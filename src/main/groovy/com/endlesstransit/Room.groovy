@@ -52,6 +52,15 @@ class Room implements Location {
         }
     }
 
+    @Override
+    String getPath() {
+        int myIndex = (parent instanceof Apartment) ? ((Apartment)parent).rooms.indexOf(this) + 1 : 0
+        if (parent != null) {
+            return "${parent.getPath()} > Room ${myIndex}"
+        }
+        return "Room ${myIndex}"
+    }
+
     void setParent(Location parent) {
         this.parent = parent
     }

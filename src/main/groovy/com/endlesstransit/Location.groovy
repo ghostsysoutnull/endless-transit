@@ -11,4 +11,5 @@ interface Location {
     int getIndexInParent()
     int getTotalInParent()
     void processAction(Player player)
+    String getPath()
 }

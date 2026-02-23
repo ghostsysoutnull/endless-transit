@@ -26,8 +26,8 @@ The game uses `java.util.Random` for procedural generation.
 
 ### Navigation & UI
 - **Mnemonic System**: Uses letters for actions (`l` Leave, `u`/`d` Up/Down, `f`/`b` Forward/Back, `c` Corridor, `i` Inventory, `q` Quit) and numbers for content selection.
+- **Breadcrumb Paths**: The HUD displays the full recursive path (e.g., `Universe > System > Planet...`) to maintain player orientation.
 - **Auto-Reversal**: Automatically switches directional pairs at container boundaries.
-- **Visited Tracking**: All containers track and display a `[Visited]` status in menus.
 
 ## Future Considerations
 - Implement a saving/loading system.

@@ -9,4 +9,6 @@
 - **Container Abstraction**: Moving "Leave" logic to a base class ensures consistent navigation without code duplication.
 - **Visual vs functional**: Decoupling the visual presentation (Street table) from the functional menu allows for rich TUI layouts.
 - **Utility Centralization**: Moving procedural logic (e.g., NameGenerator) to static utility classes simplifies container constructors and improves variety.
+- **Recursive Paths**: Implementing a recursive `getPath()` method provides essential spatial context in deeply nested hierarchies.
+
 

@@ -57,6 +57,17 @@ abstract class Container implements Location {
         // Most containers don't have automatic actions
     }
 
+    @Override
+    String getPath() {
+        String myName = (this instanceof SolarSystem || this instanceof Planet || this instanceof Country || this instanceof City || this instanceof Street || this instanceof Building) ? this.name : this.getClass().simpleName
+        if (this instanceof Floor) myName = "Floor ${this.number}"
+        
+        if (parent != null) {
+            return "${parent.getPath()} > $myName"
+        }
+        return myName
+    }
+
     Map<String, Closure> getBaseOptions(Game game) {
         def options = [:]
         if (parent != null) {

@@ -2,6 +2,7 @@ package com.endlesstransit
 
 class Universe extends Container {
     List<SolarSystem> solarSystems = []
+    String name = "Universe"
 
     Universe() {
         Random random = new Random()

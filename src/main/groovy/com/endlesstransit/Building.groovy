@@ -43,7 +43,7 @@ class Building extends Container {
         for (int i = 0; i < maxFloors; i++) {
             final int floorNum = i
             def floor = getFloor(floorNum)
-            String label = "${i + 1}. Enter: Floor ${floorNum}"
+            String label = "${i}. Enter: Floor ${floorNum}"
             if (floor.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(floor) }
         }

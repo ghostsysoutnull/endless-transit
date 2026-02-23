@@ -35,6 +35,7 @@ class Game {
             int total = currentLocation.getTotalInParent()
             
             println "\n============================================================"
+            println "PATH: ${currentLocation.getPath()}"
             if (total > 0) {
                 printf(">>> %s %d of %d <<<\n", currentLocation.getClass().simpleName, idx, total)
             }
@@ -56,8 +57,8 @@ class Game {
             }
             
             // Add global options
-            currentActionMap["-1"] = "List inventory"
-            currentActionMap["0"] = "Quit"
+            currentActionMap["i"] = "List inventory"
+            currentActionMap["q"] = "Quit"
 
             // Display Menu
             println("Choose an action:")
@@ -103,13 +104,13 @@ class Game {
             
             String choice = processInput(rawInput)
 
-            if (choice == "0") {
+            if (choice == "q") {
                 println("Goodbye!")
                 break
             }
 
-            if (choice == "-1") {
-                lastChoice = "-1"
+            if (choice == "i") {
+                lastChoice = "i"
                 player.listInventory()
                 continue
             }
@@ -163,7 +164,7 @@ class Game {
     }
 
     String processInput(String input) {
-        if (input == null) return "0"
+        if (input == null) return "q"
 
         if (input.isEmpty()) {
             if (lastChoice != null) {
@@ -174,11 +175,11 @@ class Game {
         }
 
         if (input.equalsIgnoreCase("i")) {
-            return "-1"
+            return "i"
         }
         
         if (input.equalsIgnoreCase("q")) {
-            return "0"
+            return "q"
         }
 
         return input
