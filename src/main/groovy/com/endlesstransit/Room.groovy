@@ -2,12 +2,54 @@ package com.endlesstransit
 
 import java.util.Random
 
-class Room {
+class Room implements Location {
     static def objectsList = loadObjects()
     String color
     List<String> furniture
     String lighting
     List<String> objects = []
+    Location parent
+
+    @Override
+    Location getParent() {
+        return parent
+    }
+
+    void setParent(Location parent) {
+        this.parent = parent
+    }
+
+    // Room specific location logic
+    @Override
+    void enter(Player player) {
+        println getDescription()
+    }
+
+    @Override
+    Map<String, Closure> getOptions(Game game) {
+        def options = [:]
+        
+        if (parent instanceof Apartment) {
+            Apartment apt = (Apartment) parent
+            int myIndex = apt.rooms.indexOf(this)
+            
+            if (myIndex > 0) {
+                options["Go back"] = { game.enterLocation(apt.rooms[myIndex - 1]) }
+            } else {
+                // Room 0: Go back exits to corridor?
+                // The parent of Apartment is Corridor.
+                if (apt.parent instanceof Corridor) {
+                    options["Exit Apartment"] = { game.enterLocation(apt.parent) }
+                }
+            }
+            
+            if (myIndex < apt.rooms.size() - 1) {
+                options["Go forward"] = { game.enterLocation(apt.rooms[myIndex + 1]) }
+            }
+        }
+        
+        return options
+    }
 
     Room() {
         Random random = new Random()

@@ -3,142 +3,81 @@ package com.endlesstransit
 import java.util.Scanner
 
 class Game {
-    List<Floor> floors = []
-    Floor currentFloor
+    Location currentLocation
     Player player
     Integer lastChoice
     Scanner scanner
     Map<Object, String> currentActionMap = [:]
 
     Game() {
-        currentFloor = new Floor(0)
-        floors.add(currentFloor)
         player = new Player()
         scanner = new Scanner(System.in)
+        initializeWorld()
+    }
+
+    void initializeWorld() {
+        // Create a sample hierarchy for testing
+        def solarSystem = new SolarSystem("Sol")
+        def planet = new Planet("Earth")
+        solarSystem.addLocation(planet)
+        
+        def country = new Country("Neo-Tokyo")
+        planet.addLocation(country)
+        
+        def city = new City("Sector 7")
+        country.addLocation(city)
+        
+        def street = new Street("Main Avenue")
+        city.addLocation(street)
+        
+        def building = new Building("Apartment Complex Alpha")
+        street.addLocation(building)
+        
+        def floor = new Floor(0)
+        building.addLocation(floor)
+        
+        // Start at the floor level for backward compatibility/testing
+        currentLocation = floor
     }
 
     void start() {
-        println("Welcome to the game!")
-        println("You are on Floor ${currentFloor.number}.")
-        println("You are in a corridor with ${currentFloor.corridor.doors.size()} doors.")
-
+        println("Welcome to Endless Transit!")
+        
         while (true) {
-            currentActionMap = [1: "Go up", 2: "Go down", 3: "Enter a door", (-1): "List inventory", 0: "Quit"]
+            currentLocation.enter(player)
+            
+            def options = currentLocation.getOptions(this)
+            currentActionMap = [:]
+            
+            // Map options to menu choices
+            def menu = [:]
+            int index = 1
+            options.each { label, action ->
+                menu[index] = action
+                currentActionMap[index] = label
+                index++
+            }
+            
+            // Add global options
+            currentActionMap[(-1)] = "List inventory"
+            currentActionMap[0] = "Quit"
+
+            // Display Menu
             println("Choose an action:")
-            println("1. Go up")
-            println("2. Go down")
-            println("3. Enter a door")
-            println("i. List inventory")
-            println("x. Quit")
-
-            def choice = getUserInput()
-
-            if (choice == 0) {
-                println("Goodbye!")
-                break
+            menu.each { idx, action ->
+                println("${idx}. ${currentActionMap[idx]}")
             }
-
-            if (choice == -1) {
-                player.listInventory()
-                continue
-            }
-
-            if (choice == 1) {
-                goUp()
-            } else if (choice == 2) {
-                goDown()
-            } else if (choice == 3) {
-                enterDoor()
-            } else {
-                println("Invalid choice. Please try again.")
-            }
-        }
-    }
-
-    void goUp() {
-        int nextFloorNumber = currentFloor.number + 1
-        Floor nextFloor = floors.find { floor -> floor.number == nextFloorNumber }
-
-        if (nextFloor == null) {
-            nextFloor = new Floor(nextFloorNumber)
-            floors.add(nextFloor)
-        }
-
-        currentFloor = nextFloor
-        println("You went up to Floor ${currentFloor.number}.")
-        println("You are in a corridor with ${currentFloor.corridor.doors.size()} doors.")
-    }
-
-    void goDown() {
-        if (currentFloor.number == 0) {
-            println("You are already on the ground floor.")
-        } else {
-            int previousFloorNumber = currentFloor.number - 1
-            Floor previousFloor = floors.find { floor -> floor.number == previousFloorNumber }
-            currentFloor = previousFloor
-            println("You went down to Floor ${currentFloor.number}.")
-            println("You are in a corridor with ${currentFloor.corridor.doors.size()} doors.")
-        }
-    }
-
-    void enterDoor() {
-        currentActionMap = [0: "Quit"]
-        println("Choose a door to enter:")
-        for (int i = 0; i < currentFloor.corridor.doors.size(); i++) {
-            String desc = currentFloor.corridor.doors[i].getDescription()
-            println("${i + 1}. $desc")
-            currentActionMap[i + 1] = "Enter Door ${i + 1}"
-        }
-        println("x. Quit")
-
-        def choice = getUserInput()
-
-        if (choice == 0) {
-            println("Goodbye!")
-            return
-        }
-
-        if (choice < 1 || choice > currentFloor.corridor.doors.size()) {
-            println("Invalid choice. Please try again.")
-            return
-        }
-        currentFloor.corridor.doors[choice - 1].visited = true
-        enterApartment(choice - 1)
-    }
-
-    void enterApartment(int doorIndex) {
-        println ">---------------------------<"	
-        println("> You entered an apartment.")
-
-        Apartment apartment = currentFloor.corridor.apartments[doorIndex]
-        Room currentRoom = apartment.rooms[0]
-
-        println "Room ${apartment.rooms.indexOf(currentRoom)+1} of ${apartment.rooms.size()}."	 
-        println(currentRoom.getDescription())
-
-        while (true) {
-            currentActionMap = [1: "Go back", 2: "Go forward", 3: "Go out", (-1): "List inventory", 0: "Quit"]
-            println("Choose an action:")
-            println("1. Go back")
-            println("2. Go forward")
-            println("3. Go out of the apartment")
             println("i. List inventory")
             println("x. Quit")
 
             String rawInput = getRawUserInput()
-            if (rawInput == "") {
-                if (lastChoice == 2 && currentRoom == apartment.rooms.last()) {
-                    lastChoice = 1
-                    println "End reached. Reversing direction to: ${currentActionMap[lastChoice]}"
-                } else if (lastChoice == 1 && currentRoom == apartment.rooms.first()) {
-                    lastChoice = 2
-                    println "Beginning reached. Reversing direction to: ${currentActionMap[lastChoice]}"
-                }
-            }
-            def choice = processInput(rawInput)
+            // Here we could add the auto-reversal logic back if it fits the generic model,
+            // or rely on the specific Location implementations to handle smart defaults.
+            // For now, simple repetition.
+            
+            int choice = processInput(rawInput)
 
             if (choice == 0) {
-                player.listInventory()
                 println("Goodbye!")
                 break
             }
@@ -147,41 +86,35 @@ class Game {
                 player.listInventory()
                 continue
             }
-            println "Room ${apartment.rooms.indexOf(currentRoom)+1} of ${apartment.rooms.size()}."	 
 
-            if (choice == 1) {
-                if (currentRoom == apartment.rooms[0]) {
-                    println("You are already in the first room.")
-                } else {
-                    currentRoom = apartment.rooms[apartment.rooms.indexOf(currentRoom) - 1]
-                    println("Room description:")
-                    println(currentRoom.getDescription())
-                    processRoom(currentRoom)
-                }
-            } else if (choice == 2) {
-                if (currentRoom == apartment.rooms[apartment.rooms.size() - 1]) {
-                    println("There are no more rooms forward.")
-                } else {
-                    currentRoom = apartment.rooms[apartment.rooms.indexOf(currentRoom) + 1]
-                    println("Room description:")
-                    println(currentRoom.getDescription())
-                    processRoom(currentRoom)
-                }
-            } else if (choice == 3) {
-                println("You went out of the apartment.")
-                break
+            if (menu.containsKey(choice)) {
+                menu[choice].call()
             } else {
                 println("Invalid choice. Please try again.")
             }
         }
     }
 
-    void processRoom(Room room) {
-        Random random = new Random()
-        if (random.nextInt(10) < 3) { // 30% chance of finding a random 7-digit number
-            int randomNum = random.nextInt(9000000) + 1000000 // Random number between 1000000 and 9999999
-            player.inventory.add(randomNum)
-            println("You found a 7-digit number: ${randomNum}")
+    void enterLocation(Location location) {
+        this.currentLocation = location
+    }
+    
+    // Helper to move up/down floors, used by Corridor/Floor
+    void goUp() {
+       // Logic to find next floor would need to be in Building or managed by Floor knowing its parent
+       println "Going up logic not fully refactored yet."
+    }
+
+    void goDown() {
+        println "Going down logic not fully refactored yet."
+    }
+    
+    // Temporary helper to exit current location (go to parent)
+    void exitLocation() {
+        if (currentLocation instanceof Container && ((Container)currentLocation).parent != null) {
+            currentLocation = ((Container)currentLocation).parent
+        } else {
+            println "You can't go out from here."
         }
     }
 
@@ -228,9 +161,5 @@ class Game {
         } catch (Exception e) {
             return -2 // Invalid input
         }
-    }
-
-    int getUserInput() {
-        return processInput(getRawUserInput())
     }
 }
