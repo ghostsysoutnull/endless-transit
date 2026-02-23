@@ -6,4 +6,8 @@ interface Location {
     Map<String, Closure> getOptions(Game game)
     Location getParent()
     void setParent(Location parent)
+    boolean isVisited()
+    void markVisited()
+    int getIndexInParent()
+    int getTotalInParent()
 }

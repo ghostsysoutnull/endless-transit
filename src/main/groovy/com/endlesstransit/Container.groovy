@@ -3,6 +3,33 @@ package com.endlesstransit
 abstract class Container implements Location {
     List<Location> children = []
     Location parent
+    boolean visited = false
+
+    @Override
+    boolean isVisited() {
+        return visited
+    }
+
+    @Override
+    void markVisited() {
+        this.visited = true
+    }
+
+    @Override
+    int getIndexInParent() {
+        if (parent instanceof Container) {
+            return ((Container)parent).children.indexOf(this) + 1
+        }
+        return 0
+    }
+
+    @Override
+    int getTotalInParent() {
+        if (parent instanceof Container) {
+            return ((Container)parent).children.size()
+        }
+        return 0
+    }
 
     @Override
     Location getParent() {
@@ -21,6 +48,15 @@ abstract class Container implements Location {
 
     @Override
     void enter(Player player) {
+        markVisited()
         println getDescription()
+    }
+
+    Map<String, Closure> getBaseOptions(Game game) {
+        def options = [:]
+        if (parent != null) {
+            options["1. Leave ${this.getClass().simpleName}"] = { game.exitLocation() }
+        }
+        return options
     }
 }

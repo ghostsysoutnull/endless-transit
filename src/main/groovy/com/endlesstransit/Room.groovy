@@ -9,6 +9,33 @@ class Room implements Location {
     String lighting
     List<String> objects = []
     Location parent
+    boolean visited = false
+
+    @Override
+    boolean isVisited() {
+        return visited
+    }
+
+    @Override
+    void markVisited() {
+        this.visited = true
+    }
+
+    @Override
+    int getIndexInParent() {
+        if (parent instanceof Apartment) {
+            return ((Apartment)parent).rooms.indexOf(this) + 1
+        }
+        return 0
+    }
+
+    @Override
+    int getTotalInParent() {
+        if (parent instanceof Apartment) {
+            return ((Apartment)parent).rooms.size()
+        }
+        return 0
+    }
 
     @Override
     Location getParent() {
@@ -22,29 +49,31 @@ class Room implements Location {
     // Room specific location logic
     @Override
     void enter(Player player) {
+        markVisited()
         println getDescription()
     }
 
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = [:]
+        int nextIdx = 1
         
         if (parent instanceof Apartment) {
             Apartment apt = (Apartment) parent
             int myIndex = apt.rooms.indexOf(this)
             
             if (myIndex > 0) {
-                options["Go back"] = { game.enterLocation(apt.rooms[myIndex - 1]) }
+                options["${nextIdx}. Go back"] = { game.enterLocation(apt.rooms[myIndex - 1]) }
+                nextIdx++
             } else {
-                // Room 0: Go back exits to corridor?
-                // The parent of Apartment is Corridor.
-                if (apt.parent instanceof Corridor) {
-                    options["Exit Apartment"] = { game.enterLocation(apt.parent) }
-                }
+                // Room 0: Go back exits to Apartment container or its parent
+                options["${nextIdx}. Exit Apartment"] = { game.enterLocation(apt.parent) }
+                nextIdx++
             }
             
             if (myIndex < apt.rooms.size() - 1) {
-                options["Go forward"] = { game.enterLocation(apt.rooms[myIndex + 1]) }
+                options["${nextIdx}. Go forward"] = { game.enterLocation(apt.rooms[myIndex + 1]) }
+                nextIdx++
             }
         }
         

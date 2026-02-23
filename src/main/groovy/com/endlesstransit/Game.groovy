@@ -5,9 +5,10 @@ import java.util.Scanner
 class Game {
     Location currentLocation
     Player player
-    Integer lastChoice
+    String lastChoice
     Scanner scanner
-    Map<Object, String> currentActionMap = [:]
+    Map<String, String> currentActionMap = [:]
+    Map<String, String> previousActionMap = [:]
 
     Game() {
         player = new Player()
@@ -16,79 +17,108 @@ class Game {
     }
 
     void initializeWorld() {
-        // Create a sample hierarchy for testing
         def solarSystem = new SolarSystem("Sol")
-        def planet = new Planet("Earth")
-        solarSystem.addLocation(planet)
-        
-        def country = new Country("Neo-Tokyo")
-        planet.addLocation(country)
-        
-        def city = new City("Sector 7")
-        country.addLocation(city)
-        
-        def street = new Street("Main Avenue")
-        city.addLocation(street)
-        
-        def building = new Building("Apartment Complex Alpha")
-        street.addLocation(building)
-        
-        def floor = new Floor(0)
-        building.addLocation(floor)
-        
-        // Start at the floor level for backward compatibility/testing
-        currentLocation = floor
+        // Drill down to the first street
+        def planet = solarSystem.planets[0]
+        def country = planet.countries[0]
+        def city = country.cities[0]
+        currentLocation = city.streets[0]
     }
 
     void start() {
         println("Welcome to Endless Transit!")
         
         while (true) {
+            int idx = currentLocation.getIndexInParent()
+            int total = currentLocation.getTotalInParent()
+            
+            println "\n============================================================"
+            if (total > 0) {
+                printf(">>> %s %d of %d <<<\n", currentLocation.getClass().simpleName, idx, total)
+            }
+            
             currentLocation.enter(player)
             
             def options = currentLocation.getOptions(this)
+            previousActionMap = currentActionMap
             currentActionMap = [:]
             
             // Map options to menu choices
             def menu = [:]
-            int index = 1
+            
             options.each { label, action ->
-                menu[index] = action
-                currentActionMap[index] = label
-                index++
+                String key = label.contains(".") ? label.split("\\.")[0].trim() : label
+                menu[key] = action
+                currentActionMap[key] = label
             }
             
             // Add global options
-            currentActionMap[(-1)] = "List inventory"
-            currentActionMap[0] = "Quit"
+            currentActionMap["-1"] = "List inventory"
+            currentActionMap["0"] = "Quit"
 
             // Display Menu
             println("Choose an action:")
-            menu.each { idx, action ->
-                println("${idx}. ${currentActionMap[idx]}")
+            menu.each { menuKey, action ->
+                String label = currentActionMap[menuKey]
+                // For streets, we only show non-building options in the vertical menu
+                // because the buildings were shown in the visual grid
+                if (currentLocation instanceof Street && label.contains("Enter Building:")) {
+                    return
+                }
+                println("${label}")
             }
             println("i. List inventory")
             println("x. Quit")
 
             String rawInput = getRawUserInput()
-            // Here we could add the auto-reversal logic back if it fits the generic model,
-            // or rely on the specific Location implementations to handle smart defaults.
-            // For now, simple repetition.
             
-            int choice = processInput(rawInput)
+            // Boundary-based auto-reversal logic
+            if (rawInput == "" && lastChoice != null) {
+                def reversalPairs = [
+                    "Go forward": "Go back",
+                    "Go back": "Go forward",
+                    "Go Up": "Go Down",
+                    "Go Down": "Go Up"
+                ]
+                
+                String lastAction = previousActionMap[lastChoice] ?: ""
+                String oppositeAction = reversalPairs.findResult { k, v -> lastAction.contains(k) ? v : null }
+                
+                if (oppositeAction) {
+                    // Check if current action is still available in the NEW context
+                    boolean currentStillAvailable = currentActionMap.values().any { it.contains(lastAction) }
+                    
+                    if (!currentStillAvailable) {
+                        def matchingOppositeKey = currentActionMap.find { k, v -> v.contains(oppositeAction) }?.key
+                        if (matchingOppositeKey) {
+                            println "Boundary reached. Reversing direction to: $oppositeAction"
+                            lastChoice = matchingOppositeKey
+                        }
+                    }
+                }
+            }
+            
+            String choice = processInput(rawInput)
 
-            if (choice == 0) {
+            if (choice == "0") {
                 println("Goodbye!")
                 break
             }
 
-            if (choice == -1) {
+            if (choice == "-1") {
+                lastChoice = "-1"
                 player.listInventory()
                 continue
             }
 
-            if (menu.containsKey(choice)) {
-                menu[choice].call()
+            // Find matching menu entry
+            def matchingKey = menu.keySet().find { key ->
+                return key.equalsIgnoreCase(choice)
+            }
+
+            if (matchingKey) {
+                lastChoice = matchingKey
+                menu[matchingKey].call()
             } else {
                 println("Invalid choice. Please try again.")
             }
@@ -99,27 +129,21 @@ class Game {
         this.currentLocation = location
     }
     
-    // Helper to move up/down floors, used by Corridor/Floor
-    void goUp() {
-       // Logic to find next floor would need to be in Building or managed by Floor knowing its parent
-       println "Going up logic not fully refactored yet."
-    }
-
-    void goDown() {
-        println "Going down logic not fully refactored yet."
-    }
-    
     // Temporary helper to exit current location (go to parent)
     void exitLocation() {
-        if (currentLocation instanceof Container && ((Container)currentLocation).parent != null) {
-            currentLocation = ((Container)currentLocation).parent
+        if (currentLocation.getParent() != null) {
+            currentLocation = currentLocation.getParent()
         } else {
             println "You can't go out from here."
         }
     }
 
     String getRawUserInput() {
-        String actionName = currentActionMap[lastChoice] ?: lastChoice?.toString() ?: ""
+        String fullLabel = previousActionMap[lastChoice] ?: lastChoice ?: ""
+        String actionName = fullLabel
+        if (fullLabel.contains(". ")) {
+            actionName = fullLabel.substring(fullLabel.indexOf(". ") + 2)
+        }
         String hudLastAction = lastChoice != null ? " [Last: $actionName]" : ""
         print("\n---=====================================>>$hudLastAction ")
         print("Enter your choice: ")
@@ -135,31 +159,25 @@ class Game {
         return input != null ? input.trim() : null
     }
 
-    int processInput(String input) {
-        if (input == null) return 0
+    String processInput(String input) {
+        if (input == null) return "0"
 
         if (input.isEmpty()) {
             if (lastChoice != null) {
                 println "Repeating: $lastChoice"
                 return lastChoice
             }
-            return -2
+            return "-2"
         }
 
         if (input.equalsIgnoreCase("i")) {
-            lastChoice = -1
-            return -1
+            return "-1"
         }
         
         if (input.equalsIgnoreCase("x")) {
-            return 0
+            return "0"
         }
 
-        try {
-            lastChoice = input.toInteger()
-            return lastChoice
-        } catch (Exception e) {
-            return -2 // Invalid input
-        }
+        return input
     }
 }

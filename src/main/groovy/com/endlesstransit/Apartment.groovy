@@ -4,14 +4,16 @@ import java.util.Random
 
 class Apartment extends Container {
     List<Room> rooms
+    String doorDescription
 
     @Override
     String getDescription() {
-        "A quiet apartment."
+        "Apartment: $doorDescription"
     }
 
     @Override
     void enter(Player player) {
+        markVisited()
         println ">---------------------------<"
         println("> You entered an apartment.")
         // Current logic enters room 0 directly
@@ -20,11 +22,11 @@ class Apartment extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
-        // Return apartment level options
-        return ["Go out of the apartment": { game.exitLocation() }]
+        return getBaseOptions(game)
     }
 
-    Apartment() {
+    Apartment(String doorDescription = "A plain door") {
+        this.doorDescription = doorDescription
         Random random = new Random()
         int numRooms = random.nextInt(10) + 1
         rooms = new ArrayList<Room>()

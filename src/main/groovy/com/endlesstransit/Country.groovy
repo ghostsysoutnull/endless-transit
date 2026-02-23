@@ -6,6 +6,19 @@ class Country extends Container {
 
     Country(String name) {
         this.name = name
+        Random random = new Random()
+        int numCities = random.nextInt(3) + 2
+        for (int i = 0; i < numCities; i++) {
+            addLocation(new City("Metropolis ${i + 1}"))
+        }
+    }
+
+    @Override
+    void addLocation(Location location) {
+        super.addLocation(location)
+        if (location instanceof City) {
+            cities.add(location)
+        }
     }
 
     @Override
@@ -15,9 +28,12 @@ class Country extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
-        def options = [:]
-        cities.each { city ->
-            options["Travel to ${city.name}"] = { game.enterLocation(city) }
+        def options = getBaseOptions(game)
+        int baseIdx = options.size() + 1
+        cities.eachWithIndex { city, i ->
+            String label = "${baseIdx + i}. Travel to ${city.name}"
+            if (city.isVisited()) label += " [Visited]"
+            options[label] = { game.enterLocation(city) }
         }
         return options
     }
