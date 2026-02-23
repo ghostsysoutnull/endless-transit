@@ -2,27 +2,32 @@
 
 ## Domain Model
 
-### Hierarchy
-- **Floor**: Represents a level in the building.
-- **Corridor**: Belongs to a floor, contains multiple doors/apartments.
-- **Apartment**: Behind each door, consists of one or more rooms.
-- **Room**: The basic unit of space, containing furniture, lighting, and objects.
+### Hierarchy (Composite Pattern)
+- **SolarSystem**: The highest container level.
+- **Planet / Country / City**: Mid-level planetary containers.
+- **Street**: Contains Buildings, displayed in a specialized visual grid.
+- **Building**: A container for Floors; enforces fixed height and apartment density.
+- **Floor**: Represents a level, containing a Corridor.
+- **Corridor**: Contains multiple Apartments.
+- **Apartment**: A sequence of Rooms.
+- **Room**: The atomic unit of space, containing furniture, lighting, and objects.
 
-### Entity Relationships
-- A `Game` has many `Floors` and one `Player`.
-- A `Floor` has one `Corridor`.
-- A `Corridor` has many `Doors` and many `Apartments`.
-- An `Apartment` has many `Rooms`.
+### Core Systems
+- **Generic Navigator**: The game loop interacts with any `Location` through a standard interface (`enter`, `getOptions`), allowing for infinite scale.
+- **Structural Consistency**: Rules are applied top-down (e.g., a Building's apartments-per-floor is set once and shared).
+- **Intelligent HUD**: Preserves previous context to show descriptive action names and precise "X of N" progress.
 
 ## Mechanics
 
 ### Generation
-The game uses `java.util.Random` for all procedural generation.
-- **Doors**: Randomized color, decor, and occasional "scary words".
-- **Rooms**: Randomized from static lists and external resource files.
+The game uses `java.util.Random` for procedural generation.
+- **Names**: Higher-level containers use procedural name generators (prefixes/suffixes).
+- **Structural Constraints**: Enforced boundaries (e.g., `maxFloors`) ensure navigation logic is predictable.
 
-### Inventory System
-The `Player` can collect 7-digit numbers found randomly in rooms. Currently, these are stored in a simple integer list.
+### Navigation & UI
+- **Auto-Reversal**: Automatically switches directional pairs (Go Up/Down, Go Forward/Back) at container boundaries.
+- **Smart Input**: Supports prefix-based selection (e.g., typing "1L" for building selection).
+- **Visited Tracking**: All containers track and display a `[Visited]` status in menus.
 
 ## Future Considerations
 - Implement a saving/loading system.
