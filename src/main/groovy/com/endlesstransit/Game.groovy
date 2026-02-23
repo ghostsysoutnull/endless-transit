@@ -68,31 +68,30 @@ class Game {
                 println("${label}")
             }
             println("i. List inventory")
-            println("x. Quit")
+            println("q. Quit")
 
             String rawInput = getRawUserInput()
             
             // Boundary-based auto-reversal logic
             if (rawInput == "" && lastChoice != null) {
                 def reversalPairs = [
-                    "Go forward": "Go back",
-                    "Go back": "Go forward",
-                    "Go Up": "Go Down",
-                    "Go Down": "Go Up"
+                    "f": "b",
+                    "b": "f",
+                    "u": "d",
+                    "d": "u"
                 ]
                 
-                String lastAction = previousActionMap[lastChoice] ?: ""
-                String oppositeAction = reversalPairs.findResult { k, v -> lastAction.contains(k) ? v : null }
+                String lastKey = lastChoice
+                String oppositeKey = reversalPairs[lastKey]
                 
-                if (oppositeAction) {
+                if (oppositeKey) {
                     // Check if current action is still available in the NEW context
-                    boolean currentStillAvailable = currentActionMap.values().any { it.contains(lastAction) }
+                    boolean currentStillAvailable = currentActionMap.containsKey(lastKey)
                     
                     if (!currentStillAvailable) {
-                        def matchingOppositeKey = currentActionMap.find { k, v -> v.contains(oppositeAction) }?.key
-                        if (matchingOppositeKey) {
-                            println "Boundary reached. Reversing direction to: $oppositeAction"
-                            lastChoice = matchingOppositeKey
+                        if (currentActionMap.containsKey(oppositeKey)) {
+                            println "Boundary reached. Reversing direction."
+                            lastChoice = oppositeKey
                         }
                     }
                 }
@@ -174,7 +173,7 @@ class Game {
             return "-1"
         }
         
-        if (input.equalsIgnoreCase("x")) {
+        if (input.equalsIgnoreCase("q")) {
             return "0"
         }
 

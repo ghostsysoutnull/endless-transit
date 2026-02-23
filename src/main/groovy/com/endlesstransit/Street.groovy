@@ -24,9 +24,8 @@ class Street extends Container {
             def bL = buildings[i]
             def bR = (i + 1 < buildings.size()) ? buildings[i+1] : null
             
-            // Start numbering from 2 (1 is usually Leave)
-            int numL = i + 2
-            int numR = i + 3
+            int numL = i + 1
+            int numR = i + 2
             
             String visL = bL.isVisited() ? " [V]" : ""
             String labelL = "${numL}. ${bL.name}${visL}"
@@ -58,13 +57,10 @@ class Street extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        int nextIdx = options.size() + 1
         
         for (int i = 0; i < buildings.size(); i++) {
             def building = buildings[i]
-            // We use the same index logic as enter()
-            options["${nextIdx}. Enter Building: ${building.name}"] = { game.enterLocation(building) }
-            nextIdx++
+            options["${i + 1}. Enter Building: ${building.name}"] = { game.enterLocation(building) }
         }
         return options
     }

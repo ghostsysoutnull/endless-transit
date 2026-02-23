@@ -12,21 +12,18 @@ class Floor extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        int nextIdx = options.size() + 1
         
         if (parent instanceof Building) {
             Building bldg = (Building) parent
             if (number < bldg.maxFloors - 1) {
-                options["${nextIdx}. Go Up"] = { game.enterLocation(bldg.getFloor(number + 1)) }
-                nextIdx++
+                options["u. Go Up"] = { game.enterLocation(bldg.getFloor(number + 1)) }
             }
             if (number > 0) {
-                options["${nextIdx}. Go Down"] = { game.enterLocation(bldg.getFloor(number - 1)) }
-                nextIdx++
+                options["d. Go Down"] = { game.enterLocation(bldg.getFloor(number - 1)) }
             }
         }
         
-        options["${nextIdx}. Enter Corridor"] = { game.enterLocation(corridor) }
+        options["1. Enter Corridor"] = { game.enterLocation(corridor) }
         return options
     }
 

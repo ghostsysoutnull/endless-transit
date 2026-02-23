@@ -29,9 +29,8 @@ class Planet extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        int baseIdx = options.size() + 1
         countries.eachWithIndex { country, i ->
-            String label = "${baseIdx + i}. Visit ${country.name}"
+            String label = "${i + 1}. Visit ${country.name}"
             if (country.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(country) }
         }

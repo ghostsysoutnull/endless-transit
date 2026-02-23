@@ -14,7 +14,6 @@ class Corridor extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        int nextIdx = options.size() + 1
         
         // Floor navigation
         if (parent instanceof Floor) {
@@ -23,19 +22,17 @@ class Corridor extends Container {
                 Building bldg = (Building) currentFloor.parent
                 
                 if (currentFloor.number < bldg.maxFloors - 1) {
-                    options["${nextIdx}. Go Up"] = {
+                    options["u. Go Up"] = {
                         def nextFloor = bldg.getFloor(currentFloor.number + 1)
                         game.enterLocation(nextFloor.corridor)
                     }
-                    nextIdx++
                 }
                 
                 if (currentFloor.number > 0) {
-                    options["${nextIdx}. Go Down"] = {
+                    options["d. Go Down"] = {
                         def prevFloor = bldg.getFloor(currentFloor.number - 1)
                         game.enterLocation(prevFloor.corridor)
                     }
-                    nextIdx++
                 }
             }
         }
@@ -43,14 +40,13 @@ class Corridor extends Container {
         for (int i = 0; i < apartments.size(); i++) {
             def apt = apartments[i]
             if (!apt.rooms.isEmpty()) {
-                String label = "${nextIdx}. Enter: ${apt.doorDescription}"
+                String label = "${i + 1}. Enter: ${apt.doorDescription}"
                 if (apt.rooms.any { it.isVisited() }) {
                     label += " [Visited]"
                 }
                 options[label] = { 
                     game.enterLocation(apt.rooms[0]) 
                 }
-                nextIdx++
             }
         }
         return options

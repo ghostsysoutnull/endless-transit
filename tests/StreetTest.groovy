@@ -7,13 +7,13 @@ println "Street: ${street.name} has ${street.buildings.size()} buildings."
 
 def options = street.getOptions(new Game())
 
-// Verify we have 1L, 1R, etc.
-boolean hasLeftRight = options.keySet().any { it.startsWith("1L") } && options.keySet().any { it.startsWith("1R") }
+// Verify we have numeric IDs (1, 2, etc.)
+boolean hasNumericIds = options.keySet().any { it.startsWith("1.") } && options.keySet().any { it.startsWith("2.") }
 
-if (hasLeftRight) {
-    println "SUCCESS: Street options correctly use 1L/1R format."
+if (hasNumericIds) {
+    println "SUCCESS: Street options correctly use numeric IDs."
 } else {
-    println "FAILURE: Street options do not use 1L/1R format."
+    println "FAILURE: Street options do not use numeric IDs."
     println "Actual options: ${options.keySet()}"
     System.exit(1)
 }

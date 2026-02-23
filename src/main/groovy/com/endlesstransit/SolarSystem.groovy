@@ -29,9 +29,8 @@ class SolarSystem extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        int baseIdx = options.size() + 1
         planets.eachWithIndex { planet, i ->
-            String label = "${baseIdx + i}. Land on ${planet.name}"
+            String label = "${i + 1}. Land on ${planet.name}"
             if (planet.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(planet) }
         }

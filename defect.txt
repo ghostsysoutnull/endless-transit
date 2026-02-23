@@ -1,0 +1,10 @@
+>>> Planet 2 of 3 <<<
+Planet: Planet 2
+Choose an action:
+l. Leave Planet
+2. Visit Region 1
+3. Visit Region 2
+i. List inventory
+q. Quit
+
+Visit Region 1 should have the menu option 1, and Visit Region 2 should have menu option 2.

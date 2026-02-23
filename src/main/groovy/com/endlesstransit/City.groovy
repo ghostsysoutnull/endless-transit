@@ -29,9 +29,8 @@ class City extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        int baseIdx = options.size() + 1
         streets.eachWithIndex { street, i ->
-            String label = "${baseIdx + i}. Go to ${street.name}"
+            String label = "${i + 1}. Go to ${street.name}"
             if (street.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(street) }
         }

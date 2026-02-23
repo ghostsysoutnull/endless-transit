@@ -48,11 +48,10 @@ class Building extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        int baseIdx = options.size() + 1
         for (int i = 0; i < maxFloors; i++) {
             final int floorNum = i
             def floor = getFloor(floorNum)
-            String label = "${baseIdx + i}. Enter: Floor ${floorNum}"
+            String label = "${i + 1}. Enter: Floor ${floorNum}"
             if (floor.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(floor) }
         }

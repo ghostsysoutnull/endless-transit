@@ -56,24 +56,20 @@ class Room implements Location {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = [:]
-        int nextIdx = 1
         
         if (parent instanceof Apartment) {
             Apartment apt = (Apartment) parent
             int myIndex = apt.rooms.indexOf(this)
             
             if (myIndex > 0) {
-                options["${nextIdx}. Go back"] = { game.enterLocation(apt.rooms[myIndex - 1]) }
-                nextIdx++
+                options["b. Go back"] = { game.enterLocation(apt.rooms[myIndex - 1]) }
             } else {
                 // Room 0: Go back exits to Apartment container or its parent
-                options["${nextIdx}. Exit Apartment"] = { game.enterLocation(apt.parent) }
-                nextIdx++
+                options["l. Exit Apartment"] = { game.enterLocation(apt.parent) }
             }
             
             if (myIndex < apt.rooms.size() - 1) {
-                options["${nextIdx}. Go forward"] = { game.enterLocation(apt.rooms[myIndex + 1]) }
-                nextIdx++
+                options["f. Go forward"] = { game.enterLocation(apt.rooms[myIndex + 1]) }
             }
         }
         

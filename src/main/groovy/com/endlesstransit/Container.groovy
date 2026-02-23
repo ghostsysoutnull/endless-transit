@@ -55,7 +55,7 @@ abstract class Container implements Location {
     Map<String, Closure> getBaseOptions(Game game) {
         def options = [:]
         if (parent != null) {
-            options["1. Leave ${this.getClass().simpleName}"] = { game.exitLocation() }
+            options["l. Leave ${this.getClass().simpleName}"] = { game.exitLocation() }
         }
         return options
     }
