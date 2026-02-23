@@ -7,9 +7,9 @@ class City extends Container {
     City(String name) {
         this.name = name
         Random random = new Random()
-        int numStreets = random.nextInt(5) + 3
+        int numStreets = random.nextInt(13) + 3
         for (int i = 0; i < numStreets; i++) {
-            addLocation(new Street("Avenue ${i + 1}"))
+            addLocation(new Street(NameGenerator.generateStreetName()))
         }
     }
 

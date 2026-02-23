@@ -7,9 +7,9 @@ class SolarSystem extends Container {
     SolarSystem(String name) {
         this.name = name
         Random random = new Random()
-        int numPlanets = random.nextInt(5) + 3
+        int numPlanets = random.nextInt(9) + 2
         for (int i = 0; i < numPlanets; i++) {
-            addLocation(new Planet("Planet ${i + 1}"))
+            addLocation(new Planet(NameGenerator.generatePlanetName()))
         }
     }
 

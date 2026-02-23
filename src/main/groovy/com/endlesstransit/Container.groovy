@@ -52,6 +52,11 @@ abstract class Container implements Location {
         println getDescription()
     }
 
+    @Override
+    void processAction(Player player) {
+        // Most containers don't have automatic actions
+    }
+
     Map<String, Closure> getBaseOptions(Game game) {
         def options = [:]
         if (parent != null) {

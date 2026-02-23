@@ -8,3 +8,5 @@
 - **Generic Auto-Reversal**: Using directional pairs (Up/Down, Forward/Back) decouples boundary logic from specific location types.
 - **Container Abstraction**: Moving "Leave" logic to a base class ensures consistent navigation without code duplication.
 - **Visual vs functional**: Decoupling the visual presentation (Street table) from the functional menu allows for rich TUI layouts.
+- **Utility Centralization**: Moving procedural logic (e.g., NameGenerator) to static utility classes simplifies container constructors and improves variety.
+

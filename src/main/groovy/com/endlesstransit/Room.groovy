@@ -42,6 +42,16 @@ class Room implements Location {
         return parent
     }
 
+    @Override
+    void processAction(Player player) {
+        Random random = new Random()
+        if (random.nextInt(10) < 3) { // 30% chance
+            int randomNum = random.nextInt(9000000) + 1000000 
+            player.inventory.add(randomNum)
+            println ">>> You found a 7-digit number: ${randomNum} <<<"
+        }
+    }
+
     void setParent(Location parent) {
         this.parent = parent
     }

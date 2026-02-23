@@ -7,7 +7,7 @@ class Street extends Container {
     Street(String name) {
         this.name = name
         Random random = new Random()
-        int numPairs = random.nextInt(3) + 2 // 2 to 4 pairs
+        int numPairs = random.nextInt(9) + 2 // 2 to 10 pairs
         for (int i = 0; i < numPairs * 2; i++) {
             addLocation(new Building())
         }

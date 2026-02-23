@@ -10,4 +10,5 @@ interface Location {
     void markVisited()
     int getIndexInParent()
     int getTotalInParent()
+    void processAction(Player player)
 }

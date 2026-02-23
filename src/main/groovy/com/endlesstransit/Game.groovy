@@ -17,9 +17,11 @@ class Game {
     }
 
     void initializeWorld() {
-        def solarSystem = new SolarSystem("Sol")
-        // Drill down to the first street
-        def planet = solarSystem.planets[0]
+        def universe = new Universe()
+        
+        // Start at the first street of the first city of the first country of the first planet of the first system
+        def firstSystem = universe.solarSystems[0]
+        def planet = firstSystem.planets[0]
         def country = planet.countries[0]
         def city = country.cities[0]
         currentLocation = city.streets[0]
@@ -38,6 +40,7 @@ class Game {
             }
             
             currentLocation.enter(player)
+            currentLocation.processAction(player)
             
             def options = currentLocation.getOptions(this)
             previousActionMap = currentActionMap
@@ -86,10 +89,11 @@ class Game {
                 
                 if (oppositeKey) {
                     // Check if current action is still available in the NEW context
-                    boolean currentStillAvailable = currentActionMap.containsKey(lastKey)
+                    // We check if the current options map has a label starting with the key
+                    boolean currentStillAvailable = options.keySet().any { it.startsWith(lastKey + ". ") }
                     
                     if (!currentStillAvailable) {
-                        if (currentActionMap.containsKey(oppositeKey)) {
+                        if (options.keySet().any { it.startsWith(oppositeKey + ". ") }) {
                             println "Boundary reached. Reversing direction."
                             lastChoice = oppositeKey
                         }

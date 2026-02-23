@@ -21,12 +21,12 @@
 
 ### Generation
 The game uses `java.util.Random` for procedural generation.
-- **Names**: Higher-level containers use procedural name generators (prefixes/suffixes).
+- **NameGenerator**: A centralized utility providing thematic naming for all levels (Planets, Cities, Streets, etc.).
 - **Structural Constraints**: Enforced boundaries (e.g., `maxFloors`) ensure navigation logic is predictable.
 
 ### Navigation & UI
-- **Auto-Reversal**: Automatically switches directional pairs (Go Up/Down, Go Forward/Back) at container boundaries.
-- **Smart Input**: Supports prefix-based selection (e.g., typing "1L" for building selection).
+- **Mnemonic System**: Uses letters for actions (`l` Leave, `u`/`d` Up/Down, `f`/`b` Forward/Back, `c` Corridor, `i` Inventory, `q` Quit) and numbers for content selection.
+- **Auto-Reversal**: Automatically switches directional pairs at container boundaries.
 - **Visited Tracking**: All containers track and display a `[Visited]` status in menus.
 
 ## Future Considerations

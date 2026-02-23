@@ -23,7 +23,7 @@ class Floor extends Container {
             }
         }
         
-        options["1. Enter Corridor"] = { game.enterLocation(corridor) }
+        options["c. Enter Corridor"] = { game.enterLocation(corridor) }
         return options
     }
 

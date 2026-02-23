@@ -7,18 +7,10 @@ class Building extends Container {
     int apartmentsPerFloor
 
     Building(String namePrefix = "") {
-        this.name = generateName(namePrefix)
+        this.name = NameGenerator.generateBuildingName(namePrefix)
         Random random = new Random()
-        this.maxFloors = random.nextInt(10) + 5 
-        this.apartmentsPerFloor = random.nextInt(5) + 3 // 3 to 7 apartments per floor
-    }
-
-    private String generateName(String prefix) {
-        def prefixes = ["Neon", "Crystal", "Obsidian", "Rusty", "Chrome", "Emerald", "Vapor", "Aether"]
-        def suffixes = ["Tower", "Plaza", "Heights", "Complex", "Spire", "Block", "Apex", "Nexus"]
-        Random r = new Random()
-        String generated = "${prefixes[r.nextInt(prefixes.size())]} ${suffixes[r.nextInt(suffixes.size())]}"
-        return prefix ? "$prefix $generated" : generated
+        this.maxFloors = random.nextInt(26) + 5 
+        this.apartmentsPerFloor = random.nextInt(13) + 3 // 3 to 15 apartments per floor
     }
 
     @Override

@@ -7,9 +7,9 @@ class Planet extends Container {
     Planet(String name) {
         this.name = name
         Random random = new Random()
-        int numCountries = random.nextInt(3) + 2
+        int numCountries = random.nextInt(7) + 2
         for (int i = 0; i < numCountries; i++) {
-            addLocation(new Country("Region ${i + 1}"))
+            addLocation(new Country(NameGenerator.generateCountryName()))
         }
     }
 
