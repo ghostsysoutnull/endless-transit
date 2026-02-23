@@ -1,14 +1,20 @@
 package com.endlesstransit
 
+import java.util.Scanner
+
 class Game {
     List<Floor> floors = []
     Floor currentFloor
     Player player
+    Integer lastChoice
+    Scanner scanner
+    Map<Object, String> currentActionMap = [:]
 
     Game() {
         currentFloor = new Floor(0)
         floors.add(currentFloor)
         player = new Player()
+        scanner = new Scanner(System.in)
     }
 
     void start() {
@@ -17,17 +23,24 @@ class Game {
         println("You are in a corridor with ${currentFloor.corridor.doors.size()} doors.")
 
         while (true) {
+            currentActionMap = [1: "Go up", 2: "Go down", 3: "Enter a door", (-1): "List inventory", 0: "Quit"]
             println("Choose an action:")
             println("1. Go up")
             println("2. Go down")
             println("3. Enter a door")
-            println("0. Quit")
+            println("i. List inventory")
+            println("x. Quit")
 
             def choice = getUserInput()
 
             if (choice == 0) {
                 println("Goodbye!")
                 break
+            }
+
+            if (choice == -1) {
+                player.listInventory()
+                continue
             }
 
             if (choice == 1) {
@@ -69,11 +82,14 @@ class Game {
     }
 
     void enterDoor() {
+        currentActionMap = [0: "Quit"]
         println("Choose a door to enter:")
         for (int i = 0; i < currentFloor.corridor.doors.size(); i++) {
-            println("${i + 1}. ${currentFloor.corridor.doors[i].getDescription()}")
+            String desc = currentFloor.corridor.doors[i].getDescription()
+            println("${i + 1}. $desc")
+            currentActionMap[i + 1] = "Enter Door ${i + 1}"
         }
-        println("0. Quit")
+        println("x. Quit")
 
         def choice = getUserInput()
 
@@ -101,14 +117,25 @@ class Game {
         println(currentRoom.getDescription())
 
         while (true) {
+            currentActionMap = [1: "Go back", 2: "Go forward", 3: "Go out", (-1): "List inventory", 0: "Quit"]
             println("Choose an action:")
             println("1. Go back")
             println("2. Go forward")
             println("3. Go out of the apartment")
-            println("-1. List inventory")
-            println("0. Quit")
+            println("i. List inventory")
+            println("x. Quit")
 
-            def choice = getUserInput()
+            String rawInput = getRawUserInput()
+            if (rawInput == "") {
+                if (lastChoice == 2 && currentRoom == apartment.rooms.last()) {
+                    lastChoice = 1
+                    println "End reached. Reversing direction to: ${currentActionMap[lastChoice]}"
+                } else if (lastChoice == 1 && currentRoom == apartment.rooms.first()) {
+                    lastChoice = 2
+                    println "Beginning reached. Reversing direction to: ${currentActionMap[lastChoice]}"
+                }
+            }
+            def choice = processInput(rawInput)
 
             if (choice == 0) {
                 player.listInventory()
@@ -158,18 +185,52 @@ class Game {
         }
     }
 
-    int getUserInput() {
-        print("\n---=====================================>> ")
+    String getRawUserInput() {
+        String actionName = currentActionMap[lastChoice] ?: lastChoice?.toString() ?: ""
+        String hudLastAction = lastChoice != null ? " [Last: $actionName]" : ""
+        print("\n---=====================================>>$hudLastAction ")
         print("Enter your choice: ")
-        String input = System.console().readLine()
-        if (input == "inventory") {
-            return -1
+        
+        String input
+        if (System.console()) {
+            input = System.console().readLine()
+        } else if (scanner.hasNextLine()) {
+            input = scanner.nextLine()
         } else {
-            try {
-                return input.toInteger()
-            } catch (Exception e) {
-                return -2 // Invalid input
-            }
+            return null // EOF
         }
+        return input != null ? input.trim() : null
+    }
+
+    int processInput(String input) {
+        if (input == null) return 0
+
+        if (input.isEmpty()) {
+            if (lastChoice != null) {
+                println "Repeating: $lastChoice"
+                return lastChoice
+            }
+            return -2
+        }
+
+        if (input.equalsIgnoreCase("i")) {
+            lastChoice = -1
+            return -1
+        }
+        
+        if (input.equalsIgnoreCase("x")) {
+            return 0
+        }
+
+        try {
+            lastChoice = input.toInteger()
+            return lastChoice
+        } catch (Exception e) {
+            return -2 // Invalid input
+        }
+    }
+
+    int getUserInput() {
+        return processInput(getRawUserInput())
     }
 }
