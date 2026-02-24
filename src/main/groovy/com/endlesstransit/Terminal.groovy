@@ -1,0 +1,51 @@
+package com.endlesstransit
+
+class Terminal {
+    static final String RESET = "\u001b[0m"
+    static final String BOLD = "\u001b[1m"
+    static final String DIM = "\u001b[2m"
+    static final String ITALIC = "\u001b[3m"
+    static final String HIDDEN = "\u001b[8m"
+    static final String STRIKETHROUGH = "\u001b[9m"
+    
+    // Foreground Colors
+    static final String BLACK = "\u001b[30m"
+    static final String RED = "\u001b[31m"
+    static final String GREEN = "\u001b[32m"
+    static final String YELLOW = "\u001b[33m"
+    static final String BLUE = "\u001b[34m"
+    static final String MAGENTA = "\u001b[35m"
+    static final String CYAN = "\u001b[36m"
+    static final String WHITE = "\u001b[37m"
+    static final String GREY = "\u001b[90m"
+    
+    // Light Colors
+    static final String L_CYAN = "\u001b[96m"
+    static final String L_BLUE = "\u001b[94m"
+    static final String L_MAGENTA = "\u001b[95m"
+
+    // Cursor Movement
+    static void save() { print "\u001b[s" }
+    static void restore() { print "\u001b[u" }
+    static void home() { print "\u001b[H" }
+    static void moveTo(int r, int c) { print "\u001b[${r};${c}H" }
+    static void moveUp(int n) { print "\u001b[${n}A" }
+    static void moveDown(int n) { print "\u001b[${n}B" }
+    static void moveRight(int n) { print "\u001b[${n}C" }
+    static void moveLeft(int n) { print "\u001b[${n}D" }
+    
+    static void clearLine() { print "\u001b[K" }
+    static void clearToEnd() { print "\u001b[J" }
+
+    static String colorize(String text, String color) {
+        return "${color}${text}${RESET}"
+    }
+    
+    static String dim(String text) {
+        return "${DIM}${text}${RESET}"
+    }
+    
+    static String bold(String text) {
+        return "${BOLD}${text}${RESET}"
+    }
+}

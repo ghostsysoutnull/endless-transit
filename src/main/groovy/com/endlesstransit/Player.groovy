@@ -11,11 +11,12 @@ class Player {
 
     void listInventory() {
         if (inventory.isEmpty()) {
-            println("Your inventory is empty.")
+            println(Terminal.dim("Your inventory is empty."))
         } else {
-            println("Inventory:")
+            println(Terminal.colorize("INVENTORY:", Terminal.L_CYAN))
             inventory.each { item ->
-                println(" - $item")
+                String freq = String.format("%04d", item.frequency)
+                println(" - ${Terminal.dim(freq + "Hz")} ${Terminal.bold(item.name)}")
             }
         }
     }

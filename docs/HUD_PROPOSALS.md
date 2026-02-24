@@ -29,37 +29,16 @@ Color: Red | Lighting: Soft | Furniture: Sofa, Table
 ------------------------------------------------------------------------
 ```
 
-## 3. The "Cyber-Terminal" (Data Heavy)
+## 3. The "Cyber-Terminal" (Data Heavy) [IMPLEMENTED]
 Adds procedural "metadata" to the HUD to increase Sci-Fi immersion (e.g., coordinates, scanning status).
-
-**Example:**
-```text
-[SCANNING...] Area: Sector 7G
-[COORDS: 42.001 / -12.99]
-[DEPTH: 7 Levels Below Root]
-
->>> Building: Obsidian Spire (1 of 4)
-----------------------------------------------------------------------
-[!] 12 Residents detected. 
-[!] 3 Elevators offline.
-----------------------------------------------------------------------
-```
 
 ## 4. The "Navigation Compass" (Visual Cues)
 Adds a small 2D representation of where the player can move, helping orient them in the hierarchy.
 
-**Example:**
-```text
-PATH: ... > Building > Floor 2 > Corridor
-----------------------------------------------------------------------
-NAVIGATION:
-   [U] Up (Floor 3)        
-    |
- [L]--[C]--[Enter Door]    [C] = Current Position
-    |                      [L] = Leave to Floor 2
-   [D] Down (Floor 1)
-----------------------------------------------------------------------
-```
+## 6. Quantum Trace Buffer (Implemented)
+A non-disruptive inventory overlay that appears on the right side of the screen using ANSI positioning.
+- **Spectral Data**: Hz frequency, phase stability, and signal strength visualization.
+- **Zero-Flicker**: Renders on top of the existing HUD without triggering a full screen refresh.
 
 ## 5. Feature Improvements
 

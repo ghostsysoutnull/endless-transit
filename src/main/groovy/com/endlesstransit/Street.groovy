@@ -16,10 +16,10 @@ class Street extends Container {
     @Override
     void enter(Player player) {
         markVisited()
-        println getDescription()
+        println Terminal.bold(getDescription())
         
-        println "Buildings on this street:"
-        println "----------------------------------------------------------------------"
+        println Terminal.dim("Buildings on this street:")
+        println Terminal.dim("----------------------------------------------------------------------")
         for (int i = 0; i < buildings.size(); i += 2) {
             def bL = buildings[i]
             def bR = (i + 1 < buildings.size()) ? buildings[i+1] : null
@@ -27,18 +27,18 @@ class Street extends Container {
             int numL = i + 1
             int numR = i + 2
             
-            String visL = bL.isVisited() ? " [V]" : ""
+            String visL = bL.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String labelL = "${numL}. ${bL.name}${visL}"
             
             String labelR = ""
             if (bR) {
-                String visR = bR.isVisited() ? " [V]" : ""
+                String visR = bR.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
                 labelR = "${numR}. ${bR.name}${visR}"
             }
             
-            printf("%-33s | %-33s\n", labelL, labelR)
+            printf("%-40s | %-40s\n", labelL, labelR)
         }
-        println "----------------------------------------------------------------------"
+        println Terminal.dim("----------------------------------------------------------------------")
     }
 
     @Override

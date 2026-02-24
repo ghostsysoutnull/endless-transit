@@ -49,7 +49,7 @@ class Room implements Location {
             int randomNum = random.nextInt(9000000) + 1000000 
             // Wrap the random number in an InventoryItem for compatibility
             player.inventory.add(new InventoryItem("Hidden Frequency", randomNum))
-            println ">>> You found a 7-digit number: ${randomNum} <<<"
+            println Terminal.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", Terminal.YELLOW)
         }
     }
 
@@ -81,6 +81,7 @@ class Room implements Location {
     @Override
     void enter(Player player) {
         markVisited()
+        println Terminal.bold("ROOM_SCAN_RESULT:")
         println getDescription()
     }
 
@@ -170,12 +171,12 @@ class Room implements Location {
 
     String getDescription() {
         StringBuilder description = new StringBuilder()
-        description.append("Color: ${color}\n")
-        description.append("Furniture: ${furniture.join(', ')}\n")
-        description.append("Lighting: ${lighting}\n")
+        description.append("${Terminal.dim("COLOR:")} ${color}\n")
+        description.append("${Terminal.dim("FURNITURE:")} ${furniture.join(', ')}\n")
+        description.append("${Terminal.dim("LIGHTING:")} ${lighting}\n")
         
         if (!objects.isEmpty()) {
-            description.append("Objects detected: ${objects.join(', ')}\n")
+            description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ${objects.join(', ')}\n")
         }
         return description.toString()
     }

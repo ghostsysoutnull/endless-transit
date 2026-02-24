@@ -13,6 +13,9 @@
 - **Intentional UI**: Using sub-menus for high-density actions (like "Take Object") reduces main-menu clutter and improves intentionality.
 - **Atmospheric Shell**: A simple wrapper script (run.sh) with random flavor text can significantly enhance the initial user experience and tone.
 - **Data-Rich Inventory**: Transitioning from primitive lists to specialized objects (InventoryItem) allows for descriptive metadata and better HUD integration.
+- **Quantum Sidebar Overlays**: Using ANSI escape codes for cursor movement (`\u001b[s`, `\u001b[u`, `\u001b[nA`) allows for non-disruptive UI updates like overlays without re-rendering the whole screen.
+- **ANSI Color Encapsulation**: Centralizing terminal codes in a `Terminal` utility class keeps game logic clean and ensures consistent styling across disparate location classes.
+- **Zero-Flicker Interaction**: Implementing localized UI updates (like the inventory buffer) improves immersion by maintaining the visual state of the world while accessing menus.
 
 
 

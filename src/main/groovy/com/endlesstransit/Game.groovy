@@ -27,8 +27,50 @@ class Game {
         currentLocation = city.streets[0]
     }
 
+    void renderInventoryOverlay() {
+        Terminal.save()
+        
+        int linesUp = 14
+        Terminal.moveUp(linesUp)
+        
+        String borderChar = Terminal.dim("╎")
+        String title = Terminal.colorize(" [QUANTUM_TRACE_BUFFER] ", Terminal.L_CYAN)
+        
+        Terminal.moveRight(50)
+        println "${borderChar}${title}"
+        
+        if (player.inventory.isEmpty()) {
+            Terminal.moveRight(50)
+            println "${borderChar} " + Terminal.dim(" (No spectral traces detected) ")
+        } else {
+            player.inventory.each { item ->
+                Terminal.moveRight(50)
+                String freqStr = String.format("%04d", item.frequency)
+                
+                // Liminal Metadata
+                int signalStrength = (item.frequency % 100) / 10 + 1
+                String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
+                String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
+                
+                String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
+                
+                print "${borderChar} ${Terminal.dim(freqStr)}Hz "
+                print Terminal.colorize(signalBar, signalColor)
+                println " ${Terminal.bold(item.name)} ${Terminal.dim("[" + phase + "]")}"
+            }
+        }
+        
+        Terminal.moveRight(50)
+        println "${borderChar} " + Terminal.dim("-------------------------------------------")
+        Terminal.moveRight(50)
+        println "${borderChar} " + Terminal.dim("SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
+        
+        Terminal.restore()
+        System.out.flush()
+    }
+
     void start() {
-        println("Welcome to Endless Transit!")
+        println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         
         while (true) {
             player.stepCount++
@@ -41,19 +83,19 @@ class Game {
             if (currentLocation instanceof Street || currentLocation instanceof City) sep = "_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"
             if (currentLocation instanceof Room) sep = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 
-            println "\n$sep"
+            println "\n${Terminal.dim(sep)}"
             // Cyber-Terminal Metadata
-            printf("[SCANNING...] Area: %s\n", currentLocation.getClass().simpleName)
-            printf("[COORDS: %s] [DEPTH: %d]\n", currentLocation.getCoordinates(), currentLocation.getDepth())
-            printf("[STEPS: %d] [INV: %d items", player.stepCount, player.inventory.size())
+            printf("${Terminal.dim("[")}${Terminal.colorize("SCANNING...", Terminal.CYAN)}${Terminal.dim("]")} Area: ${Terminal.bold(currentLocation.getClass().simpleName)}\n")
+            printf("${Terminal.dim("[")}COORDS: %s${Terminal.dim("]")} ${Terminal.dim("[")}DEPTH: %d${Terminal.dim("]")}\n", currentLocation.getCoordinates(), currentLocation.getDepth())
+            printf("${Terminal.dim("[")}STEPS: %d${Terminal.dim("]")} ${Terminal.dim("[")}INV: %d items", player.stepCount, player.inventory.size())
             if (!player.inventory.isEmpty()) {
                 def last3 = player.inventory.takeRight(3).reverse()
                 def freqs = last3.collect { it.frequency }
-                print(" | Recent: ${freqs.join(', ')}")
+                print(" | Recent: ${Terminal.colorize(freqs.join(', '), Terminal.L_CYAN)}")
             }
-            println "]"
+            println "${Terminal.dim("]")}"
             
-            println "PATH: ${currentLocation.getPath()}"
+            println "${Terminal.dim("PATH:")} ${Terminal.colorize(currentLocation.getPath(), Terminal.GREY)}"
             if (total > 0) {
                 printf(">>> %s %d of %d <<<\n", currentLocation.getClass().simpleName, idx, total)
             }
@@ -79,58 +121,61 @@ class Game {
             currentActionMap["q"] = "Quit"
 
             // Display Menu
-            println("Choose an action:")
+            println("${Terminal.dim("Choose an action:")}")
             menu.each { menuKey, action ->
                 String label = currentActionMap[menuKey]
-                // For streets, we only show non-building options in the vertical menu
-                // because the buildings were shown in the visual grid
                 if (currentLocation instanceof Street && label.contains("Enter Building:")) {
                     return
                 }
-                println("${label}")
+                println(label)
             }
-            println("i. List inventory")
-            println("q. Quit")
+            println("${Terminal.colorize("i", Terminal.YELLOW)}. List inventory")
+            println("${Terminal.colorize("q", Terminal.RED)}. Quit")
 
-            String rawInput = getRawUserInput()
-            
-            // Boundary-based auto-reversal logic
-            if (rawInput == "" && lastChoice != null) {
-                def reversalPairs = [
-                    "f": "b",
-                    "b": "f",
-                    "u": "d",
-                    "d": "u"
-                ]
+            String choice
+            while (true) {
+                String rawInput = getRawUserInput()
                 
-                String lastKey = lastChoice
-                String oppositeKey = reversalPairs[lastKey]
-                
-                if (oppositeKey) {
-                    // Check if current action is still available in the NEW context
-                    // We check if the current options map has a label starting with the key
-                    boolean currentStillAvailable = options.keySet().any { it.startsWith(lastKey + ". ") }
+                // Boundary-based auto-reversal logic
+                if (rawInput == "" && lastChoice != null) {
+                    def reversalPairs = [
+                        "f": "b",
+                        "b": "f",
+                        "u": "d",
+                        "d": "u"
+                    ]
                     
-                    if (!currentStillAvailable) {
-                        if (options.keySet().any { it.startsWith(oppositeKey + ". ") }) {
-                            println "Boundary reached. Reversing direction."
-                            lastChoice = oppositeKey
+                    String lastKey = lastChoice
+                    String oppositeKey = reversalPairs[lastKey]
+                    
+                    if (oppositeKey) {
+                        boolean currentStillAvailable = options.keySet().any { it.startsWith(lastKey + ". ") }
+                        
+                        if (!currentStillAvailable) {
+                            if (options.keySet().any { it.startsWith(oppositeKey + ". ") }) {
+                                println "Boundary reached. Reversing direction."
+                                lastChoice = oppositeKey
+                                choice = oppositeKey
+                                break
+                            }
                         }
                     }
                 }
+                
+                choice = processInput(rawInput)
+
+                if (choice == "i") {
+                    renderInventoryOverlay()
+                    // Don't break, just loop to get input again
+                    continue
+                }
+                
+                break // Break inner loop for any other choice
             }
-            
-            String choice = processInput(rawInput)
 
             if (choice == "q") {
                 println("Goodbye!")
                 break
-            }
-
-            if (choice == "i") {
-                lastChoice = "i"
-                player.listInventory()
-                continue
             }
 
             // Find matching menu entry
@@ -141,7 +186,7 @@ class Game {
             if (matchingKey) {
                 lastChoice = matchingKey
                 menu[matchingKey].call()
-            } else {
+            } else if (choice != "-2") {
                 println("Invalid choice. Please try again.")
             }
         }
