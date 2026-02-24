@@ -7,15 +7,18 @@ class CosmicFilament extends Container {
     CosmicFilament(String name) {
         this.name = name
         this.conduitID = "0x" + Integer.toHexString(new Random().nextInt(0xFFFF))
-        
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         // Contains 4 to 8 nodes (either Sectors or Null Zones)
         int numNodes = random.nextInt(5) + 4
         for (int i = 0; i < numNodes; i++) {
             if (random.nextInt(10) < 3) { // 30% chance of a Null Sector
-                addLocation(new NullSector("Null-Reach-${i}"))
+                addLocation(new NullSector("Null Reach ${Integer.toHexString(random.nextInt(0xFFF)).toUpperCase()}"))
             } else {
-                addLocation(new GalacticSector(NameGenerator.generateBuildingName("Sector-")))
+                addLocation(new GalacticSector(NameGenerator.generateSectorName()))
             }
         }
     }
@@ -27,6 +30,7 @@ class CosmicFilament extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         def options = getBaseOptions(game)
         children.eachWithIndex { node, i ->
             String nodeType = node instanceof NullSector ? "VOID_REACH" : "MATTER_CLUSTER"

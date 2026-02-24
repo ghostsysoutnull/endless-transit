@@ -5,11 +5,15 @@ class GalacticSector extends Container {
 
     GalacticSector(String name) {
         this.name = name
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         // Contains 3 to 7 Solar Systems
         int numSystems = random.nextInt(5) + 3
         for (int i = 0; i < numSystems; i++) {
-            addLocation(new SolarSystem(NameGenerator.generateBuildingName("System-")))
+            addLocation(new SolarSystem(NameGenerator.generateSolarSystemName()))
         }
     }
 
@@ -20,6 +24,7 @@ class GalacticSector extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         def options = getBaseOptions(game)
         children.eachWithIndex { system, i ->
             options["${i + 1}. Transition to System: ${system.name}"] = { game.enterLocation(system) }

@@ -4,8 +4,17 @@ class City extends Container {
     List<Street> streets = []
     String name
 
+    List<Street> getStreets() {
+        ensureChildrenPopulated()
+        return streets
+    }
+
     City(String name) {
         this.name = name
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         int numStreets = random.nextInt(13) + 3
         for (int i = 0; i < numStreets; i++) {
@@ -28,6 +37,7 @@ class City extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         def options = getBaseOptions(game)
         streets.eachWithIndex { street, i ->
             String label = "${i + 1}. Go to ${street.name}"

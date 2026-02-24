@@ -3,17 +3,25 @@ package com.endlesstransit
 import java.util.Random
 
 class Corridor extends Container {
-    List<Door> doors
-    List<Apartment> apartments
+    List<Door> doors = []
+    List<Apartment> apartments = []
     String culture
+    int numApartments
+
+    List<Apartment> getApartments() {
+        ensureChildrenPopulated()
+        return apartments
+    }
 
     @Override
     String getDescription() {
-        "A long corridor with ${doors.size()} doors. Cultural resonance: ${culture}."
+        ensureChildrenPopulated()
+        return "A long corridor with ${doors.size()} doors. Cultural resonance: ${culture}."
     }
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         Logger.info("Getting options for Corridor. Parent: ${parent?.getClass()?.simpleName}")
         def options = getBaseOptions(game)
         
@@ -64,6 +72,11 @@ class Corridor extends Container {
 
     Corridor(int numApartments, String culture) {
         this.culture = culture
+        this.numApartments = numApartments
+    }
+
+    @Override
+    void populateChildren() {
         doors = new ArrayList<Door>()
         apartments = new ArrayList<Apartment>()
 

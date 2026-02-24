@@ -4,6 +4,23 @@ abstract class Container implements Location {
     List<Location> children = []
     Location parent
     boolean visited = false
+    boolean childrenPopulated = false
+
+    void ensureChildrenPopulated() {
+        if (!childrenPopulated) {
+            populateChildren()
+            childrenPopulated = true
+        }
+    }
+
+    void populateChildren() {
+        // To be overridden by subclasses for lazy loading
+    }
+
+    List<Location> getChildren() {
+        ensureChildrenPopulated()
+        return children
+    }
 
     @Override
     boolean isVisited() {
@@ -18,7 +35,9 @@ abstract class Container implements Location {
     @Override
     int getIndexInParent() {
         if (parent instanceof Container) {
-            return ((Container)parent).children.indexOf(this) + 1
+            Container cp = (Container) parent
+            cp.ensureChildrenPopulated()
+            return cp.children.indexOf(this) + 1
         }
         return 0
     }
@@ -26,7 +45,9 @@ abstract class Container implements Location {
     @Override
     int getTotalInParent() {
         if (parent instanceof Container) {
-            return ((Container)parent).children.size()
+            Container cp = (Container) parent
+            cp.ensureChildrenPopulated()
+            return cp.children.size()
         }
         return 0
     }
@@ -49,7 +70,6 @@ abstract class Container implements Location {
     @Override
     void enter(Player player) {
         markVisited()
-        println getDescription()
     }
 
     @Override

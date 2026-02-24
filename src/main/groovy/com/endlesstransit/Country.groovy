@@ -4,8 +4,17 @@ class Country extends Container {
     List<City> cities = []
     String name
 
+    List<City> getCities() {
+        ensureChildrenPopulated()
+        return cities
+    }
+
     Country(String name) {
         this.name = name
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         int numCities = random.nextInt(9) + 2
         for (int i = 0; i < numCities; i++) {
@@ -28,6 +37,7 @@ class Country extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         def options = getBaseOptions(game)
         cities.eachWithIndex { city, i ->
             String label = "${i + 1}. Travel to ${city.name}"

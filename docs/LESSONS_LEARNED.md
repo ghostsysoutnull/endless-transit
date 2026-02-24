@@ -18,6 +18,7 @@
 - **Zero-Flicker Interaction**: Implementing localized UI updates (like the inventory buffer) improves immersion by maintaining the visual state of the world while accessing menus.
 - **TUI Scroll vs. Overlay**: While absolute positioning (`moveTo`) creates a "holographic" sidebar feel, it limits horizontal space for dynamic content. Pivoting to a linear, scrolling inventory provides much more room for long object names while maintaining the "Quantum" aesthetic.
 - **Operational Diagnostics**: A rolling custom `Logger` with level-based filtering and stacktrace capture is essential for debugging TUI crashes that would otherwise be lost in terminal buffer scrolling.
+- **Lazy Initialization for Procedural Scaling**: Moving child generation from constructors to a lazy `populateChildren()` method is critical when the hierarchy grows. Eagerly generating a multi-scale universe (Universe to Room) causes exponential object growth, leading to OOM errors and slow startup. Lazy population ensures we only compute what the player actually visits.
 
 
 

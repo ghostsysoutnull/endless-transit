@@ -4,11 +4,20 @@ class Universe extends Container {
     List<CosmicFilament> filaments = []
     String name = "Universe"
 
+    List<CosmicFilament> getFilaments() {
+        ensureChildrenPopulated()
+        return filaments
+    }
+
     Universe() {
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         int numFilaments = random.nextInt(5) + 3
         for (int i = 0; i < numFilaments; i++) {
-            addLocation(new CosmicFilament(NameGenerator.generateBuildingName("Filament-")))
+            addLocation(new CosmicFilament(NameGenerator.generateFilamentName()))
         }
     }
 

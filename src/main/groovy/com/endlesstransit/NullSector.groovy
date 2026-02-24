@@ -5,11 +5,15 @@ class NullSector extends Container {
 
     NullSector(String name) {
         this.name = name
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         // Very sparse: only 1 or 2 systems adrift in the void
         int numSystems = random.nextInt(2) + 1
         for (int i = 0; i < numSystems; i++) {
-            addLocation(new SolarSystem("Lost-System-${random.nextInt(1000)}"))
+            addLocation(new SolarSystem("Lost ${NameGenerator.generateSolarSystemName()}"))
         }
     }
 
@@ -31,6 +35,7 @@ class NullSector extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         def options = getBaseOptions(game)
         children.eachWithIndex { system, i ->
             options["${i + 1}. Detect faint signal: ${system.name}"] = { game.enterLocation(system) }

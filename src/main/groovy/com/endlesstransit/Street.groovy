@@ -4,8 +4,17 @@ class Street extends Container {
     List<Building> buildings = []
     String name
 
+    List<Building> getBuildings() {
+        ensureChildrenPopulated()
+        return buildings
+    }
+
     Street(String name) {
         this.name = name
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         int numPairs = random.nextInt(9) + 2 // 2 to 10 pairs
         for (int i = 0; i < numPairs * 2; i++) {
@@ -16,7 +25,7 @@ class Street extends Container {
     @Override
     void enter(Player player) {
         markVisited()
-        println Terminal.bold(getDescription())
+        ensureChildrenPopulated()
         
         println Terminal.dim("Buildings on this street:")
         println Terminal.dim("---------------------------------------------")
@@ -58,6 +67,7 @@ class Street extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         def options = getBaseOptions(game)
         
         for (int i = 0; i < buildings.size(); i++) {

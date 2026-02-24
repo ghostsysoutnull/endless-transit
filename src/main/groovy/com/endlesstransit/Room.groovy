@@ -88,8 +88,6 @@ class Room implements Location {
     @Override
     void enter(Player player) {
         markVisited()
-        println Terminal.bold("ROOM_SCAN_RESULT:")
-        println getDescription()
     }
 
     @Override

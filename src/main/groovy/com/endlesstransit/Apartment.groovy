@@ -3,10 +3,15 @@ package com.endlesstransit
 import java.util.Random
 
 class Apartment extends Container {
-    List<Room> rooms
+    List<Room> rooms = []
     String doorDescription
     String timeline
     String culture
+
+    List<Room> getRooms() {
+        ensureChildrenPopulated()
+        return rooms
+    }
 
     @Override
     String getDescription() {
@@ -16,14 +21,11 @@ class Apartment extends Container {
     @Override
     void enter(Player player) {
         markVisited()
-        println ">---------------------------<"
-        println("> You entered an apartment.")
-        // Current logic enters room 0 directly
-        rooms[0].enter(player)
     }
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         return getBaseOptions(game)
     }
 
@@ -31,7 +33,10 @@ class Apartment extends Container {
         this.doorDescription = doorDescription
         this.culture = culture
         this.timeline = ThemeManager.getRandomTimeline()
-        
+    }
+
+    @Override
+    void populateChildren() {
         Random random = new Random()
         int numRooms = random.nextInt(10) + 1
         rooms = new ArrayList<Room>()

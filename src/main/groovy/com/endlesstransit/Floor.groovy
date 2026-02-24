@@ -5,6 +5,11 @@ class Floor extends Container {
     Corridor corridor
     String culture
 
+    Corridor getCorridor() {
+        ensureChildrenPopulated()
+        return corridor
+    }
+
     @Override
     String getDescription() {
         "Floor ${number}. The air hums with the resonance of ${Terminal.colorize(culture.toUpperCase(), Terminal.CYAN)} geometry."
@@ -12,6 +17,7 @@ class Floor extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         Logger.info("Getting options for Floor $number")
         def options = getBaseOptions(game)
         
@@ -56,12 +62,19 @@ class Floor extends Container {
     @Override
     void enter(Player player) {
         Logger.info("Entering Floor $number")
-        super.enter(player)
+        markVisited()
     }
 
     Floor(int number, int apartmentsPerFloor) {
         this.number = number
         this.culture = ThemeManager.getRandomCulture()
+        this.apartmentsPerFloor = apartmentsPerFloor
+    }
+    
+    int apartmentsPerFloor
+
+    @Override
+    void populateChildren() {
         corridor = new Corridor(apartmentsPerFloor, this.culture)
         addLocation(corridor)
     }

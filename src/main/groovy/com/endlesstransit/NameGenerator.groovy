@@ -36,6 +36,18 @@ class NameGenerator {
         return "${adjectives[random.nextInt(adjectives.size())]} ${nouns[random.nextInt(nouns.size())]}"
     }
 
+    static String generateFilamentName() {
+        def Greek = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda", "Mu"]
+        def types = ["Strand", "Thread", "Web", "Link", "Sync", "Stream", "Flow", "Pulse"]
+        return "${Greek[random.nextInt(Greek.size())]}-${random.nextInt(999)}-${types[random.nextInt(types.size())]}"
+    }
+
+    static String generateSectorName() {
+        def descriptors = ["Outer", "Inner", "Core", "Rim", "Void", "Prime", "Secondary", "Tertiary", "Quaternary"]
+        def nouns = ["Sector", "Quadrant", "Grid", "Matrix", "Zone", "Region", "Reach", "Expanse"]
+        return "${descriptors[random.nextInt(descriptors.size())]} ${nouns[random.nextInt(nouns.size())]} ${random.nextInt(99)}"
+    }
+
     static String generateBuildingName(String prefix = "") {
         def prefixes = ["Neon", "Crystal", "Obsidian", "Rusty", "Chrome", "Emerald", "Vapor", "Aether", "Marble", "Titanium", "Glass", "Onyx"]
         def suffixes = ["Tower", "Plaza", "Heights", "Complex", "Spire", "Block", "Apex", "Nexus", "Center", "Hall", "Domain", "Bastion"]

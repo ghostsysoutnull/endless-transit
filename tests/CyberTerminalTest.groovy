@@ -4,7 +4,9 @@ println "Running Cyber-Terminal and Mechanics Test..."
 
 def player = new Player()
 def universe = new Universe()
-def system = universe.solarSystems[0]
+def filament = universe.filaments[0]
+def sector = filament.children[0] // GalacticSector or NullSector
+def system = sector.children[0]   // SolarSystem
 def planet = system.planets[0]
 
 // Test Depth
@@ -14,8 +16,8 @@ if (universe.getDepth() == 0) {
     println "FAILURE: Universe depth is ${universe.getDepth()}."
 }
 
-if (planet.getDepth() == 2) {
-    println "SUCCESS: Planet depth is 2 (Universe > System > Planet)."
+if (planet.getDepth() == 4) {
+    println "SUCCESS: Planet depth is 4 (Universe > Filament > Sector > System > Planet)."
 } else {
     println "FAILURE: Planet depth is ${planet.getDepth()}."
 }
