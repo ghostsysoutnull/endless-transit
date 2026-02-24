@@ -19,9 +19,14 @@ class Game {
     void initializeWorld() {
         def universe = new Universe()
         
-        // Start at the first street of the first city of the first country of the first planet of the first system
-        def firstSystem = universe.solarSystems[0]
-        def planet = firstSystem.planets[0]
+        // Start deep: Universe > Filament > Sector > System > Planet > Country > City > Street
+        def filament = universe.filaments[0]
+        def node = filament.children[0]
+        
+        // Find a SolarSystem within the node (GalacticSector or NullSector)
+        def system = node.children[0]
+        
+        def planet = system.planets[0]
         def country = planet.countries[0]
         def city = country.cities[0]
         currentLocation = city.streets[0]
@@ -69,6 +74,9 @@ class Game {
             
             // Dynamic Separator based on scale
             String sep = "----------------------------------------------------------------------"
+            if (currentLocation instanceof CosmicFilament) sep = ">> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >>"
+            if (currentLocation instanceof NullSector) sep = " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
+            if (currentLocation instanceof GalacticSector) sep = "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
             if (currentLocation instanceof SolarSystem) sep = "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
             if (currentLocation instanceof Street || currentLocation instanceof City) sep = "_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"
             if (currentLocation instanceof Room) sep = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"

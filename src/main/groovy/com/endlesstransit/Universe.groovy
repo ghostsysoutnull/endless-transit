@@ -1,37 +1,37 @@
 package com.endlesstransit
 
 class Universe extends Container {
-    List<SolarSystem> solarSystems = []
+    List<CosmicFilament> filaments = []
     String name = "Universe"
 
     Universe() {
         Random random = new Random()
-        int numSystems = random.nextInt(10) + 1
-        for (int i = 0; i < numSystems; i++) {
-            addLocation(new SolarSystem(NameGenerator.generateSolarSystemName()))
+        int numFilaments = random.nextInt(5) + 3
+        for (int i = 0; i < numFilaments; i++) {
+            addLocation(new CosmicFilament(NameGenerator.generateBuildingName("Filament-")))
         }
     }
 
     @Override
     void addLocation(Location location) {
         super.addLocation(location)
-        if (location instanceof SolarSystem) {
-            solarSystems.add(location)
+        if (location instanceof CosmicFilament) {
+            filaments.add(location)
         }
     }
 
     @Override
     String getDescription() {
-        return "The Endless Universe"
+        return "The Endless Universe - A Neural Web of Infinite Complexity"
     }
 
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        solarSystems.eachWithIndex { system, i ->
-            String label = "${i + 1}. Jump to ${system.name}"
-            if (system.isVisited()) label += " [Visited]"
-            options[label] = { game.enterLocation(system) }
+        filaments.eachWithIndex { filament, i ->
+            String label = "${i + 1}. Synchronize with ${filament.name}"
+            if (filament.isVisited()) label += " [Visited]"
+            options[label] = { game.enterLocation(filament) }
         }
         return options
     }
