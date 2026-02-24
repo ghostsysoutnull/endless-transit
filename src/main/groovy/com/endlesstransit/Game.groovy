@@ -31,11 +31,12 @@ class Game {
         Terminal.save()
         
         // Use fixed row for the holographic sidebar (absolute viewport positioning)
-        int startRow = 3
+        int startRow = 2
         int sidebarCol = 50
+        int wrapWidth = 35 // width available for text within sidebar
         
-        // Clear the sidebar area first to avoid artifacts
-        Terminal.clearArea(startRow, sidebarCol, 15, 50)
+        // Clear the sidebar area first (20 lines to be safe)
+        Terminal.clearArea(startRow, sidebarCol, 20, 50)
         
         String borderChar = Terminal.dim("╎")
         String title = Terminal.colorize(" [QUANTUM_TRACE_BUFFER] ", Terminal.L_CYAN)
@@ -47,20 +48,30 @@ class Game {
             Terminal.moveTo(startRow + 1, sidebarCol)
             println "${borderChar} " + Terminal.dim(" (No spectral traces detected) ")
         } else {
-            // Show up to 6 items in two-line format to avoid overflow
-            def displayInv = player.inventory.takeRight(6)
-            displayInv.eachWithIndex { item, i ->
-                int row = startRow + 1 + (i * 2)
-                Terminal.moveTo(row, sidebarCol)
+            // Show up to 4 items with multi-line support to avoid overflow
+            def displayInv = player.inventory.takeRight(4)
+            int currentRow = startRow + 1
+            
+            displayInv.each { item ->
                 String freqStr = String.format("%04d", item.frequency)
+                List<String> wrappedName = Terminal.wrapText(item.name, wrapWidth - 10)
                 
-                // Line 1: Freq and Name
-                String name = item.name
-                if (name.length() > 30) name = name.substring(0, 27) + "..."
-                println "${borderChar} ${Terminal.dim(freqStr)}Hz ${Terminal.bold(name)}"
+                // Line 1: Freq and Start of Name
+                Terminal.moveTo(currentRow++, sidebarCol)
+                print "${borderChar} ${Terminal.dim(freqStr)}Hz "
+                if (!wrappedName.isEmpty()) {
+                    print Terminal.bold(wrappedName[0])
+                }
+                println ""
                 
-                // Line 2: Signal and Phase
-                Terminal.moveTo(row + 1, sidebarCol)
+                // Extra lines for Name if wrapped
+                for (int j = 1; j < wrappedName.size(); j++) {
+                    Terminal.moveTo(currentRow++, sidebarCol)
+                    println "${borderChar}         ${Terminal.bold(wrappedName[j])}"
+                }
+                
+                // Status Line: Signal and Phase
+                Terminal.moveTo(currentRow++, sidebarCol)
                 int signalStrength = (item.frequency % 100) / 10 + 1
                 String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
                 String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
@@ -69,12 +80,17 @@ class Game {
                 print "${borderChar}      " // align under freq
                 print Terminal.colorize(signalBar, signalColor)
                 println " ${Terminal.dim("[" + phase + "]")}"
+                
+                // Small gap between items
+                currentRow++ 
             }
         }
         
-        Terminal.moveTo(startRow + 14, sidebarCol)
+        // Ensure footer doesn't collide by using current currentRow or a safe minimum
+        int footerRow = startRow + 18
+        Terminal.moveTo(footerRow, sidebarCol)
         println "${borderChar} " + Terminal.dim("-------------------------------------------")
-        Terminal.moveTo(startRow + 15, sidebarCol)
+        Terminal.moveTo(footerRow + 1, sidebarCol)
         println "${borderChar} " + Terminal.dim("SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
         
         Terminal.restore()
