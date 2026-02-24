@@ -19,6 +19,17 @@ Standardized tests are located in `src/test/groovy`:
 ```bash
 ./run.sh --test
 ```
+Or via Gradle:
+```bash
+gradle test
+```
+
+### Automated Vibe Checks
+A set of high-signal validation scripts is available in `.agents/` to ensure the structural and aesthetic integrity of the project:
+```bash
+.agents/vibe-check-ui.sh
+.agents/vibe-check-model.sh
+```
 
 ## 🏗️ Project Architecture
 

@@ -1,0 +1,43 @@
+plugins {
+    id 'groovy'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.groovy:groovy-all:4.0.15'
+    testImplementation 'org.apache.groovy:groovy-test:4.0.15'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+application {
+    mainClass = 'com.endlesstransit.Main'
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['src/main/groovy']
+        }
+    }
+    test {
+        groovy {
+            srcDirs = ['src/test/groovy']
+        }
+    }
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+// Custom task to run the game through the custom entry point script
+task runGame(type: Exec) {
+    dependsOn classes
+    commandLine './run.sh'
+}

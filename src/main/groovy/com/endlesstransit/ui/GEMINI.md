@@ -18,3 +18,6 @@
 ## Guidelines
 - When adding new TUI elements, ensure they respect the `Terminal` utility class.
 - Descriptions should support "glitch" effects when player coherence is low (`Terminal.glitchText`).
+
+## Localized Lessons
+@tasks/lessons/ui.md

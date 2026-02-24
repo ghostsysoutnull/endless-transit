@@ -30,6 +30,8 @@ Endless Transit is a procedural universe simulation and text-based adventure wri
 
 ## Global Development Conventions
 
+@tasks/lessons/infrastructure.md
+
 ### 1. Workflow & Planning (Mandatory)
 - **Plan First**: Write task plans to `tasks/todo.md` before implementation.
 - **Verification**: Never mark a task complete without proving it works via tests or manual verification.

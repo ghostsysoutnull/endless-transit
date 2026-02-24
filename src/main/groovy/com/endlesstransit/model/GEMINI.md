@@ -18,3 +18,6 @@ Universe > Filament > Sector > System > Planet > Country > City > Street > Build
 ## Key Classes
 - `Location.groovy`: The core interface.
 - `Container.groovy`: The base class for all nested structures.
+
+## Localized Lessons
+@tasks/lessons/model.md

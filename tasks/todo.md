@@ -64,12 +64,13 @@ Migrate tests into a standard source tree (`src/test/groovy`) and align them wit
 - [x] Update `run.sh` to execute tests from the new classpath.
 - [x] Verify 100% test pass rate.
 
-# Subsystem Vibe Checks
+# Phase 4: Validation Tooling & Lesson Localization
 
 ## Objective
-Perform deep manual and automated audits of specific domains to ensure the aesthetic and structural integrity ("vibe") is maintained after reorganization.
+Finalize the "Vibe Coding" infrastructure by localizing historical lessons and providing high-signal automated validation scripts for agents.
 
 ## Plan
-- [x] **UI Vibe Check**: Verify HUD alignment and typewriter effects in different terminals.
-- [x] **Model Vibe Check**: Verify the infinite depth and coordinate stability across multiple session reboots.
-- [x] **ProcGen Vibe Check**: Audit the Gematria frequency distribution to ensure variety.
+- [x] **Lesson Localization**: Categorize and split `tasks/lessons.md` into domain-specific files.
+- [x] **Automated Vibe Checks**: Create `.agents/` directory with validation scripts (`vibe-check-ui.sh`, `vibe-check-model.sh`).
+- [x] **Build Standardization**: Introduce a minimal `build.gradle` for standard dependency and task management.
+- [x] **Final Integrity Audit**: Ensure all `GEMINI.md` files are synchronized with the new localized lessons.

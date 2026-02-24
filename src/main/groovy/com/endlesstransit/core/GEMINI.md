@@ -15,3 +15,6 @@
 ## Guidelines
 - Avoid putting UI styling or procedural generation math directly in `Game.groovy`. Delegate to `ui` and `procgen` domains.
 - When entering a new location, always use `game.enterLocation(target)` to ensure visited paths and journal entries are handled.
+
+## Localized Lessons
+@tasks/lessons/core.md
