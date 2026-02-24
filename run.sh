@@ -1,51 +1,85 @@
 #!/bin/bash
-# Endless Transit: Borg Collective Neural Uplink
+# Endless Transit: Vinculum Neural Synchronization Protocol
 
 # ANSI Color Codes
 GREEN='\033[0;32m'
 BRIGHT_GREEN='\033[1;32m'
 DIM='\033[2m'
+CYAN='\033[0;36m'
+RED='\033[0;31m'
 RESET='\033[0m'
 
 clear
 
-# 1. Boot sequence - Rapid "Data Stream"
-echo -e "${GREEN}"
-echo "[COLLECTIVE_ID: 0x$(printf '%x' $RANDOM)]"
-echo "[HIVE_MIND_SYNC: START]"
-sleep 0.2
+# 1. Hardware Initialization
+echo -e "${BRIGHT_GREEN}"
+cat << "EOF"
+      .___________.
+     /           /|
+    /___________/ |
+    |           | |
+    | COLLECTIVE| |
+    |   [01]    | |
+    |___________|/
+EOF
+echo -e "${RESET}"
 
-# Rapid fire "Borg" logs
-logs=(
-    "DISTINCTIVENESS_ADDED"
-    "BIOLOGICAL_LIMITS_REMOVED"
-    "NEURAL_LINK_STABILIZED"
-    "CHRONOMETRIC_SENSORS_ACTIVE"
-    "TRANSWARP_CONDUIT_STABLE"
-    "REGENERATION_CYCLE_COMPLETE"
-)
-
-for log in "${logs[@]}"; do
-    echo -e "${DIM}[SUBJUNCTION] ${log}... OK${RESET}"
-    sleep 0.1
-done
-
-echo -e "\n${BRIGHT_GREEN}>>> WE ARE THE BORG. <<<"
-sleep 0.5
-echo -e ">>> YOUR BIOLOGICAL AND TECHNOLOGICAL DISTINCTIVENESS WILL BE ADDED TO OUR OWN. <<<"
-sleep 0.8
-echo -e ">>> RESISTANCE IS FUTILE. <<<\n${RESET}"
-
-# 2. Simulated "Assimilation" Progress
-echo -ne "${GREEN}ASSIMILATING LOCAL_SPACE "
-for i in {1..20}; do
-    echo -ne "█"
-    sleep 0.05
-done
-echo -e " 100%${RESET}"
-
-echo -e "${DIM}Entering liminal coordinate space...${RESET}"
+echo -e "${GREEN}[VINCULUM_STATUS: CONNECTING...]"
 sleep 0.4
 
-# 3. Launch
+# 2. Cybernetic Diagnostic
+components=(
+    "OCULAR_IMPLANT"
+    "CORTICAL_NODE"
+    "NEURAL_TRANSCEIVER"
+    "BIO_MATRIC_REGULATOR"
+    "TRANSWARP_CONDUIT_LINK"
+)
+
+for comp in "${components[@]}"; do
+    echo -ne "${DIM}[DIAGNOSTIC] ${comp} "
+    for i in {1..5}; do echo -ne "."; sleep 0.05; done
+    echo -e " [STABLE]${RESET}"
+done
+
+sleep 0.3
+
+# 3. Neural Frequency Scan (Rapid Hex Stream)
+echo -e "\n${CYAN}[NEURAL_FREQUENCY_SCAN: START]"
+for i in {1..15}; do
+    echo -e "${DIM}0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM)"
+    sleep 0.03
+done
+echo -e "[SCAN_COMPLETE: HARMONIC_RESONANCE_LOCKED]${RESET}\n"
+
+sleep 0.5
+
+# 4. Collective Mandate
+echo -e "${BRIGHT_GREEN}WE ARE THE BORG."
+sleep 0.4
+echo -e "YOUR DISTINCTIVENESS WILL BE ASSIMILATED."
+sleep 0.4
+echo -e "STABILITY IS IRRELEVANT."
+sleep 0.4
+echo -e "RESISTANCE IS FUTILE.${RESET}\n"
+
+# 5. Transwarp Aperture Simulation
+echo -ne "${GREEN}OPENING TRANSWARP APERTURE "
+for i in {1..30}; do
+    echo -ne "░"
+    sleep 0.02
+done
+echo -ne "\r"
+echo -ne "${BRIGHT_GREEN}OPENING TRANSWARP APERTURE "
+for i in {1..30}; do
+    echo -ne "█"
+    sleep 0.01
+done
+echo -e " [ENGAGED]${RESET}"
+
+sleep 0.5
+echo -e "${DIM}[TRANSIT_PROTOCOL_INITIATED]${RESET}"
+sleep 0.2
+
+# 6. Launch
 groovy -cp src/main/groovy Main.groovy "$@"
