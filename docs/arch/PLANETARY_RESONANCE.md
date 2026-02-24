@@ -45,7 +45,9 @@ Planetary Resonance influences the "Neural Link" (mechanics):
 ## 5. The Anomaly Protocol (The "Outlier")
 To prevent aesthetic fatigue, a 1% "Outlier Chance" exists at the **Apartment** level. If triggered, the `VibeCapsule` is ignored for that specific branch, allowing the discovery of "Temporal Anomalies" or "Universal Drifters" that don't belong on that planet.
 
-## 6. Implementation Strategy
-1. **Model Update**: Add `VibeCapsule` to the `com.endlesstransit.model` package.
-2. **Interface Update**: Update `Location` to support vibe inheritance.
-3. **Refactor Generators**: Update `Building`, `Floor`, `Apartment`, and `Room` to use capsule data for their internal random logic.
+## 6. Implementation Status
+- [x] **Core Hierarchy**: VibeCapsule inheritance implemented.
+- [x] **Regional Divergence**: Mutations and enclaves implemented.
+- [ ] **Gematria Resonance**: Mechanical bonus for matching culture.
+- [ ] **Temporal Coherence**: Timeline-based drain rates.
+- [ ] **Atmospheric HUD**: Vibe-based UI color shifts.

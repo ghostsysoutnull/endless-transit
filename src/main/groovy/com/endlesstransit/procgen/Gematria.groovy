@@ -3,7 +3,7 @@ package com.endlesstransit.procgen
 class Gematria {
     private static final String VOWELS = "aeiouAEIOU"
 
-    static int calculateFrequency(String name, int depth) {
+    static int calculateFrequency(String name, int depth, boolean isResonant = false) {
         int sum = 0
         name.each { String charStr ->
             char c = charStr.charAt(0)
@@ -20,6 +20,10 @@ class Gematria {
             sum *= 2
         }
 
-        return sum * depth
+        int freq = sum * depth
+        if (isResonant) {
+            freq = (freq * 1.1) as int
+        }
+        return freq
     }
 }

@@ -77,8 +77,25 @@ class Game {
             while (true) {
                 Logger.info("Entering main loop. Location: ${currentLocation.getPath()}")
                 
-                // Adjust coherence based on depth
-                player.adjustCoherence(-1) // Constant drain per step
+                // Adjust coherence based on timeline
+                def vibe = currentLocation.getVibe()
+                double drainRate = 1.0
+                if (vibe != null) {
+                    switch (vibe.timeline) {
+                        case "ancient": 
+                        case "analog": 
+                            drainRate = 0.5; break
+                        case "future":
+                        case "industrial":
+                        case "atomic":
+                        case "digital":
+                            drainRate = 1.0; break
+                        case "singularity":
+                        case "entropic":
+                            drainRate = 2.0; break
+                    }
+                }
+                player.adjustCoherence(-drainRate) 
                 
                 if (player.coherence <= 0) {
                     Terminal.clearScreen()
@@ -102,11 +119,12 @@ class Game {
                 if (currentLocation instanceof Street || currentLocation instanceof City) sep = "_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"
                 if (currentLocation instanceof Room) sep = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 
-                println "\n${Terminal.dim(sep)}"
+                String accentColor = vibe?.atmosphericColor ?: Terminal.GREY
+                println "\n${Terminal.colorize(sep, accentColor)}"
                 
                 // BORG HUD (Terminology Evolution)
                 println renderCoherenceBar()
-                printf("${Terminal.dim("[")}${Terminal.colorize("SCANNING_LOCAL_TOPOLOGY...", Terminal.CYAN)}${Terminal.dim("]")}\n")
+                printf("${Terminal.dim("[")}${Terminal.colorize("SCANNING_LOCAL_TOPOLOGY...", accentColor)}${Terminal.dim("]")}\n")
                 printf("${Terminal.dim("[")}LATTICE_IDENT: ${Terminal.bold(currentLocation.getClass().simpleName)}${Terminal.dim("]")} ${Terminal.dim(">>")} ${Terminal.colorize(currentLocation.getName(), Terminal.YELLOW)}\n")
                 printf("${Terminal.dim("[")}LOCUS_HASH: %s${Terminal.dim("]")} ${Terminal.dim("[")}HOP_DENSITY: %d${Terminal.dim("]")}\n", currentLocation.getCoordinates(), currentLocation.getDepth())
                 printf("${Terminal.dim("[")}PULSE_TRAVERSAL: %d${Terminal.dim("]")} ${Terminal.dim("[")}TRACE_BUFFER: %d/16 FRAGMENTS", player.stepCount, player.inventory.size())

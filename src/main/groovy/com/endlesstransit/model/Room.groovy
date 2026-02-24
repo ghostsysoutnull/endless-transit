@@ -124,10 +124,16 @@ class Room implements Location {
                 // Shortcut: If only 1 object and empty inventory, just take it
                 if (objects.size() == 1 && game.player.inventory.isEmpty()) {
                     String name = objects[0]
-                    int freq = Gematria.calculateFrequency(name, getDepth())
+                    def vibe = getVibe()
+                    boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
+                    int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
                     def item = new InventoryItem(name, freq)
                     game.player.inventory.add(item)
                     JournalManager.logCapture(item)
+                    
+                    if (isResonant) {
+                        println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
+                    }
                     println Terminal.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", Terminal.CYAN)
                     objects.remove(0)
                     game.instantRender = true
@@ -172,10 +178,16 @@ class Room implements Location {
                         int idx = input.toInteger() - 1
                         if (idx >= 0 && idx < objects.size()) {
                             String name = objects[idx]
-                            int freq = Gematria.calculateFrequency(name, getDepth())
+                            def vibe = getVibe()
+                            boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
+                            int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
                             def item = new InventoryItem(name, freq)
                             game.player.inventory.add(item)
                             JournalManager.logCapture(item)
+                            
+                            if (isResonant) {
+                                println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
+                            }
                             println Terminal.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", Terminal.CYAN)
                             objects.remove(idx)
                             game.instantRender = true

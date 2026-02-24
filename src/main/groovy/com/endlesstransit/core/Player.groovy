@@ -19,8 +19,8 @@ class Player {
         coherence = 100
     }
 
-    void adjustCoherence(int delta) {
-        coherence = Math.min(maxCoherence, Math.max(0, coherence + delta))
+    void adjustCoherence(double delta) {
+        coherence = Math.min(maxCoherence, Math.max(0, (coherence + delta) as int))
     }
 
     void listInventory() {
