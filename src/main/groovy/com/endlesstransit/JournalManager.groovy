@@ -10,50 +10,33 @@ class JournalManager {
         def now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         
         StringBuilder sb = new StringBuilder()
-        sb.append("======================================================================
-")
-        sb.append("SESSION_LOG: $now
-")
-        sb.append("======================================================================
-
-")
+        sb.append("======================================================================\n")
+        sb.append("SESSION_LOG: $now\n")
+        sb.append("======================================================================\n\n")
         
-        sb.append("STATISTICS:
-")
-        sb.append(" - Distance Traversed: ${player.stepCount} units
-")
-        sb.append(" - Data Fragments in Buffer: ${player.inventory.size()}
-
-")
+        sb.append("STATISTICS:\n")
+        sb.append(" - Distance Traversed: ${player.stepCount} units\n")
+        sb.append(" - Data Fragments in Buffer: ${player.inventory.size()}\n\n")
         
-        sb.append("FINAL_INVENTORY:
-")
+        sb.append("FINAL_INVENTORY:\n")
         if (player.inventory.isEmpty()) {
-            sb.append(" - (No items collected)
-")
+            sb.append(" - (No items collected)\n")
         } else {
             player.inventory.each { item ->
-                sb.append(" [${String.format("%04d", item.frequency)}Hz] ${item.name}
-")
+                sb.append(" [${String.format("%04d", item.frequency)}Hz] ${item.name}\n")
             }
         }
-        sb.append("
-")
+        sb.append("\n")
         
-        sb.append("CHRONOLOGICAL_HISTORY (Macro-Scale):
-")
+        sb.append("CHRONOLOGICAL_HISTORY (Macro-Scale):\n")
         if (player.visitedPaths.isEmpty()) {
-            sb.append(" - (No records)
-")
+            sb.append(" - (No records)\n")
         } else {
             player.visitedPaths.each { path ->
-                sb.append(" >> $path
-")
+                sb.append(" >> $path\n")
             }
         }
-        sb.append("
-
-")
+        sb.append("\n\n")
         
         try {
             new File(JOURNAL_FILE).append(sb.toString())
