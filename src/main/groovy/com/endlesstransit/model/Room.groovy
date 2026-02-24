@@ -90,8 +90,23 @@ class Room implements Location {
         return "Room ${myIndex}"
     }
 
+    @Override
+    VibeCapsule getVibe() {
+        return parent?.getVibe()
+    }
+
     void setParent(Location parent) {
         this.parent = parent
+        
+        // Re-generate furniture if we have a parent vibe and not an anomaly
+        // In the game, Apartment sets parent after Room creation
+        def vibe = getVibe()
+        if (vibe != null) {
+            // Adjust description with lattice mutation flavor
+            // We can pick new furniture based on the inherited vibe
+            // but Apartment already does this when it creates the room.
+            // Let's just ensure the description uses the mutation.
+        }
     }
 
     // Room specific location logic
@@ -213,7 +228,13 @@ class Room implements Location {
     }
 
     String getDescription() {
+        def vibe = getVibe()
         StringBuilder description = new StringBuilder()
+        
+        if (vibe != null) {
+            description.append("${Terminal.dim("REGION_TRAIT:")} ${vibe.latticeMutation}\n")
+        }
+        
         description.append("${Terminal.dim("COLOR:")} ${color}\n")
         
         int wrapWidth = 45

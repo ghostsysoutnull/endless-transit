@@ -14,6 +14,7 @@ class Apartment extends Container {
     String doorDescription
     String timeline
     String culture
+    boolean isAnomaly = false
 
     List<Room> getRooms() {
         ensureChildrenPopulated()
@@ -22,7 +23,8 @@ class Apartment extends Container {
 
     @Override
     String getDescription() {
-        "Apartment: $doorDescription. [TEMPORAL_MARKER: ${Terminal.colorize(timeline.toUpperCase(), Terminal.YELLOW)}]"
+        String info = isAnomaly ? " [!] TEMPORAL_ANOMALY_DETECTED [!]" : "[TEMPORAL_MARKER: ${Terminal.colorize(timeline.toUpperCase(), Terminal.YELLOW)}]"
+        return "Apartment: $doorDescription. $info"
     }
 
     @Override
@@ -45,6 +47,17 @@ class Apartment extends Container {
     @Override
     void populateChildren() {
         Random random = new Random()
+        
+        // Use Vibe from parent unless anomaly
+        def vibe = getVibe()
+        if (vibe != null && random.nextDouble() > 0.01) {
+            this.timeline = vibe.timeline
+            this.culture = vibe.pickCulture()
+        } else if (vibe != null) {
+            this.isAnomaly = true
+            // Keep original random culture/timeline from constructor
+        }
+
         int numRooms = random.nextInt(10) + 1
         rooms = new ArrayList<Room>()
 

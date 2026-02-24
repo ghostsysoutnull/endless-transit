@@ -6,6 +6,8 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.ui.Terminal
+import com.endlesstransit.ui.ThemeManager
 
 class Building extends Container {
     List<Floor> floors = []
@@ -45,7 +47,9 @@ class Building extends Container {
 
     @Override
     String getDescription() {
-        return "Building: $name (Total Floors: $maxFloors)"
+        def v = getVibe()
+        String vInfo = v ? "\n${Terminal.dim("[TECH_ERA:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")} ${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")}" : ""
+        return "Building: $name (Total Floors: $maxFloors)$vInfo"
     }
 
     @Override

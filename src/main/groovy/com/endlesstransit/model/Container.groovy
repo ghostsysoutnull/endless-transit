@@ -8,8 +8,19 @@ import com.endlesstransit.core.JournalManager
 abstract class Container implements Location {
     List<Location> children = []
     Location parent
+    VibeCapsule localVibe
     boolean visited = false
     boolean childrenPopulated = false
+
+    @Override
+    VibeCapsule getVibe() {
+        if (localVibe != null) return localVibe
+        return parent?.getVibe()
+    }
+
+    void setVibe(VibeCapsule vibe) {
+        this.localVibe = vibe
+    }
 
     void ensureChildrenPopulated() {
         if (!childrenPopulated) {

@@ -10,6 +10,7 @@ import com.endlesstransit.procgen.NameGenerator
 class Country extends Container {
     List<City> cities = []
     String name
+    String functionalTrait
 
     List<City> getCities() {
         ensureChildrenPopulated()
@@ -18,11 +19,23 @@ class Country extends Container {
 
     Country(String name) {
         this.name = name
+        
+        def traits = ["Ceremonial", "Military", "Industrial", "Agricultural", "Research", "Commercial"]
+        this.functionalTrait = traits[new Random().nextInt(traits.size())]
     }
 
     @Override
     void populateChildren() {
         Random random = new Random()
+        
+        // Ensure we have a local mutated vibe for this country based on the planet
+        if (this.localVibe == null) {
+            def parentVibe = getVibe()
+            if (parentVibe != null) {
+                this.localVibe = parentVibe.mutate(functionalTrait, random.nextDouble() * 0.2 - 0.1)
+            }
+        }
+        
         int numCities = random.nextInt(9) + 2
         for (int i = 0; i < numCities; i++) {
             addLocation(new City(NameGenerator.generateCityName()))
@@ -39,7 +52,9 @@ class Country extends Container {
 
     @Override
     String getDescription() {
-        return "Country: $name"
+        def v = getVibe()
+        String mutationInfo = v ? " [Sector Mutation: ${v.latticeMutation}]" : ""
+        return "Country: $name$mutationInfo"
     }
 
     @Override

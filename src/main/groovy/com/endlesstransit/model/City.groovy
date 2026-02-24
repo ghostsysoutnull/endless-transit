@@ -10,6 +10,7 @@ import com.endlesstransit.procgen.NameGenerator
 class City extends Container {
     List<Street> streets = []
     String name
+    boolean isRebelDistrict = false
 
     List<Street> getStreets() {
         ensureChildrenPopulated()
@@ -23,6 +24,21 @@ class City extends Container {
     @Override
     void populateChildren() {
         Random random = new Random()
+        
+        if (this.localVibe == null) {
+            def parentVibe = getVibe()
+            if (parentVibe != null) {
+                // 10% chance to be a "rebel" district and flip resonances
+                if (random.nextDouble() < 0.1) {
+                    this.isRebelDistrict = true
+                    this.localVibe = new VibeCapsule(parentVibe.timeline, parentVibe.secondaryCulture, parentVibe.primaryCulture)
+                    this.localVibe.latticeMutation = parentVibe.latticeMutation
+                    this.localVibe.stabilityFactor = parentVibe.stabilityFactor
+                    this.localVibe.atmosphericColor = parentVibe.atmosphericColor
+                }
+            }
+        }
+
         int numStreets = random.nextInt(13) + 3
         for (int i = 0; i < numStreets; i++) {
             addLocation(new Street(NameGenerator.generateStreetName()))
@@ -39,7 +55,8 @@ class City extends Container {
 
     @Override
     String getDescription() {
-        return "City: $name"
+        String info = isRebelDistrict ? " [UNAUTHORIZED_RESONANCE_DETECTED]" : ""
+        return "City: $name$info"
     }
 
     @Override

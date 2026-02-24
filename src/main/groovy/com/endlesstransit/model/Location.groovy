@@ -20,4 +20,5 @@ interface Location {
     int getDepth()
     String getCoordinates()
     String getName()
+    VibeCapsule getVibe()
 }

@@ -69,7 +69,9 @@ class Street extends Container {
 
     @Override
     String getDescription() {
-        return "Street: $name"
+        def v = getVibe()
+        String vInfo = v ? "\n${Terminal.dim("[TECH_ERA:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")} ${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")}" : ""
+        return "Street: $name$vInfo"
     }
 
     @Override

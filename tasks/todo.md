@@ -64,6 +64,19 @@ Migrate tests into a standard source tree (`src/test/groovy`) and align them wit
 - [x] Update `run.sh` to execute tests from the new classpath.
 - [x] Verify 100% test pass rate.
 
+# Planetary Resonance & Regional Divergence
+
+## Objective
+Implement hierarchical vibe inheritance so that planets have consistent timelines/cultures with regional mutations in countries and cities.
+
+## Plan
+- [x] **Data Foundation**: Create `VibeCapsule.groovy` in `com.endlesstransit.model`.
+- [x] **Inheritance Logic**: Update `Location` and `Container` to propagate the capsule.
+- [x] **Genesis**: Update `Planet` to instantiate the initial `VibeCapsule`.
+- [x] **Mutation**: Update `Country` and `City` to apply lattice mutations and stability shifts.
+- [x] **Realization**: Refactor `Apartment` and `Room` to generate descriptions based on the capsule.
+- [x] **Verification**: Perform a "Vibe Check" to ensure planetary consistency and regional divergence are visible.
+
 # Phase 5: Documentation Categorization
 
 ## Objective
