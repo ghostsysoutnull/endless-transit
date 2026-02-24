@@ -144,7 +144,8 @@ class Terminal {
      * Removes ANSI escape codes from a string to calculate visible length.
      */
     static String stripAnsi(String text) {
-        return text.replaceAll("\u001b\\[[;\\d]*m", "")
+        if (text == null) return ""
+        return text.replaceAll("\u001b\\[[()#;?]*[0-9;?]*[a-zA-Z]", "")
     }
 
     /**

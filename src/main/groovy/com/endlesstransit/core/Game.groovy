@@ -314,16 +314,22 @@ class Game {
         
         // 2. Navigation Path
         String path = currentLocation.getPath()
-        if (path.length() > width - 15) path = "..." + path.substring(path.length() - (width - 18))
-        Terminal.drawBoxedLine("LOCUS_TRACE: $path", width, accent)
+        String prefix = "LOCUS_TRACE: "
+        int maxPathWidth = width - 4 - prefix.length()
+        if (path.length() > maxPathWidth) {
+            path = "..." + path.substring(path.length() - (maxPathWidth - 3))
+        }
+        Terminal.drawBoxedLine("$prefix$path", width, accent)
         
         Terminal.drawBoxSeparator(width, accent, "light")
         
         // 3. Local Diagnostic
         String ident = "LATTICE_IDENT: ${currentLocation.getClass().simpleName} >> ${currentLocation.getName()}"
+        if (ident.length() > width - 4) ident = ident.substring(0, width - 7) + "..."
         Terminal.drawBoxedLine(ident, width, accent, true)
         
         String coords = "LOCUS_HASH: ${currentLocation.getCoordinates()} | HOP_DENSITY: ${currentLocation.getDepth()}"
+        if (coords.length() > width - 4) coords = coords.substring(0, width - 7) + "..."
         Terminal.drawBoxedLine(coords, width, accent)
         
         // Structural Alignment & Radar
@@ -392,6 +398,13 @@ class Game {
             }
             p = p.parent
         }
+        
+        // Limit to last 8 icons to prevent overflow
+        if (line.size() > 8) {
+            line = line.take(8)
+            line << Terminal.dim("...")
+        }
+        
         return "LATTICE: " + line.reverse().join(" ")
     }
 
