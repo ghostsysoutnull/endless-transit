@@ -48,6 +48,6 @@ To prevent aesthetic fatigue, a 1% "Outlier Chance" exists at the **Apartment** 
 ## 6. Implementation Status
 - [x] **Core Hierarchy**: VibeCapsule inheritance implemented.
 - [x] **Regional Divergence**: Mutations and enclaves implemented.
-- [ ] **Gematria Resonance**: Mechanical bonus for matching culture.
-- [ ] **Temporal Coherence**: Timeline-based drain rates.
-- [ ] **Atmospheric HUD**: Vibe-based UI color shifts.
+- [x] **Gematria Resonance**: Mechanical bonus for matching culture.
+- [x] **Temporal Coherence**: Timeline-based drain rates.
+- [x] **Atmospheric HUD**: Vibe-based UI color shifts.

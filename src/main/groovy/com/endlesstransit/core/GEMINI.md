@@ -2,7 +2,8 @@
 
 ## Game Loop
 - `Game.groovy` manages the primary while-loop, input processing, and location transitions.
-- **Coherence**: Constant drain per step. If coherence drops to 0, the neural link is severed (reboot to start).
+- **Coherence**: Constant drain per step. If coherence drops to 0, the neural link is severed (reboot to start). 
+    - *Temporal Variance*: Drain rate varies by timeline (Ancient: 0.5, Standard: 1.0, Volatile: 2.0).
 
 ## Player State
 - `Player.groovy` tracks step count, coherence, and the "Quantum Trace Buffer" (Inventory).

@@ -7,6 +7,7 @@
 ## Gematria (Numeric Frequencies)
 - **Logic**: Frequencies are calculated using the "Breathless Abjad" system (ignoring vowels).
 - **Resonance**: Master Numbers (11, 22, 33) in the sum are "Resonant" and result in doubled values.
+- **Cultural Bonus**: Objects found in rooms matching the planet's `Primary Culture` receive a **+10% Frequency Bonus**.
 - **Depth Multiplier**: Frequencies are amplified by the observer's depth in the hierarchy.
 
 ## Object Synthesis
