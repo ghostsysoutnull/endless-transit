@@ -2,47 +2,56 @@ package com.endlesstransit
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.io.*
 
 class JournalManager {
     private static final String JOURNAL_FILE = "journal.txt"
+    private static BufferedWriter writer
+
+    private static void ensureOpen() {
+        if (writer == null) {
+            writer = new BufferedWriter(new FileWriter(JOURNAL_FILE, true))
+        }
+    }
+
+    static void startSession() {
+        ensureOpen()
+        def now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        writer.write("\n======================================================================\n")
+        writer.write("SESSION_START: $now\n")
+        writer.write("======================================================================\n")
+        writer.flush()
+    }
+
+    static void logDiscovery(String path) {
+        ensureOpen()
+        writer.write("[DISCOVERY] $path\n")
+        writer.flush()
+    }
+
+    static void logCapture(InventoryItem item) {
+        ensureOpen()
+        writer.write("[CAPTURE]   ${item.name} (${String.format("%04d", item.frequency)}Hz)\n")
+        writer.flush()
+    }
+    
+    static void logSynthesis(InventoryItem item) {
+        ensureOpen()
+        writer.write("[SYNTHESIS] ${item.name} (${String.format("%04d", item.frequency)}Hz)\n")
+        writer.flush()
+    }
 
     static void saveSession(Player player) {
-        def now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        ensureOpen()
+        writer.write("\n--- SESSION_SUMMARY ---\n")
+        writer.write("Distance Traversed: ${player.stepCount} units\n")
+        writer.write("Final Buffer Size: ${player.inventory.size()}\n")
+        writer.write("======================================================================\n")
+        writer.write("SESSION_END\n\n")
+        writer.flush()
+        writer.close()
+        writer = null
         
-        StringBuilder sb = new StringBuilder()
-        sb.append("======================================================================\n")
-        sb.append("SESSION_LOG: $now\n")
-        sb.append("======================================================================\n\n")
-        
-        sb.append("STATISTICS:\n")
-        sb.append(" - Distance Traversed: ${player.stepCount} units\n")
-        sb.append(" - Data Fragments in Buffer: ${player.inventory.size()}\n\n")
-        
-        sb.append("FINAL_INVENTORY:\n")
-        if (player.inventory.isEmpty()) {
-            sb.append(" - (No items collected)\n")
-        } else {
-            player.inventory.each { item ->
-                sb.append(" [${String.format("%04d", item.frequency)}Hz] ${item.name}\n")
-            }
-        }
-        sb.append("\n")
-        
-        sb.append("CHRONOLOGICAL_HISTORY (Macro-Scale):\n")
-        if (player.visitedPaths.isEmpty()) {
-            sb.append(" - (No records)\n")
-        } else {
-            player.visitedPaths.each { path ->
-                sb.append(" >> $path\n")
-            }
-        }
-        sb.append("\n\n")
-        
-        try {
-            new File(JOURNAL_FILE).append(sb.toString())
-            println Terminal.colorize(">>> System telemetry saved to $JOURNAL_FILE", Terminal.GREEN)
-        } catch (Exception e) {
-            Logger.error("Failed to save journal entry", e)
-        }
+        println Terminal.colorize(">>> Neural link severed. Journal data synchronized to $JOURNAL_FILE", Terminal.GREEN)
     }
 }

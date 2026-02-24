@@ -65,6 +65,7 @@ class Game {
     void start() {
         println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")
+        JournalManager.startSession()
         
         try {
             while (true) {
@@ -336,15 +337,23 @@ class Game {
         if (location != null) {
             boolean isMacro = !(location instanceof Floor || location instanceof Corridor || 
                                 location instanceof Apartment || location instanceof Room)
+            String path = location.getPath()
             if (isMacro) {
-                player.visitedPaths.add(location.getPath())
+                if (!player.visitedPaths.contains(path)) {
+                    player.visitedPaths.add(path)
+                    JournalManager.logDiscovery(path)
+                }
             } else {
                 // If we enter a building's internal structure, ensure the Building itself is recorded
                 // This handles cases where we might jump directly or for consistency
                 Location p = location.parent
                 while (p != null) {
                     if (p instanceof Building) {
-                        player.visitedPaths.add(p.getPath())
+                        String bPath = p.getPath()
+                        if (!player.visitedPaths.contains(bPath)) {
+                            player.visitedPaths.add(bPath)
+                            JournalManager.logDiscovery(bPath)
+                        }
                         break
                     }
                     p = p.parent

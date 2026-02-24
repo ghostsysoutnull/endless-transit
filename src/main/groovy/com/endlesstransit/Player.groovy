@@ -63,6 +63,7 @@ class Player {
         
         def hybrid = new InventoryItem(newName, newFreq)
         inventory.add(hybrid)
+        JournalManager.logSynthesis(hybrid)
 
         Logger.info("Synthesized Hybrid: $newName ($newFreq Hz)")
         println Terminal.colorize("\n>>> SPECTRAL_SYNTHESIS_COMPLETE <<<", Terminal.L_CYAN)

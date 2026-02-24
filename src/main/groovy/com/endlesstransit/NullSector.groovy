@@ -28,7 +28,9 @@ class NullSector extends Container {
         Random random = new Random()
         if (random.nextInt(10) < 5) {
             int freq = random.nextInt(9999)
-            player.inventory.add(new InventoryItem("Spectral Echo", freq))
+            def item = new InventoryItem("Spectral Echo", freq)
+            player.inventory.add(item)
+            JournalManager.logCapture(item)
             println Terminal.colorize(">>> VOID_RESONANCE: Captured Spectral Echo (${freq}Hz) <<<", Terminal.MAGENTA)
         }
     }

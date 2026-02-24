@@ -48,8 +48,9 @@ class Room implements Location {
         Random random = new Random()
         if (random.nextInt(10) < 3) { // 30% chance
             int randomNum = random.nextInt(9000000) + 1000000 
-            // Wrap the random number in an InventoryItem for compatibility
-            player.inventory.add(new InventoryItem("Hidden Frequency", randomNum))
+            def item = new InventoryItem("Hidden Frequency", randomNum)
+            player.inventory.add(item)
+            JournalManager.logCapture(item)
             println Terminal.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", Terminal.YELLOW)
         }
     }
@@ -100,7 +101,9 @@ class Room implements Location {
                 if (objects.size() == 1 && game.player.inventory.isEmpty()) {
                     String name = objects[0]
                     int freq = Gematria.calculateFrequency(name, getDepth())
-                    game.player.inventory.add(new InventoryItem(name, freq))
+                    def item = new InventoryItem(name, freq)
+                    game.player.inventory.add(item)
+                    JournalManager.logCapture(item)
                     println Terminal.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", Terminal.CYAN)
                     objects.remove(0)
                     game.instantRender = true
@@ -146,7 +149,9 @@ class Room implements Location {
                         if (idx >= 0 && idx < objects.size()) {
                             String name = objects[idx]
                             int freq = Gematria.calculateFrequency(name, getDepth())
-                            game.player.inventory.add(new InventoryItem(name, freq))
+                            def item = new InventoryItem(name, freq)
+                            game.player.inventory.add(item)
+                            JournalManager.logCapture(item)
                             println Terminal.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", Terminal.CYAN)
                             objects.remove(idx)
                             game.instantRender = true
