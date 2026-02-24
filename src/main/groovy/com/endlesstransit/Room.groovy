@@ -96,19 +96,41 @@ class Room implements Location {
     Map<String, Closure> getOptions(Game game) {
         def options = [:]
         
-        if (!objects.isEmpty()) {
-            options["t. Take object"] = {
-                println "\nSelect an object to scan:"
-                objects.eachWithIndex { obj, i ->
-                    println "${i + 1}. $obj"
+        if (!objects.isEmpty() || !game.player.inventory.isEmpty()) {
+            options["t. Interact with objects"] = {
+                println "\n" + Terminal.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", Terminal.L_CYAN)
+                if (!objects.isEmpty()) {
+                    println Terminal.dim("Local objects:")
+                    objects.eachWithIndex { obj, i ->
+                        println "${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. Scan $obj"
+                    }
                 }
-                println "c. Cancel"
                 
-                print "\nSelection >> "
-                String input = game.scanner.nextLine().trim()
+                if (!game.player.inventory.isEmpty()) {
+                    println Terminal.dim("\nBuffer fragments (to drop):")
+                    game.player.inventory.eachWithIndex { item, i ->
+                        println "${Terminal.colorize("d" + (i + 1), Terminal.YELLOW)}. Drop ${item.name}"
+                    }
+                }
+                println "${Terminal.colorize("c", Terminal.YELLOW)}. Cancel"
                 
-                if (input.equalsIgnoreCase("c")) {
-                    println "Operation cancelled."
+                print "\nINTERACT >> "
+                String input = game.scanner.nextLine().trim().toLowerCase()
+                
+                if (input == "c" || input == "") {
+                    println "Operation aborted."
+                } else if (input.startsWith("d")) {
+                    try {
+                        int idx = input.substring(1).toInteger() - 1
+                        if (idx >= 0 && idx < game.player.inventory.size()) {
+                            def item = game.player.inventory.remove(idx)
+                            objects << item.name
+                            println Terminal.colorize(">>> Fragment ${item.name} dropped into local cell.", Terminal.YELLOW)
+                            game.instantRender = true
+                        }
+                    } catch (Exception e) {
+                        println "Invalid drop command."
+                    }
                 } else {
                     try {
                         int idx = input.toInteger() - 1
@@ -116,8 +138,9 @@ class Room implements Location {
                             String name = objects[idx]
                             int freq = Gematria.calculateFrequency(name, getDepth())
                             game.player.inventory.add(new InventoryItem(name, freq))
-                            println "Scanned ${name}. Frequency signature: ${freq}"
+                            println Terminal.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", Terminal.CYAN)
                             objects.remove(idx)
+                            game.instantRender = true
                         } else {
                             println "Invalid selection."
                         }

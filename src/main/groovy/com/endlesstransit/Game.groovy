@@ -8,7 +8,8 @@ class Game {
     String lastChoice
     Scanner scanner
     Map<String, String> currentActionMap = [:]
-    Map<String, String> previousActionMap = [:]
+    Map<String, String> previousActionMap = [[:] as Map, [:] as Map] // Keep history for repetition
+    boolean instantRender = false
 
     Game() {
         player = new Player()
@@ -125,12 +126,37 @@ class Game {
                 // Typewriter effect for location description
                 String desc = currentLocation.getDescription()
                 if (player.coherence < 40) desc = Terminal.glitchText(desc, 0.1)
-                Terminal.typewrite(desc, 5)
+                
+                if (instantRender) {
+                    println desc
+                    instantRender = false // Reset
+                } else {
+                    Terminal.typewrite(desc, 5)
+                }
                 
                 currentLocation.enter(player)
                 currentLocation.processAction(player)
                 
                 def options = currentLocation.getOptions(this)
+                
+                // --- Repetition Logic for "Leave" actions ---
+                if (lastChoice != null) {
+                    String prevLabel = currentActionMap[lastChoice]?.toLowerCase()
+                    if (prevLabel != null && (prevLabel.contains("leave") || prevLabel.contains("exit") || prevLabel.contains("go back"))) {
+                        // Find the new "leave" key in this location
+                        def newLeaveKey = options.find { k, v -> 
+                            String l = k.toLowerCase()
+                            l.contains("leave") || l.contains("exit") || l.contains("go back")
+                        }?.key
+                        
+                        if (newLeaveKey) {
+                            String key = newLeaveKey.contains(".") ? newLeaveKey.split("\\.")[0].trim() : newLeaveKey
+                            lastChoice = key
+                            Logger.info("Auto-mapped repetition key to new leave action: $key")
+                        }
+                    }
+                }
+
                 previousActionMap = currentActionMap
                 currentActionMap = [:]
                 
