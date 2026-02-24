@@ -47,28 +47,34 @@ class Game {
             Terminal.moveTo(startRow + 1, sidebarCol)
             println "${borderChar} " + Terminal.dim(" (No spectral traces detected) ")
         } else {
-            // Show up to 12 items to avoid overflowing common terminal heights
-            def displayInv = player.inventory.takeRight(12)
+            // Show up to 6 items in two-line format to avoid overflow
+            def displayInv = player.inventory.takeRight(6)
             displayInv.eachWithIndex { item, i ->
-                Terminal.moveTo(startRow + 1 + i, sidebarCol)
+                int row = startRow + 1 + (i * 2)
+                Terminal.moveTo(row, sidebarCol)
                 String freqStr = String.format("%04d", item.frequency)
                 
+                // Line 1: Freq and Name
+                String name = item.name
+                if (name.length() > 30) name = name.substring(0, 27) + "..."
+                println "${borderChar} ${Terminal.dim(freqStr)}Hz ${Terminal.bold(name)}"
+                
+                // Line 2: Signal and Phase
+                Terminal.moveTo(row + 1, sidebarCol)
                 int signalStrength = (item.frequency % 100) / 10 + 1
                 String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
                 String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
-                print "${borderChar} ${Terminal.dim(freqStr)}Hz "
+                print "${borderChar}      " // align under freq
                 print Terminal.colorize(signalBar, signalColor)
-                // Truncate name if too long for sidebar
-                String name = item.name.length() > 15 ? item.name.substring(0, 12) + "..." : item.name
-                println " ${Terminal.bold(name)} ${Terminal.dim("[" + phase + "]")}"
+                println " ${Terminal.dim("[" + phase + "]")}"
             }
         }
         
-        Terminal.moveTo(startRow + 13, sidebarCol)
-        println "${borderChar} " + Terminal.dim("-------------------------------------------")
         Terminal.moveTo(startRow + 14, sidebarCol)
+        println "${borderChar} " + Terminal.dim("-------------------------------------------")
+        Terminal.moveTo(startRow + 15, sidebarCol)
         println "${borderChar} " + Terminal.dim("SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
         
         Terminal.restore()
