@@ -3,10 +3,11 @@ package com.endlesstransit
 class Floor extends Container {
     int number
     Corridor corridor
+    String culture
 
     @Override
     String getDescription() {
-        "Floor ${number}."
+        "Floor ${number}. The air hums with the resonance of ${Terminal.colorize(culture.toUpperCase(), Terminal.CYAN)} geometry."
     }
 
     @Override
@@ -60,7 +61,8 @@ class Floor extends Container {
 
     Floor(int number, int apartmentsPerFloor) {
         this.number = number
-        corridor = new Corridor(apartmentsPerFloor)
+        this.culture = ThemeManager.getRandomCulture()
+        corridor = new Corridor(apartmentsPerFloor, this.culture)
         addLocation(corridor)
     }
 }

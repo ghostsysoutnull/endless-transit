@@ -5,10 +5,11 @@ import java.util.Random
 class Corridor extends Container {
     List<Door> doors
     List<Apartment> apartments
+    String culture
 
     @Override
     String getDescription() {
-        "A long corridor with ${doors.size()} doors."
+        "A long corridor with ${doors.size()} doors. Cultural resonance: ${culture}."
     }
 
     @Override
@@ -61,14 +62,15 @@ class Corridor extends Container {
         return options
     }
 
-    Corridor(int numApartments) {
+    Corridor(int numApartments, String culture) {
+        this.culture = culture
         doors = new ArrayList<Door>()
         apartments = new ArrayList<Apartment>()
 
         for (int i = 0; i < numApartments; i++) {
             def door = new Door()
             doors.add(door)
-            def apartment = new Apartment(door.getDescription())
+            def apartment = new Apartment(door.getDescription(), culture)
             apartments.add(apartment)
             addLocation(apartment)
         }

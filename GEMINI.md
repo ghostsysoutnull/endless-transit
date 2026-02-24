@@ -1,5 +1,7 @@
 ## Workflow Orchestration
 
+Do not produce code while we are still designing or brainstorming it, ask when to generate code if we are thinkg about ideas.
+
 ### 1. Plan Node Default
 
 * Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)

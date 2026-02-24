@@ -1,0 +1,8 @@
+crt monitor
+floppy disk
+cassette tape
+rotary phone
+beige keyboard
+magnetic strip
+dot matrix printer
+vhs player
