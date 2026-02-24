@@ -44,4 +44,25 @@ class FloorCrashTest extends GroovyTestCase {
         }
         println "SUCCESS: Entered all floors and corridors without crashing."
     }
+
+    void testRecursionSafety() {
+        def game = new Game()
+        def street = game.currentLocation
+        
+        println "Testing recursion safety for ${street.getClass().simpleName}"
+        
+        // This should not throw StackOverflowError
+        assertNotNull(street.getName())
+        assertNotNull(street.getPath())
+        
+        def building = street.buildings[0]
+        assertNotNull(building.getName())
+        assertNotNull(building.getPath())
+        
+        def floor = building.getFloor(0)
+        assertNotNull(floor.getName())
+        assertNotNull(floor.getPath())
+        
+        println "SUCCESS: Recursion safety verified."
+    }
 }

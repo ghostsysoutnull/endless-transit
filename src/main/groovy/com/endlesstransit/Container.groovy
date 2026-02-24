@@ -59,9 +59,7 @@ abstract class Container implements Location {
 
     @Override
     String getPath() {
-        String myName = (this instanceof SolarSystem || this instanceof Planet || this instanceof Country || this instanceof City || this instanceof Street || this instanceof Building) ? this.name : this.getClass().simpleName
-        if (this instanceof Floor) myName = "Floor ${this.number}"
-        
+        String myName = getName()
         if (parent != null) {
             return "${parent.getPath()} > $myName"
         }
@@ -75,18 +73,22 @@ abstract class Container implements Location {
 
     @Override
     String getCoordinates() {
-        def hashBase = this.getClass().simpleName.hashCode()
-        if (this.hasProperty('name') && this.name) hashBase = this.name.hashCode()
-        else if (this.hasProperty('number')) hashBase = this.number.hashCode()
-        
-        Random r = new Random(hashBase)
+        def nameForHash = getName()
+        Random r = new Random(nameForHash.hashCode())
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 
     @Override
     String getName() {
-        if (this.hasProperty('name') && this.name) return this.name
-        if (this.hasProperty('number')) return "Floor ${this.number}"
+        // Use more direct checks to avoid hasProperty recursion
+        if (this instanceof SolarSystem) return ((SolarSystem)this).name
+        if (this instanceof Planet) return ((Planet)this).name
+        if (this instanceof Country) return ((Country)this).name
+        if (this instanceof City) return ((City)this).name
+        if (this instanceof Street) return ((Street)this).name
+        if (this instanceof Building) return ((Building)this).name
+        if (this instanceof Floor) return "Floor ${((Floor)this).number}"
+        
         return this.getClass().simpleName
     }
 
