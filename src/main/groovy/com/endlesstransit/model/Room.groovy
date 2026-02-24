@@ -15,6 +15,9 @@ class Room implements Location {
     String color
     List<String> furniture
     String lighting
+    String walls
+    String structureDesc
+    String lightingDesc
     List<String> objects = []
     Location parent
     boolean visited = false
@@ -98,14 +101,13 @@ class Room implements Location {
     void setParent(Location parent) {
         this.parent = parent
         
-        // Re-generate furniture if we have a parent vibe and not an anomaly
-        // In the game, Apartment sets parent after Room creation
+        // Refine atmosphere based on parent vibe (regional mutation)
         def vibe = getVibe()
         if (vibe != null) {
-            // Adjust description with lattice mutation flavor
-            // We can pick new furniture based on the inherited vibe
-            // but Apartment already does this when it creates the room.
-            // Let's just ensure the description uses the mutation.
+            def atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation)
+            this.walls = atmos.walls
+            this.lightingDesc = atmos.lighting
+            this.structureDesc = atmos.structure
         }
     }
 
@@ -226,10 +228,13 @@ class Room implements Location {
         
         Random random = new Random()
         String[] colors = ["white", "blue", "pink", "gray", "purple", "orange", "green", "red"]
-        String[] lightings = ["bright", "dim", "natural", "warm", "soft", "subtle"]
-
         color = colors[random.nextInt(colors.length)]
-        lighting = lightings[random.nextInt(lightings.length)]
+        
+        // Initial atmosphere (will be refined when parent is set)
+        def atmos = ThemeManager.generateAtmosphere(culture, timeline)
+        this.walls = atmos.walls
+        this.lightingDesc = atmos.lighting
+        this.structureDesc = atmos.structure
         
         // Generate themed furniture
         int numFurniture = random.nextInt(3) + 1
@@ -243,11 +248,10 @@ class Room implements Location {
         def vibe = getVibe()
         StringBuilder description = new StringBuilder()
         
-        if (vibe != null) {
-            description.append("${Terminal.dim("REGION_TRAIT:")} ${vibe.latticeMutation}\n")
-        }
-        
-        description.append("${Terminal.dim("COLOR:")} ${color}\n")
+        description.append("You are in ${Terminal.bold(structureDesc)}.\n")
+        description.append("The walls are ${Terminal.colorize(color, Terminal.WHITE)} ${Terminal.bold(walls)}.\n")
+        description.append("The space is illuminated by ${Terminal.colorize(lightingDesc, Terminal.YELLOW)}.\n")
+        description.append("\n")
         
         int wrapWidth = 45
         
@@ -258,8 +262,6 @@ class Room implements Location {
             if (i > 0) description.append("           ") // Indent for multi-line
             description.append(line).append("\n")
         }
-        
-        description.append("${Terminal.dim("LIGHTING:")} ${lighting}\n")
         
         if (!objects.isEmpty()) {
             String objStr = objects.join(', ')

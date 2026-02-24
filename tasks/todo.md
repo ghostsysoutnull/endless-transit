@@ -64,6 +64,18 @@ Migrate tests into a standard source tree (`src/test/groovy`) and align them wit
 - [x] Update `run.sh` to execute tests from the new classpath.
 - [x] Verify 100% test pass rate.
 
+# Liminal Glitch Environments
+
+## Objective
+Implement a deep environmental synthesis engine that combines Culture and Timeline into wall, lighting, and structural descriptions to create a "neural reconstruction" aesthetic.
+
+## Plan
+- [x] **Asset Expansion**: Add `walls.txt`, `lighting.txt`, and `structures.txt` categories to `src/main/resources/themes/`.
+- [x] **Synthesis Engine**: Implement `generateAtmosphere(culture, timeline)` in `ThemeManager.groovy`.
+- [x] **Room Refactor**: Update `Room.groovy` to use synthesized walls and lighting instead of random strings.
+- [x] **Lattice Integration**: Ensure `Region Traits` (Military, Research, etc.) influence the structural description.
+- [x] **Verification**: Manual audit of room descriptions across different planet vibes.
+
 # Spectral Echoes & Null-Sector Refactor
 
 ## Objective
