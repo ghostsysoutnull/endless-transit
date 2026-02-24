@@ -164,7 +164,7 @@ class Game {
 
                 if (choice == "i") {
                     lastChoice = "i"
-                    renderInventoryOverlay()
+                    inventoryMenu()
                     // Don't break, just loop to get input again
                     continue
                 }
@@ -207,6 +207,39 @@ class Game {
         System.exit(1)
     }
 }
+
+    void inventoryMenu() {
+        while (true) {
+            println "\n" + Terminal.colorize(" [QUANTUM_TRACE_BUFFER_INTERACE] ", Terminal.L_CYAN)
+            player.listInventory()
+            println Terminal.dim("-------------------------------------------")
+            println "${Terminal.colorize("d [num]", Terminal.YELLOW)}: Drop item  |  ${Terminal.colorize("m [n1] [n2]", Terminal.YELLOW)}: Merge items"
+            println "${Terminal.colorize("b", Terminal.YELLOW)}: Back to reality"
+            
+            print "\nBUFFER_CMD >> "
+            String input = scanner.nextLine().trim().toLowerCase()
+            
+            if (input == "b" || input == "") break
+            
+            def parts = input.split(" ")
+            String cmd = parts[0]
+            
+            try {
+                if (cmd == "d" && parts.size() > 1) {
+                    int idx = parts[1].toInteger() - 1
+                    player.dropItem(idx)
+                } else if (cmd == "m" && parts.size() > 2) {
+                    int idx1 = parts[1].toInteger() - 1
+                    int idx2 = parts[2].toInteger() - 1
+                    player.mergeItems(idx1, idx2)
+                } else {
+                    println "Invalid buffer command."
+                }
+            } catch (Exception e) {
+                println "Invalid input format."
+            }
+        }
+    }
 
     void enterLocation(Location location) {
         Logger.info("Changing location from ${currentLocation?.getPath()} to ${location?.getPath()}")

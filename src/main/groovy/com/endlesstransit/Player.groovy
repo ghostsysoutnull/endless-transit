@@ -11,13 +11,46 @@ class Player {
 
     void listInventory() {
         if (inventory.isEmpty()) {
-            println(Terminal.dim("Your inventory is empty."))
+            println(Terminal.dim("  (Local buffer empty)"))
         } else {
-            println(Terminal.colorize("INVENTORY:", Terminal.L_CYAN))
-            inventory.each { item ->
+            inventory.eachWithIndex { item, i ->
                 String freq = String.format("%04d", item.frequency)
-                println(" - ${Terminal.dim(freq + "Hz")} ${Terminal.bold(item.name)}")
+                println("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ${Terminal.dim(freq + "Hz")} ${Terminal.bold(item.name)}")
             }
+        }
+    }
+
+    void dropItem(int index) {
+        if (index >= 0 && index < inventory.size()) {
+            def removed = inventory.remove(index)
+            Logger.info("Player dropped item: ${removed.name}")
+            println Terminal.colorize(">>> Item ${removed.name} purged from local buffer.", Terminal.RED)
+        }
+    }
+
+    void mergeItems(int idx1, int idx2) {
+        if (idx1 == idx2) return
+        if (idx1 < 0 || idx1 >= inventory.size() || idx2 < 0 || idx2 >= inventory.size()) return
+
+        // Take items out
+        def item1 = inventory[Math.max(idx1, idx2)]
+        inventory.remove(Math.max(idx1, idx2))
+        def item2 = inventory[Math.min(idx1, idx2)]
+        inventory.remove(Math.min(idx1, idx2))
+
+        // Synthesize
+        int newFreq = item1.frequency + item2.frequency
+        String newName = "${item1.name.split(' ')[0]}-${item2.name.split(' ')[0]} Hybrid"
+        
+        def hybrid = new InventoryItem(newName, newFreq)
+        inventory.add(hybrid)
+
+        Logger.info("Synthesized Hybrid: $newName ($newFreq Hz)")
+        println Terminal.colorize("\n>>> SPECTRAL_SYNTHESIS_COMPLETE <<<", Terminal.L_CYAN)
+        println "New Fragment: ${Terminal.bold(newName)} (${newFreq}Hz)"
+        
+        if (newFreq % 11 == 0) {
+            println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
         }
     }
 }
