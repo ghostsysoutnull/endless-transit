@@ -64,6 +64,21 @@ Migrate tests into a standard source tree (`src/test/groovy`) and align them wit
 - [x] Update `run.sh` to execute tests from the new classpath.
 - [x] Verify 100% test pass rate.
 
+# Spectral Echoes & Null-Sector Refactor
+
+## Objective
+Make Null-Sectors mechanically distinct and atmospheric by implementing "blind" navigation and high-value Spectral Echo discovery.
+
+## Plan
+- [x] **Blind Navigation**: Hide coordinates and path when inside a Null-Sector.
+- [x] **Hot/Cold Tracking**: Implement a signal-strength indicator that reacts to the player's proximity to a "Spectral Echo."
+- [x] **Capturing Logic**: Add a closure to Null-Sector that allows capturing an echo if signal strength is maximized.
+- [x] **Lore Integration**: Update descriptions to emphasize the void and static.
+- [x] **Verification**: Manual test of echo-hunting in a Null-Sector.
+
+# Liminal Glitch Environments (TODO)
+- [ ] Implement mismatched lighting/wall descriptions based on Culture/Timeline synthesis.
+
 # Symbolic Neural Lattice HUD
 
 ## Objective
