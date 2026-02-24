@@ -306,14 +306,16 @@ class Game {
         
         Terminal.drawBoxTop(width, accent)
         
-        // 1. Navigation Path
+        // 1. Sparkline & Traversal
+        String sparkline = getLatticeSparkline()
+        String globalStats = "PULSE_TRAVERSAL: ${player.stepCount} | COHERENCE: ${player.coherence}%"
+        String topRow = "$sparkline | $globalStats"
+        Terminal.drawBoxedLine(topRow, width, accent)
+        
+        // 2. Navigation Path
         String path = currentLocation.getPath()
         if (path.length() > width - 15) path = "..." + path.substring(path.length() - (width - 18))
         Terminal.drawBoxedLine("LOCUS_TRACE: $path", width, accent)
-        
-        // 2. Global Stats
-        String stats = "PULSE_TRAVERSAL: ${player.stepCount} | COHERENCE: ${player.coherence}%"
-        Terminal.drawBoxedLine(stats, width, accent)
         
         Terminal.drawBoxSeparator(width, accent, "light")
         
@@ -324,14 +326,20 @@ class Game {
         String coords = "LOCUS_HASH: ${currentLocation.getCoordinates()} | HOP_DENSITY: ${currentLocation.getDepth()}"
         Terminal.drawBoxedLine(coords, width, accent)
         
-        // Structural Alignment (if applicable)
+        // Structural Alignment & Radar
         int idx = currentLocation.getIndexInParent()
         int total = currentLocation.getTotalInParent()
         if (total > 0) {
             String alignLabel = "ALIGNMENT"
             if (currentLocation instanceof Floor) alignLabel = "Z-AXIS_ALIGN"
             if (currentLocation instanceof Room) alignLabel = "CELL_INDEX"
-            Terminal.drawBoxedLine("$alignLabel: $idx / $total", width, accent)
+            
+            // Limit radar to 10 units to avoid box overflow
+            int radarLimit = 10
+            String radar = Terminal.renderRadar(idx, Math.min(total, radarLimit), Terminal.YELLOW)
+            if (total > radarLimit) radar += Terminal.dim(" ...")
+            
+            Terminal.drawBoxedLine("$alignLabel: $idx / $total | $radar", width, accent)
         }
 
         Terminal.drawBoxSeparator(width, accent, "light")
@@ -350,6 +358,41 @@ class Game {
         // Status Scan Bar (Outside the main box)
         println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
         println ""
+    }
+
+    /**
+     * Generates a symbolic sparkline of the current depth.
+     */
+    String getLatticeSparkline() {
+        def icons = [
+            "Universe": Terminal.ICON_UNI,
+            "CosmicFilament": Terminal.ICON_FIL,
+            "GalacticSector": Terminal.ICON_SEC,
+            "NullSector": Terminal.ICON_SEC,
+            "SolarSystem": Terminal.ICON_SYS,
+            "Planet": Terminal.ICON_PLT,
+            "Country": Terminal.ICON_CTR,
+            "City": Terminal.ICON_CTY,
+            "Street": Terminal.ICON_STR,
+            "Building": Terminal.ICON_BLD,
+            "Floor": Terminal.ICON_FLR,
+            "Corridor": Terminal.ICON_COR,
+            "Apartment": Terminal.ICON_APT,
+            "Room": Terminal.ICON_ROM
+        ]
+        
+        List<String> line = []
+        Location p = currentLocation
+        while (p != null) {
+            String icon = icons[p.getClass().simpleName] ?: "?"
+            if (p == currentLocation) {
+                line << Terminal.colorize("[$icon]", Terminal.L_CYAN)
+            } else {
+                line << Terminal.dim(icon)
+            }
+            p = p.parent
+        }
+        return "LATTICE: " + line.reverse().join(" ")
     }
 
     String renderCoherenceBar() {

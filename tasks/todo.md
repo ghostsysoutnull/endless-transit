@@ -64,6 +64,18 @@ Migrate tests into a standard source tree (`src/test/groovy`) and align them wit
 - [x] Update `run.sh` to execute tests from the new classpath.
 - [x] Verify 100% test pass rate.
 
+# Symbolic Neural Lattice HUD
+
+## Objective
+Enhance the Cell Trace with graphical icons and spatial radar components to provide better depth visualization and spatial awareness.
+
+## Plan
+- [x] **Iconography**: Define scale icons in `Terminal.groovy` (e.g., Universe: ∞, Planet: ⊕).
+- [x] **Lattice Sparkline**: Implement a symbolic depth indicator in the HUD header.
+- [x] **Cell Radar**: Add a 1D grid representation of the player's position within the current container.
+- [x] **Path Truncation**: Refine text path display to complement the symbolic icons.
+- [x] **Verification**: Manual audit of icon rendering and radar accuracy across all scales.
+
 # Command Bridge HUD Refactor
 
 ## Objective

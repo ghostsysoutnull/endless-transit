@@ -40,6 +40,21 @@ class Terminal {
     static final String BOX_L_SEP_LIGHT = "╟"
     static final String BOX_R_SEP_LIGHT = "╢"
 
+    // Scale Icons
+    static final String ICON_UNI = "∞"
+    static final String ICON_FIL = "»"
+    static final String ICON_SEC = "○"
+    static final String ICON_SYS = "☼"
+    static final String ICON_PLT = "⊕"
+    static final String ICON_CTR = "⬚"
+    static final String ICON_CTY = "🏙"
+    static final String ICON_STR = "═"
+    static final String ICON_BLD = "⌂"
+    static final String ICON_FLR = "▤"
+    static final String ICON_COR = "▅"
+    static final String ICON_APT = "🚪"
+    static final String ICON_ROM = "□"
+
     // Cursor Movement
     static void save() { print "\u001b[s" }
     static void restore() { print "\u001b[u" }
@@ -154,6 +169,23 @@ class Terminal {
         String right = (type == "heavy") ? BOX_R_SEP : BOX_R_SEP_LIGHT
         String mid = (type == "heavy") ? BOX_H : BOX_H_LIGHT
         println colorize(left + (mid * (width - 2)) + right, color)
+    }
+
+    /**
+     * Renders a 1D radar showing current position [ ] [X] [ ].
+     */
+    static String renderRadar(int index, int total, String activeColor = YELLOW) {
+        if (total <= 0) return ""
+        StringBuilder sb = new StringBuilder()
+        for (int i = 1; i <= total; i++) {
+            if (i == index) {
+                sb.append(colorize("[X]", activeColor))
+            } else {
+                sb.append(dim("[ ]"))
+            }
+            if (i < total) sb.append(" ")
+        }
+        return sb.toString()
     }
 
     static List<String> wrapText(String text, int width) {
