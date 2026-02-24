@@ -57,4 +57,32 @@ class Terminal {
     static String bold(String text) {
         return "${BOLD}${text}${RESET}"
     }
+
+    static List<String> wrapText(String text, int width) {
+        List<String> lines = []
+        if (!text) return lines
+        
+        String[] words = text.split(" ")
+        StringBuilder currentLine = new StringBuilder()
+        
+        for (String word : words) {
+            if (currentLine.length() + word.length() + 1 > width) {
+                if (currentLine.length() > 0) {
+                    lines.add(currentLine.toString())
+                    currentLine = new StringBuilder()
+                }
+                // If a single word is longer than width, it will still be on its own line
+            }
+            if (currentLine.length() > 0) {
+                currentLine.append(" ")
+            }
+            currentLine.append(word)
+        }
+        
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString())
+        }
+        
+        return lines
+    }
 }

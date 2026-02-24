@@ -179,16 +179,26 @@ class Room implements Location {
         StringBuilder description = new StringBuilder()
         description.append("${Terminal.dim("COLOR:")} ${color}\n")
         
+        int wrapWidth = 45
+        
         String furnitureStr = furniture.join(', ')
-        if (furnitureStr.length() > 40) furnitureStr = furnitureStr.substring(0, 37) + "..."
-        description.append("${Terminal.dim("FURNITURE:")} ${furnitureStr}\n")
+        List<String> wrappedFurniture = Terminal.wrapText(furnitureStr, wrapWidth)
+        description.append("${Terminal.dim("FURNITURE:")} ")
+        wrappedFurniture.eachWithIndex { line, i ->
+            if (i > 0) description.append("           ") // Indent for multi-line
+            description.append(line).append("\n")
+        }
         
         description.append("${Terminal.dim("LIGHTING:")} ${lighting}\n")
         
         if (!objects.isEmpty()) {
             String objStr = objects.join(', ')
-            if (objStr.length() > 40) objStr = objStr.substring(0, 37) + "..."
-            description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ${objStr}\n")
+            List<String> wrappedObjs = Terminal.wrapText(objStr, wrapWidth)
+            description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ")
+            wrappedObjs.eachWithIndex { line, i ->
+                if (i > 0) description.append("                  ") // Indent for multi-line
+                description.append(line).append("\n")
+            }
         }
         return description.toString()
     }
