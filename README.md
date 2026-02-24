@@ -1,30 +1,50 @@
 # Endless Transit
 
-A text-based adventure game written in Groovy exploring endless corridors and mysterious apartments.
+A procedural universe simulation and text-based adventure written in Groovy. Explore infinite scales of space, from cosmic filaments to individual rooms, through an immersive cybernetic terminal interface.
 
-## Project Structure
+## 🚀 Getting Started
 
-- `Main.groovy`: Entry point for the game.
-- `src/main/groovy/com/endlesstransit/`: Core game logic and classes.
-- `src/main/resources/objects/`: Data files containing object names for room generation.
-- `docs/`: Documentation and design notes.
-- `tests/`: Placeholder for future tests.
+### Prerequisites
+- Groovy 4.x+
+- A terminal with ANSI color support
 
-## How to Run
-
-Ensure you have Groovy installed. Run the following command from the project root:
-
+### Running the Game
+The easiest way to launch is via the provided shell script:
 ```bash
-groovy -cp src/main/groovy Main.groovy
+./run.sh
 ```
 
-## Gameplay
+### Running Tests
+Standardized tests are located in `src/test/groovy`:
+```bash
+./run.sh --test
+```
 
-Explore floors, corridors, and apartments. Each room is procedurally generated with different colors, furniture, lighting, and objects. You might find mysterious 7-digit numbers along the way!
+## 🏗️ Project Architecture
 
-## Features
+The codebase is organized into functional domains to optimize for modularity and AI-agent collaboration:
 
-- **Cyber-Terminal HUD**: Immersive sci-fi interface with scanning status, coordinates, and depth tracking.
-- **Quantum Trace Buffer**: A holographic inventory overlay (press `i`) providing spectral analysis of collected data fragments.
-- **Liminal Aesthetics**: High-contrast, data-rich TUI styling with dynamic separators and spectral deviation alerts.
-- **Infinite Navigation**: Endless procedural generation across Rooms, Apartments, Streets, Cities, and Planets.
+- **`core`**: Game engine, player state, and system services.
+- **`model`**: The hierarchical world structure (Universe -> Room).
+- **`procgen`**: Procedural logic including Gematria frequency calculations.
+- **`ui`**: Cyber-Terminal TUI utilities and theme management.
+
+### Key Directories
+- `src/main/groovy/com/endlesstransit/`: Source code.
+- `src/test/groovy/com/endlesstransit/`: Standardized test suite.
+- `src/main/resources/themes/`: Cultural and temporal assets for procedural generation.
+- `docs/`: Design specifications and optimization roadmaps.
+
+## 🤖 AI-Agent Optimized
+This project uses **Context Localization**. Each domain directory contains its own `GEMINI.md` file, providing surgical context and "vibe" instructions for AI-driven development.
+
+## 🌌 Gameplay Features
+- **Infinite Procedural Scale**: Navigate a seamless hierarchy of generated spaces.
+- **Cyber-Terminal HUD**: Real-time diagnostic readout of coordinates, depth, and neural coherence.
+- **Quantum Trace Buffer**: Holographic inventory for collecting and synthesizing spectral fragments.
+- **Gematria Logic**: Mysterious frequency-based object generation derived from hierarchical depth.
+
+## 🛠️ Development Workflow
+- **Plan First**: All non-trivial tasks start with a plan in `tasks/todo.md`.
+- **Domain Integrity**: Maintain strict separation between core logic and procedural generation.
+- **Vibe Coding**: Prioritize aesthetic immersion and structural elegance.

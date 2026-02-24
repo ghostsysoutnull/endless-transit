@@ -85,7 +85,7 @@ fi
 
 # 6. Launch
 if [[ "$1" == "--test" ]]; then
-    groovy -cp src/main/groovy tests/AllTests.groovy
+    groovy -cp src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/AllTests.groovy
 else
-    groovy -cp src/main/groovy Main.groovy "$@"
+    groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/Main.groovy "$@"
 fi
