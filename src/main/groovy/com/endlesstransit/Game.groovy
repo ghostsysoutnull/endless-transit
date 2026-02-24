@@ -8,7 +8,7 @@ class Game {
     String lastChoice
     Scanner scanner
     Map<String, String> currentActionMap = [:]
-    Map<String, String> previousActionMap = [[:] as Map, [:] as Map] // Keep history for repetition
+    Map<String, String> previousActionMap = [:] 
     boolean instantRender = false
 
     Game() {
