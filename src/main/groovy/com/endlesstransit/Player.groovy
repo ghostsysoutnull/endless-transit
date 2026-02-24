@@ -3,6 +3,7 @@ package com.endlesstransit
 class Player {
     List<InventoryItem> inventory
     int stepCount = 0
+    Set<String> visitedPaths = new LinkedHashSet<>()
 
     Player() {
         inventory = new ArrayList<InventoryItem>()

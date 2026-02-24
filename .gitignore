@@ -1,3 +1,4 @@
 docs/backups/
 *.log
 *.log.*
+journal.txt

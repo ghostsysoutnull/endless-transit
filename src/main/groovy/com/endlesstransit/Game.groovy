@@ -183,6 +183,7 @@ class Game {
                 print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
                 String confirm = scanner.nextLine().trim().toLowerCase()
                 if (confirm == "y") {
+                    JournalManager.saveSession(player)
                     println(Terminal.colorize("Goodbye!", Terminal.L_CYAN))
                     break
                 }
@@ -247,6 +248,26 @@ class Game {
     void enterLocation(Location location) {
         Logger.info("Changing location from ${currentLocation?.getPath()} to ${location?.getPath()}")
         this.currentLocation = location
+        
+        // Record path if it's macro-scale (up until Building)
+        if (location != null) {
+            boolean isMacro = !(location instanceof Floor || location instanceof Corridor || 
+                                location instanceof Apartment || location instanceof Room)
+            if (isMacro) {
+                player.visitedPaths.add(location.getPath())
+            } else {
+                // If we enter a building's internal structure, ensure the Building itself is recorded
+                // This handles cases where we might jump directly or for consistency
+                Location p = location.parent
+                while (p != null) {
+                    if (p instanceof Building) {
+                        player.visitedPaths.add(p.getPath())
+                        break
+                    }
+                    p = p.parent
+                }
+            }
+        }
     }
     
     // Temporary helper to exit current location (go to parent)
