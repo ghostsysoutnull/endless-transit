@@ -22,10 +22,14 @@ class Building extends Container {
     }
 
     Floor getFloor(int number) {
-        if (number < 0 || number >= maxFloors) return null
+        if (number < 0 || number >= maxFloors) {
+            Logger.info("Floor request out of bounds: $number (max: $maxFloors)")
+            return null
+        }
         
         def floor = floors.find { it.number == number }
         if (floor == null) {
+            Logger.info("Instantiating new Floor $number in Building $name")
             floor = new Floor(number, apartmentsPerFloor)
             addLocation(floor)
         }

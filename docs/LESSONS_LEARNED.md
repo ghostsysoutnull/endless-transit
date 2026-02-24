@@ -16,6 +16,9 @@
 - **Quantum Sidebar Overlays**: Using ANSI escape codes for cursor movement (`\u001b[s`, `\u001b[u`, `\u001b[nA`) allows for non-disruptive UI updates like overlays without re-rendering the whole screen.
 - **ANSI Color Encapsulation**: Centralizing terminal codes in a `Terminal` utility class keeps game logic clean and ensures consistent styling across disparate location classes.
 - **Zero-Flicker Interaction**: Implementing localized UI updates (like the inventory buffer) improves immersion by maintaining the visual state of the world while accessing menus.
+- **Operational Diagnostics**: A rolling custom `Logger` with level-based filtering and stacktrace capture is essential for debugging TUI crashes that would otherwise be lost in terminal buffer scrolling.
+- **Defensive Navigation**: Explicit null checks in closure-based navigation (like `Corridor` up/down) prevent brittle crashes when procedural generation reaches its bounds.
+- **Loop Resilience**: Handling empty input or invalid transitions explicitly in the main game loop prevents infinite-loop "hangs" when the state becomes inconsistent.
 - **Viewport-Relative Stability**: Using absolute ANSI positioning (`moveTo(row, col)`) for HUD elements prevents them from shifting when the main game buffer scrolls, though it requires strict width management for the primary content area.
 - **Collision Avoidance**: Explicitly clearing screen areas (`clearArea`) and truncating long dynamic strings (like item lists or room descriptions) is essential for maintaining a multi-column TUI layout without visual artifacts.
 

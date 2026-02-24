@@ -13,6 +13,7 @@ class Corridor extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        Logger.info("Getting options for Corridor. Parent: ${parent?.getClass()?.simpleName}")
         def options = getBaseOptions(game)
         
         // Floor navigation
@@ -24,14 +25,22 @@ class Corridor extends Container {
                 if (currentFloor.number < bldg.maxFloors - 1) {
                     options["u. Go Up"] = {
                         def nextFloor = bldg.getFloor(currentFloor.number + 1)
-                        game.enterLocation(nextFloor.corridor)
+                        if (nextFloor != null) {
+                            game.enterLocation(nextFloor.corridor)
+                        } else {
+                            Logger.error("Failed to retrieve next floor ${currentFloor.number + 1}")
+                        }
                     }
                 }
                 
                 if (currentFloor.number > 0) {
                     options["d. Go Down"] = {
                         def prevFloor = bldg.getFloor(currentFloor.number - 1)
-                        game.enterLocation(prevFloor.corridor)
+                        if (prevFloor != null) {
+                            game.enterLocation(prevFloor.corridor)
+                        } else {
+                            Logger.error("Failed to retrieve previous floor ${currentFloor.number - 1}")
+                        }
                     }
                 }
             }

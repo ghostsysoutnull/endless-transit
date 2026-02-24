@@ -11,6 +11,7 @@ class Floor extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
+        Logger.info("Getting options for Floor $number")
         def options = getBaseOptions(game)
         
         if (parent instanceof Building) {
@@ -49,6 +50,12 @@ class Floor extends Container {
         if (location instanceof Corridor) {
             this.corridor = (Corridor) location
         }
+    }
+
+    @Override
+    void enter(Player player) {
+        Logger.info("Entering Floor $number")
+        super.enter(player)
     }
 
     Floor(int number, int apartmentsPerFloor) {

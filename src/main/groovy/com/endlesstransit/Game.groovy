@@ -77,10 +77,13 @@ class Game {
 
     void start() {
         println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
+        Logger.info("Game started.")
         
-        while (true) {
-            player.stepCount++
-            int idx = currentLocation.getIndexInParent()
+        try {
+            while (true) {
+                player.stepCount++
+                Logger.info("Entering main loop. Step: ${player.stepCount}, Location: ${currentLocation.getPath()}")
+                int idx = currentLocation.getIndexInParent()
             int total = currentLocation.getTotalInParent()
             
             // Dynamic Separator based on scale
@@ -171,8 +174,14 @@ class Game {
                 choice = processInput(rawInput)
 
                 if (choice == "i") {
+                    lastChoice = "i"
                     renderInventoryOverlay()
                     // Don't break, just loop to get input again
+                    continue
+                }
+                
+                if (choice == "-2") {
+                    // Just loop again for new input
                     continue
                 }
                 
@@ -184,6 +193,7 @@ class Game {
                 break
             }
 
+            Logger.info("Executing choice: $choice")
             // Find matching menu entry
             def matchingKey = menu.keySet().find { key ->
                 return key.equalsIgnoreCase(choice)
@@ -196,9 +206,16 @@ class Game {
                 println("Invalid choice. Please try again.")
             }
         }
+    } catch (Throwable t) {
+        Logger.error("CRITICAL_FAILURE: Game loop crashed.", t)
+        println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
+        println(Terminal.dim("Error has been logged to transit.log"))
+        System.exit(1)
     }
+}
 
     void enterLocation(Location location) {
+        Logger.info("Changing location from ${currentLocation?.getPath()} to ${location?.getPath()}")
         this.currentLocation = location
     }
     
