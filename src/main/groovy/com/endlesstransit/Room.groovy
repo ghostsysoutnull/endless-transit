@@ -96,6 +96,17 @@ class Room implements Location {
         
         if (!objects.isEmpty() || !game.player.inventory.isEmpty()) {
             options["t. Interact with objects"] = {
+                // Shortcut: If only 1 object and empty inventory, just take it
+                if (objects.size() == 1 && game.player.inventory.isEmpty()) {
+                    String name = objects[0]
+                    int freq = Gematria.calculateFrequency(name, getDepth())
+                    game.player.inventory.add(new InventoryItem(name, freq))
+                    println Terminal.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", Terminal.CYAN)
+                    objects.remove(0)
+                    game.instantRender = true
+                    return
+                }
+
                 println "\n" + Terminal.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", Terminal.L_CYAN)
                 if (!objects.isEmpty()) {
                     println Terminal.dim("Local objects:")
