@@ -108,7 +108,7 @@ class Game {
             
             // Add global options
             currentActionMap["i"] = "List inventory"
-            currentActionMap["q"] = "Quit"
+            currentActionMap["quit"] = "Quit"
 
             // Display Menu
             println("${Terminal.dim("Choose an action:")}")
@@ -120,7 +120,7 @@ class Game {
                 println(label)
             }
             println("${Terminal.colorize("i", Terminal.YELLOW)}. List inventory")
-            println("${Terminal.colorize("q", Terminal.RED)}. Quit")
+            println("${Terminal.colorize("quit", Terminal.RED)}. Quit")
 
             String choice
             while (true) {
@@ -169,9 +169,14 @@ class Game {
                 break // Break inner loop for any other choice
             }
 
-            if (choice == "q") {
-                println("Goodbye!")
-                break
+            if (choice == "quit") {
+                print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
+                String confirm = scanner.nextLine().trim().toLowerCase()
+                if (confirm == "y") {
+                    println(Terminal.colorize("Goodbye!", Terminal.L_CYAN))
+                    break
+                }
+                continue
             }
 
             Logger.info("Executing choice: $choice")
@@ -233,7 +238,7 @@ class Game {
     }
 
     String processInput(String input) {
-        if (input == null) return "q"
+        if (input == null) return "quit"
 
         if (input.isEmpty()) {
             if (lastChoice != null) {
@@ -247,8 +252,8 @@ class Game {
             return "i"
         }
         
-        if (input.equalsIgnoreCase("q")) {
-            return "q"
+        if (input.equalsIgnoreCase("quit")) {
+            return "quit"
         }
 
         return input
