@@ -5,22 +5,24 @@ import groovy.test.GroovyTestCase
 class JournalTest extends GroovyTestCase {
     void testSaveSession() {
         Player p = new Player()
+        p.stepCount = 10
+        JournalManager.startSession(p)
+        
         p.stepCount = 42
         p.inventory.add(new InventoryItem("Test Fragment", 1234))
-        p.visitedPaths.add("Universe > Alpha > Building 1")
+        JournalManager.logCapture(p.inventory[0])
+        JournalManager.logDiscovery("Universe > Alpha > Building 1")
         
         File f = new File("journal.txt")
-        long initialSize = f.exists() ? f.length() : 0
-        
         JournalManager.saveSession(p)
         
         assertTrue("Journal file should exist", f.exists())
-        assertTrue("Journal file should have grown", f.length() > initialSize)
         
         String content = f.text
-        assertTrue("Journal should contain step count", content.contains("Distance Traversed: 42"))
-        assertTrue("Journal should contain item name", content.contains("Test Fragment"))
-        assertTrue("Journal should contain visited path", content.contains("Universe > Alpha > Building 1"))
+        assertTrue("Journal should contain step delta", content.contains("Temporal Displacement: 32"))
+        assertTrue("Journal should contain captured item in manifest", content.contains("[OBJ] Test Fragment"))
+        assertTrue("Journal should contain discovery in manifest", content.contains("[LOC] Universe > Alpha > Building 1"))
+        assertTrue("Journal should have summary header", content.contains("--- SESSION_EXECUTIVE_SUMMARY ---"))
         
         println "SUCCESS: Journal entry verified."
     }

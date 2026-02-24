@@ -65,7 +65,7 @@ class Game {
     void start() {
         println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")
-        JournalManager.startSession()
+        JournalManager.startSession(player)
         
         try {
             while (true) {
