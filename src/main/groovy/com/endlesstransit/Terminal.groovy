@@ -37,6 +37,33 @@ class Terminal {
     static void clearLine() { print "\u001b[K" }
     static void clearToEnd() { print "\u001b[J" }
     
+    static void clearScreen() {
+        print "\u001b[2J"
+        home()
+    }
+
+    static void typewrite(String text, long delay = 10) {
+        text.each { c ->
+            print c
+            System.out.flush()
+            Thread.sleep(delay)
+        }
+        println ""
+    }
+
+    static String glitchText(String text, double probability = 0.05) {
+        char[] chars = text.toCharArray()
+        Random r = new Random()
+        String glitchChars = "█▓▒░/\\%!\$#*"
+        
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] != ' ' && chars[i] != '\n' && r.nextDouble() < probability) {
+                chars[i] = glitchChars.charAt(r.nextInt(glitchChars.length())) as char
+            }
+        }
+        return new String(chars)
+    }
+
     static void clearArea(int startRow, int startCol, int rows, int cols) {
         save()
         for (int i = 0; i < rows; i++) {

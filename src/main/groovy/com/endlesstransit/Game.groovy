@@ -68,68 +68,100 @@ class Game {
         try {
             while (true) {
                 Logger.info("Entering main loop. Location: ${currentLocation.getPath()}")
-                int idx = currentLocation.getIndexInParent()
-            int total = currentLocation.getTotalInParent()
-            
-            // Dynamic Separator based on scale
-            String sep = "----------------------------------------------------------------------"
-            if (currentLocation instanceof CosmicFilament) sep = ">> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >>"
-            if (currentLocation instanceof NullSector) sep = " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
-            if (currentLocation instanceof GalacticSector) sep = "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-            if (currentLocation instanceof SolarSystem) sep = "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
-            if (currentLocation instanceof Street || currentLocation instanceof City) sep = "_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"
-            if (currentLocation instanceof Room) sep = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-
-            println "\n${Terminal.dim(sep)}"
-            // Cyber-Terminal Metadata
-            printf("${Terminal.dim("[")}${Terminal.colorize("SCANNING...", Terminal.CYAN)}${Terminal.dim("]")} Area: ${Terminal.bold(currentLocation.getClass().simpleName)} ${Terminal.dim(">>")} ${Terminal.colorize(currentLocation.getName(), Terminal.YELLOW)}\n")
-            printf("${Terminal.dim("[")}COORDS: %s${Terminal.dim("]")} ${Terminal.dim("[")}DEPTH: %d${Terminal.dim("]")}\n", currentLocation.getCoordinates(), currentLocation.getDepth())
-            printf("${Terminal.dim("[")}STEPS: %d${Terminal.dim("]")} ${Terminal.dim("[")}INV: %d items", player.stepCount, player.inventory.size())
-            if (!player.inventory.isEmpty()) {
-                def last3 = player.inventory.takeRight(3).reverse()
-                def freqs = last3.collect { it.frequency }
-                print(" | Recent: ${Terminal.colorize(freqs.join(', '), Terminal.L_CYAN)}")
-            }
-            println "${Terminal.dim("]")}"
-            
-            println "${Terminal.dim("PATH:")} ${Terminal.colorize(currentLocation.getPath(), Terminal.GREY)}"
-            if (total > 0) {
-                printf(">>> %s %d of %d <<<\n", currentLocation.getClass().simpleName, idx, total)
-            }
-            
-            currentLocation.enter(player)
-            currentLocation.processAction(player)
-            
-            def options = currentLocation.getOptions(this)
-            previousActionMap = currentActionMap
-            currentActionMap = [:]
-            
-            // Map options to menu choices
-            def menu = [:]
-            
-            options.each { label, action ->
-                String key = label.contains(".") ? label.split("\\.")[0].trim() : label
-                menu[key] = action
-                currentActionMap[key] = label
-            }
-            
-            // Add global options
-            currentActionMap["i"] = "List inventory"
-            currentActionMap["quit"] = "Quit"
-
-            // Display Menu
-            println("${Terminal.dim("Choose an action:")}")
-            menu.each { menuKey, action ->
-                String label = currentActionMap[menuKey]
-                if (currentLocation instanceof Street && label.contains("Enter Building:")) {
-                    return
+                
+                // Adjust coherence based on depth
+                player.adjustCoherence(-1) // Constant drain per step
+                
+                if (player.coherence <= 0) {
+                    Terminal.clearScreen()
+                    println Terminal.colorize("!!! CRITICAL_COHERENCE_FAILURE !!!", Terminal.RED)
+                    println Terminal.colorize(">>> NEURAL LINK SEVERED. REBOOTING FROM UNIMATRIX ROOT...", Terminal.YELLOW)
+                    Thread.sleep(2000)
+                    player.coherence = 100
+                    initializeWorld()
+                    continue
                 }
-                println(label)
-            }
-            println("${Terminal.colorize("i", Terminal.YELLOW)}. List inventory")
-            println("${Terminal.colorize("quit", Terminal.RED)}. Quit")
 
-            String choice
+                int idx = currentLocation.getIndexInParent()
+                int total = currentLocation.getTotalInParent()
+                
+                // Dynamic Separator
+                String sep = "----------------------------------------------------------------------"
+                if (currentLocation instanceof CosmicFilament) sep = ">> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >>"
+                if (currentLocation instanceof NullSector) sep = " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
+                if (currentLocation instanceof GalacticSector) sep = "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+                if (currentLocation instanceof SolarSystem) sep = "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
+                if (currentLocation instanceof Street || currentLocation instanceof City) sep = "_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"
+                if (currentLocation instanceof Room) sep = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+
+                println "\n${Terminal.dim(sep)}"
+                
+                // BORG HUD (Terminology Evolution)
+                println renderCoherenceBar()
+                printf("${Terminal.dim("[")}${Terminal.colorize("SCANNING_LOCAL_TOPOLOGY...", Terminal.CYAN)}${Terminal.dim("]")}\n")
+                printf("${Terminal.dim("[")}LATTICE_IDENT: ${Terminal.bold(currentLocation.getClass().simpleName)}${Terminal.dim("]")} ${Terminal.dim(">>")} ${Terminal.colorize(currentLocation.getName(), Terminal.YELLOW)}\n")
+                printf("${Terminal.dim("[")}LOCUS_HASH: %s${Terminal.dim("]")} ${Terminal.dim("[")}HOP_DENSITY: %d${Terminal.dim("]")}\n", currentLocation.getCoordinates(), currentLocation.getDepth())
+                printf("${Terminal.dim("[")}PULSE_TRAVERSAL: %d${Terminal.dim("]")} ${Terminal.dim("[")}TRACE_BUFFER: %d/16 FRAGMENTS", player.stepCount, player.inventory.size())
+                
+                if (!player.inventory.isEmpty()) {
+                    def last3 = player.inventory.takeRight(3).reverse()
+                    def freqs = last3.collect { it.frequency }
+                    print(" | ${Terminal.dim("RECENT:")} ${Terminal.colorize(freqs.join(', '), Terminal.L_CYAN)}")
+                }
+                println "${Terminal.dim("]")}"
+                
+                println "${Terminal.dim("[UP-LINK_TRACE]:")} ${Terminal.colorize(currentLocation.getPath(), Terminal.GREY)}"
+                
+                // Structural Alignment info
+                if (total > 0) {
+                    String alignLabel = "ALIGNMENT"
+                    if (currentLocation instanceof Floor) alignLabel = "Z-AXIS_ALIGN"
+                    if (currentLocation instanceof Room) alignLabel = "CELL_INDEX"
+                    printf("${Terminal.dim("[")}$alignLabel: %d / %d${Terminal.dim("]")}\n", idx, total)
+                }
+                
+                println ""
+                
+                // Typewriter effect for location description
+                String desc = currentLocation.getDescription()
+                if (player.coherence < 40) desc = Terminal.glitchText(desc, 0.1)
+                Terminal.typewrite(desc, 5)
+                
+                currentLocation.enter(player)
+                currentLocation.processAction(player)
+                
+                def options = currentLocation.getOptions(this)
+                previousActionMap = currentActionMap
+                currentActionMap = [:]
+                
+                // Map options to menu choices
+                def menu = [:]
+                
+                options.each { label, action ->
+                    String key = label.contains(".") ? label.split("\\.")[0].trim() : label
+                    menu[key] = action
+                    currentActionMap[key] = label
+                }
+                
+                // Add global options
+                currentActionMap["i"] = "List inventory"
+                currentActionMap["quit"] = "Quit"
+
+                // Display Menu and Compass
+                println ""
+                renderCompass(options)
+                println("${Terminal.dim("EXECUTE_DIRECTIVE:")}")
+                menu.each { menuKey, action ->
+                    String label = currentActionMap[menuKey]
+                    if (currentLocation instanceof Street && label.contains("Enter Building:")) {
+                        return
+                    }
+                    println(label)
+                }
+                println("${Terminal.colorize("i", Terminal.YELLOW)}. Open Trace Buffer")
+                println("${Terminal.colorize("quit", Terminal.RED)}. Terminate Link")
+
+                String choice
             while (true) {
                 String rawInput = getRawUserInput()
                 
@@ -236,6 +268,8 @@ class Game {
                     int idx1 = parts[1].toInteger() - 1
                     int idx2 = parts[2].toInteger() - 1
                     player.mergeItems(idx1, idx2)
+                    // Synthesis restores coherence
+                    player.adjustCoherence(15)
                 } else {
                     println "Invalid buffer command."
                 }
@@ -243,6 +277,29 @@ class Game {
                 println "Invalid input format."
             }
         }
+    }
+
+    String renderCoherenceBar() {
+        int length = 10
+        int filled = (player.coherence * length / 100).toInteger()
+        String bar = "█" * filled + "░" * (length - filled)
+        String color = Terminal.GREEN
+        if (player.coherence < 30) color = Terminal.RED
+        else if (player.coherence < 70) color = Terminal.YELLOW
+        
+        return "${Terminal.dim("[")}COHERENCE: ${Terminal.colorize(bar, color)} ${player.coherence}%${Terminal.dim("]")}"
+    }
+
+    void renderCompass(Map options) {
+        String u = options.keySet().any { it.toLowerCase().contains("up") } ? Terminal.colorize("U", Terminal.YELLOW) : Terminal.dim("·")
+        String d = options.keySet().any { it.toLowerCase().contains("down") } ? Terminal.colorize("D", Terminal.YELLOW) : Terminal.dim("·")
+        String f = options.keySet().any { it.toLowerCase().contains("forward") } ? Terminal.colorize("F", Terminal.YELLOW) : Terminal.dim("·")
+        String b = options.keySet().any { it.toLowerCase().contains("back") } ? Terminal.colorize("B", Terminal.YELLOW) : Terminal.dim("·")
+        String l = options.keySet().any { it.toLowerCase().contains("leave") || it.toLowerCase().contains("exit") } ? Terminal.colorize("L", Terminal.YELLOW) : Terminal.dim("·")
+
+        println Terminal.dim("    [$u]")
+        println Terminal.dim(" [$l] [${Terminal.colorize("+", Terminal.CYAN)}] [$f]")
+        println Terminal.dim("    [$d]  ($b)")
     }
 
     void enterLocation(Location location) {

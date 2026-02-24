@@ -4,10 +4,17 @@ class Player {
     List<InventoryItem> inventory
     int stepCount = 0
     Set<String> visitedPaths = new LinkedHashSet<>()
+    int coherence = 100
+    int maxCoherence = 100
 
     Player() {
         inventory = new ArrayList<InventoryItem>()
         stepCount = 0
+        coherence = 100
+    }
+
+    void adjustCoherence(int delta) {
+        coherence = Math.min(maxCoherence, Math.max(0, coherence + delta))
     }
 
     void listInventory() {
