@@ -64,13 +64,14 @@ Migrate tests into a standard source tree (`src/test/groovy`) and align them wit
 - [x] Update `run.sh` to execute tests from the new classpath.
 - [x] Verify 100% test pass rate.
 
-# Phase 4: Validation Tooling & Lesson Localization
+# Phase 5: Documentation Categorization
 
 ## Objective
-Finalize the "Vibe Coding" infrastructure by localizing historical lessons and providing high-signal automated validation scripts for agents.
+Reorganize the `docs/` folder into functional categories and provide a central index to improve knowledge discovery for agents and architects.
 
 ## Plan
-- [x] **Lesson Localization**: Categorize and split `tasks/lessons.md` into domain-specific files.
-- [x] **Automated Vibe Checks**: Create `.agents/` directory with validation scripts (`vibe-check-ui.sh`, `vibe-check-model.sh`).
-- [x] **Build Standardization**: Introduce a minimal `build.gradle` for standard dependency and task management.
-- [x] **Final Integrity Audit**: Ensure all `GEMINI.md` files are synchronized with the new localized lessons.
+- [x] Create `docs/arch/`, `docs/vision/`, `docs/workflow/`, and `docs/archive/` directories.
+- [x] Categorize existing documents into these folders.
+- [x] Create `docs/README.md` as a central documentation map.
+- [x] Update any internal links between documents (if necessary).
+- [x] Verify that all context imports in `GEMINI.md` still point to correct (or root) documentation if they reference `docs/`.
