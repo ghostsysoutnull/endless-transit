@@ -19,7 +19,7 @@ class Street extends Container {
         println Terminal.bold(getDescription())
         
         println Terminal.dim("Buildings on this street:")
-        println Terminal.dim("----------------------------------------------------------------------")
+        println Terminal.dim("---------------------------------------------")
         for (int i = 0; i < buildings.size(); i += 2) {
             def bL = buildings[i]
             def bR = (i + 1 < buildings.size()) ? buildings[i+1] : null
@@ -27,18 +27,20 @@ class Street extends Container {
             int numL = i + 1
             int numR = i + 2
             
+            String nameL = bL.name.length() > 15 ? bL.name.substring(0, 12) + "..." : bL.name
             String visL = bL.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
-            String labelL = "${numL}. ${bL.name}${visL}"
+            String labelL = "${numL}. ${nameL}${visL}"
             
             String labelR = ""
             if (bR) {
+                String nameR = bR.name.length() > 15 ? bR.name.substring(0, 12) + "..." : bR.name
                 String visR = bR.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
-                labelR = "${numR}. ${bR.name}${visR}"
+                labelR = "${numR}. ${nameR}${visR}"
             }
             
-            printf("%-40s | %-40s\n", labelL, labelR)
+            printf("%-25s | %-25s\n", labelL, labelR)
         }
-        println Terminal.dim("----------------------------------------------------------------------")
+        println Terminal.dim("---------------------------------------------")
     }
 
     @Override

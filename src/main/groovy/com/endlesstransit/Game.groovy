@@ -30,39 +30,45 @@ class Game {
     void renderInventoryOverlay() {
         Terminal.save()
         
-        int linesUp = 14
-        Terminal.moveUp(linesUp)
+        // Use fixed row for the holographic sidebar (absolute viewport positioning)
+        int startRow = 3
+        int sidebarCol = 50
+        
+        // Clear the sidebar area first to avoid artifacts
+        Terminal.clearArea(startRow, sidebarCol, 15, 50)
         
         String borderChar = Terminal.dim("╎")
         String title = Terminal.colorize(" [QUANTUM_TRACE_BUFFER] ", Terminal.L_CYAN)
         
-        Terminal.moveRight(50)
+        Terminal.moveTo(startRow, sidebarCol)
         println "${borderChar}${title}"
         
         if (player.inventory.isEmpty()) {
-            Terminal.moveRight(50)
+            Terminal.moveTo(startRow + 1, sidebarCol)
             println "${borderChar} " + Terminal.dim(" (No spectral traces detected) ")
         } else {
-            player.inventory.each { item ->
-                Terminal.moveRight(50)
+            // Show up to 12 items to avoid overflowing common terminal heights
+            def displayInv = player.inventory.takeRight(12)
+            displayInv.eachWithIndex { item, i ->
+                Terminal.moveTo(startRow + 1 + i, sidebarCol)
                 String freqStr = String.format("%04d", item.frequency)
                 
-                // Liminal Metadata
                 int signalStrength = (item.frequency % 100) / 10 + 1
                 String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
                 String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
-                
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
                 print "${borderChar} ${Terminal.dim(freqStr)}Hz "
                 print Terminal.colorize(signalBar, signalColor)
-                println " ${Terminal.bold(item.name)} ${Terminal.dim("[" + phase + "]")}"
+                // Truncate name if too long for sidebar
+                String name = item.name.length() > 15 ? item.name.substring(0, 12) + "..." : item.name
+                println " ${Terminal.bold(name)} ${Terminal.dim("[" + phase + "]")}"
             }
         }
         
-        Terminal.moveRight(50)
+        Terminal.moveTo(startRow + 13, sidebarCol)
         println "${borderChar} " + Terminal.dim("-------------------------------------------")
-        Terminal.moveRight(50)
+        Terminal.moveTo(startRow + 14, sidebarCol)
         println "${borderChar} " + Terminal.dim("SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
         
         Terminal.restore()
@@ -212,8 +218,14 @@ class Game {
             actionName = fullLabel.substring(fullLabel.indexOf(". ") + 2)
         }
         String hudLastAction = lastChoice != null ? " [Last: $actionName]" : ""
-        print("\n---=====================================>>$hudLastAction ")
-        print("Enter your choice: ")
+        
+        // Use Terminal to clear the line before printing the prompt
+        // This prevents artifacts if the prompt line was previously used by sidebar
+        print "\r"
+        Terminal.clearLine()
+        print Terminal.dim("---=====================================>>")
+        print Terminal.colorize(hudLastAction, Terminal.CYAN)
+        print " Enter choice: "
         
         String input
         if (System.console()) {

@@ -178,11 +178,17 @@ class Room implements Location {
     String getDescription() {
         StringBuilder description = new StringBuilder()
         description.append("${Terminal.dim("COLOR:")} ${color}\n")
-        description.append("${Terminal.dim("FURNITURE:")} ${furniture.join(', ')}\n")
+        
+        String furnitureStr = furniture.join(', ')
+        if (furnitureStr.length() > 40) furnitureStr = furnitureStr.substring(0, 37) + "..."
+        description.append("${Terminal.dim("FURNITURE:")} ${furnitureStr}\n")
+        
         description.append("${Terminal.dim("LIGHTING:")} ${lighting}\n")
         
         if (!objects.isEmpty()) {
-            description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ${objects.join(', ')}\n")
+            String objStr = objects.join(', ')
+            if (objStr.length() > 40) objStr = objStr.substring(0, 37) + "..."
+            description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ${objStr}\n")
         }
         return description.toString()
     }

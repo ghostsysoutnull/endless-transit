@@ -36,6 +36,15 @@ class Terminal {
     
     static void clearLine() { print "\u001b[K" }
     static void clearToEnd() { print "\u001b[J" }
+    
+    static void clearArea(int startRow, int startCol, int rows, int cols) {
+        save()
+        for (int i = 0; i < rows; i++) {
+            moveTo(startRow + i, startCol)
+            print " " * cols
+        }
+        restore()
+    }
 
     static String colorize(String text, String color) {
         return "${color}${text}${RESET}"
