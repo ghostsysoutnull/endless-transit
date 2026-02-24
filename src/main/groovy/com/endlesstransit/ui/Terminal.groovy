@@ -127,16 +127,15 @@ class Terminal {
     }
 
     /**
-     * Renders a boxed line of text. Handles ANSI codes for accurate padding.
+     * Renders a boxed line of text. Handles ANSI codes and wide characters for accurate padding.
      */
     static void drawBoxedLine(String text, int width, String color = WHITE, boolean boldText = false) {
-        String stripped = stripAnsi(text)
-        int visibleLength = stripped.length()
-        int padding = width - visibleLength - 4 // 2 for borders, 2 for spaces
+        int visibleWidth = getVisualWidth(text)
+        int padding = width - visibleWidth - 4 // 2 for borders, 2 for spaces
         
         print colorize(BOX_V + " ", color)
         print boldText ? bold(text) : text
-        print " " * Math.max(0, padding)
+        if (padding > 0) print " " * padding
         println colorize(" " + BOX_V, color)
     }
 
@@ -146,6 +145,23 @@ class Terminal {
     static String stripAnsi(String text) {
         if (text == null) return ""
         return text.replaceAll("\u001b\\[[()#;?]*[0-9;?]*[a-zA-Z]", "")
+    }
+
+    /**
+     * Calculates the visual width of a string, accounting for wide characters (emojis, etc).
+     */
+    static int getVisualWidth(String text) {
+        String stripped = stripAnsi(text)
+        int width = 0
+        stripped.each { char c ->
+            // Basic logic: high codepoints (emojis, certain symbols) usually take 2 cells
+            if (c.hashCode() > 0x2000) {
+                width += 2
+            } else {
+                width += 1
+            }
+        }
+        return width
     }
 
     /**
