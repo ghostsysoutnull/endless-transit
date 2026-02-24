@@ -28,72 +28,31 @@ class Game {
     }
 
     void renderInventoryOverlay() {
-        Terminal.save()
-        
-        // Use fixed row for the holographic sidebar (absolute viewport positioning)
-        int startRow = 2
-        int sidebarCol = 50
-        int wrapWidth = 35 // width available for text within sidebar
-        
-        // Clear the sidebar area first (20 lines to be safe)
-        Terminal.clearArea(startRow, sidebarCol, 20, 50)
-        
-        String borderChar = Terminal.dim("╎")
-        String title = Terminal.colorize(" [QUANTUM_TRACE_BUFFER] ", Terminal.L_CYAN)
-        
-        Terminal.moveTo(startRow, sidebarCol)
-        println "${borderChar}${title}"
+        println ""
+        String title = Terminal.colorize(" [QUANTUM_TRACE_BUFFER_SYNC...] ", Terminal.L_CYAN)
+        println title
         
         if (player.inventory.isEmpty()) {
-            Terminal.moveTo(startRow + 1, sidebarCol)
-            println "${borderChar} " + Terminal.dim(" (No spectral traces detected) ")
+            println Terminal.dim("  (No spectral traces detected in local buffer) ")
         } else {
-            // Show up to 4 items with multi-line support to avoid overflow
-            def displayInv = player.inventory.takeRight(4)
-            int currentRow = startRow + 1
-            
-            displayInv.each { item ->
+            // Show all items now that we can scroll
+            player.inventory.each { item ->
                 String freqStr = String.format("%04d", item.frequency)
-                List<String> wrappedName = Terminal.wrapText(item.name, wrapWidth - 10)
                 
-                // Line 1: Freq and Start of Name
-                Terminal.moveTo(currentRow++, sidebarCol)
-                print "${borderChar} ${Terminal.dim(freqStr)}Hz "
-                if (!wrappedName.isEmpty()) {
-                    print Terminal.bold(wrappedName[0])
-                }
-                println ""
-                
-                // Extra lines for Name if wrapped
-                for (int j = 1; j < wrappedName.size(); j++) {
-                    Terminal.moveTo(currentRow++, sidebarCol)
-                    println "${borderChar}         ${Terminal.bold(wrappedName[j])}"
-                }
-                
-                // Status Line: Signal and Phase
-                Terminal.moveTo(currentRow++, sidebarCol)
                 int signalStrength = (item.frequency % 100) / 10 + 1
                 String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
                 String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
-                print "${borderChar}      " // align under freq
+                print "  ${Terminal.dim(freqStr)}Hz "
                 print Terminal.colorize(signalBar, signalColor)
-                println " ${Terminal.dim("[" + phase + "]")}"
-                
-                // Small gap between items
-                currentRow++ 
+                print " ${Terminal.dim("[" + phase + "]")}"
+                println " >> ${Terminal.bold(item.name)}"
             }
         }
-        
-        // Ensure footer doesn't collide by using current currentRow or a safe minimum
-        int footerRow = startRow + 18
-        Terminal.moveTo(footerRow, sidebarCol)
-        println "${borderChar} " + Terminal.dim("-------------------------------------------")
-        Terminal.moveTo(footerRow + 1, sidebarCol)
-        println "${borderChar} " + Terminal.dim("SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
-        
-        Terminal.restore()
+        println Terminal.dim(" ----------------------------------------------------------------------")
+        println Terminal.dim(" SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
+        println ""
         System.out.flush()
     }
 
@@ -258,10 +217,6 @@ class Game {
         }
         String hudLastAction = lastChoice != null ? " [Last: $actionName]" : ""
         
-        // Use Terminal to clear the line before printing the prompt
-        // This prevents artifacts if the prompt line was previously used by sidebar
-        print "\r"
-        Terminal.clearLine()
         print Terminal.dim("---=====================================>>")
         print Terminal.colorize(hudLastAction, Terminal.CYAN)
         print " Enter choice: "
