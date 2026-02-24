@@ -64,6 +64,21 @@ Migrate tests into a standard source tree (`src/test/groovy`) and align them wit
 - [x] Update `run.sh` to execute tests from the new classpath.
 - [x] Verify 100% test pass rate.
 
+# Command Bridge HUD Refactor
+
+## Objective
+Transition the current text-list HUD into a structured "Command Bridge" interface using ASCII box-drawing characters to enhance tactile immersion and data organization.
+
+## Plan
+- [x] **UI Utilities**: Add ASCII box-drawing helpers to `Terminal.groovy`.
+- [x] **Frame Logic**: Implement a `renderBridgeHUD` method in `Game.groovy`.
+- [x] **Logical Grouping**:
+    - [x] Top: Navigation Path & Pulse Traversal.
+    - [x] Middle: Scanning Diagnostic & Location Description.
+    - [x] Bottom: Compass & Directive Input.
+- [x] **Vibe Integration**: Ensure atmospheric colors apply to the box borders.
+- [x] **Verification**: Manual audit of HUD alignment across different location scales.
+
 # Planetary Resonance & Regional Divergence
 - [x] Hierarchical Vibe Inheritance
 - [x] Regional Mutations & Anomaly Protocol

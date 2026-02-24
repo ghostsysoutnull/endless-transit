@@ -24,6 +24,22 @@ class Terminal {
     static final String L_BLUE = "\u001b[94m"
     static final String L_MAGENTA = "\u001b[95m"
 
+    // ASCII Box Drawing Characters
+    static final String BOX_TL = "╔"
+    static final String BOX_TR = "╗"
+    static final String BOX_BL = "╚"
+    static final String BOX_BR = "╝"
+    static final String BOX_H  = "═"
+    static final String BOX_V  = "║"
+    static final String BOX_T_SEP = "╦"
+    static final String BOX_B_SEP = "╩"
+    static final String BOX_L_SEP = "╠"
+    static final String BOX_R_SEP = "╣"
+    static final String BOX_CROSS = "╬"
+    static final String BOX_H_LIGHT = "─"
+    static final String BOX_L_SEP_LIGHT = "╟"
+    static final String BOX_R_SEP_LIGHT = "╢"
+
     // Cursor Movement
     static void save() { print "\u001b[s" }
     static void restore() { print "\u001b[u" }
@@ -85,6 +101,59 @@ class Terminal {
     
     static String bold(String text) {
         return "${BOLD}${text}${RESET}"
+    }
+
+    /**
+     * Renders a full-width horizontal divider with optional title and color.
+     */
+    static void drawLine(int width, String color = WHITE, String type = "heavy") {
+        String charToUse = (type == "heavy") ? BOX_H : BOX_H_LIGHT
+        println colorize(charToUse * width, color)
+    }
+
+    /**
+     * Renders a boxed line of text. Handles ANSI codes for accurate padding.
+     */
+    static void drawBoxedLine(String text, int width, String color = WHITE, boolean boldText = false) {
+        String stripped = stripAnsi(text)
+        int visibleLength = stripped.length()
+        int padding = width - visibleLength - 4 // 2 for borders, 2 for spaces
+        
+        print colorize(BOX_V + " ", color)
+        print boldText ? bold(text) : text
+        print " " * Math.max(0, padding)
+        println colorize(" " + BOX_V, color)
+    }
+
+    /**
+     * Removes ANSI escape codes from a string to calculate visible length.
+     */
+    static String stripAnsi(String text) {
+        return text.replaceAll("\u001b\\[[;\\d]*m", "")
+    }
+
+    /**
+     * Renders a box header (Top).
+     */
+    static void drawBoxTop(int width, String color = WHITE) {
+        println colorize(BOX_TL + (BOX_H * (width - 2)) + BOX_TR, color)
+    }
+
+    /**
+     * Renders a box footer (Bottom).
+     */
+    static void drawBoxBottom(int width, String color = WHITE) {
+        println colorize(BOX_BL + (BOX_H * (width - 2)) + BOX_BR, color)
+    }
+
+    /**
+     * Renders a separator line between boxes.
+     */
+    static void drawBoxSeparator(int width, String color = WHITE, String type = "heavy") {
+        String left = (type == "heavy") ? BOX_L_SEP : BOX_L_SEP_LIGHT
+        String right = (type == "heavy") ? BOX_R_SEP : BOX_R_SEP_LIGHT
+        String mid = (type == "heavy") ? BOX_H : BOX_H_LIGHT
+        println colorize(left + (mid * (width - 2)) + right, color)
     }
 
     static List<String> wrapText(String text, int width) {

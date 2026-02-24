@@ -111,46 +111,7 @@ class Game {
                     continue
                 }
 
-                int idx = currentLocation.getIndexInParent()
-                int total = currentLocation.getTotalInParent()
-                
-                // Dynamic Separator
-                String sep = "----------------------------------------------------------------------"
-                if (currentLocation instanceof CosmicFilament) sep = ">> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >>"
-                if (currentLocation instanceof NullSector) sep = " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . "
-                if (currentLocation instanceof GalacticSector) sep = "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
-                if (currentLocation instanceof SolarSystem) sep = "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
-                if (currentLocation instanceof Street || currentLocation instanceof City) sep = "_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"
-                if (currentLocation instanceof Room) sep = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-
-                String accentColor = vibe?.atmosphericColor ?: Terminal.GREY
-                println "\n${Terminal.colorize(sep, accentColor)}"
-                
-                // BORG HUD (Terminology Evolution)
-                println renderCoherenceBar()
-                printf("${Terminal.dim("[")}${Terminal.colorize("SCANNING_LOCAL_TOPOLOGY...", accentColor)}${Terminal.dim("]")}\n")
-                printf("${Terminal.dim("[")}LATTICE_IDENT: ${Terminal.bold(currentLocation.getClass().simpleName)}${Terminal.dim("]")} ${Terminal.dim(">>")} ${Terminal.colorize(currentLocation.getName(), Terminal.YELLOW)}\n")
-                printf("${Terminal.dim("[")}LOCUS_HASH: %s${Terminal.dim("]")} ${Terminal.dim("[")}HOP_DENSITY: %d${Terminal.dim("]")}\n", currentLocation.getCoordinates(), currentLocation.getDepth())
-                printf("${Terminal.dim("[")}PULSE_TRAVERSAL: %d${Terminal.dim("]")} ${Terminal.dim("[")}TRACE_BUFFER: %d/16 FRAGMENTS", player.stepCount, player.inventory.size())
-                
-                if (!player.inventory.isEmpty()) {
-                    def last3 = player.inventory.takeRight(3).reverse()
-                    def freqs = last3.collect { it.frequency }
-                    print(" | ${Terminal.dim("RECENT:")} ${Terminal.colorize(freqs.join(', '), Terminal.L_CYAN)}")
-                }
-                println "${Terminal.dim("]")}"
-                
-                println "${Terminal.dim("[UP-LINK_TRACE]:")} ${Terminal.colorize(currentLocation.getPath(), Terminal.GREY)}"
-                
-                // Structural Alignment info
-                if (total > 0) {
-                    String alignLabel = "ALIGNMENT"
-                    if (currentLocation instanceof Floor) alignLabel = "Z-AXIS_ALIGN"
-                    if (currentLocation instanceof Room) alignLabel = "CELL_INDEX"
-                    printf("${Terminal.dim("[")}$alignLabel: %d / %d${Terminal.dim("]")}\n", idx, total)
-                }
-                
-                println ""
+                renderBridgeHUD()
                 
                 // Typewriter effect for location description
                 String desc = currentLocation.getDescription()
@@ -338,6 +299,59 @@ class Game {
         }
     }
 
+    void renderBridgeHUD() {
+        int width = 72
+        def vibe = currentLocation.getVibe()
+        String accent = vibe?.atmosphericColor ?: Terminal.WHITE
+        
+        Terminal.drawBoxTop(width, accent)
+        
+        // 1. Navigation Path
+        String path = currentLocation.getPath()
+        if (path.length() > width - 15) path = "..." + path.substring(path.length() - (width - 18))
+        Terminal.drawBoxedLine("LOCUS_TRACE: $path", width, accent)
+        
+        // 2. Global Stats
+        String stats = "PULSE_TRAVERSAL: ${player.stepCount} | COHERENCE: ${player.coherence}%"
+        Terminal.drawBoxedLine(stats, width, accent)
+        
+        Terminal.drawBoxSeparator(width, accent, "light")
+        
+        // 3. Local Diagnostic
+        String ident = "LATTICE_IDENT: ${currentLocation.getClass().simpleName} >> ${currentLocation.getName()}"
+        Terminal.drawBoxedLine(ident, width, accent, true)
+        
+        String coords = "LOCUS_HASH: ${currentLocation.getCoordinates()} | HOP_DENSITY: ${currentLocation.getDepth()}"
+        Terminal.drawBoxedLine(coords, width, accent)
+        
+        // Structural Alignment (if applicable)
+        int idx = currentLocation.getIndexInParent()
+        int total = currentLocation.getTotalInParent()
+        if (total > 0) {
+            String alignLabel = "ALIGNMENT"
+            if (currentLocation instanceof Floor) alignLabel = "Z-AXIS_ALIGN"
+            if (currentLocation instanceof Room) alignLabel = "CELL_INDEX"
+            Terminal.drawBoxedLine("$alignLabel: $idx / $total", width, accent)
+        }
+
+        Terminal.drawBoxSeparator(width, accent, "light")
+        
+        // 4. Trace Buffer Preview
+        String bufferInfo = "TRACE_BUFFER: ${player.inventory.size()}/16 FRAGMENTS"
+        if (!player.inventory.isEmpty()) {
+            def last3 = player.inventory.takeRight(3).reverse()
+            def freqs = last3.collect { it.frequency }
+            bufferInfo += " | RECENT: ${freqs.join(', ')}Hz"
+        }
+        Terminal.drawBoxedLine(bufferInfo, width, accent)
+        
+        Terminal.drawBoxBottom(width, accent)
+        
+        // Status Scan Bar (Outside the main box)
+        println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
+        println ""
+    }
+
     String renderCoherenceBar() {
         int length = 10
         int filled = (player.coherence * length / 100).toInteger()
@@ -346,7 +360,7 @@ class Game {
         if (player.coherence < 30) color = Terminal.RED
         else if (player.coherence < 70) color = Terminal.YELLOW
         
-        return "${Terminal.dim("[")}COHERENCE: ${Terminal.colorize(bar, color)} ${player.coherence}%${Terminal.dim("]")}"
+        return Terminal.colorize(bar, color)
     }
 
     void renderCompass(Map options) {
