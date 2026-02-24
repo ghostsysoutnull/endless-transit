@@ -28,6 +28,7 @@ def shell = new GroovyShell(loader)
     'CyberTerminalTest',
     'GematriaTest',
     'InventoryObjectTest',
+    'MergeLabelTest',
     'MnemonicReversalTest',
     'SingleObjectTakeTest',
     'StreetTest',

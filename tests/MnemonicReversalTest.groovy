@@ -8,7 +8,13 @@ def game = new Game()
 
 // Test Room Reversal Logic
 def apartment = new Apartment("Test Door")
-def room1 = apartment.rooms[0]
+apartment.ensureChildrenPopulated()
+def rooms = apartment.rooms
+
+// Ensure rooms are empty so options are predictable
+rooms.each { it.objects = [] }
+
+def room1 = rooms[0]
 def options1 = room1.getOptions(game)
 
 if (options1.containsKey("f. Go forward") && !options1.containsKey("b. Go back")) {
@@ -17,7 +23,7 @@ if (options1.containsKey("f. Go forward") && !options1.containsKey("b. Go back")
     println "FAILURE: First room options incorrect: ${options1.keySet()}"
 }
 
-def lastRoom = apartment.rooms.last()
+def lastRoom = rooms.last()
 def lastOptions = lastRoom.getOptions(game)
 if (lastOptions.containsKey("b. Go back") && !lastOptions.containsKey("f. Go forward")) {
     println "SUCCESS: Last room has 'b' but no 'f'."

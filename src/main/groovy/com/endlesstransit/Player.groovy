@@ -33,8 +33,13 @@ class Player {
                 print("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ")
                 print("${Terminal.dim(freqStr)}Hz ")
                 print(Terminal.colorize(signalBar, signalColor))
-                print(" ${Terminal.dim("[" + phase + "]")}")
-                println(" >> ${Terminal.bold(item.name)}")
+                print("${Terminal.dim("[" + phase + "]")}")
+                String mergeLabel = ""
+                if (item.sessionMergeCount > 0) {
+                    String label = item.sessionMergeCount > 1 ? "SYNTHESIS_x${item.sessionMergeCount}" : "NEW_SYNTHESIS"
+                    mergeLabel = " " + Terminal.colorize("[" + label + "]", Terminal.GREEN)
+                }
+                println(" >> ${Terminal.bold(item.name)}$mergeLabel")
             }
         }
     }
@@ -60,8 +65,11 @@ class Player {
         // Synthesize
         int newFreq = item1.frequency + item2.frequency
         String newName = "${item1.name.split(' ')[0]}-${item2.name.split(' ')[0]} Hybrid"
+        int c1 = item1.sessionMergeCount ?: 0
+        int c2 = item2.sessionMergeCount ?: 0
+        int newMergeCount = c1 + c2 + 1
         
-        def hybrid = new InventoryItem(newName, newFreq)
+        def hybrid = new InventoryItem(newName, newFreq, newMergeCount)
         inventory.add(hybrid)
         JournalManager.logSynthesis(hybrid)
 

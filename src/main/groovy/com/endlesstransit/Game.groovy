@@ -282,7 +282,11 @@ class Game {
             print "\nBUFFER_CMD >> "
             String input = scanner.nextLine().trim().toLowerCase()
             
-            if (input == "b" || input == "") break
+            if (input == "b" || input == "") {
+                // Clear session labels before returning to reality
+                player.inventory.each { it.sessionMergeCount = 0 }
+                break
+            }
             
             def parts = input.split(" ")
             String cmd = parts[0]
