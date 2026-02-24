@@ -1,0 +1,3 @@
+[SYNTHESIS] Fragment-Fragment Hybrid (0300Hz)
+[SYNTHESIS] Fragment-Fragment-Fragment Hybrid (0600Hz)
+[CAPTURE]   Singular Crystal (0000Hz)

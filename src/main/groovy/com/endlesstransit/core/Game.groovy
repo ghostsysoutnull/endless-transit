@@ -101,9 +101,13 @@ class Game {
                     Terminal.clearScreen()
                     println Terminal.colorize("!!! CRITICAL_COHERENCE_FAILURE !!!", Terminal.RED)
                     println Terminal.colorize(">>> NEURAL LINK SEVERED. REBOOTING FROM UNIMATRIX ROOT...", Terminal.YELLOW)
+                    
+                    JournalManager.saveSession(player, "CRITICAL_COHERENCE_FAILURE")
                     Thread.sleep(2000)
+                    
                     player.coherence = 100
                     initializeWorld()
+                    JournalManager.startSession(player)
                     continue
                 }
 
@@ -369,7 +373,7 @@ class Game {
             if (isMacro) {
                 if (!player.visitedPaths.contains(path)) {
                     player.visitedPaths.add(path)
-                    JournalManager.logDiscovery(path)
+                    JournalManager.logDiscovery(path, location)
                 }
             } else {
                 // If we enter a building's internal structure, ensure the Building itself is recorded
@@ -380,7 +384,7 @@ class Game {
                         String bPath = p.getPath()
                         if (!player.visitedPaths.contains(bPath)) {
                             player.visitedPaths.add(bPath)
-                            JournalManager.logDiscovery(bPath)
+                            JournalManager.logDiscovery(bPath, p)
                         }
                         break
                     }

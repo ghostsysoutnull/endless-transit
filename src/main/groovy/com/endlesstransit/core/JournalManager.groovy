@@ -12,7 +12,7 @@ import java.io.*
 import java.nio.file.Files
 
 class JournalManager {
-    private static final String JOURNAL_FILE = "journal.txt"
+    static String JOURNAL_FILE = "journal.txt"
     private static final String TEMP_MANIFEST = ".journal_session_tmp"
     private static BufferedWriter writer
     private static int sessionCaptures = 0
@@ -47,12 +47,21 @@ class JournalManager {
         new File(TEMP_MANIFEST).append(entry + "\n")
     }
 
-    static void logDiscovery(String path) {
+    static void logDiscovery(String path, Location location = null) {
         ensureOpen()
         sessionDiscoveries++
-        writer.write("[DISCOVERY] $path\n")
+        
+        String vibeInfo = ""
+        if (location != null) {
+            def v = location.getVibe()
+            if (v != null) {
+                vibeInfo = " [Era: ${v.timeline}, Resonance: ${v.primaryCulture}]"
+            }
+        }
+        
+        writer.write("[DISCOVERY] $path$vibeInfo\n")
         writer.flush()
-        writeToManifest("  >> [LOC] $path")
+        writeToManifest("  >> [LOC] $path$vibeInfo")
     }
 
     static void logCapture(InventoryItem item) {
@@ -71,11 +80,12 @@ class JournalManager {
         writeToManifest("  >> [SYN] ${item.name} (${item.frequency}Hz)")
     }
 
-    static void saveSession(Player player) {
+    static void saveSession(Player player, String endReason = "TERMINATE_LINK") {
         ensureOpen()
         int totalSteps = player.stepCount - startStepCount
         
         writer.write("\n--- SESSION_EXECUTIVE_SUMMARY ---\n")
+        writer.write("Termination Status:  $endReason\n")
         writer.write("Temporal Displacement: $totalSteps units\n")
         writer.write("Network Expansion:     $sessionDiscoveries macro-locations mapped\n")
         writer.write("Data Acquisition:      $sessionCaptures fragments captured\n")
@@ -98,5 +108,19 @@ class JournalManager {
         writer = null
         
         println Terminal.colorize(">>> Neural link severed. Session summary synchronized to $JOURNAL_FILE", Terminal.GREEN)
+    }
+
+    /**
+     * Resets the manager for testing.
+     */
+    static void reset() {
+        if (writer != null) {
+            writer.close()
+            writer = null
+        }
+        sessionCaptures = 0
+        sessionSyntheses = 0
+        sessionDiscoveries = 0
+        startStepCount = 0
     }
 }
