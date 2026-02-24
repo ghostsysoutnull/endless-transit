@@ -82,4 +82,8 @@ echo -e "${DIM}[TRANSIT_PROTOCOL_INITIATED]${RESET}"
 sleep 0.2
 
 # 6. Launch
-groovy -cp src/main/groovy Main.groovy "$@"
+if [[ "$1" == "--test" ]]; then
+    groovy -cp src/main/groovy tests/AllTests.groovy
+else
+    groovy -cp src/main/groovy Main.groovy "$@"
+fi

@@ -42,11 +42,13 @@ class Terminal {
         home()
     }
 
+    static boolean skipSleep = false
+
     static void typewrite(String text, long delay = 10) {
         text.each { c ->
             print c
             System.out.flush()
-            Thread.sleep(delay)
+            if (!skipSleep) Thread.sleep(delay)
         }
         println ""
     }
