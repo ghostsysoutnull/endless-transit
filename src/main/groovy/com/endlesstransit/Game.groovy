@@ -67,8 +67,7 @@ class Game {
         
         try {
             while (true) {
-                player.stepCount++
-                Logger.info("Entering main loop. Step: ${player.stepCount}, Location: ${currentLocation.getPath()}")
+                Logger.info("Entering main loop. Location: ${currentLocation.getPath()}")
                 int idx = currentLocation.getIndexInParent()
             int total = currentLocation.getTotalInParent()
             
@@ -165,8 +164,9 @@ class Game {
                 if (choice == "i") {
                     lastChoice = "i"
                     inventoryMenu()
-                    // Don't break, just loop to get input again
-                    continue
+                    // Break inner loop to re-render location immediately
+                    choice = null
+                    break
                 }
                 
                 if (choice == "-2") {
@@ -176,6 +176,8 @@ class Game {
                 
                 break // Break inner loop for any other choice
             }
+
+            if (choice == null) continue // Re-rendered from inventory
 
             if (choice == "quit") {
                 print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
@@ -194,6 +196,7 @@ class Game {
             }
 
             if (matchingKey) {
+                player.stepCount++
                 lastChoice = matchingKey
                 menu[matchingKey].call()
             } else if (choice != "-2") {

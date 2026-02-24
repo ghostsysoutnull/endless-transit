@@ -14,8 +14,19 @@ class Player {
             println(Terminal.dim("  (Local buffer empty)"))
         } else {
             inventory.eachWithIndex { item, i ->
-                String freq = String.format("%04d", item.frequency)
-                println("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ${Terminal.dim(freq + "Hz")} ${Terminal.bold(item.name)}")
+                String freqStr = String.format("%04d", item.frequency)
+                
+                // Restore "Graphics"
+                int signalStrength = (item.frequency % 100) / 10 + 1
+                String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
+                String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
+                String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
+                
+                print("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ")
+                print("${Terminal.dim(freqStr)}Hz ")
+                print(Terminal.colorize(signalBar, signalColor))
+                print(" ${Terminal.dim("[" + phase + "]")}")
+                println(" >> ${Terminal.bold(item.name)}")
             }
         }
     }
