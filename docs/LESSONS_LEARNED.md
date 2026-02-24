@@ -10,5 +10,9 @@
 - **Visual vs functional**: Decoupling the visual presentation (Street table) from the functional menu allows for rich TUI layouts.
 - **Utility Centralization**: Moving procedural logic (e.g., NameGenerator) to static utility classes simplifies container constructors and improves variety.
 - **Recursive Paths**: Implementing a recursive `getPath()` method provides essential spatial context in deeply nested hierarchies.
+- **Intentional UI**: Using sub-menus for high-density actions (like "Take Object") reduces main-menu clutter and improves intentionality.
+- **Atmospheric Shell**: A simple wrapper script (run.sh) with random flavor text can significantly enhance the initial user experience and tone.
+- **Data-Rich Inventory**: Transitioning from primitive lists to specialized objects (InventoryItem) allows for descriptive metadata and better HUD integration.
+
 
 

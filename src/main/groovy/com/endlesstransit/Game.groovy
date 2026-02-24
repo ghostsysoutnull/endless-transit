@@ -31,10 +31,28 @@ class Game {
         println("Welcome to Endless Transit!")
         
         while (true) {
+            player.stepCount++
             int idx = currentLocation.getIndexInParent()
             int total = currentLocation.getTotalInParent()
             
-            println "\n============================================================"
+            // Dynamic Separator based on scale
+            String sep = "----------------------------------------------------------------------"
+            if (currentLocation instanceof SolarSystem) sep = "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
+            if (currentLocation instanceof Street || currentLocation instanceof City) sep = "_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_"
+            if (currentLocation instanceof Room) sep = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+
+            println "\n$sep"
+            // Cyber-Terminal Metadata
+            printf("[SCANNING...] Area: %s\n", currentLocation.getClass().simpleName)
+            printf("[COORDS: %s] [DEPTH: %d]\n", currentLocation.getCoordinates(), currentLocation.getDepth())
+            printf("[STEPS: %d] [INV: %d items", player.stepCount, player.inventory.size())
+            if (!player.inventory.isEmpty()) {
+                def last3 = player.inventory.takeRight(3).reverse()
+                def freqs = last3.collect { it.frequency }
+                print(" | Recent: ${freqs.join(', ')}")
+            }
+            println "]"
+            
             println "PATH: ${currentLocation.getPath()}"
             if (total > 0) {
                 printf(">>> %s %d of %d <<<\n", currentLocation.getClass().simpleName, idx, total)

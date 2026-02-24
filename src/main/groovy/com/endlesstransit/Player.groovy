@@ -1,10 +1,12 @@
 package com.endlesstransit
 
 class Player {
-    List<Integer> inventory
+    List<InventoryItem> inventory
+    int stepCount = 0
 
     Player() {
-        inventory = new ArrayList<Integer>()
+        inventory = new ArrayList<InventoryItem>()
+        stepCount = 0
     }
 
     void listInventory() {
@@ -13,7 +15,7 @@ class Player {
         } else {
             println("Inventory:")
             inventory.each { item ->
-                println("{$item}")
+                println(" - $item")
             }
         }
     }

@@ -12,4 +12,6 @@ interface Location {
     int getTotalInParent()
     void processAction(Player player)
     String getPath()
+    int getDepth()
+    String getCoordinates()
 }

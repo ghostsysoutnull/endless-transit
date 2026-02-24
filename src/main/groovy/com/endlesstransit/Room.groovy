@@ -47,7 +47,8 @@ class Room implements Location {
         Random random = new Random()
         if (random.nextInt(10) < 3) { // 30% chance
             int randomNum = random.nextInt(9000000) + 1000000 
-            player.inventory.add(randomNum)
+            // Wrap the random number in an InventoryItem for compatibility
+            player.inventory.add(new InventoryItem("Hidden Frequency", randomNum))
             println ">>> You found a 7-digit number: ${randomNum} <<<"
         }
     }
@@ -59,6 +60,17 @@ class Room implements Location {
             return "${parent.getPath()} > Room ${myIndex}"
         }
         return "Room ${myIndex}"
+    }
+
+    @Override
+    int getDepth() {
+        return (parent != null) ? parent.getDepth() + 1 : 0
+    }
+
+    @Override
+    String getCoordinates() {
+        Random r = new Random(this.hashCode())
+        return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 
     void setParent(Location parent) {
@@ -76,6 +88,38 @@ class Room implements Location {
     Map<String, Closure> getOptions(Game game) {
         def options = [:]
         
+        if (!objects.isEmpty()) {
+            options["t. Take object"] = {
+                println "\nSelect an object to scan:"
+                objects.eachWithIndex { obj, i ->
+                    println "${i + 1}. $obj"
+                }
+                println "c. Cancel"
+                
+                print "\nSelection >> "
+                String input = game.scanner.nextLine().trim()
+                
+                if (input.equalsIgnoreCase("c")) {
+                    println "Operation cancelled."
+                } else {
+                    try {
+                        int idx = input.toInteger() - 1
+                        if (idx >= 0 && idx < objects.size()) {
+                            String name = objects[idx]
+                            int freq = Gematria.calculateFrequency(name, getDepth())
+                            game.player.inventory.add(new InventoryItem(name, freq))
+                            println "Scanned ${name}. Frequency signature: ${freq}"
+                            objects.remove(idx)
+                        } else {
+                            println "Invalid selection."
+                        }
+                    } catch (Exception e) {
+                        println "Invalid input."
+                    }
+                }
+            }
+        }
+
         if (parent instanceof Apartment) {
             Apartment apt = (Apartment) parent
             int myIndex = apt.rooms.indexOf(this)
@@ -129,7 +173,10 @@ class Room implements Location {
         description.append("Color: ${color}\n")
         description.append("Furniture: ${furniture.join(', ')}\n")
         description.append("Lighting: ${lighting}\n")
-        description.append("Objects: ${objects.join(', ')}\n")
+        
+        if (!objects.isEmpty()) {
+            description.append("Objects detected: ${objects.join(', ')}\n")
+        }
         return description.toString()
     }
 

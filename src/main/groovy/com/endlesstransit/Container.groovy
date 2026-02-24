@@ -68,6 +68,21 @@ abstract class Container implements Location {
         return myName
     }
 
+    @Override
+    int getDepth() {
+        return (parent != null) ? parent.getDepth() + 1 : 0
+    }
+
+    @Override
+    String getCoordinates() {
+        def hashBase = this.getClass().simpleName.hashCode()
+        if (this.hasProperty('name') && this.name) hashBase = this.name.hashCode()
+        else if (this.hasProperty('number')) hashBase = this.number.hashCode()
+        
+        Random r = new Random(hashBase)
+        return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
+    }
+
     Map<String, Closure> getBaseOptions(Game game) {
         def options = [:]
         if (parent != null) {

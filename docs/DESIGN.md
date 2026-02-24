@@ -22,11 +22,13 @@
 ### Generation
 The game uses `java.util.Random` for procedural generation.
 - **NameGenerator**: A centralized utility providing thematic naming for all levels (Planets, Cities, Streets, etc.).
+- **Gematria**: A mystical system ("The Breathless Abjad") that calculates object frequencies based on consonants and hierarchical depth.
 - **Structural Constraints**: Enforced boundaries (e.g., `maxFloors`) ensure navigation logic is predictable.
 
 ### Navigation & UI
-- **Mnemonic System**: Uses letters for actions (`l` Leave, `u`/`d` Up/Down, `f`/`b` Forward/Back, `c` Corridor, `i` Inventory, `q` Quit) and numbers for content selection.
-- **Breadcrumb Paths**: The HUD displays the full recursive path (e.g., `Universe > System > Planet...`) to maintain player orientation.
+- **Cyber-Terminal HUD**: Displays recursive breadcrumb paths, hierarchal depth, procedurally stable coordinates, and a step counter.
+- **Inventory System**: Stores `InventoryItem` objects (Name + Frequency). The HUD provides a "Recent" preview of scanned data.
+- **Sub-Menu Actions**: Intentional interaction (e.g., `t` to take objects) uses dedicated sub-menus to keep the main interface clean.
 - **Auto-Reversal**: Automatically switches directional pairs at container boundaries.
 
 ## Future Considerations
