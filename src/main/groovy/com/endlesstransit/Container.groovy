@@ -83,6 +83,13 @@ abstract class Container implements Location {
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 
+    @Override
+    String getName() {
+        if (this.hasProperty('name') && this.name) return this.name
+        if (this.hasProperty('number')) return "Floor ${this.number}"
+        return this.getClass().simpleName
+    }
+
     Map<String, Closure> getBaseOptions(Game game) {
         def options = [:]
         if (parent != null) {

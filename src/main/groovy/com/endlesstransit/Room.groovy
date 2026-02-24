@@ -73,6 +73,12 @@ class Room implements Location {
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 
+    @Override
+    String getName() {
+        int myIndex = getIndexInParent()
+        return "Room ${myIndex}"
+    }
+
     void setParent(Location parent) {
         this.parent = parent
     }

@@ -14,4 +14,5 @@ interface Location {
     String getPath()
     int getDepth()
     String getCoordinates()
+    String getName()
 }
