@@ -3,6 +3,7 @@
 ## Patterns
 - **ANSI Encapsulation**: Keep all color and cursor logic in `Terminal.groovy`.
 - **Vibe Consistency**: Use typewriter effects for narrative text but instant rendering for frequently refreshed HUD elements.
+- **MapBuffer Composition**: Use a 2D buffer (`MapBuffer`) for complex ASCII maps. This allows for layer-based rendering (e.g., drawing the background, then plotting entities) and handles color transitions efficiently by minimizing ANSI escape sequence repeats.
 
 ## Mistakes/Corrections
 - **Terminal Buffering**: Always call `System.out.flush()` after printing partial lines (like in `typewrite`) to ensure real-time feedback in all terminal emulators.

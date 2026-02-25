@@ -24,4 +24,6 @@ interface Location {
     VibeCapsule getVibe()
     Location findAncestor(Class type)
     boolean isAbyssal()
+    String getMapSymbol()
+    String getMapColor()
 }

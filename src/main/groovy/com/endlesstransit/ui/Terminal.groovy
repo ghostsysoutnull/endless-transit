@@ -303,4 +303,76 @@ class Terminal {
         
         return lines
     }
+
+    /**
+     * A 2D buffer for composing complex ASCII maps before rendering.
+     */
+    static class MapBuffer {
+        int width
+        int height
+        String[][] chars
+        String[][] colors
+
+        MapBuffer(int width, int height) {
+            this.width = width
+            this.height = height
+            this.chars = new String[height][width]
+            this.colors = new String[height][width]
+            clear()
+        }
+
+        void clear() {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    chars[y][x] = " "
+                    colors[y][x] = RESET
+                }
+            }
+        }
+
+        void plot(int x, int y, String symbol, String color = RESET) {
+            if (x >= 0 && x < width && y >= 0 && y < height) {
+                chars[y][x] = symbol
+                colors[y][x] = color
+            }
+        }
+
+        void drawBox(int x, int y, int w, int h, String color = WHITE) {
+            // Corners
+            plot(x, y, BOX_TL, color)
+            plot(x + w - 1, y, BOX_TR, color)
+            plot(x, y + h - 1, BOX_BL, color)
+            plot(x + w - 1, y + h - 1, BOX_BR, color)
+            
+            // Horizontals
+            for (int i = 1; i < w - 1; i++) {
+                plot(x + i, y, BOX_H, color)
+                plot(x + i, y + h - 1, BOX_H, color)
+            }
+            
+            // Verticals
+            for (int j = 1; j < h - 1; j++) {
+                plot(x, y + j, BOX_V, color)
+                plot(x + w - 1, y + j, BOX_V, color)
+            }
+        }
+
+        List<String> render() {
+            List<String> renderedLines = []
+            for (int y = 0; y < height; y++) {
+                StringBuilder line = new StringBuilder()
+                String currentColor = RESET
+                for (int x = 0; x < width; x++) {
+                    if (colors[y][x] != currentColor) {
+                        line.append(colors[y][x])
+                        currentColor = colors[y][x]
+                    }
+                    line.append(chars[y][x])
+                }
+                line.append(RESET)
+                renderedLines.add(line.toString())
+            }
+            return renderedLines
+        }
+    }
 }

@@ -88,8 +88,8 @@ Make Null-Sectors mechanically distinct and atmospheric by implementing "blind" 
 - [x] **Lore Integration**: Update descriptions to emphasize the void and static.
 - [x] **Verification**: Manual test of echo-hunting in a Null-Sector.
 
-# Liminal Glitch Environments (TODO)
-- [ ] Implement mismatched lighting/wall descriptions based on Culture/Timeline synthesis.
+# Liminal Glitch Environments
+- [x] Implement mismatched lighting/wall descriptions based on Culture/Timeline synthesis.
 
 # Symbolic Neural Lattice HUD
 
@@ -169,3 +169,20 @@ Reorganize the `docs/` folder into functional categories and provide a central i
 - [x] Create `docs/README.md` as a central documentation map.
 - [x] Update any internal links between documents (if necessary).
 - [x] Verify that all context imports in `GEMINI.md` still point to correct (or root) documentation if they reference `docs/`.
+
+# Proposed Future Phases
+
+## Phase 8: Harmonic Resonance Hubs
+- [ ] Implement Stability Wells in rare location types.
+- [ ] Add advanced synthesis tools (4+ fragment merges).
+- [ ] Create "High Fidelity" UI theme for hubs.
+
+## Phase 9: The Neural Web Map
+- [x] Expand `map` command to a 2D ASCII grid representation.
+- [x] Add real-time tracking of nearby building/sector traits.
+- [x] Implement "Tactical Zoom" for different hierarchy levels.
+
+## Phase 10: Spectral Echoes & Entity Integration
+- [ ] Implement NPC "Trace Signatures" that move between locations.
+- [ ] Add "Neural Sync" interaction mechanic (frequency-matching dialogue).
+- [ ] Create "Entity Scanner" HUD component.

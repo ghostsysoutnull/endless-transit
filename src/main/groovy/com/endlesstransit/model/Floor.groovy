@@ -59,7 +59,7 @@ class Floor extends Container {
                     }
                 }
             }
-            if (number > 0) {
+            if (number != 0) {
                 options["d. Go Down"] = { game.enterLocation(bldg.getFloor(number - 1)) }
             } else if (bldg.isBreached && number == 0) {
                 options["d. Descend into the Substrate"] = {

@@ -63,7 +63,7 @@ class ThemeManager {
     /**
      * Synthesizes atmosphere components based on vibe.
      */
-    static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation = "Standard") {
+    static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation = "Standard", boolean isAnomaly = false) {
         Random r = new Random()
         
         // If it is abyssal, force it
@@ -76,16 +76,27 @@ class ThemeManager {
                     structure: structPool[r.nextInt(structPool.size())]]
         }
 
-        // Walls pull from Culture
-        def wallPool = atmosphere["walls"][culture] ?: ["bare surfaces"]
+        String wallTheme = culture
+        String lightTheme = timeline
+        String structTheme = mutation
+
+        // Glitch Logic: Randomize themes if anomaly is detected
+        if (isAnomaly || r.nextDouble() < 0.05) {
+            if (r.nextBoolean()) wallTheme = getRandomCulture()
+            if (r.nextBoolean()) lightTheme = getRandomTimeline()
+            if (r.nextBoolean()) structTheme = r.nextBoolean() ? "Abyssal" : "Singularity"
+        }
+
+        // Walls pull from Culture (or glitched culture)
+        def wallPool = atmosphere["walls"][wallTheme] ?: ["bare surfaces"]
         String walls = wallPool[r.nextInt(wallPool.size())]
         
-        // Lighting pulls from Timeline
-        def lightPool = atmosphere["lighting"][timeline] ?: ["a dim, flickering glow"]
+        // Lighting pulls from Timeline (or glitched timeline)
+        def lightPool = atmosphere["lighting"][lightTheme] ?: ["a dim, flickering glow"]
         String lighting = lightPool[r.nextInt(lightPool.size())]
         
-        // Structure pulls from Mutation
-        def structPool = atmosphere["structures"][mutation] ?: ["a standard spatial cell"]
+        // Structure pulls from Mutation (or glitched mutation)
+        def structPool = atmosphere["structures"][structTheme] ?: atmosphere["structures"]["Standard"] ?: ["a spatial cell"]
         String structure = structPool[r.nextInt(structPool.size())]
         
         return [walls: walls, lighting: lighting, structure: structure]

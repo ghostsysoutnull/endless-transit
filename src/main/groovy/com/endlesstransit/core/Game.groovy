@@ -220,8 +220,15 @@ class Game {
                     break
                 }
 
-                if (choice == "map") {
+                if (choice == "map" || choice == "m") {
                     lastChoice = "map"
+                    renderLatticeMap()
+                    choice = null
+                    break
+                }
+
+                if (choice == "lattice") {
+                    lastChoice = "lattice"
                     renderLatticeTrace()
                     choice = null
                     break
@@ -425,10 +432,11 @@ class Game {
     void helpMenu() {
         println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
         println ""
-        println "${Terminal.bold("map")} / ${Terminal.bold("lattice")}  : View vertical world hierarchy."
-        println "${Terminal.bold("i")}              : Open Quantum Trace Buffer (Inventory)."
-        println "${Terminal.bold("q")} / ${Terminal.bold("quit")}     : Terminate neural link."
-        println "${Terminal.bold("glitch")}           : Open Lattice Debug/Cheat Menu."
+        println "${Terminal.bold("map")} / ${Terminal.bold("m")}            : View 2D spatial representation of current area."
+        println "${Terminal.bold("lattice")}            : View vertical world hierarchy tree."
+        println "${Terminal.bold("i")}                  : Open Quantum Trace Buffer (Inventory)."
+        println "${Terminal.bold("q")} / ${Terminal.bold("quit")}         : Terminate neural link."
+        println "${Terminal.bold("glitch")}               : Open Lattice Debug/Cheat Menu."
         println ""
         println "Navigation is performed via numeric keys (1, 2...) or single characters (u, d, f, b, l)."
         println ""
@@ -488,6 +496,70 @@ class Game {
                 }
             }
         }
+        instantRender = true
+    }
+
+    /**
+     * Renders a 2D spatial representation of the current lattice container.
+     */
+    void renderLatticeMap() {
+        if (!(currentLocation instanceof Container)) {
+            println Terminal.colorize("\n>>> SCAN_ERROR: Current location does not support spatial projection.", Terminal.RED)
+            return
+        }
+        
+        // Coherence Cost
+        player.adjustCoherence(-1.0)
+
+        Container container = (Container) currentLocation
+        int mapWidth = 30
+        int mapHeight = 15
+        
+        Terminal.MapBuffer buffer = new Terminal.MapBuffer(mapWidth, mapHeight)
+        
+        // Project children
+        Map<List<Integer>, Location> latticeMap = container.getLocalLatticeMap(mapWidth, mapHeight)
+        
+        latticeMap.each { pos, loc ->
+            String symbol = loc.getMapSymbol()
+            String color = loc.getMapColor()
+            
+            // Highlight visited locations
+            if (!loc.isVisited()) {
+                color = Terminal.dim(color)
+            }
+            
+            buffer.plot(pos[0], pos[1], symbol, color)
+        }
+        
+        // Distortion based on coherence
+        if (player.coherence < 30) {
+            Random r = new Random()
+            int glitchCount = (int)((30 - player.coherence) / 2)
+            for (int i = 0; i < glitchCount; i++) {
+                buffer.plot(r.nextInt(mapWidth), r.nextInt(mapHeight), Terminal.glitchText("X", 1.0), Terminal.MAGENTA)
+            }
+        }
+        
+        // Render
+        println "\n" + Terminal.colorize(" [NEURAL_LATTICE_PROJECTION] ", Terminal.L_CYAN)
+        println ""
+        
+        def vibe = currentLocation.getVibe()
+        String accent = currentLocation.isAbyssal() ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
+        
+        Terminal.drawBoxTop(mapWidth + 2, accent)
+        buffer.render().each { line ->
+            println Terminal.colorize(Terminal.BOX_V, accent) + line + Terminal.colorize(Terminal.BOX_V, accent)
+        }
+        Terminal.drawBoxBottom(mapWidth + 2, accent)
+        
+        println "\n" + Terminal.dim("SCAN_ORIGIN: ") + Terminal.bold(currentLocation.getName())
+        println Terminal.dim("LEGEND: ") + Terminal.dim("Visited: Bright | Unvisited: Dim | ") + Terminal.colorize("▲ You", Terminal.CYAN)
+        println ""
+        
+        print Terminal.dim("Press ENTER to return to link...")
+        scanner.nextLine()
         instantRender = true
     }
 
@@ -797,8 +869,12 @@ class Game {
             return "i"
         }
 
-        if (input.equalsIgnoreCase("map") || input.equalsIgnoreCase("lattice")) {
+        if (input.equalsIgnoreCase("map") || input.equalsIgnoreCase("m")) {
             return "map"
+        }
+
+        if (input.equalsIgnoreCase("lattice")) {
+            return "lattice"
         }
 
         if (input.equalsIgnoreCase("glitch")) {

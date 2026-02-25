@@ -23,6 +23,7 @@ class Room implements Location {
     boolean visited = false
     String culture
     String timeline
+    boolean isAnomaly = false
 
     @Override
     boolean isVisited() {
@@ -117,13 +118,30 @@ class Room implements Location {
         return parent?.isAbyssal() ?: false
     }
 
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return Terminal.ICON_ROM
+    }
+
+    @Override
+    String getMapColor() {
+        if (isAbyssal()) return Terminal.RED
+        def v = getVibe()
+        return v?.atmosphericColor ?: Terminal.WHITE
+    }
+
     void setParent(Location parent) {
         this.parent = parent
         
+        if (parent instanceof Apartment) {
+            this.isAnomaly = ((Apartment)parent).isAnomaly
+        }
+
         // Refine atmosphere based on parent vibe (regional mutation)
         def vibe = getVibe()
         if (vibe != null) {
-            def atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation)
+            def atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation, this.isAnomaly)
             this.walls = atmos.walls
             this.lightingDesc = atmos.lighting
             this.structureDesc = atmos.structure
@@ -267,9 +285,19 @@ class Room implements Location {
         def vibe = getVibe()
         StringBuilder description = new StringBuilder()
         
-        description.append("You are in ${Terminal.bold(structureDesc)}.\n")
-        description.append("The walls are ${Terminal.colorize(color, Terminal.WHITE)} ${Terminal.bold(walls)}.\n")
-        description.append("The space is illuminated by ${Terminal.colorize(lightingDesc, Terminal.YELLOW)}.\n")
+        String structure = structureDesc
+        String wallText = walls
+        String lightText = lightingDesc
+
+        if (isAnomaly) {
+            structure = Terminal.glitchText(structure, 0.2)
+            wallText = Terminal.glitchText(wallText, 0.1)
+            lightText = Terminal.glitchText(lightText, 0.3)
+        }
+
+        description.append("You are in ${Terminal.bold(structure)}.\n")
+        description.append("The walls are ${Terminal.colorize(color, Terminal.WHITE)} ${Terminal.bold(wallText)}.\n")
+        description.append("The space is illuminated by ${Terminal.colorize(lightText, Terminal.YELLOW)}.\n")
         description.append("\n")
         
         int wrapWidth = 45
