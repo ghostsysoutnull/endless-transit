@@ -373,9 +373,9 @@ class Game {
     String getLatticeSparkline() {
         def icons = [
             "Universe": Terminal.ICON_UNI,
-            "CosmicFilament": Terminal.ICON_FIL,
-            "GalacticSector": Terminal.ICON_SEC,
-            "NullSector": Terminal.ICON_SEC,
+            "CosmicFilament": "${Terminal.ICON_FIL}${Terminal.ICON_FIL}${Terminal.ICON_FIL}${Terminal.ICON_FIL}${Terminal.ICON_FIL}",
+            "GalacticSector": Terminal.ICON_CTR,
+            "NullSector": Terminal.ICON_CTR,
             "SolarSystem": Terminal.ICON_SYS,
             "Planet": Terminal.ICON_PLT,
             "Country": Terminal.ICON_CTR,
