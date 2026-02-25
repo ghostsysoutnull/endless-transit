@@ -22,13 +22,11 @@ class NavArrayTest extends GroovyTestCase {
 
     void testVectorRenderingStability() {
         def game = new Game()
-        // Mock options for a Corridor
+        game.currentLocation = new Street("Test")
+        // Mock options for a Room (linear navigation)
         def options = [
-            "u. Go Up": {},
-            "d. Go Down": {},
-            "f. Go Forward": {},
-            "b. Go Back": {},
-            "l. Leave Corridor": {}
+            "f. Go forward": {},
+            "b. Go back": {}
         ]
         
         // Simply ensure it doesn't crash during rendering

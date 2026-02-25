@@ -491,7 +491,9 @@ class Game {
         println Terminal.colorize("║", accent)
         
         // Line 3: Left - Center - Right
-        String leftPart = lblL ? "[$l] ${Terminal.dim(lblL)} " : ""
+        String leftLabel = lblL ?: lblB
+        String leftIcon = lblL ? l : b
+        String leftPart = leftLabel ? "[$leftIcon] ${Terminal.dim(leftLabel)} " : ""
         int leftWidth = Terminal.getVisualWidth(leftPart)
         int targetLeftPadding = (centerCol - 5) - leftWidth
         String leftPadding = " " * Math.max(0, targetLeftPadding)
@@ -504,12 +506,9 @@ class Game {
         print " " * (centerCol - 1)
         println Terminal.colorize("║", accent)
         
-        // Line 5: Down & Back
+        // Line 5: Down
         print " " * (centerCol - 2)
         print Terminal.colorize("[$d] ${Terminal.dim(lblD)}", accent)
-        if (lblB) {
-            print Terminal.dim("  ($b: $lblB)")
-        }
         println ""
     }
 
