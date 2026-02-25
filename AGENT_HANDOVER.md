@@ -22,7 +22,9 @@ We use a hierarchical context system powered by `@` imports in `GEMINI.md`.
 
 ## 4. Architectural "Source of Truth"
 - **Hierarchy**: Composite Pattern (Universe -> Room) with lazy initialization.
-- **Aesthetics**: `src/main/groovy/com/endlesstransit/ui/Terminal.groovy`.
+- **Aesthetics**: `src/main/groovy/com/endlesstransit/ui/Terminal.groovy`. 
+    - **CRITICAL**: Use `Terminal.getVisualWidth()` for any padding/alignment logic. Standard `length()` fails for icons/emojis.
+    - **Borders**: Always use `Terminal.drawBoxedLine()` to ensure frame integrity.
 - **Inheritance**: `VibeCapsule` system for planetary consistency and regional divergence.
 - **Math**: `Gematria` mystical frequency logic with cultural resonance bonuses.
 

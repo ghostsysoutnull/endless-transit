@@ -33,7 +33,7 @@ Instead of one giant `GEMINI.md`, we use the import feature to provide "localize
 
 ### B. "Vibe Check" Validation Scripts
 Create a `.agents/` directory containing small, high-signal scripts that agents can run to verify specific "vibes":
-- `vibe-check-ui.sh`: Renders a sample HUD to ensure styling hasn't regressed.
+- `vibe-check-ui.sh`: Renders a sample HUD to ensure styling hasn't regressed. Also validates visual width alignment for emojis and symbols.
 - `vibe-check-gen.sh`: Generates 100 random locations and checks for naming collisions.
 
 ### C. Active Lesson Injection
