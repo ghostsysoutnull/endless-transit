@@ -24,8 +24,8 @@ abstract class Container implements Location {
 
     void ensureChildrenPopulated() {
         if (!childrenPopulated) {
-            populateChildren()
             childrenPopulated = true
+            populateChildren()
         }
     }
 

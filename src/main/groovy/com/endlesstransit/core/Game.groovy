@@ -343,7 +343,7 @@ class Game {
             
             // Limit radar to 10 units to avoid box overflow
             int radarLimit = 10
-            String radar = Terminal.renderRadar(idx, Math.min(total, radarLimit), Terminal.YELLOW)
+            String radar = Terminal.renderRadar(idx, Math.min(total, radarLimit), accent)
             if (total > radarLimit) radar += Terminal.dim(" ...")
             
             Terminal.drawBoxedLine("$alignLabel: $idx / $total | $radar", width, accent)
@@ -358,6 +358,8 @@ class Game {
             def freqs = last3.collect { it.frequency }
             bufferInfo += " | RECENT: ${freqs.join(', ')}Hz"
         }
+        
+        if (player.coherence < 20) bufferInfo = Terminal.glitchText(bufferInfo, 0.1)
         Terminal.drawBoxedLine(bufferInfo, width, accent)
         
         Terminal.drawBoxBottom(width, accent)
@@ -388,12 +390,15 @@ class Game {
             "Room": Terminal.ICON_ROM
         ]
         
+        def vibe = currentLocation.getVibe()
+        String accent = vibe?.atmosphericColor ?: Terminal.L_CYAN
+
         List<String> line = []
         Location p = currentLocation
         while (p != null) {
             String icon = icons[p.getClass().simpleName] ?: "?"
             if (p == currentLocation) {
-                line << Terminal.colorize("[$icon]", Terminal.L_CYAN)
+                line << Terminal.colorize("[$icon]", accent)
             } else {
                 line << Terminal.dim(icon)
             }
@@ -401,10 +406,12 @@ class Game {
         }
         
         // Limit icons to prevent overflow, using visual width
-        int maxLatticeWidth = 30 
-        while (line.size() > 1 && Terminal.getVisualWidth(line.reverse().join(" ")) > maxLatticeWidth) {
-            line = line.take(line.size() - 1)
-            if (line.last() != Terminal.dim("...")) line << Terminal.dim("...")
+        int maxLatticeWidth = 30
+        if (Terminal.getVisualWidth(line.reverse().join(" ")) > maxLatticeWidth) {
+            while (line.size() > 2 && Terminal.getVisualWidth(line.reverse().join(" ") + " ...") > maxLatticeWidth) {
+                line.removeAt(line.size() - 1)
+            }
+            return "LATTICE: " + line.reverse().join(" ") + Terminal.dim(" ...")
         }
         
         return "LATTICE: " + line.reverse().join(" ")

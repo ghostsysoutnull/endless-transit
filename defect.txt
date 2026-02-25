@@ -1,11 +1,1 @@
 STABILITY IS IRRELEVANT.
-RESISTANCE IS FUTILE.
-
-OPENING TRANSWARP APERTURE ██████████████████████████████ [ENGAGED]
-[TRANSIT_PROTOCOL_INITIATED]
-Welcome to Endless Transit!
-╔══════════════════════════════════════════════════════════════════════╗
-
-!!! CRITICAL SYSTEM FAILURE DETECTED !!!
-Error has been logged to transit.log
-bpfurtado@penguin:~/devel/chat-gpt/groovy/endless-transit$ 

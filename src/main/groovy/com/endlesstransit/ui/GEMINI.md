@@ -20,4 +20,4 @@
 - Descriptions should support "glitch" effects when player coherence is low (`Terminal.glitchText`).
 
 ## Localized Lessons
-@tasks/lessons/ui.md
+@../../../../../../tasks/lessons/ui.md

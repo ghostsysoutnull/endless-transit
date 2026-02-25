@@ -6,3 +6,4 @@
 ## Mistakes/Corrections
 - **Redundant Imports**: After large-scale package moves, always perform a search-and-replace to remove outdated `import com.endlesstransit.<Class>` declarations that cause "already declared" errors.
 - **Circular Dependencies**: Keep `core` as the orchestrator; it should depend on `model`, `ui`, and `procgen`, but they should ideally not depend back on `Game` or `core` logic if possible.
+- **Numeric Method Signatures**: When a method (like `adjustCoherence`) needs to handle both integers and floating-point values (e.g., from `drainRate`), use `Number` as the parameter type instead of `double` or `int` to avoid `MissingMethodException` in Groovy's dynamic dispatch. Use `.toDouble()` or `as double` within the method for safe math.

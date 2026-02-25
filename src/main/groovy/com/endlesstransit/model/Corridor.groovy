@@ -82,14 +82,14 @@ class Corridor extends Container {
 
     @Override
     void populateChildren() {
-        doors = new ArrayList<Door>()
-        apartments = new ArrayList<Apartment>()
+        this.@doors.clear()
+        this.@apartments.clear()
 
         for (int i = 0; i < numApartments; i++) {
             def door = new Door()
-            doors.add(door)
+            this.@doors.add(door)
             def apartment = new Apartment(door.getDescription(), culture)
-            apartments.add(apartment)
+            this.@apartments.add(apartment)
             addLocation(apartment)
         }
     }

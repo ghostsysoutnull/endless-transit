@@ -123,10 +123,10 @@ Transition the current text-list HUD into a structured "Command Bridge" interfac
 - [x] Regional Mutations & Anomaly Protocol
 
 ## Mechanical & Atmospheric Synthesis
-- [ ] **Resonant Gematria**: Implement +10% bonus for culture match in `Gematria.groovy`.
-- [ ] **Temporal Drain**: Implement timeline-specific coherence drain rates in `Game.groovy`.
-- [ ] **Atmospheric HUD**: Integrate `atmosphericColor` into the main UI loop.
-- [ ] **Verification**: Audit mechanical impacts via tests and HUD vibe check.
+- [x] **Resonant Gematria**: Implement +10% bonus for culture match in `Gematria.groovy`.
+- [x] **Temporal Drain**: Implement timeline-specific coherence drain rates in `Game.groovy`.
+- [x] **Atmospheric HUD**: Integrate `atmosphericColor` into the main UI loop.
+- [x] **Verification**: Audit mechanical impacts via tests and HUD vibe check.
 
 # Phase 5: Documentation Categorization
 

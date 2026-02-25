@@ -22,9 +22,11 @@ We use a hierarchical context system powered by `@` imports in `GEMINI.md`.
 
 ## 4. Architectural "Source of Truth"
 - **Hierarchy**: Composite Pattern (Universe -> Room) with lazy initialization.
+    - **Re-entrancy Guard**: `Container.ensureChildrenPopulated()` uses a `childrenPopulated` flag set *before* population to prevent infinite recursion during Groovy property access.
 - **Aesthetics**: `src/main/groovy/com/endlesstransit/ui/Terminal.groovy`. 
-    - **CRITICAL**: Use `Terminal.getVisualWidth()` for any padding/alignment logic. Standard `length()` fails for icons/emojis.
-    - **Borders**: Always use `Terminal.drawBoxedLine()` to ensure frame integrity.
+    - **Hardware Alignment**: Always use `Terminal.drawBoxedLine()`. It uses **Cursor Horizontal Absolute** (`\u001b[nG`) to ensure perfect right-border alignment regardless of icon/emoji visual width.
+    - **Visual Width**: Use `Terminal.getVisualWidth()` for safe content truncation. Standard `length()` fails for icons/emojis.
+    - **Atmospheric HUD**: The interface dynamically tints its borders, radar, and sparkline based on the current location's `vibe.atmosphericColor`.
 - **Inheritance**: `VibeCapsule` system for planetary consistency and regional divergence.
 - **Math**: `Gematria` mystical frequency logic with cultural resonance bonuses.
 

@@ -1,4 +1,5 @@
 package com.endlesstransit.model
+import com.endlesstransit.ui.Terminal
 
 class VibeCapsule {
     String timeline
@@ -6,7 +7,7 @@ class VibeCapsule {
     String secondaryCulture
     double stabilityFactor = 0.85
     String latticeMutation = "Standard"
-    String atmosphericColor = "\u001b[37m" // Default White
+    String atmosphericColor = Terminal.WHITE // Default White
 
     VibeCapsule(String timeline, String primary, String secondary) {
         this.timeline = timeline

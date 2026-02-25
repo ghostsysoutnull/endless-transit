@@ -59,7 +59,7 @@ class Apartment extends Container {
         }
 
         int numRooms = random.nextInt(10) + 1
-        rooms = new ArrayList<Room>()
+        this.@rooms.clear()
 
         // Generate a pool of objects for the entire apartment
         int totalObjects = random.nextInt(15) + 5 // 5 to 20 objects per apartment
@@ -70,13 +70,13 @@ class Apartment extends Container {
 
         for (int i = 0; i < numRooms; i++) {
             def room = new Room(culture, timeline)
-            rooms.add(room)
+            this.@rooms.add(room)
             addLocation(room) // Sets parent
         }
         
         // Distribute objects from pool to rooms
         while (!objectPool.isEmpty()) {
-            def room = rooms[random.nextInt(rooms.size())]
+            def room = this.@rooms[random.nextInt(this.@rooms.size())]
             room.objects << objectPool.remove(0)
         }
     }

@@ -18,4 +18,4 @@
 - When entering a new location, always use `game.enterLocation(target)` to ensure visited paths and journal entries are handled.
 
 ## Localized Lessons
-@tasks/lessons/core.md
+@../../../../../../tasks/lessons/core.md
