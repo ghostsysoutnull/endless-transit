@@ -58,7 +58,7 @@ class Player {
         }
     }
 
-    void mergeItems(int idx1, int idx2) {
+    void mergeItems(int idx1, int idx2, Location location = null) {
         if (idx1 == idx2) return
         if (idx1 < 0 || idx1 >= inventory.size() || idx2 < 0 || idx2 >= inventory.size()) return
 
@@ -68,20 +68,30 @@ class Player {
         def item2 = inventory[Math.min(idx1, idx2)]
         inventory.remove(Math.min(idx1, idx2))
 
+        // Keystone Synthesis Check
+        Building bldg = (Building) location?.findAncestor(Building.class)
+        boolean createKeystone = bldg != null && bldg.isPrimed() && !inventory.any { it.isKeystone && it.name.contains(bldg.name) }
+
         // Synthesize
-        int newFreq = item1.frequency + item2.frequency
-        String newName = "${item1.name.split(' ')[0]}-${item2.name.split(' ')[0]} Hybrid"
+        int newFreq = createKeystone ? 0 : item1.frequency + item2.frequency
+        String newName = createKeystone ? "${bldg.name} Keystone" : "${item1.name.split(' ')[0]}-${item2.name.split(' ')[0]} Hybrid"
         int c1 = item1.sessionMergeCount ?: 0
         int c2 = item2.sessionMergeCount ?: 0
         int newMergeCount = c1 + c2 + 1
         
-        def hybrid = new InventoryItem(newName, newFreq, newMergeCount)
+        def hybrid = new InventoryItem(newName, newFreq, newMergeCount, createKeystone)
         inventory.add(hybrid)
-        JournalManager.logSynthesis(hybrid)
+        JournalManager.logSynthesis(hybrid, location)
 
-        Logger.info("Synthesized Hybrid: $newName ($newFreq Hz)")
-        println Terminal.colorize("\n>>> SPECTRAL_SYNTHESIS_COMPLETE <<<", Terminal.L_CYAN)
-        println "New Fragment: ${Terminal.bold(newName)} (${newFreq}Hz)"
+        if (createKeystone) {
+            Logger.info("KEYSTONE_CREATED: $newName")
+            println Terminal.colorize("\n>>> CRITICAL_WAVEFORM_COLLAPSE: KEYSTONE_STABILIZED <<<", Terminal.YELLOW)
+            println "The fragments merge into a silent, heavy anchor: ${Terminal.bold(newName)}"
+        } else {
+            Logger.info("Synthesized Hybrid: $newName ($newFreq Hz)")
+            println Terminal.colorize("\n>>> SPECTRAL_SYNTHESIS_COMPLETE <<<", Terminal.L_CYAN)
+            println "New Fragment: ${Terminal.bold(newName)} (${newFreq}Hz)"
+        }
         
         if (newFreq % 11 == 0) {
             println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)

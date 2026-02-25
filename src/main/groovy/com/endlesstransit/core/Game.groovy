@@ -95,6 +95,9 @@ class Game {
                             drainRate = 2.0; break
                     }
                 }
+                if (currentLocation.isAbyssal()) {
+                    drainRate *= 2.0
+                }
                 player.adjustCoherence(-drainRate) 
                 
                 if (player.coherence <= 0) {
@@ -253,6 +256,9 @@ class Game {
 
             if (matchingKey) {
                 player.stepCount++
+                if (currentLocation.isAbyssal()) {
+                    player.adjustCoherence(-5)
+                }
                 lastChoice = matchingKey
                 menu[matchingKey].call()
             } else if (choice != "-2") {
@@ -294,7 +300,7 @@ class Game {
                 } else if (cmd == "m" && parts.size() > 2) {
                     int idx1 = parts[1].toInteger() - 1
                     int idx2 = parts[2].toInteger() - 1
-                    player.mergeItems(idx1, idx2)
+                    player.mergeItems(idx1, idx2, currentLocation)
                     // Synthesis restores coherence
                     player.adjustCoherence(15)
                 } else {
@@ -310,19 +316,21 @@ class Game {
         int width = 100
         int splitPoint = 65
         def vibe = currentLocation.getVibe()
-        String accent = vibe?.atmosphericColor ?: Terminal.WHITE
+        boolean abyssal = currentLocation.isAbyssal()
+        String accent = abyssal ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
         
         Terminal.drawBoxTop(width, accent)
         
         // 1. Sparkline & Traversal
         String sparkline = getLatticeSparkline()
-        String globalStats = "PULSE_TRAVERSAL: ${player.stepCount} | COHERENCE: ${player.coherence}%"
+        String cohLabel = abyssal ? "INTEGRITY" : "COHERENCE"
+        String globalStats = "PULSE_TRAVERSAL: ${player.stepCount} | $cohLabel: ${player.coherence}%"
         String topRow = "$sparkline | $globalStats"
         Terminal.drawBoxedLine(topRow, width, accent)
         
         // 2. Navigation Path (Full width now)
         String path = currentLocation.getPath()
-        String prefix = "LOCUS_TRACE: "
+        String prefix = abyssal ? "VOID_TRACE: " : "LOCUS_TRACE: "
         int maxPathWidth = width - 6 // More breathing room
         if (Terminal.getVisualWidth(path) + prefix.length() > maxPathWidth) {
             path = "..." + path.substring(path.length() - (maxPathWidth - prefix.length() - 3))
@@ -332,12 +340,15 @@ class Game {
         Terminal.drawBoxSeparator(width, accent, "light")
         
         // 3. Local Diagnostic (Left) & System Status (Right)
-        String ident = "LATTICE_IDENT: ${currentLocation.getClass().simpleName} >> ${currentLocation.getName()}"
-        String sysDiag = "SYSTEM_DIAGNOSTIC: [NOMINAL]"
+        String identLabel = abyssal ? "VOID_IDENT" : "LATTICE_IDENT"
+        String ident = "$identLabel: ${currentLocation.getTypeName()} >> ${currentLocation.getName()}"
+        String sysDiag = abyssal ? "SYSTEM_STATUS: [ABYSS_SYNC]" : "SYSTEM_DIAGNOSTIC: [NOMINAL]"
         Terminal.drawSplitBoxedLine(ident, sysDiag, splitPoint, width, accent)
         
-        String coords = "LOCUS_HASH: ${currentLocation.getCoordinates()} | HOP_DENSITY: ${currentLocation.getDepth()}"
-        String cohBar = "COHERENCE: " + renderCoherenceBar()
+        String hashLabel = abyssal ? "VOID_HASH" : "LOCUS_HASH"
+        String depthLabel = abyssal ? "ABYSSAL_DEPTH" : "HOP_DENSITY"
+        String coords = "$hashLabel: ${currentLocation.getCoordinates()} | $depthLabel: ${currentLocation.getDepth()}"
+        String cohBar = cohLabel + ": " + renderCoherenceBar()
         Terminal.drawSplitBoxedLine(coords, cohBar, splitPoint, width, accent)
         
         // Structural Alignment & Radar
@@ -346,8 +357,8 @@ class Game {
         String leftBottom = ""
         if (total > 0) {
             String alignLabel = "ALIGN"
-            if (currentLocation instanceof Floor) alignLabel = "Z-AXIS"
-            if (currentLocation instanceof Room) alignLabel = "INDEX"
+            if (currentLocation instanceof Floor) alignLabel = abyssal ? "STRATA" : "Z-AXIS"
+            if (currentLocation instanceof Room) alignLabel = abyssal ? "SHARD" : "INDEX"
             
             int radarLimit = 20
             String radar = Terminal.renderRadar(idx, Math.min(total, radarLimit), accent)
@@ -357,15 +368,24 @@ class Game {
         
         // Last 3 events ticker on the right
         def recentEvents = JournalManager.getRecentEvents(3).reverse()
-        String tickerTitle = "EVENT_TICKER: [SYNC_STABLE]"
-        if (player.coherence < 30) tickerTitle = "EVENT_TICKER: [DEGRADED]"
+        String tickerTitle = abyssal ? "EVENT_TICKER: [PRESSURE_HIGH]" : "EVENT_TICKER: [SYNC_STABLE]"
+        if (player.coherence < 30) tickerTitle = abyssal ? "EVENT_TICKER: [CRITICAL]" : "EVENT_TICKER: [DEGRADED]"
         
         Terminal.drawSplitBoxedLine(leftBottom, tickerTitle, splitPoint, width, accent)
         
         // Show up to 2 recent events in the following lines of the split pane
+        List<String> tickerLines = []
+        recentEvents.each { tickerLines << it }
+        
+        // Abyssal Voices
+        if (abyssal && new Random().nextInt(10) < 3) {
+            String[] voices = ["It is cold down here.", "We see you.", "Return to the surface.", "Bedrock approaching.", "You do not belong here."]
+            tickerLines.add(0, "[VOID] " + voices[new Random().nextInt(voices.length)])
+        }
+
         for (int i = 0; i < 2; i++) {
-            String event = i < recentEvents.size() ? recentEvents[i] : ""
-            // Clean up event string for HUD (remove brackets if they take too much space)
+            String event = i < tickerLines.size() ? tickerLines[i] : ""
+            // Clean up event string for HUD
             event = event.replace("[DISCOVERY] ", "LOC: ").replace("[CAPTURE] ", "OBJ: ").replace("[SYNTHESIS] ", "SYN: ")
             Terminal.drawSplitBoxedLine("", Terminal.dim(event), splitPoint, width, accent)
         }
@@ -423,21 +443,39 @@ class Game {
         println ""
 
         hierarchy.eachWithIndex { loc, i ->
-            String type = loc.getClass().simpleName.replace("Cosmic", "").replace("Galactic", "").toUpperCase()
+            String rawType = loc.getClass().simpleName.replace("Cosmic", "").replace("Galactic", "").toUpperCase()
+            String type = rawType
             String icon = icons[loc.getClass().simpleName] ?: "?"
             String name = loc.getName()
             
+            boolean locAbyssal = loc.isAbyssal()
+
+            // Terminology Overrides
+            if (locAbyssal) {
+                if (loc instanceof Floor) type = "LAYER"
+                else if (loc instanceof Corridor) type = "ARTERY"
+                else if (loc instanceof Apartment) type = "CRYPT"
+                else if (loc instanceof Room) type = "SHARD"
+            }
+
             // Metadata extraction
             String meta = ""
             if (loc instanceof Planet) {
                 def v = loc.getVibe()
-                if (v) meta = Terminal.dim(" [ERA: ${v.timeline.toUpperCase()} | RES: ${v.primaryCulture.toUpperCase()}]")
-            } else if (loc instanceof Country) {
-                meta = Terminal.dim(" [TRAIT: ${loc.functionalTrait.toUpperCase()}]")
-            } else if (loc instanceof City && loc.isRebelDistrict) {
-                meta = Terminal.colorize(" [UNAUTHORIZED_ZONE]", Terminal.RED)
-            } else if (loc instanceof Building) {
-                meta = Terminal.dim(" [FLOORS: ${loc.maxFloors}]")
+                if (v) meta = Terminal.dim(" [${locAbyssal ? 'BEDROCK' : 'SURFACE'} | ERA: ${v.timeline.toUpperCase()}]")
+            } else if (!locAbyssal) {
+                if (loc instanceof Country) {
+                    meta = Terminal.dim(" [TRAIT: ${loc.functionalTrait.toUpperCase()}]")
+                } else if (loc instanceof City && loc.isRebelDistrict) {
+                    meta = Terminal.colorize(" [UNAUTHORIZED_ZONE]", Terminal.RED)
+                } else if (loc instanceof Building) {
+                    meta = Terminal.dim(" [FLOORS: ${loc.maxFloors}]")
+                }
+            } else {
+                // Abyssal Metadata
+                if (loc instanceof Building) {
+                    meta = Terminal.colorize(" [BREACHED]", Terminal.RED)
+                }
             }
 
             // Indentation and prefix
@@ -452,7 +490,8 @@ class Game {
             String output = "${Terminal.dim(depthStr)} $indent$branch$icon $type : $name$meta"
             
             if (loc == currentLocation) {
-                println Terminal.bold(" >> " + Terminal.colorize(Terminal.stripAnsi(output), Terminal.L_CYAN))
+                String accent = locAbyssal ? Terminal.GREY : Terminal.L_CYAN
+                println Terminal.bold(" >> " + Terminal.colorize(Terminal.stripAnsi(output), accent))
             } else {
                 println "    " + output
             }
@@ -485,14 +524,19 @@ class Game {
         ]
         
         def vibe = currentLocation.getVibe()
-        String accent = vibe?.atmosphericColor ?: Terminal.L_CYAN
+        boolean abyssal = currentLocation.isAbyssal()
+        String accent = abyssal ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.L_CYAN)
 
         List<String> line = []
         Location p = currentLocation
         while (p != null) {
             String icon = icons[p.getClass().simpleName] ?: "?"
             if (p == currentLocation) {
-                line << Terminal.colorize("[$icon]", accent)
+                String label = icon
+                if (p instanceof Floor && ((Floor)p).number < 0) {
+                    label = "${icon}-${Math.abs(((Floor)p).number)}"
+                }
+                line << Terminal.colorize("[$label]", accent)
             } else {
                 line << Terminal.dim(icon)
             }

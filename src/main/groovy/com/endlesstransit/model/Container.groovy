@@ -74,6 +74,18 @@ abstract class Container implements Location {
     }
 
     @Override
+    boolean isAbyssal() {
+        if (this instanceof Floor) return ((Floor)this).number < 0
+        return parent?.isAbyssal() ?: false
+    }
+
+    @Override
+    Location findAncestor(Class type) {
+        if (type.isInstance(this)) return this
+        return parent?.findAncestor(type)
+    }
+
+    @Override
     void setParent(Location parent) {
         this.parent = parent
     }
@@ -112,6 +124,11 @@ abstract class Container implements Location {
         def nameForHash = getName()
         Random r = new Random(nameForHash.hashCode())
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
+    }
+
+    @Override
+    String getTypeName() {
+        return this.getClass().simpleName
     }
 
     @Override

@@ -8,11 +8,13 @@ class InventoryItem {
     String name
     int frequency
     int sessionMergeCount = 0
+    boolean isKeystone = false
 
-    InventoryItem(String name, int frequency, int sessionMergeCount = 0) {
+    InventoryItem(String name, int frequency, int sessionMergeCount = 0, boolean isKeystone = false) {
         this.name = name
         this.frequency = frequency
         this.sessionMergeCount = sessionMergeCount
+        this.isKeystone = isKeystone
     }
 
     @Override

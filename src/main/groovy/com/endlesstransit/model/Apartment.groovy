@@ -22,7 +22,15 @@ class Apartment extends Container {
     }
 
     @Override
+    String getTypeName() {
+        return (parent instanceof Corridor && parent.getTypeName() == "Artery") ? "Crypt" : "Apartment"
+    }
+
+    @Override
     String getDescription() {
+        if (getTypeName() == "Crypt") {
+            return "Crypt: $doorDescription. [ABYSSAL_RESONANCE_DETECTED]"
+        }
         String info = isAnomaly ? " [!] TEMPORAL_ANOMALY_DETECTED [!]" : "[TEMPORAL_MARKER: ${Terminal.colorize(timeline.toUpperCase(), Terminal.YELLOW)}]"
         return "Apartment: $doorDescription. $info"
     }

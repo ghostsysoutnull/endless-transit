@@ -128,6 +128,20 @@ Transition the current text-list HUD into a structured "Command Bridge" interfac
 - [x] **Atmospheric HUD**: Integrate `atmosphericColor` into the main UI loop.
 - [x] **Verification**: Audit mechanical impacts via tests and HUD vibe check.
 
+# Phase 7: The Abyssal Substrate
+- [x] **Ritual Mechanics**:
+    - [x] Track floor-sampling and infusion counts in `Building.groovy`.
+    - [x] Implement `Keystone` synthesis logic.
+    - [x] Implement `Breach the Bedrock` directive at the Building Peak.
+- [x] **The Substrate (Negative Floors)**:
+    - [x] Update `Floor.groovy` to handle negative indices and "Layer" terminology.
+    - [x] Implement "Arteries," "Crypts," and "Shards" naming overrides.
+    - [x] Create "Abyssal" theme set in `ThemeManager.groovy` (Dark Brutalism).
+- [x] **HUD & Map Integration**:
+    - [x] Add "Abyssal Pressure" visual indicators to HUD.
+    - [x] Update `Lattice Trace` (map) to show the "Dark Root" hierarchy.
+- [x] **Verification**: Manual test of the full top-to-bottom unlock ritual.
+
 # Phase 6: Wide-Screen Command Bridge
 - [x] **Infrastructure**: Increase hardcoded HUD width to 100 in `Game.groovy`.
 - [x] **Multi-Pane Layout**:

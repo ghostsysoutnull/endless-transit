@@ -19,8 +19,16 @@ class Corridor extends Container {
     }
 
     @Override
+    String getTypeName() {
+        return (parent instanceof Floor && ((Floor)parent).number < 0) ? "Artery" : "Corridor"
+    }
+
+    @Override
     String getDescription() {
         ensureChildrenPopulated()
+        if (getTypeName() == "Artery") {
+            return "A vaulted transit artery with ${doors.size()} access crypts. Cultural resonance: [CORRUPTED]."
+        }
         return "A long corridor with ${doors.size()} doors. Cultural resonance: ${culture}."
     }
 
@@ -78,6 +86,17 @@ class Corridor extends Container {
     Corridor(int numApartments, String culture) {
         this.culture = culture
         this.numApartments = numApartments
+    }
+
+    @Override
+    VibeCapsule getVibe() {
+        if (localVibe != null) return localVibe
+        def v = parent?.getVibe()
+        if (parent instanceof Floor && ((Floor)parent).number < 0) {
+            // Abyssal Override
+            return new VibeCapsule("atomic", "abyssal", "abyssal")
+        }
+        return v
     }
 
     @Override

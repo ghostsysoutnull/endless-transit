@@ -15,6 +15,34 @@ class Building extends Container {
     int maxFloors
     int apartmentsPerFloor
 
+    // Ritual State
+    boolean isBreached = false
+    int infusionCount = 0
+    Set<Integer> sampledFloors = new LinkedHashSet<>()
+
+    void notifySampled(int floorNumber) {
+        if (floorNumber >= 0 && floorNumber < maxFloors) {
+            sampledFloors.add(floorNumber)
+        }
+    }
+
+    boolean isPrimed() {
+        return sampledFloors.size() >= maxFloors && infusionCount >= 7
+    }
+
+    void breach() {
+        this.isBreached = true
+        Logger.info("BUILDING_BREACHED: $name")
+        
+        println ""
+        println Terminal.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", Terminal.RED)
+        println Terminal.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
+        Thread.sleep(1000)
+        println Terminal.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", Terminal.YELLOW)
+        Thread.sleep(1000)
+        println ""
+    }
+
     Building(String namePrefix = "") {
         this.name = NameGenerator.generateBuildingName(namePrefix)
         Random random = new Random()
@@ -31,7 +59,7 @@ class Building extends Container {
     }
 
     Floor getFloor(int number) {
-        if (number < 0 || number >= maxFloors) {
+        if (number >= maxFloors) {
             Logger.info("Floor request out of bounds: $number (max: $maxFloors)")
             return null
         }

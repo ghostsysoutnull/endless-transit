@@ -20,5 +20,8 @@ interface Location {
     int getDepth()
     String getCoordinates()
     String getName()
+    String getTypeName()
     VibeCapsule getVibe()
+    Location findAncestor(Class type)
+    boolean isAbyssal()
 }

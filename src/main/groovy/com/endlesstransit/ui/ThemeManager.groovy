@@ -66,6 +66,16 @@ class ThemeManager {
     static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation = "Standard") {
         Random r = new Random()
         
+        // If it is abyssal, force it
+        if (culture == "abyssal") {
+            def wallPool = atmosphere["walls"]["abyssal"] ?: ["raw concrete"]
+            def lightPool = atmosphere["lighting"]["abyssal"] ?: ["red strobe"]
+            def structPool = atmosphere["structures"]["abyssal"] ?: ["void"]
+            return [walls: wallPool[r.nextInt(wallPool.size())], 
+                    lighting: lightPool[r.nextInt(lightPool.size())], 
+                    structure: structPool[r.nextInt(structPool.size())]]
+        }
+
         // Walls pull from Culture
         def wallPool = atmosphere["walls"][culture] ?: ["bare surfaces"]
         String walls = wallPool[r.nextInt(wallPool.size())]

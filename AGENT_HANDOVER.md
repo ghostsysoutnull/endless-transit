@@ -30,6 +30,10 @@ We use a hierarchical context system powered by `@` imports in `GEMINI.md`.
     - **Lattice Trace**: A global `map` / `lattice` command provides a vertical, high-density visualization of the world hierarchy with scale-specific metadata (Era, Resonance, Traits).
     - **Atmospheric HUD**: The interface dynamically tints its borders, radar, and sparkline based on the current location's `vibe.atmosphericColor`.
     - **Vector Array Compass**: Replaced the simple cross with a high-density "Navigational Vector Array" that displays dynamic destination labels (e.g., "Floor 16") and anchors all components to a fixed `centerCol` for perfect visual alignment.
+- **The Abyssal Substrate**: A "Dark World" facet unlocked via the **Harmonic Inversion Ritual** (Strata Sampling + 7 Infusions + Keystone Synthesis).
+    - **Terminology Shift**: In negative depth, terminology shifts to Layer (Floor), Artery (Corridor), Crypt (Apartment), and Shard (Room).
+    - **Mechanical Tension**: Renames Coherence to **Integrity** and implements **Abyssal Pressure** (doubled drain + movement penalty).
+    - **Visuals**: Forces a **Dark Brutalist** theme (Grey/Red/Black) with technical/infrastructure descriptions.
 - **Inheritance**: `VibeCapsule` system for planetary consistency and regional divergence.
 - **Math**: `Gematria` mystical frequency logic with cultural resonance bonuses.
 

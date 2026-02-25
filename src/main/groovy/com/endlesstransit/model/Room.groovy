@@ -62,7 +62,7 @@ class Room implements Location {
             int randomNum = random.nextInt(9000000) + 1000000 
             def item = new InventoryItem("Hidden Frequency", randomNum)
             player.inventory.add(item)
-            JournalManager.logCapture(item)
+            JournalManager.logCapture(item, this)
             println Terminal.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", Terminal.YELLOW)
         }
     }
@@ -88,14 +88,33 @@ class Room implements Location {
     }
 
     @Override
+    String getTypeName() {
+        return (parent instanceof Apartment && parent.getTypeName() == "Crypt") ? "Shard" : "Room"
+    }
+
+    @Override
     String getName() {
         int myIndex = getIndexInParent()
+        if (getTypeName() == "Shard") {
+            return "Shard 0x" + Integer.toHexString(myIndex).toUpperCase()
+        }
         return "Room ${myIndex}"
     }
 
     @Override
     VibeCapsule getVibe() {
         return parent?.getVibe()
+    }
+
+    @Override
+    Location findAncestor(Class type) {
+        if (type.isInstance(this)) return this
+        return parent?.findAncestor(type)
+    }
+
+    @Override
+    boolean isAbyssal() {
+        return parent?.isAbyssal() ?: false
     }
 
     void setParent(Location parent) {
@@ -131,7 +150,7 @@ class Room implements Location {
                     int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
                     def item = new InventoryItem(name, freq)
                     game.player.inventory.add(item)
-                    JournalManager.logCapture(item)
+                    JournalManager.logCapture(item, this)
                     
                     if (isResonant) {
                         println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
@@ -185,7 +204,7 @@ class Room implements Location {
                             int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
                             def item = new InventoryItem(name, freq)
                             game.player.inventory.add(item)
-                            JournalManager.logCapture(item)
+                            JournalManager.logCapture(item, this)
                             
                             if (isResonant) {
                                 println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
