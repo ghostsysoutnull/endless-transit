@@ -226,6 +226,18 @@ class Game {
                     choice = null
                     break
                 }
+
+                if (choice == "help") {
+                    helpMenu()
+                    choice = null
+                    break
+                }
+
+                if (choice == "glitch") {
+                    glitchMenu()
+                    choice = null
+                    break
+                }
                 
                 if (choice == "-2") {
                     // Just loop again for new input
@@ -408,6 +420,75 @@ class Game {
         // Status Scan Bar
         println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
         println ""
+    }
+
+    void helpMenu() {
+        println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
+        println ""
+        println "${Terminal.bold("map")} / ${Terminal.bold("lattice")}  : View vertical world hierarchy."
+        println "${Terminal.bold("i")}              : Open Quantum Trace Buffer (Inventory)."
+        println "${Terminal.bold("q")} / ${Terminal.bold("quit")}     : Terminate neural link."
+        println "${Terminal.bold("glitch")}           : Open Lattice Debug/Cheat Menu."
+        println ""
+        println "Navigation is performed via numeric keys (1, 2...) or single characters (u, d, f, b, l)."
+        println ""
+        print Terminal.dim("Press ENTER to return...")
+        scanner.nextLine()
+        instantRender = true
+    }
+
+    void glitchMenu() {
+        while (true) {
+            println "\n" + Terminal.colorize(" [LATTICE_GLITCH_INTERFACE] ", Terminal.MAGENTA)
+            println "1. PRIME    : Instantly sample all floors and set infusion count."
+            println "2. KEYSTONE : Spawn current building's Keystone fragment."
+            println "3. BREACH   : Instantly breach bedrock and teleport to Layer -1."
+            println "4. INTEGRITY: Set neural link coherence level."
+            println "c. CANCEL   : Close glitch interface."
+            println ""
+            print "GLITCH >> "
+            
+            String choice = scanner.nextLine().trim().toLowerCase()
+            Building bldg = (Building) currentLocation.findAncestor(Building.class)
+
+            if (choice == "c") break
+
+            if (choice == "1") {
+                if (bldg) {
+                    for (int i = 0; i < bldg.maxFloors; i++) bldg.notifySampled(i)
+                    bldg.infusionCount = 7
+                    println Terminal.colorize(">>> Building ${bldg.name} PRIMED.", Terminal.GREEN)
+                } else {
+                    println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
+                }
+            } else if (choice == "2") {
+                if (bldg) {
+                    player.inventory << new InventoryItem("${bldg.name} Keystone", 0, 0, true)
+                    println Terminal.colorize(">>> KEYSTONE generated in Trace Buffer.", Terminal.GREEN)
+                } else {
+                    println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
+                }
+            } else if (choice == "3") {
+                if (bldg) {
+                    bldg.isBreached = true
+                    enterLocation(bldg.getFloor(-1))
+                    println Terminal.colorize(">>> BREACHED. Descent initiated.", Terminal.RED)
+                    break
+                } else {
+                    println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
+                }
+            } else if (choice == "4") {
+                print "Set Integrity (0-100): "
+                try {
+                    int val = scanner.nextLine().toInteger()
+                    player.coherence = Math.max(0, Math.min(100, val))
+                    println Terminal.colorize(">>> Integrity set to ${player.coherence}%.", Terminal.YELLOW)
+                } catch (Exception e) {
+                    println "Invalid value."
+                }
+            }
+        }
+        instantRender = true
     }
 
     /**
@@ -718,6 +799,14 @@ class Game {
 
         if (input.equalsIgnoreCase("map") || input.equalsIgnoreCase("lattice")) {
             return "map"
+        }
+
+        if (input.equalsIgnoreCase("glitch")) {
+            return "glitch"
+        }
+
+        if (input.equalsIgnoreCase("help") || input == "?") {
+            return "help"
         }
         
         if (input.equalsIgnoreCase("quit")) {

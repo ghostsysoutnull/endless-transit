@@ -153,6 +153,9 @@ Transition the current text-list HUD into a structured "Command Bridge" interfac
     - [x] Increase 1D Radar limit to 20 units.
 - [x] **Real-time Event Log**: Add a 3-line "Ticker" on the right side of the HUD.
 - [x] **Lattice Trace Command**: Implement global `map` / `lattice` command for vertical hierarchy visualization.
+- [x] **Debugging & Help**:
+    - [x] Implement `help` / `?` command for system guidance.
+    - [x] Implement `glitch` debug menu for rapid testing of Abyssal rituals.
 - [x] **Verification**: Manual audit of alignment at 100-char width across all locations.
 
 # Phase 5: Documentation Categorization
