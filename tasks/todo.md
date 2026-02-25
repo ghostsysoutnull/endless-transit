@@ -114,7 +114,7 @@ Transition the current text-list HUD into a structured "Command Bridge" interfac
 - [x] **Logical Grouping**:
     - [x] Top: Navigation Path & Pulse Traversal.
     - [x] Middle: Scanning Diagnostic & Location Description.
-    - [x] Bottom: Compass & Directive Input.
+    - [x] Bottom: Compass (Navigational Vector Array) & Directive Input.
 - [x] **Vibe Integration**: Ensure atmospheric colors apply to the box borders.
 - [x] **Verification**: Manual audit of HUD alignment across different location scales.
 

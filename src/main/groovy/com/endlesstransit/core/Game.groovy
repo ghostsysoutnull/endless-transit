@@ -229,8 +229,8 @@ class Game {
 
             if (choice == "quit") {
                 print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
-                String confirm = scanner.nextLine().trim().toLowerCase()
-                if (confirm == "y") {
+                String confirm = scanner.hasNextLine() ? scanner.nextLine().trim().toLowerCase() : "y"
+                if (confirm == "y" || !scanner.hasNextLine()) {
                     JournalManager.saveSession(player)
                     println(Terminal.colorize("Goodbye!", Terminal.L_CYAN))
                     break
@@ -428,16 +428,75 @@ class Game {
         return Terminal.colorize(bar, color)
     }
 
-    void renderCompass(Map options) {
-        String u = options.keySet().any { it.toLowerCase().contains("up") } ? Terminal.colorize("U", Terminal.YELLOW) : Terminal.dim("·")
-        String d = options.keySet().any { it.toLowerCase().contains("down") } ? Terminal.colorize("D", Terminal.YELLOW) : Terminal.dim("·")
-        String f = options.keySet().any { it.toLowerCase().contains("forward") } ? Terminal.colorize("F", Terminal.YELLOW) : Terminal.dim("·")
-        String b = options.keySet().any { it.toLowerCase().contains("back") } ? Terminal.colorize("B", Terminal.YELLOW) : Terminal.dim("·")
-        String l = options.keySet().any { it.toLowerCase().contains("leave") || it.toLowerCase().contains("exit") } ? Terminal.colorize("L", Terminal.YELLOW) : Terminal.dim("·")
+    /**
+     * Extracts a clean, short label for a navigational direction from the current options.
+     */
+    String getCompassLabel(String keyPrefix, Map options) {
+        def entry = options.find { k, v -> k.toLowerCase().startsWith(keyPrefix.toLowerCase()) }
+        if (!entry) return ""
+        
+        String label = entry.key
+        // Expected formats: "u. Go Up", "1. Enter: Floor 16", "l. Leave Building"
+        if (label.contains(": ")) {
+            label = label.substring(label.indexOf(": ") + 2)
+        } else if (label.contains(". ")) {
+            label = label.substring(label.indexOf(". ") + 2)
+        }
+        
+        // Truncate if too long
+        if (label.length() > 15) label = label.substring(0, 12) + "..."
+        return label
+    }
 
-        println Terminal.dim("    [$u]")
-        println Terminal.dim(" [$l] [${Terminal.colorize("+", Terminal.CYAN)}] [$f]")
-        println Terminal.dim("    [$d]  ($b)")
+    void renderCompass(Map options) {
+        def vibe = currentLocation.getVibe()
+        String accent = vibe?.atmosphericColor ?: Terminal.WHITE
+        
+        // Extract destinations
+        String lblU = getCompassLabel("u.", options)
+        String lblD = getCompassLabel("d.", options)
+        String lblF = getCompassLabel("f.", options)
+        String lblB = getCompassLabel("b.", options)
+        String lblL = getCompassLabel("l.", options)
+
+        // Determine icons
+        String u = lblU ? Terminal.bold("U") : "·"
+        String d = lblD ? Terminal.bold("D") : "·"
+        String f = lblF ? Terminal.bold("F") : "·"
+        String b = lblB ? Terminal.bold("B") : "·"
+        String l = lblL ? Terminal.bold("L") : "·"
+
+        int centerCol = 25
+        
+        // Line 1: Up
+        print " " * (centerCol - 2)
+        println Terminal.colorize("[$u] ${Terminal.dim(lblU)}", accent)
+        
+        // Line 2: Vertical connector
+        print " " * (centerCol - 1)
+        println Terminal.colorize("║", accent)
+        
+        // Line 3: Left - Center - Right
+        String leftPart = lblL ? "[$l] ${Terminal.dim(lblL)} " : ""
+        int leftWidth = Terminal.getVisualWidth(leftPart)
+        int targetLeftPadding = (centerCol - 5) - leftWidth
+        String leftPadding = " " * Math.max(0, targetLeftPadding)
+        
+        print Terminal.colorize(leftPadding + leftPart, accent)
+        print Terminal.colorize("═══[╬]═══ ", accent)
+        println Terminal.colorize("[$f] ${Terminal.dim(lblF)}", accent)
+        
+        // Line 4: Vertical connector
+        print " " * (centerCol - 1)
+        println Terminal.colorize("║", accent)
+        
+        // Line 5: Down & Back
+        print " " * (centerCol - 2)
+        print Terminal.colorize("[$d] ${Terminal.dim(lblD)}", accent)
+        if (lblB) {
+            print Terminal.dim("  ($b: $lblB)")
+        }
+        println ""
     }
 
     void enterLocation(Location location) {
