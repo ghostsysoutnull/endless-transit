@@ -16,35 +16,28 @@ class JournalManager {
     static String JOURNAL_FILE = "journal.txt"
     static String LAST_ENTRY_FILE = "journal-last-entry.txt"
     private static final String TEMP_MANIFEST = ".journal_session_tmp"
-    private static BufferedWriter writer
+    private static StringBuilder sessionLog = new StringBuilder()
     private static int sessionCaptures = 0
     private static int sessionSyntheses = 0
     private static int sessionDiscoveries = 0
     private static int startStepCount = 0
     private static LocalDateTime startTime
 
-    private static void ensureOpen() {
-        if (writer == null) {
-            writer = new BufferedWriter(new FileWriter(JOURNAL_FILE, true))
-        }
-    }
-
     static void startSession(Player player) {
-        ensureOpen()
         startStepCount = player.stepCount
         sessionCaptures = 0
         sessionSyntheses = 0
         sessionDiscoveries = 0
         startTime = LocalDateTime.now()
+        sessionLog = new StringBuilder()
         
         // Clear/Create temp manifest
         new File(TEMP_MANIFEST).text = ""
         
         def nowStr = startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        writer.write("\n======================================================================\n")
-        writer.write("SESSION_START: $nowStr\n")
-        writer.write("======================================================================\n")
-        writer.flush()
+        sessionLog.append("\n======================================================================\n")
+        sessionLog.append("SESSION_START: $nowStr\n")
+        sessionLog.append("======================================================================\n")
     }
 
     private static void writeToManifest(String entry) {
@@ -52,7 +45,6 @@ class JournalManager {
     }
 
     static void logDiscovery(String path, Location location = null) {
-        ensureOpen()
         sessionDiscoveries++
         
         String vibeInfo = ""
@@ -63,29 +55,26 @@ class JournalManager {
             }
         }
         
-        writer.write("[DISCOVERY] $path$vibeInfo\n")
-        writer.flush()
+        String entry = "[DISCOVERY] $path$vibeInfo"
+        sessionLog.append(entry + "\n")
         writeToManifest("  >> [LOC] $path$vibeInfo")
     }
 
     static void logCapture(InventoryItem item) {
-        ensureOpen()
         sessionCaptures++
-        writer.write("[CAPTURE]   ${item.name} (${String.format("%04d", item.frequency)}Hz)\n")
-        writer.flush()
+        String entry = "[CAPTURE]   ${item.name} (${String.format("%04d", item.frequency)}Hz)"
+        sessionLog.append(entry + "\n")
         writeToManifest("  >> [OBJ] ${item.name} (${item.frequency}Hz)")
     }
     
     static void logSynthesis(InventoryItem item) {
-        ensureOpen()
         sessionSyntheses++
-        writer.write("[SYNTHESIS] ${item.name} (${String.format("%04d", item.frequency)}Hz)\n")
-        writer.flush()
+        String entry = "[SYNTHESIS] ${item.name} (${String.format("%04d", item.frequency)}Hz)"
+        sessionLog.append(entry + "\n")
         writeToManifest("  >> [SYN] ${item.name} (${item.frequency}Hz)")
     }
 
     static void saveSession(Player player, String endReason = "TERMINATE_LINK") {
-        ensureOpen()
         LocalDateTime endTime = LocalDateTime.now()
         Duration duration = Duration.between(startTime ?: endTime, endTime)
         long seconds = duration.getSeconds()
@@ -114,17 +103,18 @@ class JournalManager {
         
         def endNowStr = endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         
-        // Write to main journal
-        writer.write(summary.toString())
-        writer.write("\n======================================================================\n")
-        writer.write("SESSION_END: $endNowStr\n")
-        writer.write("======================================================================\n\n")
-        writer.flush()
-        writer.close()
-        writer = null
+        sessionLog.append(summary.toString())
+        sessionLog.append("\n======================================================================\n")
+        sessionLog.append("SESSION_END: $endNowStr\n")
+        sessionLog.append("======================================================================\n\n")
+        
+        String fullOutput = sessionLog.toString()
+        
+        // Write to main journal (append)
+        new File(JOURNAL_FILE).append(fullOutput)
         
         // Write to last-entry file (overwriting)
-        new File(LAST_ENTRY_FILE).text = "SESSION_SUMMARY [$endNowStr]\n" + summary.toString()
+        new File(LAST_ENTRY_FILE).text = "LAST_SESSION_SNAPSHOT\n" + fullOutput
         
         println Terminal.colorize(">>> Neural link severed. Session summary synchronized to $JOURNAL_FILE", Terminal.GREEN)
     }
@@ -133,13 +123,10 @@ class JournalManager {
      * Resets the manager for testing.
      */
     static void reset() {
-        if (writer != null) {
-            writer.close()
-            writer = null
-        }
         sessionCaptures = 0
         sessionSyntheses = 0
         sessionDiscoveries = 0
         startStepCount = 0
+        sessionLog = new StringBuilder()
     }
 }

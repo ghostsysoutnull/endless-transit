@@ -45,8 +45,11 @@ class JournalTest extends GroovyTestCase {
         assertTrue("Journal should have end timestamp", content.contains("SESSION_END:"))
         
         String lastContent = fLast.text
-        assertTrue("Last entry should contain summary", lastContent.contains("SESSION_SUMMARY"))
-        assertTrue("Last entry should contain captured item", lastContent.contains("[OBJ] Test Fragment"))
+        assertTrue("Last entry should contain snapshot header", lastContent.contains("LAST_SESSION_SNAPSHOT"))
+        assertTrue("Last entry should contain chronological discovery", lastContent.contains("[DISCOVERY] Universe > Alpha > Building 1"))
+        assertTrue("Last entry should contain chronological capture", lastContent.contains("[CAPTURE]   Test Fragment"))
+        assertTrue("Last entry should contain summary", lastContent.contains("--- SESSION_EXECUTIVE_SUMMARY ---"))
+        assertTrue("Last entry should contain captured item in manifest", lastContent.contains("[OBJ] Test Fragment"))
         
         // Cleanup
         f.delete()
