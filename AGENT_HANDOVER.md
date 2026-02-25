@@ -26,6 +26,7 @@ We use a hierarchical context system powered by `@` imports in `GEMINI.md`.
 - **Aesthetics**: `src/main/groovy/com/endlesstransit/ui/Terminal.groovy`. 
     - **Hardware Alignment**: Always use `Terminal.drawBoxedLine()`. It uses **Cursor Horizontal Absolute** (`\u001b[nG`) to ensure perfect right-border alignment regardless of icon/emoji visual width.
     - **Visual Width**: Use `Terminal.getVisualWidth()` for safe content truncation. Standard `length()` fails for icons/emojis.
+    - **Wide-Screen HUD**: The interface uses a 100-character wide multi-pane layout. It features a "Location Data" pane (left) and a "System Status" pane (right) with a real-time event ticker.
     - **Atmospheric HUD**: The interface dynamically tints its borders, radar, and sparkline based on the current location's `vibe.atmosphericColor`.
     - **Vector Array Compass**: Replaced the simple cross with a high-density "Navigational Vector Array" that displays dynamic destination labels (e.g., "Floor 16") and anchors all components to a fixed `centerCol` for perfect visual alignment.
 - **Inheritance**: `VibeCapsule` system for planetary consistency and regional divergence.

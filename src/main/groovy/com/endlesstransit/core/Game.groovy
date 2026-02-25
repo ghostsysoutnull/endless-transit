@@ -300,7 +300,8 @@ class Game {
     }
 
     void renderBridgeHUD() {
-        int width = 72
+        int width = 100
+        int splitPoint = 65
         def vibe = currentLocation.getVibe()
         String accent = vibe?.atmosphericColor ?: Terminal.WHITE
         
@@ -312,41 +313,54 @@ class Game {
         String topRow = "$sparkline | $globalStats"
         Terminal.drawBoxedLine(topRow, width, accent)
         
-        // 2. Navigation Path
+        // 2. Navigation Path (Full width now)
         String path = currentLocation.getPath()
         String prefix = "LOCUS_TRACE: "
-        int maxPathWidth = width - 4 - prefix.length()
-        if (Terminal.getVisualWidth(path) > maxPathWidth) {
-            // Simple truncation for now, could be smarter about wide chars
-            path = "..." + path.substring(path.length() - (maxPathWidth - 3))
+        int maxPathWidth = width - 6 // More breathing room
+        if (Terminal.getVisualWidth(path) + prefix.length() > maxPathWidth) {
+            path = "..." + path.substring(path.length() - (maxPathWidth - prefix.length() - 3))
         }
         Terminal.drawBoxedLine("$prefix$path", width, accent)
         
         Terminal.drawBoxSeparator(width, accent, "light")
         
-        // 3. Local Diagnostic
+        // 3. Local Diagnostic (Left) & System Status (Right)
         String ident = "LATTICE_IDENT: ${currentLocation.getClass().simpleName} >> ${currentLocation.getName()}"
-        if (Terminal.getVisualWidth(ident) > width - 4) ident = ident.substring(0, width - 7) + "..."
-        Terminal.drawBoxedLine(ident, width, accent, true)
+        String sysDiag = "SYSTEM_DIAGNOSTIC: [NOMINAL]"
+        Terminal.drawSplitBoxedLine(ident, sysDiag, splitPoint, width, accent)
         
         String coords = "LOCUS_HASH: ${currentLocation.getCoordinates()} | HOP_DENSITY: ${currentLocation.getDepth()}"
-        if (Terminal.getVisualWidth(coords) > width - 4) coords = coords.substring(0, width - 7) + "..."
-        Terminal.drawBoxedLine(coords, width, accent)
+        String cohBar = "COHERENCE: " + renderCoherenceBar()
+        Terminal.drawSplitBoxedLine(coords, cohBar, splitPoint, width, accent)
         
         // Structural Alignment & Radar
         int idx = currentLocation.getIndexInParent()
         int total = currentLocation.getTotalInParent()
+        String leftBottom = ""
         if (total > 0) {
-            String alignLabel = "ALIGNMENT"
-            if (currentLocation instanceof Floor) alignLabel = "Z-AXIS_ALIGN"
-            if (currentLocation instanceof Room) alignLabel = "CELL_INDEX"
+            String alignLabel = "ALIGN"
+            if (currentLocation instanceof Floor) alignLabel = "Z-AXIS"
+            if (currentLocation instanceof Room) alignLabel = "INDEX"
             
-            // Limit radar to 10 units to avoid box overflow
-            int radarLimit = 10
+            int radarLimit = 20
             String radar = Terminal.renderRadar(idx, Math.min(total, radarLimit), accent)
             if (total > radarLimit) radar += Terminal.dim(" ...")
-            
-            Terminal.drawBoxedLine("$alignLabel: $idx / $total | $radar", width, accent)
+            leftBottom = "$alignLabel: $idx / $total | $radar"
+        }
+        
+        // Last 3 events ticker on the right
+        def recentEvents = JournalManager.getRecentEvents(3).reverse()
+        String tickerTitle = "EVENT_TICKER: [SYNC_STABLE]"
+        if (player.coherence < 30) tickerTitle = "EVENT_TICKER: [DEGRADED]"
+        
+        Terminal.drawSplitBoxedLine(leftBottom, tickerTitle, splitPoint, width, accent)
+        
+        // Show up to 2 recent events in the following lines of the split pane
+        for (int i = 0; i < 2; i++) {
+            String event = i < recentEvents.size() ? recentEvents[i] : ""
+            // Clean up event string for HUD (remove brackets if they take too much space)
+            event = event.replace("[DISCOVERY] ", "LOC: ").replace("[CAPTURE] ", "OBJ: ").replace("[SYNTHESIS] ", "SYN: ")
+            Terminal.drawSplitBoxedLine("", Terminal.dim(event), splitPoint, width, accent)
         }
 
         Terminal.drawBoxSeparator(width, accent, "light")
@@ -364,7 +378,7 @@ class Game {
         
         Terminal.drawBoxBottom(width, accent)
         
-        // Status Scan Bar (Outside the main box)
+        // Status Scan Bar
         println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
         println ""
     }
@@ -406,7 +420,7 @@ class Game {
         }
         
         // Limit icons to prevent overflow, using visual width
-        int maxLatticeWidth = 30
+        int maxLatticeWidth = 50
         if (Terminal.getVisualWidth(line.reverse().join(" ")) > maxLatticeWidth) {
             while (line.size() > 2 && Terminal.getVisualWidth(line.reverse().join(" ") + " ...") > maxLatticeWidth) {
                 line.removeAt(line.size() - 1)

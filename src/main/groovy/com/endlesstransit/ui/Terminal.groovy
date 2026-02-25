@@ -143,6 +143,31 @@ class Terminal {
     }
 
     /**
+     * Renders a boxed line split into two panes with a vertical separator.
+     * Uses CHA for alignment of both the separator and the right border.
+     */
+    static void drawSplitBoxedLine(String left, String right, int splitPoint, int width, String color = WHITE) {
+        // Left part
+        int leftInnerWidth = splitPoint - 4
+        String safeLeft = ansiSafeTruncate(left, leftInnerWidth)
+        print colorize(BOX_V + " ", color)
+        print safeLeft
+        
+        // Separator
+        print "\u001b[${splitPoint}G"
+        print colorize(BOX_V + " ", color)
+        
+        // Right part
+        int rightInnerWidth = (width - splitPoint) - 2
+        String safeRight = ansiSafeTruncate(right, rightInnerWidth)
+        print safeRight
+        
+        // Right border
+        print "\u001b[${width}G"
+        println colorize(BOX_V, color)
+    }
+
+    /**
      * Removes ANSI escape codes from a string to calculate visible length.
      */
     static String stripAnsi(String text) {

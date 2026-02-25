@@ -17,6 +17,7 @@ class JournalManager {
     static String LAST_ENTRY_FILE = "journal-last-entry.txt"
     private static final String TEMP_MANIFEST = ".journal_session_tmp"
     private static StringBuilder sessionLog = new StringBuilder()
+    private static List<String> lastEntries = []
     private static int sessionCaptures = 0
     private static int sessionSyntheses = 0
     private static int sessionDiscoveries = 0
@@ -30,6 +31,7 @@ class JournalManager {
         sessionDiscoveries = 0
         startTime = LocalDateTime.now()
         sessionLog = new StringBuilder()
+        lastEntries = []
         
         // Clear/Create temp manifest
         new File(TEMP_MANIFEST).text = ""
@@ -57,6 +59,7 @@ class JournalManager {
         
         String entry = "[DISCOVERY] $path$vibeInfo"
         sessionLog.append(entry + "\n")
+        lastEntries << entry
         writeToManifest("  >> [LOC] $path$vibeInfo")
     }
 
@@ -64,6 +67,7 @@ class JournalManager {
         sessionCaptures++
         String entry = "[CAPTURE]   ${item.name} (${String.format("%04d", item.frequency)}Hz)"
         sessionLog.append(entry + "\n")
+        lastEntries << entry
         writeToManifest("  >> [OBJ] ${item.name} (${item.frequency}Hz)")
     }
     
@@ -71,7 +75,13 @@ class JournalManager {
         sessionSyntheses++
         String entry = "[SYNTHESIS] ${item.name} (${String.format("%04d", item.frequency)}Hz)"
         sessionLog.append(entry + "\n")
+        lastEntries << entry
         writeToManifest("  >> [SYN] ${item.name} (${item.frequency}Hz)")
+    }
+
+    static List<String> getRecentEvents(int count) {
+        if (lastEntries.isEmpty()) return []
+        return lastEntries.takeRight(count)
     }
 
     static void saveSession(Player player, String endReason = "TERMINATE_LINK") {
@@ -128,5 +138,6 @@ class JournalManager {
         sessionDiscoveries = 0
         startStepCount = 0
         sessionLog = new StringBuilder()
+        lastEntries = []
     }
 }
