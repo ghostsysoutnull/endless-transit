@@ -129,11 +129,6 @@ Transition the current text-list HUD into a structured "Command Bridge" interfac
 - [x] **Verification**: Audit mechanical impacts via tests and HUD vibe check.
 
 # Phase 6: Wide-Screen Command Bridge
-
-## Objective
-Expand the HUD horizontally to 100+ characters and implement a multi-pane layout to increase information density and immersion.
-
-## Plan
 - [x] **Infrastructure**: Increase hardcoded HUD width to 100 in `Game.groovy`.
 - [x] **Multi-Pane Layout**:
     - [x] Split the middle section into "Location Data" (Left) and "System Status" (Right).
@@ -143,6 +138,7 @@ Expand the HUD horizontally to 100+ characters and implement a multi-pane layout
     - [x] Expand the `LATTICE` sparkline to show up to 50 characters of depth.
     - [x] Increase 1D Radar limit to 20 units.
 - [x] **Real-time Event Log**: Add a 3-line "Ticker" on the right side of the HUD.
+- [x] **Lattice Trace Command**: Implement global `map` / `lattice` command for vertical hierarchy visualization.
 - [x] **Verification**: Manual audit of alignment at 100-char width across all locations.
 
 # Phase 5: Documentation Categorization

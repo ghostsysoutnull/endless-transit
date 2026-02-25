@@ -216,6 +216,13 @@ class Game {
                     choice = null
                     break
                 }
+
+                if (choice == "map") {
+                    lastChoice = "map"
+                    renderLatticeTrace()
+                    choice = null
+                    break
+                }
                 
                 if (choice == "-2") {
                     // Just loop again for new input
@@ -381,6 +388,79 @@ class Game {
         // Status Scan Bar
         println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
         println ""
+    }
+
+    /**
+     * Renders a vertical tree visualization of the current world hierarchy.
+     */
+    void renderLatticeTrace() {
+        def icons = [
+            "Universe": Terminal.ICON_UNI,
+            "CosmicFilament": Terminal.ICON_FIL,
+            "GalacticSector": Terminal.ICON_SEC,
+            "NullSector": Terminal.ICON_SEC,
+            "SolarSystem": Terminal.ICON_SYS,
+            "Planet": Terminal.ICON_PLT,
+            "Country": Terminal.ICON_CTR,
+            "City": Terminal.ICON_CTY,
+            "Street": Terminal.ICON_STR,
+            "Building": Terminal.ICON_BLD,
+            "Floor": Terminal.ICON_FLR,
+            "Corridor": Terminal.ICON_COR,
+            "Apartment": Terminal.ICON_APT,
+            "Room": Terminal.ICON_ROM
+        ]
+
+        List<Location> hierarchy = []
+        Location p = currentLocation
+        while (p != null) {
+            hierarchy << p
+            p = p.parent
+        }
+        hierarchy = hierarchy.reverse()
+
+        println "\n" + Terminal.colorize(" [NEURAL_LATTICE_TRACE_INITIATED] ", Terminal.L_CYAN)
+        println ""
+
+        hierarchy.eachWithIndex { loc, i ->
+            String type = loc.getClass().simpleName.replace("Cosmic", "").replace("Galactic", "").toUpperCase()
+            String icon = icons[loc.getClass().simpleName] ?: "?"
+            String name = loc.getName()
+            
+            // Metadata extraction
+            String meta = ""
+            if (loc instanceof Planet) {
+                def v = loc.getVibe()
+                if (v) meta = Terminal.dim(" [ERA: ${v.timeline.toUpperCase()} | RES: ${v.primaryCulture.toUpperCase()}]")
+            } else if (loc instanceof Country) {
+                meta = Terminal.dim(" [TRAIT: ${loc.functionalTrait.toUpperCase()}]")
+            } else if (loc instanceof City && loc.isRebelDistrict) {
+                meta = Terminal.colorize(" [UNAUTHORIZED_ZONE]", Terminal.RED)
+            } else if (loc instanceof Building) {
+                meta = Terminal.dim(" [FLOORS: ${loc.maxFloors}]")
+            }
+
+            // Indentation and prefix
+            String indent = ""
+            String branch = ""
+            if (i > 4) {
+                indent = "             " + ("    " * (i - 5))
+                branch = "└─ "
+            }
+
+            String depthStr = String.format("[%02d] ", i)
+            String output = "${Terminal.dim(depthStr)} $indent$branch$icon $type : $name$meta"
+            
+            if (loc == currentLocation) {
+                println Terminal.bold(" >> " + Terminal.colorize(Terminal.stripAnsi(output), Terminal.L_CYAN))
+            } else {
+                println "    " + output
+            }
+        }
+        println ""
+        print Terminal.dim("Press ENTER to return to link...")
+        scanner.nextLine()
+        instantRender = true
     }
 
     /**
@@ -590,6 +670,10 @@ class Game {
 
         if (input.equalsIgnoreCase("i")) {
             return "i"
+        }
+
+        if (input.equalsIgnoreCase("map") || input.equalsIgnoreCase("lattice")) {
+            return "map"
         }
         
         if (input.equalsIgnoreCase("quit")) {
