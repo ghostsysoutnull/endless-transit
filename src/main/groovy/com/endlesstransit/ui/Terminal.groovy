@@ -130,11 +130,13 @@ class Terminal {
      * Renders a boxed line of text. Handles ANSI codes and wide characters for accurate padding.
      */
     static void drawBoxedLine(String text, int width, String color = WHITE, boolean boldText = false) {
-        int visibleWidth = getVisualWidth(text)
-        int padding = width - visibleWidth - 4 // 2 for borders, 2 for spaces
+        int innerWidth = width - 4
+        String safeText = ansiSafeTruncate(text, innerWidth)
+        int visibleWidth = getVisualWidth(safeText)
+        int padding = innerWidth - visibleWidth
         
         print colorize(BOX_V + " ", color)
-        print boldText ? bold(text) : text
+        print boldText ? bold(safeText) : safeText
         if (padding > 0) print " " * padding
         println colorize(" " + BOX_V, color)
     }
@@ -153,15 +155,58 @@ class Terminal {
     static int getVisualWidth(String text) {
         String stripped = stripAnsi(text)
         int width = 0
-        stripped.each { char c ->
-            // Basic logic: high codepoints (emojis, certain symbols) usually take 2 cells
-            if (c.hashCode() > 0x2000) {
+        int i = 0
+        while (i < stripped.length()) {
+            int codePoint = stripped.codePointAt(i)
+            // East Asian Width or Emojis: very simplified check
+            // Most emojis and CJK characters are in these ranges
+            if (codePoint >= 0x1F000 || (codePoint >= 0x2E80 && codePoint <= 0x9FFF)) {
                 width += 2
             } else {
                 width += 1
             }
+            i += Character.charCount(codePoint)
         }
         return width
+    }
+
+    /**
+     * Truncates a string to a specific visual width while preserving ANSI codes.
+     */
+    static String ansiSafeTruncate(String text, int maxWidth) {
+        if (getVisualWidth(text) <= maxWidth) return text
+        
+        StringBuilder result = new StringBuilder()
+        int currentWidth = 0
+        int i = 0
+        
+        // We need to iterate while keeping track of ANSI sequences
+        while (i < text.length()) {
+            if (text.startsWith("\u001b[", i)) {
+                int end = text.indexOf('m', i)
+                if (end != -1) {
+                    result.append(text.substring(i, end + 1))
+                    i = end + 1
+                    continue
+                }
+            }
+            
+            int codePoint = text.codePointAt(i)
+            int charWidth = (codePoint >= 0x1F000 || (codePoint >= 0x2E80 && codePoint <= 0x9FFF)) ? 2 : 1
+            
+            if (currentWidth + charWidth + 3 > maxWidth) {
+                result.append("...")
+                // Append reset code if we were in a color
+                result.append(RESET)
+                break
+            }
+            
+            result.append(Character.toChars(codePoint))
+            currentWidth += charWidth
+            i += Character.charCount(codePoint)
+        }
+        
+        return result.toString()
     }
 
     /**
