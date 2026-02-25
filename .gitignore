@@ -2,3 +2,5 @@ docs/backups/
 *.log
 *.log.*
 journal.txt
+journal-last-entry.txt
+.journal_session_tmp
