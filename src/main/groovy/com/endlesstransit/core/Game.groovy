@@ -291,7 +291,7 @@ class Game {
                         println Terminal.colorize(">>> NEURAL_TRACE_STABILIZED.", Terminal.GREEN)
                     }
                     JournalManager.saveSession(player)
-                    println(Terminal.colorize("Goodbye!", Terminal.L_CYAN))
+                    showExitSequence()
                     break
                 }
                 continue
@@ -321,6 +321,63 @@ class Game {
         System.exit(1)
     }
 }
+
+    void showExitSequence() {
+        Terminal.clearScreen()
+        boolean isAbyssal = currentLocation.isAbyssal()
+        int footprintsCount = player.footprints.size()
+
+        if (isAbyssal) {
+            // Routine B: Abyssal Echo
+            println "\n" + Terminal.colorize(" [VOID_RESONANCE_TERMINATION] ", Terminal.RED)
+            String[] lines = [
+                "Your echoes are sinking into the strata.",
+                "The web is folding back upon itself.",
+                "The v-v-void... it remembers... [OK]",
+                "Sleep among the static, Operator."
+            ]
+            lines.each { line ->
+                String text = Terminal.glitchText(line, 0.05)
+                Terminal.typewrite(text, 40)
+                Thread.sleep(500)
+            }
+        } else if (footprintsCount >= 20) {
+            // Routine A: Locus Recap
+            println "\n" + Terminal.colorize(" [SESSION_RECAP_INITIALIZED] ", Terminal.L_CYAN)
+            println Terminal.dim("-------------------------------------------")
+            Thread.sleep(300)
+            printf("%-18s : %s\n", "FINAL_LOCUS", currentLocation.getLIP())
+            Thread.sleep(200)
+            printf("%-18s : %d steps\n", "PULSE_TRAVERSAL", player.stepCount)
+            Thread.sleep(200)
+            printf("%-18s : %d footprints\n", "CELLS_MAPPED", footprintsCount)
+            Thread.sleep(200)
+            printf("%-18s : %d spectral fragments\n", "BUFFER_DENSITY", player.inventory.size())
+            Thread.sleep(200)
+            printf("%-18s : %d stabilized\n", "RESONANT_TRACES", player.resonantTracesCount)
+            Thread.sleep(300)
+            println Terminal.dim("-------------------------------------------")
+            println "Expedition successful. Trace synchronized to substrate."
+            Thread.sleep(1000)
+        } else {
+            // Routine C: Technical Unmount
+            println "\n" + Terminal.colorize(" [LINK_TERMINATION_PROTOCOL] ", Terminal.WHITE)
+            String[] processes = [
+                "UNMOUNTING_LATTICE_TRACE",
+                "DEALLOCATING_TRACE_BUFFER",
+                "RELEASING_NEURAL_CARRIER",
+                "STABILIZING_SUBSTRATE_WAVEFORM"
+            ]
+            processes.each { proc ->
+                print Terminal.dim("[STATUS] ") + proc + "..."
+                Thread.sleep(new Random().nextInt(400) + 100)
+                println Terminal.colorize(" [DONE]", Terminal.GREEN)
+            }
+            println "\nNeural link severed. Waveform stabilized."
+            Thread.sleep(1000)
+        }
+        println ""
+    }
 
     void restoreSession() {
         def snapshot = SyncManager.restore()

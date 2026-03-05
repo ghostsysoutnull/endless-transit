@@ -11,6 +11,7 @@ class Player {
     int stepCount = 0
     Set<String> footprints = new LinkedHashSet<>()
     Set<String> visitedPaths = new LinkedHashSet<>()
+    int resonantTracesCount = 0
     int coherence = 100
     int maxCoherence = 100
 
@@ -107,6 +108,7 @@ class Player {
         }
         
         if (newFreq % 11 == 0) {
+            resonantTracesCount++
             println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
         }
     }

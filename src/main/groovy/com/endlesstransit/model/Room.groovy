@@ -204,6 +204,7 @@ class Room implements Location {
                     JournalManager.logCapture(item, this)
                     
                     if (isResonant) {
+                        game.player.resonantTracesCount++
                         println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
                     }
                     println Terminal.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", Terminal.CYAN)
@@ -258,6 +259,7 @@ class Room implements Location {
                             JournalManager.logCapture(item, this)
                             
                             if (isResonant) {
+                                game.player.resonantTracesCount++
                                 println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
                             }
                             println Terminal.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", Terminal.CYAN)
