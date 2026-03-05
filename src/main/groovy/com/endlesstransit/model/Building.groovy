@@ -17,6 +17,7 @@ class Building extends Container {
 
     // Ritual State
     boolean isBreached = false
+    boolean isLandmark = false
     int infusionCount = 0
     Set<Integer> sampledFloors = new LinkedHashSet<>()
 
@@ -47,6 +48,7 @@ class Building extends Container {
     Map<String, Object> getMutationState() {
         return [
             "isBreached": isBreached,
+            "isLandmark": isLandmark,
             "infusionCount": infusionCount,
             "sampledFloors": sampledFloors.toList()
         ]
@@ -55,6 +57,7 @@ class Building extends Container {
     @Override
     void applyMutationState(Map<String, Object> state) {
         if (state.containsKey("isBreached")) this.isBreached = (boolean) state.isBreached
+        if (state.containsKey("isLandmark")) this.isLandmark = (boolean) state.isLandmark
         if (state.containsKey("infusionCount")) this.infusionCount = (int) state.infusionCount
         if (state.containsKey("sampledFloors")) {
             this.sampledFloors.clear()
@@ -62,12 +65,26 @@ class Building extends Container {
         }
     }
 
-    Building(String namePrefix = "", long seed = 0) {
+    Building(String culture = "monolith", long seed = 0) {
         this.seed = seed
-        this.name = NameGenerator.generateBuildingName(namePrefix, seed)
         Random random = seed != 0 ? new Random(seed) : new Random()
         this.maxFloors = random.nextInt(26) + 5 
         this.apartmentsPerFloor = random.nextInt(13) + 3 // 3 to 15 apartments per floor
+
+        def result = NameGenerator.generateBuildingName(culture, maxFloors, seed)
+        this.name = (String) result.name
+        this.isLandmark = (boolean) result.isLandmark
+    }
+
+    @Override
+    void enter(Player player) {
+        if (isLandmark && !isVisited()) {
+            println "\n" + Terminal.colorize(" [UNIQUE_LOCUS_DETECTION] ", Terminal.YELLOW)
+            println Terminal.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
+            println Terminal.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
+            Thread.sleep(1000)
+        }
+        markVisited()
     }
 
     @Override

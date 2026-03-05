@@ -25,9 +25,12 @@ class Street extends Container {
     void populateChildren() {
         Random scrambler = seed != 0 ? new Random(seed) : new Random()
         int numPairs = scrambler.nextInt(9) + 2 // 2 to 10 pairs
+        
+        String culture = getVibe()?.primaryCulture ?: "monolith"
+
         for (int i = 0; i < numPairs * 2; i++) {
             long childSeed = scrambler.nextLong()
-            addLocation(new Building("", childSeed))
+            addLocation(new Building(culture, childSeed))
         }
     }
 
@@ -50,6 +53,8 @@ class Street extends Container {
             
             // Allow longer names now that we have space
             String nameL = bL.name.length() > 30 ? bL.name.substring(0, 27) + "..." : bL.name
+            if (bL.isLandmark) nameL = Terminal.colorize(Terminal.bold(nameL), Terminal.CYAN)
+
             String visL = bL.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String labelL = "${numL}. ${nameL}${visL}"
             
@@ -59,6 +64,8 @@ class Street extends Container {
             String labelR = ""
             if (bR) {
                 String nameR = bR.name.length() > 30 ? bR.name.substring(0, 27) + "..." : bR.name
+                if (bR.isLandmark) nameR = Terminal.colorize(Terminal.bold(nameR), Terminal.CYAN)
+
                 String visR = bR.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
                 labelR = "${numR}. ${nameR}${visR}"
             }

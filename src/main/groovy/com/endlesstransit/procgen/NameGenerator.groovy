@@ -55,11 +55,90 @@ class NameGenerator {
         return "${descriptors[r.nextInt(descriptors.size())]} ${nouns[r.nextInt(nouns.size())]} ${r.nextInt(99)}"
     }
 
-    static String generateBuildingName(String prefix = "", long seed = 0) {
+    static final Map<String, Map<String, List<String>>> buildingLexicon = [
+        "rust": [
+            "adj": ["Corroded", "Oxidized", "Patchwork", "Scrapyard", "Weathered", "Fading", "Dusty", "Assembled"],
+            "noun": ["Shell", "Stack", "Monolith", "Heap", "Vault", "Husk", "Anchor", "Frame"]
+        ],
+        "neon": [
+            "adj": ["Fluorescent", "Plasma", "Flickering", "Pulsing", "Synthetic", "Vibrant", "Glowing", "Digital"],
+            "noun": ["Hub", "Grid", "Node", "Array", "Matrix", "Circuit", "Core", "Nexus"]
+        ],
+        "baroque": [
+            "adj": ["Gilded", "Velvet", "Marble", "Ornate", "Grand", "Opulent", "Sacred", "Golden"],
+            "noun": ["Cathedral", "Sanctum", "Archive", "Palace", "Temple", "Gallery", "Hall", "Pillar"]
+        ],
+        "monolith": [
+            "adj": ["Brutalist", "Concrete", "Silent", "Impenetrable", "Grey", "Eternal", "Static", "Cold"],
+            "noun": ["Slab", "Tower", "Obelisk", "Block", "Unit", "Monolith", "Foundation", "Pillar"]
+        ],
+        "void": [
+            "adj": ["Hollow", "Empty", "Silent", "Ghostly", "Drifting", "Dark", "Abyssal", "Stellar"],
+            "noun": ["Void", "Shadow", "Echo", "Aperture", "Gravity", "Well", "Horizon", "Reach"]
+        ],
+        "organic": [
+            "adj": ["Living", "Grown", "Pulsing", "Verdant", "Breathing", "Soft", "Neural", "Fungal"],
+            "noun": ["Pod", "Spore", "Nest", "Shell", "Chamber", "Limb", "Leaf", "Root"]
+        ]
+    ]
+
+    static final List<String> landmarkTitles = [
+        "The Eye of the Web",
+        "Old Unimatrix Root",
+        "The Last Stable Surface",
+        "The Crystal Sanctum",
+        "The Silent Node",
+        "The Phantom Spire",
+        "The First Pillar",
+        "The Heart of the Strata",
+        "Apex of Lost Frequencies",
+        "The Great Neural Anchor",
+        "Pillar of Eternal Static",
+        "Unit Zero",
+        "The Bleeding Sky-Structure",
+        "Memory of the First Pulse",
+        "The Void-Watcher"
+    ]
+
+    static Map<String, Object> generateBuildingName(String culture, int floors, long seed = 0) {
         Random r = seed != 0 ? new Random(seed) : random
-        def prefixes = ["Neon", "Crystal", "Obsidian", "Rusty", "Chrome", "Emerald", "Vapor", "Aether", "Marble", "Titanium", "Glass", "Onyx"]
-        def suffixes = ["Tower", "Plaza", "Heights", "Complex", "Spire", "Block", "Apex", "Nexus", "Center", "Hall", "Domain", "Bastion"]
-        String generated = "${prefixes[r.nextInt(prefixes.size())]} ${suffixes[r.nextInt(suffixes.size())]}"
-        return prefix ? "$prefix $generated" : generated
+        
+        // 10% Landmark Check
+        if (r.nextDouble() < 0.10) {
+            return [name: landmarkTitles[r.nextInt(landmarkTitles.size())], isLandmark: true]
+        }
+
+        // Size-based Suffixes
+        def sizes = [
+            "small": ["Annex", "Cell", "Unit", "Pod", "Hut", "Point"],
+            "medium": ["Block", "Plaza", "Heights", "Center", "Complex", "Heights"],
+            "large": ["Arcology", "Mega-Structure", "Spire", "Sky-Anchor", "Bastion", "Citadel"]
+        ]
+        String sizeCat = floors < 10 ? "small" : (floors < 20 ? "medium" : "large")
+        
+        // Get Lexicon for culture (fall back to monolith if missing)
+        def lexicon = buildingLexicon[culture] ?: buildingLexicon["monolith"]
+        
+        // Pick a template
+        int template = r.nextInt(4)
+        String name = ""
+        switch(template) {
+            case 0: // Adjective + Noun
+                name = "${lexicon.adj[r.nextInt(lexicon.adj.size())]} ${lexicon.noun[r.nextInt(lexicon.noun.size())]}"
+                break
+            case 1: // The [Noun] of [Concept]
+                def concepts = ["Static", "Frequencies", "Resonance", "Stability", "Time", "Light", "The Web"]
+                name = "The ${lexicon.noun[r.nextInt(lexicon.noun.size())]} of ${concepts[r.nextInt(concepts.size())]}"
+                break
+            case 2: // Code-Based
+                name = "Unit 0x${Integer.toHexString(r.nextInt(0xFFF)).toUpperCase()} ${sizes[sizeCat][r.nextInt(sizes[sizeCat].size())]}"
+                break
+            case 3: // Compound
+                def compounds = ["Gate", "Fall", "Reach", "Spire", "Well", "Root"]
+                name = "${lexicon.noun[r.nextInt(lexicon.noun.size())]}${compounds[r.nextInt(compounds.size())]}"
+                break
+        }
+
+        return [name: name, isLandmark: false]
     }
 }

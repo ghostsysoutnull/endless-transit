@@ -170,6 +170,11 @@ Reorganize the `docs/` folder into functional categories and provide a central i
 - [x] Update any internal links between documents (if necessary).
 - [x] Verify that all context imports in `GEMINI.md` still point to correct (or root) documentation if they reference `docs/`.
 
+# Advanced Naming & Landmarks
+- [x] Implement culture-aware building naming engine.
+- [x] Add 10% probability for unique Legendary Landmarks.
+- [x] Integrate visual highlighting and discovery events for Landmarks.
+
 # Proposed Future Phases
 
 ## Phase 8: Harmonic Resonance Hubs
