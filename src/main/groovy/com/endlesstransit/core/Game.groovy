@@ -284,8 +284,13 @@ class Game {
                 print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
                 String confirm = scanner.hasNextLine() ? scanner.nextLine().trim().toLowerCase() : "y"
                 if (confirm == "y" || !scanner.hasNextLine()) {
+                    print Terminal.colorize("Synchronize neural trace before termination? [Y/n]: ", Terminal.CYAN)
+                    String saveConfirm = scanner.hasNextLine() ? scanner.nextLine().trim().toLowerCase() : "y"
+                    if (saveConfirm == "y" || saveConfirm == "") {
+                        SyncManager.sync(this)
+                        println Terminal.colorize(">>> NEURAL_TRACE_STABILIZED.", Terminal.GREEN)
+                    }
                     JournalManager.saveSession(player)
-                    SyncManager.sync(this)
                     println(Terminal.colorize("Goodbye!", Terminal.L_CYAN))
                     break
                 }

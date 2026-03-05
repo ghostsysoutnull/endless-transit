@@ -50,10 +50,10 @@ class Planet extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
-        int numCountries = random.nextInt(7) + 2
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
+        int numCountries = scrambler.nextInt(7) + 2
         for (int i = 0; i < numCountries; i++) {
-            long childSeed = seed != 0 ? seed + i + 10 : 0
+            long childSeed = scrambler.nextLong()
             addLocation(new Country(NameGenerator.generateCountryName(childSeed), childSeed))
         }
     }

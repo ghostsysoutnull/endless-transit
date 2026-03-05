@@ -23,10 +23,10 @@ class SolarSystem extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
-        int numPlanets = random.nextInt(9) + 2
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
+        int numPlanets = scrambler.nextInt(9) + 2
         for (int i = 0; i < numPlanets; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
+            long childSeed = scrambler.nextLong()
             addLocation(new Planet(NameGenerator.generatePlanetName(childSeed), childSeed))
         }
     }

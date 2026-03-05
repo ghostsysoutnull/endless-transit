@@ -55,11 +55,11 @@ class Universe extends Container {
 
     @Override
     void populateChildren() {
-        Random random = new Random(seed)
-        int numFilaments = random.nextInt(5) + 3
+        Random scrambler = new Random(seed)
+        int numFilaments = scrambler.nextInt(5) + 3
         for (int i = 0; i < numFilaments; i++) {
-            // Derived seed for child
-            long childSeed = seed + i + 1
+            // Use scrambler to generate a high-entropy seed for the child
+            long childSeed = scrambler.nextLong()
             addLocation(new CosmicFilament(NameGenerator.generateFilamentName(childSeed), childSeed))
         }
     }

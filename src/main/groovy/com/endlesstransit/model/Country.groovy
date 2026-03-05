@@ -28,19 +28,19 @@ class Country extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
         
         // Ensure we have a local mutated vibe for this country based on the planet
         if (this.localVibe == null) {
             def parentVibe = getVibe()
             if (parentVibe != null) {
-                this.localVibe = parentVibe.mutate(functionalTrait, random.nextDouble() * 0.2 - 0.1)
+                this.localVibe = parentVibe.mutate(functionalTrait, scrambler.nextDouble() * 0.2 - 0.1)
             }
         }
         
-        int numCities = random.nextInt(9) + 2
+        int numCities = scrambler.nextInt(9) + 2
         for (int i = 0; i < numCities; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
+            long childSeed = scrambler.nextLong()
             addLocation(new City(NameGenerator.generateCityName(childSeed), childSeed))
         }
     }

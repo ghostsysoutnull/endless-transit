@@ -17,11 +17,11 @@ class GalacticSector extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
         // Contains 3 to 7 Solar Systems
-        int numSystems = random.nextInt(5) + 3
+        int numSystems = scrambler.nextInt(5) + 3
         for (int i = 0; i < numSystems; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
+            long childSeed = scrambler.nextLong()
             addLocation(new SolarSystem(NameGenerator.generateSolarSystemName(childSeed), childSeed))
         }
     }
@@ -36,7 +36,9 @@ class GalacticSector extends Container {
         ensureChildrenPopulated()
         def options = getBaseOptions(game)
         children.eachWithIndex { system, i ->
-            options["${i + 1}. Transition to System: ${system.name}"] = { game.enterLocation(system) }
+            String label = "${i + 1}. Transition to System: ${system.name}"
+            if (system.isVisited()) label += " [Visited]"
+            options[label] = { game.enterLocation(system) }
         }
         return options
     }

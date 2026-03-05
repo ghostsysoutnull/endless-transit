@@ -55,38 +55,39 @@ class Apartment extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
         
         // Use Vibe from parent unless anomaly
         def vibe = getVibe()
-        if (vibe != null && random.nextDouble() > 0.01) {
+        if (vibe != null && scrambler.nextDouble() > 0.01) {
             this.timeline = vibe.timeline
-            this.culture = vibe.pickCulture(seed != 0 ? seed + 1 : 0)
+            this.culture = vibe.pickCulture(scrambler.nextLong())
         } else if (vibe != null) {
             this.isAnomaly = true
             // Keep original random culture/timeline from constructor
         }
 
-        int numRooms = random.nextInt(10) + 1
+        int numRooms = scrambler.nextInt(10) + 1
         this.@rooms.clear()
 
         // Generate a pool of objects for the entire apartment
-        int totalObjects = random.nextInt(15) + 5 // 5 to 20 objects per apartment
+        int totalObjects = scrambler.nextInt(15) + 5 // 5 to 20 objects per apartment
         List<String> objectPool = []
         for (int i = 0; i < totalObjects; i++) {
             // Derived seed for object pool
-            objectPool << ThemeManager.generateHybridObject(culture, timeline, seed != 0 ? seed + i + 100 : 0)
+            objectPool << ThemeManager.generateHybridObject(culture, timeline, scrambler.nextLong())
         }
 
         for (int i = 0; i < numRooms; i++) {
-            def room = new Room(culture, timeline, seed != 0 ? seed + i + 500 : 0)
+            long roomSeed = scrambler.nextLong()
+            def room = new Room(culture, timeline, roomSeed)
             this.@rooms.add(room)
             addLocation(room) // Sets parent
         }
         
         // Distribute objects from pool to rooms deterministically
         while (!objectPool.isEmpty()) {
-            int roomIdx = random.nextInt(this.@rooms.size())
+            int roomIdx = scrambler.nextInt(this.@rooms.size())
             def room = this.@rooms[roomIdx]
             room.objects << objectPool.remove(0)
         }

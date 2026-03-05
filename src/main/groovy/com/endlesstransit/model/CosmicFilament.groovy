@@ -20,13 +20,13 @@ class CosmicFilament extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
         // Contains 4 to 8 nodes (either Sectors or Null Zones)
-        int numNodes = random.nextInt(5) + 4
+        int numNodes = scrambler.nextInt(5) + 4
         for (int i = 0; i < numNodes; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
-            if (random.nextInt(10) < 3) { // 30% chance of a Null Sector
-                String nullName = "Null Reach ${Integer.toHexString(random.nextInt(0xFFF)).toUpperCase()}"
+            long childSeed = scrambler.nextLong()
+            if (scrambler.nextInt(10) < 3) { // 30% chance of a Null Sector
+                String nullName = "Null Reach ${Integer.toHexString(scrambler.nextInt(0xFFF)).toUpperCase()}"
                 addLocation(new NullSector(nullName, childSeed))
             } else {
                 addLocation(new GalacticSector(NameGenerator.generateSectorName(childSeed), childSeed))
@@ -45,7 +45,9 @@ class CosmicFilament extends Container {
         def options = getBaseOptions(game)
         children.eachWithIndex { node, i ->
             String nodeType = node instanceof NullSector ? "VOID_REACH" : "MATTER_CLUSTER"
-            options["${i + 1}. Pulse to ${nodeType}: ${node.name}"] = { game.enterLocation(node) }
+            String label = "${i + 1}. Pulse to ${nodeType}: ${node.name}"
+            if (node.isVisited()) label += " [Visited]"
+            options[label] = { game.enterLocation(node) }
         }
         return options
     }

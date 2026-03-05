@@ -24,13 +24,13 @@ class City extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
         
         if (this.localVibe == null) {
             def parentVibe = getVibe()
             if (parentVibe != null) {
                 // 10% chance to be a "rebel" district and flip resonances
-                if (random.nextDouble() < 0.1) {
+                if (scrambler.nextDouble() < 0.1) {
                     this.isRebelDistrict = true
                     this.localVibe = new VibeCapsule(parentVibe.timeline, parentVibe.secondaryCulture, parentVibe.primaryCulture)
                     this.localVibe.latticeMutation = parentVibe.latticeMutation
@@ -40,9 +40,9 @@ class City extends Container {
             }
         }
 
-        int numStreets = random.nextInt(13) + 3
+        int numStreets = scrambler.nextInt(13) + 3
         for (int i = 0; i < numStreets; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
+            long childSeed = scrambler.nextLong()
             addLocation(new Street(NameGenerator.generateStreetName(childSeed), childSeed))
         }
     }

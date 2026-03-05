@@ -23,10 +23,10 @@ class Street extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
-        int numPairs = random.nextInt(9) + 2 // 2 to 10 pairs
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
+        int numPairs = scrambler.nextInt(9) + 2 // 2 to 10 pairs
         for (int i = 0; i < numPairs * 2; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
+            long childSeed = scrambler.nextLong()
             addLocation(new Building("", childSeed))
         }
     }
@@ -91,7 +91,9 @@ class Street extends Container {
         
         for (int i = 0; i < buildings.size(); i++) {
             def building = buildings[i]
-            options["${i + 1}. Enter Building: ${building.name}"] = { game.enterLocation(building) }
+            String label = "${i + 1}. Enter Building: ${building.name}"
+            if (building.isVisited()) label += " [Visited]"
+            options[label] = { game.enterLocation(building) }
         }
         return options
     }

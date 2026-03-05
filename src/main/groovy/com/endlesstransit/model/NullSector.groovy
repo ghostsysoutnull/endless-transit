@@ -30,11 +30,11 @@ class NullSector extends Container {
 
     @Override
     void populateChildren() {
-        Random random = seed != 0 ? new Random(seed) : new Random()
+        Random scrambler = seed != 0 ? new Random(seed) : new Random()
         // Very sparse: only 1 or 2 systems adrift in the void
-        int numSystems = random.nextInt(2) + 1
+        int numSystems = scrambler.nextInt(2) + 1
         for (int i = 0; i < numSystems; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
+            long childSeed = scrambler.nextLong()
             addLocation(new SolarSystem("Lost ${NameGenerator.generateSolarSystemName(childSeed)}", childSeed))
         }
     }
@@ -88,7 +88,9 @@ class NullSector extends Container {
         }
 
         children.eachWithIndex { system, i ->
-            options["${i + 1}. Detect faint signal: ${system.name}"] = { game.enterLocation(system) }
+            String label = "${i + 1}. Detect faint signal: ${system.name}"
+            if (system.isVisited()) label += " [Visited]"
+            options[label] = { game.enterLocation(system) }
         }
         return options
     }
