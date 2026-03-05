@@ -43,9 +43,29 @@ class Building extends Container {
         println ""
     }
 
-    Building(String namePrefix = "") {
-        this.name = NameGenerator.generateBuildingName(namePrefix)
-        Random random = new Random()
+    @Override
+    Map<String, Object> getMutationState() {
+        return [
+            "isBreached": isBreached,
+            "infusionCount": infusionCount,
+            "sampledFloors": sampledFloors.toList()
+        ]
+    }
+
+    @Override
+    void applyMutationState(Map<String, Object> state) {
+        if (state.containsKey("isBreached")) this.isBreached = (boolean) state.isBreached
+        if (state.containsKey("infusionCount")) this.infusionCount = (int) state.infusionCount
+        if (state.containsKey("sampledFloors")) {
+            this.sampledFloors.clear()
+            this.sampledFloors.addAll((List<Integer>) state.sampledFloors)
+        }
+    }
+
+    Building(String namePrefix = "", long seed = 0) {
+        this.seed = seed
+        this.name = NameGenerator.generateBuildingName(namePrefix, seed)
+        Random random = seed != 0 ? new Random(seed) : new Random()
         this.maxFloors = random.nextInt(26) + 5 
         this.apartmentsPerFloor = random.nextInt(13) + 3 // 3 to 15 apartments per floor
     }
@@ -67,7 +87,7 @@ class Building extends Container {
         def floor = floors.find { it.number == number }
         if (floor == null) {
             Logger.info("Instantiating new Floor $number in Building $name")
-            floor = new Floor(number, apartmentsPerFloor)
+            floor = new Floor(number, apartmentsPerFloor, seed != 0 ? seed + number : 0)
             addLocation(floor)
         }
         return floor

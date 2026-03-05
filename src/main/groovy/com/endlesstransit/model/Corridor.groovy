@@ -83,9 +83,10 @@ class Corridor extends Container {
         return options
     }
 
-    Corridor(int numApartments, String culture) {
+    Corridor(int numApartments, String culture, long seed = 0) {
         this.culture = culture
         this.numApartments = numApartments
+        this.seed = seed
     }
 
     @Override
@@ -105,9 +106,10 @@ class Corridor extends Container {
         this.@apartments.clear()
 
         for (int i = 0; i < numApartments; i++) {
-            def door = new Door()
+            long childSeed = seed != 0 ? seed + i + 1 : 0
+            def door = new Door(childSeed)
             this.@doors.add(door)
-            def apartment = new Apartment(door.getDescription(), culture)
+            def apartment = new Apartment(door.getDescription(), culture, childSeed)
             this.@apartments.add(apartment)
             addLocation(apartment)
         }

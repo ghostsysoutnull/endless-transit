@@ -46,21 +46,22 @@ class Apartment extends Container {
         return getBaseOptions(game)
     }
 
-    Apartment(String doorDescription = "A plain door", String culture = "rust") {
+    Apartment(String doorDescription = "A plain door", String culture = "rust", long seed = 0) {
         this.doorDescription = doorDescription
         this.culture = culture
-        this.timeline = ThemeManager.getRandomTimeline()
+        this.seed = seed
+        this.timeline = ThemeManager.getRandomTimeline(seed)
     }
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         
         // Use Vibe from parent unless anomaly
         def vibe = getVibe()
         if (vibe != null && random.nextDouble() > 0.01) {
             this.timeline = vibe.timeline
-            this.culture = vibe.pickCulture()
+            this.culture = vibe.pickCulture(seed != 0 ? seed + 1 : 0)
         } else if (vibe != null) {
             this.isAnomaly = true
             // Keep original random culture/timeline from constructor
@@ -73,18 +74,20 @@ class Apartment extends Container {
         int totalObjects = random.nextInt(15) + 5 // 5 to 20 objects per apartment
         List<String> objectPool = []
         for (int i = 0; i < totalObjects; i++) {
-            objectPool << ThemeManager.generateHybridObject(culture, timeline)
+            // Derived seed for object pool
+            objectPool << ThemeManager.generateHybridObject(culture, timeline, seed != 0 ? seed + i + 100 : 0)
         }
 
         for (int i = 0; i < numRooms; i++) {
-            def room = new Room(culture, timeline)
+            def room = new Room(culture, timeline, seed != 0 ? seed + i + 500 : 0)
             this.@rooms.add(room)
             addLocation(room) // Sets parent
         }
         
-        // Distribute objects from pool to rooms
+        // Distribute objects from pool to rooms deterministically
         while (!objectPool.isEmpty()) {
-            def room = this.@rooms[random.nextInt(this.@rooms.size())]
+            int roomIdx = random.nextInt(this.@rooms.size())
+            def room = this.@rooms[roomIdx]
             room.objects << objectPool.remove(0)
         }
     }

@@ -9,6 +9,7 @@ import com.endlesstransit.ui.ThemeManager
 class Player {
     List<InventoryItem> inventory
     int stepCount = 0
+    Set<String> footprints = new LinkedHashSet<>()
     Set<String> visitedPaths = new LinkedHashSet<>()
     int coherence = 100
     int maxCoherence = 100
@@ -17,6 +18,18 @@ class Player {
         inventory = new ArrayList<InventoryItem>()
         stepCount = 0
         coherence = 100
+    }
+
+    void markFootprint(Location location) {
+        String lip = location.getLIP()
+        footprints.add(lip)
+        
+        // Also track high-level paths for the journal/HUD
+        boolean isMacro = !(location instanceof Floor || location instanceof Corridor || 
+                            location instanceof Apartment || location instanceof Room)
+        if (isMacro) {
+            visitedPaths.add(location.getPath())
+        }
     }
 
     void adjustCoherence(Number delta) {

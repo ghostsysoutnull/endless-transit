@@ -17,13 +17,14 @@ class City extends Container {
         return streets
     }
 
-    City(String name) {
+    City(String name, long seed = 0) {
         this.name = name
+        this.seed = seed
     }
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         
         if (this.localVibe == null) {
             def parentVibe = getVibe()
@@ -41,7 +42,7 @@ class City extends Container {
 
         int numStreets = random.nextInt(13) + 3
         for (int i = 0; i < numStreets; i++) {
-            addLocation(new Street(NameGenerator.generateStreetName()))
+            addLocation(new Street(NameGenerator.generateStreetName(), seed != 0 ? seed + i + 1 : 0))
         }
     }
 

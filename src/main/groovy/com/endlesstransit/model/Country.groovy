@@ -17,16 +17,18 @@ class Country extends Container {
         return cities
     }
 
-    Country(String name) {
+    Country(String name, long seed = 0) {
         this.name = name
+        this.seed = seed
         
+        Random r = seed != 0 ? new Random(seed) : new Random()
         def traits = ["Ceremonial", "Military", "Industrial", "Agricultural", "Research", "Commercial"]
-        this.functionalTrait = traits[new Random().nextInt(traits.size())]
+        this.functionalTrait = traits[r.nextInt(traits.size())]
     }
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         
         // Ensure we have a local mutated vibe for this country based on the planet
         if (this.localVibe == null) {
@@ -38,7 +40,7 @@ class Country extends Container {
         
         int numCities = random.nextInt(9) + 2
         for (int i = 0; i < numCities; i++) {
-            addLocation(new City(NameGenerator.generateCityName()))
+            addLocation(new City(NameGenerator.generateCityName(), seed != 0 ? seed + i + 1 : 0))
         }
     }
 

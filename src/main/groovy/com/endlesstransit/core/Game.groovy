@@ -16,27 +16,31 @@ class Game {
     Map<String, String> currentActionMap = [:]
     Map<String, String> previousActionMap = [:] 
     boolean instantRender = false
+    long masterSeed
 
-    Game() {
+    Game(long seed = System.currentTimeMillis()) {
+        this.masterSeed = seed
         player = new Player()
         scanner = new Scanner(System.in)
         initializeWorld()
     }
 
     void initializeWorld() {
-        def universe = new Universe()
+        def universe = new Universe(masterSeed)
         
         // Start deep: Universe > Filament > Sector > System > Planet > Country > City > Street
-        def filament = universe.filaments[0]
+        def filaments = universe.getFilaments()
+        def filament = filaments[0]
         def node = filament.children[0]
         
         // Find a SolarSystem within the node (GalacticSector or NullSector)
-        def system = node.children[0]
+        def systems = node.children
+        def system = systems[0]
         
-        def planet = system.planets[0]
-        def country = planet.countries[0]
-        def city = country.cities[0]
-        currentLocation = city.streets[0]
+        def planet = system.getPlanets()[0]
+        def country = planet.getCountries()[0]
+        def city = country.getCities()[0]
+        currentLocation = city.getStreets()[0]
     }
 
     void renderInventoryOverlay() {
@@ -72,6 +76,17 @@ class Game {
         println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")
         JournalManager.startSession(player)
+        
+        // Check for existing trace substrate
+        File saveFile = new File(SyncManager.SAVE_FILE)
+        if (saveFile.exists()) {
+            println Terminal.dim("  [DETECTED_NEURAL_TRACE_SUBSTRATE]")
+            print Terminal.colorize("  Restore previous session? [y/N]: ", Terminal.YELLOW)
+            String confirm = scanner.hasNextLine() ? scanner.nextLine().trim().toLowerCase() : "n"
+            if (confirm == "y") {
+                restoreSession()
+            }
+        }
         
         try {
             while (true) {
@@ -178,6 +193,7 @@ class Game {
                     println(label)
                 }
                 println("${Terminal.colorize("i", Terminal.YELLOW)}. Open Trace Buffer")
+                println("${Terminal.colorize("sync", Terminal.CYAN)}. Synchronize Neural Trace")
                 println("${Terminal.colorize("quit", Terminal.RED)}. Terminate Link")
 
                 String choice
@@ -216,6 +232,14 @@ class Game {
                     lastChoice = "i"
                     inventoryMenu()
                     // Break inner loop to re-render location immediately
+                    choice = null
+                    break
+                }
+
+                if (choice == "sync") {
+                    lastChoice = "sync"
+                    SyncManager.sync(this)
+                    println Terminal.colorize("\n>>> NEURAL_TRACE_STABILIZED: Session synchronized to substrate.", Terminal.GREEN)
                     choice = null
                     break
                 }
@@ -261,6 +285,7 @@ class Game {
                 String confirm = scanner.hasNextLine() ? scanner.nextLine().trim().toLowerCase() : "y"
                 if (confirm == "y" || !scanner.hasNextLine()) {
                     JournalManager.saveSession(player)
+                    SyncManager.sync(this)
                     println(Terminal.colorize("Goodbye!", Terminal.L_CYAN))
                     break
                 }
@@ -291,6 +316,59 @@ class Game {
         System.exit(1)
     }
 }
+
+    void restoreSession() {
+        def snapshot = SyncManager.restore()
+        if (snapshot == null) return
+
+        println Terminal.colorize("\n>>> RESTORE_INITIATED: Reconstituting trace...", Terminal.L_CYAN)
+        
+        this.masterSeed = (long) snapshot.masterSeed
+        def universe = new Universe(masterSeed)
+        
+        // Restore Player state
+        player = new Player()
+        player.coherence = (int) snapshot.player.coherence
+        player.stepCount = (int) snapshot.player.stepCount
+        player.footprints.addAll((List<String>) snapshot.player.footprints)
+        player.visitedPaths.addAll((List<String>) snapshot.player.visitedPaths)
+        
+        snapshot.player.inventory.each { item ->
+            player.inventory.add(new InventoryItem(
+                (String) item.name, 
+                (int) item.frequency, 
+                (int) item.sessionMergeCount, 
+                (boolean) item.isKeystone
+            ))
+        }
+
+        // Apply World Mutations and Restore Footprints
+        snapshot.mutations.each { lip, state ->
+            Location loc = universe.resolveLIP(lip)
+            if (loc != null) {
+                loc.applyMutationState((Map<String, Object>) state)
+            }
+        }
+
+        // Apply "Visited" status to all footprints
+        player.footprints.each { lip ->
+            Location loc = universe.resolveLIP(lip)
+            if (loc != null) {
+                loc.markVisited()
+            }
+        }
+
+        // Resolve current location
+        String currentLIP = (String) snapshot.player.currentLIP
+        this.currentLocation = universe.resolveLIP(currentLIP)
+        if (this.currentLocation == null) {
+            Logger.error("RESTORE_ERROR: Could not resolve current location LIP: $currentLIP")
+            initializeWorld()
+        }
+
+        println Terminal.colorize(">>> RESTORE_COMPLETE: Neural link synchronized with current locus.", Terminal.GREEN)
+        instantRender = true
+    }
 
     void inventoryMenu() {
         while (true) {
@@ -434,6 +512,7 @@ class Game {
         println ""
         println "${Terminal.bold("map")} / ${Terminal.bold("m")}            : View 2D spatial representation of current area."
         println "${Terminal.bold("lattice")}            : View vertical world hierarchy tree."
+        println "${Terminal.bold("sync")}               : Synchronize Neural Trace to substrate (Save)."
         println "${Terminal.bold("i")}                  : Open Quantum Trace Buffer (Inventory)."
         println "${Terminal.bold("q")} / ${Terminal.bold("quit")}         : Terminate neural link."
         println "${Terminal.bold("glitch")}               : Open Lattice Debug/Cheat Menu."
@@ -793,31 +872,16 @@ class Game {
         Logger.info("Changing location from ${currentLocation?.getPath()} to ${location?.getPath()}")
         this.currentLocation = location
         
-        // Record path if it's macro-scale (up until Building)
         if (location != null) {
-            boolean isMacro = !(location instanceof Floor || location instanceof Corridor || 
-                                location instanceof Apartment || location instanceof Room)
-            String path = location.getPath()
-            if (isMacro) {
-                if (!player.visitedPaths.contains(path)) {
-                    player.visitedPaths.add(path)
-                    JournalManager.logDiscovery(path, location)
+            player.markFootprint(location)
+            
+            // For stability: also mark high-level ancestors if entering a room directly
+            Location p = location.parent
+            while (p != null) {
+                if (p instanceof Building || p instanceof City || p instanceof Planet) {
+                    player.markFootprint(p)
                 }
-            } else {
-                // If we enter a building's internal structure, ensure the Building itself is recorded
-                // This handles cases where we might jump directly or for consistency
-                Location p = location.parent
-                while (p != null) {
-                    if (p instanceof Building) {
-                        String bPath = p.getPath()
-                        if (!player.visitedPaths.contains(bPath)) {
-                            player.visitedPaths.add(bPath)
-                            JournalManager.logDiscovery(bPath, p)
-                        }
-                        break
-                    }
-                    p = p.parent
-                }
+                p = p.parent
             }
         }
     }
@@ -867,6 +931,10 @@ class Game {
 
         if (input.equalsIgnoreCase("i")) {
             return "i"
+        }
+
+        if (input.equalsIgnoreCase("sync")) {
+            return "sync"
         }
 
         if (input.equalsIgnoreCase("map") || input.equalsIgnoreCase("m")) {

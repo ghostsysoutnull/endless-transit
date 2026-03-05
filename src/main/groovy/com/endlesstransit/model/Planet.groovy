@@ -18,14 +18,18 @@ class Planet extends Container {
         return countries
     }
 
-    Planet(String name) {
+    Planet(String name, long seed = 0) {
         this.name = name
+        this.seed = seed
         
-        // Initialize Planetary Vibe
-        String timeline = ThemeManager.getRandomTimeline()
-        String primary = ThemeManager.getRandomCulture()
-        String secondary = ThemeManager.getRandomCulture()
-        while (secondary == primary) secondary = ThemeManager.getRandomCulture()
+        // Initialize Planetary Vibe Deterministically
+        String timeline = ThemeManager.getRandomTimeline(seed != 0 ? seed : 0)
+        String primary = ThemeManager.getRandomCulture(seed != 0 ? seed + 1 : 0)
+        String secondary = ThemeManager.getRandomCulture(seed != 0 ? seed + 2 : 0)
+        while (secondary == primary) {
+            // Stability check for secondary
+            secondary = ThemeManager.getRandomCulture(seed != 0 ? seed + 3 : 0)
+        }
         
         this.localVibe = new VibeCapsule(timeline, primary, secondary)
         
@@ -46,10 +50,10 @@ class Planet extends Container {
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         int numCountries = random.nextInt(7) + 2
         for (int i = 0; i < numCountries; i++) {
-            addLocation(new Country(NameGenerator.generateCountryName()))
+            addLocation(new Country(NameGenerator.generateCountryName(), seed != 0 ? seed + i + 10 : 0))
         }
     }
 

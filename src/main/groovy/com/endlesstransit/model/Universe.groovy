@@ -16,15 +16,50 @@ class Universe extends Container {
         return filaments
     }
 
-    Universe() {
+    Universe(long seed = System.currentTimeMillis()) {
+        this.seed = seed
+    }
+
+    /**
+     * Resolves a Locus Index Path (LIP) to a specific Location object.
+     * Walks the tree from the root Universe.
+     */
+    Location resolveLIP(String lip) {
+        if (lip == "0") return this
+        
+        def parts = lip.split("\\.")
+        if (parts[0] != "0") {
+            Logger.error("INVALID_LIP_ROOT: $lip")
+            return null
+        }
+        
+        Location current = this
+        // Skip parts[0] as it's the root Universe
+        for (int i = 1; i < parts.length; i++) {
+            if (!(current instanceof Container)) {
+                Logger.error("LIP_RESOLUTION_FAILED: Node is not a container at $i ($lip)")
+                return null
+            }
+            Container container = (Container) current
+            container.ensureChildrenPopulated()
+            int childIndex = parts[i].toInteger()
+            
+            if (childIndex < 0 || childIndex >= container.children.size()) {
+                Logger.error("LIP_RESOLUTION_FAILED: Index out of bounds $childIndex (size: ${container.children.size()}) at part $i")
+                return null
+            }
+            current = container.children[childIndex]
+        }
+        return current
     }
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = new Random(seed)
         int numFilaments = random.nextInt(5) + 3
         for (int i = 0; i < numFilaments; i++) {
-            addLocation(new CosmicFilament(NameGenerator.generateFilamentName()))
+            // Derived seed for child
+            addLocation(new CosmicFilament(NameGenerator.generateFilamentName(), seed + i + 1))
         }
     }
 

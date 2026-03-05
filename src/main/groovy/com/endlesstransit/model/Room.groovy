@@ -24,6 +24,26 @@ class Room implements Location {
     String culture
     String timeline
     boolean isAnomaly = false
+    long seed
+
+    @Override
+    long getSeed() {
+        return seed
+    }
+
+    @Override
+    void setSeed(long seed) {
+        this.seed = seed
+    }
+
+    /**
+     * Generates a Locus Index Path (LIP) for the current location.
+     */
+    @Override
+    String getLIP() {
+        int myIndex = getIndexInParent() - 1 // 0-based index for LIP
+        return "${parent.getLIP()}.$myIndex"
+    }
 
     @Override
     boolean isVisited() {
@@ -100,6 +120,19 @@ class Room implements Location {
             return "Shard 0x" + Integer.toHexString(myIndex).toUpperCase()
         }
         return "Room ${myIndex}"
+    }
+
+    @Override
+    Map<String, Object> getMutationState() {
+        return ["objects": objects]
+    }
+
+    @Override
+    void applyMutationState(Map<String, Object> state) {
+        if (state.containsKey("objects")) {
+            this.objects.clear()
+            this.objects.addAll((List<String>) state.objects)
+        }
     }
 
     @Override
@@ -259,16 +292,17 @@ class Room implements Location {
         return options
     }
 
-    Room(String culture = "rust", String timeline = "ancient") {
+    Room(String culture = "rust", String timeline = "ancient", long seed = 0) {
         this.culture = culture
         this.timeline = timeline
+        this.seed = seed
         
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         String[] colors = ["white", "blue", "pink", "gray", "purple", "orange", "green", "red"]
         color = colors[random.nextInt(colors.length)]
         
         // Initial atmosphere (will be refined when parent is set)
-        def atmos = ThemeManager.generateAtmosphere(culture, timeline)
+        def atmos = ThemeManager.generateAtmosphere(culture, timeline, "Standard", false, seed)
         this.walls = atmos.walls
         this.lightingDesc = atmos.lighting
         this.structureDesc = atmos.structure
@@ -277,7 +311,8 @@ class Room implements Location {
         int numFurniture = random.nextInt(3) + 1
         furniture = []
         for (int i = 0; i < numFurniture; i++) {
-            furniture << ThemeManager.generateHybridObject(culture, timeline)
+            // Derived seed for furniture
+            furniture << ThemeManager.generateHybridObject(culture, timeline, seed != 0 ? seed + i + 100 : 0)
         }
     }
 

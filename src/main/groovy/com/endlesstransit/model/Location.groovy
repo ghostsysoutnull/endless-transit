@@ -26,4 +26,9 @@ interface Location {
     boolean isAbyssal()
     String getMapSymbol()
     String getMapColor()
+    long getSeed()
+    void setSeed(long seed)
+    String getLIP()
+    Map<String, Object> getMutationState()
+    void applyMutationState(Map<String, Object> state)
 }

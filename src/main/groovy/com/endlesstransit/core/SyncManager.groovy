@@ -1,0 +1,87 @@
+package com.endlesstransit.core
+
+import com.endlesstransit.model.*
+import com.endlesstransit.ui.Terminal
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+class SyncManager {
+    static final String SAVE_FILE = "session.trace"
+
+    /**
+     * Captures the current game state into a JSON file.
+     */
+    static void sync(Game game) {
+        Logger.info("SYNC_INITIATED: Capturing neural trace...")
+        
+        def player = game.player
+        def snapshot = [
+            "version": "1.1",
+            "masterSeed": game.masterSeed,
+            "timestamp": System.currentTimeMillis(),
+            "player": [
+                "coherence": player.coherence,
+                "stepCount": player.stepCount,
+                "currentLIP": game.currentLocation.getLIP(),
+                "footprints": player.footprints.toList(),
+                "visitedPaths": player.visitedPaths.toList(),
+                "inventory": player.inventory.collect { [
+                    "name": it.name,
+                    "frequency": it.frequency,
+                    "sessionMergeCount": it.sessionMergeCount,
+                    "isKeystone": it.isKeystone
+                ] }
+            ],
+            "mutations": gatherMutations(game)
+        ]
+
+        try {
+            def json = new JsonBuilder(snapshot)
+            new File(SAVE_FILE).write(json.toPrettyString())
+            Logger.info("SYNC_COMPLETE: Trace stabilized at $SAVE_FILE")
+        } catch (Exception e) {
+            Logger.error("SYNC_FAILED: Failed to write trace to substrate.", e)
+            throw e
+        }
+    }
+
+    /**
+     * Loads the game state from a JSON file and reconstitutes the world.
+     */
+    static Map<String, Object> restore() {
+        File file = new File(SAVE_FILE)
+        if (!file.exists()) {
+            Logger.info("RESTORE_FAILED: No trace substrate found at $SAVE_FILE")
+            return null
+        }
+
+        try {
+            def snapshot = new JsonSlurper().parse(file)
+            Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)}")
+            return snapshot
+        } catch (Exception e) {
+            Logger.error("RESTORE_FAILED: Trace corruption detected.", e)
+            return null
+        }
+    }
+
+    /**
+     * Scans all footprints and gathers locations with non-empty mutation states.
+     */
+    private static Map<String, Map<String, Object>> gatherMutations(Game game) {
+        Map<String, Map<String, Object>> mutations = [:]
+        
+        // This is a bit expensive, but ensures all visited rooms/buildings are saved.
+        // In a real "Sync", we only save things that actually changed.
+        game.player.footprints.each { lip ->
+            Location loc = ((Universe)game.currentLocation.findAncestor(Universe.class)).resolveLIP(lip)
+            if (loc != null) {
+                def state = loc.getMutationState()
+                if (state) {
+                    mutations[lip] = state
+                }
+            }
+        }
+        return mutations
+    }
+}

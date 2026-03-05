@@ -16,16 +16,17 @@ class Street extends Container {
         return buildings
     }
 
-    Street(String name) {
+    Street(String name, long seed = 0) {
         this.name = name
+        this.seed = seed
     }
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         int numPairs = random.nextInt(9) + 2 // 2 to 10 pairs
         for (int i = 0; i < numPairs * 2; i++) {
-            addLocation(new Building())
+            addLocation(new Building("", seed != 0 ? seed + i + 1 : 0))
         }
     }
 

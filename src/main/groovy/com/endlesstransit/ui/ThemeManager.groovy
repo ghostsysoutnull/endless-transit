@@ -42,14 +42,16 @@ class ThemeManager {
         }
     }
 
-    static String getRandomCulture() {
+    static String getRandomCulture(long seed = 0) {
         def keys = new ArrayList<>(cultures.keySet())
-        return keys[new Random().nextInt(keys.size())]
+        Random r = seed != 0 ? new Random(seed) : new Random()
+        return keys[r.nextInt(keys.size())]
     }
 
-    static String getRandomTimeline() {
+    static String getRandomTimeline(long seed = 0) {
         def keys = new ArrayList<>(timelines.keySet())
-        return keys[new Random().nextInt(keys.size())]
+        Random r = seed != 0 ? new Random(seed) : new Random()
+        return keys[r.nextInt(keys.size())]
     }
 
     static List<String> getCultureAssets(String cultureName) {
@@ -63,8 +65,8 @@ class ThemeManager {
     /**
      * Synthesizes atmosphere components based on vibe.
      */
-    static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation = "Standard", boolean isAnomaly = false) {
-        Random r = new Random()
+    static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation = "Standard", boolean isAnomaly = false, long seed = 0) {
+        Random r = seed != 0 ? new Random(seed) : new Random()
         
         // If it is abyssal, force it
         if (culture == "abyssal") {
@@ -82,8 +84,8 @@ class ThemeManager {
 
         // Glitch Logic: Randomize themes if anomaly is detected
         if (isAnomaly || r.nextDouble() < 0.05) {
-            if (r.nextBoolean()) wallTheme = getRandomCulture()
-            if (r.nextBoolean()) lightTheme = getRandomTimeline()
+            if (r.nextBoolean()) wallTheme = getRandomCulture(seed != 0 ? seed + 1 : 0)
+            if (r.nextBoolean()) lightTheme = getRandomTimeline(seed != 0 ? seed + 2 : 0)
             if (r.nextBoolean()) structTheme = r.nextBoolean() ? "Abyssal" : "Singularity"
         }
 
@@ -102,8 +104,8 @@ class ThemeManager {
         return [walls: walls, lighting: lighting, structure: structure]
     }
 
-    static String generateHybridObject(String culture, String timeline) {
-        Random r = new Random()
+    static String generateHybridObject(String culture, String timeline, long seed = 0) {
+        Random r = seed != 0 ? new Random(seed) : new Random()
         def cAssets = getCultureAssets(culture)
         def tAssets = getTimelineAssets(timeline)
 

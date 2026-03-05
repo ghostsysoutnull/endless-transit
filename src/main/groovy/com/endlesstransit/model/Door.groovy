@@ -13,9 +13,11 @@ class Door {
     String decor
     String scaryWord
     Boolean visited = false
+    long seed
 
-    Door() {
-        Random random = new Random()
+    Door(long seed = 0) {
+        this.seed = seed
+        Random random = seed != 0 ? new Random(seed) : new Random()
         String[] colors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown"]
         String[] decors = ["wooden", "metallic", "ornate", "plain", "rustic", "vintage", "modern", "minimalist"]
         String[] scaryWords = ["Beware", "Danger", "Haunt", "Fear", "Nightmare"]

@@ -102,9 +102,10 @@ class Floor extends Container {
         markVisited()
     }
 
-    Floor(int number, int apartmentsPerFloor) {
+    Floor(int number, int apartmentsPerFloor, long seed = 0) {
         this.number = number
-        this.culture = number < 0 ? "abyssal" : ThemeManager.getRandomCulture()
+        this.seed = seed
+        this.culture = number < 0 ? "abyssal" : ThemeManager.getRandomCulture(seed)
         this.apartmentsPerFloor = apartmentsPerFloor
     }
     
@@ -112,7 +113,7 @@ class Floor extends Container {
 
     @Override
     void populateChildren() {
-        corridor = new Corridor(apartmentsPerFloor, this.culture)
+        corridor = new Corridor(apartmentsPerFloor, this.culture, seed != 0 ? seed + 1 : 0)
         addLocation(corridor)
     }
 }

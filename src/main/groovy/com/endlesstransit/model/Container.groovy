@@ -12,6 +12,28 @@ abstract class Container implements Location {
     VibeCapsule localVibe
     boolean visited = false
     boolean childrenPopulated = false
+    long seed
+
+    @Override
+    long getSeed() {
+        return seed
+    }
+
+    @Override
+    void setSeed(long seed) {
+        this.seed = seed
+    }
+
+    /**
+     * Generates a Locus Index Path (LIP) for the current location.
+     * Format: 0.1.4.2... (Root is always 0 for Universe)
+     */
+    @Override
+    String getLIP() {
+        if (parent == null) return "0"
+        int myIndex = getIndexInParent() - 1 // 0-based index for LIP
+        return "${parent.getLIP()}.$myIndex"
+    }
 
     @Override
     String getMapSymbol() {
@@ -67,6 +89,16 @@ abstract class Container implements Location {
         }
         
         return projection
+    }
+
+    @Override
+    Map<String, Object> getMutationState() {
+        return [:]
+    }
+
+    @Override
+    void applyMutationState(Map<String, Object> state) {
+        // Default: nothing to apply
     }
 
     @Override

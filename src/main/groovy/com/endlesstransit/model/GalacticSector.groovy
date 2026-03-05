@@ -10,17 +10,18 @@ import com.endlesstransit.procgen.NameGenerator
 class GalacticSector extends Container {
     String name
 
-    GalacticSector(String name) {
+    GalacticSector(String name, long seed = 0) {
         this.name = name
+        this.seed = seed
     }
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         // Contains 3 to 7 Solar Systems
         int numSystems = random.nextInt(5) + 3
         for (int i = 0; i < numSystems; i++) {
-            addLocation(new SolarSystem(NameGenerator.generateSolarSystemName()))
+            addLocation(new SolarSystem(NameGenerator.generateSolarSystemName(), seed != 0 ? seed + i + 1 : 0))
         }
     }
 

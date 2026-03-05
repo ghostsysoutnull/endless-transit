@@ -29,8 +29,9 @@ class VibeCapsule {
     /**
      * Picks a culture based on the current stability factor.
      */
-    String pickCulture() {
-        return new Random().nextDouble() < stabilityFactor ? primaryCulture : secondaryCulture
+    String pickCulture(long seed = 0) {
+        Random r = seed != 0 ? new Random(seed) : new Random()
+        return r.nextDouble() < stabilityFactor ? primaryCulture : secondaryCulture
     }
 
     @Override

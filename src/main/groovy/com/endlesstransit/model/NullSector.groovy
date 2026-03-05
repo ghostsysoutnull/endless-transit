@@ -15,9 +15,11 @@ class NullSector extends Container {
     int echoFrequency = 0
     boolean echoFound = false
 
-    NullSector(String name) {
+    NullSector(String name, long seed = 0) {
         this.name = name
-        this.echoFrequency = new Random().nextInt(9000) + 1000
+        this.seed = seed
+        Random r = seed != 0 ? new Random(seed) : new Random()
+        this.echoFrequency = r.nextInt(9000) + 1000
     }
 
     @Override
@@ -28,11 +30,11 @@ class NullSector extends Container {
 
     @Override
     void populateChildren() {
-        Random random = new Random()
+        Random random = seed != 0 ? new Random(seed) : new Random()
         // Very sparse: only 1 or 2 systems adrift in the void
         int numSystems = random.nextInt(2) + 1
         for (int i = 0; i < numSystems; i++) {
-            addLocation(new SolarSystem("Lost ${NameGenerator.generateSolarSystemName()}"))
+            addLocation(new SolarSystem("Lost ${NameGenerator.generateSolarSystemName()}", seed != 0 ? seed + i + 1 : 0))
         }
     }
 
