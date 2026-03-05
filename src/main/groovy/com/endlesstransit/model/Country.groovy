@@ -40,7 +40,8 @@ class Country extends Container {
         
         int numCities = random.nextInt(9) + 2
         for (int i = 0; i < numCities; i++) {
-            addLocation(new City(NameGenerator.generateCityName(), seed != 0 ? seed + i + 1 : 0))
+            long childSeed = seed != 0 ? seed + i + 1 : 0
+            addLocation(new City(NameGenerator.generateCityName(childSeed), childSeed))
         }
     }
 

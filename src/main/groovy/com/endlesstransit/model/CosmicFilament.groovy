@@ -26,9 +26,10 @@ class CosmicFilament extends Container {
         for (int i = 0; i < numNodes; i++) {
             long childSeed = seed != 0 ? seed + i + 1 : 0
             if (random.nextInt(10) < 3) { // 30% chance of a Null Sector
-                addLocation(new NullSector("Null Reach ${Integer.toHexString(random.nextInt(0xFFF)).toUpperCase()}", childSeed))
+                String nullName = "Null Reach ${Integer.toHexString(random.nextInt(0xFFF)).toUpperCase()}"
+                addLocation(new NullSector(nullName, childSeed))
             } else {
-                addLocation(new GalacticSector(NameGenerator.generateSectorName(), childSeed))
+                addLocation(new GalacticSector(NameGenerator.generateSectorName(childSeed), childSeed))
             }
         }
     }

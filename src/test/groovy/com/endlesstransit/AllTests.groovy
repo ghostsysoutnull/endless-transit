@@ -38,6 +38,8 @@ def scriptTests = [
     "core/MergeLabelTest",
     "model/MnemonicReversalTest",
     "core/SingleObjectTakeTest",
+    "core/TracePersistenceTest",
+    "model/DeterministicUniverseTest",
     "model/StreetTest",
     "model/StructuralConsistencyTest",
     "procgen/SystemNameTest"

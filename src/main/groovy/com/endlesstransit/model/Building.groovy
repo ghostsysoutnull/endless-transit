@@ -71,6 +71,12 @@ class Building extends Container {
     }
 
     @Override
+    void populateChildren() {
+        // Ensure at least Floor 0 exists
+        getFloor(0)
+    }
+
+    @Override
     void addLocation(Location location) {
         super.addLocation(location)
         if (location instanceof Floor) {

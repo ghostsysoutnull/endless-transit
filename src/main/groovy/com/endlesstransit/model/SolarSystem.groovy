@@ -26,7 +26,8 @@ class SolarSystem extends Container {
         Random random = seed != 0 ? new Random(seed) : new Random()
         int numPlanets = random.nextInt(9) + 2
         for (int i = 0; i < numPlanets; i++) {
-            addLocation(new Planet(NameGenerator.generatePlanetName(), seed != 0 ? seed + i + 1 : 0))
+            long childSeed = seed != 0 ? seed + i + 1 : 0
+            addLocation(new Planet(NameGenerator.generatePlanetName(childSeed), childSeed))
         }
     }
 

@@ -34,7 +34,8 @@ class NullSector extends Container {
         // Very sparse: only 1 or 2 systems adrift in the void
         int numSystems = random.nextInt(2) + 1
         for (int i = 0; i < numSystems; i++) {
-            addLocation(new SolarSystem("Lost ${NameGenerator.generateSolarSystemName()}", seed != 0 ? seed + i + 1 : 0))
+            long childSeed = seed != 0 ? seed + i + 1 : 0
+            addLocation(new SolarSystem("Lost ${NameGenerator.generateSolarSystemName(childSeed)}", childSeed))
         }
     }
 

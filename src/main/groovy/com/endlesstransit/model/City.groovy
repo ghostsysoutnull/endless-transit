@@ -42,7 +42,8 @@ class City extends Container {
 
         int numStreets = random.nextInt(13) + 3
         for (int i = 0; i < numStreets; i++) {
-            addLocation(new Street(NameGenerator.generateStreetName(), seed != 0 ? seed + i + 1 : 0))
+            long childSeed = seed != 0 ? seed + i + 1 : 0
+            addLocation(new Street(NameGenerator.generateStreetName(childSeed), childSeed))
         }
     }
 

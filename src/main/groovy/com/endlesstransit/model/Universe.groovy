@@ -59,7 +59,8 @@ class Universe extends Container {
         int numFilaments = random.nextInt(5) + 3
         for (int i = 0; i < numFilaments; i++) {
             // Derived seed for child
-            addLocation(new CosmicFilament(NameGenerator.generateFilamentName(), seed + i + 1))
+            long childSeed = seed + i + 1
+            addLocation(new CosmicFilament(NameGenerator.generateFilamentName(childSeed), childSeed))
         }
     }
 

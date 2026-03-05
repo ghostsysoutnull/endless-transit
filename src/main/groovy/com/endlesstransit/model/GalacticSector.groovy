@@ -21,7 +21,8 @@ class GalacticSector extends Container {
         // Contains 3 to 7 Solar Systems
         int numSystems = random.nextInt(5) + 3
         for (int i = 0; i < numSystems; i++) {
-            addLocation(new SolarSystem(NameGenerator.generateSolarSystemName(), seed != 0 ? seed + i + 1 : 0))
+            long childSeed = seed != 0 ? seed + i + 1 : 0
+            addLocation(new SolarSystem(NameGenerator.generateSolarSystemName(childSeed), childSeed))
         }
     }
 

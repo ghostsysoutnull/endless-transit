@@ -53,7 +53,8 @@ class Planet extends Container {
         Random random = seed != 0 ? new Random(seed) : new Random()
         int numCountries = random.nextInt(7) + 2
         for (int i = 0; i < numCountries; i++) {
-            addLocation(new Country(NameGenerator.generateCountryName(), seed != 0 ? seed + i + 10 : 0))
+            long childSeed = seed != 0 ? seed + i + 10 : 0
+            addLocation(new Country(NameGenerator.generateCountryName(childSeed), childSeed))
         }
     }
 

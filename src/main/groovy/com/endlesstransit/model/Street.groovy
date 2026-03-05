@@ -26,7 +26,8 @@ class Street extends Container {
         Random random = seed != 0 ? new Random(seed) : new Random()
         int numPairs = random.nextInt(9) + 2 // 2 to 10 pairs
         for (int i = 0; i < numPairs * 2; i++) {
-            addLocation(new Building("", seed != 0 ? seed + i + 1 : 0))
+            long childSeed = seed != 0 ? seed + i + 1 : 0
+            addLocation(new Building("", childSeed))
         }
     }
 
@@ -35,8 +36,11 @@ class Street extends Container {
         markVisited()
         ensureChildrenPopulated()
         
+        int colWidth = 45
+        String separator = "-" * (colWidth * 2 + 3)
+        
         println Terminal.dim("Buildings on this street:")
-        println Terminal.dim("---------------------------------------------")
+        println Terminal.dim(separator)
         for (int i = 0; i < buildings.size(); i += 2) {
             def bL = buildings[i]
             def bR = (i + 1 < buildings.size()) ? buildings[i+1] : null
@@ -44,20 +48,25 @@ class Street extends Container {
             int numL = i + 1
             int numR = i + 2
             
-            String nameL = bL.name.length() > 15 ? bL.name.substring(0, 12) + "..." : bL.name
+            // Allow longer names now that we have space
+            String nameL = bL.name.length() > 30 ? bL.name.substring(0, 27) + "..." : bL.name
             String visL = bL.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String labelL = "${numL}. ${nameL}${visL}"
             
+            // Manual padding based on visual width to handle ANSI codes correctly
+            String leftPart = labelL + (" " * Math.max(0, colWidth - Terminal.getVisualWidth(labelL)))
+            
             String labelR = ""
             if (bR) {
-                String nameR = bR.name.length() > 15 ? bR.name.substring(0, 12) + "..." : bR.name
+                String nameR = bR.name.length() > 30 ? bR.name.substring(0, 27) + "..." : bR.name
                 String visR = bR.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
                 labelR = "${numR}. ${nameR}${visR}"
             }
+            String rightPart = labelR + (" " * Math.max(0, colWidth - Terminal.getVisualWidth(labelR)))
             
-            printf("%-25s | %-25s\n", labelL, labelR)
+            println "${leftPart} | ${rightPart}"
         }
-        println Terminal.dim("---------------------------------------------")
+        println Terminal.dim(separator)
     }
 
     @Override
