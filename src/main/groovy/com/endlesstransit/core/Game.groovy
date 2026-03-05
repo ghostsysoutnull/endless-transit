@@ -329,6 +329,7 @@ class Game {
 
         if (isAbyssal) {
             // Routine B: Abyssal Echo
+            printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", 0.1)
             println "\n" + Terminal.colorize(" [VOID_RESONANCE_TERMINATION] ", Terminal.RED)
             String[] lines = [
                 "Your echoes are sinking into the strata.",
@@ -343,6 +344,7 @@ class Game {
             }
         } else if (footprintsCount >= 20) {
             // Routine A: Locus Recap
+            printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", 0.0)
             println "\n" + Terminal.colorize(" [SESSION_RECAP_INITIALIZED] ", Terminal.L_CYAN)
             println Terminal.dim("-------------------------------------------")
             Thread.sleep(300)
@@ -361,6 +363,7 @@ class Game {
             Thread.sleep(1000)
         } else {
             // Routine C: Technical Unmount
+            printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", 0.0)
             println "\n" + Terminal.colorize(" [LINK_TERMINATION_PROTOCOL] ", Terminal.WHITE)
             String[] processes = [
                 "UNMOUNTING_LATTICE_TRACE",
@@ -708,6 +711,18 @@ class Game {
      * Renders a vertical tree visualization of the current world hierarchy.
      */
     void renderLatticeTrace() {
+        printLatticeTrace("[NEURAL_LATTICE_TRACE_INITIATED]", 0.0)
+        println ""
+        print Terminal.dim("Press ENTER to return to link...")
+        scanner.nextLine()
+        instantRender = true
+    }
+
+    /**
+     * Internal logic for printing the lattice trace. 
+     * Supports optional title override and glitch effects for the exit sequence.
+     */
+    void printLatticeTrace(String title, double glitchIntensity = 0.0) {
         def icons = [
             "Universe": Terminal.ICON_UNI,
             "CosmicFilament": Terminal.ICON_FIL,
@@ -733,7 +748,8 @@ class Game {
         }
         hierarchy = hierarchy.reverse()
 
-        println "\n" + Terminal.colorize(" [NEURAL_LATTICE_TRACE_INITIATED] ", Terminal.L_CYAN)
+        String header = Terminal.colorize(" $title ", title.contains("DIAGNOSTIC") ? Terminal.YELLOW : Terminal.L_CYAN)
+        println "\n" + header
         println ""
 
         hierarchy.eachWithIndex { loc, i ->
@@ -783,6 +799,10 @@ class Game {
             String depthStr = String.format("[%02d] ", i)
             String output = "${Terminal.dim(depthStr)} $indent$branch$icon $type : $name$meta"
             
+            if (glitchIntensity > 0) {
+                output = Terminal.glitchText(output, glitchIntensity)
+            }
+
             if (loc == currentLocation) {
                 String accent = locAbyssal ? Terminal.GREY : Terminal.L_CYAN
                 println Terminal.bold(" >> " + Terminal.colorize(Terminal.stripAnsi(output), accent))
@@ -790,10 +810,6 @@ class Game {
                 println "    " + output
             }
         }
-        println ""
-        print Terminal.dim("Press ENTER to return to link...")
-        scanner.nextLine()
-        instantRender = true
     }
 
     /**
