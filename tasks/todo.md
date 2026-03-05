@@ -186,3 +186,16 @@ Reorganize the `docs/` folder into functional categories and provide a central i
 - [ ] Implement NPC "Trace Signatures" that move between locations.
 - [ ] Add "Neural Sync" interaction mechanic (frequency-matching dialogue).
 - [ ] Create "Entity Scanner" HUD component.
+
+## Phase 11: The Neural Soundscape (Sensory Depth)
+- [ ] Implement ASCII Pulse Meter (Sinewave/Sawtooth patterns).
+- [ ] Add `tune` command for room stabilization/hidden item discovery.
+- [ ] Expand room generation to include "Auditory Descriptions."
+
+## Phase 12: Macro-Traversal & The Great Filaments
+- [ ] Implement "Keystone Jumping" between Solar Systems.
+- [ ] Add mechanics for navigating Cosmic Filaments (managing "Neural Drift").
+- [ ] Flesh out Star-Gate architecture at the highest scales.
+
+---
+*See [docs/vision/EVOLUTION_ROADMAP.md](../docs/vision/EVOLUTION_ROADMAP.md) for the strategic vision.*

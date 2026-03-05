@@ -78,3 +78,13 @@ The world is organized into a strict composite hierarchy:
 - **Objective:** Introduce "Spectral Echoes" as actual entities that the player can interact with, track, or even "reclaim."
 - **Mechanics:** Entities will have their own "Trace Signatures" and movements through the hierarchy. Interaction might involve frequency-matching or dialogue-based "Neural Syncing."
 
+### Phase 11: The Neural Soundscape (Sensory Depth)
+- **Objective:** Enhance the sensory depth of the terminal through ASCII-visualized audio data and frequency-tuning mechanics.
+- **Key Features:** ASCII Pulse Meter, `tune` command, and expanded sensory text generation.
+
+### Phase 12: Macro-Traversal & The Great Filaments
+- **Objective:** Flesh out the highest layers of the hierarchy (Solar Systems, Filaments) and implement "Keystone Jumping" for long-range travel.
+
+---
+*For a more detailed, strategic view, see the [Evolution Roadmap](EVOLUTION_ROADMAP.md).*
+
