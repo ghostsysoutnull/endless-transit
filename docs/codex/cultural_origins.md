@@ -38,4 +38,4 @@ The Neural Web is not a monoculture. It is a palimpsest of previous civilization
 *   **Archetypes:** Neural Roots, Spore Chambers, Breathing Pods.
 
 ---
-*Next Node: [ICONOGRAPHY_GLOSSARY](ICONOGRAPHY_GLOSSARY.md)*
+*Next Node: [\[ICONOGRAPHY_GLOSSARY\]]({{ "/codex/iconography_glossary.html" | relative_url }})*

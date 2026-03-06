@@ -44,4 +44,4 @@ A frequency is considered **Stable** if it is divisible by **11**.
 5.  **Stabilization:** 2860 / 11 = 260.0 (Divisible! → **STABILIZED**)
 
 ---
-*Next Node: [THE_INVERSION_RITUAL](THE_INVERSION_RITUAL.md)*
+*Next Node: [\[THE_INVERSION_RITUAL\]]({{ "/codex/the_inversion_ritual.html" | relative_url }})*

@@ -37,4 +37,4 @@ With the Keystone active, the "Breach" directive becomes available.
 | **04** | Breach | Descent into Substrate |
 
 ---
-*Next Node: [LIP_ADDRESSING](LIP_ADDRESSING.md)*
+*Next Node: [\[LIP_ADDRESSING\]]({{ "/codex/lip_addressing.html" | relative_url }})*

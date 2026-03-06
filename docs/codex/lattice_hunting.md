@@ -33,4 +33,4 @@ Some buildings appear in **BOLD CYAN** on the street list. These are **Legendary
 2.  **Breadcrumb Tracking:** If you enter a room and see `[Visited]` or `[V]`, you have already harvested its primary signal. Move forward to maximize step-to-fragment efficiency.
 
 ---
-*Next Node: [SYNTHESIS_THEORY](SYNTHESIS_THEORY.md)*
+*Next Node: [\[SYNTHESIS_THEORY\]]({{ "/codex/synthesis_theory.html" | relative_url }})*

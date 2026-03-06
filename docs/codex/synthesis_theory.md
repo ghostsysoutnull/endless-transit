@@ -36,4 +36,4 @@ As fragments are merged multiple times, their names become complex (e.g., "Rusty
 2.  **Item Hoarding:** If you find a fragment with a Master Number (11, 22, 33...), **do not merge it** into a random hybrid. Save it for Keystone synthesis at the Peak of a building.
 
 ---
-*Next Node: [CULTURAL_ORIGINS](CULTURAL_ORIGINS.md)*
+*Next Node: [\[CULTURAL_ORIGINS\]]({{ "/codex/cultural_origins.html" | relative_url }})*

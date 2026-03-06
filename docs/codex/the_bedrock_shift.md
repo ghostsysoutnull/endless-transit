@@ -29,4 +29,4 @@ Accessing the Substrate is not possible through standard navigation. It requires
 *   **Pure Fragments:** Despite the danger, the Substrate contains **Pure Frequencies**—fragments that have not been corrupted by cultural noise. These are the most powerful items for high-level synthesis.
 
 ---
-*Next Node: [GEMATRIA_SPECIFICATIONS](GEMATRIA_SPECIFICATIONS.md)*
+*Next Node: [\[GEMATRIA_SPECIFICATIONS\]]({{ "/codex/gematria_specifications.html" | relative_url }})*

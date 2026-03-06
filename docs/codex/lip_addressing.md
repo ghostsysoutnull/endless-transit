@@ -36,4 +36,4 @@ In the **Abyssal Substrate**, LIPs can include negative indices or extended hexa
 
 ---
 **END OF CODEX DATA-NODES.**
-*Return to [SYSTEM_ENTRY](../index.html)*
+*Return to [\[SYSTEM_ENTRY\]]({{ "/index.html" | relative_url }})*
