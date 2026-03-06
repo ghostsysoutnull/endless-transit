@@ -81,6 +81,23 @@ body.terminal-body {
 }
 
 /* Typography */
+a {
+    color: var(--text-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--dim-text);
+    transition: all 0.2s ease;
+}
+
+a:visited {
+    color: var(--text-color);
+}
+
+a:hover {
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+    text-shadow: 0 0 8px var(--text-color);
+}
+
 h1, h2, h3 {
     text-transform: uppercase;
     letter-spacing: 2px;
