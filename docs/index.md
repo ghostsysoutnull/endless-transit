@@ -12,11 +12,11 @@ You are standing at the gateway to an infinite procedural lattice. This interfac
 ## [MANUAL_MODULES]
 Select a module from the Comms Array above or use the initial link below:
 
-*   **[LINK_INITIATION]**: Begin with [SYSTEM_INITIALIZATION](manual/SYSTEM_INITIALIZATION.md)
-*   **[LATTICE_GEOGRAPHY]**: Explore the [LATTICE_ATLAS](manual/THE_LATTICE_ATLAS.md)
-*   **[OPERATIONAL_PROTOCOLS]**: Master the [SYSTEM_MECHANICS](manual/OPERATIONAL_PROTOCOLS.md)
-*   **[FIELD_OPERATIONS]**: Reference the [LINK_NAVIGATION](manual/LINK_NAVIGATION.md) guide
-*   **[ARCHITECTURAL_DATA]**: Review the [SUBSTRATE_CODE](manual/THE_SUBSTRATE_CODE.md) whitepaper
+*   **[LINK_INITIATION]**: Begin with [SYSTEM_INITIALIZATION]({{ "/manual/system_initialization.html" | relative_url }})
+*   **[LATTICE_GEOGRAPHY]**: Explore the [LATTICE_ATLAS]({{ "/manual/the_lattice_atlas.html" | relative_url }})
+*   **[OPERATIONAL_PROTOCOLS]**: Master the [SYSTEM_MECHANICS]({{ "/manual/operational_protocols.html" | relative_url }})
+*   **[FIELD_OPERATIONS]**: Reference the [LINK_NAVIGATION]({{ "/manual/link_navigation.html" | relative_url }}) guide
+*   **[ARCHITECTURAL_DATA]**: Review the [SUBSTRATE_CODE]({{ "/manual/the_substrate_code.html" | relative_url }}) whitepaper
 
 ---
 **STATUS**: LINK_IDLE

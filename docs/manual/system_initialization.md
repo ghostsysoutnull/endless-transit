@@ -28,4 +28,4 @@ As an Observer, your primary protocols are:
 *   **OBSERVER_STATE:** PERSISTENT
 
 ---
-*Proceed to the [LATTICE_ATLAS](THE_LATTICE_ATLAS.md) to understand the geography of the web.*
+*Proceed to the [LATTICE_ATLAS]({{ "/manual/the_lattice_atlas.html" | relative_url }}) to understand the geography of the web.*

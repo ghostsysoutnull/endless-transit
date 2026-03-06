@@ -43,4 +43,4 @@ Your terminal header is a high-fidelity data deck providing real-time telemetry:
 *   **Termination:** Always confirm your intent to `quit`. You will be offered a final synchronization before the link is severed.
 
 ---
-*Proceed to [THE_SUBSTRATE_CODE](THE_SUBSTRATE_CODE.md) for a deep dive into the system architecture.*
+*Proceed to [THE_SUBSTRATE_CODE]({{ "/manual/the_substrate_code.html" | relative_url }}) for a deep dive into the system architecture.*

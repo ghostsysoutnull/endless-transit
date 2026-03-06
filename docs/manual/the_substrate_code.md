@@ -35,4 +35,4 @@ The codebase is strictly divided into four functional domains to minimize cognit
 4.  **Procgen:** Gematria math, name generation, and lexicons.
 
 ---
-*Return to [SYSTEM_INITIALIZATION](SYSTEM_INITIALIZATION.md) to reboot the link.*
+*Return to [SYSTEM_INITIALIZATION]({{ "/manual/system_initialization.html" | relative_url }}) to reboot the link.*
