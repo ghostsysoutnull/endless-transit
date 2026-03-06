@@ -62,6 +62,26 @@ body.terminal-body {
     border-color: var(--text-color);
 }
 
+.comms-array a.nav-specs {
+    color: #ff00ff;
+    border-color: rgba(255, 0, 255, 0.3);
+}
+
+.comms-array a.nav-specs:hover {
+    background: #ff00ff;
+    color: #000;
+}
+
+.comms-array a.nav-databank {
+    color: #ffff00;
+    border-color: rgba(255, 255, 0, 0.3);
+}
+
+.comms-array a.nav-databank:hover {
+    background: #ffff00;
+    color: #000;
+}
+
 /* Split Pane Layout */
 .adaptive-bridge {
     display: grid;

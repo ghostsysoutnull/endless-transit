@@ -1,9 +1,9 @@
 ---
 layout: terminal
-title: THE_SUBSTRATE_CODE
+title: SYSTEM_SPECIFICATIONS
 ---
 
-# THE_SUBSTRATE_CODE: Architectural Whitepaper
+# SYSTEM_SPECIFICATIONS: Architectural Whitepaper
 
 This document details the engineering principles and procedural patterns that power the Endless Transit universe.
 
