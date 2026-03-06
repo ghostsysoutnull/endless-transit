@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: CULTURAL_ORIGINS
+map_type: data_bank
 ---
 
 # LATTICE_ENCYCLOPEDIA: Cultural Origins

@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: LINK_GATEWAY_INITIALIZATION
+map_type: telemetry
 ---
 
 # LINK_SETUP: Pre-Flight Checklist

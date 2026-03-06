@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: ICONOGRAPHY_GLOSSARY
+map_type: data_bank
 ---
 
 # LATTICE_ENCYCLOPEDIA: Iconography Glossary

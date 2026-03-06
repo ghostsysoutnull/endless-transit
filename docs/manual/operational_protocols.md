@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: OPERATIONAL_PROTOCOLS
+map_type: telemetry
 ---
 
 # OPERATIONAL_PROTOCOLS: System Mechanics

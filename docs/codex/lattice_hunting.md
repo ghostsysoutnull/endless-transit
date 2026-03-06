@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: LATTICE_HUNTING
+map_type: filament
 ---
 
 # FIELD_STRATEGY: Lattice Hunting & Scanning

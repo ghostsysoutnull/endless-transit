@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: THE_CODEX
+map_type: data_bank
 ---
 
 # THE_CODEX: Classified Data-Bank

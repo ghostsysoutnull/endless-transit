@@ -34,22 +34,99 @@
             </div>
         </section>
         
-        <aside class="right-pane-telemetry">
-            <div class="telemetry-header">[NEURAL_LATTICE_PROJECTION]</div>
-            <div class="ascii-map">
-. . . . . . . . . . . . 
-. . . . ■ . . . . . . . 
-. . . . . . . . . . . . 
-. . . . . ▲ . . . . . . 
-. . . . . . . . . . . . 
-. . . . . . . ■ . . . . 
-. . . . . . . . . . . . 
-            </div>
-            <div class="telemetry-log">
-                <p>> SYNC_ESTABLISHED</p>
-                <p>> SCAN_READY</p>
-                <p>> TRACE_STABLE</p>
-            </div>
+        <aside class="right-pane-telemetry" data-map-type="{{ page.map_type }}">
+            {% case page.map_type %}
+              {% when "universe" %}
+                <div class="telemetry-header">[UNIMATRIX_ROOT_TOPOLOGY]</div>
+                <div class="ascii-map universe-map">
+          » (Alpha)
+         /
+        /
+ » — — ∞ — — » (Gamma)
+       / \
+      /   \
+     »     » (Delta)
+  (Beta)
+                </div>
+                <div class="telemetry-log">
+                    <p>> CONDUIT_STABLE</p>
+                    <p>> ROOT_SYNC_NOMINAL</p>
+                </div>
+
+              {% when "filament" %}
+                <div class="telemetry-header">[FILAMENT_CONDUIT_TRACE]</div>
+                <div class="ascii-map filament-map">
+○ · · ○ · · ▲ (You)
+·     ·
+·     ○
+·
+○ · · ░ (Void Reach)
+                </div>
+                <div class="telemetry-log">
+                    <p>> TRAVERSAL_ACTIVE</p>
+                    <p>> VECTOR: INWARD</p>
+                </div>
+
+              {% when "telemetry" %}
+                <div class="telemetry-header">[SYSTEM_TELEMETRY]</div>
+                <div class="ascii-map telemetry-map">
+[SPECTROGRAM]
+█
+█ █       █
+█ █ █   █ █ █
+█ █ █ █ █ █ █ █
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+                </div>
+                <div class="telemetry-log">
+                    <p>> FREQ: 440Hz</p>
+                    <p>> LATTICE_SYNC: [OK]</p>
+                </div>
+
+              {% when "abyssal" %}
+                <div class="telemetry-header abyssal-header">[ABYSSAL_SUBSTRATE_SCAN]</div>
+                <div class="ascii-map abyssal-map">
+☠ . . . . . . ░
+. . ☠ . . . . .
+. . . . . . . ☠
+. . . ▲ . . . .
+. . . . . . . .
+░ . . . ☠ . . .
+                </div>
+                <div class="telemetry-log abyssal-log">
+                    <p>> PRESSURE: HIGH</p>
+                    <p>> INTEGRITY: [42%]</p>
+                </div>
+
+              {% when "data_bank" %}
+                <div class="telemetry-header">[DATA_CLUSTER_ARCHIVE]</div>
+                <div class="ascii-map databank-map">
+■ ■ . ■ . . ■
+. ■ ■ . ■ ■ .
+■ . ░ ■ . ■ ■
+. ■ ■ . ■ . .
+■ . . ■ ■ . ■
+. ■ ■ . . ■ .
+                </div>
+                <div class="telemetry-log">
+                    <p>> ARCHIVE_ACCESS: [GRANTED]</p>
+                    <p>> CLUSTER_SYNC: 98.2%</p>
+                </div>
+
+              {% else %}
+                <div class="telemetry-header">[NEURAL_LATTICE_PROJECTION]</div>
+                <div class="ascii-map standard-map">
+. . . . . . . .
+. . . ■ . . . .
+. . . . . ▲ . .
+. . . . . . . .
+. . . ■ . . . .
+. . . . . . . .
+                </div>
+                <div class="telemetry-log">
+                    <p>> SYNC_ESTABLISHED</p>
+                    <p>> SCAN_READY</p>
+                </div>
+            {% endcase %}
         </aside>
     </main>
 

@@ -1,4 +1,5 @@
 ---
+map_type: universe
 layout: terminal
 title: SYSTEM_ENTRY
 ---

@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: THE_INVERSION_RITUAL
+map_type: telemetry
 ---
 
 # TECHNICAL_SUBSTRATE: The Inversion Ritual

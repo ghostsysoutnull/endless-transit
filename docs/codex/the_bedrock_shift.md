@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: THE_BEDROCK_SHIFT
+map_type: abyssal
 ---
 
 # LATTICE_ENCYCLOPEDIA: The Bedrock Shift

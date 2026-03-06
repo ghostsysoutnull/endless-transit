@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: LIP_ADDRESSING
+map_type: telemetry
 ---
 
 # TECHNICAL_SUBSTRATE: Locus Index Path (LIP) Addressing

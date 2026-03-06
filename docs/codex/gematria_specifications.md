@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: GEMATRIA_SPECIFICATIONS
+map_type: telemetry
 ---
 
 # TECHNICAL_SUBSTRATE: Gematria Specifications

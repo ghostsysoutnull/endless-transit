@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: THE_LATTICE_ATLAS
+map_type: filament
 ---
 
 # THE_LATTICE_ATLAS: World & Lore

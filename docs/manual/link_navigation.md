@@ -1,6 +1,7 @@
 ---
 layout: terminal
 title: LINK_NAVIGATION
+map_type: telemetry
 ---
 
 # LINK_NAVIGATION: Field Operations Guide
