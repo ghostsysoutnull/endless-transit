@@ -12,6 +12,7 @@ You are standing at the gateway to an infinite procedural lattice. This interfac
 ## [MANUAL_MODULES]
 Select a module from the Comms Array above or use the initial link below:
 
+*   **[LINK_SETUP]**: Initialize your gateway with the [INSTALLATION_GUIDE]({{ "/manual/installation_guide.html" | relative_url }})
 *   **[LINK_INITIATION]**: Begin with [SYSTEM_INITIALIZATION]({{ "/manual/system_initialization.html" | relative_url }})
 *   **[LATTICE_GEOGRAPHY]**: Explore the [LATTICE_ATLAS]({{ "/manual/the_lattice_atlas.html" | relative_url }})
 *   **[OPERATIONAL_PROTOCOLS]**: Master the [SYSTEM_MECHANICS]({{ "/manual/operational_protocols.html" | relative_url }})
