@@ -65,13 +65,13 @@ class Building extends Container {
         }
     }
 
-    Building(String culture = "monolith", long seed = 0) {
+    Building(String culture = "monolith", long seed = 0, int depth = 0, boolean isNullZone = false, boolean isAbyssal = false) {
         this.seed = seed
         Random random = seed != 0 ? new Random(seed) : new Random()
         this.maxFloors = random.nextInt(26) + 5 
         this.apartmentsPerFloor = random.nextInt(13) + 3 // 3 to 15 apartments per floor
 
-        def result = NameGenerator.generateBuildingName(culture, maxFloors, seed)
+        def result = NameGenerator.generateBuildingName(culture, maxFloors, seed, depth, isNullZone, isAbyssal)
         this.name = (String) result.name
         this.isLandmark = (boolean) result.isLandmark
     }

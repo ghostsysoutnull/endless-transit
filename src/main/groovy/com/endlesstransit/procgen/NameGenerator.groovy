@@ -100,14 +100,34 @@ class NameGenerator {
         "The Void-Watcher"
     ]
 
-    static Map<String, Object> generateBuildingName(String culture, int floors, long seed = 0) {
+    static Map<String, Object> generateBuildingName(String culture, int floors, long seed = 0, int depth = 0, boolean isNullZone = false, boolean isAbyssal = false) {
         Random r = seed != 0 ? new Random(seed) : random
         
-        // 10% Landmark Check
-        if (r.nextDouble() < 0.10) {
+        // 1. Calculate the Rarity Curve for Legendaries (Base 3%)
+        double landmarkProb = 0.03
+        
+        // Depth Multiplier: +0.5% per depth level beyond surface (depth 5)
+        if (depth > 5) {
+            landmarkProb += (depth - 5) * 0.005
+        }
+        
+        // Zone Multipliers
+        if (isNullZone) landmarkProb *= 2.0 // Double chance in Null Zones
+        if (isAbyssal) landmarkProb *= 3.0  // Triple chance in Abyssal Substrate
+        
+        // Cap probability at 25% to keep them special
+        landmarkProb = Math.min(0.25, landmarkProb)
+
+        double roll = r.nextDouble()
+
+        // 2. Legendary Tier (The Landmarks)
+        if (roll < landmarkProb) {
             return [name: landmarkTitles[r.nextInt(landmarkTitles.size())], isLandmark: true]
         }
 
+        // 3. Uncommon Tier (15% chance for Advanced Templates)
+        boolean isUncommon = roll < (landmarkProb + 0.15)
+        
         // Size-based Suffixes
         def sizes = [
             "small": ["Annex", "Cell", "Unit", "Pod", "Hut", "Point"],
@@ -119,24 +139,26 @@ class NameGenerator {
         // Get Lexicon for culture (fall back to monolith if missing)
         def lexicon = buildingLexicon[culture] ?: buildingLexicon["monolith"]
         
-        // Pick a template
-        int template = r.nextInt(4)
         String name = ""
-        switch(template) {
-            case 0: // Adjective + Noun
-                name = "${lexicon.adj[r.nextInt(lexicon.adj.size())]} ${lexicon.noun[r.nextInt(lexicon.noun.size())]}"
-                break
-            case 1: // The [Noun] of [Concept]
+        
+        if (isUncommon) {
+            // Pick from "Cooler" templates (Code-based or Concept-based)
+            int template = r.nextInt(2)
+            if (template == 0) { // Code-Based
+                name = "Unit 0x${Integer.toHexString(r.nextInt(0xFFF)).toUpperCase()} ${sizes[sizeCat][r.nextInt(sizes[sizeCat].size())]}"
+            } else { // The [Noun] of [Concept]
                 def concepts = ["Static", "Frequencies", "Resonance", "Stability", "Time", "Light", "The Web"]
                 name = "The ${lexicon.noun[r.nextInt(lexicon.noun.size())]} of ${concepts[r.nextInt(concepts.size())]}"
-                break
-            case 2: // Code-Based
-                name = "Unit 0x${Integer.toHexString(r.nextInt(0xFFF)).toUpperCase()} ${sizes[sizeCat][r.nextInt(sizes[sizeCat].size())]}"
-                break
-            case 3: // Compound
+            }
+        } else {
+            // 4. Standard Tier (Adjective + Noun or Compound)
+            int template = r.nextInt(2)
+            if (template == 0) { // Adjective + Noun
+                name = "${lexicon.adj[r.nextInt(lexicon.adj.size())]} ${lexicon.noun[r.nextInt(lexicon.noun.size())]}"
+            } else { // Compound
                 def compounds = ["Gate", "Fall", "Reach", "Spire", "Well", "Root"]
                 name = "${lexicon.noun[r.nextInt(lexicon.noun.size())]}${compounds[r.nextInt(compounds.size())]}"
-                break
+            }
         }
 
         return [name: name, isLandmark: false]

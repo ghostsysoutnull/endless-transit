@@ -27,10 +27,13 @@ class Street extends Container {
         int numPairs = scrambler.nextInt(9) + 2 // 2 to 10 pairs
         
         String culture = getVibe()?.primaryCulture ?: "monolith"
+        int depth = getDepth()
+        boolean isNull = findAncestor(NullSector.class) != null
+        boolean isAbyssal = isAbyssal()
 
         for (int i = 0; i < numPairs * 2; i++) {
             long childSeed = scrambler.nextLong()
-            addLocation(new Building(culture, childSeed))
+            addLocation(new Building(culture, childSeed, depth, isNull, isAbyssal))
         }
     }
 
