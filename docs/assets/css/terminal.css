@@ -82,20 +82,27 @@ body.terminal-body {
 
 /* Typography */
 a {
-    color: var(--text-color);
+    color: #ffff00; /* Bright Yellow */
     text-decoration: none;
-    border-bottom: 1px dashed var(--dim-text);
+    border-bottom: 1px dashed #ffff00;
     transition: all 0.2s ease;
 }
 
 a:visited {
-    color: var(--text-color);
+    color: #ffcc00; /* Amber */
+    border-bottom-color: #ffcc00;
 }
 
 a:hover {
     color: #ffffff;
     border-bottom: 1px solid #ffffff;
-    text-shadow: 0 0 8px var(--text-color);
+    text-shadow: 0 0 10px #ffff00;
+}
+
+a:active {
+    color: #ffffff;
+    background: #ffcc00;
+    color: #000000;
 }
 
 h1, h2, h3 {
