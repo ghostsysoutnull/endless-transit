@@ -1,25 +1,23 @@
-╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-║ LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 10 | COHERENCE: 70%                            ║
-║ LOCUS_TRACE: ...ch 0 > Epsilon Ceti > Styxox > Old Shadow Federation > Cloudgate > Main Street   ║
-╟──────────────────────────────────────────────────────────────────────────────────────────────────╢
-║ LATTICE_IDENT: Street >> Main Street                          ║ SYSTEM_DIAGNOSTIC: [NOMINAL]     ║
-║ LOCUS_HASH: 20.269 / 30.922 | HOP_DENSITY: 7                  ║ COHERENCE: ███████░░░            ║
-║ ALIGN: 1 / 10 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]       ║ EVENT_TICKER: [SYNC_STABLE]      ║
-║                                                               ║ OBJ:   Hidden Frequency (63776...║
-║                                                               ║ OBJ:   gothic arch fragment in...║
-╟──────────────────────────────────────────────────────────────────────────────────────────────────╢
-║ TRACE_BUFFER: 4/16 FRAGMENTS | RECENT: 6377675, 4514, 1726075Hz                                  ║
-╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
- »» SCANNING_LOCAL_TOPOLOGY...
+»» SCANNING_LOCAL_TOPOLOGY...
 
-Street: Main Street
-[TECH_ERA: ENTROPIC] [RESONANCE: BAROQUE]
-Buildings on this street:
----------------------------------------------
-1. Crystal Apex           | 2. Neon Heights          
-3. Glass Domain [V] | 4. Emerald Domain        
-5. Rusty Apex             | 6. Onyx Complex          
-7. Titanium Bas...        | 8. Chrome Nexus          
-9. Obsidian Nexus         | 10. Obsidian Hei...      
----------------------------------------------
-
+A long corridor with 14 doors. Cultural resonance: monolith.
+ [APERTURE_SCAN_INITIALIZED] 
+Scanning adjacent cells for spectral resonance...
+----------------------------------------------------------------------------------------------------
+[ID]  [VISUAL_TELEMETRY]            [SCANNED_DESIGNATION]                [WAVEFORM]       [RESONANCE]    
+----------------------------------------------------------------------------------------------------
+01.  blue, metallic, has a window  Oxidized Pit [0x54]                  [STABLE]         1416Hz ~~~
+02.  blue, ornate                  Digital Core [0x1E]                  [STABLE]         1056Hz ≈≈≈
+03.  blue, modern, written: Nightmare  Digital Buffer [0x2F]                [STABLE]         1260Hz ~~~
+04.  blue, minimalist, has a window, written: Danger  Neural Buffer [0x38]                 [STABLE]         1200Hz ~~~
+05.  blue, ornate, has a window    Bio-luminescent Hub [0x4C]           [STABLE]         1608Hz ~~~
+06.  blue, plain, has a window     Fluorescent Hub [0x76]               [STABLE]         1512Hz ~~~
+07.  blue, minimalist, written: Beware  Data Core [0xAF]                     [STABLE]         0900Hz ~~~
+08.  blue, wooden                  Ventilation Shaft [0xA8]             [STABLE]         2148Hz ~~~
+09.  blue, minimalist, has a window  Synthetic Relay [0x35]               [STABLE]         2256Hz ~~~
+10.  blue, wooden, has a window    Encrypted Port [0xA5]                [STABLE]         2136Hz ~~~
+11.  blue, rustic                  Maintenance Sump [0x22]              [STABLE]         1800Hz ~~~
+12.  blue, modern, written: Haunt  Neural Array [0xD2]                  [STABLE]         1596Hz ~~~
+13.  blue, vintage, has a window, written: Fear  Digital Relay [0x63]                 [STABLE]         1464Hz ~~~
+14.  blue, modern                  Neural Hub [0xE5]                    [STABLE]         0936Hz ~~~
+----------------------------------------------------------------------------------------------------

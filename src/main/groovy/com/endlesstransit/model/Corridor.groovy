@@ -42,13 +42,20 @@ class Corridor extends Container {
         println Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)
         println Terminal.dim("Scanning adjacent cells for spectral resonance...")
         
-        int width = 100
+        int width = 130
         println Terminal.dim("-" * width)
         
-        // High-Density Telemetry Header
-        // [ID] 4 | [VISUAL] 28 | [DESIGNATION] 35 | [WAVE] 15 | [RESONANCE] 15
-        String header = String.format("%-4s  %-28s  %-35s  %-15s  %-15s", "[ID]", "[VISUAL_TELEMETRY]", "[SCANNED_DESIGNATION]", "[WAVEFORM]", "[RESONANCE]")
-        println Terminal.bold(header)
+        // High-Density Telemetry Header (130-char wide)
+        // [ID] 6 | [VISUAL] 40 | [DESIGNATION] 45 | [WAVE] 18 | [RESONANCE] 21
+        String hId = "[ID]"
+        String hVis = "[VISUAL_TELEMETRY]"
+        String hDes = "[SCANNED_DESIGNATION]"
+        String hWav = "[WAVEFORM]"
+        String hRes = "[RESONANCE]"
+        
+        println Terminal.bold(
+            String.format("%-6s %-40s %-45s %-18s %-21s", hId, hVis, hDes, hWav, hRes)
+        )
         println Terminal.dim("-" * width)
 
         for (int i = 0; i < apartments.size(); i++) {
@@ -61,6 +68,7 @@ class Corridor extends Container {
             String status = Terminal.dim("[ENCRYPTED]")
             String signature = "????Hz"
             String wave = "---"
+            String resLabel = ""
             
             if (!apt.rooms.isEmpty()) {
                 def firstRoom = apt.rooms[0]
@@ -69,23 +77,31 @@ class Corridor extends Container {
                 int freq = Gematria.calculateFrequency(roomName, firstRoom.getDepth())
                 signature = String.format("%04dHz", freq)
                 
-                // Simple wave visual logic
-                if (firstRoom.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
-                else if (freq % 11 == 0) wave = Terminal.colorize("≈≈≈", Terminal.GREEN)
-                else wave = Terminal.colorize("~~~", Terminal.CYAN)
+                // Enhanced wave visual logic for wider column
+                if (firstRoom.isAnomaly) wave = Terminal.colorize("#######", Terminal.RED)
+                else if (freq % 11 == 0) wave = Terminal.colorize("≈≈≈≈≈≈≈", Terminal.GREEN)
+                else wave = Terminal.colorize("~~~~~~~", Terminal.CYAN)
+                
+                resLabel = "${signature} ${wave}"
+            } else {
+                resLabel = "${signature} ${wave}"
             }
 
             boolean isVisited = apt.rooms.any { it.isVisited() }
             String visited = isVisited ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String visual = "${door.getDescription()}${visited}"
             
-            // Precise padding logic for each column to handle ANSI codes
-            String colVisual = visual + (" " * Math.max(0, 28 - Terminal.stripAnsi(visual).length()))
-            String colName = Terminal.colorize(roomName, Terminal.YELLOW) + (" " * Math.max(0, 35 - roomName.length()))
-            String colStatus = status + (" " * Math.max(0, 15 - Terminal.stripAnsi(status).length()))
-            String colRes = "${signature} ${wave}"
+            // Apply strict truncation and visual-aware padding for each column
+            String colVisText = Terminal.ansiSafeTruncate(visual, 38)
+            String colVis = colVisText + (" " * Math.max(0, 40 - Terminal.getVisualWidth(colVisText)))
+            
+            String colNameText = Terminal.colorize(Terminal.ansiSafeTruncate(roomName, 43), Terminal.YELLOW)
+            String colName = colNameText + (" " * Math.max(0, 45 - Terminal.getVisualWidth(colNameText)))
+            
+            String colStatus = status + (" " * Math.max(0, 18 - Terminal.getVisualWidth(status)))
+            String colRes = resLabel + (" " * Math.max(0, 21 - Terminal.getVisualWidth(resLabel)))
 
-            println "${id}  ${colVisual}  ${colName}  ${colStatus}  ${colRes}"
+            println "${id.padRight(6)}${colVis}${colName}${colStatus}${colRes}"
         }
         println Terminal.dim("-" * width)
     }
