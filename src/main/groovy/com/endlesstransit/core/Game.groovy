@@ -193,6 +193,7 @@ class Game {
                     // Skip items already shown in tables
                     if (currentLocation instanceof Street && label.contains("Enter Building:")) return
                     if (currentLocation instanceof Corridor && label.contains("Access:")) return
+                    if (currentLocation instanceof Building && label.contains("Access:")) return
                     
                     // If it's a single-char nav command, collect it for the bottom line
                     if (menuKey.length() == 1 && "udfblt".contains(menuKey)) {

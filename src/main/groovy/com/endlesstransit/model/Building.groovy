@@ -65,6 +65,35 @@ class Building extends Container {
         }
     }
 
+    String getFloorZone(int floorNum) {
+        if (floorNum < 0) return "ABYSSAL_SUBSTRATE"
+        if (floorNum == 0) return "TRANSIT_LOBBY"
+        if (floorNum == maxFloors - 1) return "PEAK_OBSERVATORY"
+        
+        Random r = new Random(seed + floorNum)
+        if (floorNum < 5) {
+            return ["MECHANICAL_SUMP", "STORAGE_CELL", "POWER_RELAY", "FILTRATION_INTAKE"][r.nextInt(4)]
+        } else if (floorNum > maxFloors - 5) {
+            return ["EXECUTIVE_SUITE", "NEURAL_UPLINK", "DATA_VAULT", "VIP_QUARTERS"][r.nextInt(4)]
+        } else {
+            return ["LIVING_UNIT", "RESEARCH_LAB", "HYDROPONIC_BAY", "BIO_SERVER"][r.nextInt(4)]
+        }
+    }
+
+    String getFloorIntegrity(int floorNum) {
+        if (floorNum < 0) {
+            int pressure = Math.min(100, Math.abs(floorNum) * 10)
+            return "P: ${pressure}%"
+        }
+        
+        // Base integrity 100%, drops near Floor 0 if breached
+        int base = 100
+        if (isBreached && floorNum < 10) {
+            base -= (10 - floorNum) * 8
+        }
+        return "${Math.max(0, base)}%"
+    }
+
     Building(String culture = "monolith", long seed = 0, int depth = 0, boolean isNullZone = false, boolean isAbyssal = false) {
         this.seed = seed
         Random random = seed != 0 ? new Random(seed) : new Random()
@@ -85,6 +114,69 @@ class Building extends Container {
             Thread.sleep(1000)
         }
         markVisited()
+        ensureChildrenPopulated()
+
+        println "\n" + Terminal.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", Terminal.L_CYAN)
+        println Terminal.dim("Analyzing vertical lattice structure...")
+        
+        int width = 130
+        println Terminal.dim("-" * width)
+        
+        // Header
+        String hId = "[ID]"
+        String hRad = "[RADAR]"
+        String hDes = "[STRATA_DESIGNATION]"
+        String hZon = "[FUNCTIONAL_ZONE]"
+        String hInt = "[STATUS]"
+        String hRes = "[SCAN_RESIDUE]"
+        
+        println Terminal.bold(
+            String.format("%-6s %-10s %-30s %-25s %-15s %-20s", hId, hRad, hDes, hZon, hInt, hRes)
+        )
+        println Terminal.dim("-" * width)
+
+        // Iterate floors from top to bottom (Peak to Substrate)
+        int minFloor = isBreached ? -5 : 0 // Show some substrate if breached
+        for (int i = maxFloors - 1; i >= minFloor; i--) {
+            String id = String.format("%02d.", i)
+            
+            // Radar Logic
+            String radar = "[   ]"
+            if (i >= 0) {
+                radar = "[ █ ]"
+            } else {
+                radar = Terminal.colorize("[ ! ]", Terminal.RED)
+            }
+
+            String designation = i == 0 ? "Surface / Lobby" : (i == maxFloors - 1 ? "Peak / Observatory" : "Floor $i")
+            if (i < 0) designation = "Layer -0x" + Integer.toHexString(Math.abs(i)).toUpperCase()
+            
+            String zone = getFloorZone(i)
+            String integrity = getFloorIntegrity(i)
+            
+            // Resonance logic (simulated for building view)
+            Random r = new Random(seed + i)
+            int freq = 1000 + r.nextInt(2000)
+            String resonance = "${freq}Hz " + (i < 0 ? Terminal.colorize("######", Terminal.RED) : Terminal.colorize("~~~~~~", Terminal.CYAN))
+
+            String visited = ""
+            // Check if this specific floor object exists and is visited
+            def floorObj = floors.find { it.number == i }
+            if (floorObj?.isVisited()) visited = Terminal.colorize(" [V]", Terminal.GREEN)
+
+            // Padding and Formatting
+            String colDes = (designation + visited)
+            colDes += (" " * Math.max(0, 30 - Terminal.getVisualWidth(colDes)))
+            
+            String colZon = "[${zone}]"
+            colZon += (" " * Math.max(0, 25 - colZon.length()))
+            
+            String colInt = "[${integrity}]"
+            colInt += (" " * Math.max(0, 15 - colInt.length()))
+
+            println "${id.padRight(6)}${radar.padRight(10)}${colDes}${colZon}${colInt}${resonance}"
+        }
+        println Terminal.dim("-" * width)
     }
 
     @Override
@@ -126,10 +218,16 @@ class Building extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         def options = getBaseOptions(game)
-        for (int i = 0; i < maxFloors; i++) {
+        
+        int minFloor = isBreached ? -5 : 0
+        for (int i = maxFloors - 1; i >= minFloor; i--) {
             final int floorNum = i
             def floor = getFloor(floorNum)
-            String label = "${i}. Enter: Floor ${floorNum}"
+            String zone = getFloorZone(i)
+            String id = String.format("%02d", i)
+            if (i < 0) id = "-" + Math.abs(i)
+
+            String label = "${id}. Access: ${zone}"
             if (floor.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(floor) }
         }
