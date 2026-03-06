@@ -100,6 +100,58 @@ class NameGenerator {
         "The Void-Watcher"
     ]
 
+    static final Map<String, Map<String, List<String>>> roomLexicon = [
+        "rust": [
+            "adj": ["Oxidized", "Maintenance", "Patchwork", "Corroded", "Gritty", "Scrapyard", "Heavy", "Ventilation"],
+            "noun": ["Sump", "Duct", "Alcove", "Intake", "Pit", "Cell", "Shaft", "Vault"]
+        ],
+        "neon": [
+            "adj": ["Synthetic", "Neural", "Plasma", "Digital", "Fluorescent", "Data", "Encrypted", "Bio-luminescent"],
+            "noun": ["Hub", "Suite", "Core", "Node", "Array", "Port", "Relay", "Buffer"]
+        ],
+        "baroque": [
+            "adj": ["Velvet", "Gilded", "Sacred", "Golden", "Ornate", "Grand", "Silent", "Shadowed"],
+            "noun": ["Vestibule", "Chamber", "Sanctum", "Atrium", "Gallery", "Nave", "Vault", "Study"]
+        ],
+        "monolith": [
+            "adj": ["Concrete", "Brutalist", "Grey", "Eternal", "Static", "Cold", "Empty", "Impenetrable"],
+            "noun": ["Block", "Unit", "Slab", "Cell", "Foundation", "Structure", "Vault", "Pillar"]
+        ],
+        "void": [
+            "adj": ["Hollow", "Empty", "Silent", "Ghostly", "Drifting", "Dark", "Static", "Forgotten"],
+            "noun": ["Pocket", "Echo", "Well", "Aperture", "Horizon", "Reach", "Shadow", "Well"]
+        ],
+        "organic": [
+            "adj": ["Living", "Grown", "Breathing", "Soft", "Neural", "Fungal", "Wet", "Verdant"],
+            "noun": ["Pod", "Spore", "Nest", "Chamber", "Cavity", "Limb", "Root", "Cell"]
+        ]
+    ]
+
+    static Map<String, String> generateRoomName(String culture, String trait, long seed = 0) {
+        Random r = seed != 0 ? new Random(seed) : random
+        def lexicon = roomLexicon[culture] ?: roomLexicon["monolith"]
+        
+        // Use trait to influence the "type"
+        def types = [
+            "Military": ["Security Station", "Barracks", "Armory", "Tactical Hub"],
+            "Research": ["Laboratory", "Neural Link Array", "Observation Deck", "Bio-Server"],
+            "Industrial": ["Power Plant", "Processing Core", "Maintenance Bay", "Fuel Depot"],
+            "Ceremonial": ["Prayer Hall", "Ritual Chamber", "Archive", "Memory Well"],
+            "Commercial": ["Trading Floor", "Logic Market", "Credit Hub", "Supply Node"],
+            "Agricultural": ["Hydroponic Bay", "Spore Farm", "Oxygen Sump", "Growth Chamber"]
+        ]
+        
+        def traitTypes = types[trait] ?: ["Standard Spatial Cell", "Generic Living Unit", "Transit Node", "Lattice Sub-Cell"]
+        String type = traitTypes[r.nextInt(traitTypes.size())]
+        
+        String adj = lexicon.adj[r.nextInt(lexicon.adj.size())]
+        String noun = lexicon.noun[r.nextInt(lexicon.noun.size())]
+        String hex = Integer.toHexString(r.nextInt(0xFF)).toUpperCase()
+        
+        String name = "$adj $noun [0x$hex]"
+        return [name: name, type: type]
+    }
+
     static Map<String, Object> generateBuildingName(String culture, int floors, long seed = 0, int depth = 0, boolean isNullZone = false, boolean isAbyssal = false) {
         Random r = seed != 0 ? new Random(seed) : random
         

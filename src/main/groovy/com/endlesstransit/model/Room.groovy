@@ -18,6 +18,9 @@ class Room implements Location {
     String walls
     String structureDesc
     String lightingDesc
+    String roomName
+    String roomType
+    Map<String, String> atmoTraits = [:]
     List<String> objects = []
     Location parent
     boolean visited = false
@@ -92,9 +95,9 @@ class Room implements Location {
     String getPath() {
         int myIndex = (parent instanceof Apartment) ? ((Apartment)parent).rooms.indexOf(this) + 1 : 0
         if (parent != null) {
-            return "${parent.getPath()} > Room ${myIndex}"
+            return "${parent.getPath()} > $roomName"
         }
-        return "Room ${myIndex}"
+        return roomName
     }
 
     @Override
@@ -110,21 +113,22 @@ class Room implements Location {
 
     @Override
     String getTypeName() {
-        return (parent instanceof Apartment && parent.getTypeName() == "Crypt") ? "Shard" : "Room"
+        return roomType
     }
 
     @Override
     String getName() {
-        int myIndex = getIndexInParent()
-        if (getTypeName() == "Shard") {
-            return "Shard 0x" + Integer.toHexString(myIndex).toUpperCase()
-        }
-        return "Room ${myIndex}"
+        return roomName
     }
 
     @Override
     Map<String, Object> getMutationState() {
-        return ["objects": objects]
+        return [
+            "objects": objects,
+            "roomName": roomName,
+            "roomType": roomType,
+            "atmoTraits": atmoTraits
+        ]
     }
 
     @Override
@@ -132,6 +136,12 @@ class Room implements Location {
         if (state.containsKey("objects")) {
             this.objects.clear()
             this.objects.addAll((List<String>) state.objects)
+        }
+        if (state.containsKey("roomName")) this.roomName = (String) state.roomName
+        if (state.containsKey("roomType")) this.roomType = (String) state.roomType
+        if (state.containsKey("atmoTraits")) {
+            this.atmoTraits.clear()
+            this.atmoTraits.putAll((Map<String, String>) state.atmoTraits)
         }
     }
 
@@ -171,10 +181,17 @@ class Room implements Location {
             this.isAnomaly = ((Apartment)parent).isAnomaly
         }
 
+        // Functional Naming based on Country Trait
+        Country country = (Country) findAncestor(Country.class)
+        String trait = country?.functionalTrait ?: "Standard"
+        def nameData = NameGenerator.generateRoomName(this.culture, trait, this.seed)
+        this.roomName = nameData.name
+        this.roomType = nameData.type
+
         // Refine atmosphere based on parent vibe (regional mutation)
         def vibe = getVibe()
         if (vibe != null) {
-            def atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation, this.isAnomaly)
+            def atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation, this.isAnomaly, this.seed)
             this.walls = atmos.walls
             this.lightingDesc = atmos.lighting
             this.structureDesc = atmos.structure
@@ -308,6 +325,11 @@ class Room implements Location {
         this.walls = atmos.walls
         this.lightingDesc = atmos.lighting
         this.structureDesc = atmos.structure
+
+        // Initial Atmo-Traits
+        this.atmoTraits["OXYGEN"] = "${random.nextInt(10) + 12}%"
+        this.atmoTraits["TEMP"] = "${random.nextInt(20) + 5}°C"
+        this.atmoTraits["SIGNAL"] = random.nextBoolean() ? "[SHIELDED]" : "[CLEAR]"
         
         // Generate themed furniture
         int numFurniture = random.nextInt(3) + 1
@@ -332,12 +354,31 @@ class Room implements Location {
             lightText = Terminal.glitchText(lightText, 0.3)
         }
 
-        description.append("You are in ${Terminal.bold(structure)}.\n")
-        description.append("The walls are ${Terminal.colorize(color, Terminal.WHITE)} ${Terminal.bold(wallText)}.\n")
+        // --- Structured Diagnostic Header ---
+        int width = 100
+        String headerTitle = "LOCAL_CELL_DIAGNOSTIC: ${getLIP()}"
+        description.append(Terminal.colorize(" $headerTitle ", Terminal.L_CYAN)).append("\n")
+        description.append(Terminal.dim("-" * width)).append("\n")
+        
+        String identLine = "IDENT: ${Terminal.bold(roomName)}"
+        String traitsLine = "ATMO_TRAITS: [OXY: ${atmoTraits.OXYGEN}] | [TEMP: ${atmoTraits.TEMP}] | [SIGNAL: ${atmoTraits.SIGNAL}]"
+        
+        // Manual alignment for diagnostic lines
+        description.append(identLine).append(" " * (45 - Terminal.stripAnsi(identLine).length())).append(" ║ ").append(traitsLine).append("\n")
+        
+        String typeLine = "TYPE:  ${Terminal.colorize(roomType, Terminal.YELLOW)}"
+        String resLabel = isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)
+        String resLine = "RESONANCE:   $resLabel"
+        description.append(typeLine).append(" " * (45 - Terminal.stripAnsi(typeLine).length())).append(" ║ ").append(resLine).append("\n")
+        description.append(Terminal.dim("-" * width)).append("\n")
+
+        // --- Sensory Prose ---
+        description.append("\n" + Terminal.colorize(" [NEURAL_LINK_INTERPRETATION]:", Terminal.L_MAGENTA)).append("\n")
+        description.append("You are in $structure. The walls are ${Terminal.colorize(color, Terminal.WHITE)} $wallText.\n")
         description.append("The space is illuminated by ${Terminal.colorize(lightText, Terminal.YELLOW)}.\n")
         description.append("\n")
         
-        int wrapWidth = 45
+        int wrapWidth = 60
         
         String furnitureStr = furniture.join(', ')
         List<String> wrappedFurniture = Terminal.wrapText(furnitureStr, wrapWidth)
@@ -356,6 +397,7 @@ class Room implements Location {
                 description.append(line).append("\n")
             }
         }
+        description.append(Terminal.dim("-" * width)).append("\n")
         return description.toString()
     }
 }

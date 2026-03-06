@@ -1,112 +1,55 @@
 {
     "version": "1.1",
-    "masterSeed": 1772755068841,
-    "timestamp": 1772755311868,
+    "masterSeed": 55555,
+    "timestamp": 1772763711947,
     "player": {
-        "coherence": 50,
-        "stepCount": 42,
-        "currentLIP": "0.0.0.0.1",
+        "coherence": 100,
+        "stepCount": 0,
+        "currentLIP": "0.0.0.0.0.0.0.0.0.0.0.0.0",
         "footprints": [
-            "0.0.0.0.0.0.0.0.4",
+            "0.0.0.0.0.0.0.0.0.0.0.0.0",
+            "0.0.0.0.0.0.0.0.0",
             "0.0.0.0.0.0.0",
-            "0.0.0.0.0",
-            "0.0.0.0.0.0.0.0.4.1",
-            "0.0.0.0.0.0.0.0.4.1.0",
-            "0.0.0.0.0.0.0.0.4.1.0.0.0",
-            "0.0.0.0.0.0.7",
-            "0.0.0.0.0.0.6",
-            "0.0.0.0.0.0.6.1",
-            "0.0.0.0.0.0.6.2",
-            "0.0.0.0.0.0.6.2.5",
-            "0.0.0.0.0.0.6.2.5.8",
-            "0.0.0.0.0.0.6.2.5.8.0",
-            "0.0.0.0.0.0.6.2.5.8.0.0.0",
-            "0.0.0.0.0.0.6.2.7",
-            "0.0.0.0.0.0.6.2.7.1",
-            "0.0.0.0.0.0.6.2.7.1.0",
-            "0.0.0.0.0.0.6.2.7.1.0.0.0",
-            "0.0.0.0.1"
+            "0.0.0.0.0"
         ],
         "visitedPaths": [
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Blackspire > High Walk > Impenetrable Foundation",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Blackspire",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Silverspire",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Blackwell",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Blackwell > Busy Path",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Blackwell > Broad Avenue",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Blackwell > Broad Avenue > Apex of Lost Frequencies",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Hydrael > Northern Storm Territories > Blackwell > Broad Avenue > The Last Stable Surface",
-            "Universe > Epsilon-630-Sync > Rim Expanse 47 > Lambda Prime > Orionea"
+            "Universe > Gamma-631-Link > Quaternary Grid 60 > Rigel Kapteyn > Gaiaia > Free Shadow Territories > Goldport > High Terrace > Impenetrable Pillar",
+            "Universe > Gamma-631-Link > Quaternary Grid 60 > Rigel Kapteyn > Gaiaia > Free Shadow Territories > Goldport",
+            "Universe > Gamma-631-Link > Quaternary Grid 60 > Rigel Kapteyn > Gaiaia"
         ],
         "inventory": [
             {
-                "name": "bonsai tree infused with geiger counter",
-                "frequency": 3352,
-                "sessionMergeCount": 0,
-                "isKeystone": false
-            },
-            {
-                "name": "lead-lined container with katana rack",
-                "frequency": 3207,
-                "sessionMergeCount": 0,
-                "isKeystone": false
-            },
-            {
-                "name": "Hidden Frequency",
-                "frequency": 3631362,
-                "sessionMergeCount": 0,
-                "isKeystone": false
-            },
-            {
-                "name": "chrome tailfin with katana rack",
-                "frequency": 2930,
+                "name": "Test Fragment",
+                "frequency": 1234,
                 "sessionMergeCount": 0,
                 "isKeystone": false
             }
         ]
     },
     "mutations": {
-        "0.0.0.0.0.0.0.0.4": {
-            "isBreached": false,
+        "0.0.0.0.0.0.0.0.0.0.0.0.0": {
+            "objects": [
+                "coal-stained shovel with sandaled footprint",
+                "marble pillar infused with copper pipe",
+                "amphora infused with pressure gauge",
+                "iron rivet with amphora",
+                "iron rivet with sandaled footprint",
+                "lyre infused with brass piston"
+            ],
+            "roomName": "Impenetrable Cell [0x90]",
+            "roomType": "Trading Floor",
+            "atmoTraits": {
+                "OXYGEN": "12%",
+                "TEMP": "16\u00b0C",
+                "SIGNAL": "[CLEAR]"
+            }
+        },
+        "0.0.0.0.0.0.0.0.0": {
+            "isBreached": true,
             "isLandmark": false,
-            "infusionCount": 0,
+            "infusionCount": 10,
             "sampledFloors": [
-                1
-            ]
-        },
-        "0.0.0.0.0.0.0.0.4.1.0.0.0": {
-            "objects": [
-                "shoji screen infused with lead-lined container"
-            ]
-        },
-        "0.0.0.0.0.0.6.2.5": {
-            "isBreached": false,
-            "isLandmark": true,
-            "infusionCount": 0,
-            "sampledFloors": [
-                8
-            ]
-        },
-        "0.0.0.0.0.0.6.2.5.8.0.0.0": {
-            "objects": [
-                
-            ]
-        },
-        "0.0.0.0.0.0.6.2.7": {
-            "isBreached": false,
-            "isLandmark": true,
-            "infusionCount": 0,
-            "sampledFloors": [
-                
-            ]
-        },
-        "0.0.0.0.0.0.6.2.7.1.0.0.0": {
-            "objects": [
-                "flint scraper with seamless glass cube",
-                "white light strip infused with stone tool",
-                "invisible support infused with dried papyrus",
-                "hewn log with floating white sphere"
+                0
             ]
         }
     }

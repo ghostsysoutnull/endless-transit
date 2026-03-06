@@ -4,6 +4,8 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
+import com.endlesstransit.ui.Terminal
+import com.endlesstransit.procgen.Gematria
 
 import java.util.Random
 
@@ -30,6 +32,55 @@ class Corridor extends Container {
             return "A vaulted transit artery with ${doors.size()} access crypts. Cultural resonance: [CORRUPTED]."
         }
         return "A long corridor with ${doors.size()} doors. Cultural resonance: ${culture}."
+    }
+
+    @Override
+    void enter(Player player) {
+        markVisited()
+        ensureChildrenPopulated()
+        
+        println "\n" + Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)
+        println Terminal.dim("Scanning adjacent cells for spectral resonance...")
+        
+        int width = 95
+        println Terminal.dim("-" * width)
+        // Table Header
+        String header = String.format("%-4s  %-35s  %-15s  %-15s", "[ID]", "[LABEL]", "[STATUS]", "[SIGNATURE]")
+        println Terminal.bold(header)
+        println Terminal.dim("-" * width)
+
+        for (int i = 0; i < apartments.size(); i++) {
+            def apt = apartments[i]
+            def door = doors[i]
+            
+            String id = String.format("%02d.", i + 1)
+            
+            // Label combines Door description and scanned name
+            String roomName = "?? UNKNOWN ??"
+            String status = Terminal.dim("[ENCRYPTED]")
+            String signature = "????Hz"
+            
+            if (!apt.rooms.isEmpty()) {
+                def firstRoom = apt.rooms[0]
+                roomName = firstRoom.roomName
+                status = firstRoom.isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)
+                signature = "${Gematria.calculateFrequency(roomName, firstRoom.getDepth())}Hz"
+            }
+
+            boolean isVisited = apt.rooms.any { it.isVisited() }
+            String visited = isVisited ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
+            String label = "${door.getDescription()}${visited}"
+            
+            // Manual length check for alignment since stripAnsi is needed for format
+            int visibleLabelLen = Terminal.stripAnsi(label).length()
+            String paddedLabel = label + (" " * Math.max(0, 35 - visibleLabelLen))
+
+            printf("%-4s  %s  %-15s  %-15s\n", id, paddedLabel, status, signature)
+            
+            // Sub-line for the scanned room name
+            println String.format("      > Scanned ID: %s", Terminal.colorize(roomName, Terminal.YELLOW))
+        }
+        println Terminal.dim("-" * width)
     }
 
     @Override
@@ -71,7 +122,8 @@ class Corridor extends Container {
         for (int i = 0; i < apartments.size(); i++) {
             def apt = apartments[i]
             if (!apt.rooms.isEmpty()) {
-                String label = "${i + 1}. Enter: ${apt.doorDescription}"
+                String id = String.format("%02d", i + 1)
+                String label = "${id}. Access: ${apt.rooms[0].roomName}"
                 if (apt.rooms.any { it.isVisited() }) {
                     label += " [Visited]"
                 }

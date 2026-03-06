@@ -185,16 +185,38 @@ class Game {
                 println ""
                 renderCompass(options)
                 println("${Terminal.dim("EXECUTE_DIRECTIVE:")}")
+                
+                // 1. Render Local Actions (Filtering out specialized lists)
+                List<String> navOptions = []
                 menu.each { menuKey, action ->
                     String label = currentActionMap[menuKey]
-                    if (currentLocation instanceof Street && label.contains("Enter Building:")) {
+                    
+                    // Skip items already shown in tables
+                    if (currentLocation instanceof Street && label.contains("Enter Building:")) return
+                    if (currentLocation instanceof Corridor && label.contains("Access:")) return
+                    
+                    // If it's a single-char nav command, collect it for the bottom line
+                    if (menuKey.length() == 1 && "udfblt".contains(menuKey)) {
+                        navOptions << "[${Terminal.colorize(menuKey, Terminal.YELLOW)}] ${label.split("\\. ")[1]}"
                         return
                     }
+                    
                     println(label)
                 }
-                println("${Terminal.colorize("i", Terminal.YELLOW)}. Open Trace Buffer")
-                println("${Terminal.colorize("sync", Terminal.CYAN)}. Synchronize Neural Trace")
-                println("${Terminal.colorize("quit", Terminal.RED)}. Terminate Link")
+
+                // 2. Render Single-Line Navigation
+                if (!navOptions.isEmpty()) {
+                    println navOptions.join(Terminal.dim(" | "))
+                }
+
+                // 3. Render Single-Line Global Controls
+                String buffer = "[${Terminal.colorize("i", Terminal.YELLOW)}] Buffer"
+                String sync = "[${Terminal.colorize("sync", Terminal.CYAN)}] Save"
+                String map = "[${Terminal.colorize("m", Terminal.WHITE)}] Map"
+                String tree = "[${Terminal.colorize("lattice", Terminal.WHITE)}] Tree"
+                String quit = "[${Terminal.colorize("quit", Terminal.RED)}] Quit"
+                
+                println "${buffer} | ${sync} | ${map} | ${tree} | ${quit}"
 
                 String choice
             while (true) {
@@ -298,9 +320,14 @@ class Game {
             }
 
             Logger.info("Executing choice: $choice")
-            // Find matching menu entry
+            // Find matching menu entry (with leading zero fallback)
             def matchingKey = menu.keySet().find { key ->
-                return key.equalsIgnoreCase(choice)
+                if (key.equalsIgnoreCase(choice)) return true
+                // Fallback: If user typed '1', match '01'
+                if (choice.length() == 1 && Character.isDigit(choice[0] as char)) {
+                    if (key == "0" + choice) return true
+                }
+                return false
             }
 
             if (matchingKey) {
