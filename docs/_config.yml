@@ -1,6 +1,6 @@
 title: Endless Transit | Neural Link Manual
 description: An infinite procedural universe simulation and text-adventure.
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/endless-transit" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site
 
 markdown: kramdown
