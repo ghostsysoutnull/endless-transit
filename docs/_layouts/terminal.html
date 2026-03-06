@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | Endless Transit</title>
+    <link rel="stylesheet" href="{{ '/assets/css/terminal.css' | relative_url }}">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="terminal-body">
+    <div class="scanlines"></div>
+    
+    <header class="command-bridge-hud">
+        <div class="hud-top">
+            <span class="glitch" data-text="LATTICE: ∞ »» ○ ☼ ⊕ ⬚ 🏙 ═ ⌂">LATTICE: ∞ »» ○ ☼ ⊕ ⬚ 🏙 ═ ⌂</span>
+            <span class="stats">OBSERVER_SYNC: NOMINAL | COHERENCE: 100%</span>
+        </div>
+        <nav class="comms-array">
+            <a href="{{ '/manual/SYSTEM_INITIALIZATION.html' | relative_url }}">[00_INIT]</a>
+            <a href="{{ '/manual/THE_LATTICE_ATLAS.html' | relative_url }}">[01_ATLAS]</a>
+            <a href="{{ '/manual/OPERATIONAL_PROTOCOLS.html' | relative_url }}">[02_PROTOCOLS]</a>
+            <a href="{{ '/manual/LINK_NAVIGATION.html' | relative_url }}">[03_NAV]</a>
+            <a href="{{ '/manual/THE_SUBSTRATE_CODE.html' | relative_url }}">[04_CODE]</a>
+        </nav>
+    </header>
+
+    <main class="adaptive-bridge">
+        <section class="left-pane-content">
+            <div class="content-wrapper">
+                {{ content }}
+            </div>
+        </section>
+        
+        <aside class="right-pane-telemetry">
+            <div class="telemetry-header">[NEURAL_LATTICE_PROJECTION]</div>
+            <div class="ascii-map">
+. . . . . . . . . . . . 
+. . . . ■ . . . . . . . 
+. . . . . . . . . . . . 
+. . . . . ▲ . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . ■ . . . . 
+. . . . . . . . . . . . 
+            </div>
+            <div class="telemetry-log">
+                <p>> SYNC_ESTABLISHED</p>
+                <p>> SCAN_READY</p>
+                <p>> TRACE_STABLE</p>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="terminal-footer">
+        <p>== ENDLESS_TRANSIT_LINK_GATEWAY v1.1 ==</p>
+    </footer>
+</body>
+</html>

@@ -1,61 +1,68 @@
 # Endless Transit
 
-A procedural universe simulation and text-based adventure written in Groovy. Explore infinite scales of space, from cosmic filaments to individual rooms, through an immersive cybernetic terminal interface.
+[![Build Status](https://img.shields.io/badge/build-nominal-00ffff.svg?style=flat-square)](#)
+[![Tests](https://img.shields.io/badge/tests-100%25_passing-00ff00.svg?style=flat-square)](#)
+[![Tech Stack](https://img.shields.io/badge/engine-Groovy_4.x-cyan.svg?style=flat-square)](#)
+[![Neural Link](https://img.shields.io/badge/link-persistent-magenta.svg?style=flat-square)](#)
 
-## 🚀 Getting Started
+> "The world is not a place. It is a sequence of frequencies."
 
-### Prerequisites
-- Groovy 4.x+
-- A terminal with ANSI color support
+**Endless Transit** is an infinite procedural universe simulation and text-adventure. You operate as an **Observer**, beaming your consciousness across a recursive lattice of realities through an immersive, high-fidelity cyber-terminal interface.
 
-### Running the Game
-The easiest way to launch is via the provided shell script:
+---
+
+## ⚡ [SYSTEM_INITIALIZATION]
+
+Experience the infinite scale of the Neural Web through our **Adaptive Command Bridge**.
+
+```text
+╔══════════════════════════════════════════════════════════════════════════════════════════╗
+║ LATTICE: ∞ »» ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ | TRAVERSAL: 142 | COHERENCE: [████████░░] 84%              ║
+║ LOCUS_TRACE: ...Planet > Country > City > Street > Building                              ║
+╚══════════════════════════════════════════════════════════════════════════════════════════╝
+```
+
+### 📡 **[LAUNCH_PROTOCOL]**
+To initialize the neural link, ensure you have **Groovy 4.x+** installed, then execute:
 ```bash
 ./run.sh
 ```
 
-### Running Tests
-Standardized tests are located in `src/test/groovy`:
+---
+
+## 📚 [NEURAL_LINK_MANUAL]
+For complete operational protocols, world lore, and technical whitepapers, visit the **[Official Manual](https://bpatini.github.io/endless-transit/)**.
+
+*   **[SYSTEM_INITIALIZATION](docs/manual/SYSTEM_INITIALIZATION.md)**: Narrative intro and objectives.
+*   **[LATTICE_ATLAS](docs/manual/THE_LATTICE_ATLAS.md)**: Geography and the 6 Great Cultures.
+*   **[OPERATIONAL_PROTOCOLS](docs/manual/OPERATIONAL_PROTOCOLS.md)**: Coherence, Gematria, and Rituals.
+*   **[FIELD_OPERATIONS](docs/manual/LINK_NAVIGATION.md)**: Input guide and tactical navigation.
+*   **[SUBSTRATE_CODE](docs/manual/THE_SUBSTRATE_CODE.md)**: Architectural patterns and procedural logic.
+
+---
+
+## 🏗️ [ARCHITECTURAL_PILLARS]
+
+The engine is built on **Domain-Driven Design (DDD)** to ensure modularity and scalability:
+
+*   **`core`**: The link-loop, player state, and trace persistence.
+*   **`model`**: The recursive 12-scale hierarchy (Universe -> Shard).
+*   **`procgen`**: Deterministic seeding and Gematria frequency math.
+*   **`ui`**: 130-char Adaptive Bridge and Wide-Telemetry scanning.
+
+### 🤖 **AI-Agent Collaboration**
+This project is optimized for **Context Localization**. Each domain features its own `GEMINI.md`, allowing AI architects to maintain deep project alignment with minimal cognitive noise.
+
+---
+
+## 🛠️ [FIELD_VALIDATION]
+
+Verify link stability using our automated diagnostic suite:
 ```bash
-./run.sh --test
-```
-Or via Gradle:
-```bash
-gradle test
+./run.sh --test             # Standard JUnit Suite
+.agents/vibe-check-ui.sh    # Aesthetic Alignment Check
+.agents/vibe-check-model.sh # Procedural Logic Check
 ```
 
-### Automated Vibe Checks
-A set of high-signal validation scripts is available in `.agents/` to ensure the structural and aesthetic integrity of the project:
-```bash
-.agents/vibe-check-ui.sh
-.agents/vibe-check-model.sh
-```
-
-## 🏗️ Project Architecture
-
-The codebase is organized into functional domains to optimize for modularity and AI-agent collaboration:
-
-- **`core`**: Game engine, player state, and system services.
-- **`model`**: The hierarchical world structure (Universe -> Room).
-- **`procgen`**: Procedural logic including Gematria frequency calculations.
-- **`ui`**: Cyber-Terminal TUI utilities and theme management.
-
-### Key Directories
-- `src/main/groovy/com/endlesstransit/`: Source code.
-- `src/test/groovy/com/endlesstransit/`: Standardized test suite.
-- `src/main/resources/themes/`: Cultural and temporal assets for procedural generation.
-- `docs/`: Design specifications and optimization roadmaps.
-
-## 🤖 AI-Agent Optimized
-This project uses **Context Localization**. Each domain directory contains its own `GEMINI.md` file, providing surgical context and "vibe" instructions for AI-driven development.
-
-## 🌌 Gameplay Features
-- **Infinite Procedural Scale**: Navigate a seamless hierarchy of generated spaces.
-- **Cyber-Terminal HUD**: Real-time diagnostic readout of coordinates, depth, and neural coherence.
-- **Quantum Trace Buffer**: Holographic inventory for collecting and synthesizing spectral fragments.
-- **Gematria Logic**: Mysterious frequency-based object generation derived from hierarchical depth.
-
-## 🛠️ Development Workflow
-- **Plan First**: All non-trivial tasks start with a plan in `tasks/todo.md`.
-- **Domain Integrity**: Maintain strict separation between core logic and procedural generation.
-- **Vibe Coding**: Prioritize aesthetic immersion and structural elegance.
+---
+*Connection Stabilized. Safe Transit, Operator.*
