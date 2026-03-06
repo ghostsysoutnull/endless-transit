@@ -8,6 +8,7 @@ import com.endlesstransit.ui.ThemeManager
 
 class Player {
     List<InventoryItem> inventory
+    Location currentLocation
     int stepCount = 0
     Set<String> footprints = new LinkedHashSet<>()
     Set<String> visitedPaths = new LinkedHashSet<>()

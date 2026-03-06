@@ -41,6 +41,7 @@ class Game {
         def country = planet.getCountries()[0]
         def city = country.getCities()[0]
         currentLocation = city.getStreets()[0]
+        player.currentLocation = currentLocation
     }
 
     void renderInventoryOverlay() {
@@ -453,6 +454,7 @@ class Game {
         // Resolve current location
         String currentLIP = (String) snapshot.player.currentLIP
         this.currentLocation = universe.resolveLIP(currentLIP)
+        this.player.currentLocation = this.currentLocation
         if (this.currentLocation == null) {
             Logger.error("RESTORE_ERROR: Could not resolve current location LIP: $currentLIP")
             initializeWorld()
@@ -976,6 +978,7 @@ class Game {
     void enterLocation(Location location) {
         Logger.info("Changing location from ${currentLocation?.getPath()} to ${location?.getPath()}")
         this.currentLocation = location
+        this.player.currentLocation = location
         
         if (location != null) {
             player.markFootprint(location)

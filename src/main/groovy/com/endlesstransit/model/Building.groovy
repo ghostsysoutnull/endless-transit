@@ -135,16 +135,22 @@ class Building extends Container {
         )
         println Terminal.dim("-" * width)
 
+        // Find current floor index for the radar
+        int currentFloorNum = -999
+        Location p = player.currentLocation // We'll need to ensure player has this
+        if (p instanceof Floor) currentFloorNum = p.number
+        else if (p?.parent instanceof Floor) currentFloorNum = p.parent.number
+
         // Iterate floors from top to bottom (Peak to Substrate)
         int minFloor = isBreached ? -5 : 0 // Show some substrate if breached
         for (int i = maxFloors - 1; i >= minFloor; i--) {
             String id = String.format("%02d.", i)
             
-            // Radar Logic
-            String radar = "[   ]"
-            if (i >= 0) {
-                radar = "[ █ ]"
-            } else {
+            // Radar Logic: [>X<] for current, [ █ ] for regular, [ ! ] for abyssal
+            String radar = "[ █ ]"
+            if (i == currentFloorNum) {
+                radar = Terminal.colorize("[>X<]", Terminal.YELLOW)
+            } else if (i < 0) {
                 radar = Terminal.colorize("[ ! ]", Terminal.RED)
             }
 
@@ -160,21 +166,22 @@ class Building extends Container {
             String resonance = "${freq}Hz " + (i < 0 ? Terminal.colorize("######", Terminal.RED) : Terminal.colorize("~~~~~~", Terminal.CYAN))
 
             String visited = ""
-            // Check if this specific floor object exists and is visited
             def floorObj = floors.find { it.number == i }
             if (floorObj?.isVisited()) visited = Terminal.colorize(" [V]", Terminal.GREEN)
 
-            // Padding and Formatting
-            String colDes = (designation + visited)
-            colDes += (" " * Math.max(0, 30 - Terminal.getVisualWidth(colDes)))
+            // Visual-Aware Padding for all columns
+            String colDes = designation + visited
+            colDes += " " * Math.max(0, 30 - Terminal.getVisualWidth(colDes))
             
             String colZon = "[${zone}]"
-            colZon += (" " * Math.max(0, 25 - colZon.length()))
+            colZon += " " * Math.max(0, 25 - Terminal.getVisualWidth(colZon))
             
             String colInt = "[${integrity}]"
-            colInt += (" " * Math.max(0, 15 - colInt.length()))
+            colInt += " " * Math.max(0, 15 - Terminal.getVisualWidth(colInt))
+            
+            String colRad = radar + (" " * Math.max(0, 10 - Terminal.getVisualWidth(radar)))
 
-            println "${id.padRight(6)}${radar.padRight(10)}${colDes}${colZon}${colInt}${resonance}"
+            println "${id.padRight(6)}${colRad}${colDes}${colZon}${colInt}${resonance}"
         }
         println Terminal.dim("-" * width)
     }
