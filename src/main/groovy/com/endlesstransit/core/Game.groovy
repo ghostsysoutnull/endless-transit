@@ -182,7 +182,6 @@ class Game {
                 currentActionMap["quit"] = "Quit"
 
                 // Display Menu and Compass
-                println ""
                 renderCompass(options)
                 println("${Terminal.dim("EXECUTE_DIRECTIVE:")}")
                 

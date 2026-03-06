@@ -370,13 +370,12 @@ class Room implements Location {
         String resLabel = isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)
         String resLine = "RESONANCE:   $resLabel"
         description.append(typeLine).append(" " * (45 - Terminal.stripAnsi(typeLine).length())).append(" ║ ").append(resLine).append("\n")
-        description.append(Terminal.dim("-" * width)).append("\n")
+        description.append(Terminal.dim("-" * width))
 
         // --- Sensory Prose ---
         description.append("\n" + Terminal.colorize(" [NEURAL_LINK_INTERPRETATION]:", Terminal.L_MAGENTA)).append("\n")
         description.append("You are in $structure. The walls are ${Terminal.colorize(color, Terminal.WHITE)} $wallText.\n")
         description.append("The space is illuminated by ${Terminal.colorize(lightText, Terminal.YELLOW)}.\n")
-        description.append("\n")
         
         int wrapWidth = 60
         
@@ -397,7 +396,7 @@ class Room implements Location {
                 description.append(line).append("\n")
             }
         }
-        description.append(Terminal.dim("-" * width)).append("\n")
+        description.append(Terminal.dim("-" * width))
         return description.toString()
     }
 }

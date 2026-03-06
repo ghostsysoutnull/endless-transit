@@ -39,7 +39,7 @@ class Corridor extends Container {
         markVisited()
         ensureChildrenPopulated()
         
-        println "\n" + Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)
+        println Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)
         println Terminal.dim("Scanning adjacent cells for spectral resonance...")
         
         int width = 100
