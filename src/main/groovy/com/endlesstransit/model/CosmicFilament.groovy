@@ -40,13 +40,39 @@ class CosmicFilament extends Container {
     }
 
     @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
+        lines << "Galactic sectors within this conduit:"
+        lines << "-" * 40
+        
+        for (int i = 0; i < children.size(); i += 2) {
+            def sL = children[i]
+            def sR = (i + 1 < children.size()) ? children[i+1] : null
+            
+            String labelL = String.format("%02d. %s", i + 1, sL.name)
+            if (sL.isVisited()) labelL += " [V]"
+            
+            String labelR = ""
+            if (sR) {
+                labelR = String.format("%02d. %s", i + 2, sR.name)
+                if (sR.isVisited()) labelR += " [V]"
+            }
+            
+            lines << String.format("%-40s | %-40s", labelL, labelR)
+        }
+        lines << "-" * 40
+        return lines
+    }
+
+    @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
         def options = getBaseOptions(game)
         children.eachWithIndex { node, i ->
             String nodeType = node instanceof NullSector ? "VOID_REACH" : "MATTER_CLUSTER"
-            String label = "${i + 1}. Pulse to ${nodeType}: ${node.name}"
-            if (node.isVisited()) label += " [Visited]"
+            String id = String.format("%02d", i + 1)
+            String label = "${id}. Pulse to ${nodeType}: ${node.name}"
             options[label] = { game.enterLocation(node) }
         }
         return options

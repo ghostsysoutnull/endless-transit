@@ -78,11 +78,38 @@ class Universe extends Container {
     }
 
     @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
+        lines << "Primary filaments radiating from root:"
+        lines << "-" * 40
+        
+        for (int i = 0; i < filaments.size(); i += 2) {
+            def fL = filaments[i]
+            def fR = (i + 1 < filaments.size()) ? filaments[i+1] : null
+            
+            String labelL = String.format("%02d. %s", i + 1, fL.name)
+            if (fL.isVisited()) labelL += " [V]"
+            
+            String labelR = ""
+            if (fR) {
+                labelR = String.format("%02d. %s", i + 2, fR.name)
+                if (fR.isVisited()) labelR += " [V]"
+            }
+            
+            lines << String.format("%-40s | %-40s", labelL, labelR)
+        }
+        lines << "-" * 40
+        return lines
+    }
+
+    @Override
     Map<String, Closure> getOptions(Game game) {
+        ensureChildrenPopulated()
         def options = getBaseOptions(game)
         filaments.eachWithIndex { filament, i ->
-            String label = "${i + 1}. Synchronize with ${filament.name}"
-            if (filament.isVisited()) label += " [Visited]"
+            String id = String.format("%02d", i + 1)
+            String label = "${id}. Synchronize with ${filament.name}"
             options[label] = { game.enterLocation(filament) }
         }
         return options

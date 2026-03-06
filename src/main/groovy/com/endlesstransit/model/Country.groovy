@@ -57,7 +57,33 @@ class Country extends Container {
     String getDescription() {
         def v = getVibe()
         String mutationInfo = v ? " [Sector Mutation: ${v.latticeMutation}]" : ""
-        return "Country: $name$mutationInfo"
+        return "Country: $name$mutationInfo\nA vast administrative region governed by the ${functionalTrait} directive."
+    }
+
+    @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
+        lines << "Regional cities identified:"
+        lines << "-" * 40
+        
+        for (int i = 0; i < cities.size(); i += 2) {
+            def cL = cities[i]
+            def cR = (i + 1 < cities.size()) ? cities[i+1] : null
+            
+            String labelL = String.format("%02d. %s", i + 1, cL.name)
+            if (cL.isVisited()) labelL += " [V]"
+            
+            String labelR = ""
+            if (cR) {
+                labelR = String.format("%02d. %s", i + 2, cR.name)
+                if (cR.isVisited()) labelR += " [V]"
+            }
+            
+            lines << String.format("%-40s | %-40s", labelL, labelR)
+        }
+        lines << "-" * 40
+        return lines
     }
 
     @Override
@@ -65,8 +91,8 @@ class Country extends Container {
         ensureChildrenPopulated()
         def options = getBaseOptions(game)
         cities.eachWithIndex { city, i ->
-            String label = "${i + 1}. Travel to ${city.name}"
-            if (city.isVisited()) label += " [Visited]"
+            String id = String.format("%02d", i + 1)
+            String label = "${id}. Travel to ${city.name}"
             options[label] = { game.enterLocation(city) }
         }
         return options

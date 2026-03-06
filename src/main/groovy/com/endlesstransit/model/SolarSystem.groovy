@@ -45,12 +45,38 @@ class SolarSystem extends Container {
     }
 
     @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
+        lines << "Orbital bodies within range:"
+        lines << "-" * 40
+        
+        for (int i = 0; i < planets.size(); i += 2) {
+            def pL = planets[i]
+            def pR = (i + 1 < planets.size()) ? planets[i+1] : null
+            
+            String labelL = String.format("%02d. %s", i + 1, pL.name)
+            if (pL.isVisited()) labelL += " [V]"
+            
+            String labelR = ""
+            if (pR) {
+                labelR = String.format("%02d. %s", i + 2, pR.name)
+                if (pR.isVisited()) labelR += " [V]"
+            }
+            
+            lines << String.format("%-40s | %-40s", labelL, labelR)
+        }
+        lines << "-" * 40
+        return lines
+    }
+
+    @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
         def options = getBaseOptions(game)
         planets.eachWithIndex { planet, i ->
-            String label = "${i + 1}. Land on ${planet.name}"
-            if (planet.isVisited()) label += " [Visited]"
+            String id = String.format("%02d", i + 1)
+            String label = "${id}. Land on ${planet.name}"
             options[label] = { game.enterLocation(planet) }
         }
         return options

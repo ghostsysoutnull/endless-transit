@@ -28,7 +28,33 @@ class GalacticSector extends Container {
 
     @Override
     String getDescription() {
-        "A dense cluster of celestial bodies within the neural web."
+        "Sector: $name\nA dense cluster of celestial bodies within the neural web."
+    }
+
+    @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
+        lines << "Solar systems within proximity:"
+        lines << "-" * 40
+        
+        for (int i = 0; i < children.size(); i += 2) {
+            def sL = children[i]
+            def sR = (i + 1 < children.size()) ? children[i+1] : null
+            
+            String labelL = String.format("%02d. %s", i + 1, sL.name)
+            if (sL.isVisited()) labelL += " [V]"
+            
+            String labelR = ""
+            if (sR) {
+                labelR = String.format("%02d. %s", i + 2, sR.name)
+                if (sR.isVisited()) labelR += " [V]"
+            }
+            
+            lines << String.format("%-40s | %-40s", labelL, labelR)
+        }
+        lines << "-" * 40
+        return lines
     }
 
     @Override
@@ -36,8 +62,8 @@ class GalacticSector extends Container {
         ensureChildrenPopulated()
         def options = getBaseOptions(game)
         children.eachWithIndex { system, i ->
-            String label = "${i + 1}. Transition to System: ${system.name}"
-            if (system.isVisited()) label += " [Visited]"
+            String id = String.format("%02d", i + 1)
+            String label = "${id}. Transition to System: ${system.name}"
             options[label] = { game.enterLocation(system) }
         }
         return options
