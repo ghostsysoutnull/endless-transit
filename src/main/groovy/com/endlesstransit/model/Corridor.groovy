@@ -42,10 +42,12 @@ class Corridor extends Container {
         println "\n" + Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)
         println Terminal.dim("Scanning adjacent cells for spectral resonance...")
         
-        int width = 95
+        int width = 100
         println Terminal.dim("-" * width)
-        // Table Header
-        String header = String.format("%-4s  %-35s  %-15s  %-15s", "[ID]", "[LABEL]", "[STATUS]", "[SIGNATURE]")
+        
+        // High-Density Telemetry Header
+        // [ID] 4 | [VISUAL] 28 | [DESIGNATION] 35 | [WAVE] 15 | [RESONANCE] 15
+        String header = String.format("%-4s  %-28s  %-35s  %-15s  %-15s", "[ID]", "[VISUAL_TELEMETRY]", "[SCANNED_DESIGNATION]", "[WAVEFORM]", "[RESONANCE]")
         println Terminal.bold(header)
         println Terminal.dim("-" * width)
 
@@ -55,30 +57,35 @@ class Corridor extends Container {
             
             String id = String.format("%02d.", i + 1)
             
-            // Label combines Door description and scanned name
             String roomName = "?? UNKNOWN ??"
             String status = Terminal.dim("[ENCRYPTED]")
             String signature = "????Hz"
+            String wave = "---"
             
             if (!apt.rooms.isEmpty()) {
                 def firstRoom = apt.rooms[0]
                 roomName = firstRoom.roomName
                 status = firstRoom.isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)
-                signature = "${Gematria.calculateFrequency(roomName, firstRoom.getDepth())}Hz"
+                int freq = Gematria.calculateFrequency(roomName, firstRoom.getDepth())
+                signature = String.format("%04dHz", freq)
+                
+                // Simple wave visual logic
+                if (firstRoom.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
+                else if (freq % 11 == 0) wave = Terminal.colorize("≈≈≈", Terminal.GREEN)
+                else wave = Terminal.colorize("~~~", Terminal.CYAN)
             }
 
             boolean isVisited = apt.rooms.any { it.isVisited() }
             String visited = isVisited ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
-            String label = "${door.getDescription()}${visited}"
+            String visual = "${door.getDescription()}${visited}"
             
-            // Manual length check for alignment since stripAnsi is needed for format
-            int visibleLabelLen = Terminal.stripAnsi(label).length()
-            String paddedLabel = label + (" " * Math.max(0, 35 - visibleLabelLen))
+            // Precise padding logic for each column to handle ANSI codes
+            String colVisual = visual + (" " * Math.max(0, 28 - Terminal.stripAnsi(visual).length()))
+            String colName = Terminal.colorize(roomName, Terminal.YELLOW) + (" " * Math.max(0, 35 - roomName.length()))
+            String colStatus = status + (" " * Math.max(0, 15 - Terminal.stripAnsi(status).length()))
+            String colRes = "${signature} ${wave}"
 
-            printf("%-4s  %s  %-15s  %-15s\n", id, paddedLabel, status, signature)
-            
-            // Sub-line for the scanned room name
-            println String.format("      > Scanned ID: %s", Terminal.colorize(roomName, Terminal.YELLOW))
+            println "${id}  ${colVisual}  ${colName}  ${colStatus}  ${colRes}"
         }
         println Terminal.dim("-" * width)
     }
