@@ -1,9 +1,9 @@
 ---
 layout: terminal
-title: THE_OBSERVER_CODEX
+title: THE_CODEX
 ---
 
-# THE_OBSERVER_CODEX: Classified Data-Bank
+# THE_CODEX: Classified Data-Bank
 
 Welcome to the **Observer's Codex**. This deep-data repository contains advanced strategies, cultural histories, and technical specifications for the Endless Transit universe. 
 

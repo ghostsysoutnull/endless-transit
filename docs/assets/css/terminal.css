@@ -72,12 +72,12 @@ body.terminal-body {
     color: #000;
 }
 
-.comms-array a.nav-databank {
+.comms-array a.nav-codex {
     color: #ffff00;
     border-color: rgba(255, 255, 0, 0.3);
 }
 
-.comms-array a.nav-databank:hover {
+.comms-array a.nav-codex:hover {
     background: #ffff00;
     color: #000;
 }
