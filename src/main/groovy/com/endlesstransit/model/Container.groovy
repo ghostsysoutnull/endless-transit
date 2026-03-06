@@ -102,6 +102,11 @@ abstract class Container implements Location {
     }
 
     @Override
+    List<String> getExtraContent() {
+        return []
+    }
+
+    @Override
     VibeCapsule getVibe() {
         if (localVibe != null) return localVibe
         return parent?.getVibe()

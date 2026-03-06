@@ -146,6 +146,11 @@ class Room implements Location {
     }
 
     @Override
+    List<String> getExtraContent() {
+        return []
+    }
+
+    @Override
     VibeCapsule getVibe() {
         return parent?.getVibe()
     }

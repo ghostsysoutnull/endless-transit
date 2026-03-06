@@ -13,6 +13,18 @@ This document outlines the strategic progression of the Endless Transit universe
 *   **Objective:** Transition from list-based navigation to 2D spatial awareness.
 *   **Status:** [x] Grid Rendering [x] Procedural Projection [x] Coherence Distortion.
 
+## Phase 9.1: Neural Map Evolutions (Planned)
+*   **Spectral Resonance Heatmaps:** Overlay ASCII shades (`░▒▓█`) to visualize Gematria density, allowing players to "hunt" for high-frequency zones.
+*   **Multi-Strata Projection (Ghost Layer):** Render the current container in high contrast while showing parent/adjacent containers as dim wireframe outlines in the background.
+*   **Historical Pulse Trace (Breadcrumbs):** Render a visual trail (`· · ·`) of the player's previous movements within the current container.
+*   **Dynamic HUD Integration (The Mini-Map):** [x] Shift the map from a separate command to a persistent right-side pane in the 130-char Command Bridge.
+*   **Abyssal Interference:** In deep strata, the map requires a Coherence-based `Neural Sync` to clear shifting static and reveal true node positions.
+
+## Potential Future Features
+*   **Tactical Pinning & Vector Tracking:** Ability to `target [ID]` a node. The HUD Compass will then display a `RELATIVE_VECTOR` and `LATTICE_DISTANCE` to guide navigation based on real-time coordinate comparison.
+*   **Cooperative Trace Extraction:** (Multi-player/Asynchronous) Sharing "Ghost Paths" through a central server.
+*   **Lattice Construction:** Allowing players to "Anchor" their own rooms into the procedural web using Keystones.
+
 ## Phase 10: Spectral Echoes & Entities (The Neural Pulse)
 *   **Objective:** Populate the universe with moving, interactive non-player entities.
 *   **Key Features:**

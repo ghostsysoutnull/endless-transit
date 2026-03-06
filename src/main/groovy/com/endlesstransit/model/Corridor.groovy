@@ -38,25 +38,30 @@ class Corridor extends Container {
     void enter(Player player) {
         markVisited()
         ensureChildrenPopulated()
+    }
+
+    @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
+        lines << Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)
+        lines << Terminal.dim("Scanning adjacent cells for spectral resonance...")
         
-        println Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)
-        println Terminal.dim("Scanning adjacent cells for spectral resonance...")
+        int width = 88
+        lines << Terminal.dim("-" * width)
         
-        int width = 130
-        println Terminal.dim("-" * width)
-        
-        // High-Density Telemetry Header (130-char wide)
-        // [ID] 6 | [VISUAL] 40 | [DESIGNATION] 45 | [WAVE] 18 | [RESONANCE] 21
+        // High-Density Telemetry Header (88-char wide)
+        // [ID] 4 | [VISUAL] 22 | [DESIGNATION] 28 | [WAVE] 12 | [RESONANCE] 18
         String hId = "[ID]"
         String hVis = "[VISUAL_TELEMETRY]"
         String hDes = "[SCANNED_DESIGNATION]"
         String hWav = "[WAVEFORM]"
         String hRes = "[RESONANCE]"
         
-        println Terminal.bold(
-            String.format("%-6s %-40s %-45s %-18s %-21s", hId, hVis, hDes, hWav, hRes)
+        lines << Terminal.bold(
+            String.format("%-4s %-22s %-28s %-12s %-18s", hId, hVis, hDes, hWav, hRes)
         )
-        println Terminal.dim("-" * width)
+        lines << Terminal.dim("-" * width)
 
         for (int i = 0; i < apartments.size(); i++) {
             def apt = apartments[i]
@@ -65,7 +70,7 @@ class Corridor extends Container {
             String id = String.format("%02d.", i + 1)
             
             String roomName = "?? UNKNOWN ??"
-            String status = Terminal.dim("[ENCRYPTED]")
+            String status = Terminal.dim("[ENC]")
             String signature = "????Hz"
             String wave = "---"
             String resLabel = ""
@@ -73,14 +78,13 @@ class Corridor extends Container {
             if (!apt.rooms.isEmpty()) {
                 def firstRoom = apt.rooms[0]
                 roomName = firstRoom.roomName
-                status = firstRoom.isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)
+                status = firstRoom.isAnomaly ? Terminal.colorize("[DEG]", Terminal.RED) : Terminal.colorize("[STB]", Terminal.GREEN)
                 int freq = Gematria.calculateFrequency(roomName, firstRoom.getDepth())
                 signature = String.format("%04dHz", freq)
                 
-                // Enhanced wave visual logic for wider column
-                if (firstRoom.isAnomaly) wave = Terminal.colorize("#######", Terminal.RED)
-                else if (freq % 11 == 0) wave = Terminal.colorize("≈≈≈≈≈≈≈", Terminal.GREEN)
-                else wave = Terminal.colorize("~~~~~~~", Terminal.CYAN)
+                if (firstRoom.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
+                else if (freq % 11 == 0) wave = Terminal.colorize("≈≈≈", Terminal.GREEN)
+                else wave = Terminal.colorize("~~~", Terminal.CYAN)
                 
                 resLabel = "${signature} ${wave}"
             } else {
@@ -91,19 +95,19 @@ class Corridor extends Container {
             String visited = isVisited ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String visual = "${door.getDescription()}${visited}"
             
-            // Apply strict truncation and visual-aware padding for each column
-            String colVisText = Terminal.ansiSafeTruncate(visual, 38)
-            String colVis = colVisText + (" " * Math.max(0, 40 - Terminal.getVisualWidth(colVisText)))
+            String colVisText = Terminal.ansiSafeTruncate(visual, 20)
+            String colVis = colVisText + (" " * Math.max(0, 22 - Terminal.getVisualWidth(colVisText)))
             
-            String colNameText = Terminal.colorize(Terminal.ansiSafeTruncate(roomName, 43), Terminal.YELLOW)
-            String colName = colNameText + (" " * Math.max(0, 45 - Terminal.getVisualWidth(colNameText)))
+            String colNameText = Terminal.colorize(Terminal.ansiSafeTruncate(roomName, 26), Terminal.YELLOW)
+            String colName = colNameText + (" " * Math.max(0, 28 - Terminal.getVisualWidth(colNameText)))
             
-            String colStatus = status + (" " * Math.max(0, 18 - Terminal.getVisualWidth(status)))
-            String colRes = resLabel + (" " * Math.max(0, 21 - Terminal.getVisualWidth(resLabel)))
+            String colStatus = status + (" " * Math.max(0, 12 - Terminal.getVisualWidth(status)))
+            String colRes = resLabel + (" " * Math.max(0, 18 - Terminal.getVisualWidth(resLabel)))
 
-            println "${id.padRight(6)}${colVis}${colName}${colStatus}${colRes}"
+            lines << "${id.padRight(4)}${colVis}${colName}${colStatus}${colRes}"
         }
-        println Terminal.dim("-" * width)
+        lines << Terminal.dim("-" * width)
+        return lines
     }
 
     @Override

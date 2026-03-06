@@ -115,31 +115,36 @@ class Building extends Container {
         }
         markVisited()
         ensureChildrenPopulated()
+    }
 
-        println "\n" + Terminal.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", Terminal.L_CYAN)
-        println Terminal.dim("Analyzing vertical lattice structure...")
+    @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
+        lines << Terminal.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", Terminal.L_CYAN)
+        lines << Terminal.dim("Analyzing vertical lattice structure...")
         
-        int width = 130
-        println Terminal.dim("-" * width)
+        int width = 88
+        lines << Terminal.dim("-" * width)
         
         // Header
+        // [ID] 4 | [RAD] 8 | [STRATA] 25 | [ZONE] 25 | [ST] 10 | [RES] 12
         String hId = "[ID]"
-        String hRad = "[RADAR]"
+        String hRad = "[RAD]"
         String hDes = "[STRATA_DESIGNATION]"
         String hZon = "[FUNCTIONAL_ZONE]"
-        String hInt = "[STATUS]"
-        String hRes = "[SCAN_RESIDUE]"
+        String hInt = "[ST]"
+        String hRes = "[RES]"
         
-        println Terminal.bold(
-            String.format("%-6s %-10s %-30s %-25s %-15s %-20s", hId, hRad, hDes, hZon, hInt, hRes)
+        lines << Terminal.bold(
+            String.format("%-4s %-8s %-25s %-25s %-10s %-12s", hId, hRad, hDes, hZon, hInt, hRes)
         )
-        println Terminal.dim("-" * width)
+        lines << Terminal.dim("-" * width)
 
         // Find current floor index for the radar
         int currentFloorNum = -999
-        Location p = player.currentLocation // We'll need to ensure player has this
-        if (p instanceof Floor) currentFloorNum = p.number
-        else if (p?.parent instanceof Floor) currentFloorNum = p.parent.number
+        if (player.currentLocation instanceof Floor) currentFloorNum = player.currentLocation.number
+        else if (player.currentLocation?.parent instanceof Floor) currentFloorNum = player.currentLocation.parent.number
 
         // Iterate floors from top to bottom (Peak to Substrate)
         int minFloor = isBreached ? -5 : 0 // Show some substrate if breached
@@ -154,8 +159,8 @@ class Building extends Container {
                 radar = Terminal.colorize("[ ! ]", Terminal.RED)
             }
 
-            String designation = i == 0 ? "Surface / Lobby" : (i == maxFloors - 1 ? "Peak / Observatory" : "Floor $i")
-            if (i < 0) designation = "Layer -0x" + Integer.toHexString(Math.abs(i)).toUpperCase()
+            String designation = i == 0 ? "Surface/Lobby" : (i == maxFloors - 1 ? "Peak/Observatory" : "Floor $i")
+            if (i < 0) designation = "-0x" + Integer.toHexString(Math.abs(i)).toUpperCase()
             
             String zone = getFloorZone(i)
             String integrity = getFloorIntegrity(i)
@@ -163,27 +168,28 @@ class Building extends Container {
             // Resonance logic (simulated for building view)
             Random r = new Random(seed + i)
             int freq = 1000 + r.nextInt(2000)
-            String resonance = "${freq}Hz " + (i < 0 ? Terminal.colorize("######", Terminal.RED) : Terminal.colorize("~~~~~~", Terminal.CYAN))
+            String resonance = "${freq}Hz"
 
             String visited = ""
             def floorObj = floors.find { it.number == i }
-            if (floorObj?.isVisited()) visited = Terminal.colorize(" [V]", Terminal.GREEN)
+            if (floorObj?.isVisited()) visited = Terminal.colorize("[V]", Terminal.GREEN)
 
             // Visual-Aware Padding for all columns
-            String colDes = designation + visited
-            colDes += " " * Math.max(0, 30 - Terminal.getVisualWidth(colDes))
+            String colDesText = designation + visited
+            String colDes = colDesText + (" " * Math.max(0, 25 - Terminal.getVisualWidth(colDesText)))
             
-            String colZon = "[${zone}]"
-            colZon += " " * Math.max(0, 25 - Terminal.getVisualWidth(colZon))
+            String colZonText = "[${zone}]"
+            String colZon = colZonText + (" " * Math.max(0, 25 - Terminal.getVisualWidth(colZonText)))
             
-            String colInt = "[${integrity}]"
-            colInt += " " * Math.max(0, 15 - Terminal.getVisualWidth(colInt))
+            String colIntText = "[${integrity}]"
+            String colInt = colIntText + (" " * Math.max(0, 10 - Terminal.getVisualWidth(colIntText)))
             
-            String colRad = radar + (" " * Math.max(0, 10 - Terminal.getVisualWidth(radar)))
+            String colRad = radar + (" " * Math.max(0, 8 - Terminal.getVisualWidth(radar)))
 
-            println "${id.padRight(6)}${colRad}${colDes}${colZon}${colInt}${resonance}"
+            lines << "${id.padRight(4)}${colRad}${colDes}${colZon}${colInt}${resonance}"
         }
-        println Terminal.dim("-" * width)
+        lines << Terminal.dim("-" * width)
+        return lines
     }
 
     @Override

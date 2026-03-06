@@ -41,12 +41,18 @@ class Street extends Container {
     void enter(Player player) {
         markVisited()
         ensureChildrenPopulated()
+    }
+
+    @Override
+    List<String> getExtraContent() {
+        ensureChildrenPopulated()
+        List<String> lines = []
         
-        int colWidth = 45
+        int colWidth = 40 // Adjusted for 88-char left pane
         String separator = "-" * (colWidth * 2 + 3)
         
-        println Terminal.dim("Buildings on this street:")
-        println Terminal.dim(separator)
+        lines << Terminal.dim("Buildings on this street:")
+        lines << Terminal.dim(separator)
         for (int i = 0; i < buildings.size(); i += 2) {
             def bL = buildings[i]
             def bR = (i + 1 < buildings.size()) ? buildings[i+1] : null
@@ -54,29 +60,26 @@ class Street extends Container {
             int numL = i + 1
             int numR = i + 2
             
-            // Allow longer names now that we have space
-            String nameL = bL.name.length() > 30 ? bL.name.substring(0, 27) + "..." : bL.name
+            String nameL = bL.name.length() > 25 ? bL.name.substring(0, 22) + "..." : bL.name
             if (bL.isLandmark) nameL = Terminal.colorize(Terminal.bold(nameL), Terminal.CYAN)
-
             String visL = bL.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String labelL = "${numL}. ${nameL}${visL}"
             
-            // Manual padding based on visual width to handle ANSI codes correctly
             String leftPart = labelL + (" " * Math.max(0, colWidth - Terminal.getVisualWidth(labelL)))
             
             String labelR = ""
             if (bR) {
-                String nameR = bR.name.length() > 30 ? bR.name.substring(0, 27) + "..." : bR.name
+                String nameR = bR.name.length() > 25 ? bR.name.substring(0, 22) + "..." : bR.name
                 if (bR.isLandmark) nameR = Terminal.colorize(Terminal.bold(nameR), Terminal.CYAN)
-
                 String visR = bR.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
                 labelR = "${numR}. ${nameR}${visR}"
             }
             String rightPart = labelR + (" " * Math.max(0, colWidth - Terminal.getVisualWidth(labelR)))
             
-            println "${leftPart} | ${rightPart}"
+            lines << "${leftPart} | ${rightPart}"
         }
-        println Terminal.dim(separator)
+        lines << Terminal.dim(separator)
+        return lines
     }
 
     @Override

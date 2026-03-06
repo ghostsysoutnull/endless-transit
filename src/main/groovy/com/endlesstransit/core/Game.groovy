@@ -132,16 +132,8 @@ class Game {
 
                 renderBridgeHUD()
                 
-                // Typewriter effect for location description
-                String desc = currentLocation.getDescription()
-                if (player.coherence < 40) desc = Terminal.glitchText(desc, 0.1)
-                
-                if (instantRender) {
-                    println desc
-                    instantRender = false // Reset
-                } else {
-                    Terminal.typewrite(desc, 5)
-                }
+                // --- Side-by-Side Split Pane Rendering ---
+                renderAdaptiveBridge()
                 
                 currentLocation.enter(player)
                 currentLocation.processAction(player)
@@ -268,8 +260,10 @@ class Game {
                 }
 
                 if (choice == "map" || choice == "m") {
+                    // map is now persistent, but we can treat 'm' as a 'ping' to refresh
                     lastChoice = "map"
-                    renderLatticeMap()
+                    player.adjustCoherence(-1.0)
+                    println Terminal.colorize("\n>>> DEEP_SCAN_PING: Neural lattice mapping refreshed.", Terminal.L_CYAN)
                     choice = null
                     break
                 }
@@ -504,25 +498,29 @@ class Game {
     }
 
     void renderBridgeHUD() {
-        int width = 100
-        int splitPoint = 65
+        int width = 130
+        int splitPoint = 90
         def vibe = currentLocation.getVibe()
         boolean abyssal = currentLocation.isAbyssal()
         String accent = abyssal ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
         
         Terminal.drawBoxTop(width, accent)
         
-        // 1. Sparkline & Traversal
+        // 1. Sparkline & Traversal (Expanded for 130 chars)
         String sparkline = getLatticeSparkline()
         String cohLabel = abyssal ? "INTEGRITY" : "COHERENCE"
         String globalStats = "PULSE_TRAVERSAL: ${player.stepCount} | $cohLabel: ${player.coherence}%"
-        String topRow = "$sparkline | $globalStats"
+        
+        // Manual centering for 130 chars
+        int statsWidth = Terminal.getVisualWidth(sparkline) + Terminal.getVisualWidth(globalStats) + 3
+        String topPadding = " " * ((width - statsWidth) / 2).toInteger()
+        String topRow = "${topPadding}${sparkline} | ${globalStats}"
         Terminal.drawBoxedLine(topRow, width, accent)
         
-        // 2. Navigation Path (Full width now)
+        // 2. Navigation Path
         String path = currentLocation.getPath()
         String prefix = abyssal ? "VOID_TRACE: " : "LOCUS_TRACE: "
-        int maxPathWidth = width - 6 // More breathing room
+        int maxPathWidth = width - 6
         if (Terminal.getVisualWidth(path) + prefix.length() > maxPathWidth) {
             path = "..." + path.substring(path.length() - (maxPathWidth - prefix.length() - 3))
         }
@@ -557,26 +555,19 @@ class Game {
             leftBottom = "$alignLabel: $idx / $total | $radar"
         }
         
-        // Last 3 events ticker on the right
         def recentEvents = JournalManager.getRecentEvents(3).reverse()
         String tickerTitle = abyssal ? "EVENT_TICKER: [PRESSURE_HIGH]" : "EVENT_TICKER: [SYNC_STABLE]"
-        if (player.coherence < 30) tickerTitle = abyssal ? "EVENT_TICKER: [CRITICAL]" : "EVENT_TICKER: [DEGRADED]"
-        
         Terminal.drawSplitBoxedLine(leftBottom, tickerTitle, splitPoint, width, accent)
         
-        // Show up to 2 recent events in the following lines of the split pane
         List<String> tickerLines = []
         recentEvents.each { tickerLines << it }
-        
-        // Abyssal Voices
         if (abyssal && new Random().nextInt(10) < 3) {
-            String[] voices = ["It is cold down here.", "We see you.", "Return to the surface.", "Bedrock approaching.", "You do not belong here."]
+            String[] voices = ["It is cold down here.", "We see you.", "Return to the surface.", "Bedrock approaching."]
             tickerLines.add(0, "[VOID] " + voices[new Random().nextInt(voices.length)])
         }
 
         for (int i = 0; i < 2; i++) {
             String event = i < tickerLines.size() ? tickerLines[i] : ""
-            // Clean up event string for HUD
             event = event.replace("[DISCOVERY] ", "LOC: ").replace("[CAPTURE] ", "OBJ: ").replace("[SYNTHESIS] ", "SYN: ")
             Terminal.drawSplitBoxedLine("", Terminal.dim(event), splitPoint, width, accent)
         }
@@ -590,15 +581,182 @@ class Game {
             def freqs = last3.collect { it.frequency }
             bufferInfo += " | RECENT: ${freqs.join(', ')}Hz"
         }
-        
-        if (player.coherence < 20) bufferInfo = Terminal.glitchText(bufferInfo, 0.1)
         Terminal.drawBoxedLine(bufferInfo, width, accent)
-        
         Terminal.drawBoxBottom(width, accent)
         
-        // Status Scan Bar
         println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
-        println ""
+    }
+
+    /**
+     * Renders the main world description and the persistent right-side pane (Map or Telemetry).
+     */
+    void renderAdaptiveBridge() {
+        int splitColumn = 90
+        int totalWidth = 130
+        int leftWidth = splitColumn - 2
+        int rightWidth = (totalWidth - splitColumn) - 2
+
+        // 1. Get Left Content (Description + Extra Tables)
+        String fullDesc = currentLocation.getDescription()
+        if (player.coherence < 40) fullDesc = Terminal.glitchText(fullDesc, 0.1)
+        
+        List<String> leftLines = []
+        fullDesc.split("\n").each { leftLines.addAll(Terminal.wrapText(it, leftWidth)) }
+        
+        // Add extra content (tables, lists) from the location
+        List<String> extra = currentLocation.getExtraContent()
+        if (!extra.isEmpty()) {
+            leftLines << "" // Spacer
+            leftLines.addAll(extra)
+        }
+
+        // 2. Get Right Content (Map or Telemetry)
+        List<String> rightLines = generateRightPaneContent(rightWidth)
+        
+        // 3. Apply Abyssal Static if needed
+        if (currentLocation.isAbyssal()) {
+            rightLines = applyAbyssalStatic(rightLines)
+        }
+
+        // 4. Render Combined Lines
+        int maxLines = Math.max(leftLines.size(), rightLines.size())
+        def vibe = currentLocation.getVibe()
+        String accent = currentLocation.isAbyssal() ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
+        String sep = Terminal.colorize(" ║ ", accent)
+
+        for (int i = 0; i < maxLines; i++) {
+            String left = i < leftLines.size() ? leftLines[i] : ""
+            String right = i < rightLines.size() ? rightLines[i] : ""
+            
+            // Pad left side manually to ensure separator is aligned
+            int leftVisual = Terminal.getVisualWidth(left)
+            String padding = " " * Math.max(0, leftWidth - leftVisual)
+            
+            println "${left}${padding}${sep}${right}"
+        }
+    }
+
+    List<String> applyAbyssalStatic(List<String> lines) {
+        Random r = new Random()
+        String[] staticChars = ["?", "!", "☠", "░", "▒", "▓", "X", "#"]
+        return lines.collect { line ->
+            if (line.contains("[NEURAL_MAP") || line.contains("[SYSTEM_TELEMETRY")) return line
+            
+            StringBuilder sb = new StringBuilder()
+            line.each { c ->
+                if (c != ' ' && r.nextDouble() < 0.08) {
+                    sb.append(Terminal.colorize(staticChars[r.nextInt(staticChars.size())], Terminal.RED))
+                } else {
+                    sb.append(c)
+                }
+            }
+            return sb.toString()
+        }
+    }
+
+    List<String> generateRightPaneContent(int width) {
+        int depth = currentLocation.getDepth()
+        if (depth <= 7) {
+            return generateMacroMap(width)
+        } else {
+            return generateSystemTelemetry(width)
+        }
+    }
+
+    List<String> generateMacroMap(int width) {
+        if (!(currentLocation instanceof Container)) return [Terminal.dim("[MAP_OFFLINE]")]
+        
+        int mapWidth = width - 4
+        int mapHeight = 12
+        
+        if (currentLocation instanceof Universe) {
+            return generateUniverseMap(mapWidth, mapHeight)
+        } else if (currentLocation instanceof CosmicFilament) {
+            return generateFilamentMap(mapWidth, mapHeight)
+        }
+
+        Container container = (Container) currentLocation
+        Terminal.MapBuffer buffer = new Terminal.MapBuffer(mapWidth, mapHeight)
+        Map<List<Integer>, Location> latticeMap = container.getLocalLatticeMap(mapWidth, mapHeight)
+        
+        latticeMap.each { pos, loc ->
+            String symbol = loc.getMapSymbol()
+            String color = loc.isVisited() ? loc.getMapColor() : Terminal.dim(loc.getMapColor())
+            buffer.plot(pos[0], pos[1], symbol, color)
+        }
+        
+        // Current scale indicator
+        List<String> lines = [" " + Terminal.colorize("[NEURAL_MAP: ${currentLocation.getClass().simpleName.toUpperCase()}]", Terminal.L_CYAN)]
+        lines.addAll(buffer.render())
+        lines << " " + Terminal.dim("▲ You | ■ Node | ░ Void")
+        return lines
+    }
+
+    List<String> generateUniverseMap(int w, int h) {
+        Terminal.MapBuffer buffer = new Terminal.MapBuffer(w, h)
+        int cx = w / 2
+        int cy = h / 2
+        
+        // Root symbol
+        buffer.plot(cx, cy, "∞", Terminal.CYAN)
+        
+        // Radiating filaments
+        Random r = new Random(masterSeed)
+        int numLines = 6
+        for (int i = 0; i < numLines; i++) {
+            double angle = (Math.PI * 2 / numLines) * i
+            for (int d = 1; d < 5; d++) {
+                int px = cx + (int)(Math.cos(angle) * d * 2)
+                int py = cy + (int)(Math.sin(angle) * d)
+                buffer.plot(px, py, "»", Terminal.dim(Terminal.WHITE))
+            }
+        }
+        
+        List<String> lines = [" " + Terminal.colorize("[UNIMATRIX_ROOT_TOPOLOGY]", Terminal.L_CYAN)]
+        lines.addAll(buffer.render())
+        lines << " " + Terminal.dim("∞ Core | » Cosmic Filament")
+        return lines
+    }
+
+    List<String> generateFilamentMap(int w, int h) {
+        Terminal.MapBuffer buffer = new Terminal.MapBuffer(w, h)
+        int y = h / 2
+        
+        // Linear conduit trace
+        for (int x = 4; x < w - 4; x += 4) {
+            buffer.plot(x, y, "○", Terminal.dim(Terminal.WHITE))
+            if (x < w - 8) {
+                buffer.plot(x+1, y, "·", Terminal.GREY)
+                buffer.plot(x+2, y, "·", Terminal.GREY)
+            }
+        }
+        // Player icon at the end of the trace
+        buffer.plot(w - 8, y, "▲", Terminal.CYAN)
+        
+        List<String> lines = [" " + Terminal.colorize("[CONDUIT_TRACE: ${currentLocation.getName()}]", Terminal.L_CYAN)]
+        lines.addAll(buffer.render())
+        lines << " " + Terminal.dim("▲ You | ○ Sector | · Conduit")
+        return lines
+    }
+
+    List<String> generateSystemTelemetry(int width) {
+        List<String> lines = [" " + Terminal.colorize("[SYSTEM_TELEMETRY]", Terminal.L_CYAN)]
+        lines << " " + Terminal.dim("LATTICE_SYNC: [NOMINAL]")
+        lines << ""
+        lines << " " + Terminal.dim("[QUANTUM_SPECTROGRAM]")
+        
+        // Simple ASCII spectrogram based on inventory
+        Random r = new Random(System.currentTimeMillis() / 1000)
+        for (int i = 0; i < 5; i++) {
+            int h = r.nextInt(width / 4) + 1
+            lines << " " + Terminal.colorize("█" * h, Terminal.CYAN)
+        }
+        
+        lines << ""
+        lines << " " + Terminal.dim("[DECODE_LOGS]")
+        lines << " > Trace: ${currentLocation.getLIP()}"
+        lines << " > Stable: ${player.resonantTracesCount} items"
+        return lines
     }
 
     void helpMenu() {
