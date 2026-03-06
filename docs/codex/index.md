@@ -13,21 +13,21 @@ Accessing these nodes is highly recommended for high-level link operators.
 
 ### 1. FIELD_SURVIVAL_STRATEGIES (Tactics)
 Advanced operational advice for surviving the deep strata.
-*   **[COHERENCE_OPTIMIZATION]**: (Planned) Managing drain and restoration cycles.
-*   **[LATTICE_HUNTING]**: (Planned) Using the map to identify high-signal clusters.
-*   **[SYNTHESIS_THEORY]**: (Planned) Master Number hunting and inventory management.
+*   **[COHERENCE_OPTIMIZATION]**: [Link]({{ "/codex/coherence_optimization.html" | relative_url }}) - Managing drain and restoration cycles.
+*   **[LATTICE_HUNTING]**: [Link]({{ "/codex/lattice_hunting.html" | relative_url }}) - Using the map to identify high-signal clusters.
+*   **[SYNTHESIS_THEORY]**: [Link]({{ "/codex/synthesis_theory.html" | relative_url }}) - Master Number hunting and inventory management.
 
 ### 2. THE_LATTICE_ENCYCLOPEDIA (Lore)
 Encyclopedic knowledge of the procedural world.
-*   **[CULTURAL_ORIGINS]**: (Planned) A deep-dive into the 6 Great Cultures.
-*   **[ICONOGRAPHY_GLOSSARY]**: (Planned) Visual guide to HUD and Map symbols.
-*   **[THE_BEDROCK_SHIFT]**: (Planned) The history of the Abyssal Substrate.
+*   **[CULTURAL_ORIGINS]**: [Link]({{ "/codex/cultural_origins.html" | relative_url }}) - A deep-dive into the 6 Great Cultures.
+*   **[ICONOGRAPHY_GLOSSARY]**: [Link]({{ "/codex/iconography_glossary.html" | relative_url }}) - Visual guide to HUD and Map symbols.
+*   **[THE_BEDROCK_SHIFT]**: [Link]({{ "/codex/the_bedrock_shift.html" | relative_url }}) - The history of the Abyssal Substrate.
 
 ### 3. TECHNICAL_SUBSTRATE (Math)
 The "Inner Code" of the neural web.
-*   **[GEMATRIA_SPECIFICATIONS]**: (Planned) The "Breathless Abjad" frequency tables.
-*   **[THE_INVERSION_RITUAL]**: (Planned) Mathematical requirements for Bedrock Breaches.
-*   **[LIP_ADDRESSING]**: (Planned) Understanding procedural addresses and stable loci.
+*   **[GEMATRIA_SPECIFICATIONS]**: [Link]({{ "/codex/gematria_specifications.html" | relative_url }}) - The "Breathless Abjad" frequency tables.
+*   **[THE_INVERSION_RITUAL]**: [Link]({{ "/codex/the_inversion_ritual.html" | relative_url }}) - Mathematical requirements for Bedrock Breaches.
+*   **[LIP_ADDRESSING]**: [Link]({{ "/codex/lip_addressing.html" | relative_url }}) - Understanding procedural addresses and stable loci.
 
 ---
 **ACCESS_LEVEL**: OBSERVER_PRIME
