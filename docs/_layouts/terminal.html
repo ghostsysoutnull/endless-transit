@@ -82,6 +82,36 @@
                     <p>> LATTICE_SYNC: [OK]</p>
                 </div>
 
+              {% when "strategy" %}
+                <div class="telemetry-header">[TACTICAL_SIMULATION]</div>
+                <div class="ascii-map strategy-map">
+[LATTICE_WEB]
+   ○───○───▲
+   │   │   │
+   ○───░───○
+   │   │   │
+   ○───○───○
+                </div>
+                <div class="telemetry-log">
+                    <p>> PATH_SOLVER: ACTIVE</p>
+                    <p>> OPTIMAL_ROUTE: 1.2s</p>
+                </div>
+
+              {% when "hardware" %}
+                <div class="telemetry-header">[HARDWARE_LINK_STATE]</div>
+                <div class="ascii-map hardware-map">
+[NEURAL_WEB_CARD]
+┌───────────────┐
+│ [CPU] [RAM]   │
+│ [SYNC-LINK]   │
+│  ||||||||||   │
+└───────────────┘
+                </div>
+                <div class="telemetry-log">
+                    <p>> TEMP: 32°C</p>
+                    <p>> STATUS: LINKED</p>
+                </div>
+
               {% when "abyssal" %}
                 <div class="telemetry-header abyssal-header">[ABYSSAL_SUBSTRATE_SCAN]</div>
                 <div class="ascii-map abyssal-map">

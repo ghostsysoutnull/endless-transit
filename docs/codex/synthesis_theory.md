@@ -1,7 +1,7 @@
 ---
 layout: terminal
 title: SYNTHESIS_THEORY
-map_type: telemetry
+map_type: strategy
 ---
 
 # FIELD_STRATEGY: Synthesis Theory

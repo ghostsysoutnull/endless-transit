@@ -1,7 +1,7 @@
 ---
 layout: terminal
 title: SYSTEM_SPECIFICATIONS
-map_type: telemetry
+map_type: hardware
 ---
 
 # SYSTEM_SPECIFICATIONS: Architectural Whitepaper

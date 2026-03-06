@@ -1,7 +1,7 @@
 ---
 layout: terminal
 title: COHERENCE_OPTIMIZATION
-map_type: telemetry
+map_type: strategy
 ---
 
 # FIELD_STRATEGY: Coherence Optimization
