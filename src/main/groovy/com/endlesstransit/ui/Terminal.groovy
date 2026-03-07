@@ -196,6 +196,8 @@ class Terminal {
                 // Check for specific wide symbols used in ET
                 if ("🏙🚪⬚☼⊕".contains(new String(Character.toChars(cp)))) {
                     width += 2
+                } else if ("█".contains(new String(Character.toChars(cp)))) {
+                    width += 1
                 } else {
                     width += 1
                 }

@@ -28,5 +28,14 @@ println "\n[COMPASS_PREVIEW]"
 def options = street.getOptions(game)
 game.renderCompass(options)
 
+// 6. Render Building Diagnostics (Stress Test Alignment)
+println "\n[BUILDING_DIAGNOSTICS_PREVIEW]"
+Building bld = street.buildings[0]
+bld.markVisited()
+bld.getFloor(0).markVisited()
+bld.getFloor(1).markVisited()
+game.currentLocation = bld.getFloor(1) // Simulate being on Floor 1
+bld.getExtraContent(player).each { println it }
+
 println "\n--- PREVIEW COMPLETE ---"
 println "Check the alignment of the ║ borders and the [╬] pivot."

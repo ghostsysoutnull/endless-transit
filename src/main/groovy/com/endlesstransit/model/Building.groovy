@@ -151,7 +151,7 @@ class Building extends Container {
         for (int i = maxFloors - 1; i >= minFloor; i--) {
             String id = String.format("%02d.", i)
             
-            // Radar Logic: [>X<] for current, [ █ ] for regular, [ ! ] for abyssal
+            // Radar Logic: 5 visual cells wide
             String radar = "[ █ ]"
             if (i == currentFloorNum) {
                 radar = Terminal.colorize("[>X<]", Terminal.YELLOW)
@@ -171,7 +171,7 @@ class Building extends Container {
             String resonance = "${freq}Hz"
 
             String visited = ""
-            def floorObj = floors.find { it.number == i }
+            def floorObj = this.@floors.find { it.number == i }
             if (floorObj?.isVisited()) visited = Terminal.colorize("[V]", Terminal.GREEN)
 
             // Visual-Aware Padding for all columns

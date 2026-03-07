@@ -13,9 +13,14 @@ def game = new Game()
 // but we can verify the getOptions() return values for specific types.
 
 // Test Room Reversal Logic
-def apartment = new Apartment("Test Door")
+def apartment = new Apartment("Test Door", "rust", 12345) // Fixed seed for multiple rooms
 apartment.ensureChildrenPopulated()
 def rooms = apartment.rooms
+
+if (rooms.size() < 2) {
+    println "FAILURE: Test requires at least 2 rooms, but got ${rooms.size()}"
+    System.exit(1)
+}
 
 // Ensure rooms are empty so options are predictable
 rooms.each { it.objects = [] }
