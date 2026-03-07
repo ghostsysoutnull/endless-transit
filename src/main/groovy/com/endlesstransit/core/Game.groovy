@@ -322,17 +322,22 @@ class Game {
             }
 
             Logger.info("Executing choice: $choice")
-            // Find matching menu entry (with leading zero fallback and numeric prefix support)
+            // Find matching menu entry using zero-agnostic numeric matching
             def matchingKey = menu.keySet().find { key ->
+                // 1. Exact match (case insensitive)
                 if (key.equalsIgnoreCase(choice)) return true
                 
-                // Numeric prefix support (e.g., "1" matches "1. Enter Building")
-                if (key.startsWith(choice + ". ")) return true
-                
-                // Fallback: If user typed '1', match '01'
-                if (choice.length() == 1 && Character.isDigit(choice[0] as char)) {
-                    if (key.startsWith("0" + choice + ". ")) return true
+                // 2. Numeric prefix match (e.g., user types "2" or "02" to match "02. Access")
+                if (key.contains(". ")) {
+                    String labelId = key.substring(0, key.indexOf(". ")).trim()
+                    
+                    // Normalize both by stripping leading zeros and compare
+                    String normalizedChoice = choice.replaceFirst("^0+(?!\$)", "")
+                    String normalizedLabel = labelId.replaceFirst("^0+(?!\$)", "")
+                    
+                    if (normalizedChoice == normalizedLabel) return true
                 }
+                
                 return false
             }
 

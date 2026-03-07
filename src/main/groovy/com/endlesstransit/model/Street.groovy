@@ -104,7 +104,8 @@ class Street extends Container {
         
         for (int i = 0; i < buildings.size(); i++) {
             def building = buildings[i]
-            String label = "${i + 1}. Enter Building: ${building.name}"
+            String id = String.format("%02d", i + 1)
+            String label = "${id}. Enter Building: ${building.name}"
             if (building.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(building) }
         }
