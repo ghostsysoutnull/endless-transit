@@ -322,11 +322,14 @@ class Game {
                 continue
             }
 
-            Logger.info("Executing choice: $choice")
+            Logger.info("Executing choice: '$choice'")
             // Find matching menu entry using zero-agnostic numeric matching
             def matchingKey = menu.keySet().find { key ->
                 // 1. Exact match (case insensitive)
-                if (key.equalsIgnoreCase(choice)) return true
+                if (key.equalsIgnoreCase(choice)) {
+                    Logger.info("  >> Match found: Exact Match ('$choice' == '$key')")
+                    return true
+                }
                 
                 // 2. Numeric prefix match (e.g., user types "2" or "02" to match "02. Access")
                 if (key.contains(". ")) {
@@ -336,7 +339,10 @@ class Game {
                     String normalizedChoice = choice.replaceFirst("^0+(?!\$)", "")
                     String normalizedLabel = labelId.replaceFirst("^0+(?!\$)", "")
                     
-                    if (normalizedChoice == normalizedLabel) return true
+                    if (normalizedChoice == normalizedLabel) {
+                        Logger.info("  >> Match found: Numeric Normalization ('$choice' -> '$normalizedChoice' == '$labelId' -> '$normalizedLabel')")
+                        return true
+                    }
                 }
                 
                 return false
@@ -350,6 +356,7 @@ class Game {
                 lastChoice = matchingKey
                 menu[matchingKey].call()
             } else if (choice != "-2") {
+                Logger.info("  [!] Match failed for choice '$choice'. Available keys: ${menu.keySet()}")
                 println("Invalid choice. Please try again.")
             }
         }

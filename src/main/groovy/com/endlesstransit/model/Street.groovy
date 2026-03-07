@@ -102,12 +102,14 @@ class Street extends Container {
         ensureChildrenPopulated()
         def options = getBaseOptions(game)
         
+        Logger.info("Generating options for Street: $name. Building count: ${buildings.size()}")
         for (int i = 0; i < buildings.size(); i++) {
             def building = buildings[i]
             String id = String.format("%02d", i + 1)
             String label = "${id}. Enter Building: ${building.name}"
             if (building.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(building) }
+            Logger.info("  >> Added menu key: '$label'")
         }
         return options
     }
