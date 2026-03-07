@@ -9,6 +9,7 @@ import com.endlesstransit.ui.ThemeManager
 import java.util.Scanner
 
 class Game {
+    Universe universe
     Location currentLocation
     Player player
     String lastChoice
@@ -26,7 +27,7 @@ class Game {
     }
 
     void initializeWorld() {
-        def universe = new Universe(masterSeed)
+        this.universe = new Universe(masterSeed)
         
         // Start deep: Universe > Filament > Sector > System > Planet > Country > City > Street
         def filaments = universe.getFilaments()
