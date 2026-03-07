@@ -170,6 +170,28 @@ Reorganize the `docs/` folder into functional categories and provide a central i
 - [x] Update any internal links between documents (if necessary).
 - [x] Verify that all context imports in `GEMINI.md` still point to correct (or root) documentation if they reference `docs/`.
 
+# Documentation & UI Projection Refactor
+
+## Objective
+Implement a "Contextual Projection" system for the documentation site to mirror the in-game adaptive UI, enhancing immersion and navigational clarity.
+
+## Plan
+- [x] **Layout Logic**: Update `docs/_layouts/terminal.html` with a Liquid `case` statement for dynamic ASCII maps.
+- [x] **Diversified Projections**:
+    - [x] `universe`: [UNIMATRIX_ROOT_TOPOLOGY] (Index)
+    - [x] `initiation`: [NEURAL_LINK_ESTABLISHING] (00_INIT)
+    - [x] `filament`: [FILAMENT_CONDUIT_TRACE] (Atlas/Hunting)
+    - [x] `strategy`: [TACTICAL_SIMULATION] (Optimization/Synthesis)
+    - [x] `hardware`: [HARDWARE_LINK_STATE] (Setup/Specs)
+    - [x] `telemetry`: [SYSTEM_TELEMETRY] (Protocols/Nav/LIP)
+    - [x] `abyssal`: [ABYSSAL_SUBSTRATE_SCAN] (Bedrock Shift with Red flickering)
+    - [x] `data_bank`: [DATA_CLUSTER_ARCHIVE] (Codex/Cultural Origins)
+- [x] **Front Matter Integration**: Update all 17+ Markdown files in Manual and Codex with the appropriate `map_type`.
+- [x] **Project Substrate**:
+    - [x] Add GitHub repository link to global footer.
+    - [x] Optimize footer for viewport visibility (merged into single line).
+- [x] **Verification**: Perform full batch audit of rendered site using `curl`.
+
 # Advanced Naming & Landmarks
 - [x] Implement culture-aware building naming engine.
 - [x] Add 10% probability for unique Legendary Landmarks.
@@ -204,3 +226,7 @@ Reorganize the `docs/` folder into functional categories and provide a central i
 
 ---
 *See [docs/vision/EVOLUTION_ROADMAP.md](../docs/vision/EVOLUTION_ROADMAP.md) for the strategic vision.*
+
+# Infrastructure & Session Continuity
+- [x] **Session Recovery**: Successfully restored state and completed work after a JavaScript heap crash during site refactoring.
+- [x] **Viewport Optimization**: Fixed footer line-stacking to ensure GitHub link visibility without scrolling.
