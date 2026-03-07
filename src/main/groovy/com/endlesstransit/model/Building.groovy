@@ -217,7 +217,7 @@ class Building extends Container {
             return null
         }
         
-        def floor = floors.find { it.number == number }
+        def floor = this.@floors.find { it.number == number }
         if (floor == null) {
             Logger.info("Instantiating new Floor $number in Building $name")
             floor = new Floor(number, apartmentsPerFloor, seed != 0 ? seed + number : 0)
