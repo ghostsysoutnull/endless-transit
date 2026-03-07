@@ -1,7 +1,7 @@
 ---
 layout: terminal
 title: SYSTEM_INITIALIZATION
-map_type: universe
+map_type: initiation
 ---
 
 # SYSTEM_INITIALIZATION: The Neural Link
