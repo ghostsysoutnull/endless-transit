@@ -152,12 +152,12 @@ class Terminal {
         print colorize(BOX_V + " ", color)
         print safeLeft
         
-        // Separator alignment using CHA
+        // Separator alignment using CHA (splitPoint is 1-indexed for CHA)
         print "\u001b[${splitPoint}G"
         print colorize(BOX_V + " ", color)
         
         // Right part
-        int rightInnerWidth = (width - splitPoint) - 2
+        int rightInnerWidth = (width - splitPoint) - 3
         String safeRight = ansiSafeTruncate(right, rightInnerWidth)
         print safeRight
         

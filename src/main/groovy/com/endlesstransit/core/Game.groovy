@@ -645,18 +645,14 @@ class Game {
         int maxLines = Math.max(leftLines.size(), rightLines.size())
         def vibe = currentLocation.getVibe()
         String accent = currentLocation.isAbyssal() ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
-        String sep = Terminal.colorize(" ║ ", accent)
 
         for (int i = 0; i < maxLines; i++) {
             String left = i < leftLines.size() ? leftLines[i] : ""
             String right = i < rightLines.size() ? rightLines[i] : ""
-            
-            // Pad left side manually to ensure separator is aligned
-            int leftVisual = Terminal.getVisualWidth(left)
-            String padding = " " * Math.max(0, leftWidth - leftVisual)
-            
-            println "${left}${padding}${sep}${right}"
+            Terminal.drawSplitBoxedLine(left, right, splitColumn, totalWidth, accent)
         }
+        
+        Terminal.drawBoxBottom(totalWidth, accent)
     }
 
     List<String> applyAbyssalStatic(List<String> lines) {

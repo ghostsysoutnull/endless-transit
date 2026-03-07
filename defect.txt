@@ -1,40 +1,36 @@
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                            LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 4 | COHERENCE: 92%                                ║
-║ LOCUS_TRACE: ...87-Link > Secondary Quadrant 79 > Alpha Prime > Edenax > Old Desert Federation > Silvercross > Hidden Avenue   ║
+║                         LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ ▅ | PULSE_TRAVERSAL: 0 | COHERENCE: 99%                               ║
+║ LOCUS_TRACE: ... > Goldport > High Terrace > Impenetrable Pillar > Floor 0 > Corridor > Apartment > Impenetrable Cell [0x90]   ║
 ╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
-║ LATTICE_IDENT: Street >> Hidden Avenue                                                 ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
-║ LOCUS_HASH: 66.636 / 66.360 | HOP_DENSITY: 7                                           ║ COHERENCE: █████████░                 ║
-║ ALIGN: 1 / 4 | [X] [ ] [ ] [ ]                                                         ║ EVENT_TICKER: [SYNC_STABLE]           ║
+║ LATTICE_IDENT: Trading Floor >> Impenetrable Cell [0x90]                               ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
+║ LOCUS_HASH: 36.846 / 24.583 | HOP_DENSITY: 12                                          ║ COHERENCE: █████████░                 ║
+║ INDEX: 1 / 4 | [X] [ ] [ ] [ ]                                                         ║ EVENT_TICKER: [SYNC_STABLE]           ║
 ║                                                                                        ║                                       ║
 ║                                                                                        ║                                       ║
 ╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
-║ TRACE_BUFFER: 2/16 FRAGMENTS | RECENT: 1299392, 4377827Hz                                                                      ║
+║ TRACE_BUFFER: 1/16 FRAGMENTS | RECENT: 1234Hz                                                                                  ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
  »» SCANNING_LOCAL_TOPOLOGY...
-Street: Hidden Avenue                                                                    ║  [NEURAL_MAP: STREET]
-[TECH_ERA: INDUSTRIAL] [RESONANCE:                                                       ║    ⌂                 ⌂         ⌂  
-NEON]                                                                                    ║                                   
-                                                                                         ║ ⌂                                 
-Buildings on this street:                                                                ║          ⌂           ⌂⌂ ⌂         
------------------------------------------------------------------------------------      ║                                   
-1. Old Unimatrix Root                    | 2. Unit 0xCBB Point [V]                       ║                       ⌂   ⌂   ⌂   
-3. MatrixSpire                           | 4. MatrixReach                                ║       ⌂      ⌂                    
-5. CoreReach                             | 6. CoreRoot                                   ║     ⌂                             
-7. NodeSpire                             | 8. Vibrant Grid                               ║    ⌂          ⌂          ⌂      ⌂ 
-9. Plasma Grid                           | 10. Glowing Hub                               ║                                   
-11. Flickering Grid                      | 12. GridSpire                                 ║     ⌂            ⌂                
-13. MatrixReach                          | 14. Plasma Nexus                              ║                                   
-15. Unit 0xCB5 Plaza                     | 16. GridRoot                                  ║  ▲ You | ■ Node | ░ Void
-17. HubRoot                              | 18. MatrixGate                                ║ 
-19. CircuitReach                         | 20. ArrayGate                                 ║ 
------------------------------------------------------------------------------------      ║ 
-║                        [·]                                                                                                     ║
-║                         ║                                                                                                      ║
-║    [L] Leave Street ═══[╬]═══ [·]                                                                                              ║
-║                         ║                                                                                                      ║
-║                        [·]                                                                                                     ║
-╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ [NEURAL_LINK_INTERPRETATION]:                                                           ║  [SYSTEM_TELEMETRY]
+You are in a spatial cell. The walls are blue bare surfaces.                             ║  LATTICE_SYNC: [NOMINAL]
+The space is illuminated by the steady burn of gas-lanterns.                             ║ 
+FURNITURE: marble pillar infused with pressure gauge, marble pillar infused with steam   ║  [QUANTUM_SPECTROGRAM]
+whistle                                                                                  ║  ███████
+OBJECTS_DETECTED: coal-stained shovel with sandaled footprint, marble pillar infused     ║  █████████
+with copper                                                                              ║  ████
+pipe, amphora infused with pressure gauge, iron rivet with amphora, iron rivet           ║  ███████
+with sandaled footprint, lyre infused with brass piston                                  ║  ███████
+                                                                                         ║ 
+ LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0                                        ║  [DECODE_LOGS]
+---------------------------------------------------------------------------------------------------- ║  > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0
+IDENT: Impenetrable Cell [0x90]       ║ ATMO_TRAITS: [OXY: 12%] | [TEMP: 16°C]          ║  > Stable: 0 items
+TYPE:  Trading Floor                 ║ SIGNAL: [CLEAR] | RESONANCE: [STABLE]            ║ 
+---------------------------------------------------------------------------------------------------- ║ 
+                         [·] 
+                          ║
+   [L] Exit Apartment ═══[╬]═══ [F] Go forward
+                          ║
+                         [·] 
 EXECUTE_DIRECTIVE:
-[l] Leave Street
+[t] Interact with objects | [l] Exit Apartment | [f] Go forward
 [i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [quit] Quit
----=====================================>> Enter choice: 
