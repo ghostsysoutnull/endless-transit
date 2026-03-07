@@ -1128,11 +1128,10 @@ class Game {
         String l = lblL ? Terminal.bold("L") : "·"
 
         // Line 1: Up
-        String line1 = " " * 23 + "[$u] ${Terminal.dim(lblU)}"
-        Terminal.drawBoxedLine(line1, width, accent)
+        println " " * 25 + "[$u] ${Terminal.dim(lblU)}"
         
         // Line 2: Vertical connector
-        Terminal.drawBoxedLine(" " * 24 + "║", width, accent)
+        println " " * 26 + Terminal.colorize("║", accent)
         
         // Line 3: Left - Center - Right
         String leftLabel = lblL ?: lblB
@@ -1141,18 +1140,16 @@ class Game {
         String center = "═══[╬]═══"
         String rightSide = " [$f] ${Terminal.dim(lblF)}"
         
-        // Target column for the ╬ is 25 (zero-indexed 24)
+        // Target column for the ╬ is 26
         int leftLen = Terminal.getVisualWidth(leftSide)
-        String leftPadding = " " * Math.max(0, 24 - leftLen - 4)
-        String line3 = "${leftPadding}${leftSide}${center}${rightSide}"
-        Terminal.drawBoxedLine(line3, width, accent)
+        String leftPadding = " " * Math.max(0, 26 - leftLen - 4)
+        println "${leftPadding}${Terminal.colorize(leftSide, accent)}${Terminal.colorize(center, accent)}${Terminal.colorize(rightSide, accent)}"
         
         // Line 4: Vertical connector
-        Terminal.drawBoxedLine(" " * 24 + "║", width, accent)
+        println " " * 26 + Terminal.colorize("║", accent)
         
         // Line 5: Down
-        String line5 = " " * 23 + "[$d] ${Terminal.dim(lblD)}"
-        Terminal.drawBoxedLine(line5, width, accent)
+        println " " * 25 + "[$d] ${Terminal.dim(lblD)}"
     }
 
     void enterLocation(Location location) {

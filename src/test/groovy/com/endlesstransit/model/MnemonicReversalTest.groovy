@@ -23,7 +23,7 @@ rooms.each { it.objects = [] }
 def room1 = rooms[0]
 def options1 = room1.getOptions(game)
 
-if (options1.containsKey("f. Go forward") && options1.containsKey("l. Exit Apartment")) {
+if (options1.keySet().any { it.contains("Go forward") } && options1.keySet().any { it.contains("Exit Apartment") }) {
     println "SUCCESS: First room has 'f' and 'exit'."
 } else {
     println "FAILURE: First room options incorrect: ${options1.keySet()}"

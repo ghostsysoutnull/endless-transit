@@ -291,12 +291,14 @@ class Terminal {
         StringBuilder currentLine = new StringBuilder()
         
         for (String word : words) {
-            if (currentLine.length() + word.length() + 1 > width) {
+            int wordWidth = getVisualWidth(word)
+            int currentLineWidth = getVisualWidth(currentLine.toString())
+            
+            if (currentLineWidth + wordWidth + 1 > width) {
                 if (currentLine.length() > 0) {
                     lines.add(currentLine.toString())
                     currentLine = new StringBuilder()
                 }
-                // If a single word is longer than width, it will still be on its own line
             }
             if (currentLine.length() > 0) {
                 currentLine.append(" ")
