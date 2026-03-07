@@ -1,36 +1,40 @@
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                          LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ ▅ 🚪 [□] | PULSE_TRAVERSAL: 4 | COHERENCE: 94%                       ║
-║ LOCUS_TRACE: ...on > Silvercross > Hidden Avenue > Unit 0xCBB Point > Floor 2 > Corridor > Apartment > Encrypted Core [0xD2]   ║
+║                            LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 4 | COHERENCE: 93%                                ║
+║ LOCUS_TRACE: ...87-Link > Secondary Quadrant 79 > Alpha Prime > Edenax > Old Desert Federation > Silvercross > Hidden Avenue   ║
 ╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
-║ LATTICE_IDENT: Growth Chamber >> Encrypted Core [0xD2]                                 ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
-║ LOCUS_HASH: 16.821 / 51.027 | HOP_DENSITY: 12                                          ║ COHERENCE: █████████░                 ║
-║ INDEX: 1 / 9 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]                                     ║ EVENT_TICKER: [SYNC_STABLE]           ║
-║                                                                                        ║ OBJ:   Hidden Frequency (4377827Hz)   ║
+║ LATTICE_IDENT: Street >> Hidden Avenue                                                 ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
+║ LOCUS_HASH: 66.636 / 66.360 | HOP_DENSITY: 7                                           ║ COHERENCE: █████████░                 ║
+║ ALIGN: 1 / 4 | [X] [ ] [ ] [ ]                                                         ║ EVENT_TICKER: [SYNC_STABLE]           ║
+║                                                                                        ║                                       ║
 ║                                                                                        ║                                       ║
 ╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
-║ TRACE_BUFFER: 1/16 FRAGMENTS | RECENT: 4377827Hz                                                                               ║
+║ TRACE_BUFFER: 2/16 FRAGMENTS | RECENT: 1299392, 4377827Hz                                                                      ║
 ╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
  »» SCANNING_LOCAL_TOPOLOGY...
- LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.1.5.0.1.0                                        ║  [SYSTEM_TELEMETRY]
----------------------------------------------------------------------------------------------------- ║  LATTICE_SYNC: [NOMINAL]
-IDENT: Encrypted Core [0xD2]                  ║ ATMO_TRAITS: [OXY: 18%] | [TEMP:         ║ 
-6°C] | [SIGNAL: [CLEAR]]                                                                 ║  [QUANTUM_SPECTROGRAM]
-TYPE:  Growth Chamber                         ║ RESONANCE:   [STABLE]                    ║  ████████
----------------------------------------------------------------------------------------------------- ║  █████
- [NEURAL_LINK_INTERPRETATION]:                                                           ║  █
-You are in spatial grid designed for nutrient-flow. The walls are red exposed            ║  ██
-wiring behind translucent plastic.                                                       ║  ██████
-The space is illuminated by the intense white arc of a welding torch.                    ║ 
-FURNITURE: iron rivet with plastic bead curtain                                          ║  [DECODE_LOGS]
----------------------------------------------------------------------------------------------------- ║  > Trace: 0.0.0.0.0.0.0.0.1.5.0.1.0
-                                                                                         ║  > Stable: 0 items
->>> SPECTRAL_DEVIATION: Extracted Frequency 1299392 <<<
-                       [·] 
-                        ║
- [L] Exit Apartment ═══[╬]═══ [F] Go forward
-                        ║
-                       [·] 
+Street: Hidden Avenue                                                                    ║  [NEURAL_MAP: STREET]
+[TECH_ERA: INDUSTRIAL] [RESONANCE:                                                       ║    ⌂                 ⌂         ⌂  
+NEON]                                                                                    ║                                   
+                                                                                         ║ ⌂                                 
+Buildings on this street:                                                                ║          ⌂           ⌂⌂ ⌂         
+-----------------------------------------------------------------------------------      ║                                   
+1. Old Unimatrix Root                    | 2. Unit 0xCBB Point                           ║                       ⌂   ⌂   ⌂   
+3. MatrixSpire                           | 4. MatrixReach                                ║       ⌂      ⌂                    
+5. CoreReach                             | 6. CoreRoot                                   ║     ⌂                             
+7. NodeSpire                             | 8. Vibrant Grid                               ║    ⌂          ⌂          ⌂      ⌂ 
+9. Plasma Grid                           | 10. Glowing Hub                               ║                                   
+11. Flickering Grid                      | 12. GridSpire                                 ║     ⌂            ⌂                
+13. MatrixReach                          | 14. Plasma Nexus                              ║                                   
+15. Unit 0xCB5 Plaza                     | 16. GridRoot                                  ║  ▲ You | ■ Node | ░ Void
+17. HubRoot                              | 18. MatrixGate                                ║ 
+19. CircuitReach                         | 20. ArrayGate                                 ║ 
+-----------------------------------------------------------------------------------      ║ 
+║                        [·]                                                                                                     ║
+║                         ║                                                                                                      ║
+║    [L] Leave Street ═══[╬]═══ [·]                                                                                              ║
+║                         ║                                                                                                      ║
+║                        [·]                                                                                                     ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
 EXECUTE_DIRECTIVE:
-[t] Interact with objects | [l] Exit Apartment | [f] Go forward
+[l] Leave Street
 [i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [quit] Quit
----=====================================>> [Last: lattice] Enter choice: 
+---=====================================>> Enter choice: 

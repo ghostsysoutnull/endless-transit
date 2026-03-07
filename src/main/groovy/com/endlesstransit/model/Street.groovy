@@ -64,7 +64,6 @@ class Street extends Container {
             if (bL.isLandmark) nameL = Terminal.colorize(Terminal.bold(nameL), Terminal.CYAN)
             String visL = bL.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String labelL = "${numL}. ${nameL}${visL}"
-            
             String leftPart = labelL + (" " * Math.max(0, colWidth - Terminal.getVisualWidth(labelL)))
             
             String labelR = ""
