@@ -11,6 +11,7 @@ class Floor extends Container {
     int number
     Corridor corridor
     String culture
+    String timeline
 
     Corridor getCorridor() {
         ensureChildrenPopulated()
@@ -86,10 +87,11 @@ class Floor extends Container {
         markVisited()
     }
 
-    Floor(int number, int apartmentsPerFloor, long seed = 0) {
+    Floor(int number, int apartmentsPerFloor, String culture = "rust", String timeline = "ancient", long seed = 0) {
         this.number = number
         this.seed = seed
-        this.culture = number < 0 ? "abyssal" : ThemeManager.getRandomCulture(seed)
+        this.culture = number < 0 ? "abyssal" : culture
+        this.timeline = timeline
         this.apartmentsPerFloor = apartmentsPerFloor
     }
     
@@ -97,7 +99,7 @@ class Floor extends Container {
 
     @Override
     void populateChildren() {
-        corridor = new Corridor(apartmentsPerFloor, this.culture, seed != 0 ? seed + 1 : 0)
+        corridor = new Corridor(apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + 1 : 0)
         addLocation(corridor)
     }
 }

@@ -46,11 +46,11 @@ class Apartment extends Container {
         return getBaseOptions(game)
     }
 
-    Apartment(String doorDescription = "A plain door", String culture = "rust", long seed = 0) {
+    Apartment(String doorDescription = "A plain door", String culture = "rust", String timeline = "ancient", long seed = 0) {
         this.doorDescription = doorDescription
         this.culture = culture
+        this.timeline = timeline
         this.seed = seed
-        this.timeline = ThemeManager.getRandomTimeline(seed)
     }
 
     @Override
@@ -60,6 +60,7 @@ class Apartment extends Container {
         // Use Vibe from parent unless anomaly
         def vibe = getVibe()
         if (vibe != null && scrambler.nextDouble() > 0.01) {
+            // Inheritance is handled by constructor now, but we sync with vibe if present
             this.timeline = vibe.timeline
             this.culture = vibe.pickCulture(scrambler.nextLong())
         } else if (vibe != null) {

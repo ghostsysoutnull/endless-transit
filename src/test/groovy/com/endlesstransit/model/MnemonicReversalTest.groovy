@@ -13,7 +13,7 @@ def game = new Game()
 // but we can verify the getOptions() return values for specific types.
 
 // Test Room Reversal Logic
-def apartment = new Apartment("Test Door", "rust", 12345) // Fixed seed for multiple rooms
+def apartment = new Apartment("Test Door", "rust", "ancient", 12345) // Added timeline parameter
 apartment.ensureChildrenPopulated()
 def rooms = apartment.rooms
 

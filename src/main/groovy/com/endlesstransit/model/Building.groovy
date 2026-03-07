@@ -14,6 +14,8 @@ class Building extends Container {
     String name
     int maxFloors
     int apartmentsPerFloor
+    String culture
+    String timeline
 
     // Ritual State
     boolean isBreached = false
@@ -94,8 +96,10 @@ class Building extends Container {
         return "${Math.max(0, base)}%"
     }
 
-    Building(String culture = "monolith", long seed = 0, int depth = 0, boolean isNullZone = false, boolean isAbyssal = false) {
+    Building(String culture = "monolith", String timeline = "ancient", long seed = 0, int depth = 0, boolean isNullZone = false, boolean isAbyssal = false) {
         this.seed = seed
+        this.culture = culture
+        this.timeline = timeline
         Random random = seed != 0 ? new Random(seed) : new Random()
         this.maxFloors = random.nextInt(26) + 5 
         this.apartmentsPerFloor = random.nextInt(13) + 3 // 3 to 15 apartments per floor
@@ -224,7 +228,7 @@ class Building extends Container {
         def floor = this.@floors.find { it.number == number }
         if (floor == null) {
             Logger.info("Instantiating new Floor $number in Building $name")
-            floor = new Floor(number, apartmentsPerFloor, seed != 0 ? seed + number : 0)
+            floor = new Floor(number, apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + number : 0)
             addLocation(floor)
         }
         return floor
