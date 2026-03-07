@@ -127,18 +127,27 @@ class Building extends Container {
         int width = 88
         lines << Terminal.dim("-" * width)
         
+        // Define Column Widths
+        int wId = 5
+        int wRad = 9
+        int wDes = 26
+        int wZon = 26
+        int wInt = 11
+        
+        // Helper to pad based on visual width
+        def pad = { String text, int targetWidth ->
+            return text + (" " * Math.max(0, targetWidth - Terminal.getVisualWidth(text)))
+        }
+
         // Header
-        // [ID] 4 | [RAD] 8 | [STRATA] 25 | [ZONE] 25 | [ST] 10 | [RES] 12
-        String hId = "[ID]"
-        String hRad = "[RAD]"
-        String hDes = "[STRATA_DESIGNATION]"
-        String hZon = "[FUNCTIONAL_ZONE]"
-        String hInt = "[ST]"
+        String hId = pad("[ID]", wId)
+        String hRad = pad("[RAD]", wRad)
+        String hDes = pad("[STRATA_DESIGNATION]", wDes)
+        String hZon = pad("[FUNCTIONAL_ZONE]", wZon)
+        String hInt = pad("[ST]", wInt)
         String hRes = "[RES]"
         
-        lines << Terminal.bold(
-            String.format("%-4s %-8s %-25s %-25s %-10s %-12s", hId, hRad, hDes, hZon, hInt, hRes)
-        )
+        lines << Terminal.bold("${hId}${hRad}${hDes}${hZon}${hInt}${hRes}")
         lines << Terminal.dim("-" * width)
 
         // Find current floor index for the radar
@@ -149,9 +158,9 @@ class Building extends Container {
         // Iterate floors from top to bottom (Peak to Substrate)
         int minFloor = isBreached ? -5 : 0 // Show some substrate if breached
         for (int i = maxFloors - 1; i >= minFloor; i--) {
-            String id = String.format("%02d.", i)
+            String idStr = String.format("%02d.", i)
             
-            // Radar Logic: 5 visual cells wide
+            // Radar Logic: [>X<] for current, [ █ ] for regular, [ ! ] for abyssal
             String radar = "[ █ ]"
             if (i == currentFloorNum) {
                 radar = Terminal.colorize("[>X<]", Terminal.YELLOW)
@@ -174,19 +183,14 @@ class Building extends Container {
             def floorObj = this.@floors.find { it.number == i }
             if (floorObj?.isVisited()) visited = Terminal.colorize("[V]", Terminal.GREEN)
 
-            // Visual-Aware Padding for all columns
-            String colDesText = designation + visited
-            String colDes = colDesText + (" " * Math.max(0, 25 - Terminal.getVisualWidth(colDesText)))
-            
-            String colZonText = "[${zone}]"
-            String colZon = colZonText + (" " * Math.max(0, 25 - Terminal.getVisualWidth(colZonText)))
-            
-            String colIntText = "[${integrity}]"
-            String colInt = colIntText + (" " * Math.max(0, 10 - Terminal.getVisualWidth(colIntText)))
-            
-            String colRad = radar + (" " * Math.max(0, 8 - Terminal.getVisualWidth(radar)))
+            // Assemble row with consistent padding
+            String cId = pad(idStr, wId)
+            String cRad = pad(radar, wRad)
+            String cDes = pad(designation + visited, wDes)
+            String cZon = pad("[" + zone + "]", wZon)
+            String cInt = pad("[" + integrity + "]", wInt)
 
-            lines << "${id.padRight(4)}${colRad}${colDes}${colZon}${colInt}${resonance}"
+            lines << "${cId}${cRad}${cDes}${cZon}${cInt}${resonance}"
         }
         lines << Terminal.dim("-" * width)
         return lines

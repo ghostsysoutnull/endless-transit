@@ -34,8 +34,8 @@ Building bld = street.buildings[0]
 bld.markVisited()
 bld.getFloor(0).markVisited()
 bld.getFloor(1).markVisited()
-game.currentLocation = bld.getFloor(1) // Simulate being on Floor 1
-bld.getExtraContent(player).each { println it }
+game.enterLocation(bld.getFloor(1)) // Correctly updates player and game state
+game.renderAdaptiveBridge()
 
 println "\n--- PREVIEW COMPLETE ---"
 println "Check the alignment of the ║ borders and the [╬] pivot."
