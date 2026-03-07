@@ -331,18 +331,13 @@ class Game {
                     return true
                 }
                 
-                // 2. Numeric prefix match (e.g., user types "2" or "02" to match "02. Access")
-                if (key.contains(". ")) {
-                    String labelId = key.substring(0, key.indexOf(". ")).trim()
-                    
-                    // Normalize both by stripping leading zeros and compare
-                    String normalizedChoice = choice.replaceFirst("^0+(?!\$)", "")
-                    String normalizedLabel = labelId.replaceFirst("^0+(?!\$)", "")
-                    
-                    if (normalizedChoice == normalizedLabel) {
-                        Logger.info("  >> Match found: Numeric Normalization ('$choice' -> '$normalizedChoice' == '$labelId' -> '$normalizedLabel')")
-                        return true
-                    }
+                // 2. Zero-agnostic match (e.g., "1" matches "01")
+                String normalizedChoice = choice.replaceFirst("^0+(?!\$)", "")
+                String normalizedKey = key.replaceFirst("^0+(?!\$)", "")
+                
+                if (normalizedChoice == normalizedKey) {
+                    Logger.info("  >> Match found: Zero-Agnostic ('$choice' -> '$normalizedChoice' == '$key' -> '$normalizedKey')")
+                    return true
                 }
                 
                 return false
