@@ -322,12 +322,16 @@ class Game {
             }
 
             Logger.info("Executing choice: $choice")
-            // Find matching menu entry (with leading zero fallback)
+            // Find matching menu entry (with leading zero fallback and numeric prefix support)
             def matchingKey = menu.keySet().find { key ->
                 if (key.equalsIgnoreCase(choice)) return true
+                
+                // Numeric prefix support (e.g., "1" matches "1. Enter Building")
+                if (key.startsWith(choice + ". ")) return true
+                
                 // Fallback: If user typed '1', match '01'
                 if (choice.length() == 1 && Character.isDigit(choice[0] as char)) {
-                    if (key == "0" + choice) return true
+                    if (key.startsWith("0" + choice + ". ")) return true
                 }
                 return false
             }
