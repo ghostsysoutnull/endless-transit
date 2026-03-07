@@ -83,9 +83,29 @@ EOF
     sleep 0.2
 fi
 
+# 5.5 Static Verification (Phase 1 AI Strategy)
+function compile_check() {
+    echo -ne "${CYAN}[VINCULUM_VERIFICATION: COMPILING...]${RESET} "
+    # Compile all src files to a temp directory to check for errors without keeping artifacts
+    mkdir -p .build_check
+    if ! groovyc -cp src/main/groovy -d .build_check src/main/groovy/com/endlesstransit/**/*.groovy src/main/groovy/com/endlesstransit/*.groovy 2> .compile_errors; then
+        echo -e "${RED}[FAILED]${RESET}"
+        cat .compile_errors
+        rm -rf .build_check .compile_errors
+        exit 1
+    fi
+    echo -e "${GREEN}[SUCCESS]${RESET}"
+    rm -rf .build_check .compile_errors
+}
+
 # 6. Launch
 if [[ "$1" == "--test" ]]; then
+    compile_check
     groovy -cp src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/AllTests.groovy
 else
+    # Only compile on standard run if requested or first time
+    if [[ "$*" == *"--compile"* ]]; then
+        compile_check
+    fi
     groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/Main.groovy "$@"
 fi

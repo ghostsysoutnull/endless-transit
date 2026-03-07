@@ -8,9 +8,12 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.ui.Terminal
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
+@CompileStatic
 class Planet extends Container {
-    List<Country> countries = []
+    @PackageScope List<Country> countries = []
     String name
 
     List<Country> getCountries() {
@@ -34,7 +37,7 @@ class Planet extends Container {
         this.localVibe = new VibeCapsule(timeline, primary, secondary)
         
         // Pick an atmospheric color based on primary culture
-        def colorMap = [
+        Map<String, String> colorMap = [
             "baroque": Terminal.YELLOW,
             "gilded": Terminal.WHITE,
             "monolith": Terminal.CYAN,
@@ -62,13 +65,13 @@ class Planet extends Container {
     void addLocation(Location location) {
         super.addLocation(location)
         if (location instanceof Country) {
-            countries.add(location)
+            this.countries.add((Country)location)
         }
     }
 
     @Override
     String getDescription() {
-        def v = getVibe()
+        VibeCapsule v = (VibeCapsule) getVibe()
         return "Planet: $name\n" + 
                "${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")} " + 
                "${Terminal.dim("[TIMELINE:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")}"
@@ -81,15 +84,16 @@ class Planet extends Container {
         lines << "Planetary landmasses scanned:"
         lines << "-" * 40
         
-        for (int i = 0; i < countries.size(); i += 2) {
-            def cL = countries[i]
-            def cR = (i + 1 < countries.size()) ? countries[i+1] : null
+        List<Country> ctrs = getCountries()
+        for (int i = 0; i < ctrs.size(); i += 2) {
+            Country cL = ctrs[i]
+            Country cR = (i + 1 < ctrs.size()) ? ctrs[i+1] : (Country)null
             
             String labelL = String.format("%02d. %s", i + 1, cL.name)
             if (cL.isVisited()) labelL += " [V]"
             
             String labelR = ""
-            if (cR) {
+            if (cR != null) {
                 labelR = String.format("%02d. %s", i + 2, cR.name)
                 if (cR.isVisited()) labelR += " [V]"
             }
@@ -103,8 +107,10 @@ class Planet extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
-        countries.eachWithIndex { country, i ->
+        Map<String, Closure> options = getBaseOptions(game)
+        List<Country> ctrs = getCountries()
+        for (int i = 0; i < ctrs.size(); i++) {
+            Country country = ctrs[i]
             String id = String.format("%02d", i + 1)
             String label = "${id}. Visit ${country.name}"
             options[label] = { game.enterLocation(country) }

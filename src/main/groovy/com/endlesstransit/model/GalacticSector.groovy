@@ -6,7 +6,9 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class GalacticSector extends Container {
     String name
 
@@ -28,7 +30,7 @@ class GalacticSector extends Container {
 
     @Override
     String getDescription() {
-        "Sector: $name\nA dense cluster of celestial bodies within the neural web."
+        return "Sector: $name\nA dense cluster of celestial bodies within the neural web."
     }
 
     @Override
@@ -38,16 +40,17 @@ class GalacticSector extends Container {
         lines << "Solar systems within proximity:"
         lines << "-" * 40
         
-        for (int i = 0; i < children.size(); i += 2) {
-            def sL = children[i]
-            def sR = (i + 1 < children.size()) ? children[i+1] : null
+        List<Location> ch = getChildren()
+        for (int i = 0; i < ch.size(); i += 2) {
+            Location sL = ch[i]
+            Location sR = (i + 1 < ch.size()) ? ch[i+1] : (Location)null
             
-            String labelL = String.format("%02d. %s", i + 1, sL.name)
+            String labelL = String.format("%02d. %s", i + 1, sL.getName())
             if (sL.isVisited()) labelL += " [V]"
             
             String labelR = ""
-            if (sR) {
-                labelR = String.format("%02d. %s", i + 2, sR.name)
+            if (sR != null) {
+                labelR = String.format("%02d. %s", i + 2, sR.getName())
                 if (sR.isVisited()) labelR += " [V]"
             }
             
@@ -60,10 +63,12 @@ class GalacticSector extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
-        children.eachWithIndex { system, i ->
+        Map<String, Closure> options = getBaseOptions(game)
+        List<Location> ch = getChildren()
+        for (int i = 0; i < ch.size(); i++) {
+            Location system = ch[i]
             String id = String.format("%02d", i + 1)
-            String label = "${id}. Transition to System: ${system.name}"
+            String label = "${id}. Transition to System: ${system.getName()}"
             options[label] = { game.enterLocation(system) }
         }
         return options

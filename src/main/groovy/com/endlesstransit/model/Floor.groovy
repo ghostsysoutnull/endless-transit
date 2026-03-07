@@ -6,10 +6,13 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
+@CompileStatic
 class Floor extends Container {
     int number
-    Corridor corridor
+    @PackageScope Corridor corridor
     String culture
     String timeline
 
@@ -43,7 +46,7 @@ class Floor extends Container {
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
         Logger.info("Getting options for Floor $number")
-        def options = getBaseOptions(game)
+        Map<String, Closure> options = getBaseOptions(game)
         
         if (parent instanceof Building) {
             Building bldg = (Building) parent
@@ -51,8 +54,8 @@ class Floor extends Container {
                 options["u. Go Up"] = { game.enterLocation(bldg.getFloor(number + 1)) }
             } else if (!bldg.isBreached && bldg.isPrimed()) {
                 // At the Peak and primed
-                def keystone = game.player.inventory.find { it.isKeystone && it.name.contains(bldg.name) }
-                if (keystone) {
+                InventoryItem keystone = game.player.inventory.find { it.isKeystone && it.name.contains(bldg.name) }
+                if (keystone != null) {
                     options["j. Breach the Bedrock"] = {
                         game.player.inventory.remove(keystone)
                         bldg.breach()
@@ -69,7 +72,7 @@ class Floor extends Container {
             }
         }
         
-        options["c. Enter Corridor"] = { game.enterLocation(corridor) }
+        options["c. Enter Corridor"] = { game.enterLocation(getCorridor()) }
         return options
     }
 
@@ -99,7 +102,7 @@ class Floor extends Container {
 
     @Override
     void populateChildren() {
-        corridor = new Corridor(apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + 1 : 0)
-        addLocation(corridor)
+        this.corridor = new Corridor(apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + 1 : 0)
+        addLocation(this.corridor)
     }
 }

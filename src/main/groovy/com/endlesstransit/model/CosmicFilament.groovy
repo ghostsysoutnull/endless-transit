@@ -6,7 +6,9 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class CosmicFilament extends Container {
     String name
     String conduitID
@@ -36,7 +38,7 @@ class CosmicFilament extends Container {
 
     @Override
     String getDescription() {
-        "A massive neural conduit pulsing with bio-digital energy. [CONDUIT_ID: ${conduitID}]"
+        return "A massive neural conduit pulsing with bio-digital energy. [CONDUIT_ID: ${conduitID}]"
     }
 
     @Override
@@ -46,16 +48,17 @@ class CosmicFilament extends Container {
         lines << "Galactic sectors within this conduit:"
         lines << "-" * 40
         
-        for (int i = 0; i < children.size(); i += 2) {
-            def sL = children[i]
-            def sR = (i + 1 < children.size()) ? children[i+1] : null
+        List<Location> ch = getChildren()
+        for (int i = 0; i < ch.size(); i += 2) {
+            Location sL = ch[i]
+            Location sR = (i + 1 < ch.size()) ? ch[i+1] : (Location)null
             
-            String labelL = String.format("%02d. %s", i + 1, sL.name)
+            String labelL = String.format("%02d. %s", i + 1, sL.getName())
             if (sL.isVisited()) labelL += " [V]"
             
             String labelR = ""
-            if (sR) {
-                labelR = String.format("%02d. %s", i + 2, sR.name)
+            if (sR != null) {
+                labelR = String.format("%02d. %s", i + 2, sR.getName())
                 if (sR.isVisited()) labelR += " [V]"
             }
             
@@ -68,11 +71,13 @@ class CosmicFilament extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
-        children.eachWithIndex { node, i ->
+        Map<String, Closure> options = getBaseOptions(game)
+        List<Location> ch = getChildren()
+        for (int i = 0; i < ch.size(); i++) {
+            Location node = ch[i]
             String nodeType = node instanceof NullSector ? "VOID_REACH" : "MATTER_CLUSTER"
             String id = String.format("%02d", i + 1)
-            String label = "${id}. Pulse to ${nodeType}: ${node.name}"
+            String label = "${id}. Pulse to ${nodeType}: ${node.getName()}"
             options[label] = { game.enterLocation(node) }
         }
         return options

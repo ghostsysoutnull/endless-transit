@@ -16,6 +16,8 @@ String testBase = "src/test/groovy/com/endlesstransit"
 
 println "--- Loading JUnit Tests ---"
 def junitTests = [
+    "core/NewGameTest",
+    "model/DeepLatticeCrawlTest",
     "model/FloorCrashTest",
     "core/JournalTest",
     "core/StartupTest"
@@ -27,7 +29,11 @@ junitTests.each { path ->
 }
 
 println "--- Running JUnit Suite ---"
-TestRunner.run(suite)
+def result = TestRunner.run(suite)
+if (!result.wasSuccessful()) {
+    println "\nJUNIT SUITE FAILED"
+    System.exit(1)
+}
 
 println "\n--- Running Script Tests ---"
 def shell = new GroovyShell(loader)
@@ -43,7 +49,6 @@ def scriptTests = [
     "model/StreetTest",
     "model/StructuralConsistencyTest",
     "procgen/SystemNameTest",
-    "model/DeepLatticeCrawlTest",
     "ui/InitialScreenTest"
 ]
 

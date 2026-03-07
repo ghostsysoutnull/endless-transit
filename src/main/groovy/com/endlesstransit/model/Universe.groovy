@@ -6,7 +6,9 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class Universe extends Container {
     List<CosmicFilament> filaments = []
     String name = "Universe"

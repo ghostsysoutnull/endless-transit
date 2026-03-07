@@ -4,9 +4,11 @@ import com.endlesstransit.ui.*
 import com.endlesstransit.procgen.*
 import com.endlesstransit.*
 
+import groovy.transform.CompileStatic
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@CompileStatic
 class Logger {
     private static final String LOG_FILE = "transit.log"
     private static final int MAX_ROLLS = 5
@@ -22,6 +24,14 @@ class Logger {
             t.printStackTrace(new PrintWriter(sw))
             log("STACKTRACE", sw.toString())
         }
+    }
+
+    static void reportCriticalFailure(Location loc, Player player, String lastChoice, long masterSeed, Throwable t) {
+        error("CRITICAL_FAILURE: Game loop crashed.")
+        error("  >> Master Seed: $masterSeed")
+        error("  >> Location: ${loc?.getPath()} (${loc?.getLIP()})")
+        error("  >> State: [Steps: ${player?.stepCount}, Coherence: ${player?.coherence}, LastChoice: \"$lastChoice\"]")
+        error("  >> Exception: $t", t)
     }
 
     private static synchronized void log(String level, String message) {

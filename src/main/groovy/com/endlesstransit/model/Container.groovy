@@ -5,7 +5,9 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.ui.Terminal
+import groovy.transform.CompileStatic
 
+@CompileStatic
 abstract class Container implements Location {
     List<Location> children = []
     Location parent
@@ -240,7 +242,7 @@ abstract class Container implements Location {
     }
 
     Map<String, Closure> getBaseOptions(Game game) {
-        def options = [:]
+        Map<String, Closure> options = [:]
         if (parent != null) {
             options["l. Leave ${this.getClass().simpleName}"] = { game.exitLocation() }
         }

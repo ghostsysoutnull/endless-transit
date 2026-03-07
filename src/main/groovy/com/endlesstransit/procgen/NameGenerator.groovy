@@ -1,7 +1,9 @@
 package com.endlesstransit.procgen
 
+import groovy.transform.CompileStatic
 import java.util.Random
 
+@CompileStatic
 class NameGenerator {
     private static final Random random = new Random()
 
@@ -55,7 +57,7 @@ class NameGenerator {
         return "${descriptors[r.nextInt(descriptors.size())]} ${nouns[r.nextInt(nouns.size())]} ${r.nextInt(99)}"
     }
 
-    static final Map<String, Map<String, List<String>>> buildingLexicon = [
+    static final Map<String, Map> buildingLexicon = [
         "rust": [
             "adj": ["Corroded", "Oxidized", "Patchwork", "Scrapyard", "Weathered", "Fading", "Dusty", "Assembled"],
             "noun": ["Shell", "Stack", "Monolith", "Heap", "Vault", "Husk", "Anchor", "Frame"]
@@ -100,7 +102,7 @@ class NameGenerator {
         "The Void-Watcher"
     ]
 
-    static final Map<String, Map<String, List<String>>> roomLexicon = [
+    static final Map<String, Map> roomLexicon = [
         "rust": [
             "adj": ["Oxidized", "Maintenance", "Patchwork", "Corroded", "Gritty", "Scrapyard", "Heavy", "Ventilation"],
             "noun": ["Sump", "Duct", "Alcove", "Intake", "Pit", "Cell", "Shaft", "Vault"]
@@ -129,10 +131,10 @@ class NameGenerator {
 
     static Map<String, String> generateRoomName(String culture, String trait, long seed = 0) {
         Random r = seed != 0 ? new Random(seed) : random
-        def lexicon = roomLexicon[culture] ?: roomLexicon["monolith"]
+        Map lexicon = (Map) (roomLexicon[culture] ?: roomLexicon["monolith"])
         
         // Use trait to influence the "type"
-        def types = [
+        Map<String, List<String>> types = [
             "Military": ["Security Station", "Barracks", "Armory", "Tactical Hub"],
             "Research": ["Laboratory", "Neural Link Array", "Observation Deck", "Bio-Server"],
             "Industrial": ["Power Plant", "Processing Core", "Maintenance Bay", "Fuel Depot"],
@@ -141,11 +143,13 @@ class NameGenerator {
             "Agricultural": ["Hydroponic Bay", "Spore Farm", "Oxygen Sump", "Growth Chamber"]
         ]
         
-        def traitTypes = types[trait] ?: ["Standard Spatial Cell", "Generic Living Unit", "Transit Node", "Lattice Sub-Cell"]
+        List<String> traitTypes = (List<String>) (types[trait] ?: ["Standard Spatial Cell", "Generic Living Unit", "Transit Node", "Lattice Sub-Cell"])
         String type = traitTypes[r.nextInt(traitTypes.size())]
         
-        String adj = lexicon.adj[r.nextInt(lexicon.adj.size())]
-        String noun = lexicon.noun[r.nextInt(lexicon.noun.size())]
+        List<String> adjs = (List<String>) lexicon.adj
+        List<String> nouns = (List<String>) lexicon.noun
+        String adj = adjs[r.nextInt(adjs.size())]
+        String noun = nouns[r.nextInt(nouns.size())]
         String hex = Integer.toHexString(r.nextInt(0xFF)).toUpperCase()
         
         String name = "$adj $noun [0x$hex]"
@@ -189,8 +193,10 @@ class NameGenerator {
         String sizeCat = floors < 10 ? "small" : (floors < 20 ? "medium" : "large")
         
         // Get Lexicon for culture (fall back to monolith if missing)
-        def lexicon = buildingLexicon[culture] ?: buildingLexicon["monolith"]
-        
+        Map lexicon = (Map) (buildingLexicon[culture] ?: buildingLexicon["monolith"])
+        List<String> adjs = (List<String>) lexicon.adj
+        List<String> nouns = (List<String>) lexicon.noun
+
         String name = ""
         
         if (isUncommon) {
@@ -200,16 +206,16 @@ class NameGenerator {
                 name = "Unit 0x${Integer.toHexString(r.nextInt(0xFFF)).toUpperCase()} ${sizes[sizeCat][r.nextInt(sizes[sizeCat].size())]}"
             } else { // The [Noun] of [Concept]
                 def concepts = ["Static", "Frequencies", "Resonance", "Stability", "Time", "Light", "The Web"]
-                name = "The ${lexicon.noun[r.nextInt(lexicon.noun.size())]} of ${concepts[r.nextInt(concepts.size())]}"
+                name = "The ${nouns[r.nextInt(nouns.size())]} of ${concepts[r.nextInt(concepts.size())]}"
             }
         } else {
             // 4. Standard Tier (Adjective + Noun or Compound)
             int template = r.nextInt(2)
             if (template == 0) { // Adjective + Noun
-                name = "${lexicon.adj[r.nextInt(lexicon.adj.size())]} ${lexicon.noun[r.nextInt(lexicon.noun.size())]}"
+                name = "${adjs[r.nextInt(adjs.size())]} ${nouns[r.nextInt(nouns.size())]}"
             } else { // Compound
                 def compounds = ["Gate", "Fall", "Reach", "Spire", "Well", "Root"]
-                name = "${lexicon.noun[r.nextInt(lexicon.noun.size())]}${compounds[r.nextInt(compounds.size())]}"
+                name = "${nouns[r.nextInt(nouns.size())]}${compounds[r.nextInt(compounds.size())]}"
             }
         }
 

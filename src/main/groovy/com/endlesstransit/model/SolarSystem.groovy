@@ -6,9 +6,12 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
+@CompileStatic
 class SolarSystem extends Container {
-    List<Planet> planets = []
+    @PackageScope List<Planet> planets = []
     String name
 
     List<Planet> getPlanets() {
@@ -35,7 +38,7 @@ class SolarSystem extends Container {
     void addLocation(Location location) {
         super.addLocation(location)
         if (location instanceof Planet) {
-            planets.add(location)
+            this.planets.add((Planet)location)
         }
     }
 
@@ -51,15 +54,16 @@ class SolarSystem extends Container {
         lines << "Orbital bodies within range:"
         lines << "-" * 40
         
-        for (int i = 0; i < planets.size(); i += 2) {
-            def pL = planets[i]
-            def pR = (i + 1 < planets.size()) ? planets[i+1] : null
+        List<Planet> plts = getPlanets()
+        for (int i = 0; i < plts.size(); i += 2) {
+            Planet pL = plts[i]
+            Planet pR = (i + 1 < plts.size()) ? plts[i+1] : (Planet)null
             
             String labelL = String.format("%02d. %s", i + 1, pL.name)
             if (pL.isVisited()) labelL += " [V]"
             
             String labelR = ""
-            if (pR) {
+            if (pR != null) {
                 labelR = String.format("%02d. %s", i + 2, pR.name)
                 if (pR.isVisited()) labelR += " [V]"
             }
@@ -73,8 +77,10 @@ class SolarSystem extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
-        planets.eachWithIndex { planet, i ->
+        Map<String, Closure> options = getBaseOptions(game)
+        List<Planet> plts = getPlanets()
+        for (int i = 0; i < plts.size(); i++) {
+            Planet planet = plts[i]
             String id = String.format("%02d", i + 1)
             String label = "${id}. Land on ${planet.name}"
             options[label] = { game.enterLocation(planet) }

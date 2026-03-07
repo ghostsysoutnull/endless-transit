@@ -8,9 +8,11 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
 
 import java.util.Random
 
+@CompileStatic
 class Room implements Location {
     String color
     List<String> furniture
@@ -61,7 +63,7 @@ class Room implements Location {
     @Override
     int getIndexInParent() {
         if (parent instanceof Apartment) {
-            return ((Apartment)parent).rooms.indexOf(this) + 1
+            return ((Apartment)parent).getRooms().indexOf(this) + 1
         }
         return 0
     }
@@ -69,7 +71,7 @@ class Room implements Location {
     @Override
     int getTotalInParent() {
         if (parent instanceof Apartment) {
-            return ((Apartment)parent).rooms.size()
+            return ((Apartment)parent).getRooms().size()
         }
         return 0
     }
@@ -84,7 +86,7 @@ class Room implements Location {
         Random random = new Random()
         if (random.nextInt(10) < 3) { // 30% chance
             int randomNum = random.nextInt(9000000) + 1000000 
-            def item = new InventoryItem("Hidden Frequency", randomNum)
+            InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
             player.inventory.add(item)
             JournalManager.logCapture(item, this)
             println Terminal.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", Terminal.YELLOW)
@@ -93,7 +95,6 @@ class Room implements Location {
 
     @Override
     String getPath() {
-        int myIndex = (parent instanceof Apartment) ? ((Apartment)parent).rooms.indexOf(this) + 1 : 0
         if (parent != null) {
             return "${parent.getPath()} > $roomName"
         }
@@ -107,7 +108,7 @@ class Room implements Location {
 
     @Override
     String getCoordinates() {
-        Random r = new Random(this.hashCode())
+        Random r = new Random(this.hashCode() as long)
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 
@@ -149,18 +150,17 @@ class Room implements Location {
     List<String> getExtraContent(Player player) {
         List<String> lines = []
         int width = 100
-        int split = 45
         String accent = isAbyssal() ? Terminal.RED : Terminal.L_CYAN
         
         lines << Terminal.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
         lines << Terminal.dim("-" * width)
         
         String identPart = "IDENT: ${Terminal.bold(roomName)}"
-        String traitsPart = "ATMO_TRAITS: [OXY: ${atmoTraits.OXYGEN}] | [TEMP: ${atmoTraits.TEMP}]"
+        String traitsPart = "ATMO_TRAITS: [OXY: ${atmoTraits["OXYGEN"]}] | [TEMP: ${atmoTraits["TEMP"]}]"
         lines << String.format("%-45s ║ %s", identPart, traitsPart)
         
         String typePart = "TYPE:  ${Terminal.colorize(roomType, Terminal.YELLOW)}"
-        String signalPart = "SIGNAL: ${atmoTraits.SIGNAL} | RESONANCE: ${isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)}"
+        String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)}"
         lines << String.format("%-45s ║ %s", typePart, signalPart)
         
         lines << Terminal.dim("-" * width)
@@ -192,8 +192,8 @@ class Room implements Location {
     @Override
     String getMapColor() {
         if (isAbyssal()) return Terminal.RED
-        def v = getVibe()
-        return v?.atmosphericColor ?: Terminal.WHITE
+        VibeCapsule v = getVibe()
+        return v != null ? v.atmosphericColor : Terminal.WHITE
     }
 
     void setParent(Location parent) {
@@ -205,18 +205,18 @@ class Room implements Location {
 
         // Functional Naming based on Country Trait
         Country country = (Country) findAncestor(Country.class)
-        String trait = country?.functionalTrait ?: "Standard"
-        def nameData = NameGenerator.generateRoomName(this.culture, trait, this.seed)
-        this.roomName = nameData.name
-        this.roomType = nameData.type
+        String trait = country != null ? country.functionalTrait : "Standard"
+        Map<String, String> nameData = NameGenerator.generateRoomName(this.culture, trait, this.seed)
+        this.roomName = nameData["name"]
+        this.roomType = nameData["type"]
 
         // Refine atmosphere based on parent vibe (regional mutation)
-        def vibe = getVibe()
+        VibeCapsule vibe = getVibe()
         if (vibe != null) {
-            def atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation, this.isAnomaly, this.seed)
-            this.walls = atmos.walls
-            this.lightingDesc = atmos.lighting
-            this.structureDesc = atmos.structure
+            Map<String, String> atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation, this.isAnomaly, this.seed)
+            this.walls = atmos["walls"]
+            this.lightingDesc = atmos["lighting"]
+            this.structureDesc = atmos["structure"]
         }
     }
 
@@ -228,17 +228,17 @@ class Room implements Location {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
-        def options = [:]
+        Map<String, Closure> options = [:]
         
         if (!objects.isEmpty() || !game.player.inventory.isEmpty()) {
             options["t. Interact with objects"] = {
                 // Shortcut: If only 1 object and empty inventory, just take it
                 if (objects.size() == 1 && game.player.inventory.isEmpty()) {
                     String name = objects[0]
-                    def vibe = getVibe()
+                    VibeCapsule vibe = getVibe()
                     boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
                     int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
-                    def item = new InventoryItem(name, freq)
+                    InventoryItem item = new InventoryItem(name, freq)
                     game.player.inventory.add(item)
                     JournalManager.logCapture(item, this)
                     
@@ -277,7 +277,7 @@ class Room implements Location {
                     try {
                         int idx = input.substring(1).toInteger() - 1
                         if (idx >= 0 && idx < game.player.inventory.size()) {
-                            def item = game.player.inventory.remove(idx)
+                            InventoryItem item = game.player.inventory.remove(idx)
                             objects << item.name
                             println Terminal.colorize(">>> Fragment ${item.name} dropped into local cell.", Terminal.YELLOW)
                             game.instantRender = true
@@ -290,10 +290,10 @@ class Room implements Location {
                         int idx = input.toInteger() - 1
                         if (idx >= 0 && idx < objects.size()) {
                             String name = objects[idx]
-                            def vibe = getVibe()
+                            VibeCapsule vibe = getVibe()
                             boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
                             int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
-                            def item = new InventoryItem(name, freq)
+                            InventoryItem item = new InventoryItem(name, freq)
                             game.player.inventory.add(item)
                             JournalManager.logCapture(item, this)
                             
@@ -316,17 +316,18 @@ class Room implements Location {
 
         if (parent instanceof Apartment) {
             Apartment apt = (Apartment) parent
-            int myIndex = apt.rooms.indexOf(this)
+            List<Room> rms = apt.getRooms()
+            int myIndex = rms.indexOf(this)
             
             if (myIndex > 0) {
-                options["b. Go back"] = { game.enterLocation(apt.rooms[myIndex - 1]) }
+                options["b. Go back"] = { game.enterLocation(rms[myIndex - 1]) }
             } else {
                 // Room 0: Go back exits to Apartment container or its parent
                 options["l. Exit Apartment"] = { game.enterLocation(apt.parent) }
             }
             
-            if (myIndex < apt.rooms.size() - 1) {
-                options["f. Go forward"] = { game.enterLocation(apt.rooms[myIndex + 1]) }
+            if (myIndex < rms.size() - 1) {
+                options["f. Go forward"] = { game.enterLocation(rms[myIndex + 1]) }
             }
         }
         
@@ -343,10 +344,10 @@ class Room implements Location {
         color = colors[random.nextInt(colors.length)]
         
         // Initial atmosphere (will be refined when parent is set)
-        def atmos = ThemeManager.generateAtmosphere(culture, timeline, "Standard", false, seed)
-        this.walls = atmos.walls
-        this.lightingDesc = atmos.lighting
-        this.structureDesc = atmos.structure
+        Map<String, String> atmos = ThemeManager.generateAtmosphere(culture, timeline, "Standard", false, seed)
+        this.walls = atmos["walls"]
+        this.lightingDesc = atmos["lighting"]
+        this.structureDesc = atmos["structure"]
 
         // Initial Atmo-Traits
         this.atmoTraits["OXYGEN"] = "${random.nextInt(10) + 12}%"
@@ -386,7 +387,7 @@ class Room implements Location {
         List<String> wrappedFurniture = Terminal.wrapText(furnitureStr, wrapWidth)
         description.append("${Terminal.dim("FURNITURE:")} ")
         wrappedFurniture.eachWithIndex { line, i ->
-            if (i > 0) description.append("           ") // Indent for multi-line
+            if (i > (int)0) description.append("           ") // Indent for multi-line
             description.append(line).append("\n")
         }
         
@@ -395,7 +396,7 @@ class Room implements Location {
             List<String> wrappedObjs = Terminal.wrapText(objStr, wrapWidth)
             description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ")
             wrappedObjs.eachWithIndex { line, i ->
-                if (i > 0) description.append("                  ") // Indent for multi-line
+                if (i > (int)0) description.append("                  ") // Indent for multi-line
                 description.append(line).append("\n")
             }
         }

@@ -1,5 +1,8 @@
 package com.endlesstransit.ui
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class Terminal {
     static final String RESET = "\u001b[0m"
     static final String BOLD = "\u001b[1m"
@@ -171,40 +174,14 @@ class Terminal {
      */
     static String stripAnsi(String text) {
         if (text == null) return ""
-        return text.replaceAll("\u001b\\[[()#;?]*[0-9;?]*[a-zA-Z]", "")
+        return text.replaceAll(/\u001B\[[;?0-9]*[mGKH]/, "")
     }
 
     /**
      * Calculates the visual width of a string, accounting for wide characters (emojis, etc).
      */
     static int getVisualWidth(String text) {
-        if (!text) return 0
-        String stripped = stripAnsi(text)
-        int width = 0
-        int i = 0
-        while (i < stripped.length()) {
-            int cp = stripped.codePointAt(i)
-            
-            // East Asian Width / Emoji / Supplementary characters usually take 2 cells
-            if (Character.isSupplementaryCodePoint(cp)) {
-                width += 2
-            } else if (cp >= 0x2000 && cp <= 0x32FF) { // Symbols
-                width += 2
-            } else if (cp >= 0x1F000) { // More emojis
-                width += 2
-            } else {
-                // Check for specific wide symbols used in ET
-                if ("🏙🚪⬚☼⊕".contains(new String(Character.toChars(cp)))) {
-                    width += 2
-                } else if ("█".contains(new String(Character.toChars(cp)))) {
-                    width += 1
-                } else {
-                    width += 1
-                }
-            }
-            i += Character.charCount(cp)
-        }
-        return width
+        return TUIValidator.getVisualWidth(text)
     }
 
     /**

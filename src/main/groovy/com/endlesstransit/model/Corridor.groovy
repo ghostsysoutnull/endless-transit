@@ -7,10 +7,13 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
+@CompileStatic
 class Corridor extends Container {
-    List<Door> doors = []
-    List<Apartment> apartments = []
+    @PackageScope List<Door> doors = []
+    @PackageScope List<Apartment> apartments = []
     int numApartments
     String culture
     String timeline
@@ -27,7 +30,10 @@ class Corridor extends Container {
 
     @Override
     String getTypeName() {
-        return (parent instanceof Floor && ((Floor)parent).number < 0) ? "Artery" : "Corridor"
+        if (parent instanceof Floor) {
+            if (((Floor)parent).number < 0) return "Artery"
+        }
+        return "Corridor"
     }
 
     @Override
@@ -49,11 +55,14 @@ class Corridor extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
+        Map<String, Closure> options = getBaseOptions(game)
         
-        for (int i = 0; i < apartments.size(); i++) {
-            def apt = apartments[i]
-            def door = doors[i]
+        List<Apartment> apts = getApartments()
+        List<Door> drs = getDoors()
+
+        for (int i = 0; i < apts.size(); i++) {
+            Apartment apt = apts[i]
+            Door door = drs[i]
             String id = String.format("%02d.", i + 1)
             
             String roomName = "?? UNKNOWN ??"
@@ -62,8 +71,9 @@ class Corridor extends Container {
             String wave = "---"
             String resLabel = ""
             
-            if (!apt.rooms.isEmpty()) {
-                def firstRoom = apt.rooms[0]
+            List<Room> rms = apt.getRooms()
+            if (!rms.isEmpty()) {
+                Room firstRoom = rms[0]
                 roomName = firstRoom.roomName
                 status = firstRoom.isAnomaly ? Terminal.colorize("[DEG]", Terminal.RED) : Terminal.colorize("[STB]", Terminal.GREEN)
                 int freq = Gematria.calculateFrequency(roomName, firstRoom.getDepth())
@@ -78,7 +88,7 @@ class Corridor extends Container {
                 resLabel = "${signature} ${wave}"
             }
 
-            boolean isVisited = apt.rooms.any { it.isVisited() }
+            boolean isVisited = rms.any { it.isVisited() }
             String visited = isVisited ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
             String visual = "${door.getDescription()}${visited}"
             
@@ -104,10 +114,12 @@ class Corridor extends Container {
     @Override
     VibeCapsule getVibe() {
         if (localVibe != null) return localVibe
-        def v = parent?.getVibe()
-        if (parent instanceof Floor && ((Floor)parent).number < 0) {
-            // Abyssal Override
-            return new VibeCapsule("atomic", "abyssal", "abyssal")
+        VibeCapsule v = parent?.getVibe()
+        if (parent instanceof Floor) {
+            if (((Floor)parent).number < 0) {
+                // Abyssal Override
+                return new VibeCapsule("atomic", "abyssal", "abyssal")
+            }
         }
         return v
     }
@@ -119,9 +131,9 @@ class Corridor extends Container {
 
         for (int i = 0; i < numApartments; i++) {
             long childSeed = seed != 0 ? seed + i + 1 : 0
-            def door = new Door(childSeed)
+            Door door = new Door(childSeed)
             this.@doors.add(door)
-            def apartment = new Apartment(door.getDescription(), culture, timeline, childSeed)
+            Apartment apartment = new Apartment(door.getDescription(), culture, timeline, childSeed)
             this.@apartments.add(apartment)
             addLocation(apartment)
         }

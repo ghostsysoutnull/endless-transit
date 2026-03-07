@@ -4,7 +4,9 @@ import com.endlesstransit.model.*
 import com.endlesstransit.ui.Terminal
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class SyncManager {
     static final String SAVE_FILE = "session.trace"
 
@@ -56,9 +58,9 @@ class SyncManager {
         }
 
         try {
-            def snapshot = new JsonSlurper().parse(file)
+            Map snapshot = (Map) new JsonSlurper().parse(file)
             Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)}")
-            return snapshot
+            return (Map<String, Object>) snapshot
         } catch (Exception e) {
             Logger.error("RESTORE_FAILED: Trace corruption detected.", e)
             return null

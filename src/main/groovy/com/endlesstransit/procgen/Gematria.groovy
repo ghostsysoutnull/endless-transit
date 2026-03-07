@@ -1,5 +1,8 @@
 package com.endlesstransit.procgen
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class Gematria {
     private static final String VOWELS = "aeiouAEIOU"
 

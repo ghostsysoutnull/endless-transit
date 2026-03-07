@@ -8,7 +8,9 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class NullSector extends Container {
     String name
     int signalStrength = 0
@@ -64,16 +66,17 @@ class NullSector extends Container {
         lines << "Faint gravitational anomalies detected:"
         lines << "-" * 40
         
-        for (int i = 0; i < children.size(); i += 2) {
-            def sL = children[i]
-            def sR = (i + 1 < children.size()) ? children[i+1] : null
+        List<Location> ch = getChildren()
+        for (int i = 0; i < ch.size(); i += 2) {
+            Location sL = ch[i]
+            Location sR = (i + 1 < ch.size()) ? ch[i+1] : (Location)null
             
-            String labelL = String.format("%02d. %s", i + 1, sL.name)
+            String labelL = String.format("%02d. %s", i + 1, sL.getName())
             if (sL.isVisited()) labelL += " [V]"
             
             String labelR = ""
-            if (sR) {
-                labelR = String.format("%02d. %s", i + 2, sR.name)
+            if (sR != null) {
+                labelR = String.format("%02d. %s", i + 2, sR.getName())
                 if (sR.isVisited()) labelR += " [V]"
             }
             
@@ -86,7 +89,7 @@ class NullSector extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
+        Map<String, Closure> options = getBaseOptions(game)
         
         if (!echoFound) {
             options["s. Scan for spectral echoes"] = {
@@ -102,7 +105,7 @@ class NullSector extends Container {
             
             if (signalStrength >= 100) {
                 options["c. Capture Spectral Echo"] = {
-                    def item = new InventoryItem("Spectral Echo", echoFrequency)
+                    InventoryItem item = new InventoryItem("Spectral Echo", echoFrequency)
                     game.player.inventory.add(item)
                     JournalManager.logCapture(item)
                     echoFound = true
@@ -113,9 +116,11 @@ class NullSector extends Container {
             }
         }
 
-        children.eachWithIndex { system, i ->
+        List<Location> ch = getChildren()
+        for (int i = 0; i < ch.size(); i++) {
+            Location system = ch[i]
             String id = String.format("%02d", i + 1)
-            String label = "${id}. Detect faint signal: ${system.name}"
+            String label = "${id}. Detect faint signal: ${system.getName()}"
             options[label] = { game.enterLocation(system) }
         }
         return options

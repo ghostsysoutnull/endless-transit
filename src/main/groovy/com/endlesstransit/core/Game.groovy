@@ -5,9 +5,11 @@ import com.endlesstransit.procgen.*
 import com.endlesstransit.*
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
 
 import java.util.Scanner
 
+@CompileStatic
 class Game {
     Universe universe
     Location currentLocation
@@ -30,17 +32,17 @@ class Game {
         this.universe = new Universe(masterSeed)
         
         // Start deep: Universe > Filament > Sector > System > Planet > Country > City > Street
-        def filaments = universe.getFilaments()
-        def filament = filaments[0]
-        def node = filament.children[0]
+        List<CosmicFilament> filaments = universe.getFilaments()
+        CosmicFilament filament = filaments[0]
         
         // Find a SolarSystem within the node (GalacticSector or NullSector)
-        def systems = node.children
-        def system = systems[0]
+        Container node = (Container) filament.getChildren()[0]
+        List<Location> systems = node.getChildren()
+        SolarSystem system = (SolarSystem) systems[0]
         
-        def planet = system.getPlanets()[0]
-        def country = planet.getCountries()[0]
-        def city = country.getCities()[0]
+        Planet planet = system.getPlanets()[0]
+        Country country = planet.getCountries()[0]
+        City city = country.getCities()[0]
         currentLocation = city.getStreets()[0]
         player.currentLocation = currentLocation
     }
@@ -54,11 +56,11 @@ class Game {
             println Terminal.dim("  (No spectral traces detected in local buffer) ")
         } else {
             // Show all items now that we can scroll
-            player.inventory.each { item ->
+            player.inventory.each { InventoryItem item ->
                 String freqStr = String.format("%04d", item.frequency)
                 
-                int signalStrength = (item.frequency % 100) / 10 + 1
-                String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
+                int signalStrength = (int)((item.frequency % 100) / 10 + 1)
+                String signalBar = ("█" * signalStrength) + ("░" * (10 - signalStrength))
                 String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
@@ -181,7 +183,8 @@ class Game {
                 
                 // 1. Render Local Actions (Filtering out specialized lists)
                 List<String> navOptions = []
-                menu.each { menuKey, action ->
+                menu.each { Object menuKeyObj, Object action ->
+                    String menuKey = (String) menuKeyObj
                     String label = currentActionMap[menuKey]
                     
                     // Skip items already shown in tables (Split Pane Composition)
@@ -198,7 +201,7 @@ class Game {
                     
                     // If it's a single-char nav command, collect it for the bottom line
                     if (menuKey.length() == 1 && "udfblt".contains(menuKey)) {
-                        navOptions << "[${Terminal.colorize(menuKey, Terminal.YELLOW)}] ${label.split("\\. ")[1]}"
+                        navOptions << "[${Terminal.colorize(menuKey, Terminal.YELLOW)}] ${label.split("\\. ")[1]}".toString()
                         return
                     }
                     
@@ -324,7 +327,8 @@ class Game {
 
             Logger.info("Executing choice: '$choice'")
             // Find matching menu entry using zero-agnostic numeric matching
-            def matchingKey = menu.keySet().find { key ->
+            String matchingKey = (String) menu.keySet().find { Object keyObj ->
+                String key = (String) keyObj
                 // 1. Exact match (case insensitive)
                 if (key.equalsIgnoreCase(choice)) {
                     Logger.info("  >> Match found: Exact Match ('$choice' == '$key')")
@@ -343,26 +347,23 @@ class Game {
                 return false
             }
 
-            if (matchingKey) {
+            if (matchingKey != null) {
                 player.stepCount++
                 if (currentLocation.isAbyssal()) {
                     player.adjustCoherence(-5)
                 }
                 lastChoice = matchingKey
-                menu[matchingKey].call()
+                ((Closure)menu[matchingKey]).call()
             } else if (choice != "-2") {
                 Logger.info("  [!] Match failed for choice '$choice'. Available keys: ${menu.keySet()}")
                 println("Invalid choice. Please try again.")
             }
         }
     } catch (Throwable t) {
-        Logger.error("CRITICAL_FAILURE: Game loop crashed.")
-        Logger.error("  >> Location: ${currentLocation.getPath()} (${currentLocation.getLIP()})")
-        Logger.error("  >> State: [Steps: ${player.stepCount}, Coherence: ${player.coherence}, LastChoice: \"$lastChoice\"]")
-        Logger.error("  >> Exception: $t", t)
+        Logger.reportCriticalFailure(currentLocation, player, lastChoice, masterSeed, t)
         
         println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
-        println(Terminal.dim("Error has been logged to transit.log"))
+        println(Terminal.dim("Error and session seed ($masterSeed) have been logged to transit.log"))
         System.exit(1)
     }
 }
@@ -428,40 +429,46 @@ class Game {
     }
 
     void restoreSession() {
-        def snapshot = SyncManager.restore()
+        Map<String, Object> snapshot = SyncManager.restore()
         if (snapshot == null) return
 
         println Terminal.colorize("\n>>> RESTORE_INITIATED: Reconstituting trace...", Terminal.L_CYAN)
         
-        this.masterSeed = (long) snapshot.masterSeed
-        def universe = new Universe(masterSeed)
+        this.masterSeed = (long) snapshot["masterSeed"]
+        Universe universe = new Universe(masterSeed)
         
         // Restore Player state
         player = new Player()
-        player.coherence = (int) snapshot.player.coherence
-        player.stepCount = (int) snapshot.player.stepCount
-        player.footprints.addAll((List<String>) snapshot.player.footprints)
-        player.visitedPaths.addAll((List<String>) snapshot.player.visitedPaths)
+        Map playerState = (Map) snapshot["player"]
+        player.coherence = (int) playerState["coherence"]
+        player.stepCount = (int) playerState["stepCount"]
+        player.footprints.addAll((List<String>) playerState["footprints"])
+        player.visitedPaths.addAll((List<String>) playerState["visitedPaths"])
         
-        snapshot.player.inventory.each { item ->
+        List inventory = (List) playerState["inventory"]
+        inventory.each { Object itemObj ->
+            Map item = (Map) itemObj
             player.inventory.add(new InventoryItem(
-                (String) item.name, 
-                (int) item.frequency, 
-                (int) item.sessionMergeCount, 
-                (boolean) item.isKeystone
+                (String) item["name"], 
+                (int) item["frequency"], 
+                (int) item["sessionMergeCount"], 
+                (boolean) item["isKeystone"]
             ))
         }
 
         // Apply World Mutations and Restore Footprints
-        snapshot.mutations.each { lip, state ->
+        Map mutations = (Map) snapshot["mutations"]
+        mutations.each { Object lipObj, Object stateObj ->
+            String lip = (String) lipObj
+            Map<String, Object> state = (Map<String, Object>) stateObj
             Location loc = universe.resolveLIP(lip)
             if (loc != null) {
-                loc.applyMutationState((Map<String, Object>) state)
+                loc.applyMutationState(state)
             }
         }
 
         // Apply "Visited" status to all footprints
-        player.footprints.each { lip ->
+        player.footprints.each { String lip ->
             Location loc = universe.resolveLIP(lip)
             if (loc != null) {
                 loc.markVisited()
@@ -469,7 +476,7 @@ class Game {
         }
 
         // Resolve current location
-        String currentLIP = (String) snapshot.player.currentLIP
+        String currentLIP = (String) playerState["currentLIP"]
         this.currentLocation = universe.resolveLIP(currentLIP)
         this.player.currentLocation = this.currentLocation
         if (this.currentLocation == null) {
@@ -552,13 +559,13 @@ class Game {
         Terminal.drawBoxSeparator(width, accent, "light")
         
         // 3. Local Diagnostic (Left) & System Status (Right)
-        String identLabel = abyssal ? "VOID_IDENT" : "LATTICE_IDENT"
+        String identLabel = abyssal ? HUDLabels.VOID_IDENT : HUDLabels.LATTICE_IDENT
         String ident = "$identLabel: ${currentLocation.getTypeName()} >> ${currentLocation.getName()}"
         String sysDiag = abyssal ? "SYSTEM_STATUS: [ABYSS_SYNC]" : "SYSTEM_DIAGNOSTIC: [NOMINAL]"
         Terminal.drawSplitBoxedLine(ident, sysDiag, splitPoint, width, accent)
         
-        String hashLabel = abyssal ? "VOID_HASH" : "LOCUS_HASH"
-        String depthLabel = abyssal ? "ABYSSAL_DEPTH" : "HOP_DENSITY"
+        String hashLabel = abyssal ? HUDLabels.VOID_HASH : HUDLabels.LOCUS_HASH
+        String depthLabel = abyssal ? HUDLabels.ABYSSAL_DEPTH : HUDLabels.HOP_DENSITY
         String coords = "$hashLabel: ${currentLocation.getCoordinates()} | $depthLabel: ${currentLocation.getDepth()}"
         String cohBar = cohLabel + ": " + renderCoherenceBar()
         Terminal.drawSplitBoxedLine(coords, cohBar, splitPoint, width, accent)
@@ -568,9 +575,9 @@ class Game {
         int total = currentLocation.getTotalInParent()
         String leftBottom = ""
         if (total > 0) {
-            String alignLabel = "LOCUS_INDEX"
-            if (currentLocation instanceof Floor) alignLabel = abyssal ? "STRATA" : "Z-AXIS"
-            if (currentLocation instanceof Room) alignLabel = abyssal ? "SHARD" : "INDEX"
+            String alignLabel = HUDLabels.LOCUS_INDEX
+            if (currentLocation instanceof Floor) alignLabel = abyssal ? HUDLabels.STRATA : HUDLabels.Z_AXIS
+            if (currentLocation instanceof Room) alignLabel = abyssal ? HUDLabels.SHARD : HUDLabels.INDEX
             
             int radarLimit = 20
             String radar = Terminal.renderRadar(idx, Math.min(total, radarLimit), accent)
@@ -683,18 +690,19 @@ class Game {
     }
 
     List<String> generateMacroMap(int width) {
-        if (!(currentLocation instanceof Container)) return [Terminal.dim("[MAP_OFFLINE]")]
+        Location cur = this.currentLocation
+        if (!(cur instanceof Container)) return [Terminal.dim("[MAP_OFFLINE]")]
         
         int mapWidth = width - 4
         int mapHeight = 12
         
-        if (currentLocation instanceof Universe) {
+        if (cur instanceof Universe) {
             return generateUniverseMap(mapWidth, mapHeight)
-        } else if (currentLocation instanceof CosmicFilament) {
+        } else if (cur instanceof CosmicFilament) {
             return generateFilamentMap(mapWidth, mapHeight)
         }
 
-        Container container = (Container) currentLocation
+        Container container = (Container) cur
         Terminal.MapBuffer buffer = new Terminal.MapBuffer(mapWidth, mapHeight)
         Map<List<Integer>, Location> latticeMap = container.getLocalLatticeMap(mapWidth, mapHeight)
         
@@ -713,8 +721,8 @@ class Game {
 
     List<String> generateUniverseMap(int w, int h) {
         Terminal.MapBuffer buffer = new Terminal.MapBuffer(w, h)
-        int cx = w / 2
-        int cy = h / 2
+        int cx = (int)(w / 2)
+        int cy = (int)(h / 2)
         
         // Root symbol
         buffer.plot(cx, cy, "∞", Terminal.CYAN)
@@ -739,7 +747,7 @@ class Game {
 
     List<String> generateFilamentMap(int w, int h) {
         Terminal.MapBuffer buffer = new Terminal.MapBuffer(w, h)
-        int y = h / 2
+        int y = (int)(h / 2)
         
         // Linear conduit trace
         for (int x = 4; x < w - 4; x += 4) {
@@ -759,7 +767,8 @@ class Game {
     }
 
     List<String> generateSystemTelemetry(int width) {
-        List<String> lines = [" " + Terminal.colorize("[SYSTEM_TELEMETRY]", Terminal.L_CYAN)]
+        List<String> lines = []
+        lines << " " + Terminal.colorize("[SYSTEM_TELEMETRY]", Terminal.L_CYAN)
         lines << " " + Terminal.dim("LATTICE_SYNC: [NOMINAL]")
         lines << ""
         lines << " " + Terminal.dim("[QUANTUM_SPECTROGRAM]")
@@ -767,14 +776,14 @@ class Game {
         // Simple ASCII spectrogram based on inventory
         Random r = new Random((System.currentTimeMillis() / 1000) as long)
         for (int i = 0; i < 5; i++) {
-            int h = r.nextInt((width / 4) as int) + 1
+            int h = r.nextInt((int)(width / 4)) + 1
             lines << " " + Terminal.colorize("█" * h, Terminal.CYAN)
         }
         
         lines << ""
         lines << " " + Terminal.dim("[DECODE_LOGS]")
-        lines << " > Trace: ${currentLocation.getLIP()}"
-        lines << " > Stable: ${player.resonantTracesCount} items"
+        lines << " > Trace: ${currentLocation.getLIP()}".toString()
+        lines << " > Stable: ${player.resonantTracesCount} items".toString()
         return lines
     }
 
@@ -853,7 +862,8 @@ class Game {
      * Renders a 2D spatial representation of the current lattice container.
      */
     void renderLatticeMap() {
-        if (!(currentLocation instanceof Container)) {
+        Location cur = this.currentLocation
+        if (!(cur instanceof Container)) {
             println Terminal.colorize("\n>>> SCAN_ERROR: Current location does not support spatial projection.", Terminal.RED)
             return
         }
@@ -861,7 +871,7 @@ class Game {
         // Coherence Cost
         player.adjustCoherence(-1.0)
 
-        Container container = (Container) currentLocation
+        Container container = (Container) cur
         int mapWidth = 30
         int mapHeight = 15
         
@@ -1088,10 +1098,13 @@ class Game {
      * Extracts a clean, short label for a navigational direction from the current options.
      */
     String getCompassLabel(String keyPrefix, Map options) {
-        def entry = options.find { k, v -> k.toLowerCase().startsWith(keyPrefix.toLowerCase()) }
-        if (!entry) return ""
+        String entryKey = (String) options.keySet().find { Object kObj -> 
+            String k = (String) kObj
+            k.toLowerCase().startsWith(keyPrefix.toLowerCase()) 
+        }
+        if (entryKey == null) return ""
         
-        String label = entry.key
+        String label = entryKey
         // Expected formats: "u. Go Up", "1. Enter: Floor 16", "l. Leave Building"
         if (label.contains(": ")) {
             label = label.substring(label.indexOf(": ") + 2)
@@ -1149,7 +1162,13 @@ class Game {
     }
 
     void enterLocation(Location location) {
-        Logger.info("Changing location from ${currentLocation?.getPath()} to ${location?.getPath()}")
+        Location cur = this.currentLocation
+        if (cur != null && location != null) {
+            Logger.info("Changing location from ${cur.getPath()} to ${location.getPath()}".toString())
+        } else if (location != null) {
+            Logger.info("Entering first location: ${location.getPath()}".toString())
+        }
+        
         this.currentLocation = location
         this.player.currentLocation = location
         
@@ -1157,12 +1176,12 @@ class Game {
             player.markFootprint(location)
             
             // For stability: also mark high-level ancestors if entering a room directly
-            Location p = location.parent
+            Location p = location.getParent()
             while (p != null) {
                 if (p instanceof Building || p instanceof City || p instanceof Planet) {
                     player.markFootprint(p)
                 }
-                p = p.parent
+                p = p.getParent()
             }
         }
     }
@@ -1177,12 +1196,17 @@ class Game {
     }
 
     String getRawUserInput() {
-        String fullLabel = previousActionMap[lastChoice] ?: lastChoice ?: ""
+        String fullLabel = ""
+        if (lastChoice != null) {
+            fullLabel = (String) previousActionMap[lastChoice]
+            if (fullLabel == null) fullLabel = lastChoice
+        }
+        
         String actionName = fullLabel
-        if (fullLabel.contains(". ")) {
+        if (fullLabel != null && fullLabel.contains(". ")) {
             actionName = fullLabel.substring(fullLabel.indexOf(". ") + 2)
         }
-        String hudLastAction = lastChoice != null ? " [Last: $actionName]" : ""
+        String hudLastAction = (lastChoice != null && actionName != null) ? " [Last: $actionName]" : ""
         
         print Terminal.dim("---=====================================>>")
         print Terminal.colorize(hudLastAction, Terminal.CYAN)

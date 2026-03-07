@@ -8,9 +8,12 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
+@CompileStatic
 class Building extends Container {
-    List<Floor> floors = []
+    @PackageScope List<Floor> floors = []
     String name
     int maxFloors
     int apartmentsPerFloor
@@ -139,7 +142,7 @@ class Building extends Container {
         int wInt = 11
         
         // Helper to pad based on visual width
-        def pad = { String text, int targetWidth ->
+        Closure<String> pad = { String text, int targetWidth ->
             return text + (" " * Math.max(0, targetWidth - Terminal.getVisualWidth(text)))
         }
 
@@ -156,8 +159,11 @@ class Building extends Container {
 
         // Find current floor index for the radar
         int currentFloorNum = -999
-        if (player.currentLocation instanceof Floor) currentFloorNum = player.currentLocation.number
-        else if (player.currentLocation?.parent instanceof Floor) currentFloorNum = player.currentLocation.parent.number
+        if (player.currentLocation instanceof Floor) {
+            currentFloorNum = ((Floor)player.currentLocation).number
+        } else if (player.currentLocation?.parent instanceof Floor) {
+            currentFloorNum = ((Floor)player.currentLocation.parent).number
+        }
 
         // Iterate floors from top to bottom (Peak to Substrate)
         int minFloor = isBreached ? -5 : 0 // Show some substrate if breached
@@ -184,8 +190,8 @@ class Building extends Container {
             String resonance = "${freq}Hz"
 
             String visited = ""
-            def floorObj = this.@floors.find { it.number == i }
-            if (floorObj?.isVisited()) visited = Terminal.colorize("[V]", Terminal.GREEN)
+            Floor floorObj = getFloor(i)
+            if (floorObj != null && floorObj.isVisited()) visited = Terminal.colorize("[V]", Terminal.GREEN)
 
             // Assemble row with consistent padding
             String cId = pad(idStr, wId)
@@ -194,7 +200,7 @@ class Building extends Container {
             String cZon = pad("[" + zone + "]", wZon)
             String cInt = pad("[" + integrity + "]", wInt)
 
-            lines << "${cId}${cRad}${cDes}${cZon}${cInt}${resonance}"
+            lines << "${cId}${cRad}${cDes}${cZon}${cInt}${resonance}".toString()
         }
         lines << Terminal.dim("-" * width)
         return lines
@@ -243,12 +249,14 @@ class Building extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
-        def options = getBaseOptions(game)
+        Map<String, Closure> options = getBaseOptions(game)
         
         int minFloor = isBreached ? -5 : 0
         for (int i = maxFloors - 1; i >= minFloor; i--) {
-            final int floorNum = i
-            def floor = getFloor(floorNum)
+            int floorNum = i
+            Floor floor = getFloor(floorNum)
+            if (floor == null) continue
+
             String zone = getFloorZone(i)
             String id = String.format("%02d", i)
             if (i < 0) id = "-" + Math.abs(i)

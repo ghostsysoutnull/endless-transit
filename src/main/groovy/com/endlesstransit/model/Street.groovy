@@ -6,9 +6,12 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
+@CompileStatic
 class Street extends Container {
-    List<Building> buildings = []
+    @PackageScope List<Building> buildings = []
     String name
 
     List<Building> getBuildings() {
@@ -26,8 +29,9 @@ class Street extends Container {
         Random scrambler = seed != 0 ? new Random(seed) : new Random()
         int numPairs = scrambler.nextInt(9) + 2 // 2 to 10 pairs
         
-        String culture = getVibe()?.primaryCulture ?: "monolith"
-        String timeline = getVibe()?.timeline ?: "ancient"
+        VibeCapsule v = getVibe()
+        String culture = v != null ? v.primaryCulture : "monolith"
+        String timeline = v != null ? v.timeline : "ancient"
         int depth = getDepth()
         boolean isNull = findAncestor(NullSector.class) != null
         boolean isAbyssal = isAbyssal()
@@ -54,9 +58,10 @@ class Street extends Container {
         
         lines << Terminal.dim("Buildings on this street:")
         lines << Terminal.dim(separator)
-        for (int i = 0; i < buildings.size(); i += 2) {
-            def bL = buildings[i]
-            def bR = (i + 1 < buildings.size()) ? buildings[i+1] : null
+        List<Building> bldgs = getBuildings()
+        for (int i = 0; i < bldgs.size(); i += 2) {
+            Building bL = bldgs[i]
+            Building bR = (i + 1 < bldgs.size()) ? bldgs[i+1] : (Building)null
             
             int numL = i + 1
             int numR = i + 2
@@ -68,7 +73,7 @@ class Street extends Container {
             String leftPart = labelL + (" " * Math.max(0, colWidth - Terminal.getVisualWidth(labelL)))
             
             String labelR = ""
-            if (bR) {
+            if (bR != null) {
                 String nameR = bR.name.length() > 25 ? bR.name.substring(0, 22) + "..." : bR.name
                 if (bR.isLandmark) nameR = Terminal.colorize(Terminal.bold(nameR), Terminal.CYAN)
                 String visR = bR.isVisited() ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
@@ -76,7 +81,7 @@ class Street extends Container {
             }
             String rightPart = labelR + (" " * Math.max(0, colWidth - Terminal.getVisualWidth(labelR)))
             
-            lines << "${leftPart} | ${rightPart}"
+            lines << "${leftPart} | ${rightPart}".toString()
         }
         lines << Terminal.dim(separator)
         return lines
@@ -86,25 +91,26 @@ class Street extends Container {
     void addLocation(Location location) {
         super.addLocation(location)
         if (location instanceof Building) {
-            buildings.add(location)
+            this.buildings.add((Building)location)
         }
     }
 
     @Override
     String getDescription() {
-        def v = getVibe()
-        String vInfo = v ? " | ${Terminal.dim("[TECH_ERA:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")} ${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")}" : ""
+        VibeCapsule v = getVibe()
+        String vInfo = v != null ? " | ${Terminal.dim("[TECH_ERA:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")} ${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")}" : ""
         return "Street: $name$vInfo"
     }
 
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
+        Map<String, Closure> options = getBaseOptions(game)
         
-        Logger.info("Generating options for Street: $name. Building count: ${buildings.size()}")
-        for (int i = 0; i < buildings.size(); i++) {
-            def building = buildings[i]
+        List<Building> bldgs = getBuildings()
+        Logger.info("Generating options for Street: $name. Building count: ${bldgs.size()}")
+        for (int i = 0; i < bldgs.size(); i++) {
+            Building building = bldgs[i]
             String id = String.format("%02d", i + 1)
             String label = "${id}. Enter Building: ${building.name}"
             if (building.isVisited()) label += " [Visited]"

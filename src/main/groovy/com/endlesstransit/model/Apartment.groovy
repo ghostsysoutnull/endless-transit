@@ -7,11 +7,14 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
 import java.util.Random
 
+@CompileStatic
 class Apartment extends Container {
-    List<Room> rooms = []
+    @PackageScope List<Room> rooms = []
     String doorDescription
     String timeline
     String culture
@@ -29,7 +32,10 @@ class Apartment extends Container {
 
     @Override
     String getTypeName() {
-        return (parent instanceof Corridor && parent.getTypeName() == "Artery") ? "Crypt" : "Apartment"
+        if (parent instanceof Corridor) {
+            if (((Corridor)parent).getTypeName() == "Artery") return "Crypt"
+        }
+        return "Apartment"
     }
 
     @Override
@@ -49,10 +55,11 @@ class Apartment extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
+        Map<String, Closure> options = getBaseOptions(game)
         
-        for (int i = 0; i < rooms.size(); i++) {
-            def room = rooms[i]
+        List<Room> rms = getRooms()
+        for (int i = 0; i < rms.size(); i++) {
+            Room room = rms[i]
             String id = String.format("%02d", i + 1)
             String label = "${id}. Enter Room: ${room.name}"
             if (room.isVisited()) label += " [Visited]"
@@ -60,8 +67,8 @@ class Apartment extends Container {
         }
 
         // Standard shortcut for first room
-        if (!rooms.isEmpty()) {
-            options["f. Go forward"] = { game.enterLocation(rooms[0]) }
+        if (!rms.isEmpty()) {
+            options["f. Go forward"] = { game.enterLocation(rms[0]) }
         }
         
         return options
@@ -83,15 +90,16 @@ class Apartment extends Container {
         int wName = 30
         int wStat = 15
         
-        def pad = { String text, int targetWidth ->
+        Closure<String> pad = { String text, int targetWidth ->
             return text + (" " * Math.max(0, targetWidth - Terminal.getVisualWidth(text)))
         }
 
         lines << Terminal.bold("${pad("[ID]", wId)}${pad("[TYPE]", wTyp)}${pad("[IDENTIFIER]", wName)}${pad("[STATUS]", wStat)}[RES]")
         lines << Terminal.dim("-" * width)
 
-        for (int i = 0; i < rooms.size(); i++) {
-            def room = rooms[i]
+        List<Room> rms = getRooms()
+        for (int i = 0; i < rms.size(); i++) {
+            Room room = rms[i]
             String id = String.format("%02d.", i + 1)
             String type = room.roomType
             String name = room.roomName
@@ -101,7 +109,7 @@ class Apartment extends Container {
             int freq = Gematria.calculateFrequency(name, room.getDepth())
             String res = "${freq}Hz"
 
-            lines << "${pad(id, wId)}${pad(type, wTyp)}${pad(name, wName)}${pad(status, wStat)}${res}"
+            lines << "${pad(id, wId)}${pad(type, wTyp)}${pad(name, wName)}${pad(status, wStat)}${res}".toString()
         }
         lines << Terminal.dim("-" * width)
         return lines
@@ -120,7 +128,7 @@ class Apartment extends Container {
         Random scrambler = seed != 0 ? new Random(seed) : new Random()
         
         // Use Vibe from parent unless anomaly
-        def vibe = getVibe()
+        VibeCapsule vibe = getVibe()
         if (vibe != null && scrambler.nextDouble() > 0.01) {
             // Inheritance is handled by constructor now, but we sync with vibe if present
             this.timeline = vibe.timeline
@@ -132,7 +140,7 @@ class Apartment extends Container {
 
         int numRooms = scrambler.nextInt(10) + 1
         Logger.info("  >> Generated $numRooms rooms for Apartment.")
-        this.@rooms.clear()
+        this.rooms.clear()
 
         // Generate a pool of objects for the entire apartment
         int totalObjects = scrambler.nextInt(15) + 5 // 5 to 20 objects per apartment
@@ -144,15 +152,15 @@ class Apartment extends Container {
 
         for (int i = 0; i < numRooms; i++) {
             long roomSeed = scrambler.nextLong()
-            def room = new Room(culture, timeline, roomSeed)
-            this.@rooms.add(room)
+            Room room = new Room(culture, timeline, roomSeed)
+            this.rooms.add(room)
             addLocation(room) // Sets parent
         }
-        
+
         // Distribute objects from pool to rooms deterministically
         while (!objectPool.isEmpty()) {
-            int roomIdx = scrambler.nextInt(this.@rooms.size())
-            def room = this.@rooms[roomIdx]
+            int roomIdx = scrambler.nextInt(this.rooms.size())
+            Room room = this.rooms[roomIdx]
             room.objects << objectPool.remove(0)
         }
     }

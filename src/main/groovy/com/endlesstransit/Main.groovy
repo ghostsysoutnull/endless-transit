@@ -7,5 +7,15 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 
 
-def game = new Game()
-game.start()
+try {
+    def game = new Game()
+    game.start()
+} catch (Throwable t) {
+    // If the game object was created, we can get the seed
+    Logger.error("GLOBAL_BOOT_FAILURE: System failed during initialization.")
+    Logger.error("  >> Exception: $t", t)
+    
+    println "\n\u001b[31m!!! CRITICAL BOOT FAILURE !!!\u001b[0m"
+    println "Details have been logged to transit.log"
+    System.exit(1)
+}

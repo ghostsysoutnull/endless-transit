@@ -6,9 +6,12 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 
+@CompileStatic
 class City extends Container {
-    List<Street> streets = []
+    @PackageScope List<Street> streets = []
     String name
     boolean isRebelDistrict = false
 
@@ -27,7 +30,7 @@ class City extends Container {
         Random scrambler = seed != 0 ? new Random(seed) : new Random()
         
         if (this.localVibe == null) {
-            def parentVibe = getVibe()
+            VibeCapsule parentVibe = getVibe()
             if (parentVibe != null) {
                 // 10% chance to be a "rebel" district and flip resonances
                 if (scrambler.nextDouble() < 0.1) {
@@ -51,7 +54,7 @@ class City extends Container {
     void addLocation(Location location) {
         super.addLocation(location)
         if (location instanceof Street) {
-            streets.add(location)
+            this.streets.add((Street)location)
         }
     }
 
@@ -68,15 +71,16 @@ class City extends Container {
         lines << "Streets detected in this city:"
         lines << "-" * 40
         
-        for (int i = 0; i < streets.size(); i += 2) {
-            def sL = streets[i]
-            def sR = (i + 1 < streets.size()) ? streets[i+1] : null
+        List<Street> strs = getStreets()
+        for (int i = 0; i < strs.size(); i += 2) {
+            Street sL = strs[i]
+            Street sR = (i + 1 < strs.size()) ? strs[i+1] : (Street)null
             
             String labelL = String.format("%02d. %s", i + 1, sL.name)
             if (sL.isVisited()) labelL += " [V]"
             
             String labelR = ""
-            if (sR) {
+            if (sR != null) {
                 labelR = String.format("%02d. %s", i + 2, sR.name)
                 if (sR.isVisited()) labelR += " [V]"
             }
@@ -90,8 +94,10 @@ class City extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        def options = getBaseOptions(game)
-        streets.eachWithIndex { street, i ->
+        Map<String, Closure> options = getBaseOptions(game)
+        List<Street> strs = getStreets()
+        for (int i = 0; i < strs.size(); i++) {
+            Street street = strs[i]
             String id = String.format("%02d", i + 1)
             String label = "${id}. Go to ${street.name}"
             options[label] = { game.enterLocation(street) }
