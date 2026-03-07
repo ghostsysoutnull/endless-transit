@@ -45,7 +45,7 @@ class SolarSystem extends Container {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Orbital bodies within range:"

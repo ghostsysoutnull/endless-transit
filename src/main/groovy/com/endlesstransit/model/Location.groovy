@@ -31,5 +31,5 @@ interface Location {
     String getLIP()
     Map<String, Object> getMutationState()
     void applyMutationState(Map<String, Object> state)
-    List<String> getExtraContent()
+    List<String> getExtraContent(Player player)
 }

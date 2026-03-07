@@ -118,7 +118,7 @@ class Building extends Container {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << Terminal.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", Terminal.L_CYAN)

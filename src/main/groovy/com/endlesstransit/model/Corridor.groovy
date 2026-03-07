@@ -41,7 +41,7 @@ class Corridor extends Container {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << Terminal.colorize(" [APERTURE_SCAN_INITIALIZED] ", Terminal.L_CYAN)

@@ -44,7 +44,7 @@ class Street extends Container {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
         

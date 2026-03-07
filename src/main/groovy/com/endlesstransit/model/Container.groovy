@@ -102,7 +102,7 @@ abstract class Container implements Location {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         return []
     }
 

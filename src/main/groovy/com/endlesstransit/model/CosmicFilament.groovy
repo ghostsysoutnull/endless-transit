@@ -40,7 +40,7 @@ class CosmicFilament extends Container {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Galactic sectors within this conduit:"

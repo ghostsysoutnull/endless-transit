@@ -619,7 +619,7 @@ class Game {
         fullDesc.split("\n").each { leftLines.addAll(Terminal.wrapText(it, leftWidth)) }
         
         // Add extra content (tables, lists) from the location
-        List<String> extra = currentLocation.getExtraContent()
+        List<String> extra = currentLocation.getExtraContent(player)
         if (!extra.isEmpty()) {
             leftLines << "" // Spacer
             leftLines.addAll(extra)

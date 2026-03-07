@@ -61,7 +61,7 @@ class Country extends Container {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Regional cities identified:"

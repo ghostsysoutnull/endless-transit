@@ -32,7 +32,7 @@ class GalacticSector extends Container {
     }
 
     @Override
-    List<String> getExtraContent() {
+    List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Solar systems within proximity:"
