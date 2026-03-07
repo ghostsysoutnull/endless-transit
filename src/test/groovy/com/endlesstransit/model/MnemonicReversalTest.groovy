@@ -23,10 +23,11 @@ rooms.each { it.objects = [] }
 def room1 = rooms[0]
 def options1 = room1.getOptions(game)
 
-if (options1.containsKey("f. Go forward") && !options1.containsKey("b. Go back")) {
-    println "SUCCESS: First room has 'f' but no 'b'."
+if (options1.containsKey("f. Go forward") && options1.containsKey("l. Exit Apartment")) {
+    println "SUCCESS: First room has 'f' and 'exit'."
 } else {
     println "FAILURE: First room options incorrect: ${options1.keySet()}"
+    System.exit(1)
 }
 
 def lastRoom = rooms.last()
@@ -35,6 +36,7 @@ if (lastOptions.containsKey("b. Go back") && !lastOptions.containsKey("f. Go for
     println "SUCCESS: Last room has 'b' but no 'f'."
 } else {
     println "FAILURE: Last room options incorrect: ${lastOptions.keySet()}"
+    System.exit(1)
 }
 
 // Test Floor Reversal

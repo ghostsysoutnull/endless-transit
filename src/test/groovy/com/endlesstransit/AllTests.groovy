@@ -43,7 +43,8 @@ def scriptTests = [
     "model/StreetTest",
     "model/StructuralConsistencyTest",
     "procgen/SystemNameTest",
-    "model/DeepLatticeCrawlTest"
+    "model/DeepLatticeCrawlTest",
+    "ui/InitialScreenTest"
 ]
 
 scriptTests.each { path ->

@@ -1,5 +1,5 @@
 ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║                            LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 4 | COHERENCE: 93%                                ║
+║                            LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 4 | COHERENCE: 92%                                ║
 ║ LOCUS_TRACE: ...87-Link > Secondary Quadrant 79 > Alpha Prime > Edenax > Old Desert Federation > Silvercross > Hidden Avenue   ║
 ╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
 ║ LATTICE_IDENT: Street >> Hidden Avenue                                                 ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
@@ -17,7 +17,7 @@ NEON]                                                                           
                                                                                          ║ ⌂                                 
 Buildings on this street:                                                                ║          ⌂           ⌂⌂ ⌂         
 -----------------------------------------------------------------------------------      ║                                   
-1. Old Unimatrix Root                    | 2. Unit 0xCBB Point                           ║                       ⌂   ⌂   ⌂   
+1. Old Unimatrix Root                    | 2. Unit 0xCBB Point [V]                       ║                       ⌂   ⌂   ⌂   
 3. MatrixSpire                           | 4. MatrixReach                                ║       ⌂      ⌂                    
 5. CoreReach                             | 6. CoreRoot                                   ║     ⌂                             
 7. NodeSpire                             | 8. Vibrant Grid                               ║    ⌂          ⌂          ⌂      ⌂ 

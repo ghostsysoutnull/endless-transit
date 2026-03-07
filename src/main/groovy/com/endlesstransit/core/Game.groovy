@@ -1153,7 +1153,6 @@ class Game {
         // Line 5: Down
         String line5 = " " * 23 + "[$d] ${Terminal.dim(lblD)}"
         Terminal.drawBoxedLine(line5, width, accent)
-        Terminal.drawBoxBottom(width, accent)
     }
 
     void enterLocation(Location location) {

@@ -136,8 +136,7 @@ class Terminal {
         print colorize(BOX_V + " ", color)
         print boldText ? bold(safeText) : safeText
         
-        // Use CHA (Cursor Horizontal Absolute) to jump to the end of the box
-        // width-1 because ANSI columns are 1-indexed
+        // Final border alignment using CHA
         print "\u001b[${width}G"
         println colorize(BOX_V, color)
     }
@@ -153,7 +152,7 @@ class Terminal {
         print colorize(BOX_V + " ", color)
         print safeLeft
         
-        // Separator
+        // Separator alignment using CHA
         print "\u001b[${splitPoint}G"
         print colorize(BOX_V + " ", color)
         
@@ -162,7 +161,7 @@ class Terminal {
         String safeRight = ansiSafeTruncate(right, rightInnerWidth)
         print safeRight
         
-        // Right border
+        // Right border alignment using CHA
         print "\u001b[${width}G"
         println colorize(BOX_V, color)
     }
@@ -179,20 +178,27 @@ class Terminal {
      * Calculates the visual width of a string, accounting for wide characters (emojis, etc).
      */
     static int getVisualWidth(String text) {
+        if (!text) return 0
         String stripped = stripAnsi(text)
         int width = 0
         int i = 0
         while (i < stripped.length()) {
             int cp = stripped.codePointAt(i)
             
-            // Surrogate pairs / Emojis / Wide characters usually take 2 cells
-            // Check for Supplementary characters (emojis) OR specific wide ranges
-            if (Character.isSupplementaryCodePoint(cp) || 
-                (cp >= 0x2000 && cp <= 0x32FF) || // Various symbols
-                (cp >= 0xFF00 && cp <= 0xFFEF)) {  // Halfwidth and Fullwidth Forms
+            // East Asian Width / Emoji / Supplementary characters usually take 2 cells
+            if (Character.isSupplementaryCodePoint(cp)) {
+                width += 2
+            } else if (cp >= 0x2000 && cp <= 0x32FF) { // Symbols
+                width += 2
+            } else if (cp >= 0x1F000) { // More emojis
                 width += 2
             } else {
-                width += 1
+                // Check for specific wide symbols used in ET
+                if ("🏙🚪⬚☼⊕".contains(new String(Character.toChars(cp)))) {
+                    width += 2
+                } else {
+                    width += 1
+                }
             }
             i += Character.charCount(cp)
         }
