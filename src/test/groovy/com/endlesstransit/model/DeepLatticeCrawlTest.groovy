@@ -23,6 +23,11 @@ def crawlLocation = { Location loc, int maxSiblings = 3 ->
     // Filter out "Leave" options to prevent infinite backtracking during the stress test
     def travelOptions = options.findAll { !it.key.toLowerCase().contains("leave") }
     
+    if (travelOptions.isEmpty() && loc instanceof Container && !(loc instanceof Room)) {
+        println "FAILURE: No travel options found for container ${loc.getName()} which has ${loc.children.size()} children."
+        System.exit(1)
+    }
+    
     // Limit siblings to prevent test from taking hours
     def keys = travelOptions.keySet().toList()
     int count = Math.min(keys.size(), maxSiblings)

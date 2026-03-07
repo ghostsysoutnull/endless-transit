@@ -15,6 +15,16 @@ class Corridor extends Container {
     String culture
     String timeline
 
+    List<Door> getDoors() {
+        ensureChildrenPopulated()
+        return doors
+    }
+
+    List<Apartment> getApartments() {
+        ensureChildrenPopulated()
+        return apartments
+    }
+
     @Override
     String getTypeName() {
         return (parent instanceof Floor && ((Floor)parent).number < 0) ? "Artery" : "Corridor"

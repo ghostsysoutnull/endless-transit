@@ -15,8 +15,8 @@ println "Generated Building: ${building.name} with ${building.maxFloors} floors 
 boolean consistent = true
 for (int i = 0; i < building.maxFloors; i++) {
     def floor = building.getFloor(i)
-    if (floor.corridor.apartments.size() != building.apartmentsPerFloor) {
-        println "FAILURE: Floor $i has ${floor.corridor.apartments.size()} apartments, expected ${building.apartmentsPerFloor}"
+    if (floor.getCorridor().getApartments().size() != building.apartmentsPerFloor) {
+        println "FAILURE: Floor $i has ${floor.getCorridor().getApartments().size()} apartments, expected ${building.apartmentsPerFloor}"
         consistent = false
     }
 }

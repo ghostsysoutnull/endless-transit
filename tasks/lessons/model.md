@@ -7,6 +7,7 @@
 - **Procedural Projection**: For spatial mapping in infinite/stateless hierarchies, use child-node hashes to project stable `[X, Y]` coordinates. This avoids the need to store coordinates in the model while maintaining visual stability when returning to the same location.
 - **Hierarchical Seed Scrambling**: To ensure variety between sibling nodes, use a single `Random` (scrambler) initialized with the parent's seed to generate unique `nextLong()` seeds for each child. This avoids the "repetition" pattern caused by linear seeding (`seed + index`).
 - **Mutation-Persistence Architecture**: Any player-driven or non-deterministic changes (like building breaches or landmark status) should be stored in a `mutationState` map keyed by the location's Locus Index Path (LIP) to ensure perfect reconstitution during a load.
+- **Lazy-Load Property Access**: Never access child lists (like `apartments`, `rooms`, `floors`) directly. Always use explicit getters (e.g., `getRooms()`) that invoke `ensureChildrenPopulated()` to prevent empty-state bugs during navigation or testing. In Groovy, even internal property access (e.g., `this.rooms`) triggers the getter, but explicit usage is safer for clarity.
 
 ## Mistakes/Corrections
 - **Recursive Calls**: Ensure `getName()` or `getPath()` do not trigger infinite recursion in complex nested structures. Use direct type checks (`instanceof`) where property access might be circular.

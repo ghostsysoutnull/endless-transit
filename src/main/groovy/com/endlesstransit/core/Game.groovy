@@ -568,7 +568,7 @@ class Game {
         int total = currentLocation.getTotalInParent()
         String leftBottom = ""
         if (total > 0) {
-            String alignLabel = "ALIGN"
+            String alignLabel = "LOCUS_INDEX"
             if (currentLocation instanceof Floor) alignLabel = abyssal ? "STRATA" : "Z-AXIS"
             if (currentLocation instanceof Room) alignLabel = abyssal ? "SHARD" : "INDEX"
             
