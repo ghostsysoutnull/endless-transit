@@ -348,7 +348,11 @@ class Game {
             }
         }
     } catch (Throwable t) {
-        Logger.error("CRITICAL_FAILURE: Game loop crashed.", t)
+        Logger.error("CRITICAL_FAILURE: Game loop crashed.")
+        Logger.error("  >> Location: ${currentLocation.getPath()} (${currentLocation.getLIP()})")
+        Logger.error("  >> State: [Steps: ${player.stepCount}, Coherence: ${player.coherence}, LastChoice: \"$lastChoice\"]")
+        Logger.error("  >> Exception: $t", t)
+        
         println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
         println(Terminal.dim("Error has been logged to transit.log"))
         System.exit(1)
