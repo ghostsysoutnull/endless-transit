@@ -185,12 +185,13 @@ class Terminal {
         while (i < stripped.length()) {
             int cp = stripped.codePointAt(i)
             
-            // Surrogate pairs / Emojis take 2 cells
-            if (Character.isSupplementaryCodePoint(cp)) {
+            // Surrogate pairs / Emojis / Wide characters usually take 2 cells
+            // Check for Supplementary characters (emojis) OR specific wide ranges
+            if (Character.isSupplementaryCodePoint(cp) || 
+                (cp >= 0x2000 && cp <= 0x32FF) || // Various symbols
+                (cp >= 0xFF00 && cp <= 0xFFEF)) {  // Halfwidth and Fullwidth Forms
                 width += 2
-            }
-            // Everything else in ET is narrow (1-cell) in standard terminal fonts
-            else {
+            } else {
                 width += 1
             }
             i += Character.charCount(cp)

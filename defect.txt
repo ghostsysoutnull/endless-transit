@@ -1,0 +1,36 @@
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                          LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ ▅ 🚪 [□] | PULSE_TRAVERSAL: 4 | COHERENCE: 94%                       ║
+║ LOCUS_TRACE: ...on > Silvercross > Hidden Avenue > Unit 0xCBB Point > Floor 2 > Corridor > Apartment > Encrypted Core [0xD2]   ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Growth Chamber >> Encrypted Core [0xD2]                                 ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
+║ LOCUS_HASH: 16.821 / 51.027 | HOP_DENSITY: 12                                          ║ COHERENCE: █████████░                 ║
+║ INDEX: 1 / 9 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]                                     ║ EVENT_TICKER: [SYNC_STABLE]           ║
+║                                                                                        ║ OBJ:   Hidden Frequency (4377827Hz)   ║
+║                                                                                        ║                                       ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 1/16 FRAGMENTS | RECENT: 4377827Hz                                                                               ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+ LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.1.5.0.1.0                                        ║  [SYSTEM_TELEMETRY]
+---------------------------------------------------------------------------------------------------- ║  LATTICE_SYNC: [NOMINAL]
+IDENT: Encrypted Core [0xD2]                  ║ ATMO_TRAITS: [OXY: 18%] | [TEMP:         ║ 
+6°C] | [SIGNAL: [CLEAR]]                                                                 ║  [QUANTUM_SPECTROGRAM]
+TYPE:  Growth Chamber                         ║ RESONANCE:   [STABLE]                    ║  ████████
+---------------------------------------------------------------------------------------------------- ║  █████
+ [NEURAL_LINK_INTERPRETATION]:                                                           ║  █
+You are in spatial grid designed for nutrient-flow. The walls are red exposed            ║  ██
+wiring behind translucent plastic.                                                       ║  ██████
+The space is illuminated by the intense white arc of a welding torch.                    ║ 
+FURNITURE: iron rivet with plastic bead curtain                                          ║  [DECODE_LOGS]
+---------------------------------------------------------------------------------------------------- ║  > Trace: 0.0.0.0.0.0.0.0.1.5.0.1.0
+                                                                                         ║  > Stable: 0 items
+>>> SPECTRAL_DEVIATION: Extracted Frequency 1299392 <<<
+                       [·] 
+                        ║
+ [L] Exit Apartment ═══[╬]═══ [F] Go forward
+                        ║
+                       [·] 
+EXECUTE_DIRECTIVE:
+[t] Interact with objects | [l] Exit Apartment | [f] Go forward
+[i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [quit] Quit
+---=====================================>> [Last: lattice] Enter choice: 

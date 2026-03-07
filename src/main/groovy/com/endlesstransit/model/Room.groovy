@@ -147,7 +147,24 @@ class Room implements Location {
 
     @Override
     List<String> getExtraContent(Player player) {
-        return []
+        List<String> lines = []
+        int width = 100
+        int split = 45
+        String accent = isAbyssal() ? Terminal.RED : Terminal.L_CYAN
+        
+        lines << Terminal.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
+        lines << Terminal.dim("-" * width)
+        
+        String identPart = "IDENT: ${Terminal.bold(roomName)}"
+        String traitsPart = "ATMO_TRAITS: [OXY: ${atmoTraits.OXYGEN}] | [TEMP: ${atmoTraits.TEMP}]"
+        lines << String.format("%-45s ║ %s", identPart, traitsPart)
+        
+        String typePart = "TYPE:  ${Terminal.colorize(roomType, Terminal.YELLOW)}"
+        String signalPart = "SIGNAL: ${atmoTraits.SIGNAL} | RESONANCE: ${isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)}"
+        lines << String.format("%-45s ║ %s", typePart, signalPart)
+        
+        lines << Terminal.dim("-" * width)
+        return lines
     }
 
     @Override
@@ -346,7 +363,6 @@ class Room implements Location {
     }
 
     String getDescription() {
-        def vibe = getVibe()
         StringBuilder description = new StringBuilder()
         
         String structure = structureDesc
@@ -359,30 +375,12 @@ class Room implements Location {
             lightText = Terminal.glitchText(lightText, 0.3)
         }
 
-        // --- Structured Diagnostic Header ---
-        int width = 100
-        String headerTitle = "LOCAL_CELL_DIAGNOSTIC: ${getLIP()}"
-        description.append(Terminal.colorize(" $headerTitle ", Terminal.L_CYAN)).append("\n")
-        description.append(Terminal.dim("-" * width)).append("\n")
-        
-        String identLine = "IDENT: ${Terminal.bold(roomName)}"
-        String traitsLine = "ATMO_TRAITS: [OXY: ${atmoTraits.OXYGEN}] | [TEMP: ${atmoTraits.TEMP}] | [SIGNAL: ${atmoTraits.SIGNAL}]"
-        
-        // Manual alignment for diagnostic lines
-        description.append(identLine).append(" " * (45 - Terminal.stripAnsi(identLine).length())).append(" ║ ").append(traitsLine).append("\n")
-        
-        String typeLine = "TYPE:  ${Terminal.colorize(roomType, Terminal.YELLOW)}"
-        String resLabel = isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)
-        String resLine = "RESONANCE:   $resLabel"
-        description.append(typeLine).append(" " * (45 - Terminal.stripAnsi(typeLine).length())).append(" ║ ").append(resLine).append("\n")
-        description.append(Terminal.dim("-" * width))
-
         // --- Sensory Prose ---
-        description.append("\n" + Terminal.colorize(" [NEURAL_LINK_INTERPRETATION]:", Terminal.L_MAGENTA)).append("\n")
+        description.append(Terminal.colorize(" [NEURAL_LINK_INTERPRETATION]:", Terminal.L_MAGENTA)).append("\n")
         description.append("You are in $structure. The walls are ${Terminal.colorize(color, Terminal.WHITE)} $wallText.\n")
         description.append("The space is illuminated by ${Terminal.colorize(lightText, Terminal.YELLOW)}.\n")
         
-        int wrapWidth = 60
+        int wrapWidth = 80
         
         String furnitureStr = furniture.join(', ')
         List<String> wrappedFurniture = Terminal.wrapText(furnitureStr, wrapWidth)
@@ -401,7 +399,6 @@ class Room implements Location {
                 description.append(line).append("\n")
             }
         }
-        description.append(Terminal.dim("-" * width))
         return description.toString()
     }
 }

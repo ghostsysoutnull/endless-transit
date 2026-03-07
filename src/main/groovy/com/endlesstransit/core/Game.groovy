@@ -1065,14 +1065,16 @@ class Game {
         
         // Limit icons to prevent overflow, using visual width
         int maxLatticeWidth = 50
-        if (Terminal.getVisualWidth(line.reverse().join(" ")) > maxLatticeWidth) {
-            while (line.size() > 2 && Terminal.getVisualWidth(line.reverse().join(" ") + " ...") > maxLatticeWidth) {
-                line.removeAt(line.size() - 1)
-            }
-            return "LATTICE: " + line.reverse().join(" ") + Terminal.dim(" ...")
+        while (line.size() > 2 && Terminal.getVisualWidth("LATTICE: " + line.reverse().join(" ") + " ...") > maxLatticeWidth) {
+            line.removeAt(0) // Remove oldest (Universe side)
         }
         
-        return "LATTICE: " + line.reverse().join(" ")
+        String sparkline = line.reverse().join(" ")
+        if (Terminal.getVisualWidth("LATTICE: " + sparkline) > maxLatticeWidth) {
+             return "LATTICE: ... " + sparkline
+        }
+        
+        return "LATTICE: " + sparkline
     }
 
     String renderCoherenceBar() {
@@ -1109,6 +1111,7 @@ class Game {
     void renderCompass(Map options) {
         def vibe = currentLocation.getVibe()
         String accent = vibe?.atmosphericColor ?: Terminal.WHITE
+        int width = 130
         
         // Extract destinations
         String lblU = getCompassLabel("u.", options)
@@ -1124,36 +1127,34 @@ class Game {
         String b = lblB ? Terminal.bold("B") : "·"
         String l = lblL ? Terminal.bold("L") : "·"
 
-        int centerCol = 25
-        
         // Line 1: Up
-        print " " * (centerCol - 2)
-        println Terminal.colorize("[$u] ${Terminal.dim(lblU)}", accent)
+        String line1 = "                       [$u] ${Terminal.dim(lblU)}"
+        Terminal.drawBoxedLine(line1, width, accent)
         
         // Line 2: Vertical connector
-        print " " * (centerCol - 1)
-        println Terminal.colorize("║", accent)
+        Terminal.drawBoxedLine("                        ║", width, accent)
         
         // Line 3: Left - Center - Right
         String leftLabel = lblL ?: lblB
         String leftIcon = lblL ? l : b
-        String leftPart = leftLabel ? "[$leftIcon] ${Terminal.dim(leftLabel)} " : ""
-        int leftWidth = Terminal.getVisualWidth(leftPart)
-        int targetLeftPadding = (centerCol - 5) - leftWidth
-        String leftPadding = " " * Math.max(0, targetLeftPadding)
+        String leftSide = leftLabel ? "[$leftIcon] ${Terminal.dim(leftLabel)} " : ""
+        String center = "═══[╬]═══"
+        String rightSide = " [$f] ${Terminal.dim(lblF)}"
         
-        print Terminal.colorize(leftPadding + leftPart, accent)
-        print Terminal.colorize("═══[╬]═══ ", accent)
-        println Terminal.colorize("[$f] ${Terminal.dim(lblF)}", accent)
+        // Calculate dynamic padding to center the [╬]
+        int centerPos = 25 // Target column for the ╬
+        int leftLen = Terminal.getVisualWidth(leftSide)
+        String leftPadding = " " * Math.max(0, centerPos - leftLen - 5)
+        String line3 = "${leftPadding}${leftSide}${center}${rightSide}"
+        Terminal.drawBoxedLine(line3, width, accent)
         
         // Line 4: Vertical connector
-        print " " * (centerCol - 1)
-        println Terminal.colorize("║", accent)
+        Terminal.drawBoxedLine("                        ║", width, accent)
         
         // Line 5: Down
-        print " " * (centerCol - 2)
-        print Terminal.colorize("[$d] ${Terminal.dim(lblD)}", accent)
-        println ""
+        String line5 = "                       [$d] ${Terminal.dim(lblD)}"
+        Terminal.drawBoxedLine(line5, width, accent)
+        Terminal.drawBoxBottom(width, accent)
     }
 
     void enterLocation(Location location) {
