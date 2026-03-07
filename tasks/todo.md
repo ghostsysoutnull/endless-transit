@@ -230,3 +230,7 @@ Implement a "Contextual Projection" system for the documentation site to mirror 
 # Infrastructure & Session Continuity
 - [x] **Session Recovery**: Successfully restored state and completed work after a JavaScript heap crash during site refactoring.
 - [x] **Viewport Optimization**: Fixed footer line-stacking to ensure GitHub link visibility without scrolling.
+- [x] **Critical Bug Fixes**:
+    - [x] Fixed `GroovyRuntimeException` in `generateSystemTelemetry` (BigDecimal division in Random constructor).
+    - [x] Fixed `LIP_RESOLUTION_FAILED` in Buildings (floors were missing from base children list).
+    - [x] Fixed inconsistent `getIndexInParent` in Floors to ensure stable LIP resolution.

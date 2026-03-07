@@ -73,22 +73,6 @@ class Floor extends Container {
     }
 
     @Override
-    int getIndexInParent() {
-        if (parent instanceof Building) {
-            return number + 1
-        }
-        return super.getIndexInParent()
-    }
-
-    @Override
-    int getTotalInParent() {
-        if (parent instanceof Building) {
-            return ((Building)parent).maxFloors
-        }
-        return super.getTotalInParent()
-    }
-
-    @Override
     void addLocation(Location location) {
         super.addLocation(location)
         if (location instanceof Corridor) {
