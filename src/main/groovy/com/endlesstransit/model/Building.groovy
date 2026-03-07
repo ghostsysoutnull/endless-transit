@@ -202,8 +202,8 @@ class Building extends Container {
     void addLocation(Location location) {
         if (location instanceof Floor) {
             // Check if already present to avoid duplicates if called multiple times
-            if (!floors.contains(location)) {
-                floors.add(location)
+            if (!this.@floors.contains(location)) {
+                this.@floors.add(location)
                 super.addLocation(location)
             }
         } else {

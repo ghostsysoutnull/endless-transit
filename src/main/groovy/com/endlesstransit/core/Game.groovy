@@ -763,7 +763,7 @@ class Game {
         // Simple ASCII spectrogram based on inventory
         Random r = new Random((System.currentTimeMillis() / 1000) as long)
         for (int i = 0; i < 5; i++) {
-            int h = r.nextInt(width / 4) + 1
+            int h = r.nextInt((width / 4) as int) + 1
             lines << " " + Terminal.colorize("█" * h, Terminal.CYAN)
         }
         
