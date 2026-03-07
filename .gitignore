@@ -4,3 +4,5 @@ docs/backups/
 journal.txt
 journal-last-entry.txt
 .journal_session_tmp
+*.swp
+session.trace
