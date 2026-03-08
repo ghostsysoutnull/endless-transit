@@ -20,7 +20,8 @@ def junitTests = [
     "model/DeepLatticeCrawlTest",
     "model/FloorCrashTest",
     "core/JournalTest",
-    "core/StartupTest"
+    "core/StartupTest",
+    "procgen/ProcgenVariabilityTest"
 ]
 
 junitTests.each { path ->
