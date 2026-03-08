@@ -1,23 +1,18 @@
-# Model Domain - Development Context
+# Model Domain: Structural Hierarchy
 
-## World Hierarchy
-The world is a strict composite hierarchy:
-Universe > Filament > Sector > System > Planet > Country > City > Street > Building > Floor > Corridor > Apartment > Room.
+## 📐 World Architecture
+- **Structure**: Recursive Composite Pattern (Universe -> Room).
+- **Population**: Lazy Initialization. Children are ONLY generated when accessed.
 
-## Development Patterns
-- **Interfaces**: All new location types MUST implement the `Location` interface.
-- **Lazy Initialization**: To support infinite scale, all `Container` subclasses must override `populateChildren()`. 
-- **Population Trigger**: Never populate children in the constructor. Use `ensureChildrenPopulated()` which is called by `getChildren()` or when options are requested.
-- **Parentage**: Always call `addLocation(child)` to ensure the `parent` reference is correctly set for path-finding and breadcrumbs.
+## 🏗️ Technical Invariants
+1. **LIP Integrity**: The **Locus Identity Path** (LIP) must be unique and stable.
+2. **Re-entrancy Guard**: Use `childrenPopulated` to prevent recursion loops.
+3. **Parent Referencing**: Every `Location` MUST have its `parent` set correctly upon population.
 
-## Structural Constraints
-- **Building**: Must have a fixed `maxFloors` and `apartmentsPerFloor`.
-- **Street**: Uses a grid-like display for buildings.
-- **Room**: The atomic unit. Does not contain other `Location` objects.
+## 🏛️ Verification Checklist
+- [ ] **Structural Crawl**: Do deep hierarchy requests work?
+- [ ] **Recursive Safety**: Are there infinite loops during population?
+- [ ] **Property Consistency**: Do name, path, and vibes remain stable across calls?
 
-## Key Classes
-- `Location.groovy`: The core interface.
-- `Container.groovy`: The base class for all nested structures.
-
-## Localized Lessons
+## 🧬 Localized Lessons
 @../../../../../../tasks/lessons/model.md

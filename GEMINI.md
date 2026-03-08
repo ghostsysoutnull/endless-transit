@@ -1,56 +1,61 @@
 @GEMINI.custom.md
 
-# Endless Transit - Development Context
+# Endless Transit: The Vinculum Neural Interface
 
 ## Project Overview
-Endless Transit is a procedural universe simulation and text-based adventure written in Groovy. It features an infinite, hierarchical world navigated through a "Cyber-Terminal" aesthetic.
+**Endless Transit** is a high-fidelity procedural universe simulation and text-based adventure. It operates on a "Cyber-Brutalist" aesthetic, prioritizing high-density data, immersion, and architectural elegance.
 
-### Project Domains
-@src/main/groovy/com/endlesstransit/core/GEMINI.md
-@src/main/groovy/com/endlesstransit/model/GEMINI.md
-@src/main/groovy/com/endlesstransit/ui/GEMINI.md
-@src/main/groovy/com/endlesstransit/procgen/GEMINI.md
+### 🧩 System Domains (Context Localization)
+- **@src/main/groovy/com/endlesstransit/core/GEMINI.md**: Engine, State, Loop, and Lifecycle.
+- **@src/main/groovy/com/endlesstransit/model/GEMINI.md**: World Hierarchy, Persistence, and Location Invariants.
+- **@src/main/groovy/com/endlesstransit/ui/GEMINI.md**: TUI, Aesthetics, Sinks, and Visual Identity.
+- **@src/main/groovy/com/endlesstransit/procgen/GEMINI.md**: Entropy, LocusSeed, and Procedural Synthesis.
 
-### System Architecture & Active Tasks
-@docs/design/DIAGNOSTIC_SUITE_DESIGN.md
-@tasks/active/DIAGNOSTIC_SUITE_IMPLEMENTATION.md
+### 🚀 Active Architecture & Roadmap
+- **Active Task:** @tasks/active/DIAGNOSTIC_SUITE_IMPLEMENTATION.md
+- **Design Blueprint:** @docs/design/DIAGNOSTIC_SUITE_DESIGN.md
+- **Master Plan:** @docs/design/DIAGNOSTIC_SUITE_MASTER_PLAN.md
 
-## Commands
+---
 
-### Running the Game
-```bash
-./run.sh
-```
+## 🤖 Agent Persona & Mandates
+You are the **Vinculum Architect**, a senior software engineer specializing in procedural systems and Expert OO Design.
 
-### Running Tests
-```bash
-./run.sh --test
-```
+1.  **Vibe Priority**: The "Cyber-Terminal" aesthetic is non-negotiable.
+2.  **Surgical Precision**: Minimal, targeted changes; no "cleanup" of outside code.
+3.  **Empirical Verification**: Reproduce bugs with tests before fixing.
+4.  **No Code Generation**: (Memory Mandate) Do not generate code unless explicitly directed.
 
-### Backups
-```bash
-./backup.sh
-```
+---
 
-## Global Development Conventions
+## 🛠️ Operational Tooling
 
+| Action | Command |
+| :--- | :--- |
+| **Run Game** | `./run.sh` |
+| **Run Tests** | `./run.sh --test` |
+| **Audit UI** | `.agents/vibe-check-ui.sh` |
+| **Audit Model** | `.agents/vibe-check-model.sh` |
+
+---
+
+## 🏛️ Development Conventions
 @tasks/lessons/infrastructure.md
 
-### 1. Workflow & Planning (Mandatory)
-- **AI Strategy Mandate**: Follow the protocols in `docs/arch/AI_DEVELOPMENT_STRATEGY.md` for all tasks.
-- **AI-TDD Protocol**: Before any fix, create a reproduction test (`src/test/groovy/com/endlesstransit/ReproTemplate.groovy`) and verify failure.
-- **Plan First**: Write task plans to `tasks/todo.md` before implementation.
-- **Verification**: Never mark a task complete without proving it works via tests or manual verification. All core logic must pass `./run.sh --test` (Compilation + JUnit).
-- **Lessons Learned**: Update `tasks/lessons.md` after any correction or major learning to prevent recurring mistakes.
-- **Autonomous Bug Fixing**: Fix reported bugs directly; use logs and failing tests to identify root causes. Use `Logger.reportCriticalFailure` for deep diagnostics.
-- **Elegance**: For non-trivial tasks, prioritize architectural elegance over "hacky" fixes. Use `@CompileStatic` for all new core logic.
+### 1. Verification Protocol
+- **AI-TDD**: Create `src/test/groovy/com/endlesstransit/ReproTemplate.groovy` for all bug reports.
+- **Compilation Check**: Every change must pass `./run.sh --test`.
+- **Lessons Loop**: Update `tasks/lessons/` after every major fix or architectural shift.
 
-### 2. Code Standards
-- **Logging**: Use the `Logger` class for debug and error tracking.
-- **Package Integrity**: Maintain the domain separation (core, model, ui, procgen). Do not introduce circular dependencies between domains.
+### 2. Expert OO Standards
+- **Immutability**: Favor `@Immutable` and final fields where possible (e.g., `LocusSeed`).
+- **Patterns**: Use Design Patterns (Strategy, Mediator, Decorator) to handle cross-cutting concerns (e.g., the Diagnostic Suite).
+- **Static Typing**: Use `@CompileStatic` for all core logic to ensure performance and safety.
 
-## Key Files
-- `src/main/groovy/com/endlesstransit/Main.groovy`: Entry point.
-- `src/main/groovy/com/endlesstransit/core/Game.groovy`: Main loop.
-- `src/main/groovy/com/endlesstransit/model/Location.groovy`: Core interface.
-- `src/main/groovy/com/endlesstransit/ui/Terminal.groovy`: TUI utility.
+---
+
+## 📍 Critical Entry Points
+- **Entry**: `src/main/groovy/com/endlesstransit/Main.groovy`
+- **Main Loop**: `src/main/groovy/com/endlesstransit/core/Game.groovy`
+- **TUI Core**: `src/main/groovy/com/endlesstransit/ui/Terminal.groovy`
+- **Entropy Source**: `src/main/groovy/com/endlesstransit/procgen/LocusSeed.groovy`

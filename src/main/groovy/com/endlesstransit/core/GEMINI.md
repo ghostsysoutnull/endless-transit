@@ -1,21 +1,18 @@
-# Core Engine - Development Context
+# Core Domain: The Engine
 
-## Game Loop
-- `Game.groovy` manages the primary while-loop, input processing, and location transitions.
-- **Coherence**: Constant drain per step. If coherence drops to 0, the neural link is severed (reboot to start). 
-    - *Temporal Variance*: Drain rate varies by timeline (Ancient: 0.5, Standard: 1.0, Volatile: 2.0).
+## ⚙️ Game Loop & State
+- **Primary Loop**: `Game.groovy` manages the turn cycle.
+- **Input Delegation**: Entrusted to `InputHandler`, `ActionMapper`, and `NavigationEngine`.
 
-## Player State
-- `Player.groovy` tracks step count, coherence, and the "Quantum Trace Buffer" (Inventory).
-- **Inventory**: Limited to 16 fragments. Supports merging (synthesis) which restores coherence.
+## 🏗️ Technical Invariants
+1. **Turn Integrity**: Every turn MUST update the `ActionMapper` with current options.
+2. **Deterministic Inputs**: The engine is moving toward an `InputSource` abstraction.
+3. **No Terminal Direct-Access**: All output must go through `Terminal` / `RenderSink`.
 
-## System Services
-- **Logging**: Use `Logger.groovy` for all internal state tracking and error reporting.
-- **Persistence**: `JournalManager.groovy` logs major discoveries and session summaries to `journal.txt`.
+## 🏛️ Verification Checklist
+- [ ] **Startup Test**: Does a new game initialize without NPEs?
+- [ ] **Turn Consistency**: Are mapping and navigation state-correct?
+- [ ] **Survival Mechanics**: Does coherence drain correctly?
 
-## Guidelines
-- Avoid putting UI styling or procedural generation math directly in `Game.groovy`. Delegate to `ui` and `procgen` domains.
-- When entering a new location, always use `game.enterLocation(target)` to ensure visited paths and journal entries are handled.
-
-## Localized Lessons
+## 🏺 Localized Lessons
 @../../../../../../tasks/lessons/core.md
