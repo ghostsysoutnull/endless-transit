@@ -1,0 +1,44 @@
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                         LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ ▅ [🚪] | PULSE_TRAVERSAL: 4 | COHERENCE: 95%                          ║
+║ LOCUS_TRACE: ... Desert Kingdom > Whitepeak > High Street > BlockGate > Floor 3 > Corridor > orange, rustic, written: Danger   ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Apartment >> orange, rustic, written: Danger                            ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
+║ LOCUS_HASH: 13.066 / 85.746 | HOP_DENSITY: 11                                          ║ COHERENCE: █████████░                 ║
+║ LOCUS_INDEX: 1 / 5 | [X] [ ] [ ] [ ] [ ]                                               ║ EVENT_TICKER: [SYNC_STABLE]           ║
+║                                                                                        ║                                       ║
+║                                                                                        ║                                       ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS                                                                                                   ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Apartment: orange, rustic, written: Danger. [TEMPORAL_MARKER: FUTURE]                  ║  [SYSTEM_TELEMETRY]                   ║
+║                                                                                        ║  LATTICE_SYNC: [NOMINAL]              ║
+║  [APARTMENT_UNIT_DIAGNOSTICS]                                                          ║                                       ║
+║ Scanning internal cell structure...                                                    ║  [QUANTUM_SPECTROGRAM]                ║
+║ -----------------------------------------------------------------------------------... ║  ██                                   ║
+║ [ID] [TYPE]              [IDENTIFIER]                  [STATUS]       [RES]            ║  ███                                  ║
+║ -----------------------------------------------------------------------------------... ║  ████████                             ║
+║ 01.  Oxygen Sump         Cold Unit [0xB7]              [UNSTABLE]     948Hz            ║  ████                                 ║
+║ 02.  Growth Chamber      Concrete Foundation [0x3]     [UNSTABLE]     1680Hz           ║  ███████                              ║
+║ 03.  Spore Farm          Empty Slab [0x22]             [UNSTABLE]     1572Hz           ║                                       ║
+║ 04.  Hydroponic Bay      Grey Unit [0x6F]              [UNSTABLE]     1368Hz           ║  [DECODE_LOGS]                        ║
+║ 05.  Oxygen Sump         Empty Structure [0x9F]        [UNSTABLE]     2424Hz           ║  > Trace: 0.0.0.0.0.0.0.0.7.10.0.0    ║
+║ 06.  Hydroponic Bay      Empty Pillar [0xF2]           [UNSTABLE]     1944Hz           ║  > Stable: 0 items                    ║
+║ 07.  Hydroponic Bay      Grey Slab [0x1F]              [UNSTABLE]     1356Hz           ║                                       ║
+║ -----------------------------------------------------------------------------------... ║                                       ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+  [L] Leave Apartment ═══[╬]═══ [F] Go forward
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+01. Enter Room: Cold Unit [0xB7]
+02. Enter Room: Concrete Foundation [0x3]
+03. Enter Room: Empty Slab [0x22]
+04. Enter Room: Grey Unit [0x6F]
+05. Enter Room: Empty Structure [0x9F]
+06. Enter Room: Empty Pillar [0xF2]
+07. Enter Room: Grey Slab [0x1F]
+[l] Leave Apartment | [f] Go forward
+[i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [quit] Quit

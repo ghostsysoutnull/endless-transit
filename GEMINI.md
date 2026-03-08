@@ -11,6 +11,10 @@ Endless Transit is a procedural universe simulation and text-based adventure wri
 @src/main/groovy/com/endlesstransit/ui/GEMINI.md
 @src/main/groovy/com/endlesstransit/procgen/GEMINI.md
 
+### System Architecture & Active Tasks
+@docs/design/DIAGNOSTIC_SUITE_DESIGN.md
+@tasks/active/DIAGNOSTIC_SUITE_IMPLEMENTATION.md
+
 ## Commands
 
 ### Running the Game

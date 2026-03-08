@@ -1,0 +1,43 @@
+EXECUTE_DIRECTIVE:
+c. Enter Corridor
+[l] Leave Floor | [u] Go Up | [d] Go Down
+[i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [quit] Quit
+---=====================================>> [Last: Access: MECHANICAL_SUMP] Enter choice: c
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                            LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ [▅] | PULSE_TRAVERSAL: 52 | COHERENCE: 61%                             ║
+║ LOCUS_TRACE: ...or > Neoar > Northern Frost Territories > Voidcross > Bright Loop > The Crystal Sanctum > Floor 2 > Corridor   ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Corridor >> Corridor                                                    ║ TRAFFIC: [STABLE] | THEME: [ORGANIC]  ║
+║ LOCUS_HASH: 38.858 / 80.434 | HOP_DENSITY: 10                                          ║ COHERENCE: ██████░░░░                 ║
+║ CONDUIT: 1 / 1 | [X]                                                                   ║ EVENT_TICKER: [SYNC_STABLE]           ║
+║                                                                                        ║                                       ║
+║                                                                                        ║                                       ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 11/16 FRAGMENTS | RECENT: 3341195, 1635587, 2335148Hz                                                            ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ A long corridor with multiple doors. [THEME: ORGANIC]                                  ║  [SYSTEM_TELEMETRY]                   ║
+║                                                                                        ║  LATTICE_SYNC: [NOMINAL]              ║
+║                                                                                        ║                                       ║
+║                                                                                        ║  [QUANTUM_SPECTROGRAM]                ║
+║                                                                                        ║  █████████                            ║
+║                                                                                        ║  █████                                ║
+║                                                                                        ║  ████████                             ║
+║                                                                                        ║  ████████                             ║
+║                                                                                        ║  █████████                            ║
+║                                                                                        ║                                       ║
+║                                                                                        ║  [DECODE_LOGS]                        ║
+║                                                                                        ║  > Trace: 0.0.0.0.0.0.0.1.0.7.0       ║
+║                                                                                        ║  > Stable: 0 items                    ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Leave Corridor ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+01. red, plain             | [STB] | 1404Hz ~~~      >> Concrete Slab [0xEB]
+02. red, vintage, has...   | [STB] | 1956Hz ~~~      >> Breathing Cavity [0x28]
+[l] Leave Corridor
+[i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [quit] Quit
+---=====================================>> [Last: Enter Corridor] Enter choice: 

@@ -1,0 +1,38 @@
+---=====================================>> [Last: 01] Enter choice: f
+Invalid choice. Please try again.
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                         LATTICE: ∞ »»»»» ⬚ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ ▅ | PULSE_TRAVERSAL: 8 | COHERENCE: 87%                               ║
+║ LOCUS_TRACE: ...l > Free Glacier Sovereignty > Starhaven > Hidden Street > The First Pillar > Floor 0 > Corridor > Apartment   ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Apartment >> Apartment                                                  ║ SYSTEM_DIAGNOSTIC: [NOMINAL]          ║
+║ LOCUS_HASH: 7.407 / 58.795 | HOP_DENSITY: 11                                           ║ COHERENCE: ████████░░                 ║
+║ ALIGN: 1 / 13 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]                    ║ EVENT_TICKER: [SYNC_STABLE]           ║
+║                                                                                        ║                                       ║
+║                                                                                        ║                                       ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS                                                                                                   ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Apartment: red, vintage. [TEMPORAL_MARKER: ANCIENT]                                    ║  [SYSTEM_TELEMETRY]                   ║
+║                                                                                        ║  LATTICE_SYNC: [NOMINAL]              ║
+║                                                                                        ║                                       ║
+║                                                                                        ║  [QUANTUM_SPECTROGRAM]                ║
+║                                                                                        ║  ███████                              ║
+║                                                                                        ║  █████                                ║
+║                                                                                        ║  ██                                   ║
+║                                                                                        ║  █████████                            ║
+║                                                                                        ║  ██████                               ║
+║                                                                                        ║                                       ║
+║                                                                                        ║  [DECODE_LOGS]                        ║
+║                                                                                        ║  > Trace: 0.0.0.0.0.0.2.4.0.0.0.0     ║
+║                                                                                        ║  > Stable: 0 items                    ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+  [L] Leave Apartment ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[l] Leave Apartment
+[i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [quit] Quit
+---=====================================>> [Last: 01] Enter choice: 
