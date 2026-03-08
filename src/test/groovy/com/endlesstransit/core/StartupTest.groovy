@@ -15,9 +15,21 @@ class StartupTest extends GroovyTestCase {
             assertNotNull("Game should initialize", game)
             assertNotNull("Player should exist", game.player)
             assertNotNull("Current location should be set", game.currentLocation)
-            println "SUCCESS: Game initialized without GroovyCastException."
+            
+            // Simulate the first turn's context mapping
+            Map<String, Closure> options = game.currentLocation.getOptions(game)
+            assertNotNull("Initial location should have options", options)
+            assertFalse("Options should not be empty", options.isEmpty())
+            
+            game.mapper.update(options)
+            
+            // Test getActionName for the initial state (lastChoice is null)
+            String lastActionName = game.mapper.getActionName(game.navEngine.lastChoice)
+            assertEquals("Initial last choice name should be empty", "", lastActionName)
+            
+            println "SUCCESS: Game initialization and first turn context verified."
         } catch (Throwable t) {
-            fail("Game failed to initialize: ${t.message}")
+            fail("Game failed to initialize or prepare first turn: ${t.message}")
         }
     }
 }

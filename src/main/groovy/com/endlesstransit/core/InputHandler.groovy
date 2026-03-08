@@ -1,0 +1,82 @@
+package com.endlesstransit.core
+
+import com.endlesstransit.ui.Terminal
+import groovy.transform.CompileStatic
+import java.util.Scanner
+
+/**
+ * InputHandler: Responsible for raw user interaction and input normalization.
+ * Decouples the Game loop from the specificities of CLI input.
+ */
+@CompileStatic
+class InputHandler {
+    private Scanner scanner = new Scanner(System.in)
+
+    /**
+     * Reads a line from the user and trims whitespace.
+     */
+    String getRawInput(String lastActionName) {
+        String hudLastAction = lastActionName ? " [Last: $lastActionName]" : ""
+        
+        print Terminal.dim("---=====================================>>")
+        print Terminal.colorize(hudLastAction, Terminal.CYAN)
+        print " Enter choice: "
+        
+        String input = (System.console() != null) ? System.console().readLine() : (scanner.hasNextLine() ? scanner.nextLine() : null)
+        return input?.trim()
+    }
+
+    /**
+     * Normalizes input into standard game commands or keys.
+     */
+    String normalize(String input, String lastChoice) {
+        if (input == null) return "quit"
+        if (input.isEmpty()) return lastChoice ?: "-2"
+
+        // Global Commands
+        String lower = input.toLowerCase()
+        if (lower in ["i", "sync", "map", "m", "lattice", "glitch", "help", "quit"]) {
+            return lower == "m" ? "map" : lower
+        }
+        if (lower == "?") return "help"
+
+        return input
+    }
+
+    /**
+     * Provides a zero-agnostic matching check.
+     * Matches "1" or "01" against "01".
+     */
+    boolean matches(String input, String optionKey) {
+        if (input == null || optionKey == null) return false
+        
+        // 1. Exact match (case insensitive)
+        if (optionKey.equalsIgnoreCase(input)) return true
+        
+        // 2. Zero-agnostic match for numeric keys
+        String normalizedInput = input.replaceFirst("^0+(?!\$)", "")
+        String normalizedKey = optionKey.replaceFirst("^0+(?!\$)", "")
+        
+        if (normalizedInput.isEmpty() || normalizedKey.isEmpty()) return false
+        
+        // Check if both are numeric before comparing normalized versions
+        if (normalizedInput.chars().allMatch { Character.isDigit(it) } && normalizedKey.chars().allMatch { Character.isDigit(it) }) {
+            return normalizedInput == normalizedKey
+        }
+        
+        return false
+    }
+
+    void waitForEnter() {
+        print Terminal.dim("Press ENTER to return...")
+        if (System.console() != null) {
+            System.console().readLine()
+        } else if (scanner.hasNextLine()) {
+            scanner.nextLine()
+        }
+    }
+
+    String readLine() {
+        return scanner.hasNextLine() ? scanner.nextLine().trim() : ""
+    }
+}

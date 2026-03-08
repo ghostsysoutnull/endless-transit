@@ -248,7 +248,7 @@ class Room implements Location {
                 println "${Terminal.colorize("c", Terminal.YELLOW)}. Cancel"
                 
                 print "\nINTERACT >> "
-                String input = game.scanner.nextLine().trim().toLowerCase()
+                String input = game.inputHandler.readLine().toLowerCase()
                 
                 if (input == "c" || input == "") {
                     println "Operation aborted."
