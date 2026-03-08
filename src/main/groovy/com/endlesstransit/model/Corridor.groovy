@@ -8,6 +8,7 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -120,11 +121,11 @@ class Corridor extends Container {
         return "TRAFFIC: [STABLE] | THEME: [${culture.toUpperCase()}]"
     }
 
-    Corridor(int numApartments, String culture, String timeline = "ancient", long seed = 0) {
+    Corridor(int numApartments, String culture, String timeline = "ancient", LocusSeed locus = new LocusSeed(0L)) {
         this.culture = culture
         this.timeline = timeline
         this.numApartments = numApartments
-        this.seed = seed
+        this.locus = locus
     }
 
     @Override

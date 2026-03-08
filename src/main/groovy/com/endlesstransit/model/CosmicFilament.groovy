@@ -7,6 +7,7 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -29,10 +30,10 @@ class CosmicFilament extends Container {
         return "filament"
     }
 
-    CosmicFilament(String name, long seed = 0) {
+    CosmicFilament(String name, LocusSeed locus = new LocusSeed(0L)) {
         this.name = name
-        this.seed = seed
-        Random r = seed != 0 ? new Random(seed) : new Random()
+        this.locus = locus
+        Random r = locus.value != 0 ? new Random(locus.value) : new Random()
         this.conduitID = "0x" + Integer.toHexString(r.nextInt(0xFFFF))
     }
 

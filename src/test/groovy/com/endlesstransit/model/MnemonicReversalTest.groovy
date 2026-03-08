@@ -5,16 +5,16 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
+import com.endlesstransit.procgen.LocusSeed
 
 println "Running Mnemonic and Reversal Test..."
 
 def game = new Game()
-// Mocking initialization to start in a predictable state is hard due to randomization, 
+// Mocking initialization to start in a predictable state is hard due to randomization,
 // but we can verify the getOptions() return values for specific types.
 
 // Test Room Reversal Logic
-def apartment = new Apartment("Test Door", "rust", "ancient", 12345) // Added timeline parameter
-apartment.ensureChildrenPopulated()
+def apartment = new Apartment("Test Door", "rust", "ancient", new LocusSeed(12345L)) // Added timeline parameter and LocusSeedapartment.ensureChildrenPopulated()
 def rooms = apartment.rooms
 
 if (rooms.size() < 2) {

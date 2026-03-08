@@ -6,6 +6,7 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.procgen.ProceduralFactory
@@ -28,10 +29,10 @@ class NullSector extends Container {
         return signalStrength > 0 ? "SIGNAL: ${signalStrength}%" : "SIGNAL: [SCAN_REQUIRED]"
     }
 
-    NullSector(String name, long seed = 0) {
+    NullSector(String name, LocusSeed locus = new LocusSeed(0)) {
         this.name = name
-        this.seed = seed
-        Random r = seed != 0 ? new Random(seed) : new Random()
+        this.locus = locus
+        Random r = locus.value != 0 ? new Random(locus.value) : new Random()
         this.echoFrequency = r.nextInt(9000) + 1000
     }
 

@@ -7,6 +7,7 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -34,8 +35,8 @@ class Universe extends Container {
         return "universe"
     }
 
-    Universe(long seed = System.currentTimeMillis()) {
-        this.seed = seed
+    Universe(LocusSeed locus = new LocusSeed(System.currentTimeMillis())) {
+        this.locus = locus
     }
 
     /**

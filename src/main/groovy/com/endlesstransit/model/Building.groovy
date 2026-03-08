@@ -1,4 +1,5 @@
 package com.endlesstransit.model
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
@@ -76,7 +77,7 @@ class Building extends Container {
         if (floorNum == 0) return "TRANSIT_LOBBY"
         if (floorNum == maxFloors - 1) return "PEAK_OBSERVATORY"
         
-        Random r = new Random(seed + floorNum)
+        Random r = new Random((locus != null ? locus.value : 0) + floorNum)
         if (floorNum < 5) {
             return ["MECHANICAL_SUMP", "STORAGE_CELL", "POWER_RELAY", "FILTRATION_INTAKE"][r.nextInt(4)]
         } else if (floorNum > maxFloors - 5) {
@@ -118,7 +119,9 @@ class Building extends Container {
         return Terminal.dim(" [FLOORS: $maxFloors]")
     }
 
-    Building() {}
+    Building(LocusSeed locus = new LocusSeed(0L)) {
+        this.locus = locus
+    }
 
     @Override
     void enter(Player player) {
@@ -193,7 +196,7 @@ class Building extends Container {
             String integrity = getFloorIntegrity(i)
             
             // Resonance logic (simulated for building view)
-            Random r = new Random(seed + i)
+            Random r = new Random((locus != null ? locus.value : 0) + i)
             int freq = 1000 + r.nextInt(2000)
             String resonance = "${freq}Hz"
 
@@ -243,7 +246,7 @@ class Building extends Container {
         Floor floor = this.floors.find { it.number == number }
         if (floor == null) {
             Logger.info("Instantiating new Floor $number in Building $name")
-            floor = ProceduralFactory.createFloor(this, number, apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + number : 0)
+            floor = ProceduralFactory.createFloor(this, number, apartmentsPerFloor, this.culture, this.timeline, locus != null ? locus.branch(number) : new LocusSeed(0L))
             addLocation(floor)
         }
         return floor

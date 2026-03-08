@@ -1,6 +1,7 @@
 package com.endlesstransit.model
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.Gematria
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.HUDLabels
 import groovy.transform.CompileStatic
@@ -23,13 +24,13 @@ class Room implements Location {
     String culture
     String timeline
     boolean isAnomaly = false
-    long seed
+    LocusSeed locus
 
     @Override
-    long getSeed() { return seed }
+    LocusSeed getLocus() { return locus }
 
     @Override
-    void setSeed(long seed) { this.seed = seed }
+    void setLocus(LocusSeed locus) { this.locus = locus }
 
     @Override
     String getLIP() {

@@ -6,6 +6,7 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -30,9 +31,9 @@ class SolarSystem extends Container {
         return "SYNC: [RESONANT_NODES_STABLE]"
     }
 
-    SolarSystem(String name, long seed = 0) {
+    SolarSystem(String name, LocusSeed locus = new LocusSeed(0)) {
         this.name = name
-        this.seed = seed
+        this.locus = locus
     }
 
     @Override

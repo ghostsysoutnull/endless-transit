@@ -5,6 +5,8 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 
+import com.endlesstransit.procgen.LocusSeed
+
 interface Location {
     String getDescription()
     void enter(Player player)
@@ -26,8 +28,8 @@ interface Location {
     boolean isAbyssal()
     String getMapSymbol()
     String getMapColor()
-    long getSeed()
-    void setSeed(long seed)
+    LocusSeed getLocus()
+    void setLocus(LocusSeed locus)
     String getLIP()
     Map<String, Object> getMutationState()
     void applyMutationState(Map<String, Object> state)

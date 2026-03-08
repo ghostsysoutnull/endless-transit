@@ -1,12 +1,15 @@
 package com.endlesstransit.ui
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
+import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.ui.Terminal
 
 println "--- RENDERING INITIAL SCREEN PREVIEW ---"
 
 // 1. Setup stabilized environment
-def game = new Game(12345) // Fixed seed for stable names
+long masterSeed = 12345L
+def game = new Game(masterSeed) // Fixed seed for stable names
 def player = game.player
 def universe = game.universe
 
@@ -21,7 +24,7 @@ game.bridgeView.renderBridgeHUD(game.currentLocation, player)
 
 // 4. Render the Adaptive Bridge (Split Pane)
 println "\n[ADAPTIVE_BRIDGE_PREVIEW]"
-game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterSeed)
+game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus.value)
 
 // 5. Render the Compass
 println "\n[COMPASS_PREVIEW]"
@@ -35,7 +38,7 @@ bld.markVisited()
 bld.getFloor(0).markVisited()
 bld.getFloor(1).markVisited()
 game.enterLocation(bld.getFloor(1)) // Correctly updates player and game state
-game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterSeed)
+game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus.value)
 
 println "\n--- PREVIEW COMPLETE ---"
 println "Check the alignment of the ║ borders and the [╬] pivot."

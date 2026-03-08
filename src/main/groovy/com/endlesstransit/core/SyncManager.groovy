@@ -1,6 +1,8 @@
 package com.endlesstransit.core
 
 import com.endlesstransit.model.*
+import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.ui.Terminal
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
@@ -18,8 +20,8 @@ class SyncManager {
         
         def player = game.player
         def snapshot = [
-            "version": "1.1",
-            "masterSeed": game.masterSeed,
+            "version": "1.2",
+            "masterSeed": game.masterLocus.value,
             "timestamp": System.currentTimeMillis(),
             "player": [
                 "coherence": player.coherence,
@@ -59,10 +61,11 @@ class SyncManager {
 
         try {
             Map snapshot = (Map) new JsonSlurper().parse(file)
-            long seed = (long) snapshot["masterSeed"]
-            Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)} (Seed: $seed)")
+            long seedValue = (long) snapshot["masterSeed"]
+            LocusSeed locus = new LocusSeed(seedValue)
+            Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)} (Seed: ${locus.value})")
             
-            Universe universe = new Universe(seed)
+            Universe universe = ProceduralFactory.createUniverse(locus)
             
             // 1. Reconstitute Player
             Player player = new Player()
@@ -107,7 +110,7 @@ class SyncManager {
             Location current = universe.resolveLIP(currentLIP)
             player.currentLocation = current
 
-            return new GameSession(seed, player, current)
+            return new GameSession(locus, player, current)
         } catch (Exception e) {
             Logger.error("RESTORE_FAILED: Trace corruption detected.", e)
             return null

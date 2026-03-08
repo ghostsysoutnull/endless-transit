@@ -19,18 +19,18 @@ class Game {
     Map<String, String> currentActionMap = [:]
     Map<String, String> previousActionMap = [:] 
     boolean instantRender = false
-    long masterSeed
+    LocusSeed masterLocus
     BridgeView bridgeView = new BridgeView()
 
     Game(long seed = System.currentTimeMillis()) {
-        this.masterSeed = seed
+        this.masterLocus = new LocusSeed(seed)
         player = new Player()
         scanner = new Scanner(System.in)
         initializeWorld()
     }
 
     void initializeWorld() {
-        this.universe = new Universe(masterSeed)
+        this.universe = ProceduralFactory.createUniverse(masterLocus)
         
         // Start deep: Universe > Filament > Sector > System > Planet > Country > City > Street
         List<CosmicFilament> filaments = universe.getFilaments()
@@ -125,7 +125,7 @@ class Game {
                 currentActionMap["quit"] = "Quit"
 
                 // Render the Bridge View
-                bridgeView.render(currentLocation, player, options, masterSeed)
+                bridgeView.render(currentLocation, player, options, masterLocus.value)
                 
                 // --- Repetition Logic for "Leave" actions ---
                 if (lastChoice != null) {
@@ -291,10 +291,10 @@ class Game {
             }
         }
     } catch (Throwable t) {
-        Logger.reportCriticalFailure(currentLocation, player, lastChoice, masterSeed, t)
+        Logger.reportCriticalFailure(currentLocation, player, lastChoice, masterLocus.value, t)
         
         println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
-        println(Terminal.dim("Error and session seed ($masterSeed) have been logged to transit.log"))
+        println(Terminal.dim("Error and session seed (${masterLocus.value}) have been logged to transit.log"))
         System.exit(1)
     }
 }
@@ -365,7 +365,7 @@ class Game {
 
         println Terminal.colorize("\n>>> RESTORE_INITIATED: Reconstituting trace...", Terminal.L_CYAN)
         
-        this.masterSeed = snapshot.masterSeed
+        this.masterLocus = snapshot.locus
         this.player = snapshot.player
         this.currentLocation = snapshot.currentLocation
         
@@ -373,7 +373,7 @@ class Game {
             Logger.error("RESTORE_ERROR: Could not resolve current location.")
             initializeWorld()
         } else {
-            this.universe = (Universe) this.currentLocation.findAncestor(Universe.class) ?: new Universe(masterSeed)
+            this.universe = (Universe) this.currentLocation.findAncestor(Universe.class) ?: ProceduralFactory.createUniverse(masterLocus)
         }
 
         println Terminal.colorize(">>> RESTORE_COMPLETE: Neural link synchronized with current locus.", Terminal.GREEN)

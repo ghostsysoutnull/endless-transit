@@ -7,6 +7,7 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -30,9 +31,9 @@ class Street extends Container {
         return isAbyssal() ? "SYNC: [PRESSURE_HIGH]" : "SYNC: [STABLE]"
     }
 
-    Street(String name, long seed = 0) {
+    Street(String name, LocusSeed locus = new LocusSeed(0)) {
         this.name = name
-        this.seed = seed
+        this.locus = locus
     }
 
     @Override

@@ -1,4 +1,5 @@
 package com.endlesstransit.model
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
@@ -131,11 +132,11 @@ class Apartment extends Container {
         return isAnomaly ? "ATMOS: [UNSTABLE]" : "ATMOS: [NOMINAL]"
     }
 
-    Apartment(String doorDescription = "A plain door", String culture = "rust", String timeline = "ancient", long seed = 0) {
+    Apartment(String doorDescription = "A plain door", String culture = "rust", String timeline = "ancient", LocusSeed locus = new LocusSeed(0L)) {
         this.doorDescription = doorDescription
         this.culture = culture
         this.timeline = timeline
-        this.seed = seed
+        this.locus = locus
     }
 
     @Override

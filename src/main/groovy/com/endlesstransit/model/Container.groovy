@@ -1,4 +1,5 @@
 package com.endlesstransit.model
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
@@ -15,16 +16,16 @@ abstract class Container implements Location {
     VibeCapsule localVibe
     boolean visited = false
     boolean childrenPopulated = false
-    long seed
+    LocusSeed locus
 
     @Override
-    long getSeed() {
-        return seed
+    LocusSeed getLocus() {
+        return locus
     }
 
     @Override
-    void setSeed(long seed) {
-        this.seed = seed
+    void setLocus(LocusSeed locus) {
+        this.locus = locus
     }
 
     /**
@@ -219,7 +220,7 @@ abstract class Container implements Location {
     @Override
     String getCoordinates() {
         def nameForHash = getName()
-        Random r = new Random(nameForHash.hashCode())
+        Random r = new Random(nameForHash.hashCode() + (locus != null ? locus.value : 0))
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 

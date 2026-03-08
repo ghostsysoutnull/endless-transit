@@ -5,16 +5,18 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
+import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
 
 println "Running Street TUI and Options Test..."
 
 def player = new Player()
-def universe = new Universe(12345)
+def universe = ProceduralFactory.createUniverse(new LocusSeed(12345L))
 def game = new Game()
 game.player = player
 game.currentLocation = universe
 
-def street = new Street("Test Ave", 999)
+def street = new Street("Test Ave", new LocusSeed(999L))
 street.setParent(new City("Test City"))
 street.ensureChildrenPopulated()
 

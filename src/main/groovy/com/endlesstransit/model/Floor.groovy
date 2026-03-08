@@ -8,6 +8,7 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.ui.HUDLabels
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -108,9 +109,9 @@ class Floor extends Container {
         markVisited()
     }
 
-    Floor(int number, int apartmentsPerFloor, String culture = "rust", String timeline = "ancient", long seed = 0) {
+    Floor(int number, int apartmentsPerFloor, String culture = "rust", String timeline = "ancient", LocusSeed locus = new LocusSeed(0L)) {
         this.number = number
-        this.seed = seed
+        this.locus = locus
         this.culture = number < 0 ? "abyssal" : culture
         this.timeline = timeline
         this.apartmentsPerFloor = apartmentsPerFloor

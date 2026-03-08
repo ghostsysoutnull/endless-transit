@@ -1,6 +1,8 @@
 package com.endlesstransit.model
 
 import com.endlesstransit.core.Logger
+import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
 
 class DeterministicUniverseTest {
     static void main(String[] args) {
@@ -10,16 +12,17 @@ class DeterministicUniverseTest {
     static void testUniverseStability() {
         println "Running Deterministic Universe Stability Test..."
         
-        long testSeed = 987654321L
+        long testSeedValue = 987654321L
+        LocusSeed testSeed = new LocusSeed(testSeedValue)
         
         // Universe A
-        Universe u1 = new Universe(testSeed)
+        Universe u1 = ProceduralFactory.createUniverse(testSeed)
         String name1 = u1.getFilaments()[0].name
         String planetName1 = u1.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].name
         String vibe1 = u1.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].getVibe().toString()
         
         // Universe B
-        Universe u2 = new Universe(testSeed)
+        Universe u2 = ProceduralFactory.createUniverse(testSeed)
         String name2 = u2.getFilaments()[0].name
         String planetName2 = u2.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].name
         String vibe2 = u2.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].getVibe().toString()
@@ -28,7 +31,7 @@ class DeterministicUniverseTest {
         assert planetName1 == planetName2 : "Planet name mismatch: $planetName1 vs $planetName2"
         assert vibe1 == vibe2 : "Vibe mismatch: $vibe1 vs $vibe2"
         
-        println "SUCCESS: Universe is deterministic for seed $testSeed"
+        println "SUCCESS: Universe is deterministic for seed ${testSeed.value}"
         
         // Verify LIP Resolution stability
         Location walker = u1.getFilaments()[0]
@@ -41,7 +44,7 @@ class DeterministicUniverseTest {
         Location loc2 = u2.resolveLIP(lip)
         
         assert loc1.getName() == loc2.getName() : "LIP Resolution name mismatch at $lip"
-        assert loc1.getSeed() == loc2.getSeed() : "LIP Resolution seed mismatch at $lip"
+        assert loc1.getLocus().value == loc2.getLocus().value : "LIP Resolution seed mismatch at $lip"
         
         println "SUCCESS: LIP Resolution is stable."
     }

@@ -63,7 +63,7 @@ class TracePersistenceTest {
         freshGame.restoreSession()
         
         // 6. VERIFY Stability
-        assert freshGame.masterSeed == testSeed : "Master seed not restored!"
+        assert freshGame.masterLocus.value == testSeed : "Master seed not restored!"
         assert freshGame.currentLocation.getLIP() == targetLIP : "Player location LIP mismatch!"
         assert freshGame.currentLocation.getName() == originalName : "Location name mismatch after restore!"
         assert freshGame.currentLocation.getVibe().toString() == originalVibe : "Environmental vibe mismatch after restore!"

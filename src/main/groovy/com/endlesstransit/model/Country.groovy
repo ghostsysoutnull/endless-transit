@@ -7,6 +7,7 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -37,9 +38,9 @@ class Country extends Container {
         return Terminal.dim(" [TRAIT: ${functionalTrait.toUpperCase()}]")
     }
 
-    Country(String name, long seed = 0) {
+    Country(String name, LocusSeed locus = new LocusSeed(0L)) {
         this.name = name
-        this.seed = seed
+        this.locus = locus
     }
 
     @Override

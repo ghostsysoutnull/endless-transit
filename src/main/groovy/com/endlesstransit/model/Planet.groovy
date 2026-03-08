@@ -7,6 +7,7 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
@@ -40,9 +41,9 @@ class Planet extends Container {
         return Terminal.dim(" [${isAbyssal() ? 'BEDROCK' : 'SURFACE'} | ERA: ${v.timeline.toUpperCase()}]")
     }
 
-    Planet(String name, long seed = 0) {
+    Planet(String name, LocusSeed locus = new LocusSeed(0)) {
         this.name = name
-        this.seed = seed
+        this.locus = locus
     }
 
     @Override

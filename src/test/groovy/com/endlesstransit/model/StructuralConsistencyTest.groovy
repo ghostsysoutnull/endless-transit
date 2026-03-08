@@ -5,11 +5,13 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
+import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
 
 // Simple manual test script to verify consistency and logic
 println "Running Structural Consistency Test..."
 
-def building = new Building()
+def building = new Building(new LocusSeed(12345L))
 println "Generated Building: ${building.name} with ${building.maxFloors} floors and ${building.apartmentsPerFloor} apartments per floor."
 
 boolean consistent = true
