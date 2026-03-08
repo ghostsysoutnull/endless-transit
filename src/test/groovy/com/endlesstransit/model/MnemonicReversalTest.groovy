@@ -46,6 +46,7 @@ if (lastOptions.containsKey("b. Go back") && !lastOptions.containsKey("f. Go for
 
 // Test Floor Reversal
 def building = new Building()
+building.maxFloors = 5
 def floor0 = building.getFloor(0)
 def floor0Ops = floor0.getOptions(game)
 if (floor0Ops.containsKey("u. Go Up") && !floor0Ops.containsKey("d. Go Down")) {

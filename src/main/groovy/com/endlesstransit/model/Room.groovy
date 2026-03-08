@@ -1,13 +1,8 @@
 package com.endlesstransit.model
-import com.endlesstransit.core.Game
-import com.endlesstransit.core.Player
-import com.endlesstransit.core.InventoryItem
-import com.endlesstransit.core.Logger
-import com.endlesstransit.core.JournalManager
+import com.endlesstransit.core.*
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.ThemeManager
+import com.endlesstransit.ui.HUDLabels
 import groovy.transform.CompileStatic
 
 import java.util.Random
@@ -15,8 +10,7 @@ import java.util.Random
 @CompileStatic
 class Room implements Location {
     String color
-    List<String> furniture
-    String lighting
+    List<String> furniture = []
     String walls
     String structureDesc
     String lightingDesc
@@ -32,33 +26,22 @@ class Room implements Location {
     long seed
 
     @Override
-    long getSeed() {
-        return seed
-    }
+    long getSeed() { return seed }
 
     @Override
-    void setSeed(long seed) {
-        this.seed = seed
-    }
+    void setSeed(long seed) { this.seed = seed }
 
-    /**
-     * Generates a Locus Index Path (LIP) for the current location.
-     */
     @Override
     String getLIP() {
-        int myIndex = getIndexInParent() - 1 // 0-based index for LIP
+        int myIndex = getIndexInParent() - 1 
         return "${parent.getLIP()}.$myIndex"
     }
 
     @Override
-    boolean isVisited() {
-        return visited
-    }
+    boolean isVisited() { return visited }
 
     @Override
-    void markVisited() {
-        this.visited = true
-    }
+    void markVisited() { this.visited = true }
 
     @Override
     int getIndexInParent() {
@@ -77,14 +60,45 @@ class Room implements Location {
     }
 
     @Override
-    Location getParent() {
-        return parent
+    String getIndexLabel() {
+        return isAbyssal() ? HUDLabels.SHARD : HUDLabels.CELL
     }
+
+    @Override
+    String getStatusSummary() {
+        return "ATMOS: ${atmoTraits['OXYGEN']} | TEMP: ${atmoTraits['TEMP']}"
+    }
+
+    @Override
+    String getTypeLabel() {
+        return isAbyssal() ? "SHARD" : "ROOM"
+    }
+
+    @Override
+    String getLatticeMeta() {
+        return ""
+    }
+
+    @Override
+    String getMapType() {
+        return "none"
+    }
+
+    @Override
+    String getSparklineLabel() {
+        return isAbyssal() ? "☠" : Terminal.ICON_ROM
+    }
+
+    @Override
+    void setParent(Location parent) { this.parent = parent }
+
+    @Override
+    Location getParent() { return parent }
 
     @Override
     void processAction(Player player) {
         Random random = new Random()
-        if (random.nextInt(10) < 3) { // 30% chance
+        if (random.nextInt(10) < 3) { 
             int randomNum = random.nextInt(9000000) + 1000000 
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
             player.inventory.add(item)
@@ -113,14 +127,10 @@ class Room implements Location {
     }
 
     @Override
-    String getTypeName() {
-        return roomType
-    }
+    String getTypeName() { return roomType }
 
     @Override
-    String getName() {
-        return roomName
-    }
+    String getName() { return roomName }
 
     @Override
     Map<String, Object> getMutationState() {
@@ -168,9 +178,7 @@ class Room implements Location {
     }
 
     @Override
-    VibeCapsule getVibe() {
-        return parent?.getVibe()
-    }
+    VibeCapsule getVibe() { return parent?.getVibe() }
 
     @Override
     Location findAncestor(Class type) {
@@ -179,9 +187,7 @@ class Room implements Location {
     }
 
     @Override
-    boolean isAbyssal() {
-        return parent?.isAbyssal() ?: false
-    }
+    boolean isAbyssal() { return parent?.isAbyssal() ?: false }
 
     @Override
     String getMapSymbol() {
@@ -196,35 +202,8 @@ class Room implements Location {
         return v != null ? v.atmosphericColor : Terminal.WHITE
     }
 
-    void setParent(Location parent) {
-        this.parent = parent
-        
-        if (parent instanceof Apartment) {
-            this.isAnomaly = ((Apartment)parent).isAnomaly
-        }
-
-        // Functional Naming based on Country Trait
-        Country country = (Country) findAncestor(Country.class)
-        String trait = country != null ? country.functionalTrait : "Standard"
-        Map<String, String> nameData = NameGenerator.generateRoomName(this.culture, trait, this.seed)
-        this.roomName = nameData["name"]
-        this.roomType = nameData["type"]
-
-        // Refine atmosphere based on parent vibe (regional mutation)
-        VibeCapsule vibe = getVibe()
-        if (vibe != null) {
-            Map<String, String> atmos = ThemeManager.generateAtmosphere(this.culture, this.timeline, vibe.latticeMutation, this.isAnomaly, this.seed)
-            this.walls = atmos["walls"]
-            this.lightingDesc = atmos["lighting"]
-            this.structureDesc = atmos["structure"]
-        }
-    }
-
-    // Room specific location logic
     @Override
-    void enter(Player player) {
-        markVisited()
-    }
+    void enter(Player player) { markVisited() }
 
     @Override
     Map<String, Closure> getOptions(Game game) {
@@ -232,7 +211,6 @@ class Room implements Location {
         
         if (!objects.isEmpty() || !game.player.inventory.isEmpty()) {
             options["t. Interact with objects"] = {
-                // Shortcut: If only 1 object and empty inventory, just take it
                 if (objects.size() == 1 && game.player.inventory.isEmpty()) {
                     String name = objects[0]
                     VibeCapsule vibe = getVibe()
@@ -255,14 +233,14 @@ class Room implements Location {
                 println "\n" + Terminal.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", Terminal.L_CYAN)
                 if (!objects.isEmpty()) {
                     println Terminal.dim("Local objects:")
-                    objects.eachWithIndex { obj, i ->
+                    objects.eachWithIndex { String obj, int i ->
                         println "${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. Scan $obj"
                     }
                 }
                 
                 if (!game.player.inventory.isEmpty()) {
                     println Terminal.dim("\nBuffer fragments (to drop):")
-                    game.player.inventory.eachWithIndex { item, i ->
+                    game.player.inventory.eachWithIndex { InventoryItem item, int i ->
                         println "${Terminal.colorize("d" + (i + 1), Terminal.YELLOW)}. Drop ${item.name}"
                     }
                 }
@@ -322,7 +300,6 @@ class Room implements Location {
             if (myIndex > 0) {
                 options["b. Go back"] = { game.enterLocation(rms[myIndex - 1]) }
             } else {
-                // Room 0: Go back exits to Apartment container or its parent
                 options["l. Exit Apartment"] = { game.enterLocation(apt.parent) }
             }
             
@@ -334,60 +311,28 @@ class Room implements Location {
         return options
     }
 
-    Room(String culture = "rust", String timeline = "ancient", long seed = 0) {
-        this.culture = culture
-        this.timeline = timeline
-        this.seed = seed
-        
-        Random random = seed != 0 ? new Random(seed) : new Random()
-        String[] colors = ["white", "blue", "pink", "gray", "purple", "orange", "green", "red"]
-        color = colors[random.nextInt(colors.length)]
-        
-        // Initial atmosphere (will be refined when parent is set)
-        Map<String, String> atmos = ThemeManager.generateAtmosphere(culture, timeline, "Standard", false, seed)
-        this.walls = atmos["walls"]
-        this.lightingDesc = atmos["lighting"]
-        this.structureDesc = atmos["structure"]
-
-        // Initial Atmo-Traits
-        this.atmoTraits["OXYGEN"] = "${random.nextInt(10) + 12}%"
-        this.atmoTraits["TEMP"] = "${random.nextInt(20) + 5}°C"
-        this.atmoTraits["SIGNAL"] = random.nextBoolean() ? "[SHIELDED]" : "[CLEAR]"
-        
-        // Generate themed furniture
-        int numFurniture = random.nextInt(3) + 1
-        furniture = []
-        for (int i = 0; i < numFurniture; i++) {
-            // Derived seed for furniture
-            furniture << ThemeManager.generateHybridObject(culture, timeline, seed != 0 ? seed + i + 100 : 0)
-        }
-    }
-
     String getDescription() {
         StringBuilder description = new StringBuilder()
-        
-        String structure = structureDesc
-        String wallText = walls
-        String lightText = lightingDesc
+        String s = structureDesc
+        String w = walls
+        String l = lightingDesc
 
         if (isAnomaly) {
-            structure = Terminal.glitchText(structure, 0.2)
-            wallText = Terminal.glitchText(wallText, 0.1)
-            lightText = Terminal.glitchText(lightText, 0.3)
+            s = Terminal.glitchText(s, 0.2)
+            w = Terminal.glitchText(w, 0.1)
+            l = Terminal.glitchText(l, 0.3)
         }
 
-        // --- Sensory Prose ---
         description.append(Terminal.colorize(" [NEURAL_LINK_INTERPRETATION]:", Terminal.L_MAGENTA)).append("\n")
-        description.append("You are in $structure. The walls are ${Terminal.colorize(color, Terminal.WHITE)} $wallText.\n")
-        description.append("The space is illuminated by ${Terminal.colorize(lightText, Terminal.YELLOW)}.\n")
+        description.append("You are in $s. The walls are ${Terminal.colorize(color, Terminal.WHITE)} $w.\n")
+        description.append("The space is illuminated by ${Terminal.colorize(l, Terminal.YELLOW)}.\n")
         
         int wrapWidth = 80
-        
         String furnitureStr = furniture.join(', ')
         List<String> wrappedFurniture = Terminal.wrapText(furnitureStr, wrapWidth)
         description.append("${Terminal.dim("FURNITURE:")} ")
-        wrappedFurniture.eachWithIndex { line, i ->
-            if (i > (int)0) description.append("           ") // Indent for multi-line
+        wrappedFurniture.eachWithIndex { String line, int i ->
+            if (i > 0) description.append("           ") 
             description.append(line).append("\n")
         }
         
@@ -395,11 +340,13 @@ class Room implements Location {
             String objStr = objects.join(', ')
             List<String> wrappedObjs = Terminal.wrapText(objStr, wrapWidth)
             description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ")
-            wrappedObjs.eachWithIndex { line, i ->
-                if (i > (int)0) description.append("                  ") // Indent for multi-line
+            wrappedObjs.eachWithIndex { String line, int i ->
+                if (i > 0) description.append("                  ") 
                 description.append(line).append("\n")
             }
         }
         return description.toString()
     }
+
+    Room() {}
 }

@@ -8,6 +8,7 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -16,6 +17,16 @@ class NullSector extends Container {
     int signalStrength = 0
     int echoFrequency = 0
     boolean echoFound = false
+
+    @Override
+    String getIndexLabel() {
+        return "VOID"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return signalStrength > 0 ? "SIGNAL: ${signalStrength}%" : "SIGNAL: [SCAN_REQUIRED]"
+    }
 
     NullSector(String name, long seed = 0) {
         this.name = name
@@ -32,13 +43,7 @@ class NullSector extends Container {
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        // Very sparse: only 1 or 2 systems adrift in the void
-        int numSystems = scrambler.nextInt(2) + 1
-        for (int i = 0; i < numSystems; i++) {
-            long childSeed = scrambler.nextLong()
-            addLocation(new SolarSystem("Lost ${NameGenerator.generateSolarSystemName(childSeed)}", childSeed))
-        }
+        ProceduralFactory.populateNullSector(this)
     }
 
     @Override

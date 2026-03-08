@@ -9,6 +9,7 @@ class HUDLabels {
     static final String Z_AXIS = "Z-AXIS"
     static final String SHARD = "SHARD"
     static final String INDEX = "INDEX"
+    static final String CELL = "CELL"
     
     static final String LATTICE_IDENT = "LATTICE_IDENT"
     static final String VOID_IDENT = "VOID_IDENT"

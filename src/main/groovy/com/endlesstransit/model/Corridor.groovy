@@ -7,6 +7,7 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -26,6 +27,11 @@ class Corridor extends Container {
     List<Apartment> getApartments() {
         ensureChildrenPopulated()
         return apartments
+    }
+
+    @Override
+    String getTypeLabel() {
+        return (getTypeName() == "Artery") ? "ARTERY" : "CORRIDOR"
     }
 
     @Override
@@ -104,6 +110,16 @@ class Corridor extends Container {
         return options
     }
 
+    @Override
+    String getIndexLabel() {
+        return "CONDUIT"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return "TRAFFIC: [STABLE] | THEME: [${culture.toUpperCase()}]"
+    }
+
     Corridor(int numApartments, String culture, String timeline = "ancient", long seed = 0) {
         this.culture = culture
         this.timeline = timeline
@@ -126,16 +142,6 @@ class Corridor extends Container {
 
     @Override
     void populateChildren() {
-        this.@doors.clear()
-        this.@apartments.clear()
-
-        for (int i = 0; i < numApartments; i++) {
-            long childSeed = seed != 0 ? seed + i + 1 : 0
-            Door door = new Door(childSeed)
-            this.@doors.add(door)
-            Apartment apartment = new Apartment(door.getDescription(), culture, timeline, childSeed)
-            this.@apartments.add(apartment)
-            addLocation(apartment)
-        }
+        ProceduralFactory.populateCorridor(this)
     }
 }

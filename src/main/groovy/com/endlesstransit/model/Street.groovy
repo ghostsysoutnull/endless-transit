@@ -6,6 +6,7 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -19,6 +20,16 @@ class Street extends Container {
         return buildings
     }
 
+    @Override
+    String getIndexLabel() {
+        return "WAY"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return isAbyssal() ? "SYNC: [PRESSURE_HIGH]" : "SYNC: [STABLE]"
+    }
+
     Street(String name, long seed = 0) {
         this.name = name
         this.seed = seed
@@ -26,20 +37,7 @@ class Street extends Container {
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        int numPairs = scrambler.nextInt(9) + 2 // 2 to 10 pairs
-        
-        VibeCapsule v = getVibe()
-        String culture = v != null ? v.primaryCulture : "monolith"
-        String timeline = v != null ? v.timeline : "ancient"
-        int depth = getDepth()
-        boolean isNull = findAncestor(NullSector.class) != null
-        boolean isAbyssal = isAbyssal()
-
-        for (int i = 0; i < numPairs * 2; i++) {
-            long childSeed = scrambler.nextLong()
-            addLocation(new Building(culture, timeline, childSeed, depth, isNull, isAbyssal))
-        }
+        ProceduralFactory.populateStreet(this)
     }
 
     @Override

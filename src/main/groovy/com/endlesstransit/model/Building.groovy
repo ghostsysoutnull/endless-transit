@@ -6,6 +6,7 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
 import groovy.transform.CompileStatic
@@ -99,18 +100,25 @@ class Building extends Container {
         return "${Math.max(0, base)}%"
     }
 
-    Building(String culture = "monolith", String timeline = "ancient", long seed = 0, int depth = 0, boolean isNullZone = false, boolean isAbyssal = false) {
-        this.seed = seed
-        this.culture = culture
-        this.timeline = timeline
-        Random random = seed != 0 ? new Random(seed) : new Random()
-        this.maxFloors = random.nextInt(26) + 5 
-        this.apartmentsPerFloor = random.nextInt(13) + 3 // 3 to 15 apartments per floor
-
-        def result = NameGenerator.generateBuildingName(culture, maxFloors, seed, depth, isNullZone, isAbyssal)
-        this.name = (String) result.name
-        this.isLandmark = (boolean) result.isLandmark
+    @Override
+    String getIndexLabel() {
+        return "STRATA"
     }
+
+    @Override
+    String getStatusSummary() {
+        if (isBreached) return "BEDROCK_BREACHED"
+        if (infusionCount > 0) return "INFUSION_ACTIVE: $infusionCount"
+        return "STRUCTURAL_STABLE"
+    }
+
+    @Override
+    String getLatticeMeta() {
+        if (isBreached) return Terminal.colorize(" [BREACHED]", Terminal.RED)
+        return Terminal.dim(" [FLOORS: $maxFloors]")
+    }
+
+    Building() {}
 
     @Override
     void enter(Player player) {
@@ -216,8 +224,9 @@ class Building extends Container {
     void addLocation(Location location) {
         if (location instanceof Floor) {
             // Check if already present to avoid duplicates if called multiple times
-            if (!this.@floors.contains(location)) {
-                this.@floors.add(location)
+            Floor f = (Floor) location
+            if (!this.floors.any { it.number == f.number }) {
+                this.floors.add(f)
                 super.addLocation(location)
             }
         } else {
@@ -230,11 +239,11 @@ class Building extends Container {
             Logger.info("Floor request out of bounds: $number (max: $maxFloors)")
             return null
         }
-        
-        def floor = this.@floors.find { it.number == number }
+
+        Floor floor = this.floors.find { it.number == number }
         if (floor == null) {
             Logger.info("Instantiating new Floor $number in Building $name")
-            floor = new Floor(number, apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + number : 0)
+            floor = ProceduralFactory.createFloor(this, number, apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + number : 0)
             addLocation(floor)
         }
         return floor
@@ -242,8 +251,8 @@ class Building extends Container {
 
     @Override
     String getDescription() {
-        def v = getVibe()
-        String vInfo = v ? "\n${Terminal.dim("[TECH_ERA:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")} ${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")}" : ""
+        VibeCapsule v = getVibe()
+        String vInfo = v != null ? "\n${Terminal.dim("[TECH_ERA:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")} ${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")}" : ""
         return "Building: $name (Total Floors: $maxFloors)$vInfo"
     }
 

@@ -5,6 +5,7 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.ui.Terminal
+import com.endlesstransit.ui.HUDLabels
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -239,6 +240,52 @@ abstract class Container implements Location {
         if (this instanceof Floor) return "Floor ${((Floor)this).number}"
         
         return this.getClass().simpleName
+    }
+
+    @Override
+    String getIndexLabel() {
+        return HUDLabels.LOCUS_INDEX
+    }
+
+    @Override
+    String getStatusSummary() {
+        return isAbyssal() ? "SYSTEM_STATUS: [ABYSS_SYNC]" : "SYSTEM_DIAGNOSTIC: [NOMINAL]"
+    }
+
+    @Override
+    String getTypeLabel() {
+        return getTypeName().toUpperCase()
+    }
+
+    @Override
+    String getLatticeMeta() {
+        return ""
+    }
+
+    @Override
+    String getMapType() {
+        return "local"
+    }
+
+    @Override
+    String getSparklineLabel() {
+        Map<String, String> icons = [
+            "Universe": Terminal.ICON_UNI,
+            "CosmicFilament": Terminal.ICON_FIL,
+            "GalacticSector": Terminal.ICON_SEC,
+            "NullSector": Terminal.ICON_SEC,
+            "SolarSystem": Terminal.ICON_SYS,
+            "Planet": Terminal.ICON_PLT,
+            "Country": Terminal.ICON_CTR,
+            "City": Terminal.ICON_CTY,
+            "Street": Terminal.ICON_STR,
+            "Building": Terminal.ICON_BLD,
+            "Floor": Terminal.ICON_FLR,
+            "Corridor": Terminal.ICON_COR,
+            "Apartment": Terminal.ICON_APT,
+            "Room": Terminal.ICON_ROM
+        ]
+        return icons[this.getClass().simpleName] ?: "?"
     }
 
     Map<String, Closure> getBaseOptions(Game game) {

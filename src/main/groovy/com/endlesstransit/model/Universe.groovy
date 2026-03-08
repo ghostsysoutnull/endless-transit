@@ -6,6 +6,7 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -16,6 +17,21 @@ class Universe extends Container {
     List<CosmicFilament> getFilaments() {
         ensureChildrenPopulated()
         return filaments
+    }
+
+    @Override
+    String getIndexLabel() {
+        return "ROOT"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return "UNIMATRIX_STABLE"
+    }
+
+    @Override
+    String getMapType() {
+        return "universe"
     }
 
     Universe(long seed = System.currentTimeMillis()) {
@@ -60,13 +76,7 @@ class Universe extends Container {
 
     @Override
     void populateChildren() {
-        Random scrambler = new Random(seed)
-        int numFilaments = scrambler.nextInt(5) + 3
-        for (int i = 0; i < numFilaments; i++) {
-            // Use scrambler to generate a high-entropy seed for the child
-            long childSeed = scrambler.nextLong()
-            addLocation(new CosmicFilament(NameGenerator.generateFilamentName(childSeed), childSeed))
-        }
+        ProceduralFactory.populateUniverse(this)
     }
 
     @Override

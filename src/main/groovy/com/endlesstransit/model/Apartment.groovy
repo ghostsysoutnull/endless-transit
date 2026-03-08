@@ -7,6 +7,7 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -28,6 +29,11 @@ class Apartment extends Container {
     @Override
     String getName() {
         return doorDescription
+    }
+
+    @Override
+    String getTypeLabel() {
+        return (getTypeName() == "Crypt") ? "CRYPT" : "APARTMENT"
     }
 
     @Override
@@ -115,6 +121,16 @@ class Apartment extends Container {
         return lines
     }
 
+    @Override
+    String getIndexLabel() {
+        return "UNIT"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return isAnomaly ? "ATMOS: [UNSTABLE]" : "ATMOS: [NOMINAL]"
+    }
+
     Apartment(String doorDescription = "A plain door", String culture = "rust", String timeline = "ancient", long seed = 0) {
         this.doorDescription = doorDescription
         this.culture = culture
@@ -124,44 +140,6 @@ class Apartment extends Container {
 
     @Override
     void populateChildren() {
-        Logger.info("Populating Apartment: $doorDescription (Seed: $seed)")
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        
-        // Use Vibe from parent unless anomaly
-        VibeCapsule vibe = getVibe()
-        if (vibe != null && scrambler.nextDouble() > 0.01) {
-            // Inheritance is handled by constructor now, but we sync with vibe if present
-            this.timeline = vibe.timeline
-            this.culture = vibe.pickCulture(scrambler.nextLong())
-        } else if (vibe != null) {
-            this.isAnomaly = true
-            // Keep original random culture/timeline from constructor
-        }
-
-        int numRooms = scrambler.nextInt(10) + 1
-        Logger.info("  >> Generated $numRooms rooms for Apartment.")
-        this.rooms.clear()
-
-        // Generate a pool of objects for the entire apartment
-        int totalObjects = scrambler.nextInt(15) + 5 // 5 to 20 objects per apartment
-        List<String> objectPool = []
-        for (int i = 0; i < totalObjects; i++) {
-            // Derived seed for object pool
-            objectPool << ThemeManager.generateHybridObject(culture, timeline, scrambler.nextLong())
-        }
-
-        for (int i = 0; i < numRooms; i++) {
-            long roomSeed = scrambler.nextLong()
-            Room room = new Room(culture, timeline, roomSeed)
-            this.rooms.add(room)
-            addLocation(room) // Sets parent
-        }
-
-        // Distribute objects from pool to rooms deterministically
-        while (!objectPool.isEmpty()) {
-            int roomIdx = scrambler.nextInt(this.rooms.size())
-            Room room = this.rooms[roomIdx]
-            room.objects << objectPool.remove(0)
-        }
+        ProceduralFactory.populateApartment(this)
     }
-}
+    }

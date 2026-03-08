@@ -6,6 +6,7 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
@@ -21,44 +22,32 @@ class Planet extends Container {
         return countries
     }
 
+    @Override
+    String getIndexLabel() {
+        return "ORBIT"
+    }
+
+    @Override
+    String getStatusSummary() {
+        VibeCapsule v = getVibe()
+        return "RESONANCE: [${v?.primaryCulture?.toUpperCase() ?: 'STABLE'}]"
+    }
+
+    @Override
+    String getLatticeMeta() {
+        VibeCapsule v = getVibe()
+        if (v == null) return ""
+        return Terminal.dim(" [${isAbyssal() ? 'BEDROCK' : 'SURFACE'} | ERA: ${v.timeline.toUpperCase()}]")
+    }
+
     Planet(String name, long seed = 0) {
         this.name = name
         this.seed = seed
-        
-        // Initialize Planetary Vibe Deterministically
-        String timeline = ThemeManager.getRandomTimeline(seed != 0 ? seed : 0)
-        String primary = ThemeManager.getRandomCulture(seed != 0 ? seed + 1 : 0)
-        String secondary = ThemeManager.getRandomCulture(seed != 0 ? seed + 2 : 0)
-        while (secondary == primary) {
-            // Stability check for secondary
-            secondary = ThemeManager.getRandomCulture(seed != 0 ? seed + 3 : 0)
-        }
-        
-        this.localVibe = new VibeCapsule(timeline, primary, secondary)
-        
-        // Pick an atmospheric color based on primary culture
-        Map<String, String> colorMap = [
-            "baroque": Terminal.YELLOW,
-            "gilded": Terminal.WHITE,
-            "monolith": Terminal.CYAN,
-            "neon": Terminal.L_CYAN,
-            "organic": Terminal.GREEN,
-            "rust": Terminal.RED,
-            "shogun": Terminal.MAGENTA,
-            "void": Terminal.GREY,
-            "zenith": Terminal.BLUE
-        ]
-        this.localVibe.atmosphericColor = colorMap[primary] ?: Terminal.WHITE
     }
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        int numCountries = scrambler.nextInt(7) + 2
-        for (int i = 0; i < numCountries; i++) {
-            long childSeed = scrambler.nextLong()
-            addLocation(new Country(NameGenerator.generateCountryName(childSeed), childSeed))
-        }
+        ProceduralFactory.populatePlanet(this)
     }
 
     @Override

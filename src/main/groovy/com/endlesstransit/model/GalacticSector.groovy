@@ -6,11 +6,22 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 
 @CompileStatic
 class GalacticSector extends Container {
     String name
+
+    @Override
+    String getIndexLabel() {
+        return "SECTOR"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return "GRID: [LATTICE_SYNC_OK]"
+    }
 
     GalacticSector(String name, long seed = 0) {
         this.name = name
@@ -19,13 +30,7 @@ class GalacticSector extends Container {
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        // Contains 3 to 7 Solar Systems
-        int numSystems = scrambler.nextInt(5) + 3
-        for (int i = 0; i < numSystems; i++) {
-            long childSeed = scrambler.nextLong()
-            addLocation(new SolarSystem(NameGenerator.generateSolarSystemName(childSeed), childSeed))
-        }
+        ProceduralFactory.populateSector(this)
     }
 
     @Override

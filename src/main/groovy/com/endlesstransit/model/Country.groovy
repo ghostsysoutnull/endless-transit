@@ -6,6 +6,8 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -20,32 +22,29 @@ class Country extends Container {
         return cities
     }
 
+    @Override
+    String getIndexLabel() {
+        return "REGION"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return "TRAIT: [${functionalTrait.toUpperCase()}]"
+    }
+
+    @Override
+    String getLatticeMeta() {
+        return Terminal.dim(" [TRAIT: ${functionalTrait.toUpperCase()}]")
+    }
+
     Country(String name, long seed = 0) {
         this.name = name
         this.seed = seed
-        
-        Random r = seed != 0 ? new Random(seed) : new Random()
-        List<String> traits = ["Ceremonial", "Military", "Industrial", "Agricultural", "Research", "Commercial"]
-        this.functionalTrait = traits[r.nextInt(traits.size())]
     }
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        
-        // Ensure we have a local mutated vibe for this country based on the planet
-        if (this.localVibe == null) {
-            VibeCapsule parentVibe = getVibe()
-            if (parentVibe != null) {
-                this.localVibe = parentVibe.mutate(functionalTrait, scrambler.nextDouble() * 0.2 - 0.1)
-            }
-        }
-        
-        int numCities = scrambler.nextInt(9) + 2
-        for (int i = 0; i < numCities; i++) {
-            long childSeed = scrambler.nextLong()
-            addLocation(new City(NameGenerator.generateCityName(childSeed), childSeed))
-        }
+        ProceduralFactory.populateCountry(this)
     }
 
     @Override

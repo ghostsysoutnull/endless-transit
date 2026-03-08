@@ -6,6 +6,8 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ThemeManager
+import com.endlesstransit.ui.HUDLabels
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -19,6 +21,22 @@ class Floor extends Container {
     Corridor getCorridor() {
         ensureChildrenPopulated()
         return corridor
+    }
+
+    @Override
+    String getSparklineLabel() {
+        if (number < 0) return "${Terminal.ICON_FLR}-${Math.abs(number)}"
+        return Terminal.ICON_FLR
+    }
+
+    @Override
+    String getIndexLabel() {
+        return isAbyssal() ? HUDLabels.STRATA : HUDLabels.Z_AXIS
+    }
+
+    @Override
+    String getTypeLabel() {
+        return number < 0 ? "LAYER" : "FLOOR"
     }
 
     @Override
@@ -102,7 +120,6 @@ class Floor extends Container {
 
     @Override
     void populateChildren() {
-        this.corridor = new Corridor(apartmentsPerFloor, this.culture, this.timeline, seed != 0 ? seed + 1 : 0)
-        addLocation(this.corridor)
+        ProceduralFactory.populateFloor(this)
     }
 }

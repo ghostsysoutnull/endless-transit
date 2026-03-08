@@ -6,6 +6,8 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -20,6 +22,21 @@ class City extends Container {
         return streets
     }
 
+    @Override
+    String getIndexLabel() {
+        return "DISTRICT"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return isRebelDistrict ? "STABILITY: [VOLATILE]" : "STABILITY: [STABLE]"
+    }
+
+    @Override
+    String getLatticeMeta() {
+        return isRebelDistrict ? Terminal.colorize(" [UNAUTHORIZED_ZONE]", Terminal.RED) : ""
+    }
+
     City(String name, long seed = 0) {
         this.name = name
         this.seed = seed
@@ -27,27 +44,7 @@ class City extends Container {
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        
-        if (this.localVibe == null) {
-            VibeCapsule parentVibe = getVibe()
-            if (parentVibe != null) {
-                // 10% chance to be a "rebel" district and flip resonances
-                if (scrambler.nextDouble() < 0.1) {
-                    this.isRebelDistrict = true
-                    this.localVibe = new VibeCapsule(parentVibe.timeline, parentVibe.secondaryCulture, parentVibe.primaryCulture)
-                    this.localVibe.latticeMutation = parentVibe.latticeMutation
-                    this.localVibe.stabilityFactor = parentVibe.stabilityFactor
-                    this.localVibe.atmosphericColor = parentVibe.atmosphericColor
-                }
-            }
-        }
-
-        int numStreets = scrambler.nextInt(13) + 3
-        for (int i = 0; i < numStreets; i++) {
-            long childSeed = scrambler.nextLong()
-            addLocation(new Street(NameGenerator.generateStreetName(childSeed), childSeed))
-        }
+        ProceduralFactory.populateCity(this)
     }
 
     @Override

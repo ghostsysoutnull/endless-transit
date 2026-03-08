@@ -6,12 +6,28 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 
 @CompileStatic
 class CosmicFilament extends Container {
     String name
     String conduitID
+
+    @Override
+    String getIndexLabel() {
+        return "CONDUIT"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return "SYNC: [NODE_RELIABILITY_HIGH]"
+    }
+
+    @Override
+    String getMapType() {
+        return "filament"
+    }
 
     CosmicFilament(String name, long seed = 0) {
         this.name = name
@@ -22,18 +38,7 @@ class CosmicFilament extends Container {
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        // Contains 4 to 8 nodes (either Sectors or Null Zones)
-        int numNodes = scrambler.nextInt(5) + 4
-        for (int i = 0; i < numNodes; i++) {
-            long childSeed = scrambler.nextLong()
-            if (scrambler.nextInt(10) < 3) { // 30% chance of a Null Sector
-                String nullName = "Null Reach ${Integer.toHexString(scrambler.nextInt(0xFFF)).toUpperCase()}"
-                addLocation(new NullSector(nullName, childSeed))
-            } else {
-                addLocation(new GalacticSector(NameGenerator.generateSectorName(childSeed), childSeed))
-            }
-        }
+        ProceduralFactory.populateFilament(this)
     }
 
     @Override

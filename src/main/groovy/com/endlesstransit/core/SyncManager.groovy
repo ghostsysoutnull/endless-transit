@@ -48,9 +48,9 @@ class SyncManager {
     }
 
     /**
-     * Loads the game state from a JSON file and reconstitutes the world.
+     * Loads the game state from a JSON file and reconstitutes the world into a GameSession.
      */
-    static Map<String, Object> restore() {
+    static GameSession restore() {
         File file = new File(SAVE_FILE)
         if (!file.exists()) {
             Logger.info("RESTORE_FAILED: No trace substrate found at $SAVE_FILE")
@@ -59,8 +59,55 @@ class SyncManager {
 
         try {
             Map snapshot = (Map) new JsonSlurper().parse(file)
-            Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)}")
-            return (Map<String, Object>) snapshot
+            long seed = (long) snapshot["masterSeed"]
+            Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)} (Seed: $seed)")
+            
+            Universe universe = new Universe(seed)
+            
+            // 1. Reconstitute Player
+            Player player = new Player()
+            Map playerState = (Map) snapshot["player"]
+            player.coherence = (int) playerState["coherence"]
+            player.stepCount = (int) playerState["stepCount"]
+            player.footprints.addAll((List<String>) playerState["footprints"])
+            player.visitedPaths.addAll((List<String>) playerState["visitedPaths"])
+            
+            List inventory = (List) playerState["inventory"]
+            inventory.each { Object itemObj ->
+                Map item = (Map) itemObj
+                player.inventory.add(new InventoryItem(
+                    (String) item["name"], 
+                    (int) item["frequency"], 
+                    (int) item["sessionMergeCount"], 
+                    (boolean) item["isKeystone"]
+                ))
+            }
+
+            // 2. Apply World Mutations
+            Map mutations = (Map) snapshot["mutations"]
+            mutations.each { Object lipObj, Object stateObj ->
+                String lip = (String) lipObj
+                Map<String, Object> state = (Map<String, Object>) stateObj
+                Location loc = universe.resolveLIP(lip)
+                if (loc != null) {
+                    loc.applyMutationState(state)
+                }
+            }
+
+            // 3. Re-mark footprints and visited status
+            player.footprints.each { String lip ->
+                Location loc = universe.resolveLIP(lip)
+                if (loc != null) {
+                    loc.markVisited()
+                }
+            }
+
+            // 4. Resolve Current Location
+            String currentLIP = (String) playerState["currentLIP"]
+            Location current = universe.resolveLIP(currentLIP)
+            player.currentLocation = current
+
+            return new GameSession(seed, player, current)
         } catch (Exception e) {
             Logger.error("RESTORE_FAILED: Trace corruption detected.", e)
             return null

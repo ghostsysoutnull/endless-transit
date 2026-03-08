@@ -18,8 +18,8 @@ class NewGameTest extends GroovyTestCase {
                 assertNotNull("Current location should be set", game.currentLocation)
                 
                 // Simulate the first pass of the main loop before input
-                game.renderBridgeHUD()
-                game.renderAdaptiveBridge()
+                game.bridgeView.renderBridgeHUD(game.currentLocation, game.player)
+                game.bridgeView.renderAdaptiveBridge(game.currentLocation, game.player, game.masterSeed)
                 
                 // Verify no crash during option generation
                 Map<String, Closure> options = game.currentLocation.getOptions(game)

@@ -32,4 +32,12 @@ interface Location {
     Map<String, Object> getMutationState()
     void applyMutationState(Map<String, Object> state)
     List<String> getExtraContent(Player player)
+    
+    // Semantic HUD / Navigation methods
+    String getIndexLabel()
+    String getStatusSummary()
+    String getTypeLabel()
+    String getLatticeMeta()
+    String getMapType()
+    String getSparklineLabel()
 }

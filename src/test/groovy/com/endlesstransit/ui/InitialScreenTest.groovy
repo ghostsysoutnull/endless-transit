@@ -11,31 +11,31 @@ def player = game.player
 def universe = game.universe
 
 // 2. Setup a specific Street context
-Street street = (Street) universe.filaments[0].children[0].children[0].getPlanets()[0].getCountries()[0].getCities()[0].getStreets()[0]
+Street street = (Street) universe.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].getCountries()[0].getCities()[0].getStreets()[0]
 game.currentLocation = street
 street.ensureChildrenPopulated()
 
 // 3. Render the HUD
 println "\n[HUD_PREVIEW]"
-game.renderBridgeHUD()
+game.bridgeView.renderBridgeHUD(game.currentLocation, player)
 
 // 4. Render the Adaptive Bridge (Split Pane)
 println "\n[ADAPTIVE_BRIDGE_PREVIEW]"
-game.renderAdaptiveBridge()
+game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterSeed)
 
 // 5. Render the Compass
 println "\n[COMPASS_PREVIEW]"
 def options = street.getOptions(game)
-game.renderCompass(options)
+game.bridgeView.renderCompass(game.currentLocation, options)
 
 // 6. Render Building Diagnostics (Stress Test Alignment)
 println "\n[BUILDING_DIAGNOSTICS_PREVIEW]"
-Building bld = street.buildings[0]
+Building bld = street.getBuildings()[0]
 bld.markVisited()
 bld.getFloor(0).markVisited()
 bld.getFloor(1).markVisited()
 game.enterLocation(bld.getFloor(1)) // Correctly updates player and game state
-game.renderAdaptiveBridge()
+game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterSeed)
 
 println "\n--- PREVIEW COMPLETE ---"
 println "Check the alignment of the ║ borders and the [╬] pivot."

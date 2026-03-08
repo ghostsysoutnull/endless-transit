@@ -5,7 +5,8 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.procgen.NameGenerator
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -19,6 +20,16 @@ class SolarSystem extends Container {
         return planets
     }
 
+    @Override
+    String getIndexLabel() {
+        return "RADII"
+    }
+
+    @Override
+    String getStatusSummary() {
+        return "SYNC: [RESONANT_NODES_STABLE]"
+    }
+
     SolarSystem(String name, long seed = 0) {
         this.name = name
         this.seed = seed
@@ -26,12 +37,7 @@ class SolarSystem extends Container {
 
     @Override
     void populateChildren() {
-        Random scrambler = seed != 0 ? new Random(seed) : new Random()
-        int numPlanets = scrambler.nextInt(9) + 2
-        for (int i = 0; i < numPlanets; i++) {
-            long childSeed = scrambler.nextLong()
-            addLocation(new Planet(NameGenerator.generatePlanetName(childSeed), childSeed))
-        }
+        ProceduralFactory.populateSolarSystem(this)
     }
 
     @Override
