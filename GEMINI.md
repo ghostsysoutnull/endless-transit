@@ -13,6 +13,7 @@
 
 ### 🚀 Active Architecture & Roadmap
 - **Active Task:** @tasks/active/DIAGNOSTIC_SUITE_IMPLEMENTATION.md
+- **Accelerated Playbook:** @tasks/active/ACCELERATED_PLAYBOOK.md
 - **Design Blueprint:** @docs/design/DIAGNOSTIC_SUITE_DESIGN.md
 - **Master Plan:** @docs/design/DIAGNOSTIC_SUITE_MASTER_PLAN.md
 
