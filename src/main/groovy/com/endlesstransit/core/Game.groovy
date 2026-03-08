@@ -200,6 +200,9 @@ class Game {
                     player.adjustCoherence(-1.0)
                     bridgeView.renderLatticeMap(currentLocation, player)
                     println Terminal.colorize("\n>>> DEEP_SCAN_PING: Neural lattice mapping refreshed.", Terminal.L_CYAN)
+                    
+                    waitForEnter()
+                    
                     choice = null
                     break
                 }
@@ -207,6 +210,9 @@ class Game {
                 if (choice == "lattice") {
                     lastChoice = "lattice"
                     bridgeView.renderLatticeTrace(currentLocation)
+                    
+                    waitForEnter()
+                    
                     choice = null
                     break
                 }
@@ -413,6 +419,15 @@ class Game {
         }
     }
 
+    void waitForEnter() {
+        print Terminal.dim("Press ENTER to return...")
+        if (System.console() != null) {
+            System.console().readLine()
+        } else if (scanner.hasNextLine()) {
+            scanner.nextLine()
+        }
+    }
+
     void helpMenu() {
         println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
         println ""
@@ -425,8 +440,7 @@ class Game {
         println ""
         println "Navigation is performed via numeric keys (1, 2...) or single characters (u, d, f, b, l)."
         println ""
-        print Terminal.dim("Press ENTER to return...")
-        scanner.nextLine()
+        waitForEnter()
         instantRender = true
     }
 
