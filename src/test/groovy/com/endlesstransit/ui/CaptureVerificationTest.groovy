@@ -27,7 +27,7 @@ class CaptureVerificationTest {
         
         // 4. Capture
         Terminal.println "Triggering capture..."
-        CaptureService.capture(bridgeView, new PlainFormatter())
+        CaptureService.capture(bridgeView, [], new PlainFormatter())
         
         // 5. Wait for async executor
         Thread.sleep(1000)
