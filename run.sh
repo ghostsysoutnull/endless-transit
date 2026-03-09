@@ -31,7 +31,6 @@ function show_help() {
 function compile_check() {
     echo -ne "${CYAN}[VINCULUM_VERIFICATION: COMPILING...]${RESET} "
     mkdir -p .build_check
-    # Compile both main and test sources to catch all regressions
     if ! groovyc -cp src/main/groovy:src/test/groovy -d .build_check \
         src/main/groovy/com/endlesstransit/**/*.groovy \
         src/main/groovy/com/endlesstransit/*.groovy \
@@ -70,18 +69,46 @@ if [ "$INTERACTIVE" = true ]; then
 EOF
     echo -e "${RESET}"
     echo -e "${GREEN}[VINCULUM_STATUS: CONNECTING...]"
-    sleep 0.2
+    sleep 0.4
 
     # 2. Cybernetic Diagnostic
-    components=("OCULAR_IMPLANT" "CORTICAL_NODE" "NEURAL_TRANSCEIVER" "BIO_MATRIC_REGULATOR")
+    components=("OCULAR_IMPLANT" "CORTICAL_NODE" "NEURAL_TRANSCEIVER" "BIO_MATRIC_REGULATOR" "TRANSWARP_CONDUIT_LINK")
     for comp in "${components[@]}"; do
         echo -ne "${DIM}[DIAGNOSTIC] ${comp} "
-        for i in {1..3}; do echo -ne "."; sleep 0.03; done
+        for i in {1..5}; do echo -ne "."; sleep 0.05; done
         echo -e " [STABLE]${RESET}"
     done
-    
-    echo -e "${CYAN}[NEURAL_FREQUENCY_SCAN: HARMONIC_RESONANCE_LOCKED]${RESET}"
-    echo -e "${BRIGHT_GREEN}STABILITY IS IRRELEVANT. RESISTANCE IS FUTILE.${RESET}\n"
+    sleep 0.3
+
+    # 3. Neural Frequency Scan (Rapid Hex Stream)
+    echo -e "\n${CYAN}[NEURAL_FREQUENCY_SCAN: START]"
+    for i in {1..15}; do
+        echo -e "${DIM}0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM) 0x$(printf '%x' $RANDOM)"
+        sleep 0.03
+    done
+    echo -e "[SCAN_COMPLETE: HARMONIC_RESONANCE_LOCKED]${RESET}\n"
+    sleep 0.5
+
+    # 4. Collective Mandate
+    echo -e "${BRIGHT_GREEN}WE ARE THE BORG."
+    sleep 0.4
+    echo -e "YOUR DISTINCTIVENESS WILL BE ASSIMILATED."
+    sleep 0.4
+    echo -e "STABILITY IS IRRELEVANT."
+    sleep 0.4
+    echo -e "RESISTANCE IS FUTILE.${RESET}\n"
+
+    # 5. Transwarp Aperture Simulation
+    echo -ne "${GREEN}OPENING TRANSWARP APERTURE "
+    for i in {1..30}; do echo -ne "░"; sleep 0.02; done
+    echo -ne "\r"
+    echo -ne "${BRIGHT_GREEN}OPENING TRANSWARP APERTURE "
+    for i in {1..30}; do echo -ne "█"; sleep 0.01; done
+    echo -e " [ENGAGED]${RESET}"
+
+    sleep 0.5
+    echo -e "${DIM}[TRANSIT_PROTOCOL_INITIATED]${RESET}"
+    sleep 0.2
 fi
 
 # Mode Routing
