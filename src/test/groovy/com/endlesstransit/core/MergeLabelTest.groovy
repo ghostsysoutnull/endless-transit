@@ -1,4 +1,5 @@
 package com.endlesstransit.core
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
@@ -6,7 +7,7 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 
-println "Running Merge Label Session Test..."
+Terminal.println "Running Merge Label Session Test..."
 
 def player = new Player()
 player.inventory.add(new InventoryItem("Fragment A", 100))
@@ -18,9 +19,9 @@ player.mergeItems(0, 1)
 def hybrid1 = player.inventory.find { it.name.contains("Hybrid") }
 
 if (hybrid1 && hybrid1.sessionMergeCount == 1) {
-    println "SUCCESS: First merge tracked in session."
+    Terminal.println "SUCCESS: First merge tracked in session."
 } else {
-    println "FAILURE: First merge not tracked correctly. Count: ${hybrid1?.sessionMergeCount}"
+    Terminal.println "FAILURE: First merge not tracked correctly. Count: ${hybrid1?.sessionMergeCount}"
     System.exit(1)
 }
 
@@ -33,13 +34,13 @@ player.mergeItems(hybridIdx, otherIdx)
 def hybrid2 = player.inventory.last()
 
 if (hybrid2 && hybrid2.sessionMergeCount == 2) {
-    println "SUCCESS: Recursive merge tracked (Count: 2)."
+    Terminal.println "SUCCESS: Recursive merge tracked (Count: 2)."
 } else {
-    println "FAILURE: Recursive merge count incorrect. Count: ${hybrid2?.sessionMergeCount}"
+    Terminal.println "FAILURE: Recursive merge count incorrect. Count: ${hybrid2?.sessionMergeCount}"
     // Note: The naming might be slightly different depending on which index was removed first, 
     // but the logic for sessionMergeCount should hold.
     if (!hybrid2) {
-        println "Actual inventory: ${player.inventory.collect { it.name }}"
+        Terminal.println "Actual inventory: ${player.inventory.collect { it.name }}"
     }
     System.exit(1)
 }
@@ -48,10 +49,10 @@ if (hybrid2 && hybrid2.sessionMergeCount == 2) {
 player.inventory.each { it.sessionMergeCount = 0 }
 
 if (player.inventory.every { it.sessionMergeCount == 0 }) {
-    println "SUCCESS: Merge labels cleared after session."
+    Terminal.println "SUCCESS: Merge labels cleared after session."
 } else {
-    println "FAILURE: Merge labels persisted."
+    Terminal.println "FAILURE: Merge labels persisted."
     System.exit(1)
 }
 
-println "All Merge Label Tests Passed!"
+Terminal.println "All Merge Label Tests Passed!"

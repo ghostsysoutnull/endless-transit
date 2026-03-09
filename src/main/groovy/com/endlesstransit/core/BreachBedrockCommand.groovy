@@ -14,10 +14,10 @@ class BreachBedrockCommand implements LatticeCommand {
         if (bldg != null) {
             bldg.isBreached = true
             game.enterLocation(bldg.getFloor(-1))
-            println Terminal.colorize(">>> BREACHED. Descent initiated.", Terminal.RED)
+            Terminal.println Terminal.colorize(">>> BREACHED. Descent initiated.", Terminal.RED)
             return true // Close menu
         } else {
-            println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
+            Terminal.println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
         }
         return false
     }

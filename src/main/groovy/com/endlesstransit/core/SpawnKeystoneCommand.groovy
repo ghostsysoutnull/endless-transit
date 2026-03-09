@@ -13,9 +13,9 @@ class SpawnKeystoneCommand implements LatticeCommand {
         Building bldg = (Building) game.currentLocation.findAncestor(Building.class)
         if (bldg != null) {
             game.player.inventory << new com.endlesstransit.core.InventoryItem("${bldg.name} Keystone", 0, 0, true)
-            println Terminal.colorize(">>> KEYSTONE generated in Trace Buffer.", Terminal.GREEN)
+            Terminal.println Terminal.colorize(">>> KEYSTONE generated in Trace Buffer.", Terminal.GREEN)
         } else {
-            println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
+            Terminal.println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
         }
         return false
     }

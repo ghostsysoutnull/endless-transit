@@ -1,4 +1,5 @@
 package com.endlesstransit.procgen
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
@@ -6,7 +7,7 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 
-println "Running System Name Prefix Test..."
+Terminal.println "Running System Name Prefix Test..."
 
 def universe = new Universe()
 boolean foundSystem = false
@@ -18,20 +19,20 @@ universe.filaments.each { filament ->
             sector.children.each { system ->
                 if (system instanceof SolarSystem) {
                     foundSystem = true
-                    println "Found system: '${system.name}'"
+                    Terminal.println "Found system: '${system.name}'"
                     
                     if (system.name.startsWith("System-")) {
-                        println "FAILURE: System name '${system.name}' still has 'System-' prefix!"
+                        Terminal.println "FAILURE: System name '${system.name}' still has 'System-' prefix!"
                         System.exit(1)
                     }
                     
                     if (sector instanceof NullSector) {
                         if (system.name.startsWith("Lost-System-")) {
-                            println "FAILURE: System name '${system.name}' still has 'Lost-System-' prefix!"
+                            Terminal.println "FAILURE: System name '${system.name}' still has 'Lost-System-' prefix!"
                             System.exit(1)
                         }
                         if (!system.name.startsWith("Lost ")) {
-                            println "WARNING: System in NullSector doesn't start with 'Lost ' (Current: ${system.name})"
+                            Terminal.println "WARNING: System in NullSector doesn't start with 'Lost ' (Current: ${system.name})"
                         }
                     }
                 }
@@ -41,8 +42,8 @@ universe.filaments.each { filament ->
 }
 
 if (!foundSystem) {
-    println "FAILURE: No SolarSystems found to test!"
+    Terminal.println "FAILURE: No SolarSystems found to test!"
     System.exit(1)
 }
 
-println "SUCCESS: System names look clean."
+Terminal.println "SUCCESS: System names look clean."

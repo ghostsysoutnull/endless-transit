@@ -9,13 +9,13 @@ class SetIntegrityCommand implements LatticeCommand {
     String getDescription() { "Set neural link coherence level." }
 
     boolean execute(Game game) {
-        print "Set Integrity (0-100): "
+        Terminal.print "Set Integrity (0-100): "
         try {
             int val = game.inputHandler.readLine().toInteger()
             game.player.coherence = Math.max(0, Math.min(100, val))
-            println Terminal.colorize(">>> Integrity set to ${game.player.coherence}%.", Terminal.YELLOW)
+            Terminal.println Terminal.colorize(">>> Integrity set to ${game.player.coherence}%.", Terminal.YELLOW)
         } catch (Exception e) {
-            println "Invalid value."
+            Terminal.println "Invalid value."
         }
         return false
     }

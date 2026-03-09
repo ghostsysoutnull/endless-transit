@@ -5,12 +5,12 @@ class ThemeManager {
     static final String TIMELINES_DIR = "src/main/resources/themes/timelines"
     static final String ATMOSPHERE_DIR = "src/main/resources/themes/atmosphere"
 
-    static Map<String, List<String>> cultures = [:]
-    static Map<String, List<String>> timelines = [:]
+    static Map<String, List<String>> cultures = new TreeMap<String, List<String>>()
+    static Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
     static Map<String, Map<String, List<String>>> atmosphere = [
-        "walls": [:],
-        "lighting": [:],
-        "structures": [:]
+        "walls": new TreeMap<String, List<String>>(),
+        "lighting": new TreeMap<String, List<String>>(),
+        "structures": new TreeMap<String, List<String>>()
     ]
 
     static {
@@ -42,15 +42,17 @@ class ThemeManager {
         }
     }
 
-    static String getRandomCulture(long seed = 0) {
+    static String getRandomCulture(long seed) {
         def keys = new ArrayList<>(cultures.keySet())
-        Random r = seed != 0 ? new Random(seed) : new Random()
+        if (keys.isEmpty()) return "monolith"
+        Random r = new Random(seed)
         return keys[r.nextInt(keys.size())]
     }
 
-    static String getRandomTimeline(long seed = 0) {
+    static String getRandomTimeline(long seed) {
         def keys = new ArrayList<>(timelines.keySet())
-        Random r = seed != 0 ? new Random(seed) : new Random()
+        if (keys.isEmpty()) return "digital"
+        Random r = new Random(seed)
         return keys[r.nextInt(keys.size())]
     }
 
@@ -65,8 +67,8 @@ class ThemeManager {
     /**
      * Synthesizes atmosphere components based on vibe.
      */
-    static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation = "Standard", boolean isAnomaly = false, long seed = 0) {
-        Random r = seed != 0 ? new Random(seed) : new Random()
+    static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation, boolean isAnomaly, long seed) {
+        Random r = new Random(seed)
         
         // If it is abyssal, force it
         if (culture == "abyssal") {
@@ -84,8 +86,8 @@ class ThemeManager {
 
         // Glitch Logic: Randomize themes if anomaly is detected
         if (isAnomaly || r.nextDouble() < 0.05) {
-            if (r.nextBoolean()) wallTheme = getRandomCulture(seed != 0 ? seed + 1 : 0)
-            if (r.nextBoolean()) lightTheme = getRandomTimeline(seed != 0 ? seed + 2 : 0)
+            if (r.nextBoolean()) wallTheme = getRandomCulture(seed + 1)
+            if (r.nextBoolean()) lightTheme = getRandomTimeline(seed + 2)
             if (r.nextBoolean()) structTheme = r.nextBoolean() ? "Abyssal" : "Singularity"
         }
 

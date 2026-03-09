@@ -25,15 +25,42 @@ class Game {
     
     // Domain Components
     BridgeView bridgeView = new BridgeView()
-    InputHandler inputHandler = new InputHandler()
+    InputHandler inputHandler
     ActionMapper mapper = new ActionMapper()
     NavigationEngine navEngine = new NavigationEngine()
     QuantumBufferController inventoryController = new QuantumBufferController()
 
-    Game(long seed = System.currentTimeMillis()) {
+    Game(long seed = System.currentTimeMillis(), InputSource inputSource = new RealTerminalSource()) {
         this.masterLocus = new LocusSeed(seed)
         player = new Player()
+        this.inputHandler = new InputHandler(inputSource)
         initializeWorld()
+    }
+
+    GameMemento createMemento() {
+        return new GameMemento(
+            masterSeed: masterLocus.value,
+            currentLIP: currentLocation.getLIP(),
+            playerCoherence: player.coherence,
+            inventory: new ArrayList<InventoryItem>(player.inventory),
+            inputHistory: new ArrayList<String>(inputHandler.getHistory())
+        )
+    }
+
+    void restore(GameMemento memento) {
+        this.masterLocus = new LocusSeed(memento.masterSeed)
+        this.player = new Player()
+        this.player.coherence = memento.playerCoherence
+        this.player.inventory.addAll(memento.inventory)
+        this.inputHandler = new InputHandler(this.inputHandler.source)
+        this.inputHandler.restoreHistory(memento.inputHistory)
+        
+        initializeWorld()
+        // Now navigate to the specific LIP
+        Location target = WorldGenesis.resolveLIP(universe, memento.currentLIP)
+        if (target != null) {
+            enterLocation(target)
+        }
     }
 
     void initializeWorld() {
@@ -43,13 +70,13 @@ class Game {
     }
 
     void start() {
-        println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
+        Terminal.println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")
         JournalManager.startSession(player)
         
         if (new File(SyncManager.SAVE_FILE).exists()) {
-            println Terminal.dim("  [DETECTED_NEURAL_TRACE_SUBSTRATE]")
-            print Terminal.colorize("  Restore previous session? [y/N]: ", Terminal.YELLOW)
+            Terminal.println Terminal.dim("  [DETECTED_NEURAL_TRACE_SUBSTRATE]")
+            Terminal.print Terminal.colorize("  Restore previous session? [y/N]: ", Terminal.YELLOW)
             if (inputHandler.readLine().toLowerCase() == "y") restoreSession()
         }
         
@@ -71,7 +98,7 @@ class Game {
             }
         } catch (Throwable t) {
             Logger.reportCriticalFailure(currentLocation, player, navEngine.lastChoice, masterLocus.value, t)
-            println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
+            Terminal.println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
             System.exit(1)
         }
     }
@@ -99,7 +126,9 @@ class Game {
 
             switch (choice) {
                 case "i": inventoryController.open(this); return true
-                case "sync": SyncManager.sync(this); println Terminal.colorize("\n>>> SYNC_STABILIZED.", Terminal.GREEN); return true
+                case "p": CaptureCommand.execute(bridgeView, inputHandler.getHistory()); return true
+                case "P": CaptureCommand.execute(bridgeView, inputHandler.getHistory(), true); return true
+                case "sync": SyncManager.sync(this); Terminal.println Terminal.colorize("\n>>> SYNC_STABILIZED.", Terminal.GREEN); return true
                 case "map": bridgeView.renderLatticeMap(currentLocation, player); inputHandler.waitForEnter(); return true
                 case "lattice": bridgeView.renderLatticeTrace(currentLocation); inputHandler.waitForEnter(); return true
                 case "help": helpMenu(); return true
@@ -117,15 +146,15 @@ class Game {
             navEngine.recordChoice(choice)
             action.call()
         } else {
-            println "Invalid choice."
+            Terminal.println "Invalid choice."
         }
         return true
     }
 
     private boolean confirmQuit() {
-        print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
+        Terminal.print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
         if (inputHandler.readLine().toLowerCase() == "y") {
-            print Terminal.colorize("Synchronize neural trace before termination? [Y/n]: ", Terminal.CYAN)
+            Terminal.print Terminal.colorize("Synchronize neural trace before termination? [Y/n]: ", Terminal.CYAN)
             if (inputHandler.readLine().toLowerCase() != "n") SyncManager.sync(this)
             JournalManager.saveSession(player)
             SessionRecap.show(currentLocation, player, bridgeView)
@@ -136,7 +165,7 @@ class Game {
 
     private void reboot() {
         Terminal.clearScreen()
-        println Terminal.colorize("!!! CRITICAL_COHERENCE_FAILURE !!! REBOOTING...", Terminal.RED)
+        Terminal.println Terminal.colorize("!!! CRITICAL_COHERENCE_FAILURE !!! REBOOTING...", Terminal.RED)
         Thread.sleep(2000)
         player.coherence = 100
         initializeWorld()
@@ -153,8 +182,8 @@ class Game {
     }
 
     void helpMenu() {
-        println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
-        println "\nmap/m: Spatial | lattice: Tree | sync: Save | i: Buffer | glitch: Debug | q: Terminate"
+        Terminal.println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
+        Terminal.println "\nmap/m: Spatial | lattice: Tree | sync: Save | i: Buffer | glitch: Debug | q: Terminate"
         inputHandler.waitForEnter()
         instantRender = true
     }
@@ -162,15 +191,15 @@ class Game {
     void glitchMenu() {
         List<LatticeCommand> cmds = [new PrimeBuildingCommand(), new SpawnKeystoneCommand(), new BreachBedrockCommand(), new SetIntegrityCommand()]
         while (true) {
-            println "\n" + Terminal.colorize(" [LATTICE_GLITCH_INTERFACE] ", Terminal.MAGENTA)
-            cmds.eachWithIndex { cmd, i -> println "${i + 1}. ${cmd.getLabel().padRight(10)}: ${cmd.getDescription()}" }
-            print "GLITCH (c to cancel) >> "
+            Terminal.println "\n" + Terminal.colorize(" [LATTICE_GLITCH_INTERFACE] ", Terminal.MAGENTA)
+            cmds.eachWithIndex { cmd, i -> Terminal.println "${i + 1}. ${cmd.getLabel().padRight(10)}: ${cmd.getDescription()}" }
+            Terminal.print "GLITCH (c to cancel) >> "
             String c = inputHandler.readLine().toLowerCase()
             if (c == "c") break
             try {
                 int idx = c.toInteger() - 1
                 if (idx >= 0 && idx < cmds.size() && cmds[idx].execute(this)) break
-            } catch (Exception e) { println "Invalid." }
+            } catch (Exception e) { Terminal.println "Invalid." }
         }
         instantRender = true
     }
@@ -186,6 +215,6 @@ class Game {
     
     void exitLocation() {
         if (currentLocation.parent) enterLocation(currentLocation.parent)
-        else println "End of reality reached."
+        else Terminal.println "End of reality reached."
     }
 }

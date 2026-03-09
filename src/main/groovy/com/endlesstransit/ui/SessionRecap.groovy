@@ -1,4 +1,5 @@
 package com.endlesstransit.ui
+import com.endlesstransit.ui.Terminal
 
 import com.endlesstransit.core.Player
 import com.endlesstransit.model.Location
@@ -17,7 +18,7 @@ class SessionRecap {
 
         if (isAbyssal) {
             bridgeView.printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", currentLocation, 0.1)
-            println "\n" + Terminal.colorize(" [VOID_RESONANCE_TERMINATION] ", Terminal.RED)
+            Terminal.println "\n" + Terminal.colorize(" [VOID_RESONANCE_TERMINATION] ", Terminal.RED)
             String[] lines = [
                 "Your echoes are sinking into the strata.",
                 "The web is folding back upon itself.",
@@ -31,25 +32,25 @@ class SessionRecap {
             }
         } else if (footprintsCount >= 20) {
             bridgeView.printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", currentLocation, 0.0)
-            println "\n" + Terminal.colorize(" [SESSION_RECAP_INITIALIZED] ", Terminal.L_CYAN)
-            println Terminal.dim("-------------------------------------------")
+            Terminal.println "\n" + Terminal.colorize(" [SESSION_RECAP_INITIALIZED] ", Terminal.L_CYAN)
+            Terminal.println Terminal.dim("-------------------------------------------")
             Thread.sleep(300)
-            printf("%-18s : %s\n", "FINAL_LOCUS", currentLocation.getLIP())
+            Terminal.printf("%-18s : %s\n", "FINAL_LOCUS", currentLocation.getLIP())
             Thread.sleep(200)
-            printf("%-18s : %d steps\n", "PULSE_TRAVERSAL", player.stepCount)
+            Terminal.printf("%-18s : %d steps\n", "PULSE_TRAVERSAL", player.stepCount)
             Thread.sleep(200)
-            printf("%-18s : %d footprints\n", "CELLS_MAPPED", footprintsCount)
+            Terminal.printf("%-18s : %d footprints\n", "CELLS_MAPPED", footprintsCount)
             Thread.sleep(200)
-            printf("%-18s : %d spectral fragments\n", "BUFFER_DENSITY", player.inventory.size())
+            Terminal.printf("%-18s : %d spectral fragments\n", "BUFFER_DENSITY", player.inventory.size())
             Thread.sleep(200)
-            printf("%-18s : %d stabilized\n", "RESONANT_TRACES", player.resonantTracesCount)
+            Terminal.printf("%-18s : %d stabilized\n", "RESONANT_TRACES", player.resonantTracesCount)
             Thread.sleep(300)
-            println Terminal.dim("-------------------------------------------")
-            println "Expedition successful. Trace synchronized to substrate."
+            Terminal.println Terminal.dim("-------------------------------------------")
+            Terminal.println "Expedition successful. Trace synchronized to substrate."
             Thread.sleep(1000)
         } else {
             bridgeView.printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", currentLocation, 0.0)
-            println "\n" + Terminal.colorize(" [LINK_TERMINATION_PROTOCOL] ", Terminal.WHITE)
+            Terminal.println "\n" + Terminal.colorize(" [LINK_TERMINATION_PROTOCOL] ", Terminal.WHITE)
             String[] processes = [
                 "UNMOUNTING_LATTICE_TRACE",
                 "DEALLOCATING_TRACE_BUFFER",
@@ -57,13 +58,13 @@ class SessionRecap {
                 "STABILIZING_SUBSTRATE_WAVEFORM"
             ]
             processes.each { String proc ->
-                print Terminal.dim("[STATUS] ") + proc + "..."
+                Terminal.print Terminal.dim("[STATUS] ") + proc + "..."
                 Thread.sleep(new Random().nextInt(400) + 100)
-                println Terminal.colorize(" [DONE]", Terminal.GREEN)
+                Terminal.println Terminal.colorize(" [DONE]", Terminal.GREEN)
             }
-            println "\nNeural link severed. Waveform stabilized."
+            Terminal.println "\nNeural link severed. Waveform stabilized."
             Thread.sleep(1000)
         }
-        println ""
+        Terminal.println ""
     }
 }

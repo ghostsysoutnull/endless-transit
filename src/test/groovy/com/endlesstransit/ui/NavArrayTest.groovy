@@ -1,4 +1,5 @@
 package com.endlesstransit.ui
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.core.Game
 import com.endlesstransit.model.*
 import groovy.test.GroovyTestCase
@@ -32,7 +33,7 @@ class NavArrayTest extends GroovyTestCase {
         // Simply ensure it doesn't crash during rendering
         try {
             game.renderCompass(options)
-            println "SUCCESS: Vector Array rendered without crash."
+            Terminal.println "SUCCESS: Vector Array rendered without crash."
         } catch (Exception e) {
             fail("Compass rendering failed: ${e.message}")
         }

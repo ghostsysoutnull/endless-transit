@@ -1,4 +1,5 @@
 package com.endlesstransit.model
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
@@ -7,7 +8,7 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.LocusSeed
 
-println "Running Mnemonic and Reversal Test..."
+Terminal.println "Running Mnemonic and Reversal Test..."
 
 def game = new Game()
 // Mocking initialization to start in a predictable state is hard due to randomization,
@@ -18,7 +19,7 @@ def apartment = new Apartment("Test Door", "rust", "ancient", new LocusSeed(1234
 def rooms = apartment.rooms
 
 if (rooms.size() < 2) {
-    println "FAILURE: Test requires at least 2 rooms, but got ${rooms.size()}"
+    Terminal.println "FAILURE: Test requires at least 2 rooms, but got ${rooms.size()}"
     System.exit(1)
 }
 
@@ -29,18 +30,18 @@ def room1 = rooms[0]
 def options1 = room1.getOptions(game)
 
 if (options1.keySet().any { it.contains("Go forward") } && options1.keySet().any { it.contains("Exit Apartment") }) {
-    println "SUCCESS: First room has 'f' and 'exit'."
+    Terminal.println "SUCCESS: First room has 'f' and 'exit'."
 } else {
-    println "FAILURE: First room options incorrect: ${options1.keySet()}"
+    Terminal.println "FAILURE: First room options incorrect: ${options1.keySet()}"
     System.exit(1)
 }
 
 def lastRoom = rooms.last()
 def lastOptions = lastRoom.getOptions(game)
 if (lastOptions.containsKey("b. Go back") && !lastOptions.containsKey("f. Go forward")) {
-    println "SUCCESS: Last room has 'b' but no 'f'."
+    Terminal.println "SUCCESS: Last room has 'b' but no 'f'."
 } else {
-    println "FAILURE: Last room options incorrect: ${lastOptions.keySet()}"
+    Terminal.println "FAILURE: Last room options incorrect: ${lastOptions.keySet()}"
     System.exit(1)
 }
 
@@ -50,7 +51,7 @@ building.maxFloors = 5
 def floor0 = building.getFloor(0)
 def floor0Ops = floor0.getOptions(game)
 if (floor0Ops.containsKey("u. Go Up") && !floor0Ops.containsKey("d. Go Down")) {
-    println "SUCCESS: Ground floor has 'u' but no 'd'."
+    Terminal.println "SUCCESS: Ground floor has 'u' but no 'd'."
 }
 
-println "All Mnemonic Tests Passed!"
+Terminal.println "All Mnemonic Tests Passed!"

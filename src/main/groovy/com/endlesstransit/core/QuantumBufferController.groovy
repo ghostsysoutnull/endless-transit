@@ -16,13 +16,13 @@ class QuantumBufferController {
         Location currentLocation = game.currentLocation
 
         while (true) {
-            println "\n" + Terminal.colorize(" [QUANTUM_TRACE_BUFFER_INTERACE] ", Terminal.L_CYAN)
+            Terminal.println "\n" + Terminal.colorize(" [QUANTUM_TRACE_BUFFER_INTERACE] ", Terminal.L_CYAN)
             player.listInventory()
-            println Terminal.dim("-------------------------------------------")
-            println "${Terminal.colorize("d [num]", Terminal.YELLOW)}: Drop item  |  ${Terminal.colorize("m [n1] [n2]", Terminal.YELLOW)}: Merge items"
-            println "${Terminal.colorize("b", Terminal.YELLOW)}: Back to reality"
+            Terminal.println Terminal.dim("-------------------------------------------")
+            Terminal.println "${Terminal.colorize("d [num]", Terminal.YELLOW)}: Drop item  |  ${Terminal.colorize("m [n1] [n2]", Terminal.YELLOW)}: Merge items"
+            Terminal.println "${Terminal.colorize("b", Terminal.YELLOW)}: Back to reality"
             
-            print "\nBUFFER_CMD >> "
+            Terminal.print "\nBUFFER_CMD >> "
             String input = inputHandler.readLine().toLowerCase()
             
             if (input == "b" || input == "") {
@@ -45,10 +45,10 @@ class QuantumBufferController {
                     // Synthesis restores coherence
                     player.adjustCoherence(15)
                 } else {
-                    println "Invalid buffer command."
+                    Terminal.println "Invalid buffer command."
                 }
             } catch (Exception e) {
-                println "Invalid input format."
+                Terminal.println "Invalid input format."
             }
         }
     }

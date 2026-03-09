@@ -1,4 +1,5 @@
 package com.endlesstransit.procgen
+import com.endlesstransit.ui.Terminal
 
 import groovy.transform.CompileStatic
 
@@ -19,7 +20,7 @@ class Gematria {
 
         // Master Number Resonance (11, 22, 33)
         if (sum == 11 || sum == 22 || sum == 33) {
-            println "!!! RESONANCE DETECTED in '$name' !!!"
+            Terminal.println "!!! RESONANCE DETECTED in '$name' !!!"
             sum *= 2
         }
 

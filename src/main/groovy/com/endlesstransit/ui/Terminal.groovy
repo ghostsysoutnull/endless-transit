@@ -58,6 +58,56 @@ class Terminal {
     static final String ICON_APT = "🚪"
     static final String ICON_ROM = "□"
 
+    // Time Abstraction
+    static interface ClockStrategy {
+        void sleep(long delay)
+    }
+
+    static class StandardClock implements ClockStrategy {
+        @Override void sleep(long delay) { Thread.sleep(delay) }
+    }
+
+    static class InstantClock implements ClockStrategy {
+        @Override void sleep(long delay) { /* No-op */ }
+    }
+
+    static ClockStrategy clock = new StandardClock()
+
+    // Output Abstraction
+    static RenderSink sink = new ConsoleSink()
+    static MemorySink virtualBuffer = null
+
+    /**
+     * Initializes the terminal output system.
+     * @param useVirtualBuffer If true, enables the MemorySink for screenshots and diagnostics.
+     * @param instantMode If true, uses InstantClock to skip UI delays.
+     */
+    static void initialize(boolean useVirtualBuffer = true, boolean instantMode = false) {
+        clock = instantMode ? new InstantClock() : new StandardClock()
+        if (useVirtualBuffer) {
+            virtualBuffer = new MemorySink()
+            sink = new TeeSink([new ConsoleSink(), virtualBuffer])
+        } else {
+            sink = new ConsoleSink()
+        }
+    }
+
+    static void print(String text) {
+        sink.print(text)
+    }
+
+    static void println(String text) {
+        sink.println(text)
+    }
+
+    static void println() {
+        sink.println("")
+    }
+
+    static void printf(String format, Object... args) {
+        sink.print(String.format(format, args))
+    }
+
     // Cursor Movement
     static void save() { print "\u001b[s" }
     static void restore() { print "\u001b[u" }
@@ -74,15 +124,15 @@ class Terminal {
     static void clearScreen() {
         print "\u001b[2J"
         home()
+        if (virtualBuffer != null) {
+            virtualBuffer.clear()
+        }
     }
-
-    static boolean skipSleep = false
 
     static void typewrite(String text, long delay = 10) {
         text.each { c ->
-            print c
-            System.out.flush()
-            if (!skipSleep) Thread.sleep(delay)
+            print c.toString()
+            clock.sleep(delay)
         }
         println ""
     }
@@ -174,6 +224,7 @@ class Terminal {
      */
     static String stripAnsi(String text) {
         if (text == null) return ""
+        // Handles standard SGR (colors) and CHA (horizontal position)
         return text.replaceAll(/\u001B\[[;?0-9]*[mGKH]/, "")
     }
 

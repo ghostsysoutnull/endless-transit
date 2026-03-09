@@ -1,4 +1,5 @@
 package com.endlesstransit.core
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
@@ -54,6 +55,6 @@ class JournalTest extends GroovyTestCase {
         // Cleanup
         f.delete()
         fLast.delete()
-        println "SUCCESS: Journal entry verified."
+        Terminal.println "SUCCESS: Journal entry verified."
     }
 }

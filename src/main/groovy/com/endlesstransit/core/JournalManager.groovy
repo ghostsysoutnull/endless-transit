@@ -143,7 +143,7 @@ class JournalManager {
         // Write to last-entry file (overwriting)
         new File(LAST_ENTRY_FILE).text = "LAST_SESSION_SNAPSHOT\n" + fullOutput
         
-        println Terminal.colorize(">>> Neural link severed. Session summary synchronized to $JOURNAL_FILE", Terminal.GREEN)
+        Terminal.println Terminal.colorize(">>> Neural link severed. Session summary synchronized to $JOURNAL_FILE", Terminal.GREEN)
     }
 
     /**

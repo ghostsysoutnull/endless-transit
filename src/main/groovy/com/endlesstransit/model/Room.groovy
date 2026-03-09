@@ -104,7 +104,7 @@ class Room implements Location {
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
             player.inventory.add(item)
             JournalManager.logCapture(item, this)
-            println Terminal.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", Terminal.YELLOW)
+            Terminal.println Terminal.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", Terminal.YELLOW)
         }
     }
 
@@ -223,46 +223,46 @@ class Room implements Location {
                     
                     if (isResonant) {
                         game.player.resonantTracesCount++
-                        println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
+                        Terminal.println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
                     }
-                    println Terminal.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", Terminal.CYAN)
+                    Terminal.println Terminal.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", Terminal.CYAN)
                     objects.remove(0)
                     game.instantRender = true
                     return
                 }
 
-                println "\n" + Terminal.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", Terminal.L_CYAN)
+                Terminal.println "\n" + Terminal.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", Terminal.L_CYAN)
                 if (!objects.isEmpty()) {
-                    println Terminal.dim("Local objects:")
+                    Terminal.println Terminal.dim("Local objects:")
                     objects.eachWithIndex { String obj, int i ->
-                        println "${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. Scan $obj"
+                        Terminal.println "${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. Scan $obj"
                     }
                 }
                 
                 if (!game.player.inventory.isEmpty()) {
-                    println Terminal.dim("\nBuffer fragments (to drop):")
+                    Terminal.println Terminal.dim("\nBuffer fragments (to drop):")
                     game.player.inventory.eachWithIndex { InventoryItem item, int i ->
-                        println "${Terminal.colorize("d" + (i + 1), Terminal.YELLOW)}. Drop ${item.name}"
+                        Terminal.println "${Terminal.colorize("d" + (i + 1), Terminal.YELLOW)}. Drop ${item.name}"
                     }
                 }
-                println "${Terminal.colorize("c", Terminal.YELLOW)}. Cancel"
+                Terminal.println "${Terminal.colorize("c", Terminal.YELLOW)}. Cancel"
                 
-                print "\nINTERACT >> "
+                Terminal.print "\nINTERACT >> "
                 String input = game.inputHandler.readLine().toLowerCase()
                 
                 if (input == "c" || input == "") {
-                    println "Operation aborted."
+                    Terminal.println "Operation aborted."
                 } else if (input.startsWith("d")) {
                     try {
                         int idx = input.substring(1).toInteger() - 1
                         if (idx >= 0 && idx < game.player.inventory.size()) {
                             InventoryItem item = game.player.inventory.remove(idx)
                             objects << item.name
-                            println Terminal.colorize(">>> Fragment ${item.name} dropped into local cell.", Terminal.YELLOW)
+                            Terminal.println Terminal.colorize(">>> Fragment ${item.name} dropped into local cell.", Terminal.YELLOW)
                             game.instantRender = true
                         }
                     } catch (Exception e) {
-                        println "Invalid drop command."
+                        Terminal.println "Invalid drop command."
                     }
                 } else {
                     try {
@@ -278,16 +278,16 @@ class Room implements Location {
                             
                             if (isResonant) {
                                 game.player.resonantTracesCount++
-                                println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
+                                Terminal.println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
                             }
-                            println Terminal.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", Terminal.CYAN)
+                            Terminal.println Terminal.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", Terminal.CYAN)
                             objects.remove(idx)
                             game.instantRender = true
                         } else {
-                            println "Invalid selection."
+                            Terminal.println "Invalid selection."
                         }
                     } catch (Exception e) {
-                        println "Invalid input."
+                        Terminal.println "Invalid input."
                     }
                 }
             }

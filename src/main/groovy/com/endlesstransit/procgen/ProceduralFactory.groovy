@@ -1,4 +1,5 @@
 package com.endlesstransit.procgen
+import com.endlesstransit.ui.Terminal
 
 import com.endlesstransit.model.*
 import com.endlesstransit.ui.ThemeManager

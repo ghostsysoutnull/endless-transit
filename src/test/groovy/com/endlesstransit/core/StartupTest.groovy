@@ -1,4 +1,5 @@
 package com.endlesstransit.core
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
@@ -27,7 +28,7 @@ class StartupTest extends GroovyTestCase {
             String lastActionName = game.mapper.getActionName(game.navEngine.lastChoice)
             assertEquals("Initial last choice name should be empty", "", lastActionName)
             
-            println "SUCCESS: Game initialization and first turn context verified."
+            Terminal.println "SUCCESS: Game initialization and first turn context verified."
         } catch (Throwable t) {
             fail("Game failed to initialize or prepare first turn: ${t.message}")
         }

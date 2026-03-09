@@ -1,4 +1,5 @@
 package com.endlesstransit.procgen
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.ProceduralFactory
@@ -11,7 +12,7 @@ class ProcgenVariabilityTest extends GroovyTestCase {
         // Generate a building and populate some floors
         def building = ProceduralFactory.createBuilding(null, "rust", "ancient", streetLocus.branch(0), 10, false, false)
         
-        println "Testing Building: ${building.name}"
+        Terminal.println "Testing Building: ${building.name}"
         
         Set<Integer> roomCounts = []
         Set<Integer> objectCounts = []
@@ -35,9 +36,9 @@ class ProcgenVariabilityTest extends GroovyTestCase {
             }
         }
         
-        println "Room counts found: $roomCounts"
-        println "Object counts per apartment found: $objectCounts"
-        println "Unique room names: ${roomNames.size()} / Total rooms: ${roomNames.size()}"
+        Terminal.println "Room counts found: $roomCounts"
+        Terminal.println "Object counts per apartment found: $objectCounts"
+        Terminal.println "Unique room names: ${roomNames.size()} / Total rooms: ${roomNames.size()}"
         
         assertTrue("Should have variable room counts, found only: $roomCounts", roomCounts.size() > 1)
         assertTrue("Should have variable object counts, found only: $objectCounts", objectCounts.size() > 1)
@@ -57,8 +58,8 @@ class ProcgenVariabilityTest extends GroovyTestCase {
             buildingNames << b.name
         }
         
-        println "Floor counts found: $floorCounts"
-        println "Unique building names: ${buildingNames.size()} / 20"
+        Terminal.println "Floor counts found: $floorCounts"
+        Terminal.println "Unique building names: ${buildingNames.size()} / 20"
         
         assertTrue("Should have variable floor counts, found only: $floorCounts", floorCounts.size() > 3)
         assertTrue("Should have mostly unique building names, found only: ${buildingNames.size()}", buildingNames.size() > 15)

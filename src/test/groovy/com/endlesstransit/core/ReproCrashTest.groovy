@@ -1,4 +1,5 @@
 package com.endlesstransit.core
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.ActionMapper
@@ -11,13 +12,13 @@ class ReproCrashTest extends GroovyTestCase {
         mapper.currentActionMap = [:]
         mapper.previousActionMap = [:]
         
-        println "Testing getActionName(null)..."
+        Terminal.println "Testing getActionName(null)..."
         try {
             def name = mapper.getActionName(null)
             assertEquals("", name)
-            println "SUCCESS: getActionName(null) returned empty string."
+            Terminal.println "SUCCESS: getActionName(null) returned empty string."
         } catch (Throwable t) {
-            println "FAILURE: getActionName(null) threw exception: ${t}"
+            Terminal.println "FAILURE: getActionName(null) threw exception: ${t}"
             t.printStackTrace()
             throw t
         }
@@ -27,13 +28,13 @@ class ReproCrashTest extends GroovyTestCase {
         def mapper = new ActionMapper()
         mapper.currentActionMap = ["01": "01. Open Door"]
         
-        println "Testing getActionName('unknown')..."
+        Terminal.println "Testing getActionName('unknown')..."
         try {
             def name = mapper.getActionName("unknown")
             assertEquals("unknown", name)
-            println "SUCCESS: getActionName('unknown') returned 'unknown'."
+            Terminal.println "SUCCESS: getActionName('unknown') returned 'unknown'."
         } catch (Throwable t) {
-            println "FAILURE: getActionName('unknown') threw exception: ${t}"
+            Terminal.println "FAILURE: getActionName('unknown') threw exception: ${t}"
             t.printStackTrace()
             throw t
         }

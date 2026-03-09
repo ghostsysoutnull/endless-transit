@@ -14,9 +14,9 @@ class PrimeBuildingCommand implements LatticeCommand {
         if (bldg != null) {
             for (int i = 0; i < bldg.maxFloors; i++) bldg.notifySampled(i)
             bldg.infusionCount = 7
-            println Terminal.colorize(">>> Building ${bldg.name} PRIMED.", Terminal.GREEN)
+            Terminal.println Terminal.colorize(">>> Building ${bldg.name} PRIMED.", Terminal.GREEN)
         } else {
-            println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
+            Terminal.println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
         }
         return false
     }

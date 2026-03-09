@@ -5,7 +5,7 @@ import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.ui.Terminal
 
-println "--- RENDERING INITIAL SCREEN PREVIEW ---"
+Terminal.println "--- RENDERING INITIAL SCREEN PREVIEW ---"
 
 // 1. Setup stabilized environment
 long masterSeed = 12345L
@@ -19,20 +19,20 @@ game.currentLocation = street
 street.ensureChildrenPopulated()
 
 // 3. Render the HUD
-println "\n[HUD_PREVIEW]"
+Terminal.println "\n[HUD_PREVIEW]"
 game.bridgeView.renderBridgeHUD(game.currentLocation, player)
 
 // 4. Render the Adaptive Bridge (Split Pane)
-println "\n[ADAPTIVE_BRIDGE_PREVIEW]"
+Terminal.println "\n[ADAPTIVE_BRIDGE_PREVIEW]"
 game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus.value)
 
 // 5. Render the Compass
-println "\n[COMPASS_PREVIEW]"
+Terminal.println "\n[COMPASS_PREVIEW]"
 def options = street.getOptions(game)
 game.bridgeView.renderCompass(game.currentLocation, options)
 
 // 6. Render Building Diagnostics (Stress Test Alignment)
-println "\n[BUILDING_DIAGNOSTICS_PREVIEW]"
+Terminal.println "\n[BUILDING_DIAGNOSTICS_PREVIEW]"
 Building bld = street.getBuildings()[0]
 bld.markVisited()
 bld.getFloor(0).markVisited()
@@ -40,5 +40,5 @@ bld.getFloor(1).markVisited()
 game.enterLocation(bld.getFloor(1)) // Correctly updates player and game state
 game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus.value)
 
-println "\n--- PREVIEW COMPLETE ---"
-println "Check the alignment of the ║ borders and the [╬] pivot."
+Terminal.println "\n--- PREVIEW COMPLETE ---"
+Terminal.println "Check the alignment of the ║ borders and the [╬] pivot."

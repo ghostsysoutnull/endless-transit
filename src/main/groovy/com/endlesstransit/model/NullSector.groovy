@@ -102,9 +102,9 @@ class NullSector extends Container {
                 signalStrength += new Random().nextInt(30) + 10
                 if (signalStrength >= 100) {
                     signalStrength = 100
-                    println Terminal.colorize("\n>>> HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated.", Terminal.GREEN)
+                    Terminal.println Terminal.colorize("\n>>> HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated.", Terminal.GREEN)
                 } else {
-                    println Terminal.colorize("\n>>> SCANNING_VOID: Signal strength increasing...", Terminal.CYAN)
+                    Terminal.println Terminal.colorize("\n>>> SCANNING_VOID: Signal strength increasing...", Terminal.CYAN)
                 }
                 game.instantRender = true
             }
@@ -116,7 +116,7 @@ class NullSector extends Container {
                     JournalManager.logCapture(item)
                     echoFound = true
                     signalStrength = 0
-                    println Terminal.colorize("\n>>> VOID_RESONANCE: Echo captured and stabilized.", Terminal.MAGENTA)
+                    Terminal.println Terminal.colorize("\n>>> VOID_RESONANCE: Echo captured and stabilized.", Terminal.MAGENTA)
                     game.instantRender = true
                 }
             }

@@ -1,4 +1,5 @@
 package com.endlesstransit.ui
+import com.endlesstransit.ui.Terminal
 
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
@@ -6,15 +7,36 @@ import com.endlesstransit.procgen.*
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class BridgeView {
-    
+class BridgeView implements ScreenshotProvider {
+    private Location lastLocation
+    private long lastSeed
+    private List<String> lastHudFrame = []
+
+    BridgeView() {
+        ScreenshotRegistry.register(this)
+    }
+
+    @Override
+    String getProviderName() { "BridgeView" }
+
+    @Override
+    ScreenBuffer capture(List<String> inputHistory) {
+        return new ScreenBuffer(
+            lines: new ArrayList<>(lastHudFrame),
+            timestamp: System.currentTimeMillis(),
+            locationPath: lastLocation ? lastLocation.getLIP() : "UNKNOWN",
+            masterSeed: lastSeed,
+            inputHistory: new ArrayList<>(inputHistory)
+        )
+    }
+
     void renderInventoryOverlay(Player player) {
-        println ""
+        Terminal.println ""
         String title = Terminal.colorize(" [QUANTUM_TRACE_BUFFER_SYNC...] ", Terminal.L_CYAN)
-        println title
+        Terminal.println title
         
         if (player.inventory.isEmpty()) {
-            println Terminal.dim("  (No spectral traces detected in local buffer) ")
+            Terminal.println Terminal.dim("  (No spectral traces detected in local buffer) ")
         } else {
             // Show all items now that we can scroll
             player.inventory.each { InventoryItem item ->
@@ -25,28 +47,35 @@ class BridgeView {
                 String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
-                print "  ${Terminal.dim(freqStr)}Hz "
-                print Terminal.colorize(signalBar, signalColor)
-                print " ${Terminal.dim("[" + phase + "]")}"
-                println " >> ${Terminal.bold(item.name)}"
+                Terminal.print "  ${Terminal.dim(freqStr)}Hz "
+                Terminal.print Terminal.colorize(signalBar, signalColor)
+                Terminal.print " ${Terminal.dim("[" + phase + "]")}"
+                Terminal.println " >> ${Terminal.bold(item.name)}"
             }
         }
-        println Terminal.dim(" ----------------------------------------------------------------------")
-        println Terminal.dim(" SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
-        println ""
+        Terminal.println Terminal.dim(" ----------------------------------------------------------------------")
+        Terminal.println Terminal.dim(" SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
+        Terminal.println ""
         System.out.flush()
     }
 
     void render(Location currentLocation, Player player, Map<String, Closure> options, long masterSeed) {
+        this.lastLocation = currentLocation
+        this.lastSeed = masterSeed
         renderBridgeHUD(currentLocation, player)
         renderAdaptiveBridge(currentLocation, player, masterSeed)
         renderMenu(currentLocation, options)
         renderGlobalControls()
+
+        // Capture the HUD frame from the virtual buffer
+        if (Terminal.virtualBuffer != null) {
+            this.lastHudFrame = Terminal.virtualBuffer.getBuffer()
+        }
     }
 
     void renderMenu(Location currentLocation, Map<String, Closure> options) {
         renderCompass(currentLocation, options)
-        println("${Terminal.dim("EXECUTE_DIRECTIVE:")}")
+        Terminal.println("${Terminal.dim("EXECUTE_DIRECTIVE:")}")
         
         List<String> navOptions = []
         options.each { String label, Closure action ->
@@ -70,11 +99,11 @@ class BridgeView {
                 return
             }
             
-            println(label)
+            Terminal.println(label)
         }
 
         if (!navOptions.isEmpty()) {
-            println navOptions.join(Terminal.dim(" | "))
+            Terminal.println navOptions.join(Terminal.dim(" | "))
         }
     }
 
@@ -83,9 +112,10 @@ class BridgeView {
         String sync = "[${Terminal.colorize("sync", Terminal.CYAN)}] Save"
         String map = "[${Terminal.colorize("m", Terminal.WHITE)}] Map"
         String tree = "[${Terminal.colorize("lattice", Terminal.WHITE)}] Tree"
+        String snap = "[${Terminal.colorize("p", Terminal.GREEN)}] Snap"
         String quit = "[${Terminal.colorize("quit", Terminal.RED)}] Quit"
         
-        println "${buffer} | ${sync} | ${map} | ${tree} | ${quit}"
+        Terminal.println "${buffer} | ${sync} | ${map} | ${tree} | ${snap} | ${quit}"
     }
 
     void renderBridgeHUD(Location currentLocation, Player player) {
@@ -172,7 +202,7 @@ class BridgeView {
         Terminal.drawBoxedLine(bufferInfo, width, accent)
         Terminal.drawBoxBottom(width, accent)
         
-        println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
+        Terminal.println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
     }
 
     void renderAdaptiveBridge(Location currentLocation, Player player, long masterSeed) {
@@ -409,8 +439,8 @@ class BridgeView {
         String b = lblB ? Terminal.bold("B") : "·"
         String l = lblL ? Terminal.bold("L") : "·"
 
-        println " " * 25 + "[$u] ${Terminal.dim(lblU)}"
-        println " " * 26 + Terminal.colorize("║", accent)
+        Terminal.println " " * 25 + "[$u] ${Terminal.dim(lblU)}"
+        Terminal.println " " * 26 + Terminal.colorize("║", accent)
         
         String leftLabel = lblL ?: lblB
         String leftIcon = lblL ? l : b
@@ -420,15 +450,15 @@ class BridgeView {
         
         int leftLen = Terminal.getVisualWidth(leftSide)
         String leftPadding = " " * Math.max(0, 26 - leftLen - 4)
-        println "${leftPadding}${Terminal.colorize(leftSide, accent)}${Terminal.colorize(center, accent)}${Terminal.colorize(rightSide, accent)}"
+        Terminal.println "${leftPadding}${Terminal.colorize(leftSide, accent)}${Terminal.colorize(center, accent)}${Terminal.colorize(rightSide, accent)}"
         
-        println " " * 26 + Terminal.colorize("║", accent)
-        println " " * 25 + "[$d] ${Terminal.dim(lblD)}"
+        Terminal.println " " * 26 + Terminal.colorize("║", accent)
+        Terminal.println " " * 25 + "[$d] ${Terminal.dim(lblD)}"
     }
 
     void renderLatticeTrace(Location currentLocation) {
         printLatticeTrace("[NEURAL_LATTICE_TRACE_INITIATED]", currentLocation, 0.0)
-        println ""
+        Terminal.println ""
     }
 
     void printLatticeTrace(String title, Location currentLocation, double glitchIntensity = 0.0) {
@@ -458,8 +488,8 @@ class BridgeView {
         hierarchy = hierarchy.reverse()
 
         String header = Terminal.colorize(" $title ", title.contains("DIAGNOSTIC") ? Terminal.YELLOW : Terminal.L_CYAN)
-        println "\n" + header
-        println ""
+        Terminal.println "\n" + header
+        Terminal.println ""
 
         hierarchy.eachWithIndex { Location loc, int i ->
             String icon = icons[loc.getClass().simpleName] ?: "?"
@@ -483,16 +513,16 @@ class BridgeView {
 
             if (loc == currentLocation) {
                 String accent = loc.isAbyssal() ? Terminal.GREY : Terminal.L_CYAN
-                println Terminal.bold(" >> " + Terminal.colorize(Terminal.stripAnsi(output), accent))
+                Terminal.println Terminal.bold(" >> " + Terminal.colorize(Terminal.stripAnsi(output), accent))
             } else {
-                println "    " + output
+                Terminal.println "    " + output
             }
         }
     }
 
     void renderLatticeMap(Location currentLocation, Player player) {
         if (!(currentLocation instanceof Container)) {
-            println Terminal.colorize("\n>>> SCAN_ERROR: Current location does not support spatial projection.", Terminal.RED)
+            Terminal.println Terminal.colorize("\n>>> SCAN_ERROR: Current location does not support spatial projection.", Terminal.RED)
             return
         }
         
@@ -516,20 +546,20 @@ class BridgeView {
             }
         }
         
-        println "\n" + Terminal.colorize(" [NEURAL_LATTICE_PROJECTION] ", Terminal.L_CYAN)
-        println ""
+        Terminal.println "\n" + Terminal.colorize(" [NEURAL_LATTICE_PROJECTION] ", Terminal.L_CYAN)
+        Terminal.println ""
         
         VibeCapsule vibe = currentLocation.getVibe()
         String accent = currentLocation.isAbyssal() ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
         
         Terminal.drawBoxTop(mapWidth + 2, accent)
         buffer.render().each { line ->
-            println Terminal.colorize(Terminal.BOX_V, accent) + line + Terminal.colorize(Terminal.BOX_V, accent)
+            Terminal.println Terminal.colorize(Terminal.BOX_V, accent) + line + Terminal.colorize(Terminal.BOX_V, accent)
         }
         Terminal.drawBoxBottom(mapWidth + 2, accent)
         
-        println "\n" + Terminal.dim("SCAN_ORIGIN: ") + Terminal.bold(currentLocation.getName())
-        println Terminal.dim("LEGEND: ") + Terminal.dim("Visited: Bright | Unvisited: Dim | ") + Terminal.colorize("▲ You", Terminal.CYAN)
-        println ""
+        Terminal.println "\n" + Terminal.dim("SCAN_ORIGIN: ") + Terminal.bold(currentLocation.getName())
+        Terminal.println Terminal.dim("LEGEND: ") + Terminal.dim("Visited: Bright | Unvisited: Dim | ") + Terminal.colorize("▲ You", Terminal.CYAN)
+        Terminal.println ""
     }
 }

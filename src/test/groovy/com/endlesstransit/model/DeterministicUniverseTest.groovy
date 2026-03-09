@@ -1,4 +1,5 @@
 package com.endlesstransit.model
+import com.endlesstransit.ui.Terminal
 
 import com.endlesstransit.core.Logger
 import com.endlesstransit.procgen.LocusSeed
@@ -10,7 +11,7 @@ class DeterministicUniverseTest {
     }
 
     static void testUniverseStability() {
-        println "Running Deterministic Universe Stability Test..."
+        Terminal.println "Running Deterministic Universe Stability Test..."
         
         long testSeedValue = 987654321L
         LocusSeed testSeed = new LocusSeed(testSeedValue)
@@ -31,7 +32,7 @@ class DeterministicUniverseTest {
         assert planetName1 == planetName2 : "Planet name mismatch: $planetName1 vs $planetName2"
         assert vibe1 == vibe2 : "Vibe mismatch: $vibe1 vs $vibe2"
         
-        println "SUCCESS: Universe is deterministic for seed ${testSeed.value}"
+        Terminal.println "SUCCESS: Universe is deterministic for seed ${testSeed.value}"
         
         // Verify LIP Resolution stability
         Location walker = u1.getFilaments()[0]
@@ -46,6 +47,6 @@ class DeterministicUniverseTest {
         assert loc1.getName() == loc2.getName() : "LIP Resolution name mismatch at $lip"
         assert loc1.getLocus().value == loc2.getLocus().value : "LIP Resolution seed mismatch at $lip"
         
-        println "SUCCESS: LIP Resolution is stable."
+        Terminal.println "SUCCESS: LIP Resolution is stable."
     }
 }

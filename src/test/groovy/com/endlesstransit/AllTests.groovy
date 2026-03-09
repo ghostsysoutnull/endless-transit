@@ -7,21 +7,24 @@ import com.endlesstransit.ui.Terminal
 import junit.framework.TestSuite
 import junit.textui.TestRunner
 
-// Disable typewriter delays for tests
-Terminal.skipSleep = true
+// Disable typewriter delays and enable virtual buffer for tests
+Terminal.initialize(true, true)
 
 def suite = new TestSuite()
 def loader = new GroovyClassLoader(this.class.classLoader)
 String testBase = "src/test/groovy/com/endlesstransit"
 
-println "--- Loading JUnit Tests ---"
+Terminal.println "--- Loading JUnit Tests ---"
 def junitTests = [
     "core/NewGameTest",
     "model/DeepLatticeCrawlTest",
     "model/FloorCrashTest",
     "core/JournalTest",
     "core/StartupTest",
-    "procgen/ProcgenVariabilityTest"
+    "core/GameMementoTest",
+    "procgen/ProcgenVariabilityTest",
+    "procgen/SeedScannerTest",
+    "ReplayServiceTest"
 ]
 
 junitTests.each { path ->
@@ -29,14 +32,14 @@ junitTests.each { path ->
     suite.addTestSuite(testClass)
 }
 
-println "--- Running JUnit Suite ---"
+Terminal.println "--- Running JUnit Suite ---"
 def result = TestRunner.run(suite)
 if (!result.wasSuccessful()) {
-    println "\nJUNIT SUITE FAILED"
+    Terminal.println "\nJUNIT SUITE FAILED"
     System.exit(1)
 }
 
-println "\n--- Running Script Tests ---"
+Terminal.println "\n--- Running Script Tests ---"
 def shell = new GroovyShell(loader)
 def scriptTests = [
     "ui/CyberTerminalTest",
@@ -54,14 +57,14 @@ def scriptTests = [
 ]
 
 scriptTests.each { path ->
-    println ">>> ${path.split('/').last()}"
+    Terminal.println ">>> ${path.split('/').last()}"
     try {
         shell.evaluate(new File("${testBase}/${path}.groovy"))
     } catch (Exception e) {
-        println "FAILURE in $path: ${e.message}"
+        Terminal.println "FAILURE in $path: ${e.message}"
         e.printStackTrace()
         System.exit(1)
     }
 }
 
-println "\nALL TESTS COMPLETED SUCCESSFULLY"
+Terminal.println "\nALL TESTS COMPLETED SUCCESSFULLY"

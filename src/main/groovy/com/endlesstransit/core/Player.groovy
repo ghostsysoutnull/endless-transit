@@ -40,7 +40,7 @@ class Player {
 
     void listInventory() {
         if (inventory.isEmpty()) {
-            println(Terminal.dim("  (Local buffer empty)"))
+            Terminal.println(Terminal.dim("  (Local buffer empty)"))
         } else {
             inventory.eachWithIndex { item, i ->
                 String freqStr = String.format("%04d", item.frequency)
@@ -51,16 +51,16 @@ class Player {
                 String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
-                print("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ")
-                print("${Terminal.dim(freqStr)}Hz ")
-                print(Terminal.colorize(signalBar, signalColor))
-                print("${Terminal.dim("[" + phase + "]")}")
+                Terminal.print("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ")
+                Terminal.print("${Terminal.dim(freqStr)}Hz ")
+                Terminal.print(Terminal.colorize(signalBar, signalColor))
+                Terminal.print("${Terminal.dim("[" + phase + "]")}")
                 String mergeLabel = ""
                 if (item.sessionMergeCount > 0) {
                     String label = item.sessionMergeCount > 1 ? "SYNTHESIS_x${item.sessionMergeCount}" : "NEW_SYNTHESIS"
                     mergeLabel = " " + Terminal.colorize("[" + label + "]", Terminal.GREEN)
                 }
-                println(" >> ${Terminal.bold(item.name)}$mergeLabel")
+                Terminal.println(" >> ${Terminal.bold(item.name)}$mergeLabel")
             }
         }
     }
@@ -69,7 +69,7 @@ class Player {
         if (index >= 0 && index < inventory.size()) {
             def removed = inventory.remove(index)
             Logger.info("Player dropped item: ${removed.name}")
-            println Terminal.colorize(">>> Item ${removed.name} purged from local buffer.", Terminal.RED)
+            Terminal.println Terminal.colorize(">>> Item ${removed.name} purged from local buffer.", Terminal.RED)
         }
     }
 
@@ -100,17 +100,17 @@ class Player {
 
         if (createKeystone) {
             Logger.info("KEYSTONE_CREATED: $newName")
-            println Terminal.colorize("\n>>> CRITICAL_WAVEFORM_COLLAPSE: KEYSTONE_STABILIZED <<<", Terminal.YELLOW)
-            println "The fragments merge into a silent, heavy anchor: ${Terminal.bold(newName)}"
+            Terminal.println Terminal.colorize("\n>>> CRITICAL_WAVEFORM_COLLAPSE: KEYSTONE_STABILIZED <<<", Terminal.YELLOW)
+            Terminal.println "The fragments merge into a silent, heavy anchor: ${Terminal.bold(newName)}"
         } else {
             Logger.info("Synthesized Hybrid: $newName ($newFreq Hz)")
-            println Terminal.colorize("\n>>> SPECTRAL_SYNTHESIS_COMPLETE <<<", Terminal.L_CYAN)
-            println "New Fragment: ${Terminal.bold(newName)} (${newFreq}Hz)"
+            Terminal.println Terminal.colorize("\n>>> SPECTRAL_SYNTHESIS_COMPLETE <<<", Terminal.L_CYAN)
+            Terminal.println "New Fragment: ${Terminal.bold(newName)} (${newFreq}Hz)"
         }
         
         if (newFreq % 11 == 0) {
             resonantTracesCount++
-            println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
+            Terminal.println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
         }
     }
 }

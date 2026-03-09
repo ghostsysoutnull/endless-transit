@@ -1,14 +1,15 @@
 package com.endlesstransit.core
+import com.endlesstransit.ui.Terminal
 
 import groovy.test.GroovyTestCase
 import com.endlesstransit.model.*
 
 class NewGameTest extends GroovyTestCase {
     void testNewGameInitializationAndFirstRender() {
-        println "Stress testing game world initialization AND rendering with 50 random seeds..."
+        Terminal.println "Stress testing game world initialization AND rendering with 50 random seeds..."
         // Disable sleep for tests to speed up the process
-        com.endlesstransit.ui.Terminal.skipSleep = true
-        
+        Terminal.initialize(true, true)
+
         Random r = new Random()
         for (int i = 0; i < 50; i++) {
             long seed = r.nextLong()
@@ -28,18 +29,18 @@ class NewGameTest extends GroovyTestCase {
                 // 3. Simulate first navigation step (Enter first building)
                 String firstKey = (String) options.keySet().find { ((String)it).contains("Enter Building:") }
                 if (firstKey != null) {
-                    println "  >> Testing navigation to: $firstKey"
+                    Terminal.println "  >> Testing navigation to: $firstKey"
                     options[firstKey].call()
                     assertNotNull("Should have moved to a building", game.currentLocation)
                     assertTrue("Should be in a building", game.currentLocation instanceof com.endlesstransit.model.Building)
                 }
                 
             } catch (Exception e) {
-                println "FAILURE with seed: $seed"
+                Terminal.println "FAILURE with seed: $seed"
                 e.printStackTrace()
                 fail("Game initialization or FIRST RENDER failed for seed $seed: ${e.message}")
             }
         }
-        println "SUCCESS: 50 initializations and renders completed without error."
+        Terminal.println "SUCCESS: 50 initializations and renders completed without error."
     }
 }

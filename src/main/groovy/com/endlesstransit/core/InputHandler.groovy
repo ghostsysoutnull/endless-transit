@@ -10,7 +10,24 @@ import java.util.Scanner
  */
 @CompileStatic
 class InputHandler {
-    private Scanner scanner = new Scanner(System.in)
+    InputSource source
+    private List<String> inputHistory = []
+
+    InputHandler(InputSource source = new RealTerminalSource()) {
+        this.source = source
+    }
+
+    /**
+     * @return An unmodifiable copy of the input history.
+     */
+    List<String> getHistory() {
+        return Collections.unmodifiableList(inputHistory)
+    }
+
+    void restoreHistory(List<String> history) {
+        this.inputHistory.clear()
+        this.inputHistory.addAll(history)
+    }
 
     /**
      * Reads a line from the user and trims whitespace.
@@ -18,12 +35,14 @@ class InputHandler {
     String getRawInput(String lastActionName) {
         String hudLastAction = lastActionName ? " [Last: $lastActionName]" : ""
         
-        print Terminal.dim("---=====================================>>")
-        print Terminal.colorize(hudLastAction, Terminal.CYAN)
-        print " Enter choice: "
+        Terminal.print Terminal.dim("---=====================================>>")
+        Terminal.print Terminal.colorize(hudLastAction, Terminal.CYAN)
+        Terminal.print " Enter choice: "
         
-        String input = (System.console() != null) ? System.console().readLine() : (scanner.hasNextLine() ? scanner.nextLine() : null)
-        return input?.trim()
+        String input = source.readLine()
+        String trimmed = input?.trim()
+        inputHistory.add(trimmed ?: "")
+        return trimmed
     }
 
     /**
@@ -68,15 +87,14 @@ class InputHandler {
     }
 
     void waitForEnter() {
-        print Terminal.dim("Press ENTER to return...")
-        if (System.console() != null) {
-            System.console().readLine()
-        } else if (scanner.hasNextLine()) {
-            scanner.nextLine()
-        }
+        Terminal.print Terminal.dim("Press ENTER to return...")
+        source.waitForEnter()
+        inputHistory.add("") // ENTER is an empty string in history
     }
 
     String readLine() {
-        return scanner.hasNextLine() ? scanner.nextLine().trim() : ""
+        String input = source.readLine()?.trim() ?: ""
+        inputHistory.add(input)
+        return input
     }
 }

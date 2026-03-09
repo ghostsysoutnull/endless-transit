@@ -53,7 +53,7 @@ class ActionMapper {
         return matchingKey ? currentMenu.get(matchingKey) : null
     }
 
-    boolean hasOption(String prefix) {
-        return currentMenu.keySet().any { it.startsWith(prefix + ". ") }
+    boolean hasOption(String choice) {
+        return currentMenu.containsKey(choice)
     }
 }

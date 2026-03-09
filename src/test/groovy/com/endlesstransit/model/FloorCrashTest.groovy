@@ -1,4 +1,5 @@
 package com.endlesstransit.model
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
@@ -14,7 +15,7 @@ class FloorCrashTest extends GroovyTestCase {
         def street = game.currentLocation
         def building = street.buildings[0]
         
-        println "Testing Building: ${building.name} with ${building.maxFloors} floors"
+        Terminal.println "Testing Building: ${building.name} with ${building.maxFloors} floors"
         
         for (int i = 0; i < building.maxFloors; i++) {
             def floor = building.getFloor(i)
@@ -38,7 +39,7 @@ class FloorCrashTest extends GroovyTestCase {
                 // Test entering first apartment if any
                 def firstAptKey = corridorOptions.keySet().find { it.contains("Enter:") }
                 if (firstAptKey) {
-                    println "  Testing Apartment entry: $firstAptKey"
+                    Terminal.println "  Testing Apartment entry: $firstAptKey"
                     corridorOptions[firstAptKey].call()
                     assertNotNull("Should be in a Room", game.currentLocation)
                     game.currentLocation.enter(game.player)
@@ -48,14 +49,14 @@ class FloorCrashTest extends GroovyTestCase {
                 game.enterLocation(floor)
             }
         }
-        println "SUCCESS: Entered all floors and corridors without crashing."
+        Terminal.println "SUCCESS: Entered all floors and corridors without crashing."
     }
 
     void testRecursionSafety() {
         def game = new Game()
         def street = game.currentLocation
         
-        println "Testing recursion safety for ${street.getClass().simpleName}"
+        Terminal.println "Testing recursion safety for ${street.getClass().simpleName}"
         
         // This should not throw StackOverflowError
         assertNotNull(street.getName())
@@ -69,6 +70,6 @@ class FloorCrashTest extends GroovyTestCase {
         assertNotNull(floor.getName())
         assertNotNull(floor.getPath())
         
-        println "SUCCESS: Recursion safety verified."
+        Terminal.println "SUCCESS: Recursion safety verified."
     }
 }

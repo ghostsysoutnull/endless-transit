@@ -1,0 +1,44 @@
+----------------------------------------------------------------------
+[VINCULUM_SNAPSHOT_METADATA]
+TIMESTAMP: Sun Mar 08 22:40:05 CDT 2026
+LIP: 0.0.0.0.0.0.0.0
+SEED: 12345
+VERSION: 1.0.0-VINCULUM
+----------------------------------------------------------------------
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 0 | COHERENCE: 100%║
+║ LOCUS_TRACE: Universe > ... > [VOID] > Lost Deneb Major > Novaar > Great Iron Union > Raintown > Old Way║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Street >> Old Way║ SYNC: [STABLE]║
+║ LOCUS_HASH: 68.311 / 25.784 | HOP_DENSITY: 7║ COHERENCE: ██████████║
+║ WAY: 1 / 11 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Street: Old Way | [TECH_ERA: ANALOG] [RESONANCE: MONOLITH]║  [NEURAL_MAP: STREET]║
+║ ║                        ⌂  ⌂  ⌂    ║
+║ Buildings on this street:║                    ⌂              ║
+║ -----------------------------------------------------------------------------------║      ⌂⌂                           ║
+║ 1. FoundationWell                        | 2. Impenetrable Block                   ║                                   ║
+║ 3. TowerFall                             | 4. Concrete Foundation                  ║ ⌂           ⌂        ⌂            ║
+║ 5. SlabReach                             | 6. Grey Monolith                        ║               ⌂            ⌂      ║
+║ 7. Impenetrable Obelisk                  | 8. Cold Block                           ║                                   ║
+║ 9. Static Pillar                         | 10. ObeliskFall                         ║                                   ║
+║ 11. TowerGate                            | 12. TowerReach                          ║  ⌂                        ⌂       ║
+║ 13. PillarRoot                           | 14. Grey Unit                           ║     ⌂ ⌂       ⌂⌂                  ║
+║ 15. ObeliskSpire                         | 16. ObeliskFall                         ║                                   ║
+║ 17. TowerWell                            | 18. Static Foundation                   ║        ⌂                          ║
+║ -----------------------------------------------------------------------------------║  ▲ You | ■ Node | ░ Void║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+                      ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [p] Snap | [quit] Quit
+Triggering capture...

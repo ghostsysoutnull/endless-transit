@@ -1,4 +1,5 @@
 package com.endlesstransit
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
@@ -8,6 +9,7 @@ import com.endlesstransit.core.JournalManager
 
 
 try {
+    Terminal.initialize()
     def game = new Game()
     game.start()
 } catch (Throwable t) {
@@ -15,7 +17,7 @@ try {
     Logger.error("GLOBAL_BOOT_FAILURE: System failed during initialization.")
     Logger.error("  >> Exception: $t", t)
     
-    println "\n\u001b[31m!!! CRITICAL BOOT FAILURE !!!\u001b[0m"
-    println "Details have been logged to transit.log"
+    Terminal.println "\n\u001b[31m!!! CRITICAL BOOT FAILURE !!!\u001b[0m"
+    Terminal.println "Details have been logged to transit.log"
     System.exit(1)
 }

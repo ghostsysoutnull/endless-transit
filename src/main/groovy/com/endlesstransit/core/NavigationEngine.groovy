@@ -1,4 +1,5 @@
 package com.endlesstransit.core
+import com.endlesstransit.ui.Terminal
 
 import com.endlesstransit.model.Location
 import groovy.transform.CompileStatic
@@ -46,7 +47,7 @@ class NavigationEngine {
         String oppositeKey = reversalPairs[lastChoice]
         
         if (oppositeKey && !mapper.hasOption(lastChoice) && mapper.hasOption(oppositeKey)) {
-            println "Boundary reached. Reversing direction."
+            Terminal.println "Boundary reached. Reversing direction."
             lastChoice = oppositeKey
             return oppositeKey
         }

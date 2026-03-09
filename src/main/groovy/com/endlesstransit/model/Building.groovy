@@ -42,13 +42,13 @@ class Building extends Container {
         this.isBreached = true
         Logger.info("BUILDING_BREACHED: $name")
         
-        println ""
-        println Terminal.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", Terminal.RED)
-        println Terminal.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
+        Terminal.println ""
+        Terminal.println Terminal.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", Terminal.RED)
+        Terminal.println Terminal.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
         Thread.sleep(1000)
-        println Terminal.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", Terminal.YELLOW)
+        Terminal.println Terminal.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", Terminal.YELLOW)
         Thread.sleep(1000)
-        println ""
+        Terminal.println ""
     }
 
     @Override
@@ -126,9 +126,9 @@ class Building extends Container {
     @Override
     void enter(Player player) {
         if (isLandmark && !isVisited()) {
-            println "\n" + Terminal.colorize(" [UNIQUE_LOCUS_DETECTION] ", Terminal.YELLOW)
-            println Terminal.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
-            println Terminal.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
+            Terminal.println "\n" + Terminal.colorize(" [UNIQUE_LOCUS_DETECTION] ", Terminal.YELLOW)
+            Terminal.println Terminal.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
+            Terminal.println Terminal.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
             Thread.sleep(1000)
         }
         markVisited()

@@ -9,26 +9,26 @@ class TracePersistenceTest {
     }
 
     static void testEndToEndPersistence() {
-        println "Running End-to-End Trace Persistence Test..."
-        Terminal.skipSleep = true
-        
+        Terminal.println "Running End-to-End Trace Persistence Test..."
+        Terminal.initialize(true, true)
+
         long testSeed = 55555L
         Game game = new Game(testSeed)
         
         // 1. Simulate Session: Navigate to a Room dynamically
         Location walker = game.currentLocation
-        println "Navigating from: ${walker.getTypeName()} ${walker.getName()}"
+        Terminal.println "Navigating from: ${walker.getTypeName()} ${walker.getName()}"
         
         while (!(walker instanceof Room)) {
             if (walker instanceof Container) {
                 Container c = (Container) walker
                 c.ensureChildrenPopulated()
                 if (c.children.isEmpty()) {
-                    println "  WARNING: Container ${c.getTypeName()} ${c.getName()} has no children!"
+                    Terminal.println "  WARNING: Container ${c.getTypeName()} ${c.getName()} has no children!"
                     break
                 }
                 walker = c.children[0]
-                println "  -> Entering ${walker.getTypeName()} ${walker.getName()}"
+                Terminal.println "  -> Entering ${walker.getTypeName()} ${walker.getName()}"
             } else {
                 break
             }
@@ -36,7 +36,7 @@ class TracePersistenceTest {
         
         assert walker instanceof Room : "Failed to find a room to test persistence!"
         String targetLIP = walker.getLIP()
-        println "Target Room LIP: $targetLIP"
+        Terminal.println "Target Room LIP: $targetLIP"
         game.enterLocation(walker)
         Location target = game.currentLocation
         
@@ -79,6 +79,6 @@ class TracePersistenceTest {
         // 9. VERIFY Footprints (Visited status)
         assert freshGame.currentLocation.isVisited() : "Visited status for current room not restored!"
         
-        println "SUCCESS: Trace Persistence verified. World and Player state perfectly reconstituted."
+        Terminal.println "SUCCESS: Trace Persistence verified. World and Player state perfectly reconstituted."
     }
 }
