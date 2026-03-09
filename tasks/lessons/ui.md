@@ -7,6 +7,8 @@
 - **Semantic UI Labels**: Use a centralized `HUDLabels` class to manage all HUD strings (`LOCUS_INDEX`, `STRATA`, etc.). This prevents "Semantic Drift" where AI agents inconsistently rename UI elements.
 - **Absolute Positioning (CHA)**: Use the `\u001b[nG` (Cursor Horizontal Absolute) escape sequence for all right-side borders. This bypasses the need for complex character-width calculations for 2-cell icons and ANSI codes.
 - **Visual Width Validation**: Use `TUIValidator.getVisualWidth()` instead of `String.length()` to account for emojis and icons during manual padding operations.
+- **Output Virtualization (RenderSink)**: Decouple `System.out` from the UI by using a `RenderSink` abstraction. This allows the game to "render" to memory buffers (`MemorySink`) for screenshots or automated visual assertions without a physical terminal.
+- **Visual Assertion DSL**: Instead of brittle string matching, use a `VisualAssertionEngine` that operates on the `ScreenBuffer` to verify structural invariants (e.g., "is the HUD boxed correctly?").
 
 ## Mistakes/Corrections
 - **Terminal Buffering**: Always call `System.out.flush()` after printing partial lines (like in `typewrite`) to ensure real-time feedback in all terminal emulators.
@@ -15,3 +17,4 @@
 - **Border Alignment (CHA)**: Calculating the visual width of mixed icons and emojis is notoriously unreliable across different terminals. Use the **Cursor Horizontal Absolute** (`\u001b[nG`) escape sequence to force-position the right border of a HUD box. This bypasses the need for accurate character-width guessing.
 - **Infinite String Manipulation Loops**: When implementing truncation or sparklines (like `getLatticeSparkline`), ensure that the reduction step actually modifies the collection being checked. Using `take()` (which returns a new list) instead of `removeAt()` in a while loop will cause a permanent freeze.
 - **Ellipsis Overflow**: Adding an ellipsis (`...`) during a truncation loop can increase the visual width, potentially negating the reduction step and causing an infinite loop if not handled carefully.
+- **ANSI-Aware Capture**: When capturing the screen state for tests, ensure the sink can differentiate between raw ANSI (for screenshots) and stripped text (for logic assertions). Using raw ANSI in assertions will fail due to escape code mismatches.
