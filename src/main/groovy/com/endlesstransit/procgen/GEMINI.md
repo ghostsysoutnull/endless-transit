@@ -8,6 +8,8 @@
 1. **Vertical Branching**: Use `locus.branch(index)` to derive seeds for child locations.
 2. **Horizontal Variability**: Use a local `Random` (via `locus.nextRandom()`) for sequential attributes within a single location.
 3. **Immutability**: `LocusSeed` is an immutable value object. Never modify its internal state.
+4. **Mandatory Determinism**: Component engines (NameGenerator, ThemeManager) MUST accept an explicit seed. Static `Random` usage is forbidden.
+5. **Scenario Discovery**: Use `SeedScanner` and `WorldProbe` for horizontal seed exploration.
 
 ## 🏛️ Verification Checklist
 - [ ] **Seed Stability**: Does the same seed produce the same world?

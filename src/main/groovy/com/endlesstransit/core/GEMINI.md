@@ -5,8 +5,8 @@
 - **Input Delegation**: Entrusted to `InputHandler`, `ActionMapper`, and `NavigationEngine`.
 
 ## 🏗️ Technical Invariants
-1. **Turn Integrity**: Every turn MUST update the `ActionMapper` with current options.
-2. **Deterministic Inputs**: The engine is moving toward an `InputSource` abstraction.
+1. **Turn Integrity**: Every turn MUST update the `ActionMapper` with current options. `GameMemento` is used for state recovery and deterministic replay.
+2. **Deterministic Inputs**: `InputSource` is the mandatory abstraction for all game loop execution.
 3. **No Terminal Direct-Access**: All output must go through `Terminal` / `RenderSink`.
 
 ## 🏛️ Verification Checklist
