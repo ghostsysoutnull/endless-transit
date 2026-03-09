@@ -35,6 +35,9 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 | :--- | :--- |
 | **Run Game** | `./run.sh` |
 | **Run Tests** | `./run.sh --test` |
+| **Seed Scan** | `./run.sh --seed-scan` |
+| **Session Replay** | `./run.sh --replay <path_to_screenshot>` |
+| **Help / CLI Reference** | `./run.sh --help` |
 | **Audit UI** | `.agents/vibe-check-ui.sh` |
 | **Audit Model** | `.agents/vibe-check-model.sh` |
 
@@ -45,7 +48,8 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ### 1. Verification Protocol
 - **AI-TDD**: Create `src/test/groovy/com/endlesstransit/ReproTemplate.groovy` for all bug reports.
-- **Compilation Check**: Every change must pass `./run.sh --test`.
+- **Compilation Check**: Every change MUST pass `./run.sh --compile` (or `--test`).
+- **Full Verification**: Run `./run.sh --test` before marking any major task as complete.
 - **Lessons Loop**: Update `tasks/lessons/` after every major fix or architectural shift.
 
 ### 2. Expert OO Standards
