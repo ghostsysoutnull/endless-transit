@@ -75,7 +75,7 @@ class Building extends Container {
         if (floorNum == 0) return "TRANSIT_LOBBY"
         if (floorNum == maxFloors - 1) return "PEAK_OBSERVATORY"
         
-        Random r = new Random((locus != null ? locus.value : 0) + floorNum)
+        Random r = locus.branch(floorNum).nextRandom()
         if (floorNum < 5) {
             return ["MECHANICAL_SUMP", "STORAGE_CELL", "POWER_RELAY", "FILTRATION_INTAKE"][r.nextInt(4)]
         } else if (floorNum > maxFloors - 5) {
@@ -194,7 +194,7 @@ class Building extends Container {
             String integrity = getFloorIntegrity(i)
             
             // Resonance logic (simulated for building view)
-            Random r = new Random((locus != null ? locus.value : 0) + i)
+            Random r = locus.branch(i).nextRandom()
             int freq = 1000 + r.nextInt(2000)
             String resonance = "${freq}Hz"
 

@@ -1,71 +1,56 @@
-# Refactoring Phase 1: Critical Architecture Cleanup
+# Refactoring Phase 2: Logic & Behavior Hardening
 
-**Objective:** Decompose the `Game.groovy` God Object and implement the Interface Segregation Principle for the `Location` hierarchy.
-
-## Plan
-
-### 1.1 Game.groovy Decomposition (God Object Refactor)
-- [x] **Extract `TurnProcessor`**: Move the turn cycle logic and action dispatching into a dedicated service.
-- [x] **Extract `NavigationOrchestrator`**: Separate the responsibility for location transitions and current location state.
-- [x] **Extract `PersistenceService`**: Move `createMemento()` and `restore()` logic into a dedicated state manager.
-- [x] **Extract `RenderingCoordinator`**: Decouple the UI trigger lifecycle from the main game loop.
-- [x] **Verification**: Ensure `NewGameTest.groovy` and `ReplayServiceTest.groovy` still pass with the thinner `Game` class.
-
-### 1.2 Location Hierarchy Refactor (Interface Segregation)
-- [x] **Define Focused Interfaces**:
-    - [x] `Locatable`: For position, path, and basic naming.
-    - [x] `Navigable`: For player interaction and navigation options.
-    - [x] `Renderable`: For visual symbols and UI data.
-    - [x] `Stateful`: For mutation state and persistence.
-- [x] **Implement Polymorphic Dispatch**:
-    - [x] Move `getMapSymbol()` and `getMapColor()` into concrete classes (e.g., `Planet`, `Building`).
-    - [x] Eliminate `instanceof` checks in `Container.getMapSymbol()`.
-- [x] **Verification**: Run `./run.sh --test` to confirm no visual regressions in the TUI or HUD.
-
-### 1.3 Service Injection & Dependency Inversion
-- [x] **Convert `Terminal` to instance-based**: Create an `OutputDevice` interface and inject it into the `Game` and `BridgeView`.
-- [x] **Convert `ThemeManager` to instance-based**: Create a `ThemeService` and inject it into the `model` layer.
-- [x] **Convert `ProceduralFactory` to instance-based**: Remove static methods to enable proper testing and dependency injection.
-- [x] **Model Dependency Cleanup**: Remove all `import com.endlesstransit.ui.*` from the `model` package to strictly enforce the domain boundaries.
-- [x] **Verification**: Ensure all tests still pass, specifically the `RenderSink` assertions in the diagnostic suite.
-
-## Review
-- [ ] (Pending implementation)
+**Objective:** Transition from structural separation to behavioral excellence by implementing advanced OO patterns (Command, Proxy, Adapter) and finishing the Domain Migration.
 
 ---
 
-# Phase 4: Verification & Advanced Auditing (COMPLETED)
+## 🚀 Active Plan (Phase 2)
 
-## Objective
-Implement the `SeedScanner` for deterministic scenario discovery and the `Memento` pattern for state injection and time-travel debugging.
+### 2.1 Domain Migration: LocusSeed Integration (DONE)
+*Goal: Remove all raw `long` seeds from the domain to ensure deterministic branching.*
+- [x] **Update `Location` Interface**: Replace `getSeed()/setSeed()` with `getLocus()/setLocus()` returning `LocusSeed`.
+- [x] **Update `Container` Base**: Migrate the internal `seed` field to a `LocusSeed` instance.
+- [x] **Batch Update Models**: Update constructors and internal logic for all 12+ location types (Planet, Building, Room, etc.).
+- [x] **Overhaul `ProceduralFactory`**: Use `locus.branch()` for all child generation; eliminate manual `new Random(seed)` calls.
 
-## Plan
+### 2.2 Command Pattern: Action & Navigation (⭐ RECOMMENDED)
+*Goal: Finalize the decoupling of the game loop and make player actions testable in isolation.*
+- [ ] **Refactor `TurnProcessor`**: Move from simple method delegation to a `Command` dispatch system.
+- [ ] **Implement `NavigationCommand`**: Encapsulate f/b, u/d, and numeric choice logic.
+- [ ] **Implement `GlitchCommands`**: Complete the migration of world mutations (Breach, Prime, Keystone) into Command objects.
+- [ ] **Move Boundary Logic**: Relocate "auto-reversal" and "leave/exit" repetition logic to `NavigationOrchestrator`.
 
-### 4.2 SeedScanner (Discovery Engine)
-- [x] **Define `WorldProbe` Interface**: Create the Specification contract for location matching.
-- [x] **Implement Concrete Probes**:
-    - [x] `BuildingFloorCountProbe`: Matches buildings/cities with specific floor ranges.
-    - [x] `CultureProbe`: Matches locations with specific architectural vibes.
-    - [x] `LIPProbe`: Matches a specific Locus Identity Path. (Implicitly supported by SeedScanner DFS)
-- [x] **Create `SeedScanner.groovy`**:
-    - [x] Implement headless world traversal (Depth-First Search).
-    - [x] Add support for multiple combined probes (AND/OR logic).
-    - [x] Implement `scan(long startSeed, long count, WorldProbe probe)` method.
-- [x] **Implement `SeedVault`**: A registry for named seeds (e.g., "STRESS_TEST_CITY").
-- [x] **Verification**: Create `SeedScannerTest.groovy` to prove we can find a specific location type within 100 seeds.
+### 2.3 Virtual Proxy: Lazy-Loading Automation
+*Goal: Eliminate the "Temporal Coupling" bug where children must be manually populated.*
+- [ ] **Implement `LazyLocusList`**: A proxy/wrapper for child lists that automatically calls `ensureChildrenPopulated()` on first access.
+- [ ] **Refactor `Location` Classes**: Use the proxy for all `children`, `rooms`, `apartments`, etc.
+- [ ] **Verification**: Ensure that calling `location.getChildren().size()` triggers population without manual intervention.
 
-### 4.3 State Injection (Memento Pattern)
-- [x] **Create `GameMemento.groovy`**: Define the immutable snapshot of the game state.
-- [x] **Refactor `Game.groovy`**:
-    - [x] Implement `createMemento()` to capture current state.
-    - [x] Implement `restore(GameMemento memento)` to inject state.
-- [x] **Verification**: Create a test that:
-    1. Plays 10 turns.
-    2. Saves memento.
-    3. Plays 5 more turns.
-    4. Restores memento.
-    5. Verifies we are exactly back at turn 10 state.
+### 2.4 Display Adapter: UI Flexibility
+*Goal: Allow for multiple rendering modes (e.g., Glitched, High-Contrast) via dependency injection.*
+- [ ] **Formalize `OutputFormatter`**: Finalize the interface used by the model.
+- [ ] **Create `StandardTerminalAdapter`**: The baseline "Cyber-Brutalist" implementation.
+- [ ] **Create `GlitchedTerminalAdapter`**: A decorator that adds visual artifacts/noise to the output.
+- [ ] **Verification**: Successfully swap adapters in `Main.groovy` and see visual changes without touching model code.
 
-## Review
-- [x] Phase 4.2 completed: SeedScanner is highly optimized with branch pruning, reducing scan time by 90%+.
-- [x] Phase 4.3 completed: Memento pattern implemented for robust state reconstitution via LIP resolution.
+---
+
+## ✅ Completed Tasks
+
+### Phase 1: Critical Architecture Cleanup (DONE)
+- [x] **Game.groovy Decomposition**: Decomposed into 5 specialized services (`GameState`, `TurnProcessor`, etc.).
+- [x] **Location Interface Segregation**: Split into `Locatable`, `Navigable`, `Renderable`, and `Stateful`.
+- [x] **Polymorphic Dispatch**: Removed `instanceof` checks; implemented `getMapSymbol()` in concrete classes.
+- [x] **Service Injection**: `ThemeService` and `ProceduralFactory` converted to instances.
+- [x] **Model/UI Decoupling**: Implemented `OutputFormatter` and `TerminalAdapter`.
+
+### Phase 4: Verification & Advanced Auditing (DONE)
+- [x] **SeedScanner**: High-performance headless world discovery with branch pruning.
+- [x] **Memento Pattern**: Robust state capture and LIP-based restoration in `GameMemento`.
+
+---
+
+## 🏛️ Phase 2 Recommendations
+1.  **Start with 2.1 (LocusSeed)**: This is the most foundational change. Every other part of the system relies on how seeds are managed. Getting this right now prevents massive re-work later.
+2.  **Follow with 2.2 (Command Pattern)**: This cleans up the "Brain" of the game (`TurnProcessor`) and allows us to test navigation scenarios without a real terminal.
+3.  **Implement 2.3 (Virtual Proxy) as a safety measure**: It removes a major category of "empty world" bugs caused by forgetting to call lazy-loading methods.

@@ -26,9 +26,9 @@ class Logger {
         }
     }
 
-    static void reportCriticalFailure(Location loc, Player player, String lastChoice, long masterSeed, Throwable t) {
+    static void reportCriticalFailure(Location loc, Player player, String lastChoice, LocusSeed masterLocus, Throwable t) {
         error("CRITICAL_FAILURE: Game loop crashed.")
-        error("  >> Master Seed: $masterSeed")
+        error("  >> Master Seed: ${masterLocus?.value}")
         error("  >> Location: ${loc?.getPath()} (${loc?.getLIP()})")
         error("  >> State: [Steps: ${player?.stepCount}, Coherence: ${player?.coherence}, LastChoice: \"$lastChoice\"]")
         error("  >> Exception: $t", t)

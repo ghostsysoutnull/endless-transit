@@ -24,7 +24,7 @@ game.bridgeView.renderBridgeHUD(game.currentLocation, player)
 
 // 4. Render the Adaptive Bridge (Split Pane)
 Terminal.println "\n[ADAPTIVE_BRIDGE_PREVIEW]"
-game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus.value)
+game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus)
 
 // 5. Render the Compass
 Terminal.println "\n[COMPASS_PREVIEW]"
@@ -38,7 +38,7 @@ bld.markVisited()
 bld.getFloor(0).markVisited()
 bld.getFloor(1).markVisited()
 game.enterLocation(bld.getFloor(1)) // Correctly updates player and game state
-game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus.value)
+game.bridgeView.renderAdaptiveBridge(game.currentLocation, player, game.masterLocus)
 
 Terminal.println "\n--- PREVIEW COMPLETE ---"
 Terminal.println "Check the alignment of the ║ borders and the [╬] pivot."

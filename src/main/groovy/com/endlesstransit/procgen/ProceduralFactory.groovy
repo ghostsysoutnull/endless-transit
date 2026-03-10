@@ -17,13 +17,13 @@ class ProceduralFactory {
     }
 
     CosmicFilament createFilament(Container parent, LocusSeed locus) {
-        CosmicFilament f = new CosmicFilament(NameGenerator.generateFilamentName(locus.value), locus)
+        CosmicFilament f = new CosmicFilament(NameGenerator.generateFilamentName(locus), locus)
         f.setParent(parent)
         return f
     }
 
     GalacticSector createSector(Container parent, LocusSeed locus) {
-        GalacticSector s = new GalacticSector(NameGenerator.generateSectorName(locus.value), locus)
+        GalacticSector s = new GalacticSector(NameGenerator.generateSectorName(locus), locus)
         s.setParent(parent)
         return s
     }
@@ -36,23 +36,23 @@ class ProceduralFactory {
     }
 
     SolarSystem createSolarSystem(Container parent, LocusSeed locus) {
-        SolarSystem s = new SolarSystem(NameGenerator.generateSolarSystemName(locus.value), locus)
+        SolarSystem s = new SolarSystem(NameGenerator.generateSolarSystemName(locus), locus)
         s.setParent(parent)
         return s
     }
 
     Planet createPlanet(Container parent, LocusSeed locus) {
-        Planet p = new Planet(NameGenerator.generatePlanetName(locus.value), locus)
+        Planet p = new Planet(NameGenerator.generatePlanetName(locus), locus)
         p.setParent(parent)
         
         // 1. Initialize Planetary Vibe Deterministically
-        String timeline = themeService.getRandomTimeline(locus.branch("TIMELINE").value)
-        String primary = themeService.getRandomCulture(locus.branch("CULTURE_P").value)
-        String secondary = themeService.getRandomCulture(locus.branch("CULTURE_S").value)
+        String timeline = themeService.getRandomTimeline(locus.branch("TIMELINE"))
+        String primary = themeService.getRandomCulture(locus.branch("CULTURE_P"))
+        String secondary = themeService.getRandomCulture(locus.branch("CULTURE_S"))
         
         int attempts = 0
         while (secondary == primary && attempts < 10) {
-            secondary = themeService.getRandomCulture(locus.branch("CULTURE_S_ALT" + attempts).value)
+            secondary = themeService.getRandomCulture(locus.branch("CULTURE_S_ALT" + attempts))
             attempts++
         }
         
@@ -76,23 +76,23 @@ class ProceduralFactory {
     }
 
     Country createCountry(Container parent, LocusSeed locus) {
-        Country c = new Country(NameGenerator.generateCountryName(locus.value), locus)
+        Country c = new Country(NameGenerator.generateCountryName(locus), locus)
         c.setParent(parent)
         
         List<String> traits = ["Ceremonial", "Military", "Industrial", "Agricultural", "Research", "Commercial"]
-        c.functionalTrait = locus.pickFrom(traits)
+        c.functionalTrait = (String) locus.pickFrom(traits)
         
         return c
     }
 
     City createCity(Container parent, LocusSeed locus) {
-        City c = new City(NameGenerator.generateCityName(locus.value), locus)
+        City c = new City(NameGenerator.generateCityName(locus), locus)
         c.setParent(parent)
         return c
     }
 
     Street createStreet(Container parent, LocusSeed locus) {
-        Street s = new Street(NameGenerator.generateStreetName(locus.value), locus)
+        Street s = new Street(NameGenerator.generateStreetName(locus), locus)
         s.setParent(parent)
         return s
     }
@@ -103,10 +103,8 @@ class ProceduralFactory {
         b.timeline = timeline
         b.setParent(parent)
         
-        Random r = locus.nextRandom()
-        
         // 1. Determine Scale
-        int sizeRoll = r.nextInt(100)
+        int sizeRoll = locus.nextInt(100)
         String sizeCat = "small"
         if (sizeRoll > 90) sizeCat = "massive"
         else if (sizeRoll > 70) sizeCat = "large"
@@ -115,24 +113,24 @@ class ProceduralFactory {
         // 2. Set Constraints
         switch (sizeCat) {
             case "massive":
-                b.maxFloors = r.nextInt(50) + 50 // 50 to 100
-                b.apartmentsPerFloor = r.nextInt(10) + 10 // 10 to 20
+                b.maxFloors = locus.nextInt(50, 100)
+                b.apartmentsPerFloor = locus.nextInt(10, 20)
                 break
             case "large":
-                b.maxFloors = r.nextInt(20) + 30 // 30 to 50
-                b.apartmentsPerFloor = r.nextInt(8) + 8 // 8 to 16
+                b.maxFloors = locus.nextInt(30, 50)
+                b.apartmentsPerFloor = locus.nextInt(8, 16)
                 break
             case "medium":
-                b.maxFloors = r.nextInt(15) + 10 // 10 to 25
-                b.apartmentsPerFloor = r.nextInt(6) + 4 // 4 to 10
+                b.maxFloors = locus.nextInt(10, 25)
+                b.apartmentsPerFloor = locus.nextInt(4, 10)
                 break
             default:
-                b.maxFloors = r.nextInt(7) + 3 // 3 to 10
-                b.apartmentsPerFloor = r.nextInt(4) + 2 // 2 to 6
+                b.maxFloors = locus.nextInt(3, 10)
+                b.apartmentsPerFloor = locus.nextInt(2, 6)
         }
 
         // 3. Generate Name
-        Map<String, Object> nameData = NameGenerator.generateBuildingName(culture, b.maxFloors, locus.value, depth, isNull, isAbyssal)
+        Map<String, Object> nameData = NameGenerator.generateBuildingName(culture, b.maxFloors, locus, depth, isNull, isAbyssal)
         b.name = (String) nameData["name"]
         b.isLandmark = (boolean) nameData["isLandmark"]
 
@@ -155,11 +153,10 @@ class ProceduralFactory {
         Apartment a = new Apartment(doorDesc, culture, timeline, locus)
         a.setParent(parent)
         
-        Random r = locus.nextRandom()
         VibeCapsule vibe = a.getVibe()
-        if (vibe != null && r.nextDouble() > 0.01) { // 99% chance to match vibe
+        if (vibe != null && locus.nextDouble() > 0.01) { // 99% chance to match vibe
             a.timeline = vibe.timeline
-            a.culture = vibe.pickCulture(locus.branch("CULTURE_SELECTOR").value)
+            a.culture = vibe.pickCulture(locus.branch("CULTURE_SELECTOR"))
         } else if (vibe != null) {
             a.isAnomaly = true
         }
@@ -174,11 +171,9 @@ class ProceduralFactory {
         r.setLocus(locus)
         r.setParent(parent)
         
-        Random rand = locus.nextRandom()
-        
         // 1. Initial Attributes
-        String[] colors = ["white", "blue", "pink", "gray", "purple", "orange", "green", "red"]
-        r.color = colors[rand.nextInt(colors.length)]
+        List<String> colors = ["white", "blue", "pink", "gray", "purple", "orange", "green", "red"]
+        r.color = (String) locus.pickFrom(colors)
         
         // 2. Anomaly Logic
         if (parent instanceof Apartment) {
@@ -188,27 +183,27 @@ class ProceduralFactory {
         // 3. Functional Naming
         Country country = (Country) r.findAncestor(Country.class)
         String trait = country != null ? country.functionalTrait : "Standard"
-        Map<String, String> nameData = NameGenerator.generateRoomName(culture, trait, locus.value)
-        r.roomName = nameData["name"]
-        r.roomType = nameData["type"]
+        Map<String, String> nameData = NameGenerator.generateRoomName(culture, trait, locus)
+        r.roomName = (String) nameData["name"]
+        r.roomType = (String) nameData["type"]
 
         // 4. Atmosphere
         VibeCapsule vibe = r.getVibe()
         String mutation = vibe != null ? vibe.latticeMutation : "Standard"
-        Map<String, String> atmos = themeService.generateAtmosphere(culture, timeline, mutation, r.isAnomaly, locus.value)
+        Map<String, String> atmos = themeService.generateAtmosphere(culture, timeline, mutation, r.isAnomaly, locus)
         r.walls = atmos["walls"]
         r.lightingDesc = atmos["lighting"]
         r.structureDesc = atmos["structure"]
 
         // 5. Atmo-Traits
-        r.atmoTraits["OXYGEN"] = "${rand.nextInt(10) + 12}%".toString()
-        r.atmoTraits["TEMP"] = "${rand.nextInt(20) + 5}°C".toString()
-        r.atmoTraits["SIGNAL"] = rand.nextBoolean() ? "[SHIELDED]" : "[CLEAR]"
+        r.atmoTraits["OXYGEN"] = "${locus.nextInt(12, 21)}%".toString()
+        r.atmoTraits["TEMP"] = "${locus.nextInt(5, 25)}°C".toString()
+        r.atmoTraits["SIGNAL"] = locus.nextBoolean() ? "[SHIELDED]" : "[CLEAR]"
         
         // 6. Furniture
-        int numFurniture = rand.nextInt(3) + 1
+        int numFurniture = locus.nextInt(1, 3)
         for (int i = 0; i < numFurniture; i++) {
-            r.furniture << themeService.generateHybridObject(culture, timeline, locus.branch("FURN_" + i).value)
+            r.furniture << themeService.generateHybridObject(culture, timeline, locus.branch("FURN_" + i))
         }
 
         return r
@@ -217,19 +212,17 @@ class ProceduralFactory {
     // --- Population Strategies ---
 
     void populateUniverse(Universe u) {
-        Random r = u.locus.nextRandom()
-        int numFilaments = r.nextInt(5) + 3
+        int numFilaments = u.locus.nextInt(3, 7)
         for (int i = 0; i < numFilaments; i++) {
             u.addLocation(createFilament(u, u.locus.branch(i)))
         }
     }
 
     void populateFilament(CosmicFilament f) {
-        Random r = f.locus.nextRandom()
-        int numNodes = r.nextInt(5) + 4
+        int numNodes = f.locus.nextInt(4, 8)
         for (int i = 0; i < numNodes; i++) {
             LocusSeed childLocus = f.locus.branch(i)
-            if (r.nextInt(10) < 3) {
+            if (f.locus.nextInt(100) < 30) {
                 f.addLocation(createNullSector(f, childLocus))
             } else {
                 f.addLocation(createSector(f, childLocus))
@@ -238,63 +231,55 @@ class ProceduralFactory {
     }
 
     void populateSector(GalacticSector s) {
-        Random r = s.locus.nextRandom()
-        int numSystems = r.nextInt(5) + 3
+        int numSystems = s.locus.nextInt(3, 7)
         for (int i = 0; i < numSystems; i++) {
             s.addLocation(createSolarSystem(s, s.locus.branch(i)))
         }
     }
 
     void populateNullSector(NullSector s) {
-        Random r = s.locus.nextRandom()
-        int numSystems = r.nextInt(2) + 1
+        int numSystems = s.locus.nextInt(1, 2)
         for (int i = 0; i < numSystems; i++) {
             LocusSeed childLocus = s.locus.branch(i)
-            s.addLocation(new SolarSystem("Lost " + NameGenerator.generateSolarSystemName(childLocus.value), childLocus))
+            s.addLocation(createSolarSystem(s, childLocus))
         }
     }
 
     void populateSolarSystem(SolarSystem s) {
-        Random r = s.locus.nextRandom()
-        int numPlanets = r.nextInt(9) + 2
+        int numPlanets = s.locus.nextInt(2, 10)
         for (int i = 0; i < numPlanets; i++) {
             s.addLocation(createPlanet(s, s.locus.branch(i)))
         }
     }
 
     void populatePlanet(Planet p) {
-        Random r = p.locus.nextRandom()
-        int numCountries = r.nextInt(7) + 2
+        int numCountries = p.locus.nextInt(2, 8)
         for (int i = 0; i < numCountries; i++) {
             p.addLocation(createCountry(p, p.locus.branch(i)))
         }
     }
 
     void populateCountry(Country c) {
-        Random r = c.locus.nextRandom()
-        
         // Ensure we have a local mutated vibe for this country based on the planet
         if (c.localVibe == null) {
             VibeCapsule parentVibe = c.getVibe()
             if (parentVibe != null) {
-                c.localVibe = parentVibe.mutate(c.functionalTrait, r.nextDouble() * 0.2 - 0.1)
+                c.localVibe = parentVibe.mutate(c.functionalTrait, c.locus.nextDouble() * 0.2 - 0.1)
             }
         }
 
-        int numCities = r.nextInt(9) + 2
+        int numCities = c.locus.nextInt(2, 10)
         for (int i = 0; i < numCities; i++) {
             c.addLocation(createCity(c, c.locus.branch(i)))
         }
     }
 
     void populateCity(City c) {
-        Random r = c.locus.nextRandom()
-        
         if (c.localVibe == null) {
             VibeCapsule parentVibe = c.getVibe()
             if (parentVibe != null) {
                 // 10% chance to be a "rebel" district and flip resonances
-                if (r.nextDouble() < 0.1) {
+                if (c.locus.checkProbability(0.1)) {
                     c.isRebelDistrict = true
                     c.localVibe = new VibeCapsule(parentVibe.timeline, parentVibe.secondaryCulture, parentVibe.primaryCulture)
                     c.localVibe.latticeMutation = parentVibe.latticeMutation
@@ -304,15 +289,14 @@ class ProceduralFactory {
             }
         }
 
-        int numStreets = r.nextInt(13) + 3
+        int numStreets = c.locus.nextInt(3, 15)
         for (int i = 0; i < numStreets; i++) {
             c.addLocation(createStreet(c, c.locus.branch(i)))
         }
     }
 
     void populateStreet(Street s) {
-        Random r = s.locus.nextRandom()
-        int numPairs = r.nextInt(9) + 2
+        int numPairs = s.locus.nextInt(2, 10)
         VibeCapsule v = s.getVibe()
         String culture = v != null ? v.primaryCulture : "monolith"
         String timeline = v != null ? v.timeline : "ancient"
@@ -325,13 +309,12 @@ class ProceduralFactory {
     }
 
     Apartment populateApartment(Apartment a) {
-        Random r = a.locus.nextRandom()
-        int numRooms = r.nextInt(10) + 1
+        int numRooms = a.locus.nextInt(1, 10)
         
         List<String> objectPool = []
-        int totalObjects = r.nextInt(15) + 5
+        int totalObjects = a.locus.nextInt(5, 19)
         for (int i = 0; i < totalObjects; i++) {
-            objectPool << themeService.generateHybridObject(a.culture, a.timeline, a.locus.branch("OBJ_" + i).value)
+            objectPool << themeService.generateHybridObject(a.culture, a.timeline, a.locus.branch("OBJ_" + i))
         }
 
         for (int i = 0; i < numRooms; i++) {
@@ -341,7 +324,7 @@ class ProceduralFactory {
         }
 
         while (!objectPool.isEmpty()) {
-            int roomIdx = r.nextInt(a.rooms.size())
+            int roomIdx = a.locus.nextInt(a.rooms.size())
             a.rooms[roomIdx].objects << (String) objectPool.remove(0)
         }
         return a
@@ -351,7 +334,7 @@ class ProceduralFactory {
         LocusSeed locus = c.locus
         for (int i = 0; i < c.numApartments; i++) {
             LocusSeed childLocus = locus.branch(i)
-            Door door = new Door(childLocus.value)
+            Door door = new Door(childLocus)
             c.doors << door
             Apartment apartment = createApartment(c, door.getDescription(), c.culture, c.timeline, childLocus)
             c.apartments << apartment

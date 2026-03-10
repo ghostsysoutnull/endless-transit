@@ -16,7 +16,7 @@ class RenderingCoordinator {
     }
 
     void renderCurrentState(Map<String, Closure> options) {
-        state.bridgeView.render(state.currentLocation, state.player, options, state.masterLocus.value)
+        state.bridgeView.render(state.currentLocation, state.player, options, state.masterLocus)
     }
 
     void renderLatticeMap() {

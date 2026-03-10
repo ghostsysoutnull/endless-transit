@@ -64,6 +64,30 @@ class LocusSeed {
         return nextRandom().nextDouble()
     }
 
+    /**
+     * Semantic: returns a random integer between min (inclusive) and max (inclusive).
+     */
+    int nextInt(int min, int max) {
+        if (min == max) return min
+        return nextRandom().nextInt(max - min + 1) + min
+    }
+
+    /**
+     * Semantic: picks a random key from a map.
+     */
+    String pickFromKeys(Map<String, ?> map) {
+        if (!map) return null
+        List<String> keys = new ArrayList<>(map.keySet())
+        return pickFrom(keys)
+    }
+
+    /**
+     * Semantic: returns true if a boolean roll succeeds.
+     */
+    boolean nextBoolean() {
+        return nextRandom().nextBoolean()
+    }
+
     long nextLong() {
         return nextRandom().nextLong()
     }

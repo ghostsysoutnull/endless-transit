@@ -21,7 +21,7 @@ class PersistenceService {
 
     GameMemento createMemento() {
         return new GameMemento(
-            masterSeed: state.masterLocus.value,
+            masterLocus: state.masterLocus,
             currentLIP: state.currentLocation.getLIP(),
             playerCoherence: state.player.coherence,
             inventory: new ArrayList<InventoryItem>(state.player.inventory),
@@ -30,7 +30,7 @@ class PersistenceService {
     }
 
     void restore(GameMemento memento) {
-        state.masterLocus = new LocusSeed(memento.masterSeed)
+        state.masterLocus = memento.masterLocus
         state.player = new Player()
         state.player.coherence = memento.playerCoherence
         state.player.inventory.addAll(memento.inventory)

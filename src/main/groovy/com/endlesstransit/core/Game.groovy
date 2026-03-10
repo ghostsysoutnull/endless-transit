@@ -22,9 +22,13 @@ class Game {
     TurnProcessor turnProcessor
     RenderingCoordinator renderer
 
-    Game(long seed = System.currentTimeMillis(), InputSource inputSource = new RealTerminalSource()) {
+    Game(long seedValue = System.currentTimeMillis(), InputSource inputSource = new RealTerminalSource()) {
+        this(new LocusSeed(seedValue), inputSource)
+    }
+
+    Game(LocusSeed masterLocus, InputSource inputSource = new RealTerminalSource()) {
         ModelOutput.fmt = new com.endlesstransit.ui.TerminalAdapter()
-        this.state = new GameState(seed, inputSource)
+        this.state = new GameState(masterLocus, inputSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
         this.persistence = new PersistenceService(state, navOrchestrator)
         this.renderer = new RenderingCoordinator(state)
@@ -82,7 +86,7 @@ class Game {
                 if (!turnProcessor.handleInput(this)) break
             }
         } catch (Throwable t) {
-            Logger.reportCriticalFailure(state.currentLocation, state.player, state.navEngine.lastChoice, state.masterLocus.value, t)
+            Logger.reportCriticalFailure(state.currentLocation, state.player, state.navEngine.lastChoice, state.masterLocus, t)
             Terminal.println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
             System.exit(1)
         }

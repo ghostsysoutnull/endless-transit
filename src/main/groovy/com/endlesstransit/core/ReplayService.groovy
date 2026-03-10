@@ -1,6 +1,7 @@
 package com.endlesstransit.core
 
 import groovy.transform.CompileStatic
+import com.endlesstransit.procgen.LocusSeed
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -14,7 +15,7 @@ class ReplayService {
     private static final String REGRESSION_PATH = "src/test/groovy/com/endlesstransit/regression"
 
     static class ReplayData {
-        long seed
+        LocusSeed locus
         List<String> history
         String lip
     }
@@ -29,7 +30,7 @@ class ReplayService {
 
         if (matcher.find()) {
             ReplayData data = new ReplayData()
-            data.seed = matcher.group(1).toLong()
+            data.locus = new LocusSeed(matcher.group(1).toLong())
             String historyStr = matcher.group(2).trim()
             data.history = historyStr ? historyStr.split(", ").toList() : []
             return data
@@ -45,7 +46,7 @@ class ReplayService {
         if (!data) return "ERROR: Could not parse metadata from ${screenshotFile.name}"
 
         String finalTestName = testName ?: "Regression_${screenshotFile.name.replaceAll("[^a-zA-Z0-9]", "_")}"
-        String testContent = generateTestContent(finalTestName, data.seed, data.history)
+        String testContent = generateTestContent(finalTestName, data.locus, data.history)
 
         File dir = new File(REGRESSION_PATH)
         if (!dir.exists()) dir.mkdirs()
@@ -56,12 +57,13 @@ class ReplayService {
         return "SUCCESS: Generated test at ${testFile.absolutePath}"
     }
 
-    private static String generateTestContent(String testName, long seed, List<String> history) {
+    private static String generateTestContent(String testName, LocusSeed locus, List<String> history) {
         String formattedHistory = history.collect { "\"$it\"" }.join(", ")
         
         return """package com.endlesstransit.regression
 
 import com.endlesstransit.core.HeadlessRunner
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.VisualAssertionEngine
 import com.endlesstransit.ui.ScreenBuffer
 import org.junit.jupiter.api.Test
@@ -69,17 +71,17 @@ import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Automated regression test generated from VINCULUM snapshot.
- * Target Seed: $seed
+ * Target Seed: ${locus.value}
  */
 class $testName {
 
     @Test
     void execute() {
-        long seed = ${seed}L
+        LocusSeed locus = new LocusSeed(${locus.value}L)
         List<String> script = [$formattedHistory]
         
         // Execute the simulation
-        ScreenBuffer result = HeadlessRunner.run(seed, script)
+        ScreenBuffer result = HeadlessRunner.run(locus, script)
         
         // Assertions
         assertNotNull(result, "Simulation failed to return a screen buffer")

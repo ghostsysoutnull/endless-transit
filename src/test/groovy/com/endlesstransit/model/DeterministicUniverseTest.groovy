@@ -13,26 +13,25 @@ class DeterministicUniverseTest {
     static void testUniverseStability() {
         Terminal.println "Running Deterministic Universe Stability Test..."
         
-        long testSeedValue = 987654321L
-        LocusSeed testSeed = new LocusSeed(testSeedValue)
+        LocusSeed testLocus = new LocusSeed(987654321L)
         
         // Universe A
-        Universe u1 = ProceduralFactory.instance.createUniverse(testSeed)
-        String name1 = u1.getFilaments()[0].name
-        String planetName1 = u1.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].name
-        String vibe1 = u1.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].getVibe().toString()
+        Universe u1 = ProceduralFactory.instance.createUniverse(testLocus)
+        String name1 = u1.getFilaments()[0].getName()
+        String planetName1 = u1.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].name
+        String vibe1 = u1.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].getVibe().toString()
         
         // Universe B
-        Universe u2 = ProceduralFactory.instance.createUniverse(testSeed)
-        String name2 = u2.getFilaments()[0].name
-        String planetName2 = u2.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].name
-        String vibe2 = u2.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].getVibe().toString()
+        Universe u2 = ProceduralFactory.instance.createUniverse(testLocus)
+        String name2 = u2.getFilaments()[0].getName()
+        String planetName2 = u2.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].name
+        String vibe2 = u2.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].getVibe().toString()
 
         assert name1 == name2 : "Filament name mismatch: $name1 vs $name2"
         assert planetName1 == planetName2 : "Planet name mismatch: $planetName1 vs $planetName2"
         assert vibe1 == vibe2 : "Vibe mismatch: $vibe1 vs $vibe2"
         
-        Terminal.println "SUCCESS: Universe is deterministic for seed ${testSeed.value}"
+        Terminal.println "SUCCESS: Universe is deterministic for locus ${testLocus.value}"
         
         // Verify LIP Resolution stability
         Location walker = u1.getFilaments()[0]

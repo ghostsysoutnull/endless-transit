@@ -9,7 +9,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class BridgeView implements ScreenshotProvider {
     private Location lastLocation
-    private long lastSeed
+    private LocusSeed lastLocus
     private List<String> lastHudFrame = []
 
     BridgeView() {
@@ -25,7 +25,7 @@ class BridgeView implements ScreenshotProvider {
             lines: new ArrayList<>(lastHudFrame),
             timestamp: System.currentTimeMillis(),
             locationPath: lastLocation ? lastLocation.getLIP() : "UNKNOWN",
-            masterSeed: lastSeed,
+            masterLocus: lastLocus,
             inputHistory: new ArrayList<>(inputHistory)
         )
     }
@@ -59,11 +59,11 @@ class BridgeView implements ScreenshotProvider {
         System.out.flush()
     }
 
-    void render(Location currentLocation, Player player, Map<String, Closure> options, long masterSeed) {
+    void render(Location currentLocation, Player player, Map<String, Closure> options, LocusSeed masterLocus) {
         this.lastLocation = currentLocation
-        this.lastSeed = masterSeed
+        this.lastLocus = masterLocus
         renderBridgeHUD(currentLocation, player)
-        renderAdaptiveBridge(currentLocation, player, masterSeed)
+        renderAdaptiveBridge(currentLocation, player, masterLocus)
         renderMenu(currentLocation, options)
         renderGlobalControls()
 
@@ -205,7 +205,7 @@ class BridgeView implements ScreenshotProvider {
         Terminal.println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
     }
 
-    void renderAdaptiveBridge(Location currentLocation, Player player, long masterSeed) {
+    void renderAdaptiveBridge(Location currentLocation, Player player, LocusSeed masterLocus) {
         int splitColumn = 90
         int totalWidth = 130
         int leftWidth = splitColumn - 2
@@ -225,7 +225,7 @@ class BridgeView implements ScreenshotProvider {
         }
 
         // 2. Get Right Content
-        List<String> rightLines = generateRightPaneContent(currentLocation, player, rightWidth, masterSeed)
+        List<String> rightLines = generateRightPaneContent(currentLocation, player, rightWidth, masterLocus)
         
         // 3. Apply Abyssal Static
         if (currentLocation.isAbyssal()) {
@@ -264,16 +264,16 @@ class BridgeView implements ScreenshotProvider {
         }
     }
 
-    private List<String> generateRightPaneContent(Location currentLocation, Player player, int width, long masterSeed) {
+    private List<String> generateRightPaneContent(Location currentLocation, Player player, int width, LocusSeed masterLocus) {
         int depth = currentLocation.getDepth()
         if (depth <= 7) {
-            return generateMacroMap(currentLocation, width, masterSeed)
+            return generateMacroMap(currentLocation, width, masterLocus)
         } else {
             return generateSystemTelemetry(currentLocation, player, width)
         }
     }
 
-    private List<String> generateMacroMap(Location currentLocation, int width, long masterSeed) {
+    private List<String> generateMacroMap(Location currentLocation, int width, LocusSeed masterLocus) {
         String mapType = currentLocation.getMapType()
         if (mapType == "none" || !(currentLocation instanceof Container)) return [Terminal.dim("[MAP_OFFLINE]")]
         
@@ -281,7 +281,7 @@ class BridgeView implements ScreenshotProvider {
         int mapHeight = 12
         
         if (mapType == "universe") {
-            return generateUniverseMap(mapWidth, mapHeight, masterSeed)
+            return generateUniverseMap(mapWidth, mapHeight, masterLocus)
         } else if (mapType == "filament") {
             return generateFilamentMap(currentLocation, mapWidth, mapHeight)
         }
@@ -302,13 +302,13 @@ class BridgeView implements ScreenshotProvider {
         return lines
     }
 
-    private List<String> generateUniverseMap(int w, int h, long masterSeed) {
+    private List<String> generateUniverseMap(int w, int h, LocusSeed masterLocus) {
         Terminal.MapBuffer buffer = new Terminal.MapBuffer(w, h)
         int cx = (int)(w / 2)
         int cy = (int)(h / 2)
         buffer.plot(cx, cy, "∞", Terminal.CYAN)
         
-        Random r = new Random(masterSeed)
+        Random r = masterLocus.nextRandom()
         int numLines = 6
         for (int i = 0; i < numLines; i++) {
             double angle = (Math.PI * 2 / numLines) * i

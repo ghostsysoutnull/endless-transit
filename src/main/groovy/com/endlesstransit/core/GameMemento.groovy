@@ -1,6 +1,7 @@
 package com.endlesstransit.core
 
 import com.endlesstransit.model.Location
+import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 
@@ -10,7 +11,7 @@ import groovy.transform.Immutable
 @CompileStatic
 @Immutable
 class GameMemento {
-    long masterSeed
+    LocusSeed masterLocus
     String currentLIP
     int playerCoherence
     List<InventoryItem> inventory

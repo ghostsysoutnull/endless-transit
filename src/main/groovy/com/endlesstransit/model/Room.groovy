@@ -96,7 +96,7 @@ class Room implements Location {
 
     @Override
     void processAction(Player player) {
-        Random random = new Random()
+        Random random = locus.branch("ACTION").nextRandom()
         if (random.nextInt(10) < 3) { 
             int randomNum = random.nextInt(9000000) + 1000000 
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
@@ -121,7 +121,7 @@ class Room implements Location {
 
     @Override
     String getCoordinates() {
-        Random r = new Random(this.hashCode() as long)
+        Random r = locus.branch("COORDS").nextRandom()
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 

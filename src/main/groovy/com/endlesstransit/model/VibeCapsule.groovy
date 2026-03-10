@@ -1,5 +1,9 @@
 package com.endlesstransit.model
 
+import com.endlesstransit.procgen.LocusSeed
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class VibeCapsule {
     String timeline
     String primaryCulture
@@ -18,7 +22,7 @@ class VibeCapsule {
      * Creates a mutated copy of this capsule for regional divergence.
      */
     VibeCapsule mutate(String mutation, double stabilityShift = 0.0) {
-        def next = new VibeCapsule(timeline, primaryCulture, secondaryCulture)
+        VibeCapsule next = new VibeCapsule(timeline, primaryCulture, secondaryCulture)
         next.stabilityFactor = Math.max(0.1, Math.min(0.9, this.stabilityFactor + stabilityShift))
         next.latticeMutation = mutation
         next.atmosphericColor = this.atmosphericColor
@@ -28,9 +32,8 @@ class VibeCapsule {
     /**
      * Picks a culture based on the current stability factor.
      */
-    String pickCulture(long seed = 0) {
-        Random r = seed != 0 ? new Random(seed) : new Random()
-        return r.nextDouble() < stabilityFactor ? primaryCulture : secondaryCulture
+    String pickCulture(LocusSeed locus) {
+        return locus.nextDouble() < stabilityFactor ? primaryCulture : secondaryCulture
     }
 
     @Override

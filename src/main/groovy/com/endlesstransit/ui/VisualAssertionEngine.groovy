@@ -17,6 +17,13 @@ class VisualAssertionEngine {
         return new VisualAssertionEngine(buffer)
     }
 
+    static void verify(ScreenBuffer buffer, @DelegatesTo(VisualAssertionEngine) Closure closure) {
+        VisualAssertionEngine engine = new VisualAssertionEngine(buffer)
+        closure.delegate = engine
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.call()
+    }
+
     void contains(String text) {
         boolean found = buffer.lines.any { it.contains(text) || Terminal.stripAnsi(it).contains(text) }
         if (!found) {

@@ -30,7 +30,7 @@ class NullSector extends Container {
     NullSector(String name, LocusSeed locus = new LocusSeed(0)) {
         this.name = name
         this.locus = locus
-        Random r = locus.value != 0 ? new Random(locus.value) : new Random()
+        Random r = locus.nextRandom()
         this.echoFrequency = r.nextInt(9000) + 1000
     }
 

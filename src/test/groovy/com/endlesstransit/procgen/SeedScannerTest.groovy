@@ -17,13 +17,13 @@ class SeedScannerTest extends GroovyTestCase {
         WorldProbe probe = new BuildingFloorCountProbe(5)
         
         // Scan 100 seeds starting from 0
-        SeedScanner.ScanResult result = scanner.scan(0, 100, probe)
+        SeedScanner.ScanResult result = scanner.scan(new LocusSeed(0), 100, probe)
         
         assertNotNull("Should have found a tall building within 100 seeds", result)
         assertTrue("Matching location should be a building", result.matchingLocation instanceof Building)
         assertTrue("Building should have >= 5 floors", ((Building) result.matchingLocation).maxFloors >= 5)
         
-        println "SUCCESS: Found tall building at seed ${result.seed} - LIP: ${result.matchingLocation.getLIP()}"
+        println "SUCCESS: Found tall building at seed ${result.locus} - LIP: ${result.matchingLocation.getLIP()}"
     }
 
     void testNoMatchFound() {
@@ -31,7 +31,7 @@ class SeedScannerTest extends GroovyTestCase {
         // Something impossible (hopefully)
         WorldProbe probe = new BuildingFloorCountProbe(99999)
         
-        SeedScanner.ScanResult result = scanner.scan(0, 10, probe)
+        SeedScanner.ScanResult result = scanner.scan(new LocusSeed(0), 10, probe)
         assertNull("Should NOT have found a 99k floor building in 10 seeds", result)
     }
 }

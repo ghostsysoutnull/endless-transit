@@ -1,33 +1,30 @@
 package com.endlesstransit.model
-import com.endlesstransit.core.Game
-import com.endlesstransit.core.Player
-import com.endlesstransit.core.InventoryItem
-import com.endlesstransit.core.Logger
-import com.endlesstransit.core.JournalManager
+import com.endlesstransit.procgen.LocusSeed
 
-import java.util.Random
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class Door {
     String color
     boolean hasWindows
     String decor
     String scaryWord
     Boolean visited = false
-    long seed
+    LocusSeed locus
 
-    Door(long seed = 0) {
-        this.seed = seed
-        Random random = seed != 0 ? new Random(seed) : new Random()
-        String[] colors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown"]
-        String[] decors = ["wooden", "metallic", "ornate", "plain", "rustic", "vintage", "modern", "minimalist"]
-        String[] scaryWords = ["Beware", "Danger", "Haunt", "Fear", "Nightmare"]
+    Door(LocusSeed locus = new LocusSeed(0)) {
+        this.locus = locus
+        Random r = locus.nextRandom()
+        List<String> colors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown"]
+        List<String> decors = ["wooden", "metallic", "ornate", "plain", "rustic", "vintage", "modern", "minimalist"]
+        List<String> scaryWords = ["Beware", "Danger", "Haunt", "Fear", "Nightmare"]
 
-        color = colors[random.nextInt(colors.length)]
-        hasWindows = random.nextBoolean()
-        decor = decors[random.nextInt(decors.length)]
+        color = colors[r.nextInt(colors.size())]
+        hasWindows = r.nextBoolean()
+        decor = decors[r.nextInt(decors.size())]
         
-        if (random.nextInt(4) == 0) { // 25% chance of a scary word
-            scaryWord = scaryWords[random.nextInt(scaryWords.length)]
+        if (r.nextInt(4) == 0) { // 25% chance of a scary word
+            scaryWord = scaryWords[r.nextInt(scaryWords.size())]
         }
     }
 

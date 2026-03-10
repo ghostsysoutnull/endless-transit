@@ -1,7 +1,9 @@
 package com.endlesstransit.procgen
 
+import groovy.transform.CompileStatic
 import java.util.Random
 
+@CompileStatic
 class ThemeService {
     final String CULTURES_DIR = "src/main/resources/themes/cultures"
     final String TIMELINES_DIR = "src/main/resources/themes/timelines"
@@ -20,14 +22,21 @@ class ThemeService {
     }
 
     private void loadThemes() {
-        new File(CULTURES_DIR).eachFile { file ->
-            if (file.isFile()) {
-                cultures[file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+        File cultDir = new File(CULTURES_DIR)
+        if (cultDir.exists()) {
+            cultDir.eachFile { file ->
+                if (file.isFile()) {
+                    cultures[file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+                }
             }
         }
-        new File(TIMELINES_DIR).eachFile { file ->
-            if (file.isFile()) {
-                timelines[file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+        
+        File timeDir = new File(TIMELINES_DIR)
+        if (timeDir.exists()) {
+            timeDir.eachFile { file ->
+                if (file.isFile()) {
+                    timelines[file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+                }
             }
         }
         
@@ -44,18 +53,14 @@ class ThemeService {
         }
     }
 
-    String getRandomCulture(long seed) {
-        def keys = new ArrayList<>(cultures.keySet())
-        if (keys.isEmpty()) return "monolith"
-        Random r = new Random(seed)
-        return keys[r.nextInt(keys.size())]
+    String getRandomCulture(LocusSeed locus) {
+        String culture = locus.pickFromKeys(cultures)
+        return culture ?: "monolith"
     }
 
-    String getRandomTimeline(long seed) {
-        def keys = new ArrayList<>(timelines.keySet())
-        if (keys.isEmpty()) return "digital"
-        Random r = new Random(seed)
-        return keys[r.nextInt(keys.size())]
+    String getRandomTimeline(LocusSeed locus) {
+        String timeline = locus.pickFromKeys(timelines)
+        return timeline ?: "digital"
     }
 
     List<String> getCultureAssets(String cultureName) {
@@ -69,17 +74,15 @@ class ThemeService {
     /**
      * Synthesizes atmosphere components based on vibe.
      */
-    Map<String, String> generateAtmosphere(String culture, String timeline, String mutation, boolean isAnomaly, long seed) {
-        Random r = new Random(seed)
-        
+    Map<String, String> generateAtmosphere(String culture, String timeline, String mutation, boolean isAnomaly, LocusSeed locus) {
         // If it is abyssal, force it
         if (culture == "abyssal") {
-            def wallPool = atmosphere["walls"]["abyssal"] ?: ["raw concrete"]
-            def lightPool = atmosphere["lighting"]["abyssal"] ?: ["red strobe"]
-            def structPool = atmosphere["structures"]["abyssal"] ?: ["void"]
-            return [walls: wallPool[r.nextInt(wallPool.size())], 
-                    lighting: lightPool[r.nextInt(lightPool.size())], 
-                    structure: structPool[r.nextInt(structPool.size())]]
+            List<String> wallPool = atmosphere["walls"]["abyssal"] ?: ["raw concrete"]
+            List<String> lightPool = atmosphere["lighting"]["abyssal"] ?: ["red strobe"]
+            List<String> structPool = atmosphere["structures"]["abyssal"] ?: ["void"]
+            return [walls: (String)locus.pickFrom(wallPool), 
+                    lighting: (String)locus.pickFrom(lightPool), 
+                    structure: (String)locus.pickFrom(structPool)]
         }
 
         String wallTheme = culture
@@ -87,40 +90,37 @@ class ThemeService {
         String structTheme = mutation
 
         // Glitch Logic: Randomize themes if anomaly is detected
-        if (isAnomaly || r.nextDouble() < 0.05) {
-            if (r.nextBoolean()) wallTheme = getRandomCulture(seed + 1)
-            if (r.nextBoolean()) lightTheme = getRandomTimeline(seed + 2)
-            if (r.nextBoolean()) structTheme = r.nextBoolean() ? "Abyssal" : "Singularity"
+        if (isAnomaly || locus.checkProbability(0.05)) {
+            if (locus.nextBoolean()) wallTheme = getRandomCulture(locus.branch("WALL_GLITCH"))
+            if (locus.nextBoolean()) lightTheme = getRandomTimeline(locus.branch("LIGHT_GLITCH"))
+            if (locus.nextBoolean()) structTheme = locus.nextBoolean() ? "Abyssal" : "Singularity"
         }
 
         // Walls pull from Culture (or glitched culture)
-        def wallPool = atmosphere["walls"][wallTheme] ?: ["bare surfaces"]
-        String walls = wallPool[r.nextInt(wallPool.size())]
+        List<String> wallPool = atmosphere["walls"][wallTheme] ?: ["bare surfaces"]
+        String walls = (String) locus.pickFrom(wallPool)
         
         // Lighting pulls from Timeline (or glitched timeline)
-        def lightPool = atmosphere["lighting"][lightTheme] ?: ["a dim, flickering glow"]
-        String lighting = lightPool[r.nextInt(lightPool.size())]
+        List<String> lightPool = atmosphere["lighting"][lightTheme] ?: ["a dim, flickering glow"]
+        String lighting = (String) locus.pickFrom(lightPool)
         
         // Structure pulls from Mutation (or glitched mutation)
-        def structPool = atmosphere["structures"][structTheme] ?: atmosphere["structures"]["Standard"] ?: ["a spatial cell"]
-        String structure = structPool[r.nextInt(structPool.size())]
+        List<String> structPool = atmosphere["structures"][structTheme] ?: atmosphere["structures"]["Standard"] ?: ["a spatial cell"]
+        String structure = (String) locus.pickFrom(structPool)
         
         return [walls: walls, lighting: lighting, structure: structure]
     }
 
-    String generateHybridObject(String culture, String timeline, long seed = 0) {
-        Random r = seed != 0 ? new Random(seed) : new Random()
-        def cAssets = getCultureAssets(culture)
-        def tAssets = getTimelineAssets(timeline)
+    String generateHybridObject(String culture, String timeline, LocusSeed locus) {
+        List<String> cAssets = getCultureAssets(culture)
+        List<String> tAssets = getTimelineAssets(timeline)
 
         if (cAssets && tAssets) {
-            // Mix: Timeline adjective + Culture noun OR Culture adjective + Timeline noun
-            // For simplicity, we'll just pick one from each and join them
-            String cItem = cAssets[r.nextInt(cAssets.size())]
-            String tItem = tAssets[r.nextInt(tAssets.size())]
+            String cItem = (String) locus.pickFrom(cAssets)
+            String tItem = (String) locus.pickFrom(tAssets)
             
             // Randomly decide which one comes first for variety
-            return r.nextBoolean() ? "${tItem} with ${cItem}" : "${cItem} infused with ${tItem}"
+            return locus.nextBoolean() ? "${tItem} with ${cItem}" : "${cItem} infused with ${tItem}"
         }
         return "Strange Object"
     }

@@ -20,7 +20,7 @@ class NewGameTest extends GroovyTestCase {
                 
                 // Simulate the first pass of the main loop before input
                 game.bridgeView.renderBridgeHUD(game.currentLocation, game.player)
-                game.bridgeView.renderAdaptiveBridge(game.currentLocation, game.player, game.masterLocus.value)
+                game.bridgeView.renderAdaptiveBridge(game.currentLocation, game.player, game.masterLocus)
                 
                 // Verify no crash during option generation
                 Map<String, Closure> options = game.currentLocation.getOptions(game)

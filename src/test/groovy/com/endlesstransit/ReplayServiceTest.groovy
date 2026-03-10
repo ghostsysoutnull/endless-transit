@@ -3,6 +3,7 @@ package com.endlesstransit
 import com.endlesstransit.core.HeadlessRunner
 import com.endlesstransit.core.ReplayService
 import com.endlesstransit.ui.ScreenBuffer
+import com.endlesstransit.procgen.LocusSeed
 import groovy.test.GroovyTestCase
 import java.io.File
 
@@ -17,7 +18,7 @@ class ReplayServiceTest extends GroovyTestCase {
             lines: ["+-------+", "| MOCK  |", "+-------+"],
             timestamp: System.currentTimeMillis(),
             locationPath: "0.1.2.3",
-            masterSeed: seed,
+            masterLocus: new LocusSeed(seed),
             inputHistory: script
         )
         

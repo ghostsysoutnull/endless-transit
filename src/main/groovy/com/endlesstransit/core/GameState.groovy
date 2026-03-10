@@ -24,8 +24,8 @@ class GameState {
     NavigationEngine navEngine = new NavigationEngine()
     QuantumBufferController inventoryController = new QuantumBufferController()
 
-    GameState(long seed, InputSource inputSource) {
-        this.masterLocus = new LocusSeed(seed)
+    GameState(LocusSeed locus, InputSource inputSource) {
+        this.masterLocus = locus
         this.player = new Player()
         this.inputHandler = new InputHandler(inputSource)
     }

@@ -19,38 +19,37 @@ import java.util.concurrent.atomic.AtomicLong
 class SeedScanner {
 
     static class ScanResult {
-        long seed
+        LocusSeed locus
         Location matchingLocation
     }
 
     /**
      * Scans a range of seeds to find the first location that matches the probe.
-     * @param startSeed Starting master seed.
+     * @param startLocus Starting master locus.
      * @param count Number of seeds to check.
      * @param probe The criteria to match.
      * @return ScanResult or null if not found.
      */
-    ScanResult scan(long startSeed, long count, WorldProbe probe) {
+    ScanResult scan(LocusSeed startLocus, long count, WorldProbe probe) {
         // Ensure UI is decoupled for speed and no-op output
         Terminal.initialize(true, true)
 
-        System.out.println("[VINCULUM_SEED_SCANNER] Starting scan for: ${probe.getName()}")
+        Terminal.println("[VINCULUM_SEED_SCANNER] Starting scan for: ${probe.getName()}")
 
         for (long i = 0; i < count; i++) {
-            long currentSeed = startSeed + i
-            if (i % 10 == 0) System.out.println("[VINCULUM_SEED_SCANNER] Seed: $currentSeed (${i}/${count})...")
+            LocusSeed currentLocus = new LocusSeed(startLocus.value + i)
+            if (i % 10 == 0) Terminal.println("[VINCULUM_SEED_SCANNER] Seed: ${currentLocus.value} (${i}/${count})...")
             
-            LocusSeed masterLocus = new LocusSeed(currentSeed)
-            Universe universe = ProceduralFactory.instance.createUniverse(masterLocus)
+            Universe universe = ProceduralFactory.instance.createUniverse(currentLocus)
             
             nodeCount = 0
             Location match = findInHierarchy(universe, probe)
             if (match != null) {
-                System.out.println("[VINCULUM_SEED_SCANNER] SUCCESS! Match found at seed: $currentSeed - Node count: $nodeCount")
-                return new ScanResult(seed: currentSeed, matchingLocation: match)
+                Terminal.println("[VINCULUM_SEED_SCANNER] SUCCESS! Match found at seed: ${currentLocus.value} - Node count: $nodeCount")
+                return new ScanResult(locus: currentLocus, matchingLocation: match)
             }
         }
-        System.out.println("[VINCULUM_SEED_SCANNER] FAILURE: No match found after $count seeds.")
+        Terminal.println("[VINCULUM_SEED_SCANNER] FAILURE: No match found after $count seeds.")
         return null
     }
 

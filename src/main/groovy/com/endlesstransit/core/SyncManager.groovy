@@ -21,7 +21,7 @@ class SyncManager {
         def player = game.player
         def snapshot = [
             "version": "1.2",
-            "masterSeed": game.masterLocus.value,
+            "masterLocus": game.masterLocus.value,
             "timestamp": System.currentTimeMillis(),
             "player": [
                 "coherence": player.coherence,
@@ -61,9 +61,9 @@ class SyncManager {
 
         try {
             Map snapshot = (Map) new JsonSlurper().parse(file)
-            long seedValue = (long) snapshot["masterSeed"]
+            long seedValue = (snapshot["masterLocus"] as Number).longValue()
             LocusSeed locus = new LocusSeed(seedValue)
-            Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)} (Seed: ${locus.value})")
+            Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)} (Locus: $locus)")
             
             Universe universe = ProceduralFactory.instance.createUniverse(locus)
             

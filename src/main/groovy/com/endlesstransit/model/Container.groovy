@@ -56,7 +56,7 @@ abstract class Container implements Location {
         
         children.each { child ->
             // Use name + parent name hash for stable coordinates within this container
-            Random r = new Random(child.getName().hashCode() + this.getName().hashCode())
+            Random r = locus.branch(child.getName()).nextRandom()
             int x = r.nextInt(width)
             int y = r.nextInt(height)
             
@@ -198,8 +198,7 @@ abstract class Container implements Location {
 
     @Override
     String getCoordinates() {
-        def nameForHash = getName()
-        Random r = new Random(nameForHash.hashCode() + (locus != null ? locus.value : 0))
+        Random r = locus.branch(getName()).nextRandom()
         return String.format("%.3f / %.3f", r.nextDouble() * 100, r.nextDouble() * 100)
     }
 

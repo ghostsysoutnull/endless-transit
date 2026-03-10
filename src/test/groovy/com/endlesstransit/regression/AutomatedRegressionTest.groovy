@@ -1,6 +1,7 @@
 package com.endlesstransit.regression
 
 import com.endlesstransit.core.HeadlessRunner
+import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.VisualAssertionEngine
 import com.endlesstransit.ui.ScreenBuffer
 import org.junit.jupiter.api.Test
@@ -14,11 +15,11 @@ class AutomatedRegressionTest {
 
     @Test
     void execute() {
-        long seed = 12345L
+        LocusSeed locus = new LocusSeed(12345L)
         List<String> script = ["f", "01", "quit", "y", "y"]
         
         // Execute the simulation
-        ScreenBuffer result = HeadlessRunner.run(seed, script)
+        ScreenBuffer result = HeadlessRunner.run(locus, script)
         
         // Assertions
         assertNotNull(result, "Simulation failed to return a screen buffer")

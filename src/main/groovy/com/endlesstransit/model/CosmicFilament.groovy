@@ -33,7 +33,7 @@ class CosmicFilament extends Container {
     CosmicFilament(String name, LocusSeed locus = new LocusSeed(0L)) {
         this.name = name
         this.locus = locus
-        Random r = locus.value != 0 ? new Random(locus.value) : new Random()
+        Random r = locus.nextRandom()
         this.conduitID = "0x" + Integer.toHexString(r.nextInt(0xFFFF))
     }
 

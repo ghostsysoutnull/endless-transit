@@ -1,0 +1,44 @@
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                          LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ ▅ 🚪 [□] | PULSE_TRAVERSAL: 8 | COHERENCE: 86%                           ║
+║ LOCUS_TRACE: ...teelville > Hidden Drive > Unit 0xE19 Heights > Floor 1 > Corridor > brown, rustic > Fluorescent Grid [0xE9]   ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Hydroponic Bay >> Fluorescent Grid [0xE9]                               ║ ATMOS: 18% | TEMP: 6°C                ║
+║ LOCUS_HASH: 76.299 / 75.823 | HOP_DENSITY: 12                                          ║ COHERENCE: ████████░░                 ║
+║ CELL: 2 / 2 | [ ] [X]                                                                  ║ EVENT_TICKER: [SYNC_STABLE]           ║
+║                                                                                        ║ OBJ:   Hidden Frequency (5465059Hz)   ║
+║                                                                                        ║ OBJ:   Hidden Frequency (5465059Hz)   ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 8/16 FRAGMENTS | RECENT: 5465059, 5465059, 5465059Hz                                                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║  [NEURAL_LINK_INTERPRETATION]:                                                         ║  [SYSTEM_TELEMETRY]                   ║
+║ You are in terraced geometric shelves for organic data. The walls are blue exposed     ║  LATTICE_SYNC: [NOMINAL]              ║
+║ wiring behind translucent plastic.                                                     ║                                       ║
+║ The space is illuminated by the soft, directionless glow of pure data.                 ║  [QUANTUM_SPECTROGRAM]                ║
+║ FURNITURE: time-dilated echo with data-cable bundle, time-dilated echo with data-cable ║  ███████                              ║
+║ bundle                                                                                 ║  ███                                  ║
+║ OBJECTS_DETECTED: singularity seed with neon signage, singularity seed with neon       ║  ████                                 ║
+║ signage,                                                                               ║  █████████                            ║
+║ singularity seed with neon signage, singularity seed with neon signage,                ║  ████████                             ║
+║ singularity seed with neon signage, singularity seed with neon signage,                ║                                       ║
+║ singularity seed with neon signage, singularity seed with neon signage,                ║  [DECODE_LOGS]                        ║
+║ synthetic fur infused with probability field, synthetic fur infused with               ║  > Trace: 0.0.0.0.0.0.0.0.1.12.0.0.1  ║
+║ probability field, synthetic fur infused with probability field, synthetic fur         ║  > Stable: 2 items                    ║
+║ infused with probability field, synthetic fur infused with probability field,          ║                                       ║
+║ synthetic fur infused with probability field                                           ║                                       ║
+║                                                                                        ║                                       ║
+║  LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.1.12.0.0.1                                     ║                                       ║
+║ -----------------------------------------------------------------------------------... ║                                       ║
+║ IDENT: Fluorescent Grid [0xE9]        ║ ATMO_TRAITS: [OXY: 18%] | [TEMP: 6°C]          ║                                       ║
+║ TYPE:  Hydroponic Bay                ║ SIGNAL: [CLEAR] | RESONANCE: [STABLE]           ║                                       ║
+║ -----------------------------------------------------------------------------------... ║                                       ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+          [B] Go back ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[t] Interact with objects | [b] Go back
+[i] Buffer | [sync] Save | [m] Map | [lattice] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: Interact with objects] Enter choice: 

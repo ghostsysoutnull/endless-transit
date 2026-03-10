@@ -2,6 +2,7 @@ package com.endlesstransit.core
 
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ScreenBuffer
+import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 
 /**
@@ -10,7 +11,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class HeadlessRunner {
     
-    static ScreenBuffer run(long seed, List<String> script) {
+    static ScreenBuffer run(LocusSeed locus, List<String> script) {
         // 1. Initialize Terminal in Instant/Headless mode
         // We use virtualBuffer = true so we can capture the final screen
         Terminal.initialize(true, true)
@@ -19,7 +20,7 @@ class HeadlessRunner {
         MockInputSource mockInput = new MockInputSource(script)
         
         // 3. Initialize Game
-        Game game = new Game(seed, mockInput)
+        Game game = new Game(locus, mockInput)
         
         // 4. Execute Simulation
         try {

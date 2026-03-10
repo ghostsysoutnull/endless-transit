@@ -23,7 +23,7 @@ class CaptureVerificationTest {
         
         // 3. Render a frame to the buffer
         Terminal.clearScreen()
-        bridgeView.render(genesis.startLocation, player, [:], seed.value)
+        bridgeView.render(genesis.startLocation, player, [:], seed)
         
         // 4. Capture
         Terminal.println "Triggering capture..."
