@@ -35,6 +35,23 @@
 
 ---
 
+## 🚀 Active Plan (Phase 3): Spatial Pivot & Vertical Traversal
+**Objective:** Refactor the `Building` -> `Floor` -> `Corridor` flow to introduce "Spatial Presence" via a two-stage Elevator/Corridor pivot.
+
+### 3.1 Model & State Integrity
+- [ ] **Implement `Visited` Status**: Allow `Building` to query `Player.visitedLIPs` for floor progress.
+- [ ] **Define Pivot State**: Add `isCorridorActive` flag to `Floor` or `Player`.
+
+### 3.2 UI & Rendering (The "Elevator Interface")
+- [ ] **Design "Floor Diagnostic Scan"**: Create the Stage 1 view (high-level floor summary).
+- [ ] **Refactor "Door Listing"**: Convert current `Corridor` view into the Stage 2 "Pivot" state.
+
+### 3.3 Navigation & Action Mapping
+- [ ] **Implement Two-Stage Entry**: Refactor `NavigationOrchestrator` for `Select Floor -> Pivot to Elevator`.
+- [ ] **Context-Aware Commands**: Map `u`/`d` to Elevator and `01-XX`/`b` to Corridor.
+
+---
+
 ## ✅ Completed Tasks
 
 ### Phase 1: Critical Architecture Cleanup (DONE)
