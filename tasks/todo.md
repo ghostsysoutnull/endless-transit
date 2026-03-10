@@ -1,4 +1,37 @@
-# Phase 4: Verification & Advanced Auditing
+# Refactoring Phase 1: Critical Architecture Cleanup
+
+**Objective:** Decompose the `Game.groovy` God Object and implement the Interface Segregation Principle for the `Location` hierarchy.
+
+## Plan
+
+### 1.1 Game.groovy Decomposition (God Object Refactor)
+- [ ] **Extract `TurnProcessor`**: Move the turn cycle logic and action dispatching into a dedicated service.
+- [ ] **Extract `NavigationOrchestrator`**: Separate the responsibility for location transitions and current location state.
+- [ ] **Extract `PersistenceService`**: Move `createMemento()` and `restore()` logic into a dedicated state manager.
+- [ ] **Verification**: Ensure `NewGameTest.groovy` and `ReplayServiceTest.groovy` still pass with the thinner `Game` class.
+
+### 1.2 Location Hierarchy Refactor (Interface Segregation)
+- [ ] **Define Focused Interfaces**:
+    - [ ] `Locatable`: For position, path, and basic naming.
+    - [ ] `Navigable`: For player interaction and navigation options.
+    - [ ] `Renderable`: For visual symbols and UI data.
+    - [ ] `Stateful`: For mutation state and persistence.
+- [ ] **Implement Polymorphic Dispatch**:
+    - [ ] Move `getMapSymbol()` and `getMapColor()` into concrete classes (e.g., `Planet`, `Building`).
+    - [ ] Eliminate `instanceof` checks in `Container.getMapSymbol()`.
+- [ ] **Verification**: Run `./run.sh --test` to confirm no visual regressions in the TUI or HUD.
+
+### 1.3 Service Injection (Dependency Inversion)
+- [ ] **Convert `Terminal` to instance-based**: Create an `OutputDevice` interface and inject it into the `Game` and `BridgeView`.
+- [ ] **Convert `ThemeManager` to instance-based**: Create a `ThemeService` and inject it into the `model` layer.
+- [ ] **Verification**: Ensure all tests still pass, specifically the `RenderSink` assertions in the diagnostic suite.
+
+## Review
+- [ ] (Pending implementation)
+
+---
+
+# Phase 4: Verification & Advanced Auditing (COMPLETED)
 
 ## Objective
 Implement the `SeedScanner` for deterministic scenario discovery and the `Memento` pattern for state injection and time-travel debugging.

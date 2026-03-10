@@ -4,6 +4,7 @@
 - **No Anemic Models:** Classes MUST encapsulate both data and behavior. Avoid "bags of getters/setters."
 - **Behavior-Driven State Mutation:** State changes must happen through domain-meaningful methods (e.g., `location.destabilize(amount)` instead of `location.setCoherence(...)`).
 - **Polymorphism Over Conditionals:** Refactor scale-based checks (Universe vs. Room) into polymorphic Strategy or State patterns.
+- **Strict Interface Segregation:** The `Location` interface is currently a "God Interface." Any refactor MUST decompose it into smaller, focused interfaces (e.g., `Navigable`, `Renderable`, `Stateful`) to prevent "Leaky Abstractions" where a `Door` must implement navigation logic.
 - **Zero Dependencies:** The `model` is the center. It must NEVER import from `ui` or `core`. Use interfaces for `procgen` interaction.
 
 ## 📐 World Architecture
