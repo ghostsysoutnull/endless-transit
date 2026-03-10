@@ -12,22 +12,32 @@ import groovy.transform.Immutable
 @Immutable
 class LocusSeed {
     long value
+    
+    // The default oscillator for the Vinculum entropy substrate.
+    private static final EntropyMixer mixer = new StandardMixer()
 
     /**
      * Derives a new LocusSeed from a String key (e.g., "WALLS", "CULTURE").
-     * Uses the hash of the key to ensure a stable, deterministic branch.
+     * Uses the hash of the key passed through the mixer to ensure a stable, 
+     * high-entropy branch.
      */
     LocusSeed branch(String key) {
-        return new LocusSeed(value + key.hashCode())
+        return new LocusSeed(mixer.mix(value, (long)key.hashCode()))
     }
 
     /**
      * Derives a new LocusSeed from an index (e.g., child index 4).
      */
     LocusSeed branch(int index) {
-        // Scramble the index to ensure even small differences result in large seed shifts
-        long scrambledIndex = (long)index * 2862933555777941757L + 3037000493L
-        return new LocusSeed(value ^ scrambledIndex)
+        return new LocusSeed(mixer.mix(value, (long)index))
+    }
+
+    /**
+     * Derives a new LocusSeed from a raw long input.
+     * Useful for deep-substrate mixing or combining seeds.
+     */
+    LocusSeed branch(long input) {
+        return new LocusSeed(mixer.mix(value, input))
     }
 
     /**

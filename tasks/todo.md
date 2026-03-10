@@ -35,20 +35,35 @@
 
 ---
 
-## 🚀 Active Plan (Phase 3): Spatial Pivot & Vertical Traversal
+## 🚀 Active Plan (Phase 3.5): Entropy Unification & Mixer Pattern
+**Objective:** Unify branching entropy via the `EntropyMixer` pattern to ensure deep variety across all procedural layers.
+
+### Phase 1: The Scrambling Substrate
+- [ ] **1.1 Define `EntropyMixer` Interface**
+- [ ] **1.2 Implement `StandardMixer` (LCG Scramble)**
+- [ ] **1.3 Unit Test: Entropy Divergence**
+
+### Phase 2: LocusSeed Refactor
+- [ ] **2.1 Integrate Mixer into `LocusSeed`**
+- [ ] **2.2 Unify Branching Methods (int/String)**
+- [ ] **2.3 Implement `branch(long)`**
+
+---
+
+## 🚀 Active Plan (Phase 3): Spatial Pivot & Vertical Traversal (DONE)
 **Objective:** Refactor the `Building` -> `Floor` -> `Corridor` flow to introduce "Spatial Presence" via a two-stage Elevator/Corridor pivot.
 
-### 3.1 Model & State Integrity
-- [ ] **Implement `Visited` Status**: Allow `Building` to query `Player.visitedLIPs` for floor progress.
-- [ ] **Define Pivot State**: Add `isCorridorActive` flag to `Floor` or `Player`.
+### 3.1 Model & State Integrity (DONE)
+- [x] **Implement `Visited` Status**: Allow `Building` to query `Player.visitedLIPs` for floor progress.
+- [x] **Define Pivot State**: Add `isCorridorActive` flag to `Floor` or `Player`.
 
-### 3.2 UI & Rendering (The "Elevator Interface")
-- [ ] **Design "Floor Diagnostic Scan"**: Create the Stage 1 view (high-level floor summary).
-- [ ] **Refactor "Door Listing"**: Convert current `Corridor` view into the Stage 2 "Pivot" state.
+### 3.2 UI & Rendering (The "Elevator Interface") (DONE)
+- [x] **Design "Floor Diagnostic Scan"**: Create the Stage 1 view (high-level floor summary).
+- [x] **Refactor "Door Listing"**: Convert current `Corridor` view into the Stage 2 "Pivot" state.
 
-### 3.3 Navigation & Action Mapping
-- [ ] **Implement Two-Stage Entry**: Refactor `NavigationOrchestrator` for `Select Floor -> Pivot to Elevator`.
-- [ ] **Context-Aware Commands**: Map `u`/`d` to Elevator and `01-XX`/`b` to Corridor.
+### 3.3 Navigation & Action Mapping (DONE)
+- [x] **Implement Two-Stage Entry**: Refactor `NavigationOrchestrator` for `Select Floor -> Pivot to Elevator`.
+- [x] **Context-Aware Commands**: Map `u`/`d` to Elevator and `01-XX`/`b` to Corridor.
 
 ---
 
