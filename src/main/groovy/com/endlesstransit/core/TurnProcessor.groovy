@@ -46,7 +46,8 @@ class TurnProcessor {
                 case "P": CaptureCommand.execute(state.bridgeView, state.inputHandler.getHistory(), true); return true
                 case "sync": SyncManager.sync(game); Terminal.println Terminal.colorize("\n>>> SYNC_STABILIZED.", Terminal.GREEN); return true
                 case "map": renderer.renderLatticeMap(); return true
-                case "lattice": renderer.renderLatticeTrace(); return true
+                case "lattice":
+                case "ll": renderer.renderLatticeTrace(); return true
                 case "help": renderer.helpMenu(); return true
                 case "glitch": renderer.glitchMenu(game); return true
                 case "quit": return confirmQuit(game)

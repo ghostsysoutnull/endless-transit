@@ -111,7 +111,7 @@ class BridgeView implements ScreenshotProvider {
         String buffer = "[${Terminal.colorize("i", Terminal.YELLOW)}] Buffer"
         String sync = "[${Terminal.colorize("sync", Terminal.CYAN)}] Save"
         String map = "[${Terminal.colorize("m", Terminal.WHITE)}] Map"
-        String tree = "[${Terminal.colorize("lattice", Terminal.WHITE)}] Tree"
+        String tree = "[${Terminal.colorize("ll", Terminal.WHITE)}] Tree"
         String snap = "[${Terminal.colorize("p", Terminal.GREEN)}] Snap"
         String quit = "[${Terminal.colorize("quit", Terminal.RED)}] Quit"
         

@@ -33,7 +33,7 @@ class RenderingCoordinator {
 
     void helpMenu() {
         Terminal.println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
-        Terminal.println "\nmap/m: Spatial | lattice: Tree | sync: Save | i: Buffer | glitch: Debug | q: Terminate"
+        Terminal.println "\nmap/m: Spatial | ll/lattice: Tree | sync: Save | i: Buffer | glitch: Debug | q: Terminate"
         state.inputHandler.waitForEnter()
         state.instantRender = true
     }
