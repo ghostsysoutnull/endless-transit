@@ -14,7 +14,7 @@ class SessionRecap {
     static void show(Location currentLocation, Player player, BridgeView bridgeView) {
         Terminal.clearScreen()
         boolean isAbyssal = currentLocation.isAbyssal()
-        int footprintsCount = player.footprints.size()
+        int footprintsCount = player.visitedLIPs.size()
 
         if (isAbyssal) {
             bridgeView.printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", currentLocation, 0.1)

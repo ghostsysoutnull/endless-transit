@@ -117,6 +117,16 @@ class Building extends Container {
         return ModelOutput.fmt.dim(" [FLOORS: $maxFloors]")
     }
 
+    /**
+     * Calculates the visited/total progress for a specific floor's sub-locations.
+     */
+    Map<String, Integer> getFloorProgress(Floor floor, Player player) {
+        String floorPrefix = floor.getLIP() + "."
+        int visitedCount = (int) player.visitedLIPs.count { it.startsWith(floorPrefix) }
+        int totalCount = ProceduralFactory.instance.countSubLocations(floor)
+        return [visited: visitedCount, total: totalCount]
+    }
+
     Building(LocusSeed locus = new LocusSeed(0L)) {
         this.locus = locus
     }
@@ -192,14 +202,23 @@ class Building extends Container {
             int freq = 1000 + r.nextInt(2000)
             String resonance = "${freq}Hz"
 
-            String visited = ""
+            String progressLabel = ""
             Floor floorObj = getFloor(i)
-            if (floorObj != null && floorObj.isVisited()) visited = ModelOutput.fmt.colorize("[V]", "GREEN")
+            if (floorObj != null) {
+                def progress = getFloorProgress(floorObj, player)
+                if (progress.visited >= progress.total) {
+                    progressLabel = ModelOutput.fmt.colorize(" [CLEARED]", "GREEN")
+                } else if (progress.visited > 0) {
+                    progressLabel = ModelOutput.fmt.colorize(" [PROBED: ${progress.visited}/${progress.total}]", "YELLOW")
+                } else if (floorObj.isVisited()) {
+                    progressLabel = ModelOutput.fmt.colorize(" [V]", "GREEN")
+                }
+            }
 
             // Assemble row with consistent padding
             String cId = ModelOutput.fmt.padRight(idStr, wId)
             String cRad = ModelOutput.fmt.padRight(radar, wRad)
-            String cDes = ModelOutput.fmt.padRight(designation + visited, wDes)
+            String cDes = ModelOutput.fmt.padRight(designation + progressLabel, wDes)
             String cZon = ModelOutput.fmt.padRight("[" + zone + "]", wZon)
             String cInt = ModelOutput.fmt.padRight("[" + integrity + "]", wInt)
 
@@ -266,7 +285,14 @@ class Building extends Container {
             if (i < 0) id = "-" + Math.abs(i)
 
             String label = "${id}. Access: ${zone}"
-            if (floor.isVisited()) label += " [Visited]"
+            def progress = getFloorProgress(floor, game.player)
+            if (progress.visited >= progress.total) {
+                label += " [CLEARED]"
+            } else if (progress.visited > 0) {
+                label += " [PROBED: ${progress.visited}/${progress.total}]"
+            } else if (floor.isVisited()) {
+                label += " [Visited]"
+            }
             options[label] = { game.enterLocation(floor) }
         }
         return options

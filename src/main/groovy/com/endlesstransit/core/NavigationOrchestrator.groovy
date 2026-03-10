@@ -24,6 +24,12 @@ class NavigationOrchestrator {
 
     void enterLocation(Location loc) {
         if (!loc) return
+        
+        // Vertical Traversal Refactor: Reset floor state to Elevator on entry
+        if (loc instanceof Floor) {
+            ((Floor)loc).isCorridorActive = false
+        }
+
         state.currentLocation = loc
         state.player.currentLocation = loc
         state.player.markFootprint(loc)

@@ -10,7 +10,7 @@ class Player {
     List<InventoryItem> inventory
     Location currentLocation
     int stepCount = 0
-    Set<String> footprints = new LinkedHashSet<>()
+    Set<String> visitedLIPs = new LinkedHashSet<>()
     Set<String> visitedPaths = new LinkedHashSet<>()
     int resonantTracesCount = 0
     int coherence = 100
@@ -24,7 +24,7 @@ class Player {
 
     void markFootprint(Location location) {
         String lip = location.getLIP()
-        footprints.add(lip)
+        visitedLIPs.add(lip)
         
         // Also track high-level paths for the journal/HUD
         boolean isMacro = !(location instanceof Floor || location instanceof Corridor || 

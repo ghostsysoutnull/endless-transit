@@ -56,7 +56,7 @@ Run the automated diagnostic suite to ensure your environment is synchronized:
 If you see `ALL TESTS COMPLETED SUCCESSFULLY`, your link is stable.
 
 ## [05_PERSISTENCE_SYNC]
-The system will attempt to create a `session.trace` file in the root directory to store your footprints. Ensure your user has **Write Permissions** in the project folder.
+The system will attempt to create a `session.trace` file in the root directory to store your visitedLIPs. Ensure your user has **Write Permissions** in the project folder.
 
 ---
 **STATUS**: READY_FOR_TRANSIT

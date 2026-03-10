@@ -18,7 +18,7 @@ Endless Transit uses a **Top-Down Deterministic Seeding** model.
 To support saving and loading in an infinite, procedural world without a traditional database, we implemented the **Locus Index Path** engine.
 *   **The Address:** Every location is a node in a tree. A location's "address" is its sequence of child indices (e.g., `0.1.4.2`).
 *   **Infinite Persistence:** By saving only the Master Seed and the player's current LIP, we can perfectly reconstitute the entire world-path upon reload.
-*   **Footprints:** To track "visited" status for thousands of rooms, we store a `Set<String>` of LIP strings. This remains compact (~kilobytes) even for massive expeditions.
+*   **Visited LIPs:** To track "visited" status for thousands of rooms, we store a `Set<String>` of LIP strings. This remains compact (~kilobytes) even for massive expeditions. This allows for hierarchical progress tracking (e.g., "[4/12] Rooms Cleared").
 
 ## [ADAPTIVE BRIDGE ARCHITECTURE]
 The terminal UI utilizes a **Persistent Split-Pane Rendering** system designed for a 130-character width.

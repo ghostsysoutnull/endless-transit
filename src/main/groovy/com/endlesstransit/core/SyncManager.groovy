@@ -27,7 +27,7 @@ class SyncManager {
                 "coherence": player.coherence,
                 "stepCount": player.stepCount,
                 "currentLIP": game.currentLocation.getLIP(),
-                "footprints": player.footprints.toList(),
+                "footprints": player.visitedLIPs.toList(),
                 "visitedPaths": player.visitedPaths.toList(),
                 "inventory": player.inventory.collect { [
                     "name": it.name,
@@ -72,7 +72,7 @@ class SyncManager {
             Map playerState = (Map) snapshot["player"]
             player.coherence = (int) playerState["coherence"]
             player.stepCount = (int) playerState["stepCount"]
-            player.footprints.addAll((List<String>) playerState["footprints"])
+            player.visitedLIPs.addAll((List<String>) playerState["footprints"])
             player.visitedPaths.addAll((List<String>) playerState["visitedPaths"])
             
             List inventory = (List) playerState["inventory"]
@@ -98,7 +98,7 @@ class SyncManager {
             }
 
             // 3. Re-mark footprints and visited status
-            player.footprints.each { String lip ->
+            player.visitedLIPs.each { String lip ->
                 Location loc = universe.resolveLIP(lip)
                 if (loc != null) {
                     loc.markVisited()
@@ -125,7 +125,7 @@ class SyncManager {
         
         // This is a bit expensive, but ensures all visited rooms/buildings are saved.
         // In a real "Sync", we only save things that actually changed.
-        game.player.footprints.each { lip ->
+        game.player.visitedLIPs.each { lip ->
             Location loc = ((Universe)game.currentLocation.findAncestor(Universe.class)).resolveLIP(lip)
             if (loc != null) {
                 def state = loc.getMutationState()

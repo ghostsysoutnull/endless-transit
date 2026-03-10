@@ -15,6 +15,21 @@ class Floor extends Container {
     @PackageScope Corridor corridor
     String culture
     String timeline
+    boolean isCorridorActive = false
+
+    @Override
+    Map<String, Object> getMutationState() {
+        return [
+            "isCorridorActive": isCorridorActive
+        ]
+    }
+
+    @Override
+    void applyMutationState(Map<String, Object> state) {
+        if (state.containsKey("isCorridorActive")) {
+            this.isCorridorActive = (boolean) state.isCorridorActive
+        }
+    }
 
     Corridor getCorridor() {
         ensureChildrenPopulated()
@@ -61,7 +76,14 @@ class Floor extends Container {
     @Override
     Map<String, Closure> getOptions(Game game) {
         ensureChildrenPopulated()
-        Logger.info("Getting options for Floor $number")
+        if (isCorridorActive) {
+            return getCorridorOptions(game)
+        } else {
+            return getElevatorOptions(game)
+        }
+    }
+
+    private Map<String, Closure> getElevatorOptions(Game game) {
         Map<String, Closure> options = getBaseOptions(game)
         
         if (parent instanceof Building) {
@@ -69,7 +91,6 @@ class Floor extends Container {
             if (number < bldg.maxFloors - 1) {
                 options["u. Go Up"] = { game.enterLocation(bldg.getFloor(number + 1)) }
             } else if (!bldg.isBreached && bldg.isPrimed()) {
-                // At the Peak and primed
                 InventoryItem keystone = game.player.inventory.find { it.isKeystone && it.name.contains(bldg.name) }
                 if (keystone != null) {
                     options["j. Breach the Bedrock"] = {
@@ -88,7 +109,25 @@ class Floor extends Container {
             }
         }
         
-        options["c. Enter Corridor"] = { game.enterLocation(getCorridor()) }
+        options["c. Enter Corridor"] = { 
+            this.isCorridorActive = true 
+            game.instantRender = true
+        }
+        return options
+    }
+
+    private Map<String, Closure> getCorridorOptions(Game game) {
+        Map<String, Closure> options = [:]
+        
+        // Back to Elevator shortcut
+        options["b. Back to Elevator"] = { 
+            this.isCorridorActive = false 
+            game.instantRender = true
+        }
+
+        // Door options from sub-corridor
+        options.putAll(getCorridor().getOptions(game))
+        
         return options
     }
 
@@ -104,6 +143,40 @@ class Floor extends Container {
     void enter(Player player) {
         Logger.info("Entering Floor $number")
         markVisited()
+    }
+
+    @Override
+    List<String> getExtraContent(Player player, int width) {
+        ensureChildrenPopulated()
+        if (isCorridorActive) {
+            return getCorridor().getExtraContent(player, width)
+        } else {
+            return getElevatorDiagnostics(player, width)
+        }
+    }
+
+    private List<String> getElevatorDiagnostics(Player player, int width) {
+        List<String> lines = []
+        lines << ModelOutput.fmt.colorize(" [FLOOR_DIAGNOSTIC_SUITE] ", "L_CYAN")
+        lines << ModelOutput.fmt.dim("Analyzing local strata resonance...")
+        lines << ModelOutput.fmt.dim("-" * width)
+        
+        // Metadata
+        lines << "${ModelOutput.fmt.padRight("IDENTIFIER", 15)}: ${getName()}".toString()
+        lines << "${ModelOutput.fmt.padRight("TECH_ERA", 15)}: ${ModelOutput.fmt.colorize(timeline.toUpperCase(), "YELLOW")}".toString()
+        lines << "${ModelOutput.fmt.padRight("RESONANCE", 15)}: ${ModelOutput.fmt.colorize(culture.toUpperCase(), "CYAN")}".toString()
+        
+        // Vibe Capsule Diagnostics
+        VibeCapsule vibe = getVibe()
+        if (vibe != null) {
+            lines << "${ModelOutput.fmt.padRight("STABILITY", 15)}: ${String.format("%.2f%%", vibe.stabilityFactor * 100)}".toString()
+            lines << "${ModelOutput.fmt.padRight("ATMOS_SHIFT", 15)}: ${vibe.latticeMutation.toUpperCase()}".toString()
+        }
+
+        lines << ModelOutput.fmt.dim("-" * width)
+        lines << ModelOutput.fmt.dim("Local signal is ${ModelOutput.fmt.colorize("STABLE", "GREEN")}. Corridor access authorized.")
+        
+        return lines
     }
 
     Floor(int number, int apartmentsPerFloor, String culture = "rust", String timeline = "ancient", LocusSeed locus = new LocusSeed(0L)) {

@@ -348,4 +348,22 @@ class ProceduralFactory {
         f.corridor = createCorridor(f, f.apartmentsPerFloor, f.culture, f.timeline, f.locus.branch("CORRIDOR"))
         f.addLocation(f.corridor)
     }
+
+    /**
+     * Deterministically counts the total number of sub-locations (Corridor, Apartments, Rooms)
+     * for a given floor without instantiating the full object tree.
+     */
+    int countSubLocations(Floor f) {
+        int total = 1 // The Corridor itself
+        int numApartments = f.apartmentsPerFloor
+        total += numApartments
+        
+        LocusSeed corridorLocus = f.locus.branch("CORRIDOR")
+        for (int i = 0; i < numApartments; i++) {
+            LocusSeed aptLocus = corridorLocus.branch(i)
+            int numRooms = aptLocus.nextInt(1, 10)
+            total += numRooms
+        }
+        return total
+    }
 }
