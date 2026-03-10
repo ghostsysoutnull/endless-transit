@@ -69,6 +69,11 @@ List<String> content = building.getExtraContent(game.player, 80)
 boolean foundLabel = content.any { it.contains("[PROBED: 1/") }
 assert foundLabel : "Progress label not found in Building diagnostics!"
 
+// 6.1 Test the Scan command
+Terminal.println "Testing Scan command [s]..."
+game.processInput("s") // Should trigger ScanCommand.execute
+Terminal.println "Scan command execution finished."
+
 // 7. Test Vertical Reset (u/d should reset isCorridorActive)
 floor.isCorridorActive = true
 Floor nextFloor = building.getFloor(floor.number + 1)

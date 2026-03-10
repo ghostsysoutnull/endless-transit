@@ -44,6 +44,7 @@ class TurnProcessor {
                 case "i": state.inventoryController.open(game); return true
                 case "p": CaptureCommand.execute(state.bridgeView, state.inputHandler.getHistory()); return true
                 case "P": CaptureCommand.execute(state.bridgeView, state.inputHandler.getHistory(), true); return true
+                case "s": new ScanCommand().execute(game); return true
                 case "sync": SyncManager.sync(game); Terminal.println Terminal.colorize("\n>>> SYNC_STABILIZED.", Terminal.GREEN); return true
                 case "map": renderer.renderLatticeMap(); return true
                 case "lattice":

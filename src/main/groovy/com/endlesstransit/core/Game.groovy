@@ -58,6 +58,28 @@ class Game {
     boolean processTurn() { turnProcessor.processTurn() }
     boolean handleInput() { turnProcessor.handleInput(this) }
 
+    /**
+     * Directly processes an input string, bypassing the InputSource.
+     * Useful for automated testing of commands.
+     */
+    void processInput(String choice) {
+        // Handle global commands first (mimicking TurnProcessor.handleInput)
+        switch (choice) {
+            case "s": new ScanCommand().execute(this); return
+            case "sync": SyncManager.sync(this); return
+            case "map": renderer.renderLatticeMap(); return
+            case "lattice":
+            case "ll": renderer.renderLatticeTrace(); return
+        }
+
+        Closure action = state.mapper.resolve(choice, state.inputHandler)
+        if (action) {
+            state.player.stepCount++
+            state.navEngine.recordChoice(choice)
+            action.call()
+        }
+    }
+
     void start() {
         Terminal.println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")

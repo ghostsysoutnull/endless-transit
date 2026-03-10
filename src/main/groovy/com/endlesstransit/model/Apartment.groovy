@@ -83,33 +83,17 @@ class Apartment extends Container {
     List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
-        lines << ModelOutput.fmt.colorize(" [APARTMENT_UNIT_DIAGNOSTICS] ", "L_CYAN")
-        lines << ModelOutput.fmt.dim("Scanning internal cell structure...")
-        
+        lines << ModelOutput.fmt.colorize(" [APARTMENT_UNIT_ACCESS] ", "L_CYAN")
+        lines << ModelOutput.fmt.dim("Enumerating internal cell structure...")
         lines << ModelOutput.fmt.dim("-" * width)
         
-        // Header
-        int wId = 5
-        int wTyp = 20
-        int wName = 30
-        int wStat = 15
-        
-        lines << ModelOutput.fmt.bold("${ModelOutput.fmt.padRight("[ID]", wId)}${ModelOutput.fmt.padRight("[TYPE]", wTyp)}${ModelOutput.fmt.padRight("[IDENTIFIER]", wName)}${ModelOutput.fmt.padRight("[STATUS]", wStat)}[RES]")
-        lines << ModelOutput.fmt.dim("-" * width)
-
         List<Room> rms = getRooms()
         for (int i = 0; i < rms.size(); i++) {
             Room room = rms[i]
             String id = String.format("%02d.", i + 1)
-            String type = room.roomType
-            String name = room.roomName
-            String status = room.isVisited() ? ModelOutput.fmt.colorize("[VISITED]", "GREEN") : ModelOutput.fmt.dim("[UNSTABLE]")
+            String status = room.isVisited() ? ModelOutput.fmt.colorize("[V]", "GREEN") : ""
             
-            // Resonance (simulated for overview)
-            int freq = Gematria.calculateFrequency(name, room.getDepth())
-            String res = "${freq}Hz"
-
-            lines << "${ModelOutput.fmt.padRight(id, wId)}${ModelOutput.fmt.padRight(type, wTyp)}${ModelOutput.fmt.padRight(name, wName)}${ModelOutput.fmt.padRight(status, wStat)}${res}".toString()
+            lines << "${ModelOutput.fmt.dim(id)} ${room.roomType}: ${room.roomName}${status}".toString()
         }
         lines << ModelOutput.fmt.dim("-" * width)
         return lines

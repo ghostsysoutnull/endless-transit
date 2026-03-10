@@ -81,7 +81,7 @@ class BridgeView implements ScreenshotProvider {
         options.each { String label, Closure action ->
             String key = label.contains(".") ? label.split("\\.")[0].trim() : label
             
-            // Skip items already shown in tables (Split Pane Composition)
+            // Skip items already shown in tables or summarized in Scan (Split Pane Composition)
             if (label.contains("Enter Building:")) return
             if (label.contains("Access:")) return
             if (label.contains("Go to ")) return
@@ -94,7 +94,7 @@ class BridgeView implements ScreenshotProvider {
             if (label.contains("Synchronize with ")) return
             
             // If it's a single-char nav command, collect it for the bottom line
-            if (key.length() == 1 && "udfblt".contains(key)) {
+            if (key.length() == 1 && "udfblts".contains(key)) {
                 navOptions << "[${Terminal.colorize(key, Terminal.YELLOW)}] ${label.split("\\. ")[1]}".toString()
                 return
             }
@@ -110,12 +110,13 @@ class BridgeView implements ScreenshotProvider {
     void renderGlobalControls() {
         String buffer = "[${Terminal.colorize("i", Terminal.YELLOW)}] Buffer"
         String sync = "[${Terminal.colorize("sync", Terminal.CYAN)}] Save"
+        String scan = "[${Terminal.colorize("s", Terminal.L_CYAN)}] Scan"
         String map = "[${Terminal.colorize("m", Terminal.WHITE)}] Map"
         String tree = "[${Terminal.colorize("ll", Terminal.WHITE)}] Tree"
         String snap = "[${Terminal.colorize("p", Terminal.GREEN)}] Snap"
         String quit = "[${Terminal.colorize("quit", Terminal.RED)}] Quit"
         
-        Terminal.println "${buffer} | ${sync} | ${map} | ${tree} | ${snap} | ${quit}"
+        Terminal.println "${buffer} | ${sync} | ${scan} | ${map} | ${tree} | ${snap} | ${quit}"
     }
 
     void renderBridgeHUD(Location currentLocation, Player player) {

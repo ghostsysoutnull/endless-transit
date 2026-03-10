@@ -61,19 +61,10 @@ class Corridor extends Container {
     List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
-        lines << ModelOutput.fmt.colorize(" [CORRIDOR_SCALABILITY_ANALYSIS] ", "L_CYAN")
-        lines << ModelOutput.fmt.dim("Traversing local horizontal artery...")
+        lines << ModelOutput.fmt.colorize(" [LOCAL_ACCESS_LIST] ", "L_CYAN")
+        lines << ModelOutput.fmt.dim("Analyzing local horizontal artery...")
         lines << ModelOutput.fmt.dim("-" * width)
         
-        // Header
-        int wId = 5
-        int wVis = 24
-        int wStat = 8
-        int wRes = 15
-        
-        lines << ModelOutput.fmt.bold("${ModelOutput.fmt.padRight("[ID]", wId)}${ModelOutput.fmt.padRight("[VISUAL]", wVis)}${ModelOutput.fmt.padRight("[ST]", wStat)}${ModelOutput.fmt.padRight("[RES]", wRes)}[IDENT]")
-        lines << ModelOutput.fmt.dim("-" * width)
-
         List<Apartment> apts = getApartments()
         List<Door> drs = getDoors()
 
@@ -82,32 +73,11 @@ class Corridor extends Container {
             Door door = drs[i]
             String id = String.format("%02d.", i + 1)
             
-            String roomName = "?? UNKNOWN ??"
-            String status = ModelOutput.fmt.dim("[ENC]")
-            String signature = "????Hz"
-            String wave = "---"
-            
-            List<Room> rms = apt.getRooms()
-            if (!rms.isEmpty()) {
-                Room firstRoom = rms[0]
-                roomName = firstRoom.roomName
-                status = firstRoom.isAnomaly ? ModelOutput.fmt.colorize("[DEG]", "RED") : ModelOutput.fmt.colorize("[STB]", "GREEN")
-                int freq = com.endlesstransit.procgen.Gematria.calculateFrequency(roomName, firstRoom.getDepth())
-                signature = String.format("%04dHz", freq)
-                
-                if (firstRoom.isAnomaly) wave = ModelOutput.fmt.colorize("###", "RED")
-                else if (freq % 11 == 0) wave = ModelOutput.fmt.colorize("≈≈≈", "GREEN")
-                else wave = ModelOutput.fmt.colorize("~~~", "CYAN")
-            }
-
             String aptPrefix = apt.getLIP() + "."
             boolean isVisited = apt.isVisited() || player.visitedLIPs.any { it.startsWith(aptPrefix) }
             String visitedMarker = isVisited ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
             
-            String visual = "${door.getDescription()}${visitedMarker}"
-            String resonance = "${signature} ${wave}"
-
-            lines << "${ModelOutput.fmt.padRight(id, wId)}${ModelOutput.fmt.padRight(ModelOutput.fmt.ansiSafeTruncate(visual, wVis-1), wVis)}${ModelOutput.fmt.padRight(status, wStat)}${ModelOutput.fmt.padRight(resonance, wRes)}${roomName}".toString()
+            lines << "${ModelOutput.fmt.dim(id)} ${door.getDescription()}${visitedMarker}".toString()
         }
         lines << ModelOutput.fmt.dim("-" * width)
         return lines
