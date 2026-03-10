@@ -59,9 +59,17 @@ This project is optimized for **Context Localization**. Each domain features its
 
 Verify link stability using our automated diagnostic suite:
 ```bash
-./run.sh --test             # Standard JUnit Suite
+./vinc.sh --test            # Clinical Logic Verification (Fast, Auto-compile)
+./vinc.sh --compile         # Strict Substrate Verification
 .agents/vibe-check-ui.sh    # Aesthetic Alignment Check
 .agents/vibe-check-model.sh # Procedural Logic Check
+```
+
+### 💉 **[CLINICAL_INTERFACE]**
+For developers and AI agents, use the **Vinculum Clinical Interface (VINC)** to bypass the immersive portal and execute instant operations:
+```bash
+./vinc.sh                   # Instant launch (with auto-compile)
+./vinc.sh --test            # High-velocity test execution
 ```
 
 ---

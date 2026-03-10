@@ -33,11 +33,12 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 | Action | Command |
 | :--- | :--- |
-| **Run Game** | `./run.sh` |
-| **Run Tests** | `./run.sh --test` |
-| **Seed Scan** | `./run.sh --seed-scan` |
-| **Session Replay** | `./run.sh --replay <path_to_screenshot>` |
-| **Help / CLI Reference** | `./run.sh --help` |
+| **Run Game (Clinical)** | `./vinc.sh` (Fast, Auto-compile) |
+| **Run Tests (Logic)** | `./vinc.sh --test` (High-velocity) |
+| **Verification (Static)** | `./vinc.sh --compile` |
+| **Run Game (Player)** | `./run.sh` (Immersive Portal) |
+| **Seed Scan** | `./vinc.sh --scan` |
+| **Session Replay** | `./vinc.sh --replay <path_to_screenshot>` |
 | **Audit UI** | `.agents/vibe-check-ui.sh` |
 | **Audit Model** | `.agents/vibe-check-model.sh` |
 
@@ -48,8 +49,8 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ### 1. Verification Protocol
 - **AI-TDD**: Create `src/test/groovy/com/endlesstransit/ReproTemplate.groovy` for all bug reports.
-- **Compilation Check**: Every change MUST pass `./run.sh --compile` (or `--test`).
-- **Full Verification**: Run `./run.sh --test` before marking any major task as complete.
+- **Compilation Check**: Every change MUST pass `./vinc.sh --compile` (or `--test`).
+- **Full Verification**: Run `./vinc.sh --test` before marking any major task as complete.
 - **Lessons Loop**: Update `tasks/lessons/` after every major fix or architectural shift.
 
 ### 2. Expert OO Standards

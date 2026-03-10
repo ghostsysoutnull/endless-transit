@@ -30,8 +30,16 @@ The link is initialized through the provided shell script.
 ### **Standard Initialization**
 Ensure the script has execution permissions, then launch:
 ```bash
-chmod +x run.sh
+chmod +x run.sh vinc.sh
 ./run.sh
+```
+
+### **Clinical Interface (Developers & Agents)**
+For high-velocity operations, use the **Vinculum Clinical Interface (VINC)** to bypass the immersive portal and enforce mandatory substrate verification:
+```bash
+./vinc.sh --test            # Rapid test execution (auto-compile)
+./vinc.sh --compile         # Static verification check
+./vinc.sh                   # Instant game launch
 ```
 
 ### **Manual Initialization**
