@@ -35,18 +35,32 @@
 
 ---
 
-## 🚀 Active Plan (Phase 3.5): Entropy Unification & Mixer Pattern
+## 🚀 Active Plan (Phase 3.6): Door Enhancement & Sensory Deduction (DONE)
+**Objective:** Refactor doors into sensory signal sources with enhanced scan diagnostics and deductive clues.
+
+### Phase 1: Component Substrate (DONE)
+- [x] **1.1 Define `InscriptionStyle` & `DoorInscription`**
+- [x] **1.2 Define `AnomalousTrace` Enum**
+- [x] **1.3 Create `DoorAppearance` Object**
+
+### Phase 2: Model & Synthesis Integration (DONE)
+- [x] **2.1 Refactor `Door.groovy`**
+- [x] **2.2 Update `ProceduralFactory` (Back-Propagation Logic)**
+
+---
+
+## 🚀 Active Plan (Phase 3.5): Entropy Unification & Mixer Pattern (DONE)
 **Objective:** Unify branching entropy via the `EntropyMixer` pattern to ensure deep variety across all procedural layers.
 
-### Phase 1: The Scrambling Substrate
-- [ ] **1.1 Define `EntropyMixer` Interface**
-- [ ] **1.2 Implement `StandardMixer` (LCG Scramble)**
-- [ ] **1.3 Unit Test: Entropy Divergence**
+### Phase 1: The Scrambling Substrate (DONE)
+- [x] **1.1 Define `EntropyMixer` Interface**
+- [x] **1.2 Implement `StandardMixer` (LCG Scramble)**
+- [x] **1.3 Unit Test: Entropy Divergence**
 
-### Phase 2: LocusSeed Refactor
-- [ ] **2.1 Integrate Mixer into `LocusSeed`**
-- [ ] **2.2 Unify Branching Methods (int/String)**
-- [ ] **2.3 Implement `branch(long)`**
+### Phase 2: LocusSeed Refactor (DONE)
+- [x] **2.1 Integrate Mixer into `LocusSeed`**
+- [x] **2.2 Unify Branching Methods (int/String)**
+- [x] **2.3 Implement `branch(long)`**
 
 ---
 

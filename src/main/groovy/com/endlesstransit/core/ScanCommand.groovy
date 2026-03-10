@@ -8,6 +8,7 @@ import groovy.transform.CompileStatic
 /**
  * ScanCommand: Executes a high-density technical scan of the local area.
  * Prints output directly to the terminal scrollback (outside the HUD).
+ * Refactored to support the new Door sensory substrate and Elevator-Corridor pivot.
  */
 @CompileStatic
 class ScanCommand implements LatticeCommand {
@@ -30,6 +31,13 @@ class ScanCommand implements LatticeCommand {
         
         if (loc instanceof Corridor) {
             renderCorridorScan((Corridor) loc, game.player)
+        } else if (loc instanceof Floor) {
+            Floor floor = (Floor) loc
+            if (floor.isCorridorActive) {
+                renderCorridorScan(floor.getCorridor(), game.player)
+            } else {
+                renderBuildingScan((Building) floor.parent, game.player)
+            }
         } else if (loc instanceof Apartment) {
             renderApartmentScan((Apartment) loc, game.player)
         } else if (loc instanceof Room && loc.parent instanceof Apartment) {
@@ -40,19 +48,19 @@ class ScanCommand implements LatticeCommand {
         
         Terminal.println Terminal.colorize(">>> SCAN_COMPLETE. LOCAL_PHASE_SYNCHRONIZED.", Terminal.L_CYAN)
         Terminal.println ""
-        return false // Do not close menu automatically if we want to see the result (though in our loop it doesn't matter much)
+        return false 
     }
 
     private void renderCorridorScan(Corridor corridor, Player player) {
-        int wId = 4
-        int wFreq = 8
-        int wWave = 6
-        int wStat = 8
-        int wIdent = 22
+        int wId = 3
+        int wTrace = 10
+        int wInscr = 14
+        int wMat = 20
+        int wState = 10
         
-        Terminal.println("    " + Terminal.dim("┌" + ("─" * 74) + "┐"))
-        Terminal.println("    " + Terminal.dim("│ ") + Terminal.bold("${ModelOutput.fmt.padRight("ID", wId)}${ModelOutput.fmt.padRight("FREQ", wFreq)}${ModelOutput.fmt.padRight("WAVE", wWave)}${ModelOutput.fmt.padRight("STATUS", wStat)}${ModelOutput.fmt.padRight("IDENTIFIER", wIdent)} >> ROOM_NAME".toString()) + Terminal.dim(" │"))
-        Terminal.println("    " + Terminal.dim("├" + ("─" * 4) + "┼" + ("─" * 8) + "┼" + ("─" * 6) + "┼" + ("─" * 8) + "┼" + ("─" * 22) + "┼" + ("─" * 23) + "┤"))
+        Terminal.println("    " + Terminal.dim("┌" + ("─" * 84) + "┐"))
+        Terminal.println("    " + Terminal.dim("│ ") + Terminal.bold("${ModelOutput.fmt.padRight("ID", wId)}${ModelOutput.fmt.padRight("TRACE", wTrace)}${ModelOutput.fmt.padRight("INSCRIPTION", wInscr)}${ModelOutput.fmt.padRight("MATERIAL", wMat)}${ModelOutput.fmt.padRight("STATE", wState)} >> ROOM_TYPE".toString()) + Terminal.dim(" │"))
+        Terminal.println("    " + Terminal.dim("├" + ("─" * wId) + "┼" + ("─" * wTrace) + "┼" + ("─" * wInscr) + "┼" + ("─" * wMat) + "┼" + ("─" * wState) + "┼" + ("─" * 26) + "┤"))
 
         List<Apartment> apts = corridor.getApartments()
         List<Door> drs = corridor.getDoors()
@@ -61,37 +69,48 @@ class ScanCommand implements LatticeCommand {
             Door door = drs[i]
             String id = String.format("%02d", i + 1)
             
-            String roomName = "?? UNKNOWN ??"
-            String status = Terminal.dim("[ENC]")
-            String signature = "????Hz"
-            String wave = "---"
+            String traceName = door.trace != null ? door.trace.name : "None"
+            String inscr = door.inscription != null ? door.inscription.getFormattedText() : ""
+            String mat = door.appearance != null ? door.appearance.material : "Standard Barrier"
+            String state = door.appearance != null ? door.appearance.physicalState : "Stable"
             
+            String roomType = "?? UNKNOWN ??"
             List<Room> rms = apt.getRooms()
             if (!rms.isEmpty()) {
-                Room firstRoom = rms[0]
-                roomName = firstRoom.roomName
-                status = firstRoom.isAnomaly ? Terminal.colorize("[DEG]", Terminal.RED) : Terminal.colorize("[STB]", Terminal.GREEN)
-                int freq = Gematria.calculateFrequency(roomName, firstRoom.getDepth())
-                signature = String.format("%04dHz", freq)
-                
-                if (firstRoom.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
-                else if (freq % 11 == 0) wave = Terminal.colorize("≈≈≈", Terminal.GREEN)
-                else wave = Terminal.colorize("~~~", Terminal.CYAN)
+                roomType = rms[0].roomType
             }
 
-            String ident = Terminal.ansiSafeTruncate(door.getDescription(), wIdent - 1)
-            
             Terminal.print("    " + Terminal.dim("│ "))
             Terminal.print(ModelOutput.fmt.padRight(id, wId))
-            Terminal.print(ModelOutput.fmt.padRight(signature, wFreq))
-            Terminal.print(ModelOutput.fmt.padRight(wave, wWave))
-            Terminal.print(ModelOutput.fmt.padRight(status, wStat))
-            Terminal.print(ModelOutput.fmt.padRight(ident, wIdent))
-            Terminal.print(" >> " + Terminal.ansiSafeTruncate(roomName, 20))
+            Terminal.print(ModelOutput.fmt.padRight(traceName, wTrace))
+            Terminal.print(ModelOutput.fmt.padRight(inscr, wInscr))
+            Terminal.print(ModelOutput.fmt.padRight(mat, wMat))
+            Terminal.print(ModelOutput.fmt.padRight(state, wState))
+            Terminal.print(" >> " + Terminal.ansiSafeTruncate(roomType, 22))
             Terminal.println(Terminal.dim(" │"))
         }
         
-        Terminal.println("    " + Terminal.dim("└" + ("─" * 74) + "┘"))
+        Terminal.println("    " + Terminal.dim("└" + ("─" * 84) + "┘"))
+    }
+
+    private void renderBuildingScan(Building building, Player player) {
+        if (building == null) return
+        Terminal.println Terminal.dim("    Initiating vertical strata pulse...")
+        Terminal.println "    " + Terminal.dim("BUILDING: ${building.name} [LIP: ${building.getLIP()}]")
+        Terminal.println "    " + Terminal.dim("TOTAL_STRATA: ${building.maxFloors} units detected.")
+        
+        // Find current floor index
+        int cur = -1
+        if (player.currentLocation instanceof Floor) cur = ((Floor)player.currentLocation).number
+
+        Terminal.println "    " + Terminal.dim("NEURAL_PROXIMITY_REPORT:")
+        for (int i = building.maxFloors - 1; i >= 0; i--) {
+            if (Math.abs(i - cur) <= 2) { // Show 2 floors above and below
+                String marker = (i == cur) ? ">>" : "  "
+                String zone = building.getFloorZone(i)
+                Terminal.println "    ${Terminal.colorize(marker, Terminal.YELLOW)} ${String.format("%02d", i)}. [${zone}]"
+            }
+        }
     }
 
     private void renderApartmentScan(Apartment apartment, Player player) {
