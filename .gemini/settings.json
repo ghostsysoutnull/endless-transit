@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "project-session-start-chronicle",
+            "type": "command",
+            "command": "$GEMINI_PROJECT_DIR/.gemini/hooks/on_session_start.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
