@@ -1,5 +1,11 @@
 # Model Domain: Structural Hierarchy
 
+**AI ARCHITECT CONTEXT: DOMAIN MODEL**
+- **No Anemic Models:** Classes MUST encapsulate both data and behavior. Avoid "bags of getters/setters."
+- **Behavior-Driven State Mutation:** State changes must happen through domain-meaningful methods (e.g., `location.destabilize(amount)` instead of `location.setCoherence(...)`).
+- **Polymorphism Over Conditionals:** Refactor scale-based checks (Universe vs. Room) into polymorphic Strategy or State patterns.
+- **Zero Dependencies:** The `model` is the center. It must NEVER import from `ui` or `core`. Use interfaces for `procgen` interaction.
+
 ## 📐 World Architecture
 - **Structure**: Recursive Composite Pattern (Universe -> Room).
 - **Population**: Lazy Initialization. Children are ONLY generated when accessed.

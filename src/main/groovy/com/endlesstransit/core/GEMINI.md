@@ -1,5 +1,11 @@
 # Core Domain: The Engine
 
+**AI ARCHITECT CONTEXT: CORE ORCHESTRATION**
+- **Thin Orchestrators:** `Game.groovy` manages the loop, but DELEGATES logic to `model` classes. No business rules in this module.
+- **Strict Interface Boundaries:** Treat the `procgen` module as an external service. Pass resulting data into `model` behavior methods.
+- **State Integrity:** Orchestrate traversal and tracing, but never manually manipulate internal `Location` data structures.
+- **Resilience & Telemetry:** Emit events or updates that the `ui` module can subscribe to. No direct `println` calls.
+
 ## ⚙️ Game Loop & State
 - **Primary Loop**: `Game.groovy` manages the turn cycle.
 - **Input Delegation**: Entrusted to `InputHandler`, `ActionMapper`, and `NavigationEngine`.
