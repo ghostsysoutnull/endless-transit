@@ -61,6 +61,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ## 📍 Critical Entry Points
 - **Entry**: `src/main/groovy/com/endlesstransit/Main.groovy`
-- **Main Loop**: `src/main/groovy/com/endlesstransit/core/Game.groovy`
-- **TUI Core**: `src/main/groovy/com/endlesstransit/ui/Terminal.groovy`
+- **Facade Loop**: `src/main/groovy/com/endlesstransit/core/Game.groovy` (Delegates to `TurnProcessor`).
+- **Core Services**: `GameState`, `TurnProcessor`, `NavigationOrchestrator`, `PersistenceService`, `RenderingCoordinator`.
 - **Entropy Source**: `src/main/groovy/com/endlesstransit/procgen/LocusSeed.groovy`
+- **Output Bridge**: `src/main/groovy/com/endlesstransit/ui/TerminalAdapter.groovy` (Implements `OutputFormatter`).
