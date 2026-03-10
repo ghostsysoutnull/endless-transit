@@ -15,7 +15,8 @@ def game = new Game()
 // but we can verify the getOptions() return values for specific types.
 
 // Test Room Reversal Logic
-def apartment = new Apartment("Test Door", "rust", "ancient", new LocusSeed(12345L)) // Added timeline parameter and LocusSeedapartment.ensureChildrenPopulated()
+def apartment = new Apartment("Test Door", "WHITE", "rust", "ancient", new LocusSeed(12345L))
+apartment.ensureChildrenPopulated()
 def rooms = apartment.rooms
 
 if (rooms.size() < 2) {

@@ -77,7 +77,9 @@ class Corridor extends Container {
             boolean isVisited = apt.isVisited() || player.visitedLIPs.any { it.startsWith(aptPrefix) }
             String visitedMarker = isVisited ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
             
-            lines << "${ModelOutput.fmt.dim(id)} ${door.getDescription()}${visitedMarker}".toString()
+            String doorColor = door.getTerminalColor()
+            String doorDesc = ModelOutput.fmt.colorize(door.getDescription(), doorColor)
+            lines << "${ModelOutput.fmt.dim(id)} ${doorDesc}${visitedMarker}".toString()
         }
         lines << ModelOutput.fmt.dim("-" * width)
         return lines

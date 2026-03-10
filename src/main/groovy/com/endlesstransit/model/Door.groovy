@@ -37,4 +37,18 @@ class Door {
             description.append("")
         return description.toString()
     }
+
+    String getTerminalColor() {
+        switch (color) {
+            case "red": return "RED"
+            case "blue": return "BLUE"
+            case "green": return "GREEN"
+            case "yellow": return "YELLOW"
+            case "purple": return "MAGENTA"
+            case "orange": return "YELLOW"
+            case "pink": return "L_MAGENTA"
+            case "brown": return "WHITE"
+            default: return "WHITE"
+        }
+    }
 }

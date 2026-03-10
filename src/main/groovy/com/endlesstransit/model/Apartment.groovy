@@ -16,6 +16,7 @@ import java.util.Random
 class Apartment extends Container {
     @PackageScope List<Room> rooms = []
     String doorDescription
+    String doorColor = "WHITE"
     String timeline
     String culture
     boolean isAnomaly = false
@@ -27,7 +28,7 @@ class Apartment extends Container {
 
     @Override
     String getName() {
-        return doorDescription
+        return ModelOutput.fmt.colorize(doorDescription, doorColor)
     }
 
     @Override
@@ -45,11 +46,12 @@ class Apartment extends Container {
 
     @Override
     String getDescription() {
+        String coloredDoor = ModelOutput.fmt.colorize(doorDescription, doorColor)
         if (getTypeName() == "Crypt") {
-            return "Crypt: $doorDescription. [ABYSSAL_RESONANCE_DETECTED]"
+            return "Crypt: $coloredDoor. [ABYSSAL_RESONANCE_DETECTED]"
         }
         String info = isAnomaly ? " [!] TEMPORAL_ANOMALY_DETECTED [!]" : "[TEMPORAL_MARKER: ${ModelOutput.fmt.colorize(timeline.toUpperCase(), "YELLOW")}]"
-        return "Apartment: $doorDescription. $info"
+        return "Apartment: $coloredDoor. $info"
     }
 
     @Override
@@ -95,8 +97,9 @@ class Apartment extends Container {
         return isAnomaly ? "ATMOS: [UNSTABLE]" : "ATMOS: [NOMINAL]"
     }
 
-    Apartment(String doorDescription = "A plain door", String culture = "rust", String timeline = "ancient", LocusSeed locus = new LocusSeed(0L)) {
+    Apartment(String doorDescription = "A plain door", String doorColor = "WHITE", String culture = "rust", String timeline = "ancient", LocusSeed locus = new LocusSeed(0L)) {
         this.doorDescription = doorDescription
+        this.doorColor = doorColor
         this.culture = culture
         this.timeline = timeline
         this.locus = locus

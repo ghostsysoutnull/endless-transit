@@ -2,4 +2,5 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x2A8B** | 2026-03-10 | **[SPATIAL_PIVOT_REFACTOR]** | Implemented Elevator-Corridor pivot, [s] Scan command, and Apartment auto-entry. |
 | **0xAB30** | 2026-03-10 | **[VINCULUM_STABILIZATION]** | Entropy fixed, `vinc.sh` implemented, `ll` shortcut, and Elevator-Pivot plan drafted. |

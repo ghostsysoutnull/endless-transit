@@ -149,8 +149,8 @@ class ProceduralFactory {
         return c
     }
 
-    Apartment createApartment(Container parent, String doorDesc, String culture, String timeline, LocusSeed locus) {
-        Apartment a = new Apartment(doorDesc, culture, timeline, locus)
+    Apartment createApartment(Container parent, String doorDesc, String doorColor, String culture, String timeline, LocusSeed locus) {
+        Apartment a = new Apartment(doorDesc, doorColor, culture, timeline, locus)
         a.setParent(parent)
         
         VibeCapsule vibe = a.getVibe()
@@ -335,10 +335,11 @@ class ProceduralFactory {
     void populateCorridor(Corridor c) {
         LocusSeed locus = c.locus
         for (int i = 0; i < c.numApartments; i++) {
-            LocusSeed childLocus = locus.branch(i)
-            Door door = new Door(childLocus)
+            LocusSeed aptLocus = locus.branch(i)
+            LocusSeed doorLocus = aptLocus.branch("DOOR")
+            Door door = new Door(doorLocus)
             c.doors << door
-            Apartment apartment = createApartment(c, door.getDescription(), c.culture, c.timeline, childLocus)
+            Apartment apartment = createApartment(c, door.getDescription(), door.getTerminalColor(), c.culture, c.timeline, aptLocus)
             c.apartments << apartment
             c.addLocation(apartment)
         }
