@@ -190,7 +190,7 @@ class ProceduralFactory {
         // 4. Atmosphere
         VibeCapsule vibe = r.getVibe()
         String mutation = vibe != null ? vibe.latticeMutation : "Standard"
-        Map<String, String> atmos = themeService.generateAtmosphere(culture, timeline, mutation, r.isAnomaly, locus)
+        Map<String, String> atmos = themeService.generateAtmosphere(culture, timeline, mutation, r.isAnomaly, trait, locus)
         r.walls = atmos["walls"]
         r.lightingDesc = atmos["lighting"]
         r.structureDesc = atmos["structure"]
@@ -202,8 +202,9 @@ class ProceduralFactory {
         
         // 6. Furniture
         int numFurniture = locus.nextInt(1, 3)
+        Random furnRandom = locus.branch("FURNITURE").nextRandom()
         for (int i = 0; i < numFurniture; i++) {
-            r.furniture << themeService.generateHybridObject(culture, timeline, locus.branch("FURN_" + i))
+            r.furniture << themeService.generateHybridObject(culture, timeline, furnRandom)
         }
 
         return r
@@ -313,8 +314,9 @@ class ProceduralFactory {
         
         List<String> objectPool = []
         int totalObjects = a.locus.nextInt(5, 19)
+        Random objRandom = a.locus.branch("OBJECT_POOL").nextRandom()
         for (int i = 0; i < totalObjects; i++) {
-            objectPool << themeService.generateHybridObject(a.culture, a.timeline, a.locus.branch("OBJ_" + i))
+            objectPool << themeService.generateHybridObject(a.culture, a.timeline, objRandom)
         }
 
         for (int i = 0; i < numRooms; i++) {

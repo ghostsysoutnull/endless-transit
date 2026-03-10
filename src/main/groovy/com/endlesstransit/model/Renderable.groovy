@@ -7,7 +7,7 @@ interface Renderable {
     boolean isAbyssal()
     String getMapSymbol()
     String getMapColor()
-    List<String> getExtraContent(Player player)
+    List<String> getExtraContent(Player player, int width)
     
     // Semantic HUD / Navigation methods
     String getIndexLabel()

@@ -66,13 +66,14 @@ class Planet extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Planetary landmasses scanned:"
-        lines << "-" * 40
+        lines << "-" * width
         
         List<Country> ctrs = getCountries()
+        int colWidth = (int)(width / 2) - 3
         for (int i = 0; i < ctrs.size(); i += 2) {
             Country cL = ctrs[i]
             Country cR = (i + 1 < ctrs.size()) ? ctrs[i+1] : (Country)null
@@ -86,9 +87,9 @@ class Planet extends Container {
                 if (cR.isVisited()) labelR += " [V]"
             }
             
-            lines << String.format("%-40s | %-40s", labelL, labelR)
+            lines << ModelOutput.fmt.padRight(labelL, colWidth) + " | " + labelR
         }
-        lines << "-" * 40
+        lines << "-" * width
         return lines
     }
 

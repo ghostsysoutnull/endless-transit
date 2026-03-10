@@ -36,6 +36,14 @@ class LocusSeed {
     }
 
     /**
+     * Derives a new LocusSeed by advancing the internal seed.
+     * Useful for horizontal entropy (e.g., getting multiple unique seeds in a loop).
+     */
+    LocusSeed next() {
+        return new LocusSeed(nextRandom().nextLong())
+    }
+
+    /**
      * Semantic: returns true if a random roll is below the threshold (0.0 to 1.0).
      */
     boolean checkProbability(double threshold) {

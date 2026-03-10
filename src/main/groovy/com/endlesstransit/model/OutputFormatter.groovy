@@ -19,6 +19,7 @@ interface OutputFormatter {
     String glitchText(String text, double probability)
     String ansiSafeTruncate(String text, int width)
     int getVisualWidth(String text)
+    String padRight(String text, int width)
     List<String> wrapText(String text, int width)
     void print(String text)
     void println(String text)

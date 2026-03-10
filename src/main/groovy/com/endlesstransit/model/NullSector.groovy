@@ -64,13 +64,14 @@ class NullSector extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Faint gravitational anomalies detected:"
-        lines << "-" * 40
+        lines << "-" * width
         
         List<Location> ch = getChildren()
+        int colWidth = (int)(width / 2) - 3
         for (int i = 0; i < ch.size(); i += 2) {
             Location sL = ch[i]
             Location sR = (i + 1 < ch.size()) ? ch[i+1] : (Location)null
@@ -84,9 +85,9 @@ class NullSector extends Container {
                 if (sR.isVisited()) labelR += " [V]"
             }
             
-            lines << String.format("%-40s | %-40s", labelL, labelR)
+            lines << ModelOutput.fmt.padRight(labelL, colWidth) + " | " + labelR
         }
-        lines << "-" * 40
+        lines << "-" * width
         return lines
     }
 

@@ -63,13 +63,14 @@ class Country extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Regional cities identified:"
-        lines << "-" * 40
+        lines << "-" * width
         
         List<City> cts = getCities()
+        int colWidth = (int)(width / 2) - 3
         for (int i = 0; i < cts.size(); i += 2) {
             City cL = cts[i]
             City cR = (i + 1 < cts.size()) ? cts[i+1] : (City)null
@@ -83,9 +84,9 @@ class Country extends Container {
                 if (cR.isVisited()) labelR += " [V]"
             }
             
-            lines << String.format("%-40s | %-40s", labelL, labelR)
+            lines << ModelOutput.fmt.padRight(labelL, colWidth) + " | " + labelR
         }
-        lines << "-" * 40
+        lines << "-" * width
         return lines
     }
 

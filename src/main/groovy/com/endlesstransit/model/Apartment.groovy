@@ -80,13 +80,12 @@ class Apartment extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << ModelOutput.fmt.colorize(" [APARTMENT_UNIT_DIAGNOSTICS] ", "L_CYAN")
         lines << ModelOutput.fmt.dim("Scanning internal cell structure...")
         
-        int width = 88
         lines << ModelOutput.fmt.dim("-" * width)
         
         // Header
@@ -95,11 +94,7 @@ class Apartment extends Container {
         int wName = 30
         int wStat = 15
         
-        Closure<String> pad = { String text, int targetWidth ->
-            return text + (" " * Math.max(0, targetWidth - ModelOutput.fmt.getVisualWidth(text)))
-        }
-
-        lines << ModelOutput.fmt.bold("${pad("[ID]", wId)}${pad("[TYPE]", wTyp)}${pad("[IDENTIFIER]", wName)}${pad("[STATUS]", wStat)}[RES]")
+        lines << ModelOutput.fmt.bold("${ModelOutput.fmt.padRight("[ID]", wId)}${ModelOutput.fmt.padRight("[TYPE]", wTyp)}${ModelOutput.fmt.padRight("[IDENTIFIER]", wName)}${ModelOutput.fmt.padRight("[STATUS]", wStat)}[RES]")
         lines << ModelOutput.fmt.dim("-" * width)
 
         List<Room> rms = getRooms()
@@ -114,7 +109,7 @@ class Apartment extends Container {
             int freq = Gematria.calculateFrequency(name, room.getDepth())
             String res = "${freq}Hz"
 
-            lines << "${pad(id, wId)}${pad(type, wTyp)}${pad(name, wName)}${pad(status, wStat)}${res}".toString()
+            lines << "${ModelOutput.fmt.padRight(id, wId)}${ModelOutput.fmt.padRight(type, wTyp)}${ModelOutput.fmt.padRight(name, wName)}${ModelOutput.fmt.padRight(status, wStat)}${res}".toString()
         }
         lines << ModelOutput.fmt.dim("-" * width)
         return lines

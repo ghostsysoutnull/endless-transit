@@ -134,13 +134,12 @@ class Building extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << ModelOutput.fmt.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", "L_CYAN")
         lines << ModelOutput.fmt.dim("Analyzing vertical lattice structure...")
         
-        int width = 88
         lines << ModelOutput.fmt.dim("-" * width)
         
         // Define Column Widths
@@ -150,17 +149,12 @@ class Building extends Container {
         int wZon = 26
         int wInt = 11
         
-        // Helper to pad based on visual width
-        Closure<String> pad = { String text, int targetWidth ->
-            return text + (" " * Math.max(0, targetWidth - ModelOutput.fmt.getVisualWidth(text)))
-        }
-
         // Header
-        String hId = pad("[ID]", wId)
-        String hRad = pad("[RAD]", wRad)
-        String hDes = pad("[STRATA_DESIGNATION]", wDes)
-        String hZon = pad("[FUNCTIONAL_ZONE]", wZon)
-        String hInt = pad("[ST]", wInt)
+        String hId = ModelOutput.fmt.padRight("[ID]", wId)
+        String hRad = ModelOutput.fmt.padRight("[RAD]", wRad)
+        String hDes = ModelOutput.fmt.padRight("[STRATA_DESIGNATION]", wDes)
+        String hZon = ModelOutput.fmt.padRight("[FUNCTIONAL_ZONE]", wZon)
+        String hInt = ModelOutput.fmt.padRight("[ST]", wInt)
         String hRes = "[RES]"
         
         lines << ModelOutput.fmt.bold("${hId}${hRad}${hDes}${hZon}${hInt}${hRes}")
@@ -203,11 +197,11 @@ class Building extends Container {
             if (floorObj != null && floorObj.isVisited()) visited = ModelOutput.fmt.colorize("[V]", "GREEN")
 
             // Assemble row with consistent padding
-            String cId = pad(idStr, wId)
-            String cRad = pad(radar, wRad)
-            String cDes = pad(designation + visited, wDes)
-            String cZon = pad("[" + zone + "]", wZon)
-            String cInt = pad("[" + integrity + "]", wInt)
+            String cId = ModelOutput.fmt.padRight(idStr, wId)
+            String cRad = ModelOutput.fmt.padRight(radar, wRad)
+            String cDes = ModelOutput.fmt.padRight(designation + visited, wDes)
+            String cZon = ModelOutput.fmt.padRight("[" + zone + "]", wZon)
+            String cInt = ModelOutput.fmt.padRight("[" + integrity + "]", wInt)
 
             lines << "${cId}${cRad}${cDes}${cZon}${cInt}${resonance}".toString()
         }

@@ -94,28 +94,29 @@ class Universe extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Primary filaments radiating from root:"
-        lines << "-" * 40
+        lines << "-" * width
         
+        int colWidth = (width - 3).intdiv(2)
         for (int i = 0; i < filaments.size(); i += 2) {
-            def fL = filaments[i]
-            def fR = (i + 1 < filaments.size()) ? filaments[i+1] : null
+            CosmicFilament fL = filaments[i]
+            CosmicFilament fR = (i + 1 < filaments.size()) ? filaments[i+1] : (CosmicFilament)null
             
-            String labelL = String.format("%02d. %s", i + 1, fL.name)
+            String labelL = String.format("%02d. %s", i + 1, fL.getName())
             if (fL.isVisited()) labelL += " [V]"
             
             String labelR = ""
-            if (fR) {
-                labelR = String.format("%02d. %s", i + 2, fR.name)
+            if (fR != null) {
+                labelR = String.format("%02d. %s", i + 2, fR.getName())
                 if (fR.isVisited()) labelR += " [V]"
             }
             
-            lines << String.format("%-40s | %-40s", labelL, labelR)
+            lines << (ModelOutput.fmt.padRight(labelL, colWidth) + " | " + ModelOutput.fmt.padRight(labelR, colWidth))
         }
-        lines << "-" * 40
+        lines << "-" * width
         return lines
     }
 

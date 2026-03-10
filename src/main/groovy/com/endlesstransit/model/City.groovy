@@ -62,29 +62,30 @@ class City extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Streets detected in this city:"
-        lines << "-" * 40
+        lines << "-" * width
         
+        int colWidth = (width - 3).intdiv(2)
         List<Street> strs = getStreets()
         for (int i = 0; i < strs.size(); i += 2) {
             Street sL = strs[i]
             Street sR = (i + 1 < strs.size()) ? strs[i+1] : (Street)null
             
-            String labelL = String.format("%02d. %s", i + 1, sL.name)
+            String labelL = String.format("%02d. %s", i + 1, sL.getName())
             if (sL.isVisited()) labelL += " [V]"
             
             String labelR = ""
             if (sR != null) {
-                labelR = String.format("%02d. %s", i + 2, sR.name)
+                labelR = String.format("%02d. %s", i + 2, sR.getName())
                 if (sR.isVisited()) labelR += " [V]"
             }
             
-            lines << String.format("%-40s | %-40s", labelL, labelR)
+            lines << (ModelOutput.fmt.padRight(labelL, colWidth) + " | " + ModelOutput.fmt.padRight(labelR, colWidth))
         }
-        lines << "-" * 40
+        lines << "-" * width
         return lines
     }
 

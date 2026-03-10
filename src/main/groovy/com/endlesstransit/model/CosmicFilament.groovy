@@ -48,12 +48,13 @@ class CosmicFilament extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Galactic sectors within this conduit:"
-        lines << "-" * 40
+        lines << "-" * width
         
+        int colWidth = (width - 3).intdiv(2)
         List<Location> ch = getChildren()
         for (int i = 0; i < ch.size(); i += 2) {
             Location sL = ch[i]
@@ -68,9 +69,9 @@ class CosmicFilament extends Container {
                 if (sR.isVisited()) labelR += " [V]"
             }
             
-            lines << String.format("%-40s | %-40s", labelL, labelR)
+            lines << (ModelOutput.fmt.padRight(labelL, colWidth) + " | " + ModelOutput.fmt.padRight(labelR, colWidth))
         }
-        lines << "-" * 40
+        lines << "-" * width
         return lines
     }
 

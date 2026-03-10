@@ -62,6 +62,13 @@ class TerminalAdapter implements OutputFormatter {
     }
 
     @Override
+    String padRight(String text, int width) {
+        int visualWidth = Terminal.getVisualWidth(text)
+        if (visualWidth >= width) return text
+        return text + (" " * (width - visualWidth))
+    }
+
+    @Override
     List<String> wrapText(String text, int width) {
         return Terminal.wrapText(text, width)
     }

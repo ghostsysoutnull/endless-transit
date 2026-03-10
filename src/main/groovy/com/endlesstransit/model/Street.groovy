@@ -46,41 +46,40 @@ class Street extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
-        
-        int colWidth = 40 // Adjusted for 88-char left pane
-        String separator = "-" * (colWidth * 2 + 3)
-        
+        int colWidth = (width - 3).intdiv(2)
+
         lines << ModelOutput.fmt.dim("Buildings on this street:")
-        lines << ModelOutput.fmt.dim(separator)
+        lines << ModelOutput.fmt.dim("-" * width)
         List<Building> bldgs = getBuildings()
         for (int i = 0; i < bldgs.size(); i += 2) {
             Building bL = bldgs[i]
             Building bR = (i + 1 < bldgs.size()) ? bldgs[i+1] : (Building)null
-            
+
             int numL = i + 1
             int numR = i + 2
-            
-            String nameL = bL.name.length() > 25 ? bL.name.substring(0, 22) + "..." : bL.name
+
+            String bNameL = bL.getName()
+            String nameL = bNameL.length() > 25 ? bNameL.substring(0, 22) + "..." : bNameL
             if (bL.isLandmark) nameL = ModelOutput.fmt.colorize(ModelOutput.fmt.bold(nameL), "CYAN")
             String visL = bL.isVisited() ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
             String labelL = "${numL}. ${nameL}${visL}"
-            String leftPart = labelL + (" " * Math.max(0, colWidth - ModelOutput.fmt.getVisualWidth(labelL)))
-            
+            String leftPart = ModelOutput.fmt.padRight(labelL, colWidth)
+
             String labelR = ""
             if (bR != null) {
-                String nameR = bR.name.length() > 25 ? bR.name.substring(0, 22) + "..." : bR.name
+                String bNameR = bR.getName()
+                String nameR = bNameR.length() > 25 ? bNameR.substring(0, 22) + "..." : bNameR
                 if (bR.isLandmark) nameR = ModelOutput.fmt.colorize(ModelOutput.fmt.bold(nameR), "CYAN")
                 String visR = bR.isVisited() ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
                 labelR = "${numR}. ${nameR}${visR}"
             }
-            String rightPart = labelR + (" " * Math.max(0, colWidth - ModelOutput.fmt.getVisualWidth(labelR)))
-            
-            lines << "${leftPart} | ${rightPart}".toString()
+
+            lines << (leftPart + " | " + ModelOutput.fmt.padRight(labelR, colWidth))
         }
-        lines << ModelOutput.fmt.dim(separator)
+        lines << ModelOutput.fmt.dim("-" * width)
         return lines
     }
 

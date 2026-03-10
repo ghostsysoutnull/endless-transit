@@ -72,55 +72,56 @@ class ThemeService {
     }
 
     /**
-     * Synthesizes atmosphere components based on vibe.
+     * Synthesizes atmosphere components based on vibe and functional trait.
      */
-    Map<String, String> generateAtmosphere(String culture, String timeline, String mutation, boolean isAnomaly, LocusSeed locus) {
+    Map<String, String> generateAtmosphere(String culture, String timeline, String mutation, boolean isAnomaly, String trait, LocusSeed locus) {
+        Random r = locus.nextRandom()
         // If it is abyssal, force it
         if (culture == "abyssal") {
             List<String> wallPool = atmosphere["walls"]["abyssal"] ?: ["raw concrete"]
             List<String> lightPool = atmosphere["lighting"]["abyssal"] ?: ["red strobe"]
             List<String> structPool = atmosphere["structures"]["abyssal"] ?: ["void"]
-            return [walls: (String)locus.pickFrom(wallPool), 
-                    lighting: (String)locus.pickFrom(lightPool), 
-                    structure: (String)locus.pickFrom(structPool)]
+            return [walls: (String)wallPool[r.nextInt(wallPool.size())], 
+                    lighting: (String)lightPool[r.nextInt(lightPool.size())], 
+                    structure: (String)structPool[r.nextInt(structPool.size())]]
         }
 
         String wallTheme = culture
         String lightTheme = timeline
-        String structTheme = mutation
+        String structTheme = trait != "Standard" ? trait : mutation
 
         // Glitch Logic: Randomize themes if anomaly is detected
-        if (isAnomaly || locus.checkProbability(0.05)) {
-            if (locus.nextBoolean()) wallTheme = getRandomCulture(locus.branch("WALL_GLITCH"))
-            if (locus.nextBoolean()) lightTheme = getRandomTimeline(locus.branch("LIGHT_GLITCH"))
-            if (locus.nextBoolean()) structTheme = locus.nextBoolean() ? "Abyssal" : "Singularity"
+        if (isAnomaly || r.nextDouble() < 0.05) {
+            if (r.nextBoolean()) wallTheme = getRandomCulture(locus.branch("WALL_GLITCH"))
+            if (r.nextBoolean()) lightTheme = getRandomTimeline(locus.branch("LIGHT_GLITCH"))
+            if (r.nextBoolean()) structTheme = r.nextBoolean() ? "Abyssal" : "Singularity"
         }
 
         // Walls pull from Culture (or glitched culture)
-        List<String> wallPool = atmosphere["walls"][wallTheme] ?: ["bare surfaces"]
-        String walls = (String) locus.pickFrom(wallPool)
+        List<String> wallPool = atmosphere["walls"][wallTheme] ?: atmosphere["walls"]["monolith"] ?: ["bare surfaces"]
+        String walls = (String) wallPool[r.nextInt(wallPool.size())]
         
         // Lighting pulls from Timeline (or glitched timeline)
-        List<String> lightPool = atmosphere["lighting"][lightTheme] ?: ["a dim, flickering glow"]
-        String lighting = (String) locus.pickFrom(lightPool)
+        List<String> lightPool = atmosphere["lighting"][lightTheme] ?: atmosphere["lighting"]["monolith"] ?: ["a dim, flickering glow"]
+        String lighting = (String) lightPool[r.nextInt(lightPool.size())]
         
-        // Structure pulls from Mutation (or glitched mutation)
-        List<String> structPool = atmosphere["structures"][structTheme] ?: atmosphere["structures"]["Standard"] ?: ["a spatial cell"]
-        String structure = (String) locus.pickFrom(structPool)
+        // Structure pulls from trait (or glitched mutation)
+        List<String> structPool = atmosphere["structures"][structTheme] ?: atmosphere["structures"]["monolith"] ?: atmosphere["structures"]["Standard"] ?: ["a spatial cell"]
+        String structure = (String) structPool[r.nextInt(structPool.size())]
         
         return [walls: walls, lighting: lighting, structure: structure]
     }
 
-    String generateHybridObject(String culture, String timeline, LocusSeed locus) {
+    String generateHybridObject(String culture, String timeline, Random r) {
         List<String> cAssets = getCultureAssets(culture)
         List<String> tAssets = getTimelineAssets(timeline)
 
         if (cAssets && tAssets) {
-            String cItem = (String) locus.pickFrom(cAssets)
-            String tItem = (String) locus.pickFrom(tAssets)
+            String cItem = (String) cAssets[r.nextInt(cAssets.size())]
+            String tItem = (String) tAssets[r.nextInt(tAssets.size())]
             
             // Randomly decide which one comes first for variety
-            return locus.nextBoolean() ? "${tItem} with ${cItem}" : "${cItem} infused with ${tItem}"
+            return r.nextBoolean() ? "${tItem} with ${cItem}" : "${cItem} infused with ${tItem}"
         }
         return "Strange Object"
     }

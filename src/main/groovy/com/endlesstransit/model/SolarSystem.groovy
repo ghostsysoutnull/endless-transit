@@ -54,13 +54,14 @@ class SolarSystem extends Container {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << "Orbital bodies within range:"
-        lines << "-" * 40
+        lines << "-" * width
         
         List<Planet> plts = getPlanets()
+        int colWidth = (int)(width / 2) - 3
         for (int i = 0; i < plts.size(); i += 2) {
             Planet pL = plts[i]
             Planet pR = (i + 1 < plts.size()) ? plts[i+1] : (Planet)null
@@ -74,9 +75,9 @@ class SolarSystem extends Container {
                 if (pR.isVisited()) labelR += " [V]"
             }
             
-            lines << String.format("%-40s | %-40s", labelL, labelR)
+            lines << ModelOutput.fmt.padRight(labelL, colWidth) + " | " + labelR
         }
-        lines << "-" * 40
+        lines << "-" * width
         return lines
     }
 

@@ -96,7 +96,7 @@ class Room implements Location {
 
     @Override
     void processAction(Player player) {
-        Random random = locus.branch("ACTION").nextRandom()
+        Random random = locus.branch("ACTION").branch(player.stepCount).nextRandom()
         if (random.nextInt(10) < 3) { 
             int randomNum = random.nextInt(9000000) + 1000000 
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
@@ -156,9 +156,8 @@ class Room implements Location {
     }
 
     @Override
-    List<String> getExtraContent(Player player) {
+    List<String> getExtraContent(Player player, int width) {
         List<String> lines = []
-        int width = 100
         String accent = isAbyssal() ? "RED" : "L_CYAN"
         
         lines << ModelOutput.fmt.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
@@ -166,11 +165,11 @@ class Room implements Location {
         
         String identPart = "IDENT: ${ModelOutput.fmt.bold(roomName)}"
         String traitsPart = "ATMO_TRAITS: [OXY: ${atmoTraits["OXYGEN"]}] | [TEMP: ${atmoTraits["TEMP"]}]"
-        lines << String.format("%-45s ║ %s", identPart, traitsPart)
+        lines << ModelOutput.fmt.padRight(identPart, width.intdiv(2)) + " ║ " + traitsPart
         
         String typePart = "TYPE:  ${ModelOutput.fmt.colorize(roomType, "YELLOW")}"
         String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? ModelOutput.fmt.colorize("[DEGRADED]", "RED") : ModelOutput.fmt.colorize("[STABLE]", "GREEN")}"
-        lines << String.format("%-45s ║ %s", typePart, signalPart)
+        lines << ModelOutput.fmt.padRight(typePart, width.intdiv(2)) + " ║ " + signalPart
         
         lines << ModelOutput.fmt.dim("-" * width)
         return lines

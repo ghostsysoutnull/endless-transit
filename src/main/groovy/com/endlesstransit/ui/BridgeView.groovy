@@ -217,10 +217,9 @@ class BridgeView implements ScreenshotProvider {
         
         List<String> leftLines = []
         fullDesc.split("\n").each { leftLines.addAll(Terminal.wrapText(it, leftWidth)) }
-        
-        List<String> extra = currentLocation.getExtraContent(player)
-        if (!extra.isEmpty()) {
-            leftLines << "" 
+
+        List<String> extra = currentLocation.getExtraContent(player, leftWidth)
+        if (!extra.isEmpty()) {            leftLines << "" 
             leftLines.addAll(extra)
         }
 
