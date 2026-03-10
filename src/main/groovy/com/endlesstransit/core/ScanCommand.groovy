@@ -8,7 +8,7 @@ import groovy.transform.CompileStatic
 /**
  * ScanCommand: Executes a high-density technical scan of the local area.
  * Prints output directly to the terminal scrollback (outside the HUD).
- * Refactored to support the new Door sensory substrate and Elevator-Corridor pivot.
+ * Refactored for perfect border alignment and Cyber-Brutalist table aesthetics.
  */
 @CompileStatic
 class ScanCommand implements LatticeCommand {
@@ -52,15 +52,29 @@ class ScanCommand implements LatticeCommand {
     }
 
     private void renderCorridorScan(Corridor corridor, Player player) {
-        int wId = 3
+        int wId = 2
         int wTrace = 10
         int wInscr = 14
         int wMat = 20
         int wState = 10
+        int wRoom = 24
         
-        Terminal.println("    " + Terminal.dim("┌" + ("─" * 84) + "┐"))
-        Terminal.println("    " + Terminal.dim("│ ") + Terminal.bold("${ModelOutput.fmt.padRight("ID", wId)}${ModelOutput.fmt.padRight("TRACE", wTrace)}${ModelOutput.fmt.padRight("INSCRIPTION", wInscr)}${ModelOutput.fmt.padRight("MATERIAL", wMat)}${ModelOutput.fmt.padRight("STATE", wState)} >> ROOM_TYPE".toString()) + Terminal.dim(" │"))
-        Terminal.println("    " + Terminal.dim("├" + ("─" * wId) + "┼" + ("─" * wTrace) + "┼" + ("─" * wInscr) + "┼" + ("─" * wMat) + "┼" + ("─" * wState) + "┼" + ("─" * 26) + "┤"))
+        // Internal content width = sum of columns + 5 internal separators
+        int totalInternal = wId + wTrace + wInscr + wMat + wState + wRoom + 5
+        
+        String top = "┌" + ("─" * totalInternal) + "┐"
+        String mid = "├" + ("─" * wId) + "┼" + ("─" * wTrace) + "┼" + ("─" * wInscr) + "┼" + ("─" * wMat) + "┼" + ("─" * wState) + "┼" + ("─" * wRoom) + "┤"
+        String bot = "└" + ("─" * totalInternal) + "┘"
+        String sep = Terminal.dim("│")
+        
+        Terminal.println("    " + Terminal.dim(top))
+        
+        // Header Row
+        Terminal.print("    " + Terminal.dim("│"))
+        Terminal.print("${ModelOutput.fmt.padRight("ID", wId)}${sep}${ModelOutput.fmt.padRight("TRACE", wTrace)}${sep}${ModelOutput.fmt.padRight("INSCRIPTION", wInscr)}${sep}${ModelOutput.fmt.padRight("MATERIAL", wMat)}${sep}${ModelOutput.fmt.padRight("STATE", wState)}${sep}${ModelOutput.fmt.padRight("ROOM_TYPE", wRoom)}")
+        Terminal.println(Terminal.dim("│"))
+        
+        Terminal.println("    " + Terminal.dim(mid))
 
         List<Apartment> apts = corridor.getApartments()
         List<Door> drs = corridor.getDoors()
@@ -76,21 +90,24 @@ class ScanCommand implements LatticeCommand {
             
             String roomType = "?? UNKNOWN ??"
             List<Room> rms = apt.getRooms()
-            if (!rms.isEmpty()) {
-                roomType = rms[0].roomType
-            }
+            if (!rms.isEmpty()) roomType = rms[0].roomType
 
-            Terminal.print("    " + Terminal.dim("│ "))
+            Terminal.print("    " + Terminal.dim("│"))
             Terminal.print(ModelOutput.fmt.padRight(id, wId))
+            Terminal.print(Terminal.dim("│"))
             Terminal.print(ModelOutput.fmt.padRight(traceName, wTrace))
+            Terminal.print(Terminal.dim("│"))
             Terminal.print(ModelOutput.fmt.padRight(inscr, wInscr))
+            Terminal.print(Terminal.dim("│"))
             Terminal.print(ModelOutput.fmt.padRight(mat, wMat))
+            Terminal.print(Terminal.dim("│"))
             Terminal.print(ModelOutput.fmt.padRight(state, wState))
-            Terminal.print(" >> " + Terminal.ansiSafeTruncate(roomType, 22))
-            Terminal.println(Terminal.dim(" │"))
+            Terminal.print(Terminal.dim("│"))
+            Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(roomType, wRoom), wRoom))
+            Terminal.println(Terminal.dim("│"))
         }
         
-        Terminal.println("    " + Terminal.dim("└" + ("─" * 84) + "┘"))
+        Terminal.println("    " + Terminal.dim(bot))
     }
 
     private void renderBuildingScan(Building building, Player player) {
@@ -99,13 +116,12 @@ class ScanCommand implements LatticeCommand {
         Terminal.println "    " + Terminal.dim("BUILDING: ${building.name} [LIP: ${building.getLIP()}]")
         Terminal.println "    " + Terminal.dim("TOTAL_STRATA: ${building.maxFloors} units detected.")
         
-        // Find current floor index
         int cur = -1
         if (player.currentLocation instanceof Floor) cur = ((Floor)player.currentLocation).number
 
         Terminal.println "    " + Terminal.dim("NEURAL_PROXIMITY_REPORT:")
         for (int i = building.maxFloors - 1; i >= 0; i--) {
-            if (Math.abs(i - cur) <= 2) { // Show 2 floors above and below
+            if (Math.abs(i - cur) <= 2) {
                 String marker = (i == cur) ? ">>" : "  "
                 String zone = building.getFloorZone(i)
                 Terminal.println "    ${Terminal.colorize(marker, Terminal.YELLOW)} ${String.format("%02d", i)}. [${zone}]"
@@ -114,15 +130,28 @@ class ScanCommand implements LatticeCommand {
     }
 
     private void renderApartmentScan(Apartment apartment, Player player) {
-        int wId = 4
+        int wId = 2
         int wFreq = 8
         int wWave = 6
         int wStat = 10
         int wType = 20
+        int wIdent = 24
 
-        Terminal.println("    " + Terminal.dim("┌" + ("─" * 74) + "┐"))
-        Terminal.println("    " + Terminal.dim("│ ") + Terminal.bold("${ModelOutput.fmt.padRight("ID", wId)}${ModelOutput.fmt.padRight("FREQ", wFreq)}${ModelOutput.fmt.padRight("WAVE", wWave)}${ModelOutput.fmt.padRight("STATUS", wStat)}${ModelOutput.fmt.padRight("TYPE", wType)} >> IDENTIFIER".toString()) + Terminal.dim(" │"))
-        Terminal.println("    " + Terminal.dim("├" + ("─" * 4) + "┼" + ("─" * 8) + "┼" + ("─" * 6) + "┼" + ("─" * 10) + "┼" + ("─" * 20) + "┼" + ("─" * 23) + "┤"))
+        int totalInternal = wId + wFreq + wWave + wStat + wType + wIdent + 5
+        
+        String top = "┌" + ("─" * totalInternal) + "┐"
+        String mid = "├" + ("─" * wId) + "┼" + ("─" * wFreq) + "┼" + ("─" * wWave) + "┼" + ("─" * wStat) + "┼" + ("─" * wType) + "┼" + ("─" * wIdent) + "┤"
+        String bot = "└" + ("─" * totalInternal) + "┘"
+        String sep = Terminal.dim("│")
+
+        Terminal.println("    " + Terminal.dim(top))
+        
+        // Header
+        Terminal.print("    " + Terminal.dim("│"))
+        Terminal.print("${ModelOutput.fmt.padRight("ID", wId)}${sep}${ModelOutput.fmt.padRight("FREQ", wFreq)}${sep}${ModelOutput.fmt.padRight("WAVE", wWave)}${sep}${ModelOutput.fmt.padRight("STATUS", wStat)}${sep}${ModelOutput.fmt.padRight("TYPE", wType)}${sep}${ModelOutput.fmt.padRight("IDENTIFIER", wIdent)}")
+        Terminal.println(Terminal.dim("│"))
+        
+        Terminal.println("    " + Terminal.dim(mid))
 
         List<Room> rms = apartment.getRooms()
         rms.eachWithIndex { Room room, int i ->
@@ -136,16 +165,21 @@ class ScanCommand implements LatticeCommand {
             String wave = (freq % 11 == 0) ? Terminal.colorize("≈≈≈", Terminal.GREEN) : Terminal.colorize("~~~", Terminal.CYAN)
             if (room.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
 
-            Terminal.print("    " + Terminal.dim("│ "))
+            Terminal.print("    " + Terminal.dim("│"))
             Terminal.print(ModelOutput.fmt.padRight(id, wId))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(signature, wFreq))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(wave, wWave))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(status, wStat))
-            Terminal.print(ModelOutput.fmt.padRight(type, wType))
-            Terminal.print(" >> " + Terminal.ansiSafeTruncate(name, 20))
-            Terminal.println(Terminal.dim(" │"))
+            Terminal.print(sep)
+            Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(type, wType), wType))
+            Terminal.print(sep)
+            Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(name, wIdent), wIdent))
+            Terminal.println(Terminal.dim("│"))
         }
         
-        Terminal.println("    " + Terminal.dim("└" + ("─" * 74) + "┘"))
+        Terminal.println("    " + Terminal.dim(bot))
     }
 }
