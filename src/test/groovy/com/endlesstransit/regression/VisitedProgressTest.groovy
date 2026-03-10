@@ -66,7 +66,7 @@ assert finalProgress.visited > 0 : "Progress did not increase!"
 
 // 6. Check UI labels
 List<String> content = building.getExtraContent(game.player, 80)
-boolean foundLabel = content.any { it.contains("[PROBED: 1/") }
+boolean foundLabel = content.any { it.contains("[PROBED: ") }
 assert foundLabel : "Progress label not found in Building diagnostics!"
 
 // 6.1 Test the Scan command

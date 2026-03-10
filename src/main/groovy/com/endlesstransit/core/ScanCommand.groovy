@@ -32,6 +32,8 @@ class ScanCommand implements LatticeCommand {
             renderCorridorScan((Corridor) loc, game.player)
         } else if (loc instanceof Apartment) {
             renderApartmentScan((Apartment) loc, game.player)
+        } else if (loc instanceof Room && loc.parent instanceof Apartment) {
+            renderApartmentScan((Apartment) loc.parent, game.player)
         } else {
             Terminal.println Terminal.dim("    No scan-compatible structure detected in this strata.")
         }

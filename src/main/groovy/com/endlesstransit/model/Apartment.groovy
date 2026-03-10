@@ -70,11 +70,6 @@ class Apartment extends Container {
             if (room.isVisited()) label += " [Visited]"
             options[label] = { game.enterLocation(room) }
         }
-
-        // Standard shortcut for first room
-        if (!rms.isEmpty()) {
-            options["f. Go forward"] = { game.enterLocation(rms[0]) }
-        }
         
         return options
     }
@@ -84,18 +79,9 @@ class Apartment extends Container {
         ensureChildrenPopulated()
         List<String> lines = []
         lines << ModelOutput.fmt.colorize(" [APARTMENT_UNIT_ACCESS] ", "L_CYAN")
-        lines << ModelOutput.fmt.dim("Enumerating internal cell structure...")
+        lines << ModelOutput.fmt.dim("Local unit entry-point. Internal cells detected: ${rooms.size()}")
         lines << ModelOutput.fmt.dim("-" * width)
         
-        List<Room> rms = getRooms()
-        for (int i = 0; i < rms.size(); i++) {
-            Room room = rms[i]
-            String id = String.format("%02d.", i + 1)
-            String status = room.isVisited() ? ModelOutput.fmt.colorize("[V]", "GREEN") : ""
-            
-            lines << "${ModelOutput.fmt.dim(id)} ${room.roomType}: ${room.roomName}${status}".toString()
-        }
-        lines << ModelOutput.fmt.dim("-" * width)
         return lines
     }
 
