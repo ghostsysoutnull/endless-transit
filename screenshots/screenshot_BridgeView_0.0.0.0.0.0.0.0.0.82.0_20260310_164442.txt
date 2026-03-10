@@ -1,0 +1,331 @@
+[VINCULUM_SNAPSHOT_METADATA]
+TIMESTAMP: Tue Mar 10 16:44:42 CDT 2026
+LOCATION: 0.0.0.0.0.0.0.0.0.82.0
+SEED: 1773179053524
+HISTORY: , 1, 2, c, 2, L, p
+VERSION: 1.0.0-VINCULUM
+--------------------------------------------------
+
+Welcome to Endless Transit!
+  [DETECTED_NEURAL_TRACE_SUBSTRATE]
+  Restore previous session? [y/N]: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 0 | COHERENCE: 99%║
+║ LOCUS_TRACE: Universe > ... > [VOID] > Proxima Kapteyn > Styxar > Free Frost Domain > Neonhaven > New Way║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Street >> New Way║ SYNC: [STABLE]║
+║ LOCUS_HASH: 33.933 / 8.057 | HOP_DENSITY: 7║ COHERENCE: █████████░║
+║ WAY: 1 / 8 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ]║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Street: New Way | [TECH_ERA: ATOMIC] [RESONANCE: ZENITH]║  [NEURAL_MAP: STREET]║
+║ ║                                   ║
+║ Buildings on this street:║                               ⌂   ║
+║ -----------------------------------------------------------------------------------...║      ⌂                            ║
+║ 1. Eternal Pillar                          | 2. Impenetrable Block                 ...║                                   ║
+║ 3. SlabReach                               | 4. PillarRoot                         ...║                           ⌂       ║
+║ 5. PillarGate                              | 6. MonolithRoot                       ...║                            ⌂     ⌂║
+║ 7. Silent Slab                             | 8. SlabSpire                          ...║                                   ║
+║ 9. Brutalist Block                         | 10. PillarReach                       ...║                                   ║
+║ -----------------------------------------------------------------------------------...║                                   ║
+║ ║ ⌂        ⌂                      ⌂ ║
+║ ║                                  ⌂║
+║ ║   ⌂                               ║
+║ ║  ▲ You | ■ Node | ░ Void║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+     [L] Leave Street ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[l] Leave Street
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> Enter choice: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                               LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ [⌂] | PULSE_TRAVERSAL: 1 | COHERENCE: 98%║
+║ LOCUS_TRACE: Universe > ... > [VOID] > Proxima Kapteyn > Styxar > Free Frost Domain > Neonhaven > New Way > Eternal Pillar║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Building >> Eternal Pillar║ STRUCTURAL_STABLE║
+║ LOCUS_HASH: 50.464 / 13.198 | HOP_DENSITY: 8║ COHERENCE: █████████░║
+║ STRATA: 1 / 10 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Building: Eternal Pillar (Total Floors: 84)║  [SYSTEM_TELEMETRY]║
+║ [TECH_ERA: ATOMIC] [RESONANCE: ZENITH]║  LATTICE_SYNC: [NOMINAL]║
+║ ║ ║
+║  [BUILDING_STRATA_DIAGNOSTICS] ║  [QUANTUM_SPECTROGRAM]║
+║ Analyzing vertical lattice structure...║  ██║
+║ -----------------------------------------------------------------------------------...║  █████║
+║ [ID] [RAD]    [STRATA_DESIGNATION]      [FUNCTIONAL_ZONE]         [ST]       [RES]║  ████║
+║ -----------------------------------------------------------------------------------...║  █████████║
+║ 83.  [ █ ]    Peak/Observatory          [PEAK_OBSERVATORY]        [100%]     1880Hz║  █║
+║ 82.  [ █ ]    Floor 82                  [EXECUTIVE_SUITE]         [100%]     2254Hz║ ║
+║ 81.  [ █ ]    Floor 81                  [EXECUTIVE_SUITE]         [100%]     1131Hz║  [DECODE_LOGS]║
+║ 80.  [ █ ]    Floor 80                  [EXECUTIVE_SUITE]         [100%]     1505Hz║  > Trace: 0.0.0.0.0.0.0.0.0║
+║ 79.  [ █ ]    Floor 79                  [LIVING_UNIT]             [100%]     1377Hz║  > Stable: 0 items║
+║ 78.  [ █ ]    Floor 78                  [LIVING_UNIT]             [100%]     1752Hz║ ║
+║ 77.  [ █ ]    Floor 77                  [LIVING_UNIT]             [100%]     2628Hz║ ║
+║ 76.  [ █ ]    Floor 76                  [LIVING_UNIT]             [100%]     1003Hz║ ║
+║ 75.  [ █ ]    Floor 75                  [LIVING_UNIT]             [100%]     2875Hz║ ║
+║ 74.  [ █ ]    Floor 74                  [LIVING_UNIT]             [100%]     1250Hz║ ║
+║ 73.  [ █ ]    Floor 73                  [LIVING_UNIT]             [100%]     2126Hz║ ║
+║ 72.  [ █ ]    Floor 72                  [LIVING_UNIT]             [100%]     2501Hz║ ║
+║ 71.  [ █ ]    Floor 71                  [LIVING_UNIT]             [100%]     2373Hz║ ║
+║ 70.  [ █ ]    Floor 70                  [LIVING_UNIT]             [100%]     2747Hz║ ║
+║ 69.  [ █ ]    Floor 69                  [LIVING_UNIT]             [100%]     1624Hz║ ║
+║ 68.  [ █ ]    Floor 68                  [LIVING_UNIT]             [100%]     1999Hz║ ║
+║ 67.  [ █ ]    Floor 67                  [LIVING_UNIT]             [100%]     1853Hz║ ║
+║ 66.  [ █ ]    Floor 66                  [LIVING_UNIT]             [100%]     2228Hz║ ║
+║ 65.  [ █ ]    Floor 65                  [LIVING_UNIT]             [100%]     1104Hz║ ║
+║ 64.  [ █ ]    Floor 64                  [LIVING_UNIT]             [100%]     1479Hz║ ║
+║ 63.  [ █ ]    Floor 63                  [LIVING_UNIT]             [100%]     1351Hz║ ║
+║ 62.  [ █ ]    Floor 62                  [LIVING_UNIT]             [100%]     1725Hz║ ║
+║ 61.  [ █ ]    Floor 61                  [LIVING_UNIT]             [100%]     2602Hz║ ║
+║ 60.  [ █ ]    Floor 60                  [LIVING_UNIT]             [100%]     2977Hz║ ║
+║ 59.  [ █ ]    Floor 59                  [LIVING_UNIT]             [100%]     2849Hz║ ║
+║ 58.  [ █ ]    Floor 58                  [LIVING_UNIT]             [100%]     1223Hz║ ║
+║ 57.  [ █ ]    Floor 57                  [LIVING_UNIT]             [100%]     2100Hz║ ║
+║ 56.  [ █ ]    Floor 56                  [LIVING_UNIT]             [100%]     2474Hz║ ║
+║ 55.  [ █ ]    Floor 55                  [LIVING_UNIT]             [100%]     2347Hz║ ║
+║ 54.  [ █ ]    Floor 54                  [LIVING_UNIT]             [100%]     2721Hz║ ║
+║ 53.  [ █ ]    Floor 53                  [LIVING_UNIT]             [100%]     1598Hz║ ║
+║ 52.  [ █ ]    Floor 52                  [LIVING_UNIT]             [100%]     1972Hz║ ║
+║ 51.  [ █ ]    Floor 51                  [LIVING_UNIT]             [100%]     1862Hz║ ║
+║ 50.  [ █ ]    Floor 50                  [LIVING_UNIT]             [100%]     2236Hz║ ║
+║ 49.  [ █ ]    Floor 49                  [LIVING_UNIT]             [100%]     1113Hz║ ║
+║ 48.  [ █ ]    Floor 48                  [LIVING_UNIT]             [100%]     1488Hz║ ║
+║ 47.  [ █ ]    Floor 47                  [LIVING_UNIT]             [100%]     1360Hz║ ║
+║ 46.  [ █ ]    Floor 46                  [LIVING_UNIT]             [100%]     1734Hz║ ║
+║ 45.  [ █ ]    Floor 45                  [LIVING_UNIT]             [100%]     2611Hz║ ║
+║ 44.  [ █ ]    Floor 44                  [LIVING_UNIT]             [100%]     2985Hz║ ║
+║ 43.  [ █ ]    Floor 43                  [LIVING_UNIT]             [100%]     2858Hz║ ║
+║ 42.  [ █ ]    Floor 42                  [LIVING_UNIT]             [100%]     1232Hz║ ║
+║ 41.  [ █ ]    Floor 41                  [LIVING_UNIT]             [100%]     2109Hz║ ║
+║ 40.  [ █ ]    Floor 40                  [LIVING_UNIT]             [100%]     2483Hz║ ║
+║ 39.  [ █ ]    Floor 39                  [LIVING_UNIT]             [100%]     2355Hz║ ║
+║ 38.  [ █ ]    Floor 38                  [LIVING_UNIT]             [100%]     2730Hz║ ║
+║ 37.  [ █ ]    Floor 37                  [LIVING_UNIT]             [100%]     1606Hz║ ║
+║ 36.  [ █ ]    Floor 36                  [LIVING_UNIT]             [100%]     1981Hz║ ║
+║ 35.  [ █ ]    Floor 35                  [LIVING_UNIT]             [100%]     1836Hz║ ║
+║ 34.  [ █ ]    Floor 34                  [LIVING_UNIT]             [100%]     2210Hz║ ║
+║ 33.  [ █ ]    Floor 33                  [LIVING_UNIT]             [100%]     1087Hz║ ║
+║ 32.  [ █ ]    Floor 32                  [LIVING_UNIT]             [100%]     1461Hz║ ║
+║ 31.  [ █ ]    Floor 31                  [LIVING_UNIT]             [100%]     1333Hz║ ║
+║ 30.  [ █ ]    Floor 30                  [LIVING_UNIT]             [100%]     1708Hz║ ║
+║ 29.  [ █ ]    Floor 29                  [LIVING_UNIT]             [100%]     2584Hz║ ║
+║ 28.  [ █ ]    Floor 28                  [LIVING_UNIT]             [100%]     2959Hz║ ║
+║ 27.  [ █ ]    Floor 27                  [LIVING_UNIT]             [100%]     2831Hz║ ║
+║ 26.  [ █ ]    Floor 26                  [LIVING_UNIT]             [100%]     1206Hz║ ║
+║ 25.  [ █ ]    Floor 25                  [LIVING_UNIT]             [100%]     2082Hz║ ║
+║ 24.  [ █ ]    Floor 24                  [LIVING_UNIT]             [100%]     2457Hz║ ║
+║ 23.  [ █ ]    Floor 23                  [LIVING_UNIT]             [100%]     2329Hz║ ║
+║ 22.  [ █ ]    Floor 22                  [LIVING_UNIT]             [100%]     2703Hz║ ║
+║ 21.  [ █ ]    Floor 21                  [LIVING_UNIT]             [100%]     1580Hz║ ║
+║ 20.  [ █ ]    Floor 20                  [LIVING_UNIT]             [100%]     1955Hz║ ║
+║ 19.  [ █ ]    Floor 19                  [LIVING_UNIT]             [100%]     1844Hz║ ║
+║ 18.  [ █ ]    Floor 18                  [LIVING_UNIT]             [100%]     2219Hz║ ║
+║ 17.  [ █ ]    Floor 17                  [LIVING_UNIT]             [100%]     1095Hz║ ║
+║ 16.  [ █ ]    Floor 16                  [LIVING_UNIT]             [100%]     1470Hz║ ║
+║ 15.  [ █ ]    Floor 15                  [LIVING_UNIT]             [100%]     1342Hz║ ║
+║ 14.  [ █ ]    Floor 14                  [LIVING_UNIT]             [100%]     1717Hz║ ║
+║ 13.  [ █ ]    Floor 13                  [LIVING_UNIT]             [100%]     2593Hz║ ║
+║ 12.  [ █ ]    Floor 12                  [LIVING_UNIT]             [100%]     2968Hz║ ║
+║ 11.  [ █ ]    Floor 11                  [LIVING_UNIT]             [100%]     2840Hz║ ║
+║ 10.  [ █ ]    Floor 10                  [LIVING_UNIT]             [100%]     1214Hz║ ║
+║ 09.  [ █ ]    Floor 9                   [LIVING_UNIT]             [100%]     2091Hz║ ║
+║ 08.  [ █ ]    Floor 8                   [LIVING_UNIT]             [100%]     2466Hz║ ║
+║ 07.  [ █ ]    Floor 7                   [LIVING_UNIT]             [100%]     2338Hz║ ║
+║ 06.  [ █ ]    Floor 6                   [LIVING_UNIT]             [100%]     2712Hz║ ║
+║ 05.  [ █ ]    Floor 5                   [LIVING_UNIT]             [100%]     1589Hz║ ║
+║ 04.  [ █ ]    Floor 4                   [MECHANICAL_SUMP]         [100%]     1963Hz║ ║
+║ 03.  [ █ ]    Floor 3                   [MECHANICAL_SUMP]         [100%]     1959Hz║ ║
+║ 02.  [ █ ]    Floor 2                   [MECHANICAL_SUMP]         [100%]     2333Hz║ ║
+║ 01.  [ █ ]    Floor 1                   [MECHANICAL_SUMP]         [100%]     1210Hz║ ║
+║ 00.  [ █ ]    Surface/Lobby             [TRANSIT_LOBBY]           [100%]     1584Hz║ ║
+║ -----------------------------------------------------------------------------------...║ ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Leave Building ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[l] Leave Building
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: 1] Enter choice: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                              LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ [▤] | PULSE_TRAVERSAL: 2 | COHERENCE: 97%║
+║ LOCUS_TRACE: ...... > [VOID] > Proxima Kapteyn > Styxar > Free Frost Domain > Neonhaven > New Way > Eternal Pillar > Floor 2║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Floor >> Floor 2║ SYSTEM_DIAGNOSTIC: [NOMINAL]║
+║ LOCUS_HASH: 66.522 / 43.809 | HOP_DENSITY: 9║ COHERENCE: █████████░║
+║ Z-AXIS: 83 / 84 | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [...║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Floor 2. The air hums with the resonance of ZENITH geometry.║  [SYSTEM_TELEMETRY]║
+║ ║  LATTICE_SYNC: [NOMINAL]║
+║  [FLOOR_DIAGNOSTIC_SUITE] ║ ║
+║ Analyzing local strata resonance...║  [QUANTUM_SPECTROGRAM]║
+║ -----------------------------------------------------------------------------------...║  █║
+║ IDENTIFIER     : Floor 2║  ██████║
+║ TECH_ERA       : ATOMIC║  ██║
+║ RESONANCE      : ZENITH║  █║
+║ STABILITY      : 79.77%║  ████████║
+║ ATMOS_SHIFT    : COMMERCIAL║ ║
+║ -----------------------------------------------------------------------------------...║  [DECODE_LOGS]║
+║ Local signal is STABLE. Corridor access authorized.║  > Trace: 0.0.0.0.0.0.0.0.0.82║
+║ ║  > Stable: 0 items║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [U] Go Up
+                          ║
+      [L] Leave Floor ═══[╬]═══ [·] 
+                          ║
+                         [D] Go Down
+EXECUTE_DIRECTIVE:
+c. Enter Corridor
+[l] Leave Floor | [u] Go Up | [d] Go Down
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: 2] Enter choice: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                              LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ [▤] | PULSE_TRAVERSAL: 3 | COHERENCE: 96%║
+║ LOCUS_TRACE: ...... > [VOID] > Proxima Kapteyn > Styxar > Free Frost Domain > Neonhaven > New Way > Eternal Pillar > Floor 2║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Floor >> Floor 2║ SYSTEM_DIAGNOSTIC: [NOMINAL]║
+║ LOCUS_HASH: 66.522 / 43.809 | HOP_DENSITY: 9║ COHERENCE: █████████░║
+║ Z-AXIS: 83 / 84 | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [...║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Floor 2. The air hums with the resonance of ZENITH geometry.║  [SYSTEM_TELEMETRY]║
+║ ║  LATTICE_SYNC: [NOMINAL]║
+║  [LOCAL_ACCESS_LIST] ║ ║
+║ Analyzing local horizontal artery...║  [QUANTUM_SPECTROGRAM]║
+║ -----------------------------------------------------------------------------------...║  ████║
+║ 01. purple, wooden║  █████║
+║ 02. purple, metallic║  ███║
+║ 03. purple, wooden, has a window║  ████████║
+║ 04. purple, ornate, has a window, written: Danger║  █████║
+║ 05. purple, vintage║ ║
+║ 06. purple, minimalist║  [DECODE_LOGS]║
+║ 07. purple, modern, has a window║  > Trace: 0.0.0.0.0.0.0.0.0.82║
+║ 08. purple, minimalist, has a window║  > Stable: 0 items║
+║ 09. purple, plain║ ║
+║ 10. purple, rustic║ ║
+║ 11. purple, plain, has a window║ ║
+║ 12. purple, rustic║ ║
+║ 13. purple, wooden, written: Haunt║ ║
+║ 14. purple, ornate║ ║
+║ 15. purple, wooden, has a window║ ║
+║ 16. purple, ornate║ ║
+║ 17. purple, modern║ ║
+║ 18. purple, minimalist, has a window, written: Nightmare║ ║
+║ 19. purple, ornate║ ║
+║ -----------------------------------------------------------------------------------...║ ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Leave Corridor ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[b] Back to Elevator | [l] Leave Corridor
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: Enter Corridor] Enter choice: >>> SPECTRAL_DEVIATION: Extracted Frequency 1292725 <<<
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                          LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ ▅ 🚪 [□] | PULSE_TRAVERSAL: 4 | COHERENCE: 95%║
+║ LOCUS_TRACE: ...onhaven > New Way > Eternal Pillar > Floor 2 > Corridor > purple, metallic > Cold Foundation [0xF3]║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Logic Market >> Cold Foundation [0xF3]║ ATMOS: 20% | TEMP: 21°C║
+║ LOCUS_HASH: 74.126 / 65.311 | HOP_DENSITY: 12║ COHERENCE: █████████░║
+║ CELL: 1 / 1 | [X]║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ OBJ:   Hidden Frequency (1292725Hz)║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 1/16 FRAGMENTS | RECENT: 1292725Hz║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║  [NEURAL_LINK_INTERPRETATION]:║  [SYSTEM_TELEMETRY]║
+║ You are in a spatial cell. The walls are pink matte-black composite plating.║  LATTICE_SYNC: [NOMINAL]║
+║ The space is illuminated by a dim, flickering glow.║ ║
+║ FURNITURE: protective goggles with laurel wreath, bakelite dial with marble pillar║  [QUANTUM_SPECTROGRAM]║
+║ OBJECTS_DETECTED: white stone altar infused with radar dish, marble pillar infused ...║  ████║
+║ geiger║  █████████║
+║ counter, protective goggles with laurel wreath, geiger counter with laurel║  ██████║
+║ wreath, geiger counter with laurel wreath, lead-lined container with amphora,║  █████║
+║ marble pillar infused with chrome tailfin, lead-lined container with marble║  █████║
+║ pillar, toga-draped statue infused with bakelite dial, lead-lined container with║ ║
+║ amphora║  [DECODE_LOGS]║
+║ ║  > Trace: 0.0.0.0.0.0.0.0.0.82.0.1.0║
+║  LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.82.0.1.0 ║  > Stable: 0 items║
+║ -----------------------------------------------------------------------------------...║ ║
+║ IDENT: Cold Foundation [0xF3]                ║ ATMO_TRAITS: [OXY: 20%] | [TEMP: 21°C]║ ║
+║ TYPE:  Logic Market                          ║ SIGNAL: [CLEAR] | RESONANCE: [STABLE]║ ║
+║ -----------------------------------------------------------------------------------...║ ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Exit Apartment ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[t] Interact with objects | [l] Exit Apartment
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: 2] Enter choice: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                             LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ ▤ [▅] | PULSE_TRAVERSAL: 5 | COHERENCE: 94%║
+║ LOCUS_TRACE: ...] > Proxima Kapteyn > Styxar > Free Frost Domain > Neonhaven > New Way > Eternal Pillar > Floor 2 > Corridor║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Corridor >> Corridor║ TRAFFIC: [STABLE] | THEME: [ZENITH]║
+║ LOCUS_HASH: 96.778 / 25.916 | HOP_DENSITY: 10║ COHERENCE: █████████░║
+║ CONDUIT: 1 / 1 | [X]║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ OBJ:   Hidden Frequency (1292725Hz)║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 1/16 FRAGMENTS | RECENT: 1292725Hz║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ A long corridor with multiple doors. [THEME: ZENITH]║  [SYSTEM_TELEMETRY]║
+║ ║  LATTICE_SYNC: [NOMINAL]║
+║  [LOCAL_ACCESS_LIST] ║ ║
+║ Analyzing local horizontal artery...║  [QUANTUM_SPECTROGRAM]║
+║ -----------------------------------------------------------------------------------...║  █║
+║ 01. purple, wooden║  ██████║
+║ 02. purple, metallic [V]║  ██║
+║ 03. purple, wooden, has a window║  █║
+║ 04. purple, ornate, has a window, written: Danger║  ██║
+║ 05. purple, vintage║ ║
+║ 06. purple, minimalist║  [DECODE_LOGS]║
+║ 07. purple, modern, has a window║  > Trace: 0.0.0.0.0.0.0.0.0.82.0║
+║ 08. purple, minimalist, has a window║  > Stable: 0 items║
+║ 09. purple, plain║ ║
+║ 10. purple, rustic║ ║
+║ 11. purple, plain, has a window║ ║
+║ 12. purple, rustic║ ║
+║ 13. purple, wooden, written: Haunt║ ║
+║ 14. purple, ornate║ ║
+║ 15. purple, wooden, has a window║ ║
+║ 16. purple, ornate║ ║
+║ 17. purple, modern║ ║
+║ 18. purple, minimalist, has a window, written: Nightmare║ ║
+║ 19. purple, ornate║ ║
+║ -----------------------------------------------------------------------------------...║ ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Leave Corridor ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[l] Leave Corridor
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit

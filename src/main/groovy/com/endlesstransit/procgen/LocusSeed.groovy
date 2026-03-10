@@ -25,7 +25,9 @@ class LocusSeed {
      * Derives a new LocusSeed from an index (e.g., child index 4).
      */
     LocusSeed branch(int index) {
-        return new LocusSeed(value + index + 1000)
+        // Scramble the index to ensure even small differences result in large seed shifts
+        long scrambledIndex = (long)index * 2862933555777941757L + 3037000493L
+        return new LocusSeed(value ^ scrambledIndex)
     }
 
     /**
