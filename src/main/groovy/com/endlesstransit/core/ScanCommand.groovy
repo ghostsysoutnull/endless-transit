@@ -48,6 +48,9 @@ class ScanCommand implements LatticeCommand {
         
         Terminal.println Terminal.colorize(">>> SCAN_COMPLETE. LOCAL_PHASE_SYNCHRONIZED.", Terminal.L_CYAN)
         Terminal.println ""
+        
+        game.getInputHandler().waitForEnter()
+        
         return false 
     }
 
@@ -60,7 +63,8 @@ class ScanCommand implements LatticeCommand {
         int wRoom = 24
         
         // Internal content width = sum of columns + 5 internal separators
-        int totalInternal = wId + wTrace + wInscr + wMat + wState + wRoom + 5
+        // wId(2) + wTrace(10) + wInscr(14) + wMat(20) + wState(10) + wRoom(24) + 5 = 85
+        int totalInternal = 85
         
         String top = "┌" + ("─" * totalInternal) + "┐"
         String mid = "├" + ("─" * wId) + "┼" + ("─" * wTrace) + "┼" + ("─" * wInscr) + "┼" + ("─" * wMat) + "┼" + ("─" * wState) + "┼" + ("─" * wRoom) + "┤"
@@ -94,15 +98,15 @@ class ScanCommand implements LatticeCommand {
 
             Terminal.print("    " + Terminal.dim("│"))
             Terminal.print(ModelOutput.fmt.padRight(id, wId))
-            Terminal.print(Terminal.dim("│"))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(traceName, wTrace))
-            Terminal.print(Terminal.dim("│"))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(inscr, wInscr))
-            Terminal.print(Terminal.dim("│"))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(mat, wMat))
-            Terminal.print(Terminal.dim("│"))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(state, wState))
-            Terminal.print(Terminal.dim("│"))
+            Terminal.print(sep)
             Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(roomType, wRoom), wRoom))
             Terminal.println(Terminal.dim("│"))
         }
@@ -137,7 +141,8 @@ class ScanCommand implements LatticeCommand {
         int wType = 20
         int wIdent = 24
 
-        int totalInternal = wId + wFreq + wWave + wStat + wType + wIdent + 5
+        // 2 + 8 + 6 + 10 + 20 + 24 + 5 = 75
+        int totalInternal = 75
         
         String top = "┌" + ("─" * totalInternal) + "┐"
         String mid = "├" + ("─" * wId) + "┼" + ("─" * wFreq) + "┼" + ("─" * wWave) + "┼" + ("─" * wStat) + "┼" + ("─" * wType) + "┼" + ("─" * wIdent) + "┤"

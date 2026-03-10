@@ -1,0 +1,238 @@
+[VINCULUM_SNAPSHOT_METADATA]
+TIMESTAMP: Tue Mar 10 18:18:13 CDT 2026
+LOCATION: 0.0.0.0.0.0.0.0.1.32
+SEED: 1773184659104
+HISTORY: , 2, 2, c, s, p
+VERSION: 1.0.0-VINCULUM
+--------------------------------------------------
+
+Welcome to Endless Transit!
+  [DETECTED_NEURAL_TRACE_SUBSTRATE]
+  Restore previous session? [y/N]: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 [═] | PULSE_TRAVERSAL: 0 | COHERENCE: 99%║
+║ LOCUS_TRACE: ...-94-Thread > Void Quadrant 43 > Alpha Australis > Orionra > New Frost Territories > Blacktown > Broad Avenue║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Street >> Broad Avenue║ SYNC: [STABLE]║
+║ LOCUS_HASH: 13.067 / 3.875 | HOP_DENSITY: 7║ COHERENCE: █████████░║
+║ WAY: 1 / 15 | [X] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Street: Broad Avenue | [TECH_ERA: FUTURE] [RESONANCE: ZENITH]║  [NEURAL_MAP: STREET]║
+║ ║                                 ⌂ ║
+║ Buildings on this street:║                     ⌂             ║
+║ -----------------------------------------------------------------------------------...║   ⌂                               ║
+║ 1. FoundationFall                          | 2. MonolithReach                      ...║     ⌂                             ║
+║ 3. Eternal Block                           | 4. Cold Monolith                      ...║                              ⌂    ║
+║ 5. The Obelisk of Resonance                | 6. Unit 0x17D Center                  ...║                                   ║
+║ 7. MonolithGate                            | 8. Grey Tower                         ...║                                   ║
+║ -----------------------------------------------------------------------------------...║                                   ║
+║ ║     ⌂                             ║
+║ ║                                   ║
+║ ║                                   ║
+║ ║                       ⌂   ⌂       ║
+║ ║  ▲ You | ■ Node | ░ Void║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+     [L] Leave Street ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[l] Leave Street
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> Enter choice: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                               LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ [⌂] | PULSE_TRAVERSAL: 1 | COHERENCE: 98%║
+║ LOCUS_TRACE: ...d Quadrant 43 > Alpha Australis > Orionra > New Frost Territories > Blacktown > Broad Avenue > MonolithReach║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Building >> MonolithReach║ STRUCTURAL_STABLE║
+║ LOCUS_HASH: 86.291 / 15.221 | HOP_DENSITY: 8║ COHERENCE: █████████░║
+║ STRATA: 2 / 8 | [ ] [X] [ ] [ ] [ ] [ ] [ ] [ ]║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Building: MonolithReach (Total Floors: 34)║  [SYSTEM_TELEMETRY]║
+║ [TECH_ERA: FUTURE] [RESONANCE: ZENITH]║  LATTICE_SYNC: [NOMINAL]║
+║ ║ ║
+║  [BUILDING_STRATA_DIAGNOSTICS] ║  [QUANTUM_SPECTROGRAM]║
+║ Analyzing vertical lattice structure...║  ███║
+║ -----------------------------------------------------------------------------------...║  █║
+║ [ID] [RAD]    [STRATA_DESIGNATION]      [FUNCTIONAL_ZONE]         [ST]       [RES]║  ██████║
+║ -----------------------------------------------------------------------------------...║  ████████║
+║ 33.  [ █ ]    Peak/Observatory          [PEAK_OBSERVATORY]        [100%]     2352Hz║  ███║
+║ 32.  [ █ ]    Floor 32                  [DATA_VAULT]              [100%]     2556Hz║ ║
+║ 31.  [ █ ]    Floor 31                  [NEURAL_UPLINK]           [100%]     1265Hz║  [DECODE_LOGS]║
+║ 30.  [ █ ]    Floor 30                  [NEURAL_UPLINK]           [100%]     1590Hz║  > Trace: 0.0.0.0.0.0.0.0.1║
+║ 29.  [ █ ]    Floor 29                  [BIO_SERVER]              [100%]     2869Hz║  > Stable: 0 items║
+║ 28.  [ █ ]    Floor 28                  [HYDROPONIC_BAY]          [100%]     2296Hz║ ║
+║ 27.  [ █ ]    Floor 27                  [LIVING_UNIT]             [100%]     2591Hz║ ║
+║ 26.  [ █ ]    Floor 26                  [RESEARCH_LAB]            [100%]     1266Hz║ ║
+║ 25.  [ █ ]    Floor 25                  [LIVING_UNIT]             [100%]     2012Hz║ ║
+║ 24.  [ █ ]    Floor 24                  [RESEARCH_LAB]            [100%]     1842Hz║ ║
+║ 23.  [ █ ]    Floor 23                  [RESEARCH_LAB]            [100%]     2330Hz║ ║
+║ 22.  [ █ ]    Floor 22                  [RESEARCH_LAB]            [100%]     2065Hz║ ║
+║ 21.  [ █ ]    Floor 21                  [RESEARCH_LAB]            [100%]     1200Hz║ ║
+║ 20.  [ █ ]    Floor 20                  [RESEARCH_LAB]            [100%]     2318Hz║ ║
+║ 19.  [ █ ]    Floor 19                  [HYDROPONIC_BAY]          [100%]     2224Hz║ ║
+║ 18.  [ █ ]    Floor 18                  [HYDROPONIC_BAY]          [100%]     2803Hz║ ║
+║ 17.  [ █ ]    Floor 17                  [HYDROPONIC_BAY]          [100%]     1947Hz║ ║
+║ 16.  [ █ ]    Floor 16                  [RESEARCH_LAB]            [100%]     2517Hz║ ║
+║ 15.  [ █ ]    Floor 15                  [LIVING_UNIT]             [100%]     1290Hz║ ║
+║ 14.  [ █ ]    Floor 14                  [LIVING_UNIT]             [100%]     2397Hz║ ║
+║ 13.  [ █ ]    Floor 13                  [BIO_SERVER]              [100%]     2412Hz║ ║
+║ 12.  [ █ ]    Floor 12                  [RESEARCH_LAB]            [100%]     2593Hz║ ║
+║ 11.  [ █ ]    Floor 11                  [HYDROPONIC_BAY]          [100%]     1294Hz║ ║
+║ 10.  [ █ ]    Floor 10                  [BIO_SERVER]              [100%]     1459Hz║ ║
+║ 09.  [ █ ]    Floor 9                   [LIVING_UNIT]             [100%]     2571Hz║ ║
+║ 08.  [ █ ]    Floor 8                   [RESEARCH_LAB]            [100%]     1588Hz║ ║
+║ 07.  [ █ ]    Floor 7                   [RESEARCH_LAB]            [100%]     1673Hz║ ║
+║ 06.  [ █ ]    Floor 6                   [LIVING_UNIT]             [100%]     1698Hz║ ║
+║ 05.  [ █ ]    Floor 5                   [LIVING_UNIT]             [100%]     2223Hz║ ║
+║ 04.  [ █ ]    Floor 4                   [STORAGE_CELL]            [100%]     2807Hz║ ║
+║ 03.  [ █ ]    Floor 3                   [MECHANICAL_SUMP]         [100%]     2935Hz║ ║
+║ 02.  [ █ ]    Floor 2                   [POWER_RELAY]             [100%]     1180Hz║ ║
+║ 01.  [ █ ]    Floor 1                   [MECHANICAL_SUMP]         [100%]     1874Hz║ ║
+║ 00.  [ █ ]    Surface/Lobby             [TRANSIT_LOBBY]           [100%]     1947Hz║ ║
+║ -----------------------------------------------------------------------------------...║ ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Leave Building ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[l] Leave Building
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: 2] Enter choice: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                              LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ [▤] | PULSE_TRAVERSAL: 2 | COHERENCE: 97%║
+║ LOCUS_TRACE: ... 43 > Alpha Australis > Orionra > New Frost Territories > Blacktown > Broad Avenue > MonolithReach > Floor 2║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Floor >> Floor 2║ SYSTEM_DIAGNOSTIC: [NOMINAL]║
+║ LOCUS_HASH: 79.743 / 65.867 | HOP_DENSITY: 9║ COHERENCE: █████████░║
+║ Z-AXIS: 33 / 34 | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [...║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Floor 2. The air hums with the resonance of ZENITH geometry.║  [SYSTEM_TELEMETRY]║
+║ ║  LATTICE_SYNC: [NOMINAL]║
+║  [FLOOR_DIAGNOSTIC_SUITE] ║ ║
+║ Analyzing local strata resonance...║  [QUANTUM_SPECTROGRAM]║
+║ -----------------------------------------------------------------------------------...║  ███████║
+║ IDENTIFIER     : Floor 2║  ████████║
+║ TECH_ERA       : FUTURE║  ████████║
+║ RESONANCE      : ZENITH║  ██████║
+║ STABILITY      : 75.90%║  ████████║
+║ ATMOS_SHIFT    : INDUSTRIAL║ ║
+║ -----------------------------------------------------------------------------------...║  [DECODE_LOGS]║
+║ Local signal is STABLE. Corridor access authorized.║  > Trace: 0.0.0.0.0.0.0.0.1.32║
+║ ║  > Stable: 0 items║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [U] Go Up
+                          ║
+      [L] Leave Floor ═══[╬]═══ [·] 
+                          ║
+                         [D] Go Down
+EXECUTE_DIRECTIVE:
+c. Enter Corridor
+[l] Leave Floor | [u] Go Up | [d] Go Down
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: 2] Enter choice: ╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                              LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ [▤] | PULSE_TRAVERSAL: 3 | COHERENCE: 96%║
+║ LOCUS_TRACE: ... 43 > Alpha Australis > Orionra > New Frost Territories > Blacktown > Broad Avenue > MonolithReach > Floor 2║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Floor >> Floor 2║ SYSTEM_DIAGNOSTIC: [NOMINAL]║
+║ LOCUS_HASH: 79.743 / 65.867 | HOP_DENSITY: 9║ COHERENCE: █████████░║
+║ Z-AXIS: 33 / 34 | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [...║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Floor 2. The air hums with the resonance of ZENITH geometry.║  [SYSTEM_TELEMETRY]║
+║ ║  LATTICE_SYNC: [NOMINAL]║
+║  [LOCAL_ACCESS_LIST] ║ ║
+║ Analyzing local horizontal artery...║  [QUANTUM_SPECTROGRAM]║
+║ -----------------------------------------------------------------------------------...║  ██████║
+║ 01. Brutalist Slab [POLISHED]║  █████║
+║ 02. Reinforced Polymer [POLISHED]║  █║
+║ 03. Reinforced Polymer [STATIC]║  ██║
+║ 04. Synth-Glass Slab [PITTED]║  ███████║
+║ 05. Pristine Ceramic [RUSTED]║ ║
+║ 06. Industrial Barrier [PITTED]║  [DECODE_LOGS]║
+║ 07. Industrial Barrier [COLD]║  > Trace: 0.0.0.0.0.0.0.0.1.32║
+║ 08. Pristine Ceramic [COLD]║  > Stable: 0 items║
+║ 09. Oxidized Metal Hatch [POLISHED]║ ║
+║ -----------------------------------------------------------------------------------...║ ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Leave Corridor ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[b] Back to Elevator | [l] Leave Corridor
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit
+---=====================================>> [Last: Enter Corridor] Enter choice: 
+>>> LOCAL_LATTICE_SCAN_INITIATED [LOCUS: 0.0.0.0.0.0.0.0.1.32]
+    ┌────────────────────────────────────────────────────────────────────────────────────┐
+    │ ID TRACE     INSCRIPTION   MATERIAL            STATE      >> ROOM_TYPE │
+    ├───┼──────────┼──────────────┼────────────────────┼──────────┼──────────────────────────┤
+    │ 01 Ozone                   Brutalist Slab      Polished   >> Processing Core │
+    │ 02 Ozone                   Reinforced Polymer  Polished   >> Power Plant │
+    │ 03 Humming                 Reinforced Polymer  Static     >> Fuel Depot │
+    │ 04 Ozone                   Synth-Glass Slab    Pitted     >> Power Plant │
+    │ 05 Ozone                   Pristine Ceramic    Rusted     >> Power Plant │
+    │ 06 Ozone                   Industrial Barrier  Pitted     >> Processing Core │
+    │ 07 Ozone                   Industrial Barrier  Cold       >> Power Plant │
+    │ 08 Humming                 Pristine Ceramic    Cold       >> Fuel Depot │
+    │ 09 Ozone                   Oxidized Metal HatchPolished   >> Processing Core │
+    └────────────────────────────────────────────────────────────────────────────────────┘
+>>> SCAN_COMPLETE. LOCAL_PHASE_SYNCHRONIZED.
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                              LATTICE: ∞ » ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ [▤] | PULSE_TRAVERSAL: 3 | COHERENCE: 95%║
+║ LOCUS_TRACE: ... 43 > Alpha Australis > Orionra > New Frost Territories > Blacktown > Broad Avenue > MonolithReach > Floor 2║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ LATTICE_IDENT: Floor >> Floor 2║ SYSTEM_DIAGNOSTIC: [NOMINAL]║
+║ LOCUS_HASH: 79.743 / 65.867 | HOP_DENSITY: 9║ COHERENCE: █████████░║
+║ Z-AXIS: 33 / 34 | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [...║ EVENT_TICKER: [SYNC_STABLE]║
+║ ║ ║
+║ ║ ║
+╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢
+║ TRACE_BUFFER: 0/16 FRAGMENTS║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+ »» SCANNING_LOCAL_TOPOLOGY...
+║ Floor 2. The air hums with the resonance of ZENITH geometry.║  [SYSTEM_TELEMETRY]║
+║ ║  LATTICE_SYNC: [NOMINAL]║
+║  [LOCAL_ACCESS_LIST] ║ ║
+║ Analyzing local horizontal artery...║  [QUANTUM_SPECTROGRAM]║
+║ -----------------------------------------------------------------------------------...║  ███████║
+║ 01. Brutalist Slab [POLISHED]║  ███████║
+║ 02. Reinforced Polymer [POLISHED]║  █████║
+║ 03. Reinforced Polymer [STATIC]║  █████║
+║ 04. Synth-Glass Slab [PITTED]║  ██████║
+║ 05. Pristine Ceramic [RUSTED]║ ║
+║ 06. Industrial Barrier [PITTED]║  [DECODE_LOGS]║
+║ 07. Industrial Barrier [COLD]║  > Trace: 0.0.0.0.0.0.0.0.1.32║
+║ 08. Pristine Ceramic [COLD]║  > Stable: 0 items║
+║ 09. Oxidized Metal Hatch [POLISHED]║ ║
+║ -----------------------------------------------------------------------------------...║ ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                         [·] 
+                          ║
+   [L] Leave Corridor ═══[╬]═══ [·] 
+                          ║
+                         [·] 
+EXECUTE_DIRECTIVE:
+[b] Back to Elevator | [l] Leave Corridor
+[i] Buffer | [sync] Save | [s] Scan | [m] Map | [ll] Tree | [p] Snap | [quit] Quit

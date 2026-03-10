@@ -26,4 +26,9 @@ class MockInputSource implements InputSource {
     void waitForEnter() {
         // No-op in headless mode
     }
+
+    @Override
+    boolean isInteractive() {
+        return false
+    }
 }

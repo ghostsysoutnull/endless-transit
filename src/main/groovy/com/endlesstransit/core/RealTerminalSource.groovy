@@ -19,4 +19,9 @@ class RealTerminalSource implements InputSource {
     void waitForEnter() {
         if (scanner.hasNextLine()) scanner.nextLine()
     }
+
+    @Override
+    boolean isInteractive() {
+        return true
+    }
 }

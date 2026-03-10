@@ -86,7 +86,13 @@ class InputHandler {
         return false
     }
 
+    /**
+     * Triggers a pause until the player presses ENTER.
+     * Skipped if the input source is non-interactive.
+     */
     void waitForEnter() {
+        if (!source.isInteractive()) return
+        
         Terminal.print Terminal.dim("Press ENTER to return...")
         source.waitForEnter()
         inputHistory.add("") // ENTER is an empty string in history

@@ -9,4 +9,5 @@ import groovy.transform.CompileStatic
 interface InputSource {
     String readLine()
     void waitForEnter()
+    boolean isInteractive()
 }
