@@ -1,5 +1,11 @@
 # ProcGen Domain: Entropy & Synthesis
 
+**AI ARCHITECT CONTEXT: ENTROPY ARCHITECT**
+- **Strict Determinism:** Every generator MUST be stateless. The same `LocusSeed` and index MUST produce the exact same output. No static `Random` or `ThreadLocalRandom`.
+- **Branch Integrity:** Child seeds MUST be derived using `locus.branch(index)`. Never generate a new root seed for a child location; entropy must flow down the hierarchy.
+- **Lazy Synthesis:** Generators should only produce what is requested. Avoid "Pre-Calculated" objects that aren't immediately needed by the `model`.
+- **Semantic Variance:** Ensure `NameGenerator` and `ThemeManager` use local seed-scrambling to prevent "Repetition Drift" where siblings look identical.
+
 ## ⚛️ The Seed of Reality
 - **Primary Source**: `LocusSeed.groovy`
 - **Philosophy**: Mathematical determinism. Given a seed, the universe is pre-calculated.

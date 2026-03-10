@@ -1,5 +1,11 @@
 # UI Domain: The Visual Interface
 
+**AI ARCHITECT CONTEXT: AESTHETIC ORCHESTRATION**
+- **Cyber-Brutalist Mandate:** UI must feel high-density and data-heavy. Prioritize monospaced alignment, boxed HUDs, and high-contrast color shifts.
+- **Reactive Observation:** The UI MUST NOT query the `model` for deep state. It should "listen" to telemetry from the `core` or observe a stable `ScreenBuffer`.
+- **Mandatory Virtualization:** Never use `System.out.println` directly. All output MUST go through a `RenderSink` to ensure it can be captured by the `CaptureService` and `VirtualBuffer`.
+- **Visual Invariants:** All right-side layout elements must use the `Terminal.getVisualWidth()` helper to account for 2-cell icons and ANSI metadata.
+
 ## 👁️ Aesthetics & "Vibe"
 - **Style**: Cyber-Brutalist. Data-heavy, high contrast.
 - **Styling**: Exclusively use `Terminal.colorize()`, `Terminal.dim()`, and `Terminal.bold()`. 
