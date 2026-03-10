@@ -2,55 +2,57 @@ package com.endlesstransit.procgen
 import com.endlesstransit.ui.Terminal
 
 import com.endlesstransit.model.*
-import com.endlesstransit.ui.ThemeManager
+
 import groovy.transform.CompileStatic
 
 @CompileStatic
 class ProceduralFactory {
+    static ProceduralFactory instance = new ProceduralFactory()
+    ThemeService themeService = new ThemeService()
     
-    static Universe createUniverse(LocusSeed locus) {
+    Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
         u.setLocus(locus)
         return u
     }
 
-    static CosmicFilament createFilament(Container parent, LocusSeed locus) {
+    CosmicFilament createFilament(Container parent, LocusSeed locus) {
         CosmicFilament f = new CosmicFilament(NameGenerator.generateFilamentName(locus.value), locus)
         f.setParent(parent)
         return f
     }
 
-    static GalacticSector createSector(Container parent, LocusSeed locus) {
+    GalacticSector createSector(Container parent, LocusSeed locus) {
         GalacticSector s = new GalacticSector(NameGenerator.generateSectorName(locus.value), locus)
         s.setParent(parent)
         return s
     }
 
-    static NullSector createNullSector(Container parent, LocusSeed locus) {
+    NullSector createNullSector(Container parent, LocusSeed locus) {
         String nullName = "Null Reach ${Integer.toHexString(locus.nextInt(0xFFF)).toUpperCase()}"
         NullSector s = new NullSector(nullName, locus)
         s.setParent(parent)
         return s
     }
 
-    static SolarSystem createSolarSystem(Container parent, LocusSeed locus) {
+    SolarSystem createSolarSystem(Container parent, LocusSeed locus) {
         SolarSystem s = new SolarSystem(NameGenerator.generateSolarSystemName(locus.value), locus)
         s.setParent(parent)
         return s
     }
 
-    static Planet createPlanet(Container parent, LocusSeed locus) {
+    Planet createPlanet(Container parent, LocusSeed locus) {
         Planet p = new Planet(NameGenerator.generatePlanetName(locus.value), locus)
         p.setParent(parent)
         
         // 1. Initialize Planetary Vibe Deterministically
-        String timeline = ThemeManager.getRandomTimeline(locus.branch("TIMELINE").value)
-        String primary = ThemeManager.getRandomCulture(locus.branch("CULTURE_P").value)
-        String secondary = ThemeManager.getRandomCulture(locus.branch("CULTURE_S").value)
+        String timeline = themeService.getRandomTimeline(locus.branch("TIMELINE").value)
+        String primary = themeService.getRandomCulture(locus.branch("CULTURE_P").value)
+        String secondary = themeService.getRandomCulture(locus.branch("CULTURE_S").value)
         
         int attempts = 0
         while (secondary == primary && attempts < 10) {
-            secondary = ThemeManager.getRandomCulture(locus.branch("CULTURE_S_ALT" + attempts).value)
+            secondary = themeService.getRandomCulture(locus.branch("CULTURE_S_ALT" + attempts).value)
             attempts++
         }
         
@@ -73,7 +75,7 @@ class ProceduralFactory {
         return p
     }
 
-    static Country createCountry(Container parent, LocusSeed locus) {
+    Country createCountry(Container parent, LocusSeed locus) {
         Country c = new Country(NameGenerator.generateCountryName(locus.value), locus)
         c.setParent(parent)
         
@@ -83,19 +85,19 @@ class ProceduralFactory {
         return c
     }
 
-    static City createCity(Container parent, LocusSeed locus) {
+    City createCity(Container parent, LocusSeed locus) {
         City c = new City(NameGenerator.generateCityName(locus.value), locus)
         c.setParent(parent)
         return c
     }
 
-    static Street createStreet(Container parent, LocusSeed locus) {
+    Street createStreet(Container parent, LocusSeed locus) {
         Street s = new Street(NameGenerator.generateStreetName(locus.value), locus)
         s.setParent(parent)
         return s
     }
 
-    static Building createBuilding(Container parent, String culture, String timeline, LocusSeed locus, int depth, boolean isNull, boolean isAbyssal) {
+    Building createBuilding(Container parent, String culture, String timeline, LocusSeed locus, int depth, boolean isNull, boolean isAbyssal) {
         Building b = new Building(locus)
         b.culture = culture
         b.timeline = timeline
@@ -137,19 +139,19 @@ class ProceduralFactory {
         return b
     }
 
-    static Floor createFloor(Container parent, int number, int apartmentsPerFloor, String culture, String timeline, LocusSeed locus) {
+    Floor createFloor(Container parent, int number, int apartmentsPerFloor, String culture, String timeline, LocusSeed locus) {
         Floor f = new Floor(number, apartmentsPerFloor, culture, timeline, locus)
         f.setParent(parent)
         return f
     }
 
-    static Corridor createCorridor(Container parent, int numApartments, String culture, String timeline, LocusSeed locus) {
+    Corridor createCorridor(Container parent, int numApartments, String culture, String timeline, LocusSeed locus) {
         Corridor c = new Corridor(numApartments, culture, timeline, locus)
         c.setParent(parent)
         return c
     }
 
-    static Apartment createApartment(Container parent, String doorDesc, String culture, String timeline, LocusSeed locus) {
+    Apartment createApartment(Container parent, String doorDesc, String culture, String timeline, LocusSeed locus) {
         Apartment a = new Apartment(doorDesc, culture, timeline, locus)
         a.setParent(parent)
         
@@ -165,7 +167,7 @@ class ProceduralFactory {
         return a
     }
 
-    static Room createRoom(Container parent, String culture, String timeline, LocusSeed locus) {
+    Room createRoom(Container parent, String culture, String timeline, LocusSeed locus) {
         Room r = new Room()
         r.culture = culture
         r.timeline = timeline
@@ -193,7 +195,7 @@ class ProceduralFactory {
         // 4. Atmosphere
         VibeCapsule vibe = r.getVibe()
         String mutation = vibe != null ? vibe.latticeMutation : "Standard"
-        Map<String, String> atmos = ThemeManager.generateAtmosphere(culture, timeline, mutation, r.isAnomaly, locus.value)
+        Map<String, String> atmos = themeService.generateAtmosphere(culture, timeline, mutation, r.isAnomaly, locus.value)
         r.walls = atmos["walls"]
         r.lightingDesc = atmos["lighting"]
         r.structureDesc = atmos["structure"]
@@ -206,7 +208,7 @@ class ProceduralFactory {
         // 6. Furniture
         int numFurniture = rand.nextInt(3) + 1
         for (int i = 0; i < numFurniture; i++) {
-            r.furniture << ThemeManager.generateHybridObject(culture, timeline, locus.branch("FURN_" + i).value)
+            r.furniture << themeService.generateHybridObject(culture, timeline, locus.branch("FURN_" + i).value)
         }
 
         return r
@@ -214,7 +216,7 @@ class ProceduralFactory {
 
     // --- Population Strategies ---
 
-    static void populateUniverse(Universe u) {
+    void populateUniverse(Universe u) {
         Random r = u.locus.nextRandom()
         int numFilaments = r.nextInt(5) + 3
         for (int i = 0; i < numFilaments; i++) {
@@ -222,7 +224,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateFilament(CosmicFilament f) {
+    void populateFilament(CosmicFilament f) {
         Random r = f.locus.nextRandom()
         int numNodes = r.nextInt(5) + 4
         for (int i = 0; i < numNodes; i++) {
@@ -235,7 +237,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateSector(GalacticSector s) {
+    void populateSector(GalacticSector s) {
         Random r = s.locus.nextRandom()
         int numSystems = r.nextInt(5) + 3
         for (int i = 0; i < numSystems; i++) {
@@ -243,7 +245,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateNullSector(NullSector s) {
+    void populateNullSector(NullSector s) {
         Random r = s.locus.nextRandom()
         int numSystems = r.nextInt(2) + 1
         for (int i = 0; i < numSystems; i++) {
@@ -252,7 +254,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateSolarSystem(SolarSystem s) {
+    void populateSolarSystem(SolarSystem s) {
         Random r = s.locus.nextRandom()
         int numPlanets = r.nextInt(9) + 2
         for (int i = 0; i < numPlanets; i++) {
@@ -260,7 +262,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populatePlanet(Planet p) {
+    void populatePlanet(Planet p) {
         Random r = p.locus.nextRandom()
         int numCountries = r.nextInt(7) + 2
         for (int i = 0; i < numCountries; i++) {
@@ -268,7 +270,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateCountry(Country c) {
+    void populateCountry(Country c) {
         Random r = c.locus.nextRandom()
         
         // Ensure we have a local mutated vibe for this country based on the planet
@@ -285,7 +287,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateCity(City c) {
+    void populateCity(City c) {
         Random r = c.locus.nextRandom()
         
         if (c.localVibe == null) {
@@ -308,7 +310,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateStreet(Street s) {
+    void populateStreet(Street s) {
         Random r = s.locus.nextRandom()
         int numPairs = r.nextInt(9) + 2
         VibeCapsule v = s.getVibe()
@@ -322,14 +324,14 @@ class ProceduralFactory {
         }
     }
 
-    static Apartment populateApartment(Apartment a) {
+    Apartment populateApartment(Apartment a) {
         Random r = a.locus.nextRandom()
         int numRooms = r.nextInt(10) + 1
         
         List<String> objectPool = []
         int totalObjects = r.nextInt(15) + 5
         for (int i = 0; i < totalObjects; i++) {
-            objectPool << ThemeManager.generateHybridObject(a.culture, a.timeline, a.locus.branch("OBJ_" + i).value)
+            objectPool << themeService.generateHybridObject(a.culture, a.timeline, a.locus.branch("OBJ_" + i).value)
         }
 
         for (int i = 0; i < numRooms; i++) {
@@ -345,7 +347,7 @@ class ProceduralFactory {
         return a
     }
 
-    static void populateCorridor(Corridor c) {
+    void populateCorridor(Corridor c) {
         LocusSeed locus = c.locus
         for (int i = 0; i < c.numApartments; i++) {
             LocusSeed childLocus = locus.branch(i)
@@ -357,7 +359,7 @@ class ProceduralFactory {
         }
     }
 
-    static void populateFloor(Floor f) {
+    void populateFloor(Floor f) {
         f.corridor = createCorridor(f, f.apartmentsPerFloor, f.culture, f.timeline, f.locus.branch("CORRIDOR"))
         f.addLocation(f.corridor)
     }

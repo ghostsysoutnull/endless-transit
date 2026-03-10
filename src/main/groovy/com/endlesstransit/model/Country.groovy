@@ -8,7 +8,6 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -35,7 +34,7 @@ class Country extends Container {
 
     @Override
     String getLatticeMeta() {
-        return Terminal.dim(" [TRAIT: ${functionalTrait.toUpperCase()}]")
+        return ModelOutput.fmt.dim(" [TRAIT: ${functionalTrait.toUpperCase()}]")
     }
 
     Country(String name, LocusSeed locus = new LocusSeed(0L)) {
@@ -45,7 +44,7 @@ class Country extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateCountry(this)
+        ProceduralFactory.instance.populateCountry(this)
     }
 
     @Override
@@ -102,5 +101,11 @@ class Country extends Container {
             options[label] = { game.enterLocation(city) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "⬚"
     }
 }

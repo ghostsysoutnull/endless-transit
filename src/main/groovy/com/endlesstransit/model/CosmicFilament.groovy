@@ -39,7 +39,7 @@ class CosmicFilament extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateFilament(this)
+        ProceduralFactory.instance.populateFilament(this)
     }
 
     @Override
@@ -87,5 +87,11 @@ class CosmicFilament extends Container {
             options[label] = { game.enterLocation(node) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "»"
     }
 }

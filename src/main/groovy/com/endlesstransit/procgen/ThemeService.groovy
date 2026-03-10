@@ -1,23 +1,25 @@
-package com.endlesstransit.ui
+package com.endlesstransit.procgen
 
-class ThemeManager {
-    static final String CULTURES_DIR = "src/main/resources/themes/cultures"
-    static final String TIMELINES_DIR = "src/main/resources/themes/timelines"
-    static final String ATMOSPHERE_DIR = "src/main/resources/themes/atmosphere"
+import java.util.Random
 
-    static Map<String, List<String>> cultures = new TreeMap<String, List<String>>()
-    static Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
-    static Map<String, Map<String, List<String>>> atmosphere = [
+class ThemeService {
+    final String CULTURES_DIR = "src/main/resources/themes/cultures"
+    final String TIMELINES_DIR = "src/main/resources/themes/timelines"
+    final String ATMOSPHERE_DIR = "src/main/resources/themes/atmosphere"
+
+    Map<String, List<String>> cultures = new TreeMap<String, List<String>>()
+    Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
+    Map<String, Map<String, List<String>>> atmosphere = [
         "walls": new TreeMap<String, List<String>>(),
         "lighting": new TreeMap<String, List<String>>(),
         "structures": new TreeMap<String, List<String>>()
     ]
 
-    static {
+    ThemeService() {
         loadThemes()
     }
 
-    private static void loadThemes() {
+    private void loadThemes() {
         new File(CULTURES_DIR).eachFile { file ->
             if (file.isFile()) {
                 cultures[file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
@@ -42,32 +44,32 @@ class ThemeManager {
         }
     }
 
-    static String getRandomCulture(long seed) {
+    String getRandomCulture(long seed) {
         def keys = new ArrayList<>(cultures.keySet())
         if (keys.isEmpty()) return "monolith"
         Random r = new Random(seed)
         return keys[r.nextInt(keys.size())]
     }
 
-    static String getRandomTimeline(long seed) {
+    String getRandomTimeline(long seed) {
         def keys = new ArrayList<>(timelines.keySet())
         if (keys.isEmpty()) return "digital"
         Random r = new Random(seed)
         return keys[r.nextInt(keys.size())]
     }
 
-    static List<String> getCultureAssets(String cultureName) {
+    List<String> getCultureAssets(String cultureName) {
         return cultures[cultureName] ?: []
     }
 
-    static List<String> getTimelineAssets(String timelineName) {
+    List<String> getTimelineAssets(String timelineName) {
         return timelines[timelineName] ?: []
     }
 
     /**
      * Synthesizes atmosphere components based on vibe.
      */
-    static Map<String, String> generateAtmosphere(String culture, String timeline, String mutation, boolean isAnomaly, long seed) {
+    Map<String, String> generateAtmosphere(String culture, String timeline, String mutation, boolean isAnomaly, long seed) {
         Random r = new Random(seed)
         
         // If it is abyssal, force it
@@ -106,7 +108,7 @@ class ThemeManager {
         return [walls: walls, lighting: lighting, structure: structure]
     }
 
-    static String generateHybridObject(String culture, String timeline, long seed = 0) {
+    String generateHybridObject(String culture, String timeline, long seed = 0) {
         Random r = seed != 0 ? new Random(seed) : new Random()
         def cAssets = getCultureAssets(culture)
         def tAssets = getTimelineAssets(timeline)

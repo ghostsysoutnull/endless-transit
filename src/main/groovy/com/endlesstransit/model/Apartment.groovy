@@ -6,8 +6,6 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -50,7 +48,7 @@ class Apartment extends Container {
         if (getTypeName() == "Crypt") {
             return "Crypt: $doorDescription. [ABYSSAL_RESONANCE_DETECTED]"
         }
-        String info = isAnomaly ? " [!] TEMPORAL_ANOMALY_DETECTED [!]" : "[TEMPORAL_MARKER: ${Terminal.colorize(timeline.toUpperCase(), Terminal.YELLOW)}]"
+        String info = isAnomaly ? " [!] TEMPORAL_ANOMALY_DETECTED [!]" : "[TEMPORAL_MARKER: ${ModelOutput.fmt.colorize(timeline.toUpperCase(), "YELLOW")}]"
         return "Apartment: $doorDescription. $info"
     }
 
@@ -85,11 +83,11 @@ class Apartment extends Container {
     List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
-        lines << Terminal.colorize(" [APARTMENT_UNIT_DIAGNOSTICS] ", Terminal.L_CYAN)
-        lines << Terminal.dim("Scanning internal cell structure...")
+        lines << ModelOutput.fmt.colorize(" [APARTMENT_UNIT_DIAGNOSTICS] ", "L_CYAN")
+        lines << ModelOutput.fmt.dim("Scanning internal cell structure...")
         
         int width = 88
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.dim("-" * width)
         
         // Header
         int wId = 5
@@ -98,11 +96,11 @@ class Apartment extends Container {
         int wStat = 15
         
         Closure<String> pad = { String text, int targetWidth ->
-            return text + (" " * Math.max(0, targetWidth - Terminal.getVisualWidth(text)))
+            return text + (" " * Math.max(0, targetWidth - ModelOutput.fmt.getVisualWidth(text)))
         }
 
-        lines << Terminal.bold("${pad("[ID]", wId)}${pad("[TYPE]", wTyp)}${pad("[IDENTIFIER]", wName)}${pad("[STATUS]", wStat)}[RES]")
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.bold("${pad("[ID]", wId)}${pad("[TYPE]", wTyp)}${pad("[IDENTIFIER]", wName)}${pad("[STATUS]", wStat)}[RES]")
+        lines << ModelOutput.fmt.dim("-" * width)
 
         List<Room> rms = getRooms()
         for (int i = 0; i < rms.size(); i++) {
@@ -110,7 +108,7 @@ class Apartment extends Container {
             String id = String.format("%02d.", i + 1)
             String type = room.roomType
             String name = room.roomName
-            String status = room.isVisited() ? Terminal.colorize("[VISITED]", Terminal.GREEN) : Terminal.dim("[UNSTABLE]")
+            String status = room.isVisited() ? ModelOutput.fmt.colorize("[VISITED]", "GREEN") : ModelOutput.fmt.dim("[UNSTABLE]")
             
             // Resonance (simulated for overview)
             int freq = Gematria.calculateFrequency(name, room.getDepth())
@@ -118,7 +116,7 @@ class Apartment extends Container {
 
             lines << "${pad(id, wId)}${pad(type, wTyp)}${pad(name, wName)}${pad(status, wStat)}${res}".toString()
         }
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.dim("-" * width)
         return lines
     }
 
@@ -141,6 +139,12 @@ class Apartment extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateApartment(this)
+        ProceduralFactory.instance.populateApartment(this)
     }
+    
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "🚪"
     }
+}

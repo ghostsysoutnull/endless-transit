@@ -5,8 +5,6 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
-import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.HUDLabels
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -39,33 +37,14 @@ abstract class Container implements Location {
         return "${parent.getLIP()}.$myIndex"
     }
 
-    @Override
-    String getMapSymbol() {
-        if (isAbyssal()) return "☠"
-        
-        if (this instanceof Universe) return Terminal.ICON_UNI
-        if (this instanceof CosmicFilament) return Terminal.ICON_FIL
-        if (this instanceof GalacticSector) return Terminal.ICON_SEC
-        if (this instanceof SolarSystem) return Terminal.ICON_SYS
-        if (this instanceof Planet) return Terminal.ICON_PLT
-        if (this instanceof Country) return Terminal.ICON_CTR
-        if (this instanceof City) return Terminal.ICON_CTY
-        if (this instanceof Street) return Terminal.ICON_STR
-        if (this instanceof Building) return Terminal.ICON_BLD
-        if (this instanceof Floor) return Terminal.ICON_FLR
-        if (this instanceof Corridor) return Terminal.ICON_COR
-        if (this instanceof Apartment) return Terminal.ICON_APT
-        
-        return "■"
-    }
 
     @Override
     String getMapColor() {
-        if (isAbyssal()) return Terminal.RED
+        if (isAbyssal()) return "RED"
         
         def v = getVibe()
         if (v != null) return v.atmosphericColor
-        return Terminal.WHITE
+        return "WHITE"
     }
 
     /**
@@ -271,20 +250,20 @@ abstract class Container implements Location {
     @Override
     String getSparklineLabel() {
         Map<String, String> icons = [
-            "Universe": Terminal.ICON_UNI,
-            "CosmicFilament": Terminal.ICON_FIL,
-            "GalacticSector": Terminal.ICON_SEC,
-            "NullSector": Terminal.ICON_SEC,
-            "SolarSystem": Terminal.ICON_SYS,
-            "Planet": Terminal.ICON_PLT,
-            "Country": Terminal.ICON_CTR,
-            "City": Terminal.ICON_CTY,
-            "Street": Terminal.ICON_STR,
-            "Building": Terminal.ICON_BLD,
-            "Floor": Terminal.ICON_FLR,
-            "Corridor": Terminal.ICON_COR,
-            "Apartment": Terminal.ICON_APT,
-            "Room": Terminal.ICON_ROM
+            "Universe": "∞",
+            "CosmicFilament": "»",
+            "GalacticSector": "○",
+            "NullSector": "○",
+            "SolarSystem": "☼",
+            "Planet": "⊕",
+            "Country": "⬚",
+            "City": "🏙",
+            "Street": "═",
+            "Building": "⌂",
+            "Floor": "▤",
+            "Corridor": "▅",
+            "Apartment": "🚪",
+            "Room": "□"
         ]
         return icons[this.getClass().simpleName] ?: "?"
     }

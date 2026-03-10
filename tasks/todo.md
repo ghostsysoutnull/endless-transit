@@ -5,26 +5,29 @@
 ## Plan
 
 ### 1.1 Game.groovy Decomposition (God Object Refactor)
-- [ ] **Extract `TurnProcessor`**: Move the turn cycle logic and action dispatching into a dedicated service.
-- [ ] **Extract `NavigationOrchestrator`**: Separate the responsibility for location transitions and current location state.
-- [ ] **Extract `PersistenceService`**: Move `createMemento()` and `restore()` logic into a dedicated state manager.
-- [ ] **Verification**: Ensure `NewGameTest.groovy` and `ReplayServiceTest.groovy` still pass with the thinner `Game` class.
+- [x] **Extract `TurnProcessor`**: Move the turn cycle logic and action dispatching into a dedicated service.
+- [x] **Extract `NavigationOrchestrator`**: Separate the responsibility for location transitions and current location state.
+- [x] **Extract `PersistenceService`**: Move `createMemento()` and `restore()` logic into a dedicated state manager.
+- [x] **Extract `RenderingCoordinator`**: Decouple the UI trigger lifecycle from the main game loop.
+- [x] **Verification**: Ensure `NewGameTest.groovy` and `ReplayServiceTest.groovy` still pass with the thinner `Game` class.
 
 ### 1.2 Location Hierarchy Refactor (Interface Segregation)
-- [ ] **Define Focused Interfaces**:
-    - [ ] `Locatable`: For position, path, and basic naming.
-    - [ ] `Navigable`: For player interaction and navigation options.
-    - [ ] `Renderable`: For visual symbols and UI data.
-    - [ ] `Stateful`: For mutation state and persistence.
-- [ ] **Implement Polymorphic Dispatch**:
-    - [ ] Move `getMapSymbol()` and `getMapColor()` into concrete classes (e.g., `Planet`, `Building`).
-    - [ ] Eliminate `instanceof` checks in `Container.getMapSymbol()`.
-- [ ] **Verification**: Run `./run.sh --test` to confirm no visual regressions in the TUI or HUD.
+- [x] **Define Focused Interfaces**:
+    - [x] `Locatable`: For position, path, and basic naming.
+    - [x] `Navigable`: For player interaction and navigation options.
+    - [x] `Renderable`: For visual symbols and UI data.
+    - [x] `Stateful`: For mutation state and persistence.
+- [x] **Implement Polymorphic Dispatch**:
+    - [x] Move `getMapSymbol()` and `getMapColor()` into concrete classes (e.g., `Planet`, `Building`).
+    - [x] Eliminate `instanceof` checks in `Container.getMapSymbol()`.
+- [x] **Verification**: Run `./run.sh --test` to confirm no visual regressions in the TUI or HUD.
 
-### 1.3 Service Injection (Dependency Inversion)
-- [ ] **Convert `Terminal` to instance-based**: Create an `OutputDevice` interface and inject it into the `Game` and `BridgeView`.
-- [ ] **Convert `ThemeManager` to instance-based**: Create a `ThemeService` and inject it into the `model` layer.
-- [ ] **Verification**: Ensure all tests still pass, specifically the `RenderSink` assertions in the diagnostic suite.
+### 1.3 Service Injection & Dependency Inversion
+- [x] **Convert `Terminal` to instance-based**: Create an `OutputDevice` interface and inject it into the `Game` and `BridgeView`.
+- [x] **Convert `ThemeManager` to instance-based**: Create a `ThemeService` and inject it into the `model` layer.
+- [x] **Convert `ProceduralFactory` to instance-based**: Remove static methods to enable proper testing and dependency injection.
+- [x] **Model Dependency Cleanup**: Remove all `import com.endlesstransit.ui.*` from the `model` package to strictly enforce the domain boundaries.
+- [x] **Verification**: Ensure all tests still pass, specifically the `RenderSink` assertions in the diagnostic suite.
 
 ## Review
 - [ ] (Pending implementation)

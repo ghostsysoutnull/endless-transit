@@ -7,8 +7,6 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 
@@ -44,7 +42,7 @@ class NullSector extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateNullSector(this)
+        ProceduralFactory.instance.populateNullSector(this)
     }
 
     @Override
@@ -57,7 +55,7 @@ class NullSector extends Container {
             status = "SIGNAL_STRENGTH: ${signalStrength}% | FREQ_DRIFT: ${echoFrequency}Hz"
         }
         return "A pocket of absolute silence. Only the echoes of distant, dead civilizations remain.\n" +
-               Terminal.colorize("[VOID_STATUS: $status]", Terminal.MAGENTA)
+               ModelOutput.fmt.colorize("[VOID_STATUS: $status]", "MAGENTA")
     }
 
     @Override
@@ -102,9 +100,9 @@ class NullSector extends Container {
                 signalStrength += new Random().nextInt(30) + 10
                 if (signalStrength >= 100) {
                     signalStrength = 100
-                    Terminal.println Terminal.colorize("\n>>> HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated.", Terminal.GREEN)
+                    ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated.", "GREEN")
                 } else {
-                    Terminal.println Terminal.colorize("\n>>> SCANNING_VOID: Signal strength increasing...", Terminal.CYAN)
+                    ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> SCANNING_VOID: Signal strength increasing...", "CYAN")
                 }
                 game.instantRender = true
             }
@@ -116,7 +114,7 @@ class NullSector extends Container {
                     JournalManager.logCapture(item)
                     echoFound = true
                     signalStrength = 0
-                    Terminal.println Terminal.colorize("\n>>> VOID_RESONANCE: Echo captured and stabilized.", Terminal.MAGENTA)
+                    ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> VOID_RESONANCE: Echo captured and stabilized.", "MAGENTA")
                     game.instantRender = true
                 }
             }
@@ -130,5 +128,11 @@ class NullSector extends Container {
             options[label] = { game.enterLocation(system) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "○"
     }
 }

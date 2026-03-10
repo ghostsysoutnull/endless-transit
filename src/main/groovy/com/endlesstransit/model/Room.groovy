@@ -2,8 +2,6 @@ package com.endlesstransit.model
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.HUDLabels
 import groovy.transform.CompileStatic
 
 import java.util.Random
@@ -87,7 +85,7 @@ class Room implements Location {
 
     @Override
     String getSparklineLabel() {
-        return isAbyssal() ? "☠" : Terminal.ICON_ROM
+        return isAbyssal() ? "☠" : "□"
     }
 
     @Override
@@ -104,7 +102,7 @@ class Room implements Location {
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
             player.inventory.add(item)
             JournalManager.logCapture(item, this)
-            Terminal.println Terminal.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", Terminal.YELLOW)
+            ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", "YELLOW")
         }
     }
 
@@ -161,20 +159,20 @@ class Room implements Location {
     List<String> getExtraContent(Player player) {
         List<String> lines = []
         int width = 100
-        String accent = isAbyssal() ? Terminal.RED : Terminal.L_CYAN
+        String accent = isAbyssal() ? "RED" : "L_CYAN"
         
-        lines << Terminal.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
+        lines << ModelOutput.fmt.dim("-" * width)
         
-        String identPart = "IDENT: ${Terminal.bold(roomName)}"
+        String identPart = "IDENT: ${ModelOutput.fmt.bold(roomName)}"
         String traitsPart = "ATMO_TRAITS: [OXY: ${atmoTraits["OXYGEN"]}] | [TEMP: ${atmoTraits["TEMP"]}]"
         lines << String.format("%-45s ║ %s", identPart, traitsPart)
         
-        String typePart = "TYPE:  ${Terminal.colorize(roomType, Terminal.YELLOW)}"
-        String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? Terminal.colorize("[DEGRADED]", Terminal.RED) : Terminal.colorize("[STABLE]", Terminal.GREEN)}"
+        String typePart = "TYPE:  ${ModelOutput.fmt.colorize(roomType, "YELLOW")}"
+        String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? ModelOutput.fmt.colorize("[DEGRADED]", "RED") : ModelOutput.fmt.colorize("[STABLE]", "GREEN")}"
         lines << String.format("%-45s ║ %s", typePart, signalPart)
         
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.dim("-" * width)
         return lines
     }
 
@@ -193,14 +191,14 @@ class Room implements Location {
     @Override
     String getMapSymbol() {
         if (isAbyssal()) return "☠"
-        return Terminal.ICON_ROM
+        return "□"
     }
 
     @Override
     String getMapColor() {
-        if (isAbyssal()) return Terminal.RED
+        if (isAbyssal()) return "RED"
         VibeCapsule v = getVibe()
-        return v != null ? v.atmosphericColor : Terminal.WHITE
+        return v != null ? v.atmosphericColor : "WHITE"
     }
 
     @Override
@@ -223,46 +221,46 @@ class Room implements Location {
                     
                     if (isResonant) {
                         game.player.resonantTracesCount++
-                        Terminal.println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
+                        ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
                     }
-                    Terminal.println Terminal.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", Terminal.CYAN)
+                    ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", "CYAN")
                     objects.remove(0)
                     game.instantRender = true
                     return
                 }
 
-                Terminal.println "\n" + Terminal.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", Terminal.L_CYAN)
+                ModelOutput.fmt.println "\n" + ModelOutput.fmt.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", "L_CYAN")
                 if (!objects.isEmpty()) {
-                    Terminal.println Terminal.dim("Local objects:")
+                    ModelOutput.fmt.println ModelOutput.fmt.dim("Local objects:")
                     objects.eachWithIndex { String obj, int i ->
-                        Terminal.println "${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. Scan $obj"
+                        ModelOutput.fmt.println "${ModelOutput.fmt.colorize((i + 1).toString(), "YELLOW")}. Scan $obj"
                     }
                 }
                 
                 if (!game.player.inventory.isEmpty()) {
-                    Terminal.println Terminal.dim("\nBuffer fragments (to drop):")
+                    ModelOutput.fmt.println ModelOutput.fmt.dim("\nBuffer fragments (to drop):")
                     game.player.inventory.eachWithIndex { InventoryItem item, int i ->
-                        Terminal.println "${Terminal.colorize("d" + (i + 1), Terminal.YELLOW)}. Drop ${item.name}"
+                        ModelOutput.fmt.println "${ModelOutput.fmt.colorize("d" + (i + 1), "YELLOW")}. Drop ${item.name}"
                     }
                 }
-                Terminal.println "${Terminal.colorize("c", Terminal.YELLOW)}. Cancel"
+                ModelOutput.fmt.println "${ModelOutput.fmt.colorize("c", "YELLOW")}. Cancel"
                 
-                Terminal.print "\nINTERACT >> "
+                ModelOutput.fmt.print "\nINTERACT >> "
                 String input = game.inputHandler.readLine().toLowerCase()
                 
                 if (input == "c" || input == "") {
-                    Terminal.println "Operation aborted."
+                    ModelOutput.fmt.println "Operation aborted."
                 } else if (input.startsWith("d")) {
                     try {
                         int idx = input.substring(1).toInteger() - 1
                         if (idx >= 0 && idx < game.player.inventory.size()) {
                             InventoryItem item = game.player.inventory.remove(idx)
                             objects << item.name
-                            Terminal.println Terminal.colorize(">>> Fragment ${item.name} dropped into local cell.", Terminal.YELLOW)
+                            ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> Fragment ${item.name} dropped into local cell.", "YELLOW")
                             game.instantRender = true
                         }
                     } catch (Exception e) {
-                        Terminal.println "Invalid drop command."
+                        ModelOutput.fmt.println "Invalid drop command."
                     }
                 } else {
                     try {
@@ -278,16 +276,16 @@ class Room implements Location {
                             
                             if (isResonant) {
                                 game.player.resonantTracesCount++
-                                Terminal.println Terminal.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", Terminal.GREEN)
+                                ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
                             }
-                            Terminal.println Terminal.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", Terminal.CYAN)
+                            ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", "CYAN")
                             objects.remove(idx)
                             game.instantRender = true
                         } else {
-                            Terminal.println "Invalid selection."
+                            ModelOutput.fmt.println "Invalid selection."
                         }
                     } catch (Exception e) {
-                        Terminal.println "Invalid input."
+                        ModelOutput.fmt.println "Invalid input."
                     }
                 }
             }
@@ -319,19 +317,19 @@ class Room implements Location {
         String l = lightingDesc
 
         if (isAnomaly) {
-            s = Terminal.glitchText(s, 0.2)
-            w = Terminal.glitchText(w, 0.1)
-            l = Terminal.glitchText(l, 0.3)
+            s = ModelOutput.fmt.glitchText(s, 0.2)
+            w = ModelOutput.fmt.glitchText(w, 0.1)
+            l = ModelOutput.fmt.glitchText(l, 0.3)
         }
 
-        description.append(Terminal.colorize(" [NEURAL_LINK_INTERPRETATION]:", Terminal.L_MAGENTA)).append("\n")
-        description.append("You are in $s. The walls are ${Terminal.colorize(color, Terminal.WHITE)} $w.\n")
-        description.append("The space is illuminated by ${Terminal.colorize(l, Terminal.YELLOW)}.\n")
+        description.append(ModelOutput.fmt.colorize(" [NEURAL_LINK_INTERPRETATION]:", ModelOutput.fmt.L_MAGENTA)).append("\n")
+        description.append("You are in $s. The walls are ${ModelOutput.fmt.colorize(color, "WHITE")} $w.\n")
+        description.append("The space is illuminated by ${ModelOutput.fmt.colorize(l, "YELLOW")}.\n")
         
         int wrapWidth = 80
         String furnitureStr = furniture.join(', ')
-        List<String> wrappedFurniture = Terminal.wrapText(furnitureStr, wrapWidth)
-        description.append("${Terminal.dim("FURNITURE:")} ")
+        List<String> wrappedFurniture = ModelOutput.fmt.wrapText(furnitureStr, wrapWidth)
+        description.append("${ModelOutput.fmt.dim("FURNITURE:")} ")
         wrappedFurniture.eachWithIndex { String line, int i ->
             if (i > 0) description.append("           ") 
             description.append(line).append("\n")
@@ -339,8 +337,8 @@ class Room implements Location {
         
         if (!objects.isEmpty()) {
             String objStr = objects.join(', ')
-            List<String> wrappedObjs = Terminal.wrapText(objStr, wrapWidth)
-            description.append("${Terminal.colorize("OBJECTS_DETECTED:", Terminal.CYAN)} ")
+            List<String> wrappedObjs = ModelOutput.fmt.wrapText(objStr, wrapWidth)
+            description.append("${ModelOutput.fmt.colorize("OBJECTS_DETECTED:", "CYAN")} ")
             wrappedObjs.eachWithIndex { String line, int i ->
                 if (i > 0) description.append("                  ") 
                 description.append(line).append("\n")

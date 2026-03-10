@@ -8,8 +8,6 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.ThemeManager
-import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -38,7 +36,7 @@ class Planet extends Container {
     String getLatticeMeta() {
         VibeCapsule v = getVibe()
         if (v == null) return ""
-        return Terminal.dim(" [${isAbyssal() ? 'BEDROCK' : 'SURFACE'} | ERA: ${v.timeline.toUpperCase()}]")
+        return ModelOutput.fmt.dim(" [${isAbyssal() ? 'BEDROCK' : 'SURFACE'} | ERA: ${v.timeline.toUpperCase()}]")
     }
 
     Planet(String name, LocusSeed locus = new LocusSeed(0)) {
@@ -48,7 +46,7 @@ class Planet extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populatePlanet(this)
+        ProceduralFactory.instance.populatePlanet(this)
     }
 
     @Override
@@ -63,8 +61,8 @@ class Planet extends Container {
     String getDescription() {
         VibeCapsule v = (VibeCapsule) getVibe()
         return "Planet: $name\n" + 
-               "${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")} " + 
-               "${Terminal.dim("[TIMELINE:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")}"
+               "${ModelOutput.fmt.dim("[RESONANCE:")} ${ModelOutput.fmt.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${ModelOutput.fmt.dim("]")} " + 
+               "${ModelOutput.fmt.dim("[TIMELINE:")} ${ModelOutput.fmt.colorize(v.timeline.toUpperCase(), "YELLOW")}${ModelOutput.fmt.dim("]")}"
     }
 
     @Override
@@ -106,5 +104,11 @@ class Planet extends Container {
             options[label] = { game.enterLocation(country) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "⊕"
     }
 }

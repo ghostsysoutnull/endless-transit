@@ -41,7 +41,7 @@ class SeedScanner {
             if (i % 10 == 0) System.out.println("[VINCULUM_SEED_SCANNER] Seed: $currentSeed (${i}/${count})...")
             
             LocusSeed masterLocus = new LocusSeed(currentSeed)
-            Universe universe = ProceduralFactory.createUniverse(masterLocus)
+            Universe universe = ProceduralFactory.instance.createUniverse(masterLocus)
             
             nodeCount = 0
             Location match = findInHierarchy(universe, probe)

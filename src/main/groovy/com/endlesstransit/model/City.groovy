@@ -8,7 +8,6 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -35,7 +34,7 @@ class City extends Container {
 
     @Override
     String getLatticeMeta() {
-        return isRebelDistrict ? Terminal.colorize(" [UNAUTHORIZED_ZONE]", Terminal.RED) : ""
+        return isRebelDistrict ? ModelOutput.fmt.colorize(" [UNAUTHORIZED_ZONE]", "RED") : ""
     }
 
     City(String name, LocusSeed locus = new LocusSeed(0L)) {
@@ -45,7 +44,7 @@ class City extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateCity(this)
+        ProceduralFactory.instance.populateCity(this)
     }
 
     @Override
@@ -101,5 +100,11 @@ class City extends Container {
             options[label] = { game.enterLocation(street) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "🏙"
     }
 }

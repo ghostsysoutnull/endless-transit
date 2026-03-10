@@ -53,7 +53,7 @@ class WorldGenesis {
      * Hierarchy: Universe > Filament > Sector > System > Planet > Country > City > Street
      */
     static GenesisResult createInitialWorld(LocusSeed masterLocus) {
-        Universe universe = ProceduralFactory.createUniverse(masterLocus)
+        Universe universe = ProceduralFactory.instance.createUniverse(masterLocus)
         
         // Deep traversal to find a starting Street
         // 1. Filament

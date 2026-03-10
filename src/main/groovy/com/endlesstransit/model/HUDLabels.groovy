@@ -1,4 +1,4 @@
-package com.endlesstransit.ui
+package com.endlesstransit.model
 
 import groovy.transform.CompileStatic
 

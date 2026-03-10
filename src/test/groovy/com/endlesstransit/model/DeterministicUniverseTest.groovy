@@ -17,13 +17,13 @@ class DeterministicUniverseTest {
         LocusSeed testSeed = new LocusSeed(testSeedValue)
         
         // Universe A
-        Universe u1 = ProceduralFactory.createUniverse(testSeed)
+        Universe u1 = ProceduralFactory.instance.createUniverse(testSeed)
         String name1 = u1.getFilaments()[0].name
         String planetName1 = u1.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].name
         String vibe1 = u1.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].getVibe().toString()
         
         // Universe B
-        Universe u2 = ProceduralFactory.createUniverse(testSeed)
+        Universe u2 = ProceduralFactory.instance.createUniverse(testSeed)
         String name2 = u2.getFilaments()[0].name
         String planetName2 = u2.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].name
         String vibe2 = u2.getFilaments()[0].getChildren()[0].children[0].getPlanets()[0].getVibe().toString()

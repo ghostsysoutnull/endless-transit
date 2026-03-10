@@ -65,7 +65,7 @@ class SyncManager {
             LocusSeed locus = new LocusSeed(seedValue)
             Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)} (Seed: ${locus.value})")
             
-            Universe universe = ProceduralFactory.createUniverse(locus)
+            Universe universe = ProceduralFactory.instance.createUniverse(locus)
             
             // 1. Reconstitute Player
             Player player = new Player()

@@ -8,8 +8,6 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.ProceduralFactory
-import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.ThemeManager
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -42,13 +40,13 @@ class Building extends Container {
         this.isBreached = true
         Logger.info("BUILDING_BREACHED: $name")
         
-        Terminal.println ""
-        Terminal.println Terminal.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", Terminal.RED)
-        Terminal.println Terminal.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
+        ModelOutput.fmt.println ""
+        ModelOutput.fmt.println ModelOutput.fmt.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", "RED")
+        ModelOutput.fmt.println ModelOutput.fmt.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
         Thread.sleep(1000)
-        Terminal.println Terminal.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", Terminal.YELLOW)
+        ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", "YELLOW")
         Thread.sleep(1000)
-        Terminal.println ""
+        ModelOutput.fmt.println ""
     }
 
     @Override
@@ -115,8 +113,8 @@ class Building extends Container {
 
     @Override
     String getLatticeMeta() {
-        if (isBreached) return Terminal.colorize(" [BREACHED]", Terminal.RED)
-        return Terminal.dim(" [FLOORS: $maxFloors]")
+        if (isBreached) return ModelOutput.fmt.colorize(" [BREACHED]", "RED")
+        return ModelOutput.fmt.dim(" [FLOORS: $maxFloors]")
     }
 
     Building(LocusSeed locus = new LocusSeed(0L)) {
@@ -126,9 +124,9 @@ class Building extends Container {
     @Override
     void enter(Player player) {
         if (isLandmark && !isVisited()) {
-            Terminal.println "\n" + Terminal.colorize(" [UNIQUE_LOCUS_DETECTION] ", Terminal.YELLOW)
-            Terminal.println Terminal.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
-            Terminal.println Terminal.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
+            ModelOutput.fmt.println "\n" + ModelOutput.fmt.colorize(" [UNIQUE_LOCUS_DETECTION] ", "YELLOW")
+            ModelOutput.fmt.println ModelOutput.fmt.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
+            ModelOutput.fmt.println ModelOutput.fmt.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
             Thread.sleep(1000)
         }
         markVisited()
@@ -139,11 +137,11 @@ class Building extends Container {
     List<String> getExtraContent(Player player) {
         ensureChildrenPopulated()
         List<String> lines = []
-        lines << Terminal.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", Terminal.L_CYAN)
-        lines << Terminal.dim("Analyzing vertical lattice structure...")
+        lines << ModelOutput.fmt.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", "L_CYAN")
+        lines << ModelOutput.fmt.dim("Analyzing vertical lattice structure...")
         
         int width = 88
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.dim("-" * width)
         
         // Define Column Widths
         int wId = 5
@@ -154,7 +152,7 @@ class Building extends Container {
         
         // Helper to pad based on visual width
         Closure<String> pad = { String text, int targetWidth ->
-            return text + (" " * Math.max(0, targetWidth - Terminal.getVisualWidth(text)))
+            return text + (" " * Math.max(0, targetWidth - ModelOutput.fmt.getVisualWidth(text)))
         }
 
         // Header
@@ -165,8 +163,8 @@ class Building extends Container {
         String hInt = pad("[ST]", wInt)
         String hRes = "[RES]"
         
-        lines << Terminal.bold("${hId}${hRad}${hDes}${hZon}${hInt}${hRes}")
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.bold("${hId}${hRad}${hDes}${hZon}${hInt}${hRes}")
+        lines << ModelOutput.fmt.dim("-" * width)
 
         // Find current floor index for the radar
         int currentFloorNum = -999
@@ -184,9 +182,9 @@ class Building extends Container {
             // Radar Logic: [>X<] for current, [ █ ] for regular, [ ! ] for abyssal
             String radar = "[ █ ]"
             if (i == currentFloorNum) {
-                radar = Terminal.colorize("[>X<]", Terminal.YELLOW)
+                radar = ModelOutput.fmt.colorize("[>X<]", "YELLOW")
             } else if (i < 0) {
-                radar = Terminal.colorize("[ ! ]", Terminal.RED)
+                radar = ModelOutput.fmt.colorize("[ ! ]", "RED")
             }
 
             String designation = i == 0 ? "Surface/Lobby" : (i == maxFloors - 1 ? "Peak/Observatory" : "Floor $i")
@@ -202,7 +200,7 @@ class Building extends Container {
 
             String visited = ""
             Floor floorObj = getFloor(i)
-            if (floorObj != null && floorObj.isVisited()) visited = Terminal.colorize("[V]", Terminal.GREEN)
+            if (floorObj != null && floorObj.isVisited()) visited = ModelOutput.fmt.colorize("[V]", "GREEN")
 
             // Assemble row with consistent padding
             String cId = pad(idStr, wId)
@@ -213,7 +211,7 @@ class Building extends Container {
 
             lines << "${cId}${cRad}${cDes}${cZon}${cInt}${resonance}".toString()
         }
-        lines << Terminal.dim("-" * width)
+        lines << ModelOutput.fmt.dim("-" * width)
         return lines
     }
 
@@ -246,7 +244,7 @@ class Building extends Container {
         Floor floor = this.floors.find { it.number == number }
         if (floor == null) {
             Logger.info("Instantiating new Floor $number in Building $name")
-            floor = ProceduralFactory.createFloor(this, number, apartmentsPerFloor, this.culture, this.timeline, locus != null ? locus.branch(number) : new LocusSeed(0L))
+            floor = ProceduralFactory.instance.createFloor(this, number, apartmentsPerFloor, this.culture, this.timeline, locus != null ? locus.branch(number) : new LocusSeed(0L))
             addLocation(floor)
         }
         return floor
@@ -255,7 +253,7 @@ class Building extends Container {
     @Override
     String getDescription() {
         VibeCapsule v = getVibe()
-        String vInfo = v != null ? "\n${Terminal.dim("[TECH_ERA:")} ${Terminal.colorize(v.timeline.toUpperCase(), Terminal.YELLOW)}${Terminal.dim("]")} ${Terminal.dim("[RESONANCE:")} ${Terminal.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${Terminal.dim("]")}" : ""
+        String vInfo = v != null ? "\n${ModelOutput.fmt.dim("[TECH_ERA:")} ${ModelOutput.fmt.colorize(v.timeline.toUpperCase(), "YELLOW")}${ModelOutput.fmt.dim("]")} ${ModelOutput.fmt.dim("[RESONANCE:")} ${ModelOutput.fmt.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${ModelOutput.fmt.dim("]")}" : ""
         return "Building: $name (Total Floors: $maxFloors)$vInfo"
     }
 
@@ -278,5 +276,11 @@ class Building extends Container {
             options[label] = { game.enterLocation(floor) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "⌂"
     }
 }

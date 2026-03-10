@@ -10,7 +10,7 @@ class ProcgenVariabilityTest extends GroovyTestCase {
         LocusSeed streetLocus = new LocusSeed(987654321L)
         
         // Generate a building and populate some floors
-        def building = ProceduralFactory.createBuilding(null, "rust", "ancient", streetLocus.branch(0), 10, false, false)
+        def building = ProceduralFactory.instance.createBuilding(null, "rust", "ancient", streetLocus.branch(0), 10, false, false)
         
         Terminal.println "Testing Building: ${building.name}"
         
@@ -24,7 +24,7 @@ class ProcgenVariabilityTest extends GroovyTestCase {
             def corridor = floor.getCorridor()
             
             corridor.apartments.each { apt ->
-                ProceduralFactory.populateApartment(apt)
+                ProceduralFactory.instance.populateApartment(apt)
                 roomCounts << apt.rooms.size()
                 
                 int totalAptObjects = 0
@@ -53,7 +53,7 @@ class ProcgenVariabilityTest extends GroovyTestCase {
         Set<String> buildingNames = []
         
         for (int i = 0; i < 20; i++) {
-            def b = ProceduralFactory.createBuilding(null, "monolith", "ancient", streetLocus.branch(i), 10, false, false)
+            def b = ProceduralFactory.instance.createBuilding(null, "monolith", "ancient", streetLocus.branch(i), 10, false, false)
             floorCounts << b.maxFloors
             buildingNames << b.name
         }

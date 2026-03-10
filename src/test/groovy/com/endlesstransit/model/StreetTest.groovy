@@ -12,7 +12,7 @@ import com.endlesstransit.procgen.ProceduralFactory
 Terminal.println "Running Street TUI and Options Test..."
 
 def player = new Player()
-def universe = ProceduralFactory.createUniverse(new LocusSeed(12345L))
+def universe = ProceduralFactory.instance.createUniverse(new LocusSeed(12345L))
 def game = new Game()
 game.player = player
 game.currentLocation = universe

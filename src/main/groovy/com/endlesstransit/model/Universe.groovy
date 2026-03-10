@@ -77,7 +77,7 @@ class Universe extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateUniverse(this)
+        ProceduralFactory.instance.populateUniverse(this)
     }
 
     @Override
@@ -129,5 +129,11 @@ class Universe extends Container {
             options[label] = { game.enterLocation(filament) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "∞"
     }
 }

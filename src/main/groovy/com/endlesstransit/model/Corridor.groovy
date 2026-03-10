@@ -5,8 +5,6 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
@@ -73,7 +71,7 @@ class Corridor extends Container {
             String id = String.format("%02d.", i + 1)
             
             String roomName = "?? UNKNOWN ??"
-            String status = Terminal.dim("[ENC]")
+            String status = ModelOutput.fmt.dim("[ENC]")
             String signature = "????Hz"
             String wave = "---"
             String resLabel = ""
@@ -82,13 +80,13 @@ class Corridor extends Container {
             if (!rms.isEmpty()) {
                 Room firstRoom = rms[0]
                 roomName = firstRoom.roomName
-                status = firstRoom.isAnomaly ? Terminal.colorize("[DEG]", Terminal.RED) : Terminal.colorize("[STB]", Terminal.GREEN)
+                status = firstRoom.isAnomaly ? ModelOutput.fmt.colorize("[DEG]", "RED") : ModelOutput.fmt.colorize("[STB]", "GREEN")
                 int freq = Gematria.calculateFrequency(roomName, firstRoom.getDepth())
                 signature = String.format("%04dHz", freq)
                 
-                if (firstRoom.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
-                else if (freq % 11 == 0) wave = Terminal.colorize("≈≈≈", Terminal.GREEN)
-                else wave = Terminal.colorize("~~~", Terminal.CYAN)
+                if (firstRoom.isAnomaly) wave = ModelOutput.fmt.colorize("###", "RED")
+                else if (freq % 11 == 0) wave = ModelOutput.fmt.colorize("≈≈≈", "GREEN")
+                else wave = ModelOutput.fmt.colorize("~~~", "CYAN")
                 
                 resLabel = "${signature} ${wave}"
             } else {
@@ -96,14 +94,14 @@ class Corridor extends Container {
             }
 
             boolean isVisited = rms.any { it.isVisited() }
-            String visited = isVisited ? Terminal.colorize(" [V]", Terminal.GREEN) : ""
+            String visited = isVisited ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
             String visual = "${door.getDescription()}${visited}"
             
-            String colVisText = Terminal.ansiSafeTruncate(visual, 20)
-            String colVis = colVisText + (" " * Math.max(0, 22 - Terminal.getVisualWidth(colVisText)))
+            String colVisText = ModelOutput.fmt.ansiSafeTruncate(visual, 20)
+            String colVis = colVisText + (" " * Math.max(0, 22 - ModelOutput.fmt.getVisualWidth(colVisText)))
             
             String colResText = resLabel
-            String colRes = colResText + (" " * Math.max(0, 15 - Terminal.getVisualWidth(colResText)))
+            String colRes = colResText + (" " * Math.max(0, 15 - ModelOutput.fmt.getVisualWidth(colResText)))
 
             String label = "${id} ${colVis} | ${status} | ${colRes} >> ${roomName}"
             options[label] = { game.enterLocation(apt) }
@@ -143,6 +141,12 @@ class Corridor extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateCorridor(this)
+        ProceduralFactory.instance.populateCorridor(this)
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "▅"
     }
 }

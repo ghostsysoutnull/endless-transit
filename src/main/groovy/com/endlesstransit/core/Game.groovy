@@ -3,218 +3,92 @@ package com.endlesstransit.core
 import com.endlesstransit.model.*
 import com.endlesstransit.ui.*
 import com.endlesstransit.procgen.*
-import com.endlesstransit.procgen.WorldGenesis
-import com.endlesstransit.*
 import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.ThemeManager
 import com.endlesstransit.ui.SessionRecap
 import groovy.transform.CompileStatic
 import java.io.File
 
 /**
  * Game: The high-level orchestrator of the Endless Transit engine.
- * Coordinates input, action mapping, navigation, and world state.
+ * Coordinates input, action mapping, navigation, and world state through specialized services.
  */
 @CompileStatic
 class Game {
-    Universe universe
-    Location currentLocation
-    Player player
-    boolean instantRender = false
-    LocusSeed masterLocus
+    GameState state
     
-    // Domain Components
-    BridgeView bridgeView = new BridgeView()
-    InputHandler inputHandler
-    ActionMapper mapper = new ActionMapper()
-    NavigationEngine navEngine = new NavigationEngine()
-    QuantumBufferController inventoryController = new QuantumBufferController()
+    // Services
+    NavigationOrchestrator navOrchestrator
+    PersistenceService persistence
+    TurnProcessor turnProcessor
+    RenderingCoordinator renderer
 
     Game(long seed = System.currentTimeMillis(), InputSource inputSource = new RealTerminalSource()) {
-        this.masterLocus = new LocusSeed(seed)
-        player = new Player()
-        this.inputHandler = new InputHandler(inputSource)
-        initializeWorld()
-    }
-
-    GameMemento createMemento() {
-        return new GameMemento(
-            masterSeed: masterLocus.value,
-            currentLIP: currentLocation.getLIP(),
-            playerCoherence: player.coherence,
-            inventory: new ArrayList<InventoryItem>(player.inventory),
-            inputHistory: new ArrayList<String>(inputHandler.getHistory())
-        )
-    }
-
-    void restore(GameMemento memento) {
-        this.masterLocus = new LocusSeed(memento.masterSeed)
-        this.player = new Player()
-        this.player.coherence = memento.playerCoherence
-        this.player.inventory.addAll(memento.inventory)
-        this.inputHandler = new InputHandler(this.inputHandler.source)
-        this.inputHandler.restoreHistory(memento.inputHistory)
+        ModelOutput.fmt = new com.endlesstransit.ui.TerminalAdapter()
+        this.state = new GameState(seed, inputSource)
+        this.navOrchestrator = new NavigationOrchestrator(state)
+        this.persistence = new PersistenceService(state, navOrchestrator)
+        this.renderer = new RenderingCoordinator(state)
+        this.turnProcessor = new TurnProcessor(state, renderer, navOrchestrator)
         
-        initializeWorld()
-        // Now navigate to the specific LIP
-        Location target = WorldGenesis.resolveLIP(universe, memento.currentLIP)
-        if (target != null) {
-            enterLocation(target)
-        }
+        navOrchestrator.initializeWorld()
     }
 
-    void initializeWorld() {
-        WorldGenesis.GenesisResult result = WorldGenesis.createInitialWorld(masterLocus)
-        this.universe = result.universe
-        enterLocation(result.startLocation)
-    }
+    // --- Convenience Accessors for External API ---
+    Universe getUniverse() { state.universe }
+    Location getCurrentLocation() { state.currentLocation }
+    void setCurrentLocation(Location l) { state.currentLocation = l }
+    Player getPlayer() { state.player }
+    void setPlayer(Player p) { state.player = p }
+    LocusSeed getMasterLocus() { state.masterLocus }
+    InputHandler getInputHandler() { state.inputHandler }
+    ActionMapper getMapper() { state.mapper }
+    NavigationEngine getNavEngine() { state.navEngine }
+    BridgeView getBridgeView() { state.bridgeView }
+    boolean getInstantRender() { state.instantRender }
+    void setInstantRender(boolean v) { state.instantRender = v }
+
+    GameMemento createMemento() { persistence.createMemento() }
+    void restore(GameMemento memento) { persistence.restore(memento) }
+    void restoreSession() { persistence.restoreSession() }
+
+    boolean processTurn() { turnProcessor.processTurn() }
+    boolean handleInput() { turnProcessor.handleInput(this) }
 
     void start() {
         Terminal.println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")
-        JournalManager.startSession(player)
+        JournalManager.startSession(state.player)
         
         if (new File(SyncManager.SAVE_FILE).exists()) {
             Terminal.println Terminal.dim("  [DETECTED_NEURAL_TRACE_SUBSTRATE]")
             Terminal.print Terminal.colorize("  Restore previous session? [y/N]: ", Terminal.YELLOW)
-            if (inputHandler.readLine().toLowerCase() == "y") restoreSession()
+            if (state.inputHandler.readLine().toLowerCase() == "y") persistence.restoreSession()
         }
         
         try {
             while (true) {
                 // 1. Process Turn Context (Coherence & Events)
-                if (!processTurn()) break
+                if (!turnProcessor.processTurn()) break
 
                 // 2. Map Actions
-                Map<String, Closure> options = currentLocation.getOptions(this)
-                mapper.update(options)
-                navEngine.updateRepetitionContext(mapper, options)
+                Map<String, Closure> options = state.currentLocation.getOptions(this)
+                state.mapper.update(options)
+                state.navEngine.updateRepetitionContext(state.mapper, options)
 
                 // 3. Render
-                bridgeView.render(currentLocation, player, options, masterLocus.value)
+                renderer.renderCurrentState(options)
                 
                 // 4. Input & Dispatch
-                if (!handleInput()) break
+                if (!turnProcessor.handleInput(this)) break
             }
         } catch (Throwable t) {
-            Logger.reportCriticalFailure(currentLocation, player, navEngine.lastChoice, masterLocus.value, t)
+            Logger.reportCriticalFailure(state.currentLocation, state.player, state.navEngine.lastChoice, state.masterLocus.value, t)
             Terminal.println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
             System.exit(1)
         }
     }
 
-    private boolean processTurn() {
-        VibeCapsule vibe = currentLocation.getVibe()
-        double drain = (currentLocation.isAbyssal() ? 2.0 : 1.0) * (vibe?.timeline == "entropic" ? 2.0 : 1.0)
-        player.adjustCoherence(-drain) 
-        
-        if (player.coherence <= 0) {
-            reboot()
-            return true
-        }
-
-        currentLocation.enter(player)
-        currentLocation.processAction(player)
-        return true
-    }
-
-    private boolean handleInput() {
-        String choice = ""
-        while (true) {
-            String raw = inputHandler.getRawInput(mapper.getActionName(navEngine.lastChoice))
-            choice = navEngine.checkBoundaryReversal(raw, mapper) ?: inputHandler.normalize(raw, navEngine.lastChoice)
-
-            switch (choice) {
-                case "i": inventoryController.open(this); return true
-                case "p": CaptureCommand.execute(bridgeView, inputHandler.getHistory()); return true
-                case "P": CaptureCommand.execute(bridgeView, inputHandler.getHistory(), true); return true
-                case "sync": SyncManager.sync(this); Terminal.println Terminal.colorize("\n>>> SYNC_STABILIZED.", Terminal.GREEN); return true
-                case "map": bridgeView.renderLatticeMap(currentLocation, player); inputHandler.waitForEnter(); return true
-                case "lattice": bridgeView.renderLatticeTrace(currentLocation); inputHandler.waitForEnter(); return true
-                case "help": helpMenu(); return true
-                case "glitch": glitchMenu(); return true
-                case "quit": return confirmQuit()
-                case "-2": continue
-                default: break
-            }
-            break
-        }
-
-        Closure action = mapper.resolve(choice, inputHandler)
-        if (action) {
-            player.stepCount++
-            navEngine.recordChoice(choice)
-            action.call()
-        } else {
-            Terminal.println "Invalid choice."
-        }
-        return true
-    }
-
-    private boolean confirmQuit() {
-        Terminal.print Terminal.colorize("Are you sure you want to quit? [y/N]: ", Terminal.YELLOW)
-        if (inputHandler.readLine().toLowerCase() == "y") {
-            Terminal.print Terminal.colorize("Synchronize neural trace before termination? [Y/n]: ", Terminal.CYAN)
-            if (inputHandler.readLine().toLowerCase() != "n") SyncManager.sync(this)
-            JournalManager.saveSession(player)
-            SessionRecap.show(currentLocation, player, bridgeView)
-            return false
-        }
-        return true
-    }
-
-    private void reboot() {
-        Terminal.clearScreen()
-        Terminal.println Terminal.colorize("!!! CRITICAL_COHERENCE_FAILURE !!! REBOOTING...", Terminal.RED)
-        Thread.sleep(2000)
-        player.coherence = 100
-        initializeWorld()
-    }
-
-    void restoreSession() {
-        GameSession snapshot = SyncManager.restore()
-        if (!snapshot) return
-        this.masterLocus = snapshot.locus
-        this.player = snapshot.player
-        this.currentLocation = snapshot.currentLocation
-        this.universe = (Universe) this.currentLocation.findAncestor(Universe.class) ?: ProceduralFactory.createUniverse(masterLocus)
-        instantRender = true
-    }
-
-    void helpMenu() {
-        Terminal.println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
-        Terminal.println "\nmap/m: Spatial | lattice: Tree | sync: Save | i: Buffer | glitch: Debug | q: Terminate"
-        inputHandler.waitForEnter()
-        instantRender = true
-    }
-
-    void glitchMenu() {
-        List<LatticeCommand> cmds = [new PrimeBuildingCommand(), new SpawnKeystoneCommand(), new BreachBedrockCommand(), new SetIntegrityCommand()]
-        while (true) {
-            Terminal.println "\n" + Terminal.colorize(" [LATTICE_GLITCH_INTERFACE] ", Terminal.MAGENTA)
-            cmds.eachWithIndex { cmd, i -> Terminal.println "${i + 1}. ${cmd.getLabel().padRight(10)}: ${cmd.getDescription()}" }
-            Terminal.print "GLITCH (c to cancel) >> "
-            String c = inputHandler.readLine().toLowerCase()
-            if (c == "c") break
-            try {
-                int idx = c.toInteger() - 1
-                if (idx >= 0 && idx < cmds.size() && cmds[idx].execute(this)) break
-            } catch (Exception e) { Terminal.println "Invalid." }
-        }
-        instantRender = true
-    }
-
-    void enterLocation(Location loc) {
-        if (!loc) return
-        this.currentLocation = loc
-        this.player.currentLocation = loc
-        player.markFootprint(loc)
-        Location p = loc.parent
-        while (p) { if (p instanceof Building || p instanceof City || p instanceof Planet) player.markFootprint(p); p = p.parent }
-    }
-    
-    void exitLocation() {
-        if (currentLocation.parent) enterLocation(currentLocation.parent)
-        else Terminal.println "End of reality reached."
-    }
+    // --- Delegation to NavOrchestrator ---
+    void enterLocation(Location loc) { navOrchestrator.enterLocation(loc) }
+    void exitLocation() { navOrchestrator.exitLocation() }
 }

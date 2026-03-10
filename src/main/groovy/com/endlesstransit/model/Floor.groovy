@@ -4,9 +4,6 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
-import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.ThemeManager
-import com.endlesstransit.ui.HUDLabels
 import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
@@ -26,8 +23,8 @@ class Floor extends Container {
 
     @Override
     String getSparklineLabel() {
-        if (number < 0) return "${Terminal.ICON_FLR}-${Math.abs(number)}"
-        return Terminal.ICON_FLR
+        if (number < 0) return "${"▤"}-${Math.abs(number)}"
+        return "▤"
     }
 
     @Override
@@ -58,7 +55,7 @@ class Floor extends Container {
         if (number < 0) {
             return "${getName()}. The air is thick with oily static and the hum of abyssal substrate."
         }
-        return "Floor ${number}. The air hums with the resonance of ${Terminal.colorize(culture.toUpperCase(), Terminal.CYAN)} geometry."
+        return "Floor ${number}. The air hums with the resonance of ${ModelOutput.fmt.colorize(culture.toUpperCase(), "CYAN")} geometry."
     }
 
     @Override
@@ -121,6 +118,12 @@ class Floor extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateFloor(this)
+        ProceduralFactory.instance.populateFloor(this)
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "▤"
     }
 }

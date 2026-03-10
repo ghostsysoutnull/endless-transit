@@ -31,7 +31,7 @@ class GalacticSector extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateSector(this)
+        ProceduralFactory.instance.populateSector(this)
     }
 
     @Override
@@ -78,5 +78,11 @@ class GalacticSector extends Container {
             options[label] = { game.enterLocation(system) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "○"
     }
 }

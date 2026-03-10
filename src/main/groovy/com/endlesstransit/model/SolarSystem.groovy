@@ -7,7 +7,6 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -38,7 +37,7 @@ class SolarSystem extends Container {
 
     @Override
     void populateChildren() {
-        ProceduralFactory.populateSolarSystem(this)
+        ProceduralFactory.instance.populateSolarSystem(this)
     }
 
     @Override
@@ -93,5 +92,11 @@ class SolarSystem extends Container {
             options[label] = { game.enterLocation(planet) }
         }
         return options
+    }
+
+    @Override
+    String getMapSymbol() {
+        if (isAbyssal()) return "☠"
+        return "☼"
     }
 }
