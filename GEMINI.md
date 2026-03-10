@@ -12,10 +12,9 @@
 - **@src/main/groovy/com/endlesstransit/procgen/GEMINI.md**: Entropy, LocusSeed, and Procedural Synthesis.
 
 ### 🚀 Active Architecture & Roadmap
-- **Active Task:** @tasks/active/DIAGNOSTIC_SUITE_IMPLEMENTATION.md
-- **Accelerated Playbook:** @tasks/active/ACCELERATED_PLAYBOOK.md
-- **Design Blueprint:** @docs/design/DIAGNOSTIC_SUITE_DESIGN.md
-- **Master Plan:** @docs/design/DIAGNOSTIC_SUITE_MASTER_PLAN.md
+- **Active Task:** @tasks/active/VERTICAL_TRAVERSAL_REFACTOR.md
+- **Previous Task:** @tasks/active/DIAGNOSTIC_SUITE_IMPLEMENTATION.md
+- **📜 Chronicles & Lore:** @journals/CHRONICLE_INDEX.md
 
 ---
 
@@ -26,6 +25,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 2.  **Surgical Precision**: Minimal, targeted changes; no "cleanup" of outside code.
 3.  **Empirical Verification**: Reproduce bugs with tests before fixing.
 4.  **No Code Generation**: (Memory Mandate) Do not generate code unless explicitly directed.
+5.  **Chronicle Suggestion**: Proactively suggest running `skill-chronicle` after any meaningful architectural or vibe-shifting change.
 
 ---
 

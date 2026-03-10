@@ -40,5 +40,15 @@ Refactor the `Building` -> `Floor` -> `Corridor` navigation flow from a "telepor
 
 ---
 
+## 📍 Next Session Entry Point (STRIKE 1)
+**Goal:** Implement the "Visited" progress labels in the `Building` floor list.
+1.  **Research:** Examine `Building.getExtraContent()` and `Player.visitedLIPs`.
+2.  **Strategy:** Modify `Building` to iterate through its floors and check if each floor's LIP exists in the player's visited set.
+3.  **Action:** Update the floor list TUI to render `[PROBED]` or `[3/12]` next to each floor entry.
+4.  **Verification:** Run `./vinc.sh --test` and check the "Building" related tests.
+
+---
+
 ## Session History & Notes
 - **2026-03-10:** Brainstormed the "Elevator/Pivot" model. Identified the need for a two-stage floor entry to ground the player spatially.
+- **2026-03-10:** Established `skill-chronicle` and recorded **[OBSERVER_LOG_0xAB30]** to document the architectural transition and vibe-refinement phase.
