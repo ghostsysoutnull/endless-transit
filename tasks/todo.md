@@ -21,13 +21,13 @@
 - [x] **Implement `GlitchCommands`**: Successfully migrated Breach, Prime, Keystone, and Integrity into the Command substrate.
 - [x] **Refactor System Commands**: Ported Scan, Sync, Help, Map, and Capture to `GameCommand`.
 
-### 2.3 Virtual Proxy: Lazy-Loading Automation (⭐ RECOMMENDED)
+### 2.3 Virtual Proxy: Lazy-Loading Automation (DONE)
 *Goal: Eliminate the "Temporal Coupling" bug where children must be manually populated.*
-- [ ] **Implement `LazyLocusList`**: A proxy/wrapper for child lists that automatically calls `ensureChildrenPopulated()` on first access.
-- [ ] **Refactor `Location` Classes**: Use the proxy for all `children`, `rooms`, `apartments`, etc.
-- [ ] **Verification**: Ensure that calling `location.getChildren().size()` triggers population without manual intervention.
+- [x] **Implement `LazyLocusList`**: Automated population via Virtual Proxy on first list access.
+- [x] **Refactor `Location` Classes**: Migrated `Container`, `Street`, `Building`, `Corridor`, and `Apartment`.
+- [x] **Verification**: Confirmed recursive safety and list synchronization across deep hierarchies.
 
-### 2.4 Display Adapter: UI Flexibility
+### 2.4 Display Adapter: UI Flexibility (⭐ RECOMMENDED)
 *Goal: Allow for multiple rendering modes (e.g., Glitched, High-Contrast) via dependency injection.*
 - [ ] **Formalize `OutputFormatter`**: Finalize the interface used by the model.
 - [ ] **Create `StandardTerminalAdapter`**: The baseline "Cyber-Brutalist" implementation.

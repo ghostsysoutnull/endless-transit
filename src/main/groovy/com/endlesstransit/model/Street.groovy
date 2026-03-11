@@ -11,11 +11,10 @@ import groovy.transform.PackageScope
 
 @CompileStatic
 class Street extends Container {
-    @PackageScope List<Building> buildings = []
+    @PackageScope List<Building> buildings = new LazyLocusList<Building>(this)
     String name
 
     List<Building> getBuildings() {
-        ensureChildrenPopulated()
         return buildings
     }
 
@@ -42,12 +41,11 @@ class Street extends Container {
     @Override
     void enter(Player player) {
         markVisited()
-        ensureChildrenPopulated()
+        // LazyLocusList handles population on access
     }
 
     @Override
     List<String> getExtraContent(Player player, int width) {
-        ensureChildrenPopulated()
         List<String> lines = []
         int colWidth = (width - 3).intdiv(2)
 
@@ -100,7 +98,6 @@ class Street extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
-        ensureChildrenPopulated()
         Map<String, Closure> options = getBaseOptions(game)
         
         List<Building> bldgs = getBuildings()

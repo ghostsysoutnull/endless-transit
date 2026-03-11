@@ -9,7 +9,7 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 abstract class Container implements Location {
-    List<Location> children = []
+    List<Location> children = new LazyLocusList<Location>(this)
     Location parent
     VibeCapsule localVibe
     boolean visited = false
@@ -37,7 +37,6 @@ abstract class Container implements Location {
         return "${parent.getLIP()}.$myIndex"
     }
 
-
     @Override
     String getMapColor() {
         if (isAbyssal()) return "RED"
@@ -51,9 +50,9 @@ abstract class Container implements Location {
      * Projects child locations into a 2D coordinate space for the map.
      */
     Map<List<Integer>, Location> getLocalLatticeMap(int width, int height) {
-        ensureChildrenPopulated()
         Map<List<Integer>, Location> projection = [:]
         
+        // Children list access automatically triggers population via LazyLocusList
         children.each { child ->
             // Use name + parent name hash for stable coordinates within this container
             Random r = locus.branch(child.getName()).nextRandom()
@@ -99,6 +98,9 @@ abstract class Container implements Location {
         this.localVibe = vibe
     }
 
+    /**
+     * Internal population gate. Called by LazyLocusList.
+     */
     void ensureChildrenPopulated() {
         if (!childrenPopulated) {
             childrenPopulated = true
@@ -111,7 +113,6 @@ abstract class Container implements Location {
     }
 
     List<Location> getChildren() {
-        ensureChildrenPopulated()
         return children
     }
 
@@ -129,7 +130,6 @@ abstract class Container implements Location {
     int getIndexInParent() {
         if (parent instanceof Container) {
             Container cp = (Container) parent
-            cp.ensureChildrenPopulated()
             return cp.children.indexOf(this) + 1
         }
         return 0
@@ -139,7 +139,6 @@ abstract class Container implements Location {
     int getTotalInParent() {
         if (parent instanceof Container) {
             Container cp = (Container) parent
-            cp.ensureChildrenPopulated()
             return cp.children.size()
         }
         return 0

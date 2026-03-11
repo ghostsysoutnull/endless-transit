@@ -12,19 +12,17 @@ import groovy.transform.PackageScope
 
 @CompileStatic
 class Corridor extends Container {
-    @PackageScope List<Door> doors = []
-    @PackageScope List<Apartment> apartments = []
+    @PackageScope List<Door> doors = new LazyLocusList<Door>(this)
+    @PackageScope List<Apartment> apartments = new LazyLocusList<Apartment>(this)
     int numApartments
     String culture
     String timeline
 
     List<Door> getDoors() {
-        ensureChildrenPopulated()
         return doors
     }
 
     List<Apartment> getApartments() {
-        ensureChildrenPopulated()
         return apartments
     }
 
@@ -59,7 +57,6 @@ class Corridor extends Container {
 
     @Override
     List<String> getExtraContent(Player player, int width) {
-        ensureChildrenPopulated()
         List<String> lines = []
         lines << ModelOutput.fmt.colorize(" [LOCAL_ACCESS_LIST] ", "L_CYAN")
         lines << ModelOutput.fmt.dim("Analyzing local horizontal artery...")
@@ -85,7 +82,6 @@ class Corridor extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
-        ensureChildrenPopulated()
         Map<String, Closure> options = getBaseOptions(game)
         
         List<Apartment> apts = getApartments()
@@ -126,6 +122,16 @@ class Corridor extends Container {
             }
         }
         return v
+    }
+
+    @Override
+    void addLocation(Location location) {
+        super.addLocation(location)
+        if (location instanceof Apartment) {
+            this.apartments.add((Apartment)location)
+        } else if (location instanceof Door) {
+            this.doors.add((Door)location)
+        }
     }
 
     @Override

@@ -13,7 +13,7 @@ import groovy.transform.PackageScope
 
 @CompileStatic
 class Building extends Container {
-    @PackageScope List<Floor> floors = []
+    @PackageScope List<Floor> floors = new LazyLocusList<Floor>(this)
     String name
     int maxFloors
     int apartmentsPerFloor
@@ -132,6 +132,11 @@ class Building extends Container {
     }
 
     @Override
+    String getDescription() {
+        return "Building: $name. [THEME: ${culture.toUpperCase()}] [STATUS: ${getStatusSummary()}]"
+    }
+
+    @Override
     void enter(Player player) {
         if (isLandmark && !isVisited()) {
             ModelOutput.fmt.println "\n" + ModelOutput.fmt.colorize(" [UNIQUE_LOCUS_DETECTION] ", "YELLOW")
@@ -140,12 +145,10 @@ class Building extends Container {
             Thread.sleep(1000)
         }
         markVisited()
-        ensureChildrenPopulated()
     }
 
     @Override
     List<String> getExtraContent(Player player, int width) {
-        ensureChildrenPopulated()
         List<String> lines = []
         lines << ModelOutput.fmt.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", "L_CYAN")
         lines << ModelOutput.fmt.dim("Analyzing vertical lattice structure...")
@@ -207,92 +210,53 @@ class Building extends Container {
             if (floorObj != null) {
                 def progress = getFloorProgress(floorObj, player)
                 if (progress.visited >= progress.total) {
-                    progressLabel = ModelOutput.fmt.colorize(" [CLEARED]", "GREEN")
+                    progressLabel = ModelOutput.fmt.colorize("[CLEARED]", "GREEN")
                 } else if (progress.visited > 0) {
-                    progressLabel = ModelOutput.fmt.colorize(" [PROBED: ${progress.visited}/${progress.total}]", "YELLOW")
-                } else if (floorObj.isVisited()) {
-                    progressLabel = ModelOutput.fmt.colorize(" [V]", "GREEN")
+                    progressLabel = ModelOutput.fmt.colorize("[PROBED: ${progress.visited}/${progress.total}]", "CYAN")
                 }
             }
 
-            // Assemble row with consistent padding
-            String cId = ModelOutput.fmt.padRight(idStr, wId)
-            String cRad = ModelOutput.fmt.padRight(radar, wRad)
-            String cDes = ModelOutput.fmt.padRight(designation + progressLabel, wDes)
-            String cZon = ModelOutput.fmt.padRight("[" + zone + "]", wZon)
-            String cInt = ModelOutput.fmt.padRight("[" + integrity + "]", wInt)
-
-            lines << "${cId}${cRad}${cDes}${cZon}${cInt}${resonance}".toString()
+            String line = "${ModelOutput.fmt.dim(idStr)}${radar}${ModelOutput.fmt.padRight(designation, wDes)}${ModelOutput.fmt.padRight(zone, wZon)}${ModelOutput.fmt.padRight(integrity, wInt)}${resonance} ${progressLabel}"
+            lines << line
         }
         lines << ModelOutput.fmt.dim("-" * width)
         return lines
     }
 
     @Override
-    void populateChildren() {
-        // Ensure at least Floor 0 exists
-        getFloor(0)
+    void addLocation(Location location) {
+        super.addLocation(location)
+        if (location instanceof Floor) {
+            this.floors.add((Floor)location)
+        }
     }
 
     @Override
-    void addLocation(Location location) {
-        if (location instanceof Floor) {
-            // Check if already present to avoid duplicates if called multiple times
-            Floor f = (Floor) location
-            if (!this.floors.any { it.number == f.number }) {
-                this.floors.add(f)
-                super.addLocation(location)
-            }
-        } else {
-            super.addLocation(location)
-        }
+    void populateChildren() {
+        ProceduralFactory.instance.populateBuilding(this)
     }
 
     Floor getFloor(int number) {
-        if (number >= maxFloors) {
-            Logger.info("Floor request out of bounds: $number (max: $maxFloors)")
-            return null
+        // floors access will trigger populateChildren() via LazyLocusList
+        Floor f = floors.find { it.number == number }
+        
+        // Handle abyssal floors if not in the initial list (e.g. during a breach)
+        if (f == null && number < 0 && isBreached) {
+            f = ProceduralFactory.instance.createFloor(this, number, apartmentsPerFloor, culture, timeline, locus.branch(number))
+            this.addLocation(f)
         }
-
-        Floor floor = this.floors.find { it.number == number }
-        if (floor == null) {
-            Logger.info("Instantiating new Floor $number in Building $name")
-            floor = ProceduralFactory.instance.createFloor(this, number, apartmentsPerFloor, this.culture, this.timeline, locus != null ? locus.branch(number) : new LocusSeed(0L))
-            addLocation(floor)
-        }
-        return floor
-    }
-
-    @Override
-    String getDescription() {
-        VibeCapsule v = getVibe()
-        String vInfo = v != null ? "\n${ModelOutput.fmt.dim("[TECH_ERA:")} ${ModelOutput.fmt.colorize(v.timeline.toUpperCase(), "YELLOW")}${ModelOutput.fmt.dim("]")} ${ModelOutput.fmt.dim("[RESONANCE:")} ${ModelOutput.fmt.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${ModelOutput.fmt.dim("]")}" : ""
-        return "Building: $name (Total Floors: $maxFloors)$vInfo"
+        
+        return f
     }
 
     @Override
     Map<String, Closure> getOptions(Game game) {
         Map<String, Closure> options = getBaseOptions(game)
         
-        int minFloor = isBreached ? -5 : 0
-        for (int i = maxFloors - 1; i >= minFloor; i--) {
-            int floorNum = i
-            Floor floor = getFloor(floorNum)
-            if (floor == null) continue
-
-            String zone = getFloorZone(i)
-            String id = String.format("%02d", i)
-            if (i < 0) id = "-" + Math.abs(i)
-
-            String label = "${id}. Access: ${zone}"
-            def progress = getFloorProgress(floor, game.player)
-            if (progress.visited >= progress.total) {
-                label += " [CLEARED]"
-            } else if (progress.visited > 0) {
-                label += " [PROBED: ${progress.visited}/${progress.total}]"
-            } else if (floor.isVisited()) {
-                label += " [Visited]"
-            }
+        // Floors access will trigger populateChildren() via LazyLocusList
+        for (Floor floor : floors) {
+            String id = String.format("%02d", floors.indexOf(floor) + 1)
+            String label = "${id}. Access: ${getFloorZone(floor.number)}"
             options[label] = { game.enterLocation(floor) }
         }
         return options

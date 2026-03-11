@@ -14,14 +14,13 @@ import java.util.Random
 
 @CompileStatic
 class Apartment extends Container {
-    @PackageScope List<Room> rooms = []
+    @PackageScope List<Room> rooms = new LazyLocusList<Room>(this)
     String doorDescription
     String timeline
     String culture
     boolean isAnomaly = false
 
     List<Room> getRooms() {
-        ensureChildrenPopulated()
         return rooms
     }
 
@@ -59,7 +58,6 @@ class Apartment extends Container {
 
     @Override
     Map<String, Closure> getOptions(Game game) {
-        ensureChildrenPopulated()
         Map<String, Closure> options = getBaseOptions(game)
         
         List<Room> rms = getRooms()
@@ -76,7 +74,6 @@ class Apartment extends Container {
 
     @Override
     List<String> getExtraContent(Player player, int width) {
-        ensureChildrenPopulated()
         List<String> lines = []
         lines << ModelOutput.fmt.colorize(" [APARTMENT_UNIT_ACCESS] ", "L_CYAN")
         lines << ModelOutput.fmt.dim("Local unit entry-point. Internal cells detected: ${rooms.size()}")
@@ -100,6 +97,14 @@ class Apartment extends Container {
         this.culture = culture
         this.timeline = timeline
         this.locus = locus
+    }
+
+    @Override
+    void addLocation(Location location) {
+        super.addLocation(location)
+        if (location instanceof Room) {
+            this.rooms.add((Room)location)
+        }
     }
 
     @Override

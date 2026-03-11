@@ -309,6 +309,12 @@ class ProceduralFactory {
         }
     }
 
+    void populateBuilding(Building b) {
+        for (int i = 0; i < b.maxFloors; i++) {
+            b.addLocation(createFloor(b, i, b.apartmentsPerFloor, b.culture, b.timeline, b.locus.branch(i)))
+        }
+    }
+
     Apartment populateApartment(Apartment a) {
         int numRooms = a.locus.nextInt(1, 10)
         
@@ -321,7 +327,6 @@ class ProceduralFactory {
 
         for (int i = 0; i < numRooms; i++) {
             Room room = createRoom(a, a.culture, a.timeline, a.locus.branch(i))
-            a.rooms << room
             a.addLocation(room)
         }
 
@@ -355,7 +360,6 @@ class ProceduralFactory {
 
             c.doors << door
             Apartment apartment = createApartment(c, door.getMinimalDescription(), c.culture, c.timeline, aptLocus)
-            c.apartments << apartment
             c.addLocation(apartment)
         }
     }
