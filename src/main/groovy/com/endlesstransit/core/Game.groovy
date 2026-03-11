@@ -22,13 +22,13 @@ class Game {
     TurnProcessor turnProcessor
     RenderingCoordinator renderer
 
-    Game(long seedValue = System.currentTimeMillis(), InputSource inputSource = new RealTerminalSource()) {
+    Game(long seedValue = System.currentTimeMillis(), InputSource inputSource = null) {
         this(new LocusSeed(seedValue), inputSource)
     }
 
-    Game(LocusSeed masterLocus, InputSource inputSource = new RealTerminalSource()) {
+    Game(LocusSeed masterLocus, InputSource inputSource = null) {
         ModelOutput.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
-        this.state = new GameState(masterLocus, inputSource)
+        this.state = new GameState(masterLocus, inputSource ?: InputHandler.defaultSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
         this.persistence = new PersistenceService(state, navOrchestrator)
         this.renderer = new RenderingCoordinator(state)

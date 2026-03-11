@@ -10,11 +10,12 @@ import java.util.Scanner
  */
 @CompileStatic
 class InputHandler {
+    static InputSource defaultSource = new RealTerminalSource()
     InputSource source
     private List<String> inputHistory = []
 
-    InputHandler(InputSource source = new RealTerminalSource()) {
-        this.source = source
+    InputHandler(InputSource source = null) {
+        this.source = source ?: defaultSource
     }
 
     /**

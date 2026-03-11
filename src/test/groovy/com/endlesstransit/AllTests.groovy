@@ -9,6 +9,8 @@ import junit.textui.TestRunner
 
 // Disable typewriter delays and enable virtual buffer for tests
 Terminal.initialize(true, true)
+// Globally override default input source to non-blocking mock for tests
+InputHandler.defaultSource = new MockInputSource([])
 
 def suite = new TestSuite()
 def loader = new GroovyClassLoader(this.class.classLoader)
