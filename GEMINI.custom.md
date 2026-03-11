@@ -1,3 +1,11 @@
+## 🛡️ The Shield (Safety Mandates)
+Before starting any work, you MUST read and internalize the mandates in:
+- **@tasks/lessons/POST_MORTEM_2026_03_11.md**
+
+**CRITICAL:** 
+1. Never start implementing (updating/creating/deleting files) without explicit, absolute confirmation from the user for that specific task.
+2. Never commit or push without individual, explicit approval.
+
 ## Workflow Orchestration
 
 Do not produce code while we are still designing or brainstorming it, ask when to generate code if we are thinkg about ideas.
