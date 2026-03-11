@@ -8,7 +8,11 @@ class SetIntegrityCommand implements LatticeCommand {
     String getLabel() { "INTEGRITY" }
     String getDescription() { "Set neural link coherence level." }
 
-    boolean execute(Game game) {
+    @Override
+    boolean shouldCloseMenu() { false }
+
+    @Override
+    boolean execute(Game game, String choice = null) {
         Terminal.print "Set Integrity (0-100): "
         try {
             int val = game.inputHandler.readLine().toInteger()
@@ -17,6 +21,6 @@ class SetIntegrityCommand implements LatticeCommand {
         } catch (Exception e) {
             Terminal.println "Invalid value."
         }
-        return false
+        return true
     }
 }

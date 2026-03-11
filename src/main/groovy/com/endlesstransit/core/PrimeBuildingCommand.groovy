@@ -9,7 +9,11 @@ class PrimeBuildingCommand implements LatticeCommand {
     String getLabel() { "PRIME" }
     String getDescription() { "Instantly sample all floors and set infusion count." }
 
-    boolean execute(Game game) {
+    @Override
+    boolean shouldCloseMenu() { false }
+
+    @Override
+    boolean execute(Game game, String choice = null) {
         Building bldg = (Building) game.currentLocation.findAncestor(Building.class)
         if (bldg != null) {
             for (int i = 0; i < bldg.maxFloors; i++) bldg.notifySampled(i)
@@ -18,6 +22,6 @@ class PrimeBuildingCommand implements LatticeCommand {
         } else {
             Terminal.println Terminal.colorize(">>> ERROR: No building ancestor found.", Terminal.RED)
         }
-        return false
+        return true
     }
 }

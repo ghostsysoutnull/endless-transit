@@ -7,13 +7,12 @@ import groovy.transform.CompileStatic
  * against the game state.
  */
 @CompileStatic
-interface LatticeCommand {
-    String getLabel()
-    String getDescription()
-    
+interface LatticeCommand extends GameCommand {
     /**
-     * Executes the command. 
-     * Returns true if the menu should close after execution.
+     * Returns true if the glitch menu should close after execution.
      */
-    boolean execute(Game game)
+    boolean shouldCloseMenu()
+
+    @Override
+    boolean execute(Game game, String choice)
 }

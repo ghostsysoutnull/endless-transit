@@ -55,7 +55,10 @@ class RenderingCoordinator {
             if (c == "c") break
             try {
                 int idx = c.toInteger() - 1
-                if (idx >= 0 && idx < cmds.size() && cmds[idx].execute(game)) break
+                if (idx >= 0 && idx < cmds.size()) {
+                    cmds[idx].execute(game, null)
+                    if (cmds[idx].shouldCloseMenu()) break
+                }
             } catch (Exception e) { 
                 Terminal.println "Invalid." 
             }

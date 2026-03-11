@@ -13,14 +13,15 @@
 - [x] **Batch Update Models**: Update constructors and internal logic for all 12+ location types (Planet, Building, Room, etc.).
 - [x] **Overhaul `ProceduralFactory`**: Use `locus.branch()` for all child generation; eliminate manual `new Random(seed)` calls.
 
-### 2.2 Command Pattern: Action & Navigation (⭐ RECOMMENDED)
+### 2.2 Command Pattern: Action & Navigation (DONE)
 *Goal: Finalize the decoupling of the game loop and make player actions testable in isolation.*
-- [ ] **Refactor `TurnProcessor`**: Move from simple method delegation to a `Command` dispatch system.
-- [ ] **Implement `NavigationCommand`**: Encapsulate f/b, u/d, and numeric choice logic.
-- [ ] **Implement `GlitchCommands`**: Complete the migration of world mutations (Breach, Prime, Keystone) into Command objects.
-- [ ] **Move Boundary Logic**: Relocate "auto-reversal" and "leave/exit" repetition logic to `NavigationOrchestrator`.
+- [x] **Introduce `GameCommand` Interface**: Unified interface for all player actions with `GameState` and `choice` context.
+- [x] **Refactor `TurnProcessor`**: Migrated to a `Command` dispatch system with a `globalCommands` registry.
+- [x] **Implement `NavigationCommand`**: Encapsulated f/b, u/d, and numeric choice logic.
+- [x] **Implement `GlitchCommands`**: Successfully migrated Breach, Prime, Keystone, and Integrity into the Command substrate.
+- [x] **Refactor System Commands**: Ported Scan, Sync, Help, Map, and Capture to `GameCommand`.
 
-### 2.3 Virtual Proxy: Lazy-Loading Automation
+### 2.3 Virtual Proxy: Lazy-Loading Automation (⭐ RECOMMENDED)
 *Goal: Eliminate the "Temporal Coupling" bug where children must be manually populated.*
 - [ ] **Implement `LazyLocusList`**: A proxy/wrapper for child lists that automatically calls `ensureChildrenPopulated()` on first access.
 - [ ] **Refactor `Location` Classes**: Use the proxy for all `children`, `rooms`, `apartments`, etc.

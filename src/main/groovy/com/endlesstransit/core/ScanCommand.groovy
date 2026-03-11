@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
  * Refactored for Dual-Layer Scan: [DATA_SUMMARY] + [SENSORY_TELEMETRY].
  */
 @CompileStatic
-class ScanCommand implements LatticeCommand {
+class ScanCommand implements GameCommand, LatticeCommand {
 
     @Override
     String getLabel() {
@@ -23,8 +23,11 @@ class ScanCommand implements LatticeCommand {
     }
 
     @Override
-    boolean execute(Game game) {
-        Location loc = game.currentLocation
+    boolean shouldCloseMenu() { false }
+
+    @Override
+    boolean execute(Game game, String choice = null) {
+        Location loc = game.getCurrentLocation()
         Terminal.println ""
         Terminal.println Terminal.colorize(">>> LOCAL_LATTICE_SCAN_INITIATED [LOCUS: ${loc.getLIP()}]", Terminal.L_CYAN)
         
@@ -50,7 +53,7 @@ class ScanCommand implements LatticeCommand {
         
         game.getInputHandler().waitForEnter()
         
-        return false 
+        return true 
     }
 
     private void renderCorridorScan(Corridor corridor, Player player) {
