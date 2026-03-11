@@ -27,7 +27,7 @@ class Game {
     }
 
     Game(LocusSeed masterLocus, InputSource inputSource = new RealTerminalSource()) {
-        ModelOutput.fmt = new com.endlesstransit.ui.TerminalAdapter()
+        ModelOutput.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
         this.state = new GameState(masterLocus, inputSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
         this.persistence = new PersistenceService(state, navOrchestrator)

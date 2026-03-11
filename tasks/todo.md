@@ -27,14 +27,15 @@
 - [x] **Refactor `Location` Classes**: Migrated `Container`, `Street`, `Building`, `Corridor`, and `Apartment`.
 - [x] **Verification**: Confirmed recursive safety and list synchronization across deep hierarchies.
 
-### 2.4 Display Adapter: UI Flexibility (⭐ RECOMMENDED)
+### 2.4 Display Adapter: UI Flexibility (DONE)
 *Goal: Allow for multiple rendering modes (e.g., Glitched, High-Contrast) via dependency injection.*
-- [ ] **Formalize `OutputFormatter`**: Finalize the interface used by the model.
-- [ ] **Create `StandardTerminalAdapter`**: The baseline "Cyber-Brutalist" implementation.
-- [ ] **Create `GlitchedTerminalAdapter`**: A decorator that adds visual artifacts/noise to the output.
-- [ ] **Verification**: Successfully swap adapters in `Main.groovy` and see visual changes without touching model code.
+- [x] **Renamed `TerminalAdapter`**: Refactored to `StandardTerminalAdapter` to clarify its baseline role.
+- [x] **Implemented `GlitchedTerminalAdapter`**: A proper Decorator that adds procedural visual noise while preserving layout integrity.
+- [x] **Decoupled Model Output**: Ensured all `Location` subclasses use the active `ModelOutput.fmt` without knowing its implementation.
+- [x] **Aesthetic Invariant Verification**: Created `DisplayAdapterTest.groovy` to prove that decorators don't cause alignment drift.
 
----
+### Phase 3: Spatial Pivot & Navigation Polish
+
 
 ## 🚀 Active Plan (Phase 3.6): Door Enhancement & Sensory Deduction (DONE)
 **Objective:** Refactor doors into sensory signal sources with enhanced scan diagnostics and deductive clues.

@@ -24,7 +24,8 @@ def junitTests = [
     "core/GameMementoTest",
     "procgen/ProcgenVariabilityTest",
     "procgen/SeedScannerTest",
-    "ReplayServiceTest"
+    "ReplayServiceTest",
+    "ui/DisplayAdapterTest"
 ]
 
 junitTests.each { path ->

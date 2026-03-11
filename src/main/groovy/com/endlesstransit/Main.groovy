@@ -10,7 +10,7 @@ import com.endlesstransit.core.JournalManager
 
 try {
     Terminal.initialize()
-    com.endlesstransit.model.ModelOutput.fmt = new com.endlesstransit.ui.TerminalAdapter()
+    com.endlesstransit.model.ModelOutput.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
     def game = new Game()
     game.start()
 } catch (Throwable t) {

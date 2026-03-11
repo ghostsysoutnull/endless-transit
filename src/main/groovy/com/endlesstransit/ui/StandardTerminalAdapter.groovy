@@ -3,8 +3,12 @@ package com.endlesstransit.ui
 import com.endlesstransit.model.OutputFormatter
 import groovy.transform.CompileStatic
 
+/**
+ * StandardTerminalAdapter: The baseline implementation of the OutputFormatter.
+ * Provides the core Cyber-Brutalist rendering logic using standard ANSI codes.
+ */
 @CompileStatic
-class TerminalAdapter implements OutputFormatter {
+class StandardTerminalAdapter implements OutputFormatter {
     @Override String getRED() { return Terminal.RED }
     @Override String getCYAN() { return Terminal.CYAN }
     @Override String getWHITE() { return Terminal.WHITE }
