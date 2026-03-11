@@ -5,7 +5,6 @@ import groovy.transform.Immutable
 
 /**
  * InscriptionStyle: The physical representation of written text on a surface.
- * Dictates the visual "vibe" and TUI formatting for inscriptions.
  */
 @CompileStatic
 enum InscriptionStyle {
@@ -14,9 +13,6 @@ enum InscriptionStyle {
     ETCHED,    // Lore/Abstract: ⟨WORD⟩
     BURNED     // Warning: !! WORD !!
     
-    /**
-     * Formats the given text according to the style's visual grammar.
-     */
     String format(String text) {
         switch (this) {
             case STAMPED:  return "[${text}]"
@@ -24,6 +20,19 @@ enum InscriptionStyle {
             case ETCHED:   return "⟨${text}⟩"
             case BURNED:   return "!! ${text} !!"
             default:       return text
+        }
+    }
+
+    /**
+     * Returns a narrative fragment describing how the word was applied.
+     */
+    String getNarrative(String text) {
+        switch (this) {
+            case STAMPED:  return "The word '${text}' is stamped into the metal in block letters."
+            case SCRAWLED: return "The word '${text.toLowerCase()}' is scrawled across the surface in jagged, desperate lines."
+            case ETCHED:   return "The word '${text}' is finely etched into the frame, appearing almost as a structural glyph."
+            case BURNED:   return "The word '${text}' is burned into the material with a high-intensity plasma torch."
+            default:       return "There is an inscription: '${text}'."
         }
     }
 }
@@ -37,10 +46,11 @@ class DoorInscription {
     String text
     InscriptionStyle style
     
-    /**
-     * Returns the formatted string for UI display.
-     */
     String getFormattedText() {
         return style.format(text)
+    }
+
+    String getNarrative() {
+        return style.getNarrative(text)
     }
 }

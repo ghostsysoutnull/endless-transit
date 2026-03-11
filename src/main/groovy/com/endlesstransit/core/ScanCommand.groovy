@@ -7,8 +7,7 @@ import groovy.transform.CompileStatic
 
 /**
  * ScanCommand: Executes a high-density technical scan of the local area.
- * Prints output directly to the terminal scrollback (outside the HUD).
- * Refactored for perfect border alignment and Cyber-Brutalist table aesthetics.
+ * Refactored for Dual-Layer Scan: [DATA_SUMMARY] + [SENSORY_TELEMETRY].
  */
 @CompileStatic
 class ScanCommand implements LatticeCommand {
@@ -61,9 +60,6 @@ class ScanCommand implements LatticeCommand {
         int wMat = 20
         int wState = 10
         int wRoom = 24
-        
-        // Internal content width = sum of columns + 5 internal separators
-        // wId(2) + wTrace(10) + wInscr(14) + wMat(20) + wState(10) + wRoom(24) + 5 = 85
         int totalInternal = 85
         
         String top = "┌" + ("─" * totalInternal) + "┐"
@@ -71,6 +67,7 @@ class ScanCommand implements LatticeCommand {
         String bot = "└" + ("─" * totalInternal) + "┘"
         String sep = Terminal.dim("│")
         
+        Terminal.println Terminal.bold("    [DATA_SUMMARY]:")
         Terminal.println("    " + Terminal.dim(top))
         
         // Header Row
@@ -86,11 +83,10 @@ class ScanCommand implements LatticeCommand {
         apts.eachWithIndex { Apartment apt, int i ->
             Door door = drs[i]
             String id = String.format("%02d", i + 1)
-            
-            String traceName = door.trace != null ? door.trace.name : "None"
-            String inscr = door.inscription != null ? door.inscription.getFormattedText() : ""
-            String mat = door.appearance != null ? door.appearance.material : "Standard Barrier"
-            String state = door.appearance != null ? door.appearance.physicalState : "Stable"
+            String traceName = door.trace?.name ?: "None"
+            String inscr = door.inscription?.getFormattedText() ?: ""
+            String mat = door.appearance.material
+            String state = door.appearance.physicalState
             
             String roomType = "?? UNKNOWN ??"
             List<Room> rms = apt.getRooms()
@@ -110,8 +106,27 @@ class ScanCommand implements LatticeCommand {
             Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(roomType, wRoom), wRoom))
             Terminal.println(Terminal.dim("│"))
         }
-        
         Terminal.println("    " + Terminal.dim(bot))
+        
+        // Phase 2: Narrative
+        Terminal.println ""
+        Terminal.println Terminal.bold("    [SENSORY_TELEMETRY]:")
+        apts.eachWithIndex { Apartment apt, int i ->
+            Door door = drs[i]
+            String id = String.format("%02d", i + 1)
+            String narrative = door.getFullNarrative()
+            
+            Terminal.print "    " + Terminal.colorize("${id}. ", Terminal.CYAN)
+            List<String> wrapped = Terminal.wrapText(narrative, 80)
+            wrapped.eachWithIndex { String line, int lineIdx ->
+                if (lineIdx == 0) {
+                    Terminal.println line
+                } else {
+                    Terminal.println "        " + line
+                }
+            }
+            Terminal.println ""
+        }
     }
 
     private void renderBuildingScan(Building building, Player player) {
@@ -140,8 +155,6 @@ class ScanCommand implements LatticeCommand {
         int wStat = 10
         int wType = 20
         int wIdent = 24
-
-        // 2 + 8 + 6 + 10 + 20 + 24 + 5 = 75
         int totalInternal = 75
         
         String top = "┌" + ("─" * totalInternal) + "┐"
@@ -149,6 +162,7 @@ class ScanCommand implements LatticeCommand {
         String bot = "└" + ("─" * totalInternal) + "┘"
         String sep = Terminal.dim("│")
 
+        Terminal.println Terminal.bold("    [STRATA_OVERVIEW]:")
         Terminal.println("    " + Terminal.dim(top))
         
         // Header
@@ -184,7 +198,6 @@ class ScanCommand implements LatticeCommand {
             Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(name, wIdent), wIdent))
             Terminal.println(Terminal.dim("│"))
         }
-        
         Terminal.println("    " + Terminal.dim(bot))
     }
 }

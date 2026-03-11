@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic
 
 /**
  * Door: The interface between the corridor and the unit.
- * Refactored to use sensory and technical components for high-fidelity simulation.
+ * Refactored to support the Dual-Layer Scan (Data + Narrative).
  */
 @CompileStatic
 class Door {
@@ -16,15 +16,10 @@ class Door {
     Boolean visited = false
     LocusSeed locus
 
-    /**
-     * Primary constructor.
-     * Uses the provided locus to deterministically synthesize its components.
-     */
     Door(LocusSeed locus = new LocusSeed(0)) {
         this.locus = locus
         this.appearance = generateAppearance(locus)
         
-        // 20% chance for a door to have a written inscription
         if (locus.branch("INSCRIPTION_ROLL").checkProbability(0.2)) {
             this.inscription = generateInscription(locus.branch("INSCRIPTION"))
         }
@@ -57,9 +52,6 @@ class Door {
         )
     }
 
-    /**
-     * Minimalist description for high-velocity HUD navigation.
-     */
     String getMinimalDescription() {
         StringBuilder sb = new StringBuilder()
         if (visited) sb.append("(VISITED) ")
@@ -70,29 +62,23 @@ class Door {
         return sb.toString()
     }
 
-    /**
-     * Backward compatibility with existing Model/UI logic.
-     */
     String getDescription() {
         return getMinimalDescription()
     }
 
     /**
-     * High-density technical diagnostic block for the [s] Scan command.
+     * Synthesizes a full atmospheric paragraph for the door.
      */
-    String getEnhancedDescription() {
+    String getFullNarrative() {
         StringBuilder sb = new StringBuilder()
-        sb.append("MATERIAL: ").append(appearance.material).append("\n")
-        sb.append("STATE   : ").append(appearance.physicalState).append("\n")
-        
-        if (inscription) {
-            sb.append("MARKING : ").append(inscription.style).append(" '").append(inscription.text).append("'\n")
-        }
+        sb.append(appearance.getNarrative())
         
         if (trace) {
-            sb.append("TRACE   : ").append(trace.sensoryDescription)
-        } else {
-            sb.append("TRACE   : No anomalous signatures detected.")
+            sb.append(" ").append(trace.sensoryDescription)
+        }
+        
+        if (inscription) {
+            sb.append(" ").append(inscription.getNarrative())
         }
         
         return sb.toString()
