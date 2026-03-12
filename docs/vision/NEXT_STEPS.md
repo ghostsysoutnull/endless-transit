@@ -40,12 +40,13 @@ This document outlines the high-priority technical and aesthetic initiatives for
 
 ## 4. 🏗️ CORE_DECOMPOSITION: SERVICE_REFACTOR
 **Focus:** Infrastructure / Code Quality
-**Goal:** Continue decomposing the `Game.groovy` facade into specialized, testable services to maintain "Expert OO" standards.
+**Goal:** Continue decomposing the `Game.groovy` and `TurnProcessor.groovy` logic into specialized, testable services to maintain "Expert OO" standards.
 
 ### Implementation Goals:
-- **TraversalService:** Extract the complex logic of entering/exiting locations and updating the `ActionMapper`.
-- **TurnOrchestrator:** Move the turn-cycle logic (Input -> Process -> Render) into a dedicated service.
-- **StateRepository:** Formalize the storage and retrieval of `GameMemento` for cleaner save/load/replay integration.
+- **SurvivalService:** Extract the "Turn Physics" from `TurnProcessor.processTurn()`. This service will manage coherence drain, environmental stressors (Abyssal static), and event triggering.
+- **CommandRegistry:** Move the command mapping logic out of `TurnProcessor`. This service will handle global command registration, shortcut mapping (e.g., `ll` -> `lattice`), and "Glitch Menu" discovery.
+- **InputOrchestrator:** Refine the complex input-loop logic from `TurnProcessor.handleInput()`. This service will handle input normalization, history tracking, and the "Boundary Reversal" detection.
+- **WorldStateRepository:** Formalize the storage and retrieval of `GameMemento`. This service will act as the single source of truth for the `Universe` hierarchy and player persistence, decoupling `PersistenceService` from the high-level orchestrator.
 
 ---
 

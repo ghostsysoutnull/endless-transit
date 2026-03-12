@@ -27,7 +27,7 @@ class SeedScannerTest {
         assertTrue(result.matchingLocation instanceof Building, "Matching location should be a building")
         assertTrue(((Building) result.matchingLocation).maxFloors >= 5, "Building should have >= 5 floors")
         
-        println "SUCCESS: Found tall building at seed ${result.locus} - LIP: ${result.matchingLocation.getLIP()}"
+        Terminal.println "SUCCESS: Found tall building at seed ${result.locus} - LIP: ${result.matchingLocation.getLIP()}"
     }
 
     @Test

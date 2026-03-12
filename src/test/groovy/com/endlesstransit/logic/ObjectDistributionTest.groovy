@@ -2,6 +2,7 @@ package com.endlesstransit.logic
 
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.*
+import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -27,16 +28,16 @@ class ObjectDistributionTest {
             }
         }
         
-        println "\n--- OBJECT_DISTRIBUTION_ANALYSIS ---"
-        println "Total Rooms: $totalRooms"
+        Terminal.println "\n--- OBJECT_DISTRIBUTION_ANALYSIS ---"
+        Terminal.println "Total Rooms: $totalRooms"
         distribution.sort().each { count, freq ->
             double percentage = (freq / totalRooms) * 100
-            println "Rooms with $count objects: $freq (${String.format("%.2f", percentage)}%)"
+            Terminal.println "Rooms with $count objects: $freq (${String.format("%.2f", percentage)}%)"
         }
         
         // If it's too concentrated, we might see a very high percentage in 0 or a single number
         double zeroRate = (distribution[0] / totalRooms) * 100
-        println "Zero Object Rate: ${String.format("%.2f", zeroRate)}%"
+        Terminal.println "Zero Object Rate: ${String.format("%.2f", zeroRate)}%"
         
         // We expect some variance. If more than 80% of rooms have the same number of objects (e.g. 0), it might feel "concentrated"
         boolean isConcentrated = distribution.values().any { it > totalRooms * 0.8 }

@@ -102,7 +102,9 @@ class Game {
                 state.navEngine.updateRepetitionContext(state.mapper, options)
 
                 // 3. Render
-                renderer.renderCurrentState(options)
+                if (!state.suppressRendering) {
+                    renderer.renderCurrentState(options)
+                }
                 
                 // 4. Input & Dispatch
                 if (!turnProcessor.handleInput(this)) break

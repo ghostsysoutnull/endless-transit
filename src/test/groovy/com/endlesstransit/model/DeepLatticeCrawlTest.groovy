@@ -15,6 +15,7 @@ class DeepLatticeCrawlTest {
     void setUp() {
         Terminal.initialize(true, true)
         game = new Game(42L) // Stable seed
+        game.state.suppressRendering = true
         universe = game.universe
     }
 

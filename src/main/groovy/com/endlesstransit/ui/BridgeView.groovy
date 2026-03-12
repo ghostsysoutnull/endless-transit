@@ -56,7 +56,7 @@ class BridgeView implements ScreenshotProvider {
         Terminal.println Terminal.dim(" ----------------------------------------------------------------------")
         Terminal.println Terminal.dim(" SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
         Terminal.println ""
-        System.out.flush()
+        Terminal.flush()
     }
 
     void render(Location currentLocation, Player player, Map<String, Closure> options, LocusSeed masterLocus) {

@@ -43,9 +43,9 @@ class Building extends Container {
         ModelOutput.fmt.println ""
         ModelOutput.fmt.println ModelOutput.fmt.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", "RED")
         ModelOutput.fmt.println ModelOutput.fmt.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
-        Thread.sleep(1000)
+        com.endlesstransit.ui.Terminal.clock.sleep(1000)
         ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", "YELLOW")
-        Thread.sleep(1000)
+        com.endlesstransit.ui.Terminal.clock.sleep(1000)
         ModelOutput.fmt.println ""
     }
 
@@ -142,7 +142,7 @@ class Building extends Container {
             ModelOutput.fmt.println "\n" + ModelOutput.fmt.colorize(" [UNIQUE_LOCUS_DETECTION] ", "YELLOW")
             ModelOutput.fmt.println ModelOutput.fmt.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
             ModelOutput.fmt.println ModelOutput.fmt.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
-            Thread.sleep(1000)
+            com.endlesstransit.ui.Terminal.clock.sleep(1000)
         }
         markVisited()
     }

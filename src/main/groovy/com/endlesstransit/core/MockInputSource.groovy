@@ -19,7 +19,21 @@ class MockInputSource implements InputSource {
         if (currentIndex < script.size()) {
             return script[currentIndex++]
         }
-        return "quit" // Auto-quit when script ends
+        
+        // Safety sequence for headless termination:
+        // 1. "quit" to initiate exit
+        // 2. "y" to confirm quit
+        // 3. "n" to skip sync for speed
+        // 4. Then return "quit" indefinitely (though loop should break by then)
+        int offset = currentIndex - script.size()
+        currentIndex++
+        
+        switch (offset) {
+            case 0: return "quit"
+            case 1: return "y"
+            case 2: return "n"
+            default: return "quit"
+        }
     }
 
     @Override

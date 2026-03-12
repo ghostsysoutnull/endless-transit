@@ -3,6 +3,7 @@ package com.endlesstransit
 import com.endlesstransit.core.HeadlessRunner
 import com.endlesstransit.core.ReplayService
 import com.endlesstransit.ui.ScreenBuffer
+import com.endlesstransit.ui.Terminal
 import com.endlesstransit.procgen.LocusSeed
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
@@ -33,7 +34,7 @@ class ReplayServiceTest {
         
         // 3. Promote it
         String result = ReplayService.promoteToTest(tempScreenshot, "AutomatedRegressionTest")
-        println result
+        Terminal.println result
         assertTrue(result.contains("SUCCESS"))
         
         // 4. Verify the file exists

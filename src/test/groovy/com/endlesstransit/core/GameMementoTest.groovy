@@ -59,6 +59,6 @@ class GameMementoTest {
         assertEquals(midLIP, game.currentLocation.getLIP(), "LIP should be restored to midLoc")
         assertEquals(memento.playerCoherence, game.player.coherence, "Player coherence should be restored")
         
-        println "SUCCESS: Game state perfectly restored from Memento."
+        Terminal.println "SUCCESS: Game state perfectly restored from Memento."
     }
 }

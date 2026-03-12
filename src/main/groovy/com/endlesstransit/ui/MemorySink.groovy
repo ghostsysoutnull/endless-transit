@@ -32,6 +32,11 @@ class MemorySink implements RenderSink {
         flushCurrentLine()
     }
 
+    @Override
+    void flush() {
+        // No-op for now. Line structure must be preserved.
+    }
+
     private void flushCurrentLine() {
         buffer.add(currentLine.toString())
         currentLine = new StringBuilder()

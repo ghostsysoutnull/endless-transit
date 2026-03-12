@@ -15,6 +15,7 @@ class GameState {
     Location currentLocation
     Player player
     boolean instantRender = false
+    boolean suppressRendering = false
     LocusSeed masterLocus
     
     // Components that manage aspects of the state

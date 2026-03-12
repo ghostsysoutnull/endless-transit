@@ -14,4 +14,9 @@ class ConsoleSink implements RenderSink {
     void println(String message) {
         System.out.println(message)
     }
+
+    @Override
+    void flush() {
+        System.out.flush()
+    }
 }

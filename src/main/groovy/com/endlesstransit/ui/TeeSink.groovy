@@ -22,4 +22,9 @@ class TeeSink implements RenderSink {
     void println(String message) {
         sinks.each { it.println(message) }
     }
+
+    @Override
+    void flush() {
+        sinks.each { it.flush() }
+    }
 }

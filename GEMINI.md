@@ -34,7 +34,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 | Action | Command |
 | :--- | :--- |
 | **Run Game (Clinical)** | `./vinc.sh` (Fast, Auto-compile) |
-| **Run Tests (Logic)** | `./vinc.sh --test` (High-velocity) |
+| **Run Tests (Logic)** | `./vinc.sh --test -q` (High-velocity, context-efficient) |
 | **Verification (Static)** | `./vinc.sh --compile` |
 | **Run Game (Player)** | `./run.sh` (Immersive Portal) |
 | **Seed Scan** | `./vinc.sh --scan` |

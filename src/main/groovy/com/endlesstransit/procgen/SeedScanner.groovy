@@ -10,6 +10,9 @@ import groovy.transform.CompileStatic
 
 import java.util.concurrent.atomic.AtomicLong
 
+import com.endlesstransit.procgen.probes.BuildingFloorCountProbe
+import com.endlesstransit.procgen.probes.CultureProbe
+
 /**
  * SeedScanner: A discovery engine for exploring entropy space.
  * It iterates through seeds and traverses the world hierarchy to find locations
@@ -17,6 +20,42 @@ import java.util.concurrent.atomic.AtomicLong
  */
 @CompileStatic
 class SeedScanner {
+
+    static void main(String[] args) {
+        long startSeed = 0
+        long count = 100
+        String probeType = "building"
+        String probeArg = "5"
+        
+        if (args.length > 0) {
+            try {
+                startSeed = args[0].toLong()
+            } catch (NumberFormatException e) {
+                Terminal.println("[SCANNER_ERROR] Invalid start seed: ${args[0]}")
+                return
+            }
+        }
+        if (args.length > 1) count = args[1].toLong()
+        if (args.length > 2) probeType = args[2]
+        if (args.length > 3) probeArg = args[3]
+
+        // Silent/Instant mode for scan
+        Terminal.initialize(true, true)
+        
+        SeedScanner scanner = new SeedScanner()
+        WorldProbe probe
+        
+        if (probeType == "building") {
+            probe = new BuildingFloorCountProbe(probeArg.toInteger())
+        } else if (probeType == "culture") {
+            probe = new CultureProbe(probeArg)
+        } else {
+            Terminal.println("[SCANNER_ERROR] Unknown probe type: $probeType")
+            return
+        }
+
+        scanner.scan(new LocusSeed(startSeed), count, probe)
+    }
 
     static class ScanResult {
         LocusSeed locus

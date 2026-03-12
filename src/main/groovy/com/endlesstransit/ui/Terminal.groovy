@@ -74,22 +74,46 @@ class Terminal {
     static ClockStrategy clock = new StandardClock()
 
     // Output Abstraction
+    static final RenderSink nullSink = new NullSink()
     static RenderSink sink = new ConsoleSink()
     static MemorySink virtualBuffer = null
+    static boolean clinicalMode = false
 
     /**
      * Initializes the terminal output system.
      * @param useVirtualBuffer If true, enables the MemorySink for screenshots and diagnostics.
-     * @param instantMode If true, uses InstantClock to skip UI delays.
+     * @param instant If true, uses InstantClock to skip UI delays. If null, preserves current.
+     * @param clinical If true, suppresses all output (Clinical Mode). If null, preserves current.
      */
-    static void initialize(boolean useVirtualBuffer = true, boolean instantMode = false) {
-        clock = instantMode ? new InstantClock() : new StandardClock()
+    static void initialize(boolean useVirtualBuffer = true, Boolean instant = null, Boolean clinical = null) {
+        if (instant != null) {
+            clock = instant ? new InstantClock() : new StandardClock()
+        }
+        
+        // If clinical is null, preserve current state. 
+        // This prevents tests from accidentally un-silencing a Clinical Run.
+        if (clinical != null) {
+            clinicalMode = clinical
+        }
+        
         if (useVirtualBuffer) {
             virtualBuffer = new MemorySink()
-            sink = new TeeSink([new ConsoleSink(), virtualBuffer])
+            if (clinicalMode) {
+                sink = new TeeSink([nullSink, virtualBuffer])
+            } else {
+                sink = new TeeSink([new ConsoleSink(), virtualBuffer])
+            }
         } else {
-            sink = new ConsoleSink()
+            sink = clinicalMode ? nullSink : new ConsoleSink()
         }
+    }
+
+    /**
+     * Toggles Clinical Mode (silence) at runtime.
+     */
+    static void setClinical(boolean clinical) {
+        clinicalMode = clinical
+        initialize(virtualBuffer != null, clock instanceof InstantClock, clinicalMode)
     }
 
     static void print(String text) {
@@ -102,6 +126,10 @@ class Terminal {
 
     static void println() {
         sink.println("")
+    }
+
+    static void flush() {
+        sink.flush()
     }
 
     static void printf(String format, Object... args) {

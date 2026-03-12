@@ -6,4 +6,5 @@ import groovy.transform.CompileStatic
 interface RenderSink {
     void print(String message)
     void println(String message)
+    void flush()
 }

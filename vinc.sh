@@ -35,7 +35,7 @@ case "$1" in
     "--test")
         vinculum_compile
         echo -e "${CYAN}[VINC:EXECUTING_LOGIC_SUITE]${RESET}"
-        groovy -cp .build_vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy
+        groovy -cp .build_vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
         ;;
     "--compile")
         vinculum_compile
