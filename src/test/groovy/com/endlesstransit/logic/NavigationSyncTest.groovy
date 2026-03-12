@@ -61,9 +61,21 @@ class NavigationSyncTest {
         assertTrue(entered instanceof Floor, "Should have entered a floor")
         assertEquals(5, ((Floor)entered).number, "Choice '05' should lead to Floor 5")
 
+        // Test zero-agnostic resolution: "5" should match "05"
+        def action5 = mapper.resolve("5", inputHandler)
+        assertNotNull(action5, "Should be able to resolve choice '5' (zero-agnostic)")
+        action5.call()
+        assertEquals(5, ((Floor)game.state.currentLocation).number, "Choice '5' should lead to Floor 5")
+
         // Test choice "00" - should lead to Floor 0
         def action00 = mapper.resolve("00", inputHandler)
         action00.call()
         assertEquals(0, ((Floor)game.state.currentLocation).number, "Choice '00' should lead to Floor 0")
+
+        // Test choice "0" - should match "00"
+        def action0 = mapper.resolve("0", inputHandler)
+        assertNotNull(action0, "Should be able to resolve choice '0' (zero-agnostic)")
+        action0.call()
+        assertEquals(0, ((Floor)game.state.currentLocation).number, "Choice '0' should lead to Floor 0")
     }
 }
