@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0xDECE** | 2026-03-12 | **[THE_VINCULUM_CODEX]** | Codified 14+ behavioral specs; established logic-test alignment matrix. |
 | **0x870F** | 2026-03-11 | **[VERIFICATION_REVOLUTION]** | Migrated entire test suite to JUnit 5; implemented automated discovery. |
 | **0xB4A1** | 2026-03-11 | **[AESTHETIC_DECOUPLING]** | Decoupled UI from model via Adapter and Decorator patterns. |
 | **0x2F1B** | 2026-03-11 | **[VIRTUAL_PROXY_AUTOMATION]** | Automated child population via LazyLocusList Virtual Proxy. |
