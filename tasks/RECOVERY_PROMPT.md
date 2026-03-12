@@ -1,26 +1,29 @@
-# RECOVERY HANDOVER: [PHASE_0x870F_STABILIZATION]
+# RECOVERY HANDOVER: [PHASE_0xDECE_CODEX_STABILIZATION]
 
 ## 🎯 Current Status
-- **Substrate:** 100% Modernized. The entire test suite (41 cases) is now running on **JUnit 5 (Jupiter)** with automated discovery via `TestRunner.groovy`.
-- **Infrastructure:** Two major design specs are active:
-    1. `docs/design/TEST_INFRASTRUCTURE_EVOLUTION.md` (Golden Master & Chaos Monkey).
-    2. `docs/design/LOGIC_DECODING_MASTER_PLAN.md` (The Vinculum Codex).
-- **Safety:** Mandates in `GEMINI.custom.md` and `tasks/lessons/POST_MORTEM_2026_03_11.md` are non-negotiable.
+- **Substrate:** 100% Modernized. The entire test suite (41 cases) is now running on **JUnit 5 (Jupiter)**.
+- **Codex:** Phase 0 (Logic Decoding) is **COMPLETE**. The **Vinculum Codex** (`docs/logic/`) now contains 14+ behavioral specifications for Model, ProcGen, and Core domains.
+- **Gaps:** 4 critical logic gaps identified in `docs/logic/TEST_ALIGNMENT.md`:
+    1.  **Coherence Drain Multipliers** (Abyssal/Entropic).
+    2.  **Apartment Auto-Entry** (Orchestration shortcut).
+    3.  **Theme Synthesis** (Visual asset mapping).
+    4.  **Regional Divergence** (10% Rebel District frequency).
 
 ## 🚀 How to Resume
-To restart the refactoring or logic documentation effort safely, copy and paste the following prompt into a new session:
+To restart the gap-filling phase safely, copy and paste the following prompt into a new session:
 
 ---
 **START_PROMPT**
-Initialize session. We are in the **Post-Modernization Stabilization** phase. 
+Initialize session. We have completed **Phase 0 (Logic Decoding)** and formalized the **Vinculum Codex**.
 1. **Audit:** Confirm that `./vinc.sh --test` passes with 41/41 tests across all JUnit 5 classes.
-2. **Review:** Read the new design specs in `docs/design/LOGIC_DECODING_MASTER_PLAN.md` (ABSOLUTE_PRIORITY) and `docs/design/TEST_INFRASTRUCTURE_EVOLUTION.md`.
-3. **Context:** Check `journals/LOG_20260311_2050_0x870F.md` for the latest "Verification Revolution" chronicle.
-4. **MANDATE:** Phase 0 (Logic Decoding) is the first mandatory step. Do not begin the structural decomposition of `core` or the "Test Evolution" until the "Vinculum Codex" documentation for the target domain is complete and verified.
+2. **Review:** Read the **Test Alignment Matrix** in `docs/logic/TEST_ALIGNMENT.md` to understand the identified logic gaps.
+3. **Context:** Check `journals/LOG_20260312_0xDECE.md` for the latest "The Vinculum Codex" chronicle.
+4. **MANDATE:** The next step is to **create a detailed Plan Document** to address the identified gaps in `docs/logic/TEST_ALIGNMENT.md`. This plan should prioritize survival mechanics (Coherence) and navigation shortcuts (Auto-Entry) before moving to aesthetic synthesis.
 **END_PROMPT**
 ---
 
 ## 🏛️ Context Links
-- **Behavioral Baseline:** `docs/arch/TEST_CATALOG_20260311.md`
+- **Vinculum Codex:** `docs/logic/` (Behavioral source of truth)
+- **Logic Matrix:** `docs/logic/TEST_ALIGNMENT.md` (Identified GAPs)
+- **Orchestration Flow:** `docs/logic/ORCHESTRATION_FLOW.md`
 - **Logic Roadmap:** `docs/design/LOGIC_DECODING_MASTER_PLAN.md`
-- **Test Hardening Plan:** `docs/design/TEST_INFRASTRUCTURE_EVOLUTION.md`
