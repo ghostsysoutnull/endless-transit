@@ -2,6 +2,8 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0xDEE0** | 2026-03-12 | **[ENTROPY_AVALANCHE]** | Hardened entropy substrate; restored landmarks and regional divergence. |
+| **0xDECF** | 2026-03-12 | **[LANDMARK_FORENSICS]** | Traced landmark regression to March 11 refactor; staged restoration plan. |
 | **0xDECE** | 2026-03-12 | **[THE_VINCULUM_CODEX]** | Codified 14+ behavioral specs; established logic-test alignment matrix. |
 | **0x870F** | 2026-03-11 | **[VERIFICATION_REVOLUTION]** | Migrated entire test suite to JUnit 5; implemented automated discovery. |
 | **0xB4A1** | 2026-03-11 | **[AESTHETIC_DECOUPLING]** | Decoupled UI from model via Adapter and Decorator patterns. |

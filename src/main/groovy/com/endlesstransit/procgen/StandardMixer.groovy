@@ -16,11 +16,13 @@ class StandardMixer implements EntropyMixer {
 
     @Override
     long mix(long base, long input) {
-        // 1. Scramble the input via LCG step
-        long scrambled = input * MULT + INC
+        // 1. Scramble both the base and the input via LCG steps
+        // This ensures that even small changes in either parameter result 
+        // in massive bit-flips in the output (The Avalanche Effect).
+        long scrambledBase = (base * MULT) + INC
+        long scrambledInput = (input * MULT) + INC
         
-        // 2. Mix with the base via bitwise XOR
-        // This ensures the new seed is non-linearly unrelated to the parent.
-        return base ^ scrambled
+        // 2. Mix via bitwise XOR
+        return scrambledBase ^ scrambledInput
     }
 }

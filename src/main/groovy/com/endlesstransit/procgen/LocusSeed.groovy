@@ -59,7 +59,7 @@ class LocusSeed {
      * Semantic: returns true if a random roll is below the threshold (0.0 to 1.0).
      */
     boolean checkProbability(double threshold) {
-        return nextRandom().nextDouble() < threshold
+        return branch("PROBABILITY").nextRandom().nextDouble() < threshold
     }
 
     /**
@@ -67,21 +67,21 @@ class LocusSeed {
      */
     def <T> T pickFrom(List<T> list) {
         if (!list) return null
-        return list[nextRandom().nextInt(list.size())]
+        return list[branch("PICK").nextRandom().nextInt(list.size())]
     }
 
     /**
      * Semantic: returns a random integer between 0 (inclusive) and bound (exclusive).
      */
     int nextInt(int bound) {
-        return nextRandom().nextInt(bound)
+        return branch("INT").nextRandom().nextInt(bound)
     }
 
     /**
      * Semantic: returns a random double between 0.0 and 1.0.
      */
     double nextDouble() {
-        return nextRandom().nextDouble()
+        return branch("DOUBLE").nextRandom().nextDouble()
     }
 
     /**
@@ -89,7 +89,7 @@ class LocusSeed {
      */
     int nextInt(int min, int max) {
         if (min == max) return min
-        return nextRandom().nextInt(max - min + 1) + min
+        return branch("RANGE").nextRandom().nextInt(max - min + 1) + min
     }
 
     /**
@@ -98,18 +98,18 @@ class LocusSeed {
     String pickFromKeys(Map<String, ?> map) {
         if (!map) return null
         List<String> keys = new ArrayList<>(map.keySet())
-        return pickFrom(keys)
+        return (String) keys[branch("KEYS").nextRandom().nextInt(keys.size())]
     }
 
     /**
      * Semantic: returns true if a boolean roll succeeds.
      */
     boolean nextBoolean() {
-        return nextRandom().nextBoolean()
+        return branch("BOOL").nextRandom().nextBoolean()
     }
 
     long nextLong() {
-        return nextRandom().nextLong()
+        return branch("LONG").nextRandom().nextLong()
     }
 
     @Override
