@@ -2,6 +2,7 @@
 
 **AI ARCHITECT CONTEXT: DOMAIN MODEL**
 - **No Anemic Models:** Classes MUST encapsulate both data and behavior. Avoid "bags of getters/setters."
+- **Behavioral Integrity**: A model class is its narrative and visual identity. Never strip narrative methods, detailed descriptions, or unique UI logic during structural refactoring.
 - **Behavior-Driven State Mutation:** State changes must happen through domain-meaningful methods (e.g., `location.destabilize(amount)` instead of `location.setCoherence(...)`).
 - **Polymorphism Over Conditionals:** Use polymorphic behavior for all display logic. Concrete `Container` subclasses must implement `getMapSymbol()` and `getMapColor()` directly; `instanceof` checks are forbidden in these domains.
 - **Interface Segregation:** The `Location` interface is decomposed into focused traits: `Locatable` (identity), `Navigable` (movement), `Renderable` (display), and `Stateful` (mutation). Implement only what is necessary for a specific subtype.
@@ -20,6 +21,7 @@
 
 ## 🏛️ Verification Checklist
 - [ ] **Structural Crawl**: Do deep hierarchy requests work?
+- [ ] **Behavioral Integrity**: Compare a random location's `getName()` and `getPath()` against a known baseline.
 - [ ] **Recursive Safety**: Are there infinite loops during population?
 - [ ] **Property Consistency**: Do name, path, and vibes remain stable across calls?
 

@@ -1,7 +1,8 @@
 # Core Domain: The Engine
 
 **AI ARCHITECT CONTEXT: CORE ORCHESTRATION**
-- **Decomposed Facade:** `Game.groovy` is a thin facade. It MUST delegate all orchestration to specialized services: `GameState` (data), `TurnProcessor` (loop logic), `NavigationOrchestrator` (movement), `PersistenceService` (IO), and `RenderingCoordinator` (UI bridge).
+- **Decomposed Facade:** `Game.groovy` is a thin facade. It MUST delegate all orchestration to specialized services.
+- **Incremental Extraction**: Decomposing the facade must be done one service at a time. Do not move more than 5 related classes/methods in a single atomic refactor.
 - **Service Injection:** Core services should be injected or accessed via stable orchestrators. Avoid deep coupling between services; use `GameState` as the shared source of truth.
 - **State Integrity:** Orchestrate traversal and tracing, but never manually manipulate internal `Location` data structures.
 - **Resilience & Telemetry:** Emit events or updates that the `ui` module can subscribe to. No direct `println` calls.
@@ -20,6 +21,7 @@
 ## 🏛️ Verification Checklist
 - [ ] **Startup Test**: Does a new game initialize without NPEs?
 - [ ] **Turn Consistency**: Are mapping and navigation state-correct?
+- [ ] **Vibe Integrity**: Does the player HUD and bridge view look identical after turn orchestration changes?
 - [ ] **Survival Mechanics**: Does coherence drain correctly?
 
 ## 🏺 Localized Lessons

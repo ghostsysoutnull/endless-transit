@@ -23,6 +23,8 @@
 - **`VisualAssertionEngine`**: Mandatory tool for verifying TUI layout invariants.
 
 ## 🏛️ Verification Checklist
+- [ ] **Visual Baseline**: Mandatory `./vinc.sh --scan` before and after any UI or model change.
+- [ ] **Vibe Regression Check**: Compare output for specific markers (`RADAR`, `ELEVATOR`, `NEURAL_LINK`) against baselines.
 - [ ] UI alignment check at 100-character width.
 - [ ] Color consistency across location vibe shifts.
 - [ ] Proper terminal cleanup on exit/crash.
