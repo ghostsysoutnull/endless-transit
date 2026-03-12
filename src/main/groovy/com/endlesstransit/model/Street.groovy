@@ -102,12 +102,12 @@ class Street extends Container {
         
         List<Building> bldgs = getBuildings()
         Logger.info("Generating options for Street: $name. Building count: ${bldgs.size()}")
-        for (int i = 0; i < bldgs.size(); i++) {
-            Building building = bldgs[i]
+        bldgs.eachWithIndex { Building building, int i ->
+            final Building targetBuilding = building
             String id = String.format("%02d", i + 1)
             String label = "${id}. Enter Building: ${building.name}"
             if (building.isVisited()) label += " [Visited]"
-            options[label] = { game.enterLocation(building) }
+            options[label] = { game.enterLocation(targetBuilding) }
             Logger.info("  >> Added menu key: '$label'")
         }
         return options

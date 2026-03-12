@@ -61,12 +61,12 @@ class Apartment extends Container {
         Map<String, Closure> options = getBaseOptions(game)
         
         List<Room> rms = getRooms()
-        for (int i = 0; i < rms.size(); i++) {
-            Room room = rms[i]
+        rms.eachWithIndex { Room room, int i ->
+            final Room targetRoom = room
             String id = String.format("%02d", i + 1)
             String label = "${id}. Enter Room: ${room.name}"
             if (room.isVisited()) label += " [Visited]"
-            options[label] = { game.enterLocation(room) }
+            options[label] = { game.enterLocation(targetRoom) }
         }
         
         return options

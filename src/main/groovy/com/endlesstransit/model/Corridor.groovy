@@ -85,11 +85,11 @@ class Corridor extends Container {
         Map<String, Closure> options = getBaseOptions(game)
         
         List<Apartment> apts = getApartments()
-        for (int i = 0; i < apts.size(); i++) {
-            Apartment apt = apts[i]
+        apts.eachWithIndex { Apartment apt, int i ->
+            final Apartment targetApt = apt
             String id = String.format("%02d", i + 1)
             String label = "${id}. Access: ${apt.getName()}"
-            options[label] = { game.enterLocation(apt) }
+            options[label] = { game.enterLocation(targetApt) }
         }
         return options
     }

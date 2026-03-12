@@ -253,11 +253,17 @@ class Building extends Container {
     Map<String, Closure> getOptions(Game game) {
         Map<String, Closure> options = getBaseOptions(game)
         
-        // Floors access will trigger populateChildren() via LazyLocusList
-        for (Floor floor : floors) {
-            String id = String.format("%02d", floors.indexOf(floor) + 1)
-            String label = "${id}. Access: ${getFloorZone(floor.number)}"
-            options[label] = { game.enterLocation(floor) }
+        // Match the range shown in getExtraContent
+        int minFloor = isBreached ? -5 : 0
+        for (int i = maxFloors - 1; i >= minFloor; i--) {
+            Floor floor = getFloor(i)
+            if (floor != null) {
+                // Use a local variable to avoid closure capture bug
+                final Floor targetFloor = floor
+                String id = String.format("%02d", i)
+                String label = "${id}. Access: ${getFloorZone(i)}"
+                options[label] = { game.enterLocation(targetFloor) }
+            }
         }
         return options
     }
