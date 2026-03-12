@@ -6,10 +6,11 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
+import org.junit.jupiter.api.Test
+import static org.junit.jupiter.api.Assertions.*
 
-import groovy.test.GroovyTestCase
-
-class JournalTest extends GroovyTestCase {
+class JournalTest {
+    @Test
     void testSaveSession() {
         // Use a test-specific file
         String testFile = "journal_test.txt"
@@ -34,23 +35,23 @@ class JournalTest extends GroovyTestCase {
         File fLast = new File(lastEntryFile)
         JournalManager.saveSession(p)
         
-        assertTrue("Journal file should exist", f.exists())
-        assertTrue("Last entry file should exist", fLast.exists())
+        assertTrue(f.exists(), "Journal file should exist")
+        assertTrue(fLast.exists(), "Last entry file should exist")
         
         String content = f.text
-        assertTrue("Journal should contain step delta", content.contains("Temporal Displacement: 32"))
-        assertTrue("Journal should contain captured item in manifest", content.contains("[OBJ] Test Fragment"))
-        assertTrue("Journal should contain discovery in manifest", content.contains("[LOC] Universe > Alpha > Building 1"))
-        assertTrue("Journal should have summary header", content.contains("--- SESSION_EXECUTIVE_SUMMARY ---"))
-        assertTrue("Journal should have duration", content.contains("Session Duration:"))
-        assertTrue("Journal should have end timestamp", content.contains("SESSION_END:"))
+        assertTrue(content.contains("Temporal Displacement: 32"), "Journal should contain step delta")
+        assertTrue(content.contains("[OBJ] Test Fragment"), "Journal should contain captured item in manifest")
+        assertTrue(content.contains("[LOC] Universe > Alpha > Building 1"), "Journal should contain discovery in manifest")
+        assertTrue(content.contains("--- SESSION_EXECUTIVE_SUMMARY ---"), "Journal should have summary header")
+        assertTrue(content.contains("Session Duration:"), "Journal should have duration")
+        assertTrue(content.contains("SESSION_END:"), "Journal should have end timestamp")
         
         String lastContent = fLast.text
-        assertTrue("Last entry should contain snapshot header", lastContent.contains("LAST_SESSION_SNAPSHOT"))
-        assertTrue("Last entry should contain chronological discovery", lastContent.contains("[DISCOVERY] Universe > Alpha > Building 1"))
-        assertTrue("Last entry should contain chronological capture", lastContent.contains("[CAPTURE]   Test Fragment"))
-        assertTrue("Last entry should contain summary", lastContent.contains("--- SESSION_EXECUTIVE_SUMMARY ---"))
-        assertTrue("Last entry should contain captured item in manifest", lastContent.contains("[OBJ] Test Fragment"))
+        assertTrue(lastContent.contains("LAST_SESSION_SNAPSHOT"), "Last entry should contain snapshot header")
+        assertTrue(lastContent.contains("[DISCOVERY] Universe > Alpha > Building 1"), "Last entry should contain chronological discovery")
+        assertTrue(lastContent.contains("[CAPTURE]   Test Fragment"), "Last entry should contain chronological capture")
+        assertTrue(lastContent.contains("--- SESSION_EXECUTIVE_SUMMARY ---"), "Last entry should contain summary")
+        assertTrue(lastContent.contains("[OBJ] Test Fragment"), "Last entry should contain captured item in manifest")
         
         // Cleanup
         f.delete()

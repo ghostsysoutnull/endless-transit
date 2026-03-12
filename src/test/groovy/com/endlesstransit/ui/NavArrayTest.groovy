@@ -2,9 +2,18 @@ package com.endlesstransit.ui
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.core.Game
 import com.endlesstransit.model.*
-import groovy.test.GroovyTestCase
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
+import static org.junit.jupiter.api.Assertions.*
 
-class NavArrayTest extends GroovyTestCase {
+class NavArrayTest {
+
+    @BeforeEach
+    void setUp() {
+        Terminal.initialize(true, true)
+    }
+
+    @Test
     void testCompassLabelExtraction() {
         def game = new Game()
         def options = [
@@ -14,13 +23,14 @@ class NavArrayTest extends GroovyTestCase {
             "l. Leave Building": {}
         ]
         
-        assertEquals("Go Up", game.getCompassLabel("u.", options))
-        assertEquals("Go Down", game.getCompassLabel("d.", options))
-        assertEquals("Leave Building", game.getCompassLabel("l.", options))
+        assertEquals("Go Up", game.bridgeView.getCompassLabel("u.", options))
+        assertEquals("Go Down", game.bridgeView.getCompassLabel("d.", options))
+        assertEquals("Leave Building", game.bridgeView.getCompassLabel("l.", options))
         // Special case: numbered options are not directions in the current logic
-        assertEquals("", game.getCompassLabel("f.", options))
+        assertEquals("", game.bridgeView.getCompassLabel("f.", options))
     }
 
+    @Test
     void testVectorRenderingStability() {
         def game = new Game()
         game.currentLocation = new Street("Test")
@@ -32,7 +42,7 @@ class NavArrayTest extends GroovyTestCase {
         
         // Simply ensure it doesn't crash during rendering
         try {
-            game.renderCompass(options)
+            game.bridgeView.renderCompass(game.currentLocation, options)
             Terminal.println "SUCCESS: Vector Array rendered without crash."
         } catch (Exception e) {
             fail("Compass rendering failed: ${e.message}")

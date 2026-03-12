@@ -4,11 +4,13 @@ import com.endlesstransit.core.HeadlessRunner
 import com.endlesstransit.core.ReplayService
 import com.endlesstransit.ui.ScreenBuffer
 import com.endlesstransit.procgen.LocusSeed
-import groovy.test.GroovyTestCase
+import org.junit.jupiter.api.Test
+import static org.junit.jupiter.api.Assertions.*
 import java.io.File
 
-class ReplayServiceTest extends GroovyTestCase {
+class ReplayServiceTest {
 
+    @Test
     void testPromotionWorkflow() {
         long seed = 12345L
         List<String> script = ["f", "01", "quit", "y", "y"]

@@ -1,58 +1,54 @@
 package com.endlesstransit.model
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
-import com.endlesstransit.core.Game
-import com.endlesstransit.core.Player
-import com.endlesstransit.core.InventoryItem
-import com.endlesstransit.core.Logger
-import com.endlesstransit.core.JournalManager
+import com.endlesstransit.core.*
 import com.endlesstransit.procgen.LocusSeed
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
+import static org.junit.jupiter.api.Assertions.*
 
-Terminal.println "Running Mnemonic and Reversal Test..."
+class MnemonicReversalTest {
 
-def game = new Game()
-// Mocking initialization to start in a predictable state is hard due to randomization,
-// but we can verify the getOptions() return values for specific types.
+    @BeforeEach
+    void setUp() {
+        Terminal.initialize(true, true)
+    }
 
-// Test Room Reversal Logic
-def apartment = new Apartment("Test Door", "rust", "ancient", new LocusSeed(12345L))
-apartment.ensureChildrenPopulated()
-def rooms = apartment.rooms
+    @Test
+    void execute() {
+        Terminal.println "Running Mnemonic and Reversal Test..."
 
-if (rooms.size() < 2) {
-    Terminal.println "FAILURE: Test requires at least 2 rooms, but got ${rooms.size()}"
-    System.exit(1)
+        def game = new Game()
+        
+        // Test Room Reversal Logic
+        def apartment = new Apartment("Test Door", "rust", "ancient", new LocusSeed(12345L))
+        apartment.ensureChildrenPopulated()
+        def rooms = apartment.rooms
+
+        assertTrue(rooms.size() >= 2, "Test requires at least 2 rooms, but got ${rooms.size()}")
+
+        // Ensure rooms are empty so options are predictable
+        rooms.each { it.objects = [] }
+
+        def room1 = rooms[0]
+        def options1 = room1.getOptions(game)
+
+        assertTrue(options1.keySet().any { it.contains("Go forward") }, "First room should have 'f'")
+        assertTrue(options1.keySet().any { it.contains("Exit Apartment") }, "First room should have 'exit'")
+
+        def lastRoom = rooms.last()
+        def lastOptions = lastRoom.getOptions(game)
+        assertTrue(lastOptions.containsKey("b. Go back"), "Last room should have 'b'")
+        assertFalse(lastOptions.containsKey("f. Go forward"), "Last room should NOT have 'f'")
+
+        // Test Floor Reversal
+        def building = new Building()
+        building.maxFloors = 5
+        def floor0 = building.getFloor(0)
+        def floor0Ops = floor0.getOptions(game)
+        assertTrue(floor0Ops.containsKey("u. Go Up"), "Ground floor should have 'u'")
+        assertFalse(floor0Ops.containsKey("d. Go Down"), "Ground floor should NOT have 'd'")
+
+        Terminal.println "All Mnemonic Tests Passed!"
+    }
 }
-
-// Ensure rooms are empty so options are predictable
-rooms.each { it.objects = [] }
-
-def room1 = rooms[0]
-def options1 = room1.getOptions(game)
-
-if (options1.keySet().any { it.contains("Go forward") } && options1.keySet().any { it.contains("Exit Apartment") }) {
-    Terminal.println "SUCCESS: First room has 'f' and 'exit'."
-} else {
-    Terminal.println "FAILURE: First room options incorrect: ${options1.keySet()}"
-    System.exit(1)
-}
-
-def lastRoom = rooms.last()
-def lastOptions = lastRoom.getOptions(game)
-if (lastOptions.containsKey("b. Go back") && !lastOptions.containsKey("f. Go forward")) {
-    Terminal.println "SUCCESS: Last room has 'b' but no 'f'."
-} else {
-    Terminal.println "FAILURE: Last room options incorrect: ${lastOptions.keySet()}"
-    System.exit(1)
-}
-
-// Test Floor Reversal
-def building = new Building()
-building.maxFloors = 5
-def floor0 = building.getFloor(0)
-def floor0Ops = floor0.getOptions(game)
-if (floor0Ops.containsKey("u. Go Up") && !floor0Ops.containsKey("d. Go Down")) {
-    Terminal.println "SUCCESS: Ground floor has 'u' but no 'd'."
-}
-
-Terminal.println "All Mnemonic Tests Passed!"

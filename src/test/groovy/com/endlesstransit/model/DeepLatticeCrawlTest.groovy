@@ -1,20 +1,24 @@
 package com.endlesstransit.model
 
-import groovy.test.GroovyTestCase
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
 import com.endlesstransit.ui.Terminal
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
+import static org.junit.jupiter.api.Assertions.*
 
-class DeepLatticeCrawlTest extends GroovyTestCase {
+class DeepLatticeCrawlTest {
     Game game
     Universe universe
 
+    @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
         game = new Game(42L) // Stable seed
         universe = game.universe
     }
 
+    @Test
     void testVerticalIntegrity() {
         Terminal.println "Starting Deep Lattice Stress Crawl..."
         
@@ -86,7 +90,7 @@ class DeepLatticeCrawlTest extends GroovyTestCase {
         game.enterLocation(loc)
         
         def options = loc.getOptions(game)
-        assertFalse("Options should not be empty for ${loc.getName()}", options.isEmpty())
+        assertFalse(options.isEmpty(), "Options should not be empty for ${loc.getName()}")
 
         // Filter out "Leave" options to prevent infinite backtracking
         Map<String, Closure> travelOptions = options.findAll { Object k, Object v -> !((String)k).toLowerCase().contains("leave") }
@@ -115,7 +119,7 @@ class DeepLatticeCrawlTest extends GroovyTestCase {
                 return false
             }
 
-            assertNotNull("Could not match choice '$choice' for key '$key'", matchingKey)
+            assertNotNull(matchingKey, "Could not match choice '$choice' for key '$key'")
             
             Location startLoc = game.currentLocation
             options[matchingKey].call()

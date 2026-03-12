@@ -4,11 +4,19 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.ui.ScreenBuffer
 import com.endlesstransit.ui.VisualAssertionEngine
 import com.endlesstransit.procgen.LocusSeed
-import groovy.transform.CompileStatic
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
+import static org.junit.jupiter.api.Assertions.*
 
-@CompileStatic
 class HeadlessSimulationTest {
-    static void main(String[] args) {
+
+    @BeforeEach
+    void setUp() {
+        Terminal.initialize(true, true)
+    }
+
+    @Test
+    void execute() {
         Terminal.println "Running Headless Simulation Test..."
         LocusSeed locus = new LocusSeed(12345L)
 
@@ -29,20 +37,11 @@ class HeadlessSimulationTest {
 
         // 1. Structural Validation (LIP)
         String[] parts = finalScreen.locationPath.split("\\.")
-        if (parts.length >= 7) { // Adjusted depth expectation for 12345L
-            Terminal.println Terminal.colorize("SUCCESS: Headless simulation reached deep building strata.", Terminal.GREEN)
-        } else {
-            Terminal.println Terminal.colorize("FAILURE: Simulation ended at unexpected depth: ${parts.length}", Terminal.RED)
-            System.exit(1)
-        }
+        assertTrue(parts.length >= 7, "Simulation ended at unexpected depth: ${parts.length}")
+        Terminal.println "SUCCESS: Headless simulation reached deep building strata."
 
         // 2. Visual Validation (DSL)
-        try {
-            VisualAssertionEngine.expect(finalScreen).isBoxedCorrectly()
-            Terminal.println Terminal.colorize("SUCCESS: UI Boxing verified in headless mode.", Terminal.GREEN)
-        } catch (AssertionError e) {
-            Terminal.println Terminal.colorize("FAILURE: Visual assertion failed: ${e.message}", Terminal.RED)
-            System.exit(1)
-        }
+        VisualAssertionEngine.expect(finalScreen).isBoxedCorrectly()
+        Terminal.println "SUCCESS: UI Boxing verified in headless mode."
     }
 }

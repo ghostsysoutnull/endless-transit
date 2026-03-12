@@ -25,7 +25,6 @@ function vinculum_compile() {
         exit 1
     fi
     echo -e "${GREEN}[INTEGRITY_STABLE]${RESET}"
-    rm -rf .build_vinc .vinc_errors
 }
 
 # Ensure the script is always running from the project root
@@ -36,7 +35,7 @@ case "$1" in
     "--test")
         vinculum_compile
         echo -e "${CYAN}[VINC:EXECUTING_LOGIC_SUITE]${RESET}"
-        groovy -cp src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/AllTests.groovy
+        groovy -cp .build_vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy
         ;;
     "--compile")
         vinculum_compile

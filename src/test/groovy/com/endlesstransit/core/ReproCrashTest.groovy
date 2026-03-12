@@ -3,9 +3,11 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.ActionMapper
-import groovy.test.GroovyTestCase
+import org.junit.jupiter.api.Test
+import static org.junit.jupiter.api.Assertions.*
 
-class ReproCrashTest extends GroovyTestCase {
+class ReproCrashTest {
+    @Test
     void testGetActionNameWithNull() {
         def mapper = new ActionMapper()
         // Simulate initialization as in Game constructor/start
@@ -24,6 +26,7 @@ class ReproCrashTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testGetActionNameWithUnknownKey() {
         def mapper = new ActionMapper()
         mapper.currentActionMap = ["01": "01. Open Door"]

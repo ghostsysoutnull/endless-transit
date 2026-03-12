@@ -2,14 +2,18 @@ package com.endlesstransit.core
 
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.Location
-import groovy.test.GroovyTestCase
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
+import static org.junit.jupiter.api.Assertions.*
 
-class GameMementoTest extends GroovyTestCase {
+class GameMementoTest {
 
+    @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
     }
 
+    @Test
     void testMementoCaptureAndRestore() {
         // 1. Initialize Game with a fixed seed
         long seed = 12345L
@@ -31,11 +35,11 @@ class GameMementoTest extends GroovyTestCase {
         
         Location midLoc = game.currentLocation
         String midLIP = midLoc.getLIP()
-        assertFalse("LIP should have changed after navigation", startLIP == midLIP)
+        assertFalse(startLIP == midLIP, "LIP should have changed after navigation")
         
         // 3. Create Memento
         GameMemento memento = game.createMemento()
-        assertEquals("Memento should store current LIP", midLIP, memento.currentLIP)
+        assertEquals(midLIP, memento.currentLIP, "Memento should store current LIP")
         
         // 4. Play more steps
         game.processTurn()
@@ -45,15 +49,15 @@ class GameMementoTest extends GroovyTestCase {
         
         Location endLoc = game.currentLocation
         String endLIP = endLoc.getLIP()
-        assertFalse("LIP should have changed further", midLIP == endLIP)
+        assertFalse(midLIP == endLIP, "LIP should have changed further")
         
         // 5. Restore Memento
         game.restore(memento)
         
         // 6. Verify restoration
-        assertEquals("Master seed should be restored", seed, game.masterLocus.value)
-        assertEquals("LIP should be restored to midLoc", midLIP, game.currentLocation.getLIP())
-        assertEquals("Player coherence should be restored", memento.playerCoherence, game.player.coherence)
+        assertEquals(seed, game.masterLocus.value, "Master seed should be restored")
+        assertEquals(midLIP, game.currentLocation.getLIP(), "LIP should be restored to midLoc")
+        assertEquals(memento.playerCoherence, game.player.coherence, "Player coherence should be restored")
         
         println "SUCCESS: Game state perfectly restored from Memento."
     }

@@ -2,17 +2,20 @@ package com.endlesstransit.ui
 
 import com.endlesstransit.model.ModelOutput
 import com.endlesstransit.model.OutputFormatter
-import junit.framework.TestCase
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeEach
+import static org.junit.jupiter.api.Assertions.*
 
-class DisplayAdapterTest extends TestCase {
+class DisplayAdapterTest {
     private MemorySink sink
 
-    @Override
+    @BeforeEach
     void setUp() {
         sink = new MemorySink()
         Terminal.sink = sink
     }
 
+    @Test
     void testStandardAdapterInvariants() {
         OutputFormatter adapter = new StandardTerminalAdapter()
         ModelOutput.fmt = adapter
@@ -30,6 +33,7 @@ class DisplayAdapterTest extends TestCase {
         assertEquals(width, Terminal.getVisualWidth(coloredPadded))
     }
 
+    @Test
     void testGlitchedAdapterLayoutIntegrity() {
         OutputFormatter standard = new StandardTerminalAdapter()
         // Use a high glitch chance to ensure the logic is exercised
@@ -40,10 +44,10 @@ class DisplayAdapterTest extends TestCase {
         
         // Invariant: Even if glitched, the visual width MUST be preserved
         String padded = glitched.padRight(label, targetWidth)
-        assertEquals("Glitched adapter must maintain alignment", 
-                     targetWidth, Terminal.getVisualWidth(padded))
+        assertEquals(targetWidth, Terminal.getVisualWidth(padded), "Glitched adapter must maintain alignment")
     }
 
+    @Test
     void testGlitchedOutputVariation() {
         OutputFormatter standard = new StandardTerminalAdapter()
         OutputFormatter glitched = new GlitchedTerminalAdapter(standard, 1.0)
@@ -58,8 +62,8 @@ class DisplayAdapterTest extends TestCase {
         String cleanOutput = Terminal.stripAnsi(output).trim()
         
         // Assertion: Output should be different from input due to glitching
-        assertNotSame("Glitched output should modify the text", input, cleanOutput)
-        assertTrue("Output should be different", input != cleanOutput)
-        assertEquals("Length should remain stable", input.length(), cleanOutput.length())
+        assertNotSame(input, cleanOutput, "Glitched output should modify the text")
+        assertTrue(input != cleanOutput, "Output should be different")
+        assertEquals(input.length(), cleanOutput.length(), "Length should remain stable")
     }
 }

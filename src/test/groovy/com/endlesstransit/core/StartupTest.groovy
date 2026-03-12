@@ -6,27 +6,28 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
+import org.junit.jupiter.api.Test
+import static org.junit.jupiter.api.Assertions.*
 
-import groovy.test.GroovyTestCase
-
-class StartupTest extends GroovyTestCase {
+class StartupTest {
+    @Test
     void testGameInitialization() {
         try {
             def game = new Game()
-            assertNotNull("Game should initialize", game)
-            assertNotNull("Player should exist", game.player)
-            assertNotNull("Current location should be set", game.currentLocation)
+            assertNotNull(game, "Game should initialize")
+            assertNotNull(game.player, "Player should exist")
+            assertNotNull(game.currentLocation, "Current location should be set")
             
             // Simulate the first turn's context mapping
             Map<String, Closure> options = game.currentLocation.getOptions(game)
-            assertNotNull("Initial location should have options", options)
-            assertFalse("Options should not be empty", options.isEmpty())
+            assertNotNull(options, "Initial location should have options")
+            assertFalse(options.isEmpty(), "Options should not be empty")
             
             game.mapper.update(options)
             
             // Test getActionName for the initial state (lastChoice is null)
             String lastActionName = game.mapper.getActionName(game.navEngine.lastChoice)
-            assertEquals("Initial last choice name should be empty", "", lastActionName)
+            assertEquals("", lastActionName, "Initial last choice name should be empty")
             
             Terminal.println "SUCCESS: Game initialization and first turn context verified."
         } catch (Throwable t) {

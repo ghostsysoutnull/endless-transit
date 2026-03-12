@@ -3,9 +3,11 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.ProceduralFactory
-import groovy.test.GroovyTestCase
+import org.junit.jupiter.api.Test
+import static org.junit.jupiter.api.Assertions.*
 
-class ProcgenVariabilityTest extends GroovyTestCase {
+class ProcgenVariabilityTest {
+    @Test
     void testApartmentVariability() {
         LocusSeed streetLocus = new LocusSeed(987654321L)
         
@@ -40,13 +42,14 @@ class ProcgenVariabilityTest extends GroovyTestCase {
         Terminal.println "Object counts per apartment found: $objectCounts"
         Terminal.println "Unique room names: ${roomNames.size()} / Total rooms: ${roomNames.size()}"
         
-        assertTrue("Should have variable room counts, found only: $roomCounts", roomCounts.size() > 1)
-        assertTrue("Should have variable object counts, found only: $objectCounts", objectCounts.size() > 1)
+        assertTrue(roomCounts.size() > 1, "Should have variable room counts, found only: $roomCounts")
+        assertTrue(objectCounts.size() > 1, "Should have variable object counts, found only: $objectCounts")
         
         // Note: Room names might occasionally collide by pure chance, but with many rooms it should be mostly unique
-        assertTrue("Too many room name collisions. Unique: ${roomNames.size()}", roomNames.size() > 5)
+        assertTrue(roomNames.size() > 5, "Too many room name collisions. Unique: ${roomNames.size()}")
     }
 
+    @Test
     void testBuildingVariability() {
         LocusSeed streetLocus = new LocusSeed(11223344L)
         Set<Integer> floorCounts = []
@@ -61,7 +64,7 @@ class ProcgenVariabilityTest extends GroovyTestCase {
         Terminal.println "Floor counts found: $floorCounts"
         Terminal.println "Unique building names: ${buildingNames.size()} / 20"
         
-        assertTrue("Should have variable floor counts, found only: $floorCounts", floorCounts.size() > 3)
-        assertTrue("Should have mostly unique building names, found only: ${buildingNames.size()}", buildingNames.size() > 15)
+        assertTrue(floorCounts.size() > 3, "Should have variable floor counts, found only: $floorCounts")
+        assertTrue(buildingNames.size() > 15, "Should have mostly unique building names, found only: ${buildingNames.size()}")
     }
 }

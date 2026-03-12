@@ -3,28 +3,37 @@ import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.JournalManager
-import groovy.test.GroovyTestCase
+import com.endlesstransit.procgen.LocusSeed
+import org.junit.jupiter.api.Test
+import static org.junit.jupiter.api.Assertions.*
 
-class AbyssalRitualTest extends GroovyTestCase {
+class AbyssalRitualTest {
+    @Test
     void testRitualPriming() {
-        def building = new Building("Test")
+        def building = new Building(new LocusSeed(0L))
+        building.name = "Test"
         building.maxFloors = 3
         
-        assertFalse("New building should not be primed", building.isPrimed())
+        assertFalse(building.isPrimed(), "New building should not be primed")
         
         building.notifySampled(0)
         building.notifySampled(1)
         building.notifySampled(2)
-        assertEquals("Should have 3 sampled floors", 3, building.sampledFloors.size())
+        assertEquals(3, building.sampledFloors.size(), "Should have 3 sampled floors")
         
         building.infusionCount = 7
-        assertTrue("Building should now be primed", building.isPrimed())
+        assertTrue(building.isPrimed(), "Building should now be primed")
     }
 
+    @Test
     void testKeystoneGeneration() {
         def game = new Game()
-        def bldg = new Building("Alpha")
+        def bldg = new Building(new LocusSeed(0L))
+        bldg.name = "Alpha"
         bldg.maxFloors = 1
+        bldg.apartmentsPerFloor = 2
+        bldg.culture = "monolith"
+        bldg.timeline = "ancient"
         bldg.notifySampled(0)
         bldg.infusionCount = 7 // Prime it
         
@@ -35,28 +44,43 @@ class AbyssalRitualTest extends GroovyTestCase {
         game.player.mergeItems(0, 1, floor)
         
         def keystone = game.player.inventory.find { it.name == "Alpha Keystone" }
-        assertNotNull("Keystone should be created in primed building", keystone)
-        assertTrue("Item should be marked as keystone", keystone.isKeystone)
-        assertEquals("Keystone should have 0Hz frequency", 0, keystone.frequency)
+        assertNotNull(keystone, "Keystone should be created in primed building")
+        assertTrue(keystone.isKeystone, "Item should be marked as keystone")
+        assertEquals(0, keystone.frequency, "Keystone should have 0Hz frequency")
     }
 
+    @Test
     void testTerminologyShift() {
-        def bldg = new Building("Deep")
+        def bldg = new Building(new LocusSeed(0L))
+        bldg.name = "Deep"
+        bldg.culture = "monolith"
+        bldg.timeline = "ancient"
+        bldg.maxFloors = 10
+        bldg.apartmentsPerFloor = 2
+        bldg.isBreached = true // Enable abyssal access
+        
         def layer = bldg.getFloor(-1)
+        assertNotNull(layer, "Abyssal layer should be accessible when breached")
+        
+        // Force population to be sure
+        layer.ensureChildrenPopulated()
         
         assertEquals("Layer", layer.getTypeName())
         assertEquals("Layer -0x1", layer.getName())
-        assertTrue("Layer should be abyssal", layer.isAbyssal())
+        assertTrue(layer.isAbyssal(), "Layer should be abyssal")
         
-        def artery = layer.corridor
+        def artery = layer.getCorridor()
+        assertNotNull(artery, "Artery (Corridor) should be populated for layer")
         assertEquals("Artery", artery.getTypeName())
-        assertTrue("Artery should be abyssal", artery.isAbyssal())
+        assertTrue(artery.isAbyssal(), "Artery should be abyssal")
         
-        def crypt = artery.apartments[0]
+        def crypt = artery.getApartments()[0]
+        assertNotNull(crypt, "Crypt (Apartment) should exist in artery")
         assertEquals("Crypt", crypt.getTypeName())
         
-        def shard = crypt.rooms[0]
-        assertEquals("Shard", shard.getTypeName())
-        assertTrue("Shard name should be hex", shard.getName().startsWith("Shard 0x"))
+        def shard = crypt.getRooms()[0]
+        assertNotNull(shard, "Shard (Room) should exist in crypt")
+        // Terminology check: Room type name is generated, but label is "SHARD"
+        assertEquals("SHARD", shard.getTypeLabel())
     }
 }

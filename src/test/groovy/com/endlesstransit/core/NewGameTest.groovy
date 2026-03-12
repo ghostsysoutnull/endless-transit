@@ -1,10 +1,13 @@
 package com.endlesstransit.core
 import com.endlesstransit.ui.Terminal
-
-import groovy.test.GroovyTestCase
 import com.endlesstransit.model.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.DisplayName
+import static org.junit.jupiter.api.Assertions.*
 
-class NewGameTest extends GroovyTestCase {
+class NewGameTest {
+    @Test
+    @DisplayName("Stress test game world initialization and first render")
     void testNewGameInitializationAndFirstRender() {
         Terminal.println "Stress testing game world initialization AND rendering with 50 random seeds..."
         // Disable sleep for tests to speed up the process
@@ -15,8 +18,8 @@ class NewGameTest extends GroovyTestCase {
             long seed = r.nextLong()
             try {
                 Game game = new Game(seed)
-                assertNotNull("Game universe should be initialized", game.universe)
-                assertNotNull("Current location should be set", game.currentLocation)
+                assertNotNull(game.universe, "Game universe should be initialized")
+                assertNotNull(game.currentLocation, "Current location should be set")
                 
                 // Simulate the first pass of the main loop before input
                 game.bridgeView.renderBridgeHUD(game.currentLocation, game.player)
@@ -24,15 +27,15 @@ class NewGameTest extends GroovyTestCase {
                 
                 // Verify no crash during option generation
                 Map<String, Closure> options = game.currentLocation.getOptions(game)
-                assertFalse("Initial location should have navigation options", options.isEmpty())
+                assertFalse(options.isEmpty(), "Initial location should have navigation options")
                 
                 // 3. Simulate first navigation step (Enter first building)
                 String firstKey = (String) options.keySet().find { ((String)it).contains("Enter Building:") }
                 if (firstKey != null) {
                     Terminal.println "  >> Testing navigation to: $firstKey"
                     options[firstKey].call()
-                    assertNotNull("Should have moved to a building", game.currentLocation)
-                    assertTrue("Should be in a building", game.currentLocation instanceof com.endlesstransit.model.Building)
+                    assertNotNull(game.currentLocation, "Should have moved to a building")
+                    assertTrue(game.currentLocation instanceof com.endlesstransit.model.Building, "Should be in a building")
                 }
                 
             } catch (Exception e) {
