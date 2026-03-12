@@ -330,9 +330,11 @@ class ProceduralFactory {
             a.addLocation(room)
         }
 
+        int objIdx = 0
         while (!objectPool.isEmpty()) {
-            int roomIdx = a.locus.nextInt(a.rooms.size())
+            int roomIdx = a.locus.branch("DIST_" + objIdx).nextInt(a.rooms.size())
             a.rooms[roomIdx].objects << (String) objectPool.remove(0)
+            objIdx++
         }
         return a
     }
