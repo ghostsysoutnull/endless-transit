@@ -1,24 +1,26 @@
-# RECOVERY HANDOVER: [RETAKE_SESSION_0x7E2A]
+# RECOVERY HANDOVER: [PHASE_0x870F_STABILIZATION]
 
 ## 🎯 Current Status
-- **Codebase:** Stable Master (Reverted). All logic-rich model classes and the engine are in their original state.
-- **Plans:** High-fidelity roadmaps exist in `tasks/active/` but progress is reset to 0%.
-- **Safety:** The "Shield" mandates are active in `GEMINI.custom.md`.
+- **Substrate:** 100% Modernized. The entire test suite (41 cases) is now running on **JUnit 5 (Jupiter)** with automated discovery via `TestRunner.groovy`.
+- **Infrastructure:** Two major design specs are active:
+    1. `docs/design/TEST_INFRASTRUCTURE_EVOLUTION.md` (Golden Master & Chaos Monkey).
+    2. `docs/design/LOGIC_DECODING_MASTER_PLAN.md` (The Vinculum Codex).
+- **Safety:** Mandates in `GEMINI.custom.md` and `tasks/lessons/POST_MORTEM_2026_03_11.md` are non-negotiable.
 
 ## 🚀 How to Resume
-To restart the refactoring effort safely, copy and paste the following prompt into a new session:
+To restart the refactoring or logic documentation effort safely, copy and paste the following prompt into a new session:
 
 ---
 **START_PROMPT**
-Initialize session. I want to resume the **OO Structural Pivot** refactor.
-1. Read the safety mandates in `@tasks/lessons/POST_MORTEM_2026_03_11.md`.
-2. Review the roadmap in `@tasks/todo.md` and the detailed plan in `@tasks/active/OO_STRUCTURAL_PIVOT.md`.
-3. Establish a "Vibe Baseline" by running `./vinc.sh --scan` and `./vinc.sh --test` before changing anything.
-4. **MANDATE:** Propose a strategy for Phase 1.1, but DO NOT modify any files until I give you the specific "Start Implementing" directive.
+Initialize session. We are in the **Post-Modernization Stabilization** phase. 
+1. **Audit:** Confirm that `./vinc.sh --test` passes with 41/41 tests across all JUnit 5 classes.
+2. **Review:** Read the new design specs in `docs/design/TEST_INFRASTRUCTURE_EVOLUTION.md` and `docs/design/LOGIC_DECODING_MASTER_PLAN.md`.
+3. **Context:** Check `journals/LOG_20260311_2050_0x870F.md` for the latest "Verification Revolution" chronicle.
+4. **MANDATE:** Do not begin the structural decomposition of `core` until Phase 1 of the "Logic Decoding" or "Test Evolution" plans is approved and initiated.
 **END_PROMPT**
 ---
 
 ## 🏛️ Context Links
-- **Primary Roadmap:** `tasks/todo.md`
-- **Structural Plan:** `tasks/active/OO_STRUCTURAL_PIVOT.md`
-- **Traversal Plan:** `tasks/active/VERTICAL_TRAVERSAL_REFACTOR.md`
+- **Behavioral Baseline:** `docs/arch/TEST_CATALOG_20260311.md`
+- **Logic Roadmap:** `docs/design/LOGIC_DECODING_MASTER_PLAN.md`
+- **Test Hardening Plan:** `docs/design/TEST_INFRASTRUCTURE_EVOLUTION.md`
