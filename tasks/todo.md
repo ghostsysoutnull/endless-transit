@@ -1,31 +1,41 @@
-# 🚀 Active Plan (The Vinculum Codex & Structural Pivot)
-**Objective:** Systematically document the simulation's "Source of Truth" through logic decoding before executing the structural decompression of the `core` layer.
+# Endless Transit: Active Task List
+
+## 🔴 ACTIVE: [LOGIC_HARDENING_PHASE_2]
+**Objective:** Address identified logic gaps in Coherence and Navigation.
+**Ref Document:** `tasks/active/LOGIC_HARDENING_PLAN.md`
+
+### Phase 1: Survival Mechanics (Coherence)
+- [ ] 1.1 Implement `CoherenceDrainTest.groovy`
+- [ ] 1.2 Refine `GameState.adjustCoherence()` (Multiplier + Death State)
+
+### Phase 2: Navigation Shortcuts (Auto-Entry)
+- [ ] 2.1 Implement `AutoEntryTest.groovy`
+- [ ] 2.2 Refine `NavigationOrchestrator` (Apartment -> Room transition)
+
+### Phase 3: Synthesis & Verification
+- [ ] 3.1 Implement `RegionalDivergenceTest.groovy`
+- [ ] 3.2 Implement `AtmosphereSynthesisTest.groovy`
+- [ ] 3.3 Full Suite Regression (41+ tests)
+- [ ] 3.4 Chronicle & Align Codex
 
 ---
 
-## 📅 Roadmap (Active Evolution)
-
-### Phase 0: Logic Decoding & Behavioral Mapping (CURRENT_FOCUS)
-- [ ] **Core Formula Extraction**: Document `LocusSeed` branching, `NameGenerator` weights, and `Gematria` resonance in `docs/logic/CORE_PHYSICS.md`.
-- [ ] **Class-Level Neural Mapping**: Create behavioral specifications for all `model` and `procgen` classes in `docs/logic/classes/`.
-- [ ] **Orchestration Flow**: Document the "Spatial Pivot" and "Turn Cycle" interactions in `docs/logic/ORCHESTRATION_FLOW.md`.
-- [ ] **Logic-Test Alignment**: Verify all documented rules against the JUnit 5 suite and identify "Dark Logic" gaps.
-
-### Phase 1: Test Infrastructure Evolution (PENDING)
-- [ ] **Golden Master Registry**: Implement the 100-location snapshot system for bit-perfect ProcGen verification.
-- [ ] **Memento Parity Audit**: Verify deep serialization/restoration integrity.
-- [ ] **Chaos Monkey Fuzzing**: Stress-test the state machine with randomized command injection.
-
-### Phase 2: Structural Architecture Refactor (PENDING)
-- [ ] **Game.groovy Decomposition**: Decomposed into 5 specialized services (`GameState`, `TurnProcessor`, etc.).
-- [ ] **Location Interface Segregation**: Split into `Locatable`, `Navigable`, `Renderable`, and `Stateful`.
-- [ ] **Polymorphic Dispatch**: Removed `instanceof` checks; implemented `getMapSymbol()` in concrete classes.
-- [ ] **Service Injection**: `ThemeService` and `ProceduralFactory` converted to instances.
-- [ ] **Model/UI Decoupling**: Implemented `OutputFormatter` and `TerminalAdapter`.
+## 🟢 COMPLETED: [PHASE_0_LOGIC_DECODING]
+- [x] Create Vinculum Codex (14 docs)
+- [x] Map Logic-Test Alignment Matrix (70% coverage)
+- [x] Verify 41/41 baseline JUnit 5 tests
+- [x] Chronicle 0xDECE
 
 ---
 
-## 🏛️ Phase 2 Recommendations
-1.  **Start with 2.1 (LocusSeed)**: Foundational change for seed management.
-2.  **Follow with 2.2 (Command Pattern)**: Cleans up the "Brain" of the game.
-3.  **Implement 2.3 (Virtual Proxy)**: Removes "empty world" bugs caused by lazy-loading.
+## ⏳ BACKLOG: [AESTHETIC_REFINEMENT]
+- [ ] [NEURAL_MAP] Implement right-side 2D ASCII radar.
+- [ ] [SYSTEM_TELEMETRY] Dynamic Spectrogram.
+- [ ] [VINCULUM_AUDIT] Static analysis for @CompileStatic enforcement.
+
+---
+
+## 🏛️ RECENT LESSONS (Updated 2026-03-12)
+- **Clinical Testing:** Use `./vinc.sh --test` to verify logic invariants without UI overhead.
+- **LIP Resolution:** LIPs are the source of truth for all world navigation and state restoration.
+- **Entropy Mixers:** LocusSeed branching must follow strictly deterministic vertical flow.
