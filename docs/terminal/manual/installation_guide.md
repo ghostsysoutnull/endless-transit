@@ -61,4 +61,4 @@ The system will attempt to create a `session.trace` file in the root directory t
 ---
 **STATUS**: READY_FOR_TRANSIT
 **GATEWAY**: CONFIGURED
-*Proceed to [SYSTEM_INITIALIZATION]({{ "/manual/system_initialization.html" | relative_url }}) to begin.*
+*Proceed to [SYSTEM_INITIALIZATION]({{ "/terminal/manual/system_initialization.html" | relative_url }}) to begin.*

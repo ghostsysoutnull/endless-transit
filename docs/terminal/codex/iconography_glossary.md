@@ -44,4 +44,4 @@ Used in the **Aperture Scan** and **Spectrogram** panes.
 *   `-------` : **ENCRYPTED** — Locked or inaccessible signature.
 
 ---
-*Next Node: [\[THE_BEDROCK_SHIFT\]]({{ "/codex/the_bedrock_shift.html" | relative_url }})*
+*Next Node: [\[THE_BEDROCK_SHIFT\]]({{ "/terminal/codex/the_bedrock_shift.html" | relative_url }})*

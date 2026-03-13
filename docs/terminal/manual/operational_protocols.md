@@ -29,4 +29,4 @@ To access the Abyssal Substrate, you must perform a ritual at the "Peak" of a bu
 4.  **The Breach:** With the Keystone in hand, you can initiate a Bedrock Breach, opening an aperture to the negative strata below Floor 0.
 
 ---
-*Proceed to [LINK_NAVIGATION]({{ "/manual/link_navigation.html" | relative_url }}) for the tactical control manifest.*
+*Proceed to [LINK_NAVIGATION]({{ "/terminal/manual/link_navigation.html" | relative_url }}) for the tactical control manifest.*

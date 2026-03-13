@@ -34,4 +34,4 @@ When you breach the Bedrock, Coherence is replaced by **Integrity**.
 2.  **The Buffer Buffer:** Never let your Coherence drop below 30% if your buffer is empty. You need at least two items to perform a life-saving synthesis.
 
 ---
-*Next Node: [\[LATTICE_HUNTING\]]({{ "/codex/lattice_hunting.html" | relative_url }})*
+*Next Node: [\[LATTICE_HUNTING\]]({{ "/terminal/codex/lattice_hunting.html" | relative_url }})*

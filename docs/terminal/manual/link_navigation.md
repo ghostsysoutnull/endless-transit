@@ -44,4 +44,4 @@ Your terminal header is a high-fidelity data deck providing real-time telemetry:
 *   **Termination:** Always confirm your intent to `quit`. You will be offered a final synchronization before the link is severed.
 
 ---
-*Proceed to [SYSTEM_SPECIFICATIONS]({{ "/manual/system_specifications.html" | relative_url }}) for a deep dive into the system architecture.*
+*Proceed to [SYSTEM_SPECIFICATIONS]({{ "/terminal/manual/system_specifications.html" | relative_url }}) for a deep dive into the system architecture.*

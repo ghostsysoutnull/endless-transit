@@ -45,4 +45,4 @@ Beneath every building lies the **Bedrock**. Through the ritual of **Harmonic In
 In the Substrate, the light is red, the walls are raw concrete, and the **Abyssal Pressure** threatens your Integrity at every turn.
 
 ---
-*Proceed to the [OPERATIONAL_PROTOCOLS]({{ "/manual/operational_protocols.html" | relative_url }}) to master the mechanics of the link.*
+*Proceed to the [OPERATIONAL_PROTOCOLS]({{ "/terminal/manual/operational_protocols.html" | relative_url }}) to master the mechanics of the link.*
