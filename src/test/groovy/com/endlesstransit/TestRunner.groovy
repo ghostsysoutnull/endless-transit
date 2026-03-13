@@ -7,6 +7,10 @@ import org.junit.platform.launcher.TestExecutionListener
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.engine.TestExecutionResult
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*
+import static org.junit.platform.launcher.EngineFilter.*
+import static org.junit.platform.launcher.TagFilter.*
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*
+import static org.junit.platform.engine.discovery.ClassNameFilter.*
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.core.InputHandler
 import com.endlesstransit.core.MockInputSource

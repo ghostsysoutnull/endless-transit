@@ -36,6 +36,7 @@ class TurnProcessor {
         globalCommands["help"] = new HelpCommand()
         globalCommands["glitch"] = new GlitchMenuCommand()
         globalCommands["quit"] = new QuitCommand()
+        globalCommands["quitnow"] = new QuitNowCommand()
     }
 
     boolean processTurn() {
