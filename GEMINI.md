@@ -1,4 +1,4 @@
-@GEMINI.custom.md
+@.gemini/GEMINI.custom.md
 
 # Endless Transit: The Vinculum Neural Interface
 

@@ -6,9 +6,9 @@ journal-last-entry.txt
 .journal_session_tmp
 *.swp
 session.trace
-.build_vinc/
-.vinc_errors
+build/
 *.class
 last-message.txt
+
 journal_test.txt
 journal-last-entry_test.txt

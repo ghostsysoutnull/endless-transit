@@ -12,16 +12,16 @@ RESET='\033[0m'
 # Function: Clean Compilation Check
 function vinculum_compile() {
     echo -ne "${CYAN}[VINC:VERIFYING_SUBSTRATE...]${RESET} "
-    mkdir -p .build_vinc
+    mkdir -p build/vinc
     # Compile both main and test sources to ensure global integrity
-    if ! groovyc -cp src/main/groovy:src/test/groovy -d .build_vinc \
+    if ! groovyc -cp src/main/groovy:src/test/groovy -d build/vinc \
         src/main/groovy/com/endlesstransit/**/*.groovy \
         src/main/groovy/com/endlesstransit/*.groovy \
         src/test/groovy/com/endlesstransit/**/*.groovy \
-        src/test/groovy/com/endlesstransit/*.groovy 2> .vinc_errors; then
+        src/test/groovy/com/endlesstransit/*.groovy 2> build/vinc_errors; then
         echo -e "${RED}[INTEGRITY_FAILURE]${RESET}"
-        cat .vinc_errors
-        rm -rf .build_vinc .vinc_errors
+        cat build/vinc_errors
+        rm -rf build/vinc build/vinc_errors
         exit 1
     fi
     echo -e "${GREEN}[INTEGRITY_STABLE]${RESET}"
@@ -35,7 +35,7 @@ case "$1" in
     "--test")
         vinculum_compile
         echo -e "${CYAN}[VINC:EXECUTING_LOGIC_SUITE]${RESET}"
-        groovy -cp .build_vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
+        groovy -cp build/vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
         ;;
     "--compile")
         vinculum_compile
