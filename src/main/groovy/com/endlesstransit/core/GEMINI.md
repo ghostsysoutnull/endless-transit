@@ -1,28 +1,27 @@
-# Core Domain: The Engine
+# Domain Invariants: Engine & Core
 
-**AI ARCHITECT CONTEXT: CORE ORCHESTRATION**
+**ARCHITECTURAL CONSTRAINTS**
 - **Decomposed Facade:** `Game.groovy` is a thin facade. It MUST delegate all orchestration to specialized services.
-- **Incremental Extraction**: Decomposing the facade must be done one service at a time. Do not move more than 5 related classes/methods in a single atomic refactor.
-- **Service Injection:** Core services should be injected or accessed via stable orchestrators. Avoid deep coupling between services; use `GameState` as the shared source of truth.
-- **State Integrity:** Orchestrate traversal and tracing, but never manually manipulate internal `Location` data structures.
-- **Resilience & Telemetry:** Emit events or updates that the `ui` module can subscribe to. No direct `println` calls.
+- **Incremental Extraction**: Decomposing the facade must be done one service at a time (max 5 files/methods per refactor).
+- **Service Injection:** Core services should access `GameState` as the shared source of truth.
+- **State Integrity**: Never manually manipulate internal `Location` data structures.
+- **Resilience & Telemetry**: Emit events or updates for the UI. No direct `println`.
 
 ## ⚙️ Game Loop & State
-- **Primary Loop**: `Game.groovy` manages the turn cycle via `TurnProcessor`.
-- **Orchestration**: Logic is partitioned across `NavigationOrchestrator`, `ActionMapper`, and `RenderingCoordinator`.
-- **Persistence**: Managed exclusively by `PersistenceService` using `GameMemento`.
+- **Primary Loop**: Managed via `TurnProcessor`.
+- **Orchestration**: Logic partitioned across `NavigationOrchestrator`, `ActionMapper`, and `RenderingCoordinator`.
+- **Persistence**: Exclusive management by `PersistenceService` via `GameMemento`.
 
 ## 🏗️ Technical Invariants
-1. **Turn Integrity**: Every turn MUST update the `ActionMapper` with current options. `GameMemento` is used for state recovery and deterministic replay.
-2. **Deterministic Inputs**: `InputSource` is the mandatory abstraction for all game loop execution.
-3. **No Terminal Direct-Access**: All output must go through `Terminal` / `RenderSink`.
-4. **Service Isolation**: Changes to navigation logic must stay in `NavigationOrchestrator`; UI orchestration stays in `RenderingCoordinator`.
+1. **Turn Integrity**: Every turn MUST update `ActionMapper`.
+2. **Deterministic Inputs**: `InputSource` abstraction is mandatory.
+3. **No Terminal Direct-Access**: All output MUST go through `Terminal` / `RenderSink`.
+4. **Service Isolation**: Navigation logic stays in `NavigationOrchestrator`.
 
 ## 🏛️ Verification Checklist
-- [ ] **Startup Test**: Does a new game initialize without NPEs?
-- [ ] **Turn Consistency**: Are mapping and navigation state-correct?
-- [ ] **Vibe Integrity**: Does the player HUD and bridge view look identical after turn orchestration changes?
-- [ ] **Survival Mechanics**: Does coherence drain correctly?
+- [ ] **Startup Test**: New game initializes without NPEs.
+- [ ] **Turn Consistency**: Mapping and navigation are state-correct.
+- [ ] **Survival Mechanics**: Coherence drain is verified.
 
 ## 🏺 Localized Lessons
-@../../../../../../tasks/lessons/core.md
+- **Core Domain Lessons**: @tasks/lessons/core.md

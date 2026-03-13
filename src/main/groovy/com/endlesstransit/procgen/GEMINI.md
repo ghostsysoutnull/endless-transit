@@ -1,26 +1,25 @@
-# ProcGen Domain: Entropy & Synthesis
+# Domain Invariants: Entropy & Synthesis
 
-**AI ARCHITECT CONTEXT: ENTROPY ARCHITECT**
-- **Strict Determinism:** Every generator MUST be stateless. The same `LocusSeed` and index MUST produce the exact same output. No static `Random` or `ThreadLocalRandom`.
-- **Branch Integrity:** Child seeds MUST be derived using `locus.branch(index)`. Never generate a new root seed for a child location; entropy must flow down the hierarchy.
-- **Service-Based Generation:** Use `ProceduralFactory.instance` and `ThemeService.instance` (or injected equivalents) for generation. Static utility methods for complex synthesis are discouraged to ensure testability.
-- **Semantic Variance:** Ensure `NameGenerator` and `ThemeService` use local seed-scrambling to prevent "Repetition Drift" where siblings look identical.
+**ARCHITECTURAL CONSTRAINTS**
+- **Strict Determinism:** Every generator MUST be stateless. No static `Random` or `ThreadLocalRandom`.
+- **Branch Integrity:** Child seeds MUST be derived using `locus.branch(index)`.
+- **Service-Based Generation:** Use `ProceduralFactory.instance` and `ThemeService.instance`.
+- **Semantic Variance:** Component engines MUST accept an explicit seed.
 
 ## ⚛️ The Seed of Reality
-- **Primary Source**: `LocusSeed.groovy`
-- **Philosophy**: Mathematical determinism. Given a seed, the universe is pre-calculated.
+- **Primary Source**: `LocusSeed.groovy`.
+- **Philosophy**: Mathematical determinism.
 
 ## 🧬 Entropy Rules
-1. **Vertical Branching**: Use `locus.branch(index)` to derive seeds for child locations.
-2. **Horizontal Variability**: Use a local `Random` (via `locus.nextRandom()`) for sequential attributes within a single location.
-3. **Immutability**: `LocusSeed` is an immutable value object. Never modify its internal state.
-4. **Service Determinism**: Component engines (NameGenerator, ThemeService) MUST accept an explicit seed. Static `Random` usage is forbidden.
-5. **Scenario Discovery**: Use `SeedScanner` and `WorldProbe` for horizontal seed exploration.
+1. **Vertical Branching**: `locus.branch(index)` for child locations.
+2. **Horizontal Variability**: `locus.nextRandom()` for sequential attributes.
+3. **Immutability**: `LocusSeed` is an immutable value object.
+4. **Service Determinism**: Never use static `Random` in utilities.
 
 ## 🏛️ Verification Checklist
-- [ ] **Seed Stability**: Does the same seed produce the same world?
-- [ ] **Entropy Isolation**: Do changes in one branch affect other branches?
-- [ ] **Name Uniqueness**: Are building/room names sufficiently varied?
+- [ ] **Seed Stability**: Same seed produces same world.
+- [ ] **Entropy Isolation**: Changes in one branch don't affect others.
+- [ ] **Name Uniqueness**: Names are sufficiently varied.
 
 ## 🏺 Localized Lessons
-@../../../../../../tasks/lessons/procgen.md
+- **Entropy Domain Lessons**: @tasks/lessons/procgen.md
