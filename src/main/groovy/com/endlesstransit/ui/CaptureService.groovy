@@ -1,6 +1,10 @@
 package com.endlesstransit.ui
 
 import groovy.transform.CompileStatic
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.io.File
@@ -16,6 +20,7 @@ class CaptureService {
         return t
     }
     private static final String SCREENSHOT_DIR = "screenshots"
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
     
     static class CaptureResult {
         boolean success
@@ -48,7 +53,8 @@ class CaptureService {
             File dir = new File(SCREENSHOT_DIR)
             if (!dir.exists()) dir.mkdirs()
 
-            String timestamp = new Date(buffer.timestamp).format("yyyyMMdd_HHmmss")
+            String timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(buffer.timestamp), ZoneId.systemDefault())
+                                .format(TIMESTAMP_FORMATTER)
             // Sanitize LIP for filename
             String lip = buffer.locationPath.replaceAll("[^a-zA-Z0-9.-]", "_")
             String filename = "${SCREENSHOT_DIR}/screenshot_${providerName}_${lip}_${timestamp}.${strategy.getExtension()}"

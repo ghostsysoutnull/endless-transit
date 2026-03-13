@@ -3,21 +3,21 @@ plugins {
     id 'application'
 }
 
+buildDir = 'build/gradle'
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy-all:4.0.15'
-    testImplementation 'org.apache.groovy:groovy-test:4.0.15'
+    implementation 'org.apache.groovy:groovy-all:5.0.0'
+    testImplementation 'org.apache.groovy:groovy-test:5.0.0'
     
     // JUnit 5 Platform & Jupiter
-    testImplementation platform('org.junit:junit-bom:5.10.1')
+    testImplementation platform('org.junit:junit-bom:5.11.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    
-    // JUnit 4 (Vintage) for co-existence during migration
-    testImplementation 'junit:junit:4.13.2'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.platform:junit-platform-engine'
 }
 
 application {
