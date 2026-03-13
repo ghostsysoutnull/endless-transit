@@ -326,18 +326,32 @@ class Terminal {
 
     /**
      * Renders a 1D radar showing current position [ ] [X] [ ].
+     * Auto-windows the view if total exceeds a specific limit to keep the index centered.
      */
-    static String renderRadar(int index, int total, String activeColor = YELLOW) {
+    static String renderRadar(int index, int total, String activeColor = YELLOW, int windowSize = 10) {
         if (total <= 0) return ""
+        
+        int start = Math.max(1, index - (windowSize / 2).toInteger())
+        int end = Math.min(total, start + windowSize - 1)
+        
+        // Adjust start if end is at total
+        if (end == total) {
+            start = Math.max(1, total - windowSize + 1)
+        }
+
         StringBuilder sb = new StringBuilder()
-        for (int i = 1; i <= total; i++) {
+        if (start > 1) sb.append(dim(".. "))
+        
+        for (int i = start; i <= end; i++) {
             if (i == index) {
                 sb.append(colorize("[X]", activeColor))
             } else {
                 sb.append(dim("[ ]"))
             }
-            if (i < total) sb.append(" ")
+            if (i < end) sb.append(" ")
         }
+        
+        if (end < total) sb.append(dim(" .."))
         return sb.toString()
     }
 

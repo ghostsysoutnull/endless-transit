@@ -25,10 +25,12 @@ class Building extends Container {
     boolean isLandmark = false
     int infusionCount = 0
     Set<Integer> sampledFloors = new LinkedHashSet<>()
+    int lastVisitedFloor = 0
 
     void notifySampled(int floorNumber) {
         if (floorNumber >= 0 && floorNumber < maxFloors) {
             sampledFloors.add(floorNumber)
+            lastVisitedFloor = floorNumber
         }
     }
 
@@ -55,7 +57,8 @@ class Building extends Container {
             "isBreached": isBreached,
             "isLandmark": isLandmark,
             "infusionCount": infusionCount,
-            "sampledFloors": sampledFloors.toList()
+            "sampledFloors": sampledFloors.toList(),
+            "lastVisitedFloor": lastVisitedFloor
         ]
     }
 
@@ -64,6 +67,7 @@ class Building extends Container {
         if (state.containsKey("isBreached")) this.isBreached = (boolean) state.isBreached
         if (state.containsKey("isLandmark")) this.isLandmark = (boolean) state.isLandmark
         if (state.containsKey("infusionCount")) this.infusionCount = (int) state.infusionCount
+        if (state.containsKey("lastVisitedFloor")) this.lastVisitedFloor = (int) state.lastVisitedFloor
         if (state.containsKey("sampledFloors")) {
             this.sampledFloors.clear()
             this.sampledFloors.addAll((List<Integer>) state.sampledFloors)
@@ -155,18 +159,18 @@ class Building extends Container {
         
         lines << ModelOutput.fmt.dim("-" * width)
         
-        // Define Column Widths
-        int wId = 5
-        int wRad = 9
-        int wDes = 26
-        int wZon = 26
-        int wInt = 11
+        // Define Column Widths - Optimized for 88 chars left pane
+        int wId = 4
+        int wRad = 7
+        int wDes = 18
+        int wZon = 18
+        int wInt = 8
         
         // Header
         String hId = ModelOutput.fmt.padRight("[ID]", wId)
         String hRad = ModelOutput.fmt.padRight("[RAD]", wRad)
-        String hDes = ModelOutput.fmt.padRight("[STRATA_DESIGNATION]", wDes)
-        String hZon = ModelOutput.fmt.padRight("[FUNCTIONAL_ZONE]", wZon)
+        String hDes = ModelOutput.fmt.padRight("[STRATA]", wDes)
+        String hZon = ModelOutput.fmt.padRight("[FUNCTION]", wZon)
         String hInt = ModelOutput.fmt.padRight("[ST]", wInt)
         String hRes = "[RES]"
         
@@ -179,22 +183,28 @@ class Building extends Container {
             currentFloorNum = ((Floor)player.currentLocation).number
         } else if (player.currentLocation?.parent instanceof Floor) {
             currentFloorNum = ((Floor)player.currentLocation.parent).number
+        } else if (player.currentLocation == this) {
+            // SPATIAL ANCHOR: Use the last visited floor if we are at the building root
+            currentFloorNum = lastVisitedFloor
         }
 
         // Iterate floors from top to bottom (Peak to Substrate)
         int minFloor = isBreached ? -5 : 0 // Show some substrate if breached
         for (int i = maxFloors - 1; i >= minFloor; i--) {
             String idStr = String.format("%02d.", i)
+            Floor floorObj = getFloor(i)
             
-            // Radar Logic: [>X<] for current, [ █ ] for regular, [ ! ] for abyssal
-            String radar = "[ █ ]"
+            // Radar Logic: [>X<] for current, [ X ] for visited, [   ] for regular
+            String radar = "[   ]"
             if (i == currentFloorNum) {
                 radar = ModelOutput.fmt.colorize("[>X<]", "YELLOW")
+            } else if (floorObj != null && floorObj.isVisited()) {
+                radar = "[ X ]"
             } else if (i < 0) {
                 radar = ModelOutput.fmt.colorize("[ ! ]", "RED")
             }
 
-            String designation = i == 0 ? "Surface/Lobby" : (i == maxFloors - 1 ? "Peak/Observatory" : "Floor $i")
+            String designation = i == 0 ? "Lobby" : (i == maxFloors - 1 ? "Peak" : "Floor $i")
             if (i < 0) designation = "-0x" + Integer.toHexString(Math.abs(i)).toUpperCase()
             
             String zone = getFloorZone(i)
@@ -206,17 +216,20 @@ class Building extends Container {
             String resonance = "${freq}Hz"
 
             String progressLabel = ""
-            Floor floorObj = getFloor(i)
             if (floorObj != null) {
                 def progress = getFloorProgress(floorObj, player)
-                if (progress.visited >= progress.total) {
-                    progressLabel = ModelOutput.fmt.colorize("[CLEARED]", "GREEN")
+                String visMarker = floorObj.isVisited() ? ModelOutput.fmt.colorize("[V]", "GREEN") : ""
+                
+                if (progress.visited >= progress.total && progress.total > 0) {
+                    progressLabel = "$visMarker " + ModelOutput.fmt.colorize("[CLEARED]", "GREEN")
                 } else if (progress.visited > 0) {
-                    progressLabel = ModelOutput.fmt.colorize("[PROBED: ${progress.visited}/${progress.total}]", "CYAN")
+                    progressLabel = "$visMarker " + ModelOutput.fmt.colorize("[${progress.visited}/${progress.total}]", "CYAN")
+                } else if (floorObj.isVisited()) {
+                    progressLabel = visMarker
                 }
             }
 
-            String line = "${ModelOutput.fmt.dim(idStr)}${radar}${ModelOutput.fmt.padRight(designation, wDes)}${ModelOutput.fmt.padRight(zone, wZon)}${ModelOutput.fmt.padRight(integrity, wInt)}${resonance} ${progressLabel}"
+            String line = "${ModelOutput.fmt.dim(ModelOutput.fmt.padRight(idStr, wId))}${ModelOutput.fmt.padRight(radar, wRad)}${ModelOutput.fmt.padRight(designation, wDes)}${ModelOutput.fmt.padRight(zone, wZon)}${ModelOutput.fmt.padRight(integrity, wInt)}${resonance} ${progressLabel}"
             lines << line
         }
         lines << ModelOutput.fmt.dim("-" * width)

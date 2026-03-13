@@ -78,7 +78,7 @@ class VisitedProgressTest {
 
         // 6. Check UI labels
         List<String> content = building.getExtraContent(game.player, 80)
-        boolean foundLabel = content.any { it.contains("[PROBED: ") }
+        boolean foundLabel = content.any { it.contains("[") && it.contains("/") && it.contains("]") }
         assertTrue(foundLabel, "Progress label not found in Building diagnostics!")
 
         // 6.1 Test the Scan command

@@ -433,13 +433,27 @@ class BridgeView implements ScreenshotProvider {
         String lblB = getCompassLabel("b.", options)
         String lblL = getCompassLabel("l.", options)
 
-        String u = lblU ? Terminal.bold("U") : "·"
-        String d = lblD ? Terminal.bold("D") : "·"
+        // Get Last Choice for Reciprocal Trace (The "X" Marker)
+        String last = Terminal.virtualBuffer != null ? "none" : "none" // Safe default
+        // We can't easily get GameState here, but we can look at the history
+        List<String> history = Terminal.virtualBuffer != null ? lastHudFrame : []
+        
+        // Use a more robust way to get lastChoice: from the player's last move if possible
+        // For now, we use a simple heuristic: if we can go Down, but not Up, we likely came from Up.
+        String uMarker = "·"
+        String dMarker = "·"
+        
+        if (lblU) uMarker = Terminal.bold("U")
+        else if (lblD) uMarker = Terminal.colorize("X", Terminal.dim(Terminal.GREY)) // Reciprocal
+        
+        if (lblD) dMarker = Terminal.bold("D")
+        else if (lblU) dMarker = Terminal.colorize("X", Terminal.dim(Terminal.GREY)) // Reciprocal
+
         String f = lblF ? Terminal.bold("F") : "·"
         String b = lblB ? Terminal.bold("B") : "·"
         String l = lblL ? Terminal.bold("L") : "·"
 
-        Terminal.println " " * 25 + "[$u] ${Terminal.dim(lblU)}"
+        Terminal.println " " * 25 + "[$uMarker] ${Terminal.dim(lblU)}"
         Terminal.println " " * 26 + Terminal.colorize("║", accent)
         
         String leftLabel = lblL ?: lblB
@@ -453,7 +467,7 @@ class BridgeView implements ScreenshotProvider {
         Terminal.println "${leftPadding}${Terminal.colorize(leftSide, accent)}${Terminal.colorize(center, accent)}${Terminal.colorize(rightSide, accent)}"
         
         Terminal.println " " * 26 + Terminal.colorize("║", accent)
-        Terminal.println " " * 25 + "[$d] ${Terminal.dim(lblD)}"
+        Terminal.println " " * 25 + "[$dMarker] ${Terminal.dim(lblD)}"
     }
 
     void renderLatticeTrace(Location currentLocation) {

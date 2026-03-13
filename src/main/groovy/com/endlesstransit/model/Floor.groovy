@@ -142,6 +142,9 @@ class Floor extends Container {
     @Override
     void enter(Player player) {
         Logger.info("Entering Floor $number")
+        if (parent instanceof Building) {
+            ((Building) parent).lastVisitedFloor = this.number
+        }
         markVisited()
     }
 
@@ -165,6 +168,16 @@ class Floor extends Container {
         lines << "${ModelOutput.fmt.padRight("IDENTIFIER", 15)}: ${getName()}".toString()
         lines << "${ModelOutput.fmt.padRight("TECH_ERA", 15)}: ${ModelOutput.fmt.colorize(timeline.toUpperCase(), "YELLOW")}".toString()
         lines << "${ModelOutput.fmt.padRight("RESONANCE", 15)}: ${ModelOutput.fmt.colorize(culture.toUpperCase(), "CYAN")}".toString()
+        
+        // Visited Status
+        String visStatus = isVisited() ? ModelOutput.fmt.colorize("TRUE", "GREEN") : ModelOutput.fmt.dim("FALSE")
+        if (parent instanceof Building) {
+            def progress = ((Building) parent).getFloorProgress(this, player)
+            if (progress.total > 0) {
+                visStatus += ModelOutput.fmt.dim(" [PROBE: ${progress.visited}/${progress.total}]")
+            }
+        }
+        lines << "${ModelOutput.fmt.padRight("VISITED", 15)}: ${visStatus}".toString()
         
         // Vibe Capsule Diagnostics
         VibeCapsule vibe = getVibe()
