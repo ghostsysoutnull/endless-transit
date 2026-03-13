@@ -13,12 +13,12 @@ You are standing at the gateway to an infinite procedural lattice. This interfac
 ## [MANUAL_MODULES]
 Select a module from the Comms Array above or use the initial link below:
 
-*   **[LINK_SETUP]**: Initialize your gateway with the [INSTALLATION_GUIDE]({{ "/manual/installation_guide.html" | relative_url }})
-*   **[LINK_INITIATION]**: Begin with [SYSTEM_INITIALIZATION]({{ "/manual/system_initialization.html" | relative_url }})
-*   **[LATTICE_GEOGRAPHY]**: Explore the [LATTICE_ATLAS]({{ "/manual/the_lattice_atlas.html" | relative_url }})
-*   **[OPERATIONAL_PROTOCOLS]**: Master the [SYSTEM_MECHANICS]({{ "/manual/operational_protocols.html" | relative_url }})
-*   **[FIELD_OPERATIONS]**: Reference the [LINK_NAVIGATION]({{ "/manual/link_navigation.html" | relative_url }}) guide
-*   **[ARCHITECTURAL_DATA]**: Review the [SYSTEM_SPECIFICATIONS]({{ "/manual/system_specifications.html" | relative_url }}) whitepaper
+*   **[LINK_SETUP]**: Initialize your gateway with the [INSTALLATION_GUIDE]({{ "/terminal/manual/installation_guide.html" | relative_url }})
+*   **[LINK_INITIATION]**: Begin with [SYSTEM_INITIALIZATION]({{ "/terminal/manual/system_initialization.html" | relative_url }})
+*   **[LATTICE_GEOGRAPHY]**: Explore the [LATTICE_ATLAS]({{ "/terminal/manual/the_lattice_atlas.html" | relative_url }})
+*   **[OPERATIONAL_PROTOCOLS]**: Master the [SYSTEM_MECHANICS]({{ "/terminal/manual/operational_protocols.html" | relative_url }})
+*   **[FIELD_OPERATIONS]**: Reference the [LINK_NAVIGATION]({{ "/terminal/manual/link_navigation.html" | relative_url }}) guide
+*   **[ARCHITECTURAL_DATA]**: Review the [SYSTEM_SPECIFICATIONS]({{ "/terminal/manual/system_specifications.html" | relative_url }}) whitepaper
 
 ---
 **STATUS**: LINK_IDLE
