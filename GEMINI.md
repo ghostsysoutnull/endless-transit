@@ -1,3 +1,5 @@
+Unless the user explicitly authorizes file modification, this session is analysis-only. Questions, reviews, and planning requests do not authorize edits, commits, or pushes.
+
 @.gemini/GEMINI.custom.md
 
 # Endless Transit: The Vinculum Neural Interface
