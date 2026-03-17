@@ -17,7 +17,7 @@ In Endless Transit, the code is the Lore. This command handles **Dual-Channel Sy
 
 ### 1. CONTEXT HARVEST
 - Run `git log -n 10 --oneline` to extract recent commits.
-- Read `tasks/todo.md` and the current active task document from `tasks/active/`.
+- Read `tasks/todo.md` to identify the active task, then read that document directly (currently `docs/analysis/OOA_REFACTOR_PLAN.md`).
 - Read `journals/CHRONICLE_INDEX.md` to understand the existing log history.
 - Retrieve the current `masterSeed` and `LIP` from the last session or `GameMemento` if available.
 
