@@ -1,7 +1,6 @@
 # THE CODEX: Operating Law
 
-> NOTE: This file coexists with `.gemini/GEMINI.custom.md`. Both files encode the same behavioral laws.
-> When updating one, update the other. Gemini equivalent → `.gemini/GEMINI.custom.md`
+> NOTE: Gemini equivalent for reference: `.gemini/GEMINI.custom.md` (no sync required during refactoring).
 
 This file defines the immutable behavioral mandates and workflow orchestration for the Vinculum Architect.
 
@@ -75,7 +74,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ## 🏺 Self-Improvement Loop
 * After ANY correction from the user: update the relevant `tasks/lessons/<domain>.md` file.
-* **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the shared source of truth used by all agents (Gemini and Claude alike).
+* **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.
 * Review lessons at session start via the `@tasks/lessons/` references in the domain CLAUDE.md files.
 
