@@ -20,6 +20,7 @@ Mandatory safety mandates and workflow orchestration:
 - **Active Task:** @docs/analysis/OOA_REFACTOR_PLAN.md
 - **Previous Task:** @tasks/active/VERTICAL_TRAVERSAL_REFACTOR.md
 - **📜 Chronicles & Lore:** @journals/CHRONICLE_INDEX.md
+- **Backlog:** @tasks/backlog/
 
 ---
 
@@ -39,6 +40,8 @@ Mandatory safety mandates and workflow orchestration:
 
 ## 🏛️ Development Conventions
 - **Infrastructure Lessons**: @tasks/lessons/infrastructure.md
+- **Core Domain Lessons**: @tasks/lessons/core.md
+- **Model Domain Lessons**: @tasks/lessons/model.md
 - **Expert OO Standards**: Immutability, Design Patterns, and `@CompileStatic` logic.
 
 ---

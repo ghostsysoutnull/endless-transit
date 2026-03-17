@@ -1,29 +1,27 @@
-# RECOVERY HANDOVER: [PHASE_0xDECE_CODEX_STABILIZATION]
+# RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
 
 ## 🎯 Current Status
-- **Substrate:** 100% Modernized. The entire test suite (41 cases) is now running on **JUnit 5 (Jupiter)**.
-- **Codex:** Phase 0 (Logic Decoding) is **COMPLETE**. The **Vinculum Codex** (`docs/logic/`) now contains 14+ behavioral specifications for Model, ProcGen, and Core domains.
-- **Gaps:** 4 critical logic gaps identified in `docs/logic/TEST_ALIGNMENT.md`:
-    1.  **Coherence Drain Multipliers** (Abyssal/Entropic).
-    2.  **Apartment Auto-Entry** (Orchestration shortcut).
-    3.  **Theme Synthesis** (Visual asset mapping).
-    4.  **Regional Divergence** (10% Rebel District frequency).
+- **Substrate:** Dual-agent configuration active (Claude via `.claude/CODEX.md` + Gemini via `.gemini/GEMINI.custom.md`).
+- **Test Suite:** 44 tests, all green (`./vinc.sh --test`).
+- **Active Work:** OOA Structural Refactoring — NOT STARTED. Full plan in `docs/analysis/OOA_REFACTOR_PLAN.md`.
+- **Completed:** LOGIC_HARDENING_PHASE_2 (survival mechanics, navigation shortcuts, atmosphere synthesis).
 
 ## 🚀 How to Resume
-To restart the gap-filling phase safely, copy and paste the following prompt into a new session:
+To start the OOA refactoring safely, copy and paste the following prompt into a new session:
 
 ---
 **START_PROMPT**
-Initialize session. We have completed **Phase 0 (Logic Decoding)** and formalized the **Vinculum Codex**.
-1. **Audit:** Confirm that `./vinc.sh --test` passes with 41/41 tests across all JUnit 5 classes.
-2. **Review:** Read the **Test Alignment Matrix** in `docs/logic/TEST_ALIGNMENT.md` to understand the identified logic gaps.
-3. **Context:** Check `journals/LOG_20260312_0xDECE.md` for the latest "The Vinculum Codex" chronicle.
-4. **MANDATE:** The next step is to **create a detailed Plan Document** to address the identified gaps in `docs/logic/TEST_ALIGNMENT.md`. This plan should prioritize survival mechanics (Coherence) and navigation shortcuts (Auto-Entry) before moving to aesthetic synthesis.
+Initialize session for the Endless Transit substrate.
+1. **Codex:** Read `.claude/CODEX.md` (or `.gemini/GEMINI.custom.md`) — internalize all Safety Mandates.
+2. **Audit:** Confirm `./vinc.sh --test` passes with 44 tests green.
+3. **Plan:** Read `docs/analysis/OOA_REFACTOR_PLAN.md` — focus on Phase 0 (Baselines) as the entry point.
+4. **Mandate:** Do NOT begin Phase 1 until Phase 0 and Phase 0.5a are complete (see refactor plan for dependency map).
 **END_PROMPT**
 ---
 
 ## 🏛️ Context Links
-- **Vinculum Codex:** `docs/logic/` (Behavioral source of truth)
-- **Logic Matrix:** `docs/logic/TEST_ALIGNMENT.md` (Identified GAPs)
-- **Orchestration Flow:** `docs/logic/ORCHESTRATION_FLOW.md`
-- **Logic Roadmap:** `docs/design/LOGIC_DECODING_MASTER_PLAN.md`
+- **Active Refactor Plan:** `docs/analysis/OOA_REFACTOR_PLAN.md`
+- **OOA Analysis Report:** `docs/analysis/OOA_REPORT.md`
+- **Test Coverage Gaps:** `docs/analysis/TEST_COVERAGE_GAPS.md`
+- **Chronicle Index:** `journals/CHRONICLE_INDEX.md`
+- **Safety Mandates:** `tasks/lessons/POST_MORTEM_2026_03_11.md`, `tasks/lessons/POST_MORTEM_2026_03_06.md`
