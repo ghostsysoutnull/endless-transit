@@ -1,6 +1,7 @@
 # OOA Refactor Plan: Structural Hardening
 **Created:** 2026-03-17
-**Based on:** `docs/analysis/OOA_REPORT.md`
+**Last updated:** 2026-03-17
+**Based on:** `docs/analysis/OOA_REPORT.md`, `docs/analysis/TEST_COVERAGE_GAPS.md`
 **Status:** NOT STARTED
 
 > **Prime Directive:** Zero behavioral change to the game. Same seed → same world. Same inputs → same outputs.
@@ -23,6 +24,7 @@
 | Phase | Name | Status | Risk |
 | :--- | :--- | :--- | :--- |
 | 0 | Baselines | `[ ] NOT STARTED` | None |
+| 0.5 | Test Coverage Gaps | `[ ] NOT STARTED` | None |
 | 1 | Bug Fixes | `[ ] NOT STARTED` | Low |
 | 2 | Resource Loading | `[ ] NOT STARTED` | Low |
 | 3 | Value Objects | `[ ] NOT STARTED` | Low |
@@ -34,6 +36,21 @@
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
 | 10 | Domain Event System | `[ ] NOT STARTED` | High |
 | O1 | HeadlessRunner DSL | `[ ] NOT STARTED` | None |
+
+---
+
+## Test Suite Assessment
+
+A full review of all 44 test files revealed the suite is strong on *behavioral* mechanics
+(coherence drain, navigation, persistence, generation determinism) but insufficient on
+*structural contracts* (parent chains, rendering content, service boundaries) — exactly
+the areas the refactoring touches most.
+
+**Well covered** (can proceed on existing tests): Phases 2, 4b, 8, 9.
+**Gaps requiring new tests before proceeding**: Phases 1a, 3a, 4a, 5, 6, 7, 10.
+
+See `docs/analysis/TEST_COVERAGE_GAPS.md` for full analysis. Phase 0.5 below closes
+the gaps needed before the earliest affected phases begin.
 
 ---
 
@@ -53,11 +70,92 @@
 
 ---
 
+## Phase 0.5 — Test Coverage Gaps
+**Goal:** Write missing tests that the refactoring phases depend on for safety.
+No production code changes. Tests only.
+**Depends on:** Phase 0 (suite must be green first)
+
+> These tests are the safety net. Do not start Phase 1 without 0.5a.
+> Do not start Phase 3 without 0.5b. Do not start Phase 4 without 0.5c.
+> Do not start Phase 5 without 0.5d. Do not start Phase 6 without 0.5e.
+> Do not start Phase 7 without 0.5f. Do not start Phase 10 without 0.5g.
+
+### 0.5a — Corridor Save/Restore Test (needed before Phase 1a)
+No test currently validates that `isCorridorActive = true` survives a save/restore cycle.
+The exact bug being fixed in Phase 1a has no regression test — if fixed incorrectly,
+nothing catches it.
+
+- [ ] Write `CorridorPersistenceTest`: enter a floor, activate corridor mode, `sync()`, restore, assert `isCorridorActive == true`
+
+**Files:** `CorridorPersistenceTest.groovy` (new, test only)
+**Status:** `[ ] NOT STARTED`
+
+### 0.5b — AnomalousTrace Mapping Test (needed before Phase 3a)
+`AnomalousTrace.matches(String roomType)` is completely untested. A refactor to `RoomCategory`
+could silently break all door trace associations with no test failing.
+
+- [ ] Write `AnomalousTraceTest`: assert each `AnomalousTrace` value matches its expected room type strings (e.g., `OZONE` matches `"SERVER"`, `"LABORATORY"`; `FROST` matches `"STORAGE"`, `"VAULT"`)
+- [ ] Assert no cross-contamination (e.g., `OZONE` does not match `"STORAGE"`)
+
+**Files:** `AnomalousTraceTest.groovy` (new, test only)
+**Status:** `[ ] NOT STARTED`
+
+### 0.5c — Room Ancestor Chain Test (needed before Phase 4a)
+`Room.findAncestor()` and parent chain traversal are used during navigation but are untested.
+If LeafLocation extraction breaks parent wiring, navigation silently fails.
+
+- [ ] Write `RoomAncestorTest`: navigate to a `Room`, assert `findAncestor(Building)`, `findAncestor(Floor)`, `findAncestor(Corridor)` all return correct non-null instances with matching LIPs
+
+**Files:** `RoomAncestorTest.groovy` (new, test only)
+**Status:** `[ ] NOT STARTED`
+
+### 0.5d — Per-Location Rendering Content Tests (needed before Phase 5)
+`InitialScreenTest` only checks that rendering methods don't throw. If constructor injection
+is wired incorrectly for any model class, that class renders blank/broken with no test failing.
+
+- [ ] Write `LocationRenderingTest`: for each of `Building`, `Floor`, `Corridor`, `Room`, `Street`, `Planet` — assert `getDescription()` is non-empty, `getExtraContent()` returns non-empty list, key HUD label strings are present
+- [ ] Expand `VisualBaselinePinningTest` to assert at least 8 distinct HUD markers (currently only 2)
+
+**Files:** `LocationRenderingTest.groovy` (new), `VisualBaselinePinningTest.groovy` (update)
+**Status:** `[ ] NOT STARTED`
+
+### 0.5e — ActionMapper Multi-Depth Resolution Test (needed before Phase 6)
+`NavigationSyncTest` only tests ActionMapper resolution during building floor navigation.
+Moving ActionMapper to `TurnProcessor` without coverage at other depths risks silent failures.
+
+- [ ] Extend `NavigationSyncTest` (or write `ActionMapperDepthTest`): verify ActionMapper correctly resolves choices at street level (building selection), corridor level (apartment selection), and room level (object interaction)
+
+**Files:** `ActionMapperDepthTest.groovy` (new, test only)
+**Status:** `[ ] NOT STARTED`
+
+### 0.5f — Expanded Visual Baseline Assertions (needed before Phase 7)
+Phase 7 decomposes `BridgeView` into components. The current visual tests are too shallow
+to catch a component extraction that shifts column alignment or drops a separator.
+
+- [ ] Write `BridgeViewStructureTest` using `VisualAssertionEngine`: assert HUD header box is present and correctly bounded, dual-pane column positions are stable, compass block is present, right-pane content present for at least 3 location depths
+- [ ] Capture and pin `./vinc.sh --scan` output at a known seed as a structured baseline
+
+**Files:** `BridgeViewStructureTest.groovy` (new, test only)
+**Status:** `[ ] NOT STARTED`
+
+### 0.5g — EventBus Unit Tests (needed before Phase 10)
+Phase 10 introduces an event bus. Without unit tests for the bus itself, a broken subscription
+or wrong payload is invisible until something higher-level breaks.
+
+- [ ] Write `EventBusTest`: verify subscribe/publish, multiple listeners, event payload fields (LIP, item name), and that unsubscribed listeners don't receive events
+
+**Files:** `EventBusTest.groovy` (new, test only)
+**Status:** `[ ] NOT STARTED`
+
+**Phase 0.5 Gates:** `./vinc.sh --test` — all new tests must pass alongside existing suite
+
+---
+
 ## Phase 1 — Bug Fixes
 **Goal:** Correct two silent correctness bugs before subsequent phases build on them.
 **OOA Items:** 4.1, 4.3
 **Max files per commit:** 2
-**Depends on:** Phase 0
+**Depends on:** Phase 0.5a (corridor persistence test must exist first)
 
 ### 1a — Floor Save/Restore Ordering (OOA 4.1)
 `Floor.enter()` resets `isCorridorActive = false` before mutation state is applied.
@@ -117,7 +215,7 @@ Building/room name lexicons are hard-coded maps in `NameGenerator.groovy`.
 **Goal:** Wrap domain primitives in typed value objects. No behavioral change — same logic, explicit types.
 **OOA Items:** 3.4, 3.3
 **Max files per commit:** 4
-**Depends on:** Phase 0
+**Depends on:** Phase 0.5b (AnomalousTrace test must exist before 3a)
 
 ### 3a — RoomCategory Enum (OOA 3.4)
 `AnomalousTrace.matches(String roomType)` uses fragile substring matching. Room type naming changes
@@ -150,7 +248,7 @@ silently break trace associations.
 **Goal:** Pull logic out of over-loaded classes. Callers remain unchanged.
 **OOA Items:** 1.1, 2.4
 **Max files per commit:** 3
-**Depends on:** Phase 3
+**Depends on:** Phase 3; Phase 0.5c (ancestor chain test must exist before 4a)
 
 ### 4a — LeafLocation Abstract Base (OOA 1.1)
 `Room` re-implements ~40 lines already in `Container`: parent tracking, `findAncestor()`,
@@ -183,7 +281,7 @@ on the player data aggregate.
 accessed from a global static field.
 **OOA Items:** 1.2
 **Max files per commit:** 5
-**Depends on:** Phase 4 (LeafLocation base in place)
+**Depends on:** Phase 4; Phase 0.5d (per-location rendering tests must exist first)
 
 > **Critical:** Run `./vinc.sh --compile` after every single file change in this phase.
 
@@ -235,7 +333,7 @@ accessed from a global static field.
 **Goal:** `GameState` becomes a lean data container. UI, input, and navigation concerns move to their owning services.
 **OOA Items:** 2.3
 **Max files per commit:** 4
-**Depends on:** Phase 5
+**Depends on:** Phase 5; Phase 0.5e (multi-depth ActionMapper test must exist first)
 
 ### 6a — Move BridgeView to RenderingCoordinator
 - [ ] `RenderingCoordinator` owns and instantiates `BridgeView`
@@ -270,7 +368,7 @@ accessed from a global static field.
 **Goal:** `BridgeView` becomes a compositor. Each rendering concern is an independently testable `ViewComponent`.
 **OOA Items:** 2.1
 **Max files per commit:** 3
-**Depends on:** Phase 6 (BridgeView owned by RenderingCoordinator)
+**Depends on:** Phase 6; Phase 0.5f (BridgeView structural baseline tests must exist first)
 
 > **Mandatory:** `./vinc.sh --scan` before AND after every sub-phase. Pixel-identical output required.
 
@@ -372,7 +470,7 @@ Conditional branching in `Floor.getOptions()` eliminated.
 Eliminates the `model → core` dependency violation (`Building` calling `JournalManager`).
 **OOA Items:** 3.1
 **Max files per commit:** 4
-**Depends on:** Phase 4b (SynthesisService in place)
+**Depends on:** Phase 4b; Phase 0.5g (EventBus unit tests must exist first)
 
 ### Tasks
 - [ ] **10a** Define `DomainEvent` base class + `EventBus` (subscribe/publish)
@@ -409,17 +507,25 @@ Eliminates the `model → core` dependency violation (`Building` calling `Journa
 
 ```
 Phase 0 (Baselines)
-    └── Phase 1 (Bug Fixes)
-    └── Phase 2 (Resource Loading)
-    └── Phase 3 (Value Objects)
-            └── Phase 4 (Structural Extraction)
-                    └── Phase 5 (DI: ModelOutput)
-                            └── Phase 6 (GameState Decomp.)
-                                    └── Phase 7 (BridgeView Decomp.)
-                    └── Phase 8 (Floor State Pattern)  ← also needs Phase 1a
-    └── Phase 9 (ProceduralFactory Split)              ← needs Phase 3
-    └── Phase 10 (Domain Events)                       ← needs Phase 4b
-    └── O1 (HeadlessRunner DSL)                        ← independent
+    └── Phase 0.5 (Test Coverage Gaps)
+            ├── 0.5a ──► Phase 1  (Bug Fixes)
+            ├── 0.5b ──► Phase 3  (Value Objects)
+            ├── 0.5c ──► Phase 4  (Structural Extraction)
+            ├── 0.5d ──► Phase 5  (DI: ModelOutput)
+            ├── 0.5e ──► Phase 6  (GameState Decomp.)
+            ├── 0.5f ──► Phase 7  (BridgeView Decomp.)
+            └── 0.5g ──► Phase 10 (Domain Events)
+
+Phase 1  (Bug Fixes)        ──► Phase 8 (Floor State Pattern)
+Phase 3  (Value Objects)    ──► Phase 4 (Structural Extraction)
+                            ──► Phase 9 (ProceduralFactory Split)
+Phase 4  (Structural Extr.) ──► Phase 5 (DI: ModelOutput)
+                            ──► Phase 10 (Domain Events)  [4b only]
+Phase 5  (DI: ModelOutput)  ──► Phase 6 (GameState Decomp.)
+Phase 6  (GameState Decomp.)──► Phase 7 (BridgeView Decomp.)
+
+Phase 2  (Resource Loading) ── independent (needs Phase 0 only)
+Phase O1 (HeadlessRunner DSL) ── independent
 ```
 
 ---
@@ -434,6 +540,6 @@ Phase 0 (Baselines)
 
 ---
 
-*Last updated: 2026-03-17*
+*Last updated: 2026-03-17 — Added Phase 0.5 (test coverage gaps), updated all phase dependencies, added test suite assessment section.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*
