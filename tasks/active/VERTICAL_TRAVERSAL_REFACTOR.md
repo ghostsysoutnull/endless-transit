@@ -12,17 +12,17 @@ Refactor the `Building` -> `Floor` -> `Corridor` navigation flow from a "telepor
 ---
 
 ## Phase 1: Model & State Integrity
-- [ ] **1.1 Visited Status Tracking**
+- [x] **1.1 Visited Status Tracking**
     - Ensure `Building` can query `Player.visitedLIPs` to show `[PROBED]` or `[4/12]` progress in the floor list.
-- [ ] **1.2 Spatial State Definition**
+- [x] **1.2 Spatial State Definition**
     - Introduce a `isCorridorActive` flag (or similar) to the `Floor` or `Player` state to differentiate between "Standing at the Elevator" and "Walking the Hallway."
 
 ## Phase 2: UI & Rendering (The "Elevator Interface")
-- [ ] **2.1 The "Floor Diagnostic Scan" (Stage 1)**
+- [x] **2.1 The "Floor Diagnostic Scan" (Stage 1)**
     - Design the TUI for the "Elevator" view: High-level summary of floor signatures, tech era, and atmospheric resonance.
-- [ ] **2.2 The "Door Listing" (Stage 2)**
+- [x] **2.2 The "Door Listing" (Stage 2)**
     - Refactor the current `Corridor` view to be the secondary state of the `Floor` pivot.
-- [ ] **2.3 Layout Consistency**
+- [x] **2.3 Layout Consistency**
     - Ensure the transition between Stage 1 and Stage 2 maintains the "Cyber-Brutalist" box alignment and HUD labels.
 
 ## Phase 4: Verification & Regression

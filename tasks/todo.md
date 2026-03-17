@@ -5,15 +5,15 @@
 **Ref Document:** `tasks/active/LOGIC_HARDENING_PLAN.md`
 
 ### Phase 1: Survival Mechanics (Coherence)
-- [ ] 1.1 Implement `CoherenceDrainTest.groovy`
-- [ ] 1.2 Refine `GameState.adjustCoherence()` (Multiplier + Death State)
+- [x] 1.1 Implement `CoherenceDrainTest.groovy`
+- [x] 1.2 Refine `GameState.adjustCoherence()` (Multiplier + Death State)
 
 ### Phase 2: Navigation Shortcuts (Auto-Entry)
-- [ ] 2.1 Implement `AutoEntryTest.groovy`
-- [ ] 2.2 Refine `NavigationOrchestrator` (Apartment -> Room transition)
+- [x] 2.1 Implement `AutoEntryTest.groovy`
+- [x] 2.2 Refine `NavigationOrchestrator` (Apartment -> Room transition)
 
 ### Phase 3: Synthesis & Verification
-- [ ] 3.1 Implement `RegionalDivergenceTest.groovy`
+- [x] 3.1 Implement `RegionalDivergenceTest.groovy`
 - [ ] 3.2 Implement `AtmosphereSynthesisTest.groovy`
 - [ ] 3.3 Full Suite Regression (41+ tests)
 - [ ] 3.4 Chronicle & Align Codex

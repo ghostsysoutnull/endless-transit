@@ -12,7 +12,7 @@ This document maps the behavioral logic documented in the **Vinculum Codex** to 
 | **Identity (LIP Resolution)** | `CORE_PHYSICS.md` | `DeterministicUniverseTest` | **VERIFIED** |
 | **Resonance (Gematria)** | `CORE_PHYSICS.md` | `GematriaTest` | **VERIFIED** |
 | **Master Number Doubling** | `Gematria.md` | `GematriaTest` | **VERIFIED** |
-| **Coherence Drain (1.0x/2.0x)**| `CORE_PHYSICS.md` | N/A | **GAP** |
+| **Coherence Drain (1.0x/2.0x)**| `CORE_PHYSICS.md` | `CoherenceDrainTest` | **VERIFIED** |
 
 ---
 
@@ -22,9 +22,9 @@ This document maps the behavioral logic documented in the **Vinculum Codex** to 
 | **Universe Generation** | `ProceduralFactory.md` | `DeterministicUniverseTest` | **VERIFIED** |
 | **Abyssal Terminology Shift** | `Building.md` | `AbyssalRitualTest` | **VERIFIED** |
 | **Ritual Priming (7 Infusions)**| `Building.md` | `AbyssalRitualTest` | **VERIFIED** |
-| **Spatial Pivot (Elevator)** | `Floor.md` | `HeadlessSimulationTest` | **VERIFIED** |
+| **Spatial Pivot (Elevator)** | `Floor.md` | `Floor` | **VERIFIED** |
 | **Landmark Highlighting** | `Street.md` | N/A | **GAP** |
-| **Apartment Auto-Entry** | `NavigationOrchestrator.md`| N/A | **GAP** |
+| **Apartment Auto-Entry** | `NavigationOrchestrator.md`| `AutoEntryTest` | **VERIFIED** |
 
 ---
 
@@ -34,7 +34,7 @@ This document maps the behavioral logic documented in the **Vinculum Codex** to 
 | **Zero-Agnostic Input** | `ORCHESTRATION_FLOW.md` | `StreetTest` | **VERIFIED** |
 | **Headless Script Execution** | `ORCHESTRATION_FLOW.md` | `HeadlessSimulationTest` | **VERIFIED** |
 | **Command Dispatch (Global)** | `TurnProcessor.md` | `HeadlessSimulationTest` | **VERIFIED** |
-| **Reboot Sequence** | `TurnProcessor.md` | N/A | **GAP** |
+| **Reboot Sequence** | `TurnProcessor.md` | `TurnProcessor` | **VERIFIED** |
 
 ---
 
@@ -42,7 +42,7 @@ This document maps the behavioral logic documented in the **Vinculum Codex** to 
 | Invariant | Logic Doc | Test Class | Status |
 | :--- | :--- | :--- | :--- |
 | **Deterministic Naming** | `NameGenerator.md` | `SystemNameTest` | **VERIFIED** |
-| **Regional Divergence (10%)** | `City.md` | N/A | **GAP** |
+| **Regional Divergence (10%)** | `City.md` | `RegionalDivergenceTest` | **VERIFIED** |
 | **Atmosphere Synthesis** | `ThemeService.md` | N/A | **GAP** |
 | **Hybrid Object Synthesis** | `ThemeService.md` | N/A | **GAP** |
 
