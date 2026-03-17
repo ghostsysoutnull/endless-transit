@@ -1,8 +1,16 @@
 # Endless Transit: Active Task List
 
-## 🔴 ACTIVE: [LOGIC_HARDENING_PHASE_2]
-**Objective:** Address identified logic gaps in Coherence and Navigation.
-**Ref Document:** `tasks/active/LOGIC_HARDENING_PLAN.md`
+## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
+**Objective:** Incrementally harden the OO architecture without any behavioral change.
+**Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
+
+- [ ] Phase 0 — Baselines (capture scan output, confirm green suite)
+- [ ] Phase 0.5 — Test Coverage Gaps (8 safety-net tests)
+- [ ] Phases 1–10 — See OOA_REFACTOR_PLAN.md for full breakdown
+
+---
+
+## 🟢 COMPLETED: [LOGIC_HARDENING_PHASE_2]
 
 ### Phase 1: Survival Mechanics (Coherence)
 - [x] 1.1 Implement `CoherenceDrainTest.groovy`
@@ -35,7 +43,7 @@
 
 ---
 
-## 🏛️ RECENT LESSONS (Updated 2026-03-12)
-- **Clinical Testing:** Use `./vinc.sh --test` to verify logic invariants without UI overhead.
-- **LIP Resolution:** LIPs are the source of truth for all world navigation and state restoration.
-- **Entropy Mixers:** LocusSeed branching must follow strictly deterministic vertical flow.
+## 🏛️ RECENT LESSONS (Updated 2026-03-17)
+- **Safe-Accessors Mandate:** All child lists must use `getXXX()` getters — never access `this.list` directly (lazy-loading law).
+- **Structural Collapse Guard:** Never apply skeleton/template patterns to existing classes without reading full source first.
+- **Phase Gates:** Each OOA refactor phase is incomplete until all three gates pass: `--test`, `--scan` (model/ui), and `DeterministicUniverseTest` (procgen).

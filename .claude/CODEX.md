@@ -75,4 +75,5 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ## 🏛️ Safety Mandates (The Shield)
 Read and internalize the mandates in:
-- **@tasks/lessons/POST_MORTEM_2026_03_11.md**
+- **@tasks/lessons/POST_MORTEM_2026_03_11.md** — Structural Collapse (skeleton class incident)
+- **@tasks/lessons/POST_MORTEM_2026_03_06.md** — Mandatory Safe-Accessors (lazy-loading law)
