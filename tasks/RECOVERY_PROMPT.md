@@ -2,7 +2,7 @@
 
 ## 🎯 Current Status
 - **Substrate:** Dual-agent configuration active (Claude via `.claude/CODEX.md` + Gemini via `.gemini/GEMINI.custom.md`).
-- **Test Suite:** 44 tests, all green (`./vinc.sh --test`).
+- **Test Suite:** 61 test methods across 44 test classes, all green (`./vinc.sh --test`).
 - **Active Work:** OOA Structural Refactoring — NOT STARTED. Full plan in `docs/analysis/OOA_REFACTOR_PLAN.md`.
 - **Completed:** LOGIC_HARDENING_PHASE_2 (survival mechanics, navigation shortcuts, atmosphere synthesis).
 
