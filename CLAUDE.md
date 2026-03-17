@@ -26,8 +26,8 @@ Latest journal state for session continuity:
 ---
 
 ## 🚀 Active Architecture & Roadmap
-- **Active Task:** @tasks/active/VERTICAL_TRAVERSAL_REFACTOR.md
-- **Previous Task:** @tasks/active/DIAGNOSTIC_SUITE_IMPLEMENTATION.md
+- **Active Task:** @docs/analysis/OOA_REFACTOR_PLAN.md
+- **Previous Task:** @tasks/active/VERTICAL_TRAVERSAL_REFACTOR.md
 - **📜 Chronicles & Lore:** @journals/CHRONICLE_INDEX.md
 
 ---
