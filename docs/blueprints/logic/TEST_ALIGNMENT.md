@@ -43,8 +43,8 @@ This document maps the behavioral logic documented in the **Vinculum Codex** to 
 | :--- | :--- | :--- | :--- |
 | **Deterministic Naming** | `NameGenerator.md` | `SystemNameTest` | **VERIFIED** |
 | **Regional Divergence (10%)** | `City.md` | `RegionalDivergenceTest` | **VERIFIED** |
-| **Atmosphere Synthesis** | `ThemeService.md` | N/A | **GAP** |
-| **Hybrid Object Synthesis** | `ThemeService.md` | N/A | **GAP** |
+| **Atmosphere Synthesis** | `ThemeService.md` | `AtmosphereSynthesisTest` | **VERIFIED** |
+| **Hybrid Object Synthesis** | `ThemeService.md` | `AtmosphereSynthesisTest` | **VERIFIED** |
 
 ---
 

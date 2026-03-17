@@ -30,16 +30,16 @@ Address the logic gaps identified in `docs/logic/TEST_ALIGNMENT.md` by implement
 - [x] **3.1 Implement `RegionalDivergenceTest.groovy`**
     - Stress-test 1000 cities to verify ~10% frequency of `isRebelDistrict`.
     - Verify culture flipping in rebel districts.
-- [ ] **3.2 Implement `AtmosphereSynthesisTest.groovy`**
+- [x] **3.2 Implement `AtmosphereSynthesisTest.groovy`**
     - Verify `ThemeService` correctly maps Vibe to wall/lighting assets.
     - Verify hybrid object generation (e.g., "Neon-Baroque" artifacts).
 
 ## Phase 4: Verification & Chronicle
-- [ ] **4.1 Full Suite Regression**
+- [x] **4.1 Full Suite Regression**
     - Ensure 41/41 baseline + new tests all pass.
-- [ ] **4.2 Update `TEST_ALIGNMENT.md`**
+- [x] **4.2 Update `TEST_ALIGNMENT.md`**
     - Mark all gaps as **VERIFIED**.
-- [ ] **4.3 Chronicle Session 0xDECF**
+- [x] **4.3 Chronicle Session 0x3F83**
     - Document the stabilization of survival and navigation logic.
 
 ---

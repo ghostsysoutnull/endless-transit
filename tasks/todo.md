@@ -14,9 +14,9 @@
 
 ### Phase 3: Synthesis & Verification
 - [x] 3.1 Implement `RegionalDivergenceTest.groovy`
-- [ ] 3.2 Implement `AtmosphereSynthesisTest.groovy`
-- [ ] 3.3 Full Suite Regression (41+ tests)
-- [ ] 3.4 Chronicle & Align Codex
+- [x] 3.2 Implement `AtmosphereSynthesisTest.groovy`
+- [x] 3.3 Full Suite Regression (41+ tests)
+- [x] 3.4 Chronicle & Align Codex
 
 ---
 
