@@ -1,6 +1,6 @@
 # Domain Invariants: Structural Hierarchy
 
-> Gemini equivalent → `GEMINI.md` (this file)
+> Gemini equivalent: `GEMINI.md` (same directory)
 
 **ARCHITECTURAL CONSTRAINTS**
 - **No Anemic Models:** Classes MUST encapsulate both data and behavior.

@@ -1,6 +1,6 @@
 # Domain Invariants: Engine & Core
 
-> Gemini equivalent → `GEMINI.md` (this file)
+> Gemini equivalent: `GEMINI.md` (same directory)
 
 **ARCHITECTURAL CONSTRAINTS**
 - **Decomposed Facade:** `Game.groovy` is a thin facade. It MUST delegate all orchestration to specialized services.

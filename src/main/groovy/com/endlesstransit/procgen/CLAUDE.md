@@ -1,6 +1,6 @@
 # Domain Invariants: Entropy & Synthesis
 
-> Gemini equivalent → `GEMINI.md` (this file)
+> Gemini equivalent: `GEMINI.md` (same directory)
 
 **ARCHITECTURAL CONSTRAINTS**
 - **Strict Determinism:** Every generator MUST be stateless. No static `Random` or `ThreadLocalRandom`.

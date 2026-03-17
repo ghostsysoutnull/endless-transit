@@ -1,6 +1,6 @@
 # Domain Invariants: The Visual Interface
 
-> Gemini equivalent → `GEMINI.md` (this file)
+> Gemini equivalent: `GEMINI.md` (same directory)
 
 **ARCHITECTURAL CONSTRAINTS**
 - **Cyber-Brutalist Mandate:** UI must feel high-density and data-heavy. Monospaced alignment and boxed HUDs are non-negotiable.
