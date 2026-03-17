@@ -38,6 +38,13 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * If something goes sideways, STOP and re-plan immediately — don't keep pushing.
 * Write detailed specs upfront to reduce ambiguity.
 
+### 1.5. Refactoring Branch Strategy
+* Each refactoring phase runs on its own git branch: `refactor/phase-N-short-name`.
+* Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --scan` where applicable).
+* Every new class created during refactoring MUST include `@CompileStatic`.
+* Run `/chronicle` after every completed phase to maintain session continuity.
+* The active task pointer in `CLAUDE.md` should reflect the current refactoring phase document, not a stale task.
+
 ### 2. Subagent Strategy
 * Use subagents (via the `Agent` tool) to keep the main context window clean.
 * **Subagent Discipline**: Subagents MUST read the full content of any file they are instructed to move, copy, or refactor. Proposing changes based on templates or skeletons is a failure.

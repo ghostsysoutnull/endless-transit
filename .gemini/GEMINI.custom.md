@@ -34,6 +34,13 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * Use plan mode for verification steps, not just building.
 * Write detailed specs upfront to reduce ambiguity.
 
+### 1.5. Refactoring Branch Strategy
+* Each refactoring phase runs on its own git branch: `refactor/phase-N-short-name`.
+* Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --scan` where applicable).
+* Every new class created during refactoring MUST include `@CompileStatic`.
+* Run `skill-chronicle` after every completed phase to maintain session continuity.
+* The active task pointer in `GEMINI.md` should reflect the current refactoring phase document, not a stale task.
+
 ### 2. Subagent Strategy
 * Use subagents liberally to keep main context window clean.
 * **Subagent Discipline**: Subagents MUST read the full content of any file they are instructed to move, copy, or refactor. 

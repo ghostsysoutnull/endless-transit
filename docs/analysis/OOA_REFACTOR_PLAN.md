@@ -36,6 +36,7 @@
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
 | 10 | Domain Event System | `[ ] NOT STARTED` | High |
 | O1 | HeadlessRunner DSL | `[ ] NOT STARTED` | None |
+| O2 | CodeNarc Static Analysis | `[ ] NOT STARTED` | None |
 
 ---
 
@@ -145,6 +146,17 @@ or wrong payload is invisible until something higher-level breaks.
 - [ ] Write `EventBusTest`: verify subscribe/publish, multiple listeners, event payload fields (LIP, item name), and that unsubscribed listeners don't receive events
 
 **Files:** `EventBusTest.groovy` (new, test only)
+**Status:** `[ ] NOT STARTED`
+
+### 0.5h — Procgen Content Snapshot Test (needed before Phases 2b and 9)
+`DeterministicUniverseTest` compares two live runs — both would be equally wrong if generation
+order shifts. A snapshot test pinning actual generated values for a known seed catches subtle
+changes that structural comparison misses.
+
+- [ ] Write `ProcgenSnapshotTest`: for seed `0x1234` (or similar pinned value), assert exact planet name, culture string, and at least 3 building names match hardcoded expected values
+- [ ] Run after any procgen or resource loading change as an additional determinism gate
+
+**Files:** `ProcgenSnapshotTest.groovy` (new, test only)
 **Status:** `[ ] NOT STARTED`
 
 **Phase 0.5 Gates:** `./vinc.sh --test` — all new tests must pass alongside existing suite
@@ -289,6 +301,8 @@ accessed from a global static field.
 - [ ] Grep all `ModelOutput.fmt` usages across `model/` package
 - [ ] List every class that requires injection
 - [ ] Document the injection chain from `Main.groovy` down
+- [ ] **Audit all `@PackageScope` fields** in `Building`, `Floor`, `Corridor` — document which new classes
+  will need access and whether package boundaries need adjusting before injection begins
 
 **Status:** `[ ] NOT STARTED`
 
@@ -427,11 +441,13 @@ Conditional branching in `Floor.getOptions()` eliminated.
 - [ ] Implement `ElevatorState` and `CorridorState`
 - [ ] Replace `isCorridorActive` in `Floor` with `FloorState currentState`
 - [ ] Update `Floor.getMutationState()` / `applyMutationState()` to serialize state type (not boolean)
+- [ ] **Update `VisitedProgressTest`**: it directly asserts `floor.isCorridorActive == true/false`;
+  update assertions to use the new `FloorState` API (e.g., `floor.currentState instanceof CorridorState`)
 
-**Files:** `FloorState.groovy` (new), `ElevatorState.groovy` (new), `CorridorState.groovy` (new), `Floor.groovy`
+**Files:** `FloorState.groovy` (new), `ElevatorState.groovy` (new), `CorridorState.groovy` (new), `Floor.groovy`, `VisitedProgressTest.groovy`
 **Status:** `[ ] NOT STARTED`
 
-**Phase 8 Gates:** `./vinc.sh --test` — focus `AutoEntryTest`, `NavigationSyncTest`, `TracePersistenceTest` + `./vinc.sh --scan`
+**Phase 8 Gates:** `./vinc.sh --test` — focus `AutoEntryTest`, `NavigationSyncTest`, `TracePersistenceTest`, `VisitedProgressTest` + `./vinc.sh --scan`
 
 ---
 
@@ -487,6 +503,28 @@ Eliminates the `model → core` dependency violation (`Building` calling `Journa
 
 ---
 
+## Optional Phase O2 — CodeNarc Static Analysis
+**Goal:** Add CodeNarc to the Gradle build to catch naming violations, unused imports, `println`
+leakage, and method complexity drift that accumulates across a large refactoring effort.
+**Depends on:** None (purely additive to build infrastructure; ideally done before Phase 1)
+
+### Tasks
+- [ ] Add `codenarc` plugin to `build.gradle`
+- [ ] Create `config/codenarc/codenarc.xml` rule set — enable at minimum:
+  - `NoSystemExit`, `SystemErrPrint`, `SystemOutPrint` — catch `println` leakage
+  - `UnusedImport`, `UnnecessaryGroovyImport` — keep imports clean during refactoring
+  - `MethodSize` (max 50 lines), `ClassSize` (max 500 lines) — flag growing classes
+  - `CompileStatic` — warn when new classes omit `@CompileStatic`
+- [ ] Fix any existing violations (expected to be few given existing discipline)
+- [ ] Verify `./vinc.sh --compile` still passes with CodeNarc enabled
+
+**Files:** `build.gradle`, `config/codenarc/codenarc.xml` (new)
+**Status:** `[ ] NOT STARTED`
+
+**Gates:** `./vinc.sh --compile` passes with zero CodeNarc violations
+
+---
+
 ## Optional Phase O1 — HeadlessRunner Fluent DSL
 **Goal:** Improve test readability. No production code changes.
 **OOA Items:** 4.4
@@ -526,6 +564,7 @@ Phase 6  (GameState Decomp.)──► Phase 7 (BridgeView Decomp.)
 
 Phase 2  (Resource Loading) ── independent (needs Phase 0 only)
 Phase O1 (HeadlessRunner DSL) ── independent
+Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 ```
 
 ---
@@ -533,13 +572,16 @@ Phase O1 (HeadlessRunner DSL) ── independent
 ## Refactor Guard (always active)
 
 - Maximum **5 files** per atomic commit
+- Every new class MUST have `@CompileStatic`
 - `./vinc.sh --compile` after **every file change** in Phase 5+
 - `./vinc.sh --scan` **before and after** any phase touching `model` or `ui`
+- Each phase runs on its own git branch (`refactor/phase-N-name`); merge to `master` only when all gates pass
 - If anything goes sideways: **STOP, revert, re-plan** — do not push through
 - After any user correction: update `tasks/lessons/<domain>.md`
+- Run `/chronicle` after every completed phase
 
 ---
 
-*Last updated: 2026-03-17 — Added Phase 0.5 (test coverage gaps), updated all phase dependencies, added test suite assessment section.*
+*Last updated: 2026-03-17 — Added Phase 0.5h (procgen snapshot), Phase O2 (CodeNarc), @PackageScope audit to Phase 5a, VisitedProgressTest update to Phase 8, git branching + @CompileStatic rules to Refactor Guard, O2 to dependency map.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*
