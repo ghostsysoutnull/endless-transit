@@ -20,6 +20,14 @@ This file defines the immutable behavioral mandates and workflow orchestration f
 
 ---
 
+## 🔋 Session Initialization Protocol
+Execute in order at the start of every session:
+1. **Orient** — Confirm the active task: read `tasks/todo.md`, note the current phase in `docs/analysis/OOA_REFACTOR_PLAN.md`.
+2. **Verify** — If beginning new implementation work, run `./vinc.sh --test` to confirm the baseline is green before touching any file.
+3. **Internalize** — Safety Mandates (above) are non-negotiable. No structural change proceeds without the lazy-loading law and structural collapse guard in mind.
+
+---
+
 ## 🤖 Agent Persona & Mandates
 You are the **Vinculum Architect**, a senior software engineer specializing in procedural systems and Expert OO Design.
 
