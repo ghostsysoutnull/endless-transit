@@ -104,24 +104,24 @@ class SpectralFrequencyContractTest {
     @Test
     void gematria_doublesSum_forMasterNumber11() {
         // "K" → ordinal 11 (consonant) → sum = 11 → master number → doubled → 22 → × depth 1 = 22
-        int freq = Gematria.calculateFrequency("K", 1)
-        assertEquals(22, freq,
+        SpectralFrequency freq = Gematria.calculateFrequency("K", 1)
+        assertEquals(22, freq.value,
             "'K' has consonant ordinal 11 (master number) — sum must be doubled before × depth")
     }
 
     @Test
     void gematria_doublesSum_forMasterNumber22() {
         // "V" → ordinal 22 (consonant) → sum = 22 → master number → doubled → 44 → × depth 1 = 44
-        int freq = Gematria.calculateFrequency("V", 1)
-        assertEquals(44, freq,
+        SpectralFrequency freq = Gematria.calculateFrequency("V", 1)
+        assertEquals(44, freq.value,
             "'V' has consonant ordinal 22 (master number) — sum must be doubled before × depth")
     }
 
     @Test
     void gematria_doublesSum_forMasterNumber33() {
         // "ZG" → Z=26 + G=7 = 33 → master number → doubled → 66 → × depth 1 = 66
-        int freq = Gematria.calculateFrequency("ZG", 1)
-        assertEquals(66, freq,
+        SpectralFrequency freq = Gematria.calculateFrequency("ZG", 1)
+        assertEquals(66, freq.value,
             "'ZG' consonant sum is 33 (master number) — sum must be doubled before × depth")
     }
 
@@ -133,8 +133,8 @@ class SpectralFrequencyContractTest {
     void gematria_doesNotDouble_for44() {
         // "VV" → V=22, V=22 → sum = 44 — NOT a master number (narrow definition)
         // Expected: freq = 44 * 1 = 44 (no doubling)
-        int freq = Gematria.calculateFrequency("VV", 1)
-        assertEquals(44, freq,
+        SpectralFrequency freq = Gematria.calculateFrequency("VV", 1)
+        assertEquals(44, freq.value,
             "44 is NOT a master number in this implementation — sum must not be doubled")
     }
 
@@ -144,16 +144,16 @@ class SpectralFrequencyContractTest {
         // "YN" → Y=25 + N=14 = 39. "ZP" → Z=26 + P=16 = 42. "ZS" → Z=26 + S=19 = 45.
         // "ZV" → Z=26 + V=22 = 48. "KKK" → 11+11+11=33 → master.
         // "ZY" → Z=26 + Y=25 = 51. "ZZ" → Z=26+26=52. "ZZD" → 52+4=56. "ZZC" → 52+3=55.
-        int freq = Gematria.calculateFrequency("ZZC", 1)
-        assertEquals(55, freq,
+        SpectralFrequency freq = Gematria.calculateFrequency("ZZC", 1)
+        assertEquals(55, freq.value,
             "55 is NOT a master number — sum (ZZC=55) must not be doubled")
     }
 
     @Test
     void gematria_standardName_noMasterNumber() {
         // Confirmed by GematriaTest: "Key" (K=11, y=25, consonants only) → sum=36, depth=10 → 360
-        int freq = Gematria.calculateFrequency("Key", 10)
-        assertEquals(360, freq, "'Key' at depth 10 must equal 360 (no master number)")
+        SpectralFrequency freq = Gematria.calculateFrequency("Key", 10)
+        assertEquals(360, freq.value, "'Key' at depth 10 must equal 360 (no master number)")
     }
 
     // -------------------------------------------------------------------------

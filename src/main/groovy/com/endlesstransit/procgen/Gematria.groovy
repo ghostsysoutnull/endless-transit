@@ -8,7 +8,7 @@ import groovy.transform.CompileStatic
 class Gematria {
     private static final String VOWELS = "aeiouAEIOU"
 
-    static int calculateFrequency(String name, int depth, boolean isResonant = false) {
+    static SpectralFrequency calculateFrequency(String name, int depth, boolean isResonant = false) {
         int sum = 0
         name.each { String charStr ->
             char c = charStr.charAt(0)
@@ -29,6 +29,6 @@ class Gematria {
         if (isResonant) {
             freq = (freq * 1.1) as int
         }
-        return freq
+        return new SpectralFrequency(freq)
     }
 }

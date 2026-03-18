@@ -28,6 +28,7 @@
 | 1 | Bug Fixes | `[x] COMPLETE` | Low |
 | 2 | Resource Loading | `[ ] NOT STARTED` | Low |
 | 3 | Value Objects | `[x] COMPLETE` | Low |
+| 3c | Gematria Return Type Completion | `[x] COMPLETE` | Low |
 | 4 | Structural Extraction | `[ ] NOT STARTED` | Low |
 | 5 | Dependency Injection | `[ ] NOT STARTED` | Medium |
 | 6 | GameState Decomposition | `[ ] NOT STARTED` | Medium |
@@ -272,7 +273,29 @@ silently break trace associations.
 **Files:** `SpectralFrequency.groovy` (new), `InventoryItem.groovy`, `Player.groovy`, `Gematria.groovy`
 **Status:** `[ ] NOT STARTED`
 
-**Phase 3 Gates:** `./vinc.sh --test` — focus `GematriaTest`, `InventoryObjectTest`, `MergeLabelTest`, `SurvivalPinningTest`, `DeterministicUniverseTest`
+**Phase 3 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=108 SUCCEEDED=103 FAILED=0 SKIPPED=5`
+**Retrospective:** `docs/retro/RETRO_PHASE_3.md`
+
+---
+
+## Phase 3c — Gematria Return Type Completion
+**Goal:** Complete the SpectralFrequency story by changing `Gematria.calculateFrequency()` return
+type from `int` to `SpectralFrequency`. Currently the primary *producer* of frequencies bypasses
+the type it creates. Deferred from Phase 3 to keep blast radius bounded; executed immediately after
+as a standalone bounded commit.
+**Depends on:** Phase 3b-ii (SpectralFrequency and InventoryItem migration complete)
+**Max files per commit:** 3
+
+### Tasks
+- [ ] Change `Gematria.calculateFrequency()` return type to `SpectralFrequency`
+- [ ] `Room.groovy` call sites: unwrap with `.value` when passing to `InventoryItem` constructor
+- [ ] `ScanCommand.groovy` call site: unwrap with `.value` where int is required for display
+- [ ] Verify `SpectralFrequencyContractTest` (B3/B4 Gematria tests), `GematriaTest`, `DeterministicUniverseTest` all pass
+
+**Files:** `Gematria.groovy`, `Room.groovy`, `ScanCommand.groovy`
+**Status:** `[x] COMPLETE — 2026-03-18`
+
+**Phase 3c Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=108 SUCCEEDED=103 FAILED=0 SKIPPED=5`
 
 ---
 

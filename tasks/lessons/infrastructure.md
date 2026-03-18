@@ -21,6 +21,8 @@
 - **Silent defaults on semantically meaningful values deserve a guard**: Any `?: fallback` where the fallback has a distinct domain meaning (e.g., `?: AnomalousTrace.SILENCE` masking a missing Country ancestor) should emit a log warning. Without it, hierarchy errors are invisible in production and tests.
 - **Standalone model objects require manual property setup**: `new Building(LocusSeed)` has `maxFloors=0` by default. Tests that create model objects outside the full procgen chain must set domain properties (`culture`, `timeline`, `maxFloors`, `apartmentsPerFloor`) explicitly, or `getFloor(0)` and similar accessors return null silently.
 
+- **Blast radius analysis must include the test tree, not just production source**: When planning a field type change or method signature change, grep `src/test/` for direct accesses to that field/method as a separate step from grepping `src/main/`. Production blast radius analysis misses test-only coupling — assertions like `assertEquals(literal, item.field)` won't appear in any production file but will fail at runtime. Phase 3b-ii found 3 unplanned test files this way (InventoryObjectTest, AbyssalRitualTest, TracePersistenceTest).
+
 - **The 5-file commit limit counts production files, not test-assertion updates**: Test assertions updated solely to adapt to a field type change carry no behavioral risk or architectural footprint. Counting them against the per-commit limit creates false pressure to defer them, which leaves the suite broken. Rule: max 5 *production* files per atomic commit; test-only assertion updates for the same change are free and should travel with it.
 
 ## Mistakes/Corrections

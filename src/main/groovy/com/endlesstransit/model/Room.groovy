@@ -213,8 +213,8 @@ class Room implements Location {
                     String name = objects[0]
                     VibeCapsule vibe = getVibe()
                     boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
-                    int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
-                    InventoryItem item = new InventoryItem(name, freq)
+                    SpectralFrequency freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
+                    InventoryItem item = new InventoryItem(name, freq.value)
                     game.player.inventory.add(item)
                     JournalManager.logCapture(item, this)
                     
@@ -268,8 +268,8 @@ class Room implements Location {
                             String name = objects[idx]
                             VibeCapsule vibe = getVibe()
                             boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
-                            int freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
-                            InventoryItem item = new InventoryItem(name, freq)
+                            SpectralFrequency freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
+                            InventoryItem item = new InventoryItem(name, freq.value)
                             game.player.inventory.add(item)
                             JournalManager.logCapture(item, this)
                             

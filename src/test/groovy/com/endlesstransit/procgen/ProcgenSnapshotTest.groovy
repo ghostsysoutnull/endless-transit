@@ -84,4 +84,37 @@ class ProcgenSnapshotTest {
         assertEquals("ObeliskWell", buildings[2].name,
             "Building[2] name must match pinned value for seed 0x1234")
     }
+
+    /**
+     * Phase 3a contract: generateRoomName() must return a 'category' key typed as RoomCategory,
+     * never the old 'type' String key. Guards against Phase 9 factory code silently falling back
+     * to the removed key and receiving null at runtime.
+     *
+     * Covers all 6 cultures × all 7 traits (including the Standard fallback).
+     */
+    @Test
+    void generateRoomName_returnsCategoryKey_notTypeKey_acrossAllCulturesAndTraits() {
+        LocusSeed locus = new LocusSeed(SNAPSHOT_SEED)
+        List<String> traits = ["Military", "Research", "Industrial", "Ceremonial", "Commercial", "Agricultural", "Standard"]
+        List<String> cultures = ["rust", "neon", "baroque", "monolith", "void", "organic"]
+
+        traits.each { String trait ->
+            cultures.each { String culture ->
+                Map<String, Object> result = NameGenerator.generateRoomName(culture, trait, locus.branch("${trait}_${culture}"))
+
+                assertNull(result["type"],
+                    "generateRoomName must not return 'type' key — it was removed in Phase 3a (culture=${culture}, trait=${trait})")
+                assertNotNull(result["category"],
+                    "generateRoomName must return 'category' key (culture=${culture}, trait=${trait})")
+                assertTrue(result["category"] instanceof RoomCategory,
+                    "'category' value must be a RoomCategory instance, got: ${result['category']?.class?.simpleName} (culture=${culture}, trait=${trait})")
+
+                RoomCategory category = (RoomCategory) result["category"]
+                assertNotNull(category.displayName,
+                    "RoomCategory.displayName must not be null (culture=${culture}, trait=${trait})")
+                assertNotNull(category.trace,
+                    "RoomCategory.trace must not be null — every category must map to an AnomalousTrace (culture=${culture}, trait=${trait})")
+            }
+        }
+    }
 }

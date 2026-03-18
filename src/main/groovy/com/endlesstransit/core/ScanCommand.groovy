@@ -182,7 +182,7 @@ class ScanCommand implements GameCommand, LatticeCommand {
             String name = room.roomName
             String status = room.isVisited() ? Terminal.colorize("[VISITED]", Terminal.GREEN) : Terminal.dim("[UNSTABLE]")
             
-            int freq = Gematria.calculateFrequency(name, room.getDepth())
+            int freq = Gematria.calculateFrequency(name, room.getDepth()).value
             String signature = String.format("%04dHz", freq)
             String wave = (freq % 11 == 0) ? Terminal.colorize("≈≈≈", Terminal.GREEN) : Terminal.colorize("~~~", Terminal.CYAN)
             if (room.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
