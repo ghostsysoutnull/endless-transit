@@ -1,6 +1,17 @@
 {
   "permissions": {
-    "allow": [],
+    "allow": [
+      "Bash(./vinc.sh:*)",
+      "Bash(./run.sh:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(date:*)",
+      "Write",
+      "Edit"
+    ],
     "deny": []
   },
   "hooks": {
