@@ -143,10 +143,10 @@ to catch a component extraction that shifts column alignment or drops a separato
 Phase 10 introduces an event bus. Without unit tests for the bus itself, a broken subscription
 or wrong payload is invisible until something higher-level breaks.
 
-- [ ] Write `EventBusTest`: verify subscribe/publish, multiple listeners, event payload fields (LIP, item name), and that unsubscribed listeners don't receive events
+- [x] Write `EventBusTest`: verify subscribe/publish, multiple listeners, event payload fields (LIP, item name), and that unsubscribed listeners don't receive events
 
-**Files:** `EventBusTest.groovy` (new, test only)
-**Status:** `[ ] NOT STARTED`
+**Files:** `EventBusTest.groovy` (new, `@Disabled` until Phase 10), `DomainEvent.groovy` + `EventBus.groovy` (minimal stubs defining API contract)
+**Status:** `[x] COMPLETE — 2026-03-17` (87 discovered / 82 pass / 5 skipped; stubs compile, tests disabled)
 
 ### 0.5h — Procgen Content Snapshot Test (needed before Phases 2b and 9)
 `DeterministicUniverseTest` compares two live runs — both would be equally wrong if generation
