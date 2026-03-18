@@ -1,4 +1,3 @@
-docs/backups/
 *.log
 *.log.*
 journal.txt
@@ -8,7 +7,6 @@ journal-last-entry.txt
 session.trace
 build/
 *.class
-last-message.txt
 
 journal_test.txt
 journal-last-entry_test.txt
