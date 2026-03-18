@@ -27,6 +27,10 @@
 
 - **The 5-file commit limit counts production files, not test-assertion updates**: Test assertions updated solely to adapt to a field type change carry no behavioral risk or architectural footprint. Counting them against the per-commit limit creates false pressure to defer them, which leaves the suite broken. Rule: max 5 *production* files per atomic commit; test-only assertion updates for the same change are free and should travel with it.
 
+- **`getResourceAsStream` requires an index file for directory enumeration**: Classpath resource loading cannot list directory contents — especially inside a JAR where `jar:` URIs expose no directory API. When converting any resource directory from filesystem to classpath loading, add an `index.txt` alongside the resource files listing the available keys (one per line). Load the index first, then load each named file. This pattern is portable to JARs, consistent across directories, and makes available resources explicit.
+
+- **Clear the improvement backlog between phases, not after**: Bounded per-phase commit limits leave small residue items (missed annotations, inconsistent patterns, deferred conversions). Clearing them before entering the next phase takes one short session. Carrying them across multiple phases makes each item harder to attribute and more likely to interact with in-flight changes. The compound cost grows faster than the items do.
+
 ## Mistakes/Corrections
 - **Package Relocation**: When moving the entry point (`Main.groovy`), ensure it is within the package structure (`com.endlesstransit`) to avoid classpath collisions or import ambiguity.
 - **Verification Protocol**: Always use the `--test` parameter when executing `./vinc.sh` for verification. Avoid manual execution for logic or UI validation that can be automated via the test suite.
