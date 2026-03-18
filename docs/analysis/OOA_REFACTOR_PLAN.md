@@ -231,13 +231,13 @@ drives rendering and game logic (`Building.groovy`, `Corridor.groovy`, `SessionR
 ### 2b — NameGenerator Lexicon Externalization (OOA 1.3)
 Building/room name lexicons are hard-coded maps in `NameGenerator.groovy`.
 
-- [ ] Create `src/main/resources/names/buildings/` text files per culture (rust, neon, baroque, monolith, void, organic)
-- [ ] Load via classpath (same pattern as 2a)
-- [ ] Remove hard-coded maps from `NameGenerator.groovy`
-- [ ] Verify `DeterministicUniverseTest` still passes (same seed → same names)
+- [x] Create `src/main/resources/names/buildings/` text files per culture (rust, neon, baroque, monolith, void, organic)
+- [x] Load via filesystem (same pattern as ThemeService; both convert to classpath in 2a)
+- [x] Remove hard-coded maps from `NameGenerator.groovy`
+- [x] Verify `DeterministicUniverseTest` still passes (same seed → same names)
 
-**Files:** `NameGenerator.groovy` + resource files
-**Status:** `[ ] NOT STARTED`
+**Files:** `NameGenerator.groovy` + 12 resource files
+**Status:** `[x] COMPLETE — 2026-03-18` | commit: db138ab
 
 **Phase 2 Gates:** `./vinc.sh --test` — focus `SystemNameTest`, `ProcgenVariabilityTest`, `DeterministicUniverseTest`
 
