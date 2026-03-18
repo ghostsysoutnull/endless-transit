@@ -12,7 +12,7 @@ import java.util.regex.Pattern
  */
 @CompileStatic
 class ReplayService {
-    private static final String REGRESSION_PATH = "src/test/groovy/com/endlesstransit/regression"
+    private static final String SNAPSHOT_PATH = "src/test/groovy/com/endlesstransit/regression/snapshots"
 
     static class ReplayData {
         LocusSeed locus
@@ -39,59 +39,26 @@ class ReplayService {
     }
 
     /**
-     * Promotes a screenshot file to a permanent regression test.
+     * Promotes a screenshot file to a regression snapshot (JSON).
+     * The snapshot is picked up automatically by RegressionHarnessTest.
      */
     static String promoteToTest(File screenshotFile, String testName = null) {
         ReplayData data = parseMetadata(screenshotFile)
         if (!data) return "ERROR: Could not parse metadata from ${screenshotFile.name}"
 
         String finalTestName = testName ?: "Regression_${screenshotFile.name.replaceAll("[^a-zA-Z0-9]", "_")}"
-        String testContent = generateTestContent(finalTestName, data.locus, data.history)
 
-        File dir = new File(REGRESSION_PATH)
+        File dir = new File(SNAPSHOT_PATH)
         if (!dir.exists()) dir.mkdirs()
 
-        File testFile = new File(dir, "${finalTestName}.groovy")
-        testFile.text = testContent
-
-        return "SUCCESS: Generated test at ${testFile.absolutePath}"
-    }
-
-    private static String generateTestContent(String testName, LocusSeed locus, List<String> history) {
-        String formattedHistory = history.collect { "\"$it\"" }.join(", ")
-        
-        return """package com.endlesstransit.regression
-
-import com.endlesstransit.core.HeadlessRunner
-import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.VisualAssertionEngine
-import com.endlesstransit.ui.ScreenBuffer
-import org.junit.jupiter.api.Test
-import static org.junit.jupiter.api.Assertions.*
-
-/**
- * Automated regression test generated from VINCULUM snapshot.
- * Target Seed: ${locus.value}
- */
-class $testName {
-
-    @Test
-    void execute() {
-        LocusSeed locus = new LocusSeed(${locus.value}L)
-        List<String> script = [$formattedHistory]
-        
-        // Execute the simulation
-        ScreenBuffer result = HeadlessRunner.run(locus, script)
-        
-        // Assertions
-        assertNotNull(result, "Simulation failed to return a screen buffer")
-        
-        VisualAssertionEngine.verify(result) {
-            isBoxedCorrectly()
-            // Add custom assertions here based on the bug report
-        }
-    }
+        String historyJson = data.history.collect { "\"$it\"" }.join(", ")
+        File snapshotFile = new File(dir, "${finalTestName}.json")
+        snapshotFile.text = """{
+  "name": "${finalTestName}",
+  "seed": ${data.locus.value},
+  "history": [${historyJson}]
 }
 """
+        return "SUCCESS: Generated snapshot at ${snapshotFile.absolutePath}"
     }
 }
