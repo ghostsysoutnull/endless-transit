@@ -1,9 +1,7 @@
 package com.endlesstransit.core
-import com.endlesstransit.model.*
-import com.endlesstransit.ui.*
-import com.endlesstransit.procgen.*
-import com.endlesstransit.*
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class InventoryItem {
     String name
     SpectralFrequency frequency
