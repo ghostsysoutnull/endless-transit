@@ -124,10 +124,10 @@ is wired incorrectly for any model class, that class renders blank/broken with n
 `NavigationSyncTest` only tests ActionMapper resolution during building floor navigation.
 Moving ActionMapper to `TurnProcessor` without coverage at other depths risks silent failures.
 
-- [ ] Extend `NavigationSyncTest` (or write `ActionMapperDepthTest`): verify ActionMapper correctly resolves choices at street level (building selection), corridor level (apartment selection), and room level (object interaction)
+- [x] Extend `NavigationSyncTest` (or write `ActionMapperDepthTest`): verify ActionMapper correctly resolves choices at street level (building selection), corridor level (apartment selection), and room level (object interaction)
 
 **Files:** `ActionMapperDepthTest.groovy` (new, test only)
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-17` (79/79 green; 3 test methods at street/corridor/room depth)
 
 ### 0.5f — Expanded Visual Baseline Assertions (needed before Phase 7)
 Phase 7 decomposes `BridgeView` into components. The current visual tests are too shallow
