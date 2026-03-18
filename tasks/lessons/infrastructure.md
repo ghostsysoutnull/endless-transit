@@ -9,6 +9,9 @@
 - **Context-Efficient Testing**: Use `./vinc.sh --test --agent 2>/dev/null` for quick gate checks (1 line: `STATUS=PASS|FAIL ...`). Use `./vinc.sh --test -q` when debugging failures (20 lines with stack frame location). `--agent` is the default for agentic verification; `-q` is for human-readable diagnosis.
 - **Build Cache Staleness**: Always run `rm -rf build/vinc` after deleting or renaming any `.groovy` source file. `vinculum_compile()` never purges stale artifacts — deleted classes continue to be discovered and run until the cache is manually cleared. Symptom: test discovered count is higher than expected, or unknown tests appear in output.
 
+- **Test Artifact Convention**: All files written by tests fall into two categories: (1) **transient scaffolding** — always deleted in `@AfterEach` or inline cleanup, never committed; (2) **pinned baselines** — written once with write-once semantics (`if (!file.exists())`), gitignored, refreshed by deleting and re-running. Tests must never write to `src/` or overwrite committed files. Violations pollute `git status` and erode confidence in the working tree.
+- **Polling over sleeping**: When a test waits for an async side-effect (file write, event, state change), use a polling loop (`while deadline not reached: check condition, sleep 50ms`) rather than a fixed sleep. The common-case path exits in 1–2 iterations; the timeout ceiling still catches regressions.
+
 ## Mistakes/Corrections
 - **Package Relocation**: When moving the entry point (`Main.groovy`), ensure it is within the package structure (`com.endlesstransit`) to avoid classpath collisions or import ambiguity.
 - **Verification Protocol**: Always use the `--test` parameter when executing `./vinc.sh` for verification. Avoid manual execution for logic or UI validation that can be automated via the test suite.
