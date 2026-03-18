@@ -105,10 +105,10 @@ could silently break all door trace associations with no test failing.
 `Room.findAncestor()` and parent chain traversal are used during navigation but are untested.
 If LeafLocation extraction breaks parent wiring, navigation silently fails.
 
-- [ ] Write `RoomAncestorTest`: navigate to a `Room`, assert `findAncestor(Building)`, `findAncestor(Floor)`, `findAncestor(Corridor)` all return correct non-null instances with matching LIPs
+- [x] Write `RoomAncestorTest`: navigate to a `Room`, assert `findAncestor(Building)`, `findAncestor(Floor)`, `findAncestor(Corridor)` all return correct non-null instances with matching LIPs
 
 **Files:** `RoomAncestorTest.groovy` (new, test only)
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-17` (75/75 green; also pins parent reference consistency)
 
 ### 0.5d — Per-Location Rendering Content Tests (needed before Phase 5)
 `InitialScreenTest` only checks that rendering methods don't throw. If constructor injection
