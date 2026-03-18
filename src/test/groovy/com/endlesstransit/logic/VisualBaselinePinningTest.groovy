@@ -24,9 +24,14 @@ class VisualBaselinePinningTest {
         assertTrue(baseline.contains("PULSE_TRAVERSAL"), "Baseline should contain HUD markers")
         assertTrue(baseline.contains("COHERENCE"), "Baseline should contain HUD markers")
         
-        // Save to a temporary file for manual comparison if Lock 3 fails
+        // Write once — only captures if the baseline doesn't already exist.
+        // To refresh: delete the file and re-run the test.
         String path = "screenshots/baseline_refactor_survival.txt"
-        Files.write(Paths.get(path), baseline.getBytes())
-        Terminal.println "Visual baseline captured to $path"
+        File baselineFile = new File(path)
+        if (!baselineFile.exists()) {
+            new File("screenshots").mkdirs()
+            Files.write(Paths.get(path), baseline.getBytes())
+            Terminal.println "Visual baseline captured to $path"
+        }
     }
 }
