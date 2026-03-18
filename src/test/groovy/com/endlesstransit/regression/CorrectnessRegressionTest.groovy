@@ -8,11 +8,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
 
-class VibeRegressionTest {
+class CorrectnessRegressionTest {
 
     @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
+        com.endlesstransit.model.ModelOutput.fmt = new StandardTerminalAdapter()
     }
 
     /**

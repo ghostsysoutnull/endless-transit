@@ -11,6 +11,8 @@
 
 - **Test Artifact Convention**: All files written by tests fall into two categories: (1) **transient scaffolding** — always deleted in `@AfterEach` or inline cleanup, never committed; (2) **pinned baselines** — written once with write-once semantics (`if (!file.exists())`), gitignored, refreshed by deleting and re-running. Tests must never write to `src/` or overwrite committed files. Violations pollute `git status` and erode confidence in the working tree.
 - **Polling over sleeping**: When a test waits for an async side-effect (file write, event, state change), use a polling loop (`while deadline not reached: check condition, sleep 50ms`) rather than a fixed sleep. The common-case path exits in 1–2 iterations; the timeout ceiling still catches regressions.
+- **Verify the working tree after every test run**: Run `git status --short` immediately after `./vinc.sh --test`. A clean tree confirms no test is leaking artifacts. If anything appears dirty, investigate before the next commit — artifact pollution compounds silently across sessions.
+- **Code generation in tests signals a missing abstraction**: When every generated file shares the same structure with only data varying, the answer is a `@TestFactory` + data files (JSON, txt), not a template engine. Generated `.groovy` source files require compilation, pollute the source tree, and risk overwriting committed code.
 
 ## Mistakes/Corrections
 - **Package Relocation**: When moving the entry point (`Main.groovy`), ensure it is within the package structure (`com.endlesstransit`) to avoid classpath collisions or import ambiguity.

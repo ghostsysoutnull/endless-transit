@@ -19,7 +19,9 @@
 
 - [x] Phase 0 — Baselines (61/61 green, seeds 0/500/9999 pinned, visual baseline at seed 12345)
 - [x] Phase 0.5 — Test Coverage Gaps (8 safety-net tests) — all 8 complete (0.5a–0.5h ✅)
-- [ ] Phases 1–10 — See OOA_REFACTOR_PLAN.md for full breakdown
+- [x] Phase 1 — Bug Fixes (isCorridorActive reset removed, visitedPaths documented) ✅
+- [ ] Phase 2 — Resource Loading — **NEXT**
+- [ ] Phases 3–10 — See OOA_REFACTOR_PLAN.md for full breakdown
 
 ---
 

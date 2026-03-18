@@ -6,7 +6,6 @@ journal-last-entry.txt
 *.swp
 session.trace
 build/
-*.class
 
 journal_test.txt
 journal-last-entry_test.txt
