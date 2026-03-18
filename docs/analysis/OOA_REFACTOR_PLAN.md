@@ -583,6 +583,8 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 - After any user correction: update `tasks/lessons/<domain>.md`
 - Run `/chronicle` after every completed phase
 - Write phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, then retro)
+- Log any workflow friction from the retro to `docs/analysis/WORKFLOW_BACKLOG.md`
+- Every 3 phases (Phase 1, 4, 7, 10): review backlog before starting next phase
 
 ---
 

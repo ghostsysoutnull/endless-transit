@@ -79,6 +79,12 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * Write rules that prevent the same mistake from recurring.
 * Review lessons at session start via the `@tasks/lessons/` references in the domain CLAUDE.md files.
 
+## 🔧 Workflow Improvement Cadence
+* After every phase retro: scan "Concerns for Upcoming Phases" — log any workflow friction to `docs/analysis/WORKFLOW_BACKLOG.md`.
+* **Review cadence:** every 3 phases (Phase 1, 4, 7, 10). Open the backlog, assess open items, decide whether a workflow session is warranted before continuing.
+* **Early trigger:** any `High` priority item in the backlog skips the cadence and blocks the next phase immediately.
+* Workflow sessions follow the same plan → execute → retro → chronicle pattern as code phases.
+
 ---
 
 ## 🏛️ Safety Mandates (The Shield)

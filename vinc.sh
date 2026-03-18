@@ -12,7 +12,7 @@ RESET='\033[0m'
 # Function: Clean Compilation Check
 function vinculum_compile() {
     echo -ne "${CYAN}[VINC:VERIFYING_SUBSTRATE...]${RESET} "
-    mkdir -p build/vinc
+    rm -rf build/vinc && mkdir -p build/vinc  # purge stale .class files before recompile
     # Compile both main and test sources to ensure global integrity
     if ! groovyc -cp src/main/groovy:src/test/groovy -d build/vinc \
         src/main/groovy/com/endlesstransit/**/*.groovy \
