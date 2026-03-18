@@ -59,32 +59,24 @@ class NameGenerator {
         return "${descriptors[r.nextInt(descriptors.size())]} ${nouns[r.nextInt(nouns.size())]} ${r.nextInt(99)}"
     }
 
-    static final Map buildingLexicon = [
-        "rust": [
-            "adj": ["Corroded", "Oxidized", "Patchwork", "Scrapyard", "Weathered", "Fading", "Dusty", "Assembled"],
-            "noun": ["Shell", "Stack", "Monolith", "Heap", "Vault", "Husk", "Anchor", "Frame"]
-        ],
-        "neon": [
-            "adj": ["Vibrant", "Fluorescent", "Flickering", "Synthetic", "Digital", "Glitchy", "Pulsing", "Lucid"],
-            "noun": ["Hub", "Nexus", "Array", "Node", "Core", "Circuit", "Relay", "Grid"]
-        ],
-        "baroque": [
-            "adj": ["Ornate", "Golden", "Cathedral", "Sacred", "Opulent", "Marble", "Grand", "Sanctum"],
-            "noun": ["Gallery", "Archive", "Palace", "Temple", "Sanctum", "Hall", "Cathedral", "Altar"]
-        ],
-        "monolith": [
-            "adj": ["Brutalist", "Concrete", "Silent", "Impenetrable", "Grey", "Eternal", "Static", "Cold"],
-            "noun": ["Slab", "Tower", "Obelisk", "Block", "Unit", "Monolith", "Foundation", "Pillar"]
-        ],
-        "void": [
-            "adj": ["Hollow", "Empty", "Silent", "Ghostly", "Drifting", "Dark", "Abyssal", "Stellar"],
-            "noun": ["Void", "Shadow", "Echo", "Aperture", "Gravity", "Well", "Horizon", "Reach"]
-        ],
-        "organic": [
-            "adj": ["Living", "Grown", "Pulsing", "Verdant", "Breathing", "Soft", "Neural", "Fungal"],
-            "noun": ["Pod", "Spore", "Nest", "Shell", "Chamber", "Limb", "Leaf", "Root"]
-        ]
-    ]
+    static final Map buildingLexicon = loadBuildingLexicon()
+
+    private static Map loadBuildingLexicon() {
+        Map lexicon = new LinkedHashMap()
+        for (String culture in ["rust", "neon", "baroque", "monolith", "void", "organic"]) {
+            lexicon[culture] = [
+                "adj" : loadLexiconFile("src/main/resources/names/buildings/${culture}_adj.txt"),
+                "noun": loadLexiconFile("src/main/resources/names/buildings/${culture}_noun.txt")
+            ]
+        }
+        return lexicon
+    }
+
+    private static List<String> loadLexiconFile(String path) {
+        File file = new File(path)
+        if (!file.exists()) return []
+        return file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+    }
 
     static final List<String> landmarkTitles = [
         "The Eye of the Web",

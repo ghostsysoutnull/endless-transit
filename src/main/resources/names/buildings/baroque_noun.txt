@@ -1,0 +1,8 @@
+Gallery
+Archive
+Palace
+Temple
+Sanctum
+Hall
+Cathedral
+Altar

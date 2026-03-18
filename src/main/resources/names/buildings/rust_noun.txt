@@ -1,0 +1,8 @@
+Shell
+Stack
+Monolith
+Heap
+Vault
+Husk
+Anchor
+Frame
