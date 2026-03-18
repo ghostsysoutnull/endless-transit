@@ -628,6 +628,8 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 - Write phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, then retro)
 - Log any workflow friction from the retro to `docs/analysis/WORKFLOW_BACKLOG.md`
 - Every 3 phases (Phase 1, 4, 7, 10): review backlog before starting next phase
+- **Blast radius planning must include test tree**: grep `src/test/` for field/method accesses alongside `src/main/`. List affected test files explicitly in the phase plan under a "Test blast radius" line alongside "Files:".
+- **Test execution discipline**: use `./vinc.sh --test ClassName --agent 2>/dev/null` for fast inner-loop checks during implementation; always run `./vinc.sh --test --agent 2>/dev/null` (full suite) before every commit — the targeted filter is a development accelerator, not a gate replacement.
 
 ---
 
