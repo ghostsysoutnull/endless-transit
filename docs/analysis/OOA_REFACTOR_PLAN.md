@@ -95,11 +95,11 @@ nothing catches it.
 `AnomalousTrace.matches(String roomType)` is completely untested. A refactor to `RoomCategory`
 could silently break all door trace associations with no test failing.
 
-- [ ] Write `AnomalousTraceTest`: assert each `AnomalousTrace` value matches its expected room type strings (e.g., `OZONE` matches `"SERVER"`, `"LABORATORY"`; `FROST` matches `"STORAGE"`, `"VAULT"`)
-- [ ] Assert no cross-contamination (e.g., `OZONE` does not match `"STORAGE"`)
+- [x] Write `AnomalousTraceTest`: assert each `AnomalousTrace` value matches its expected room type strings (e.g., `OZONE` matches `"SERVER"`, `"LABORATORY"`; `FROST` matches `"STORAGE"`, `"VAULT"`)
+- [x] Assert no cross-contamination (e.g., `OZONE` does not match `"STORAGE"`)
 
 **Files:** `AnomalousTraceTest.groovy` (new, test only)
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-17` (74/74 green; 12 test methods covering all 6 traces)
 
 ### 0.5c — Room Ancestor Chain Test (needed before Phase 4a)
 `Room.findAncestor()` and parent chain traversal are used during navigation but are untested.
