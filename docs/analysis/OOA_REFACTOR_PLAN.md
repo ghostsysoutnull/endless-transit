@@ -153,11 +153,12 @@ or wrong payload is invisible until something higher-level breaks.
 order shifts. A snapshot test pinning actual generated values for a known seed catches subtle
 changes that structural comparison misses.
 
-- [ ] Write `ProcgenSnapshotTest`: for seed `0x1234` (or similar pinned value), assert exact planet name, culture string, and at least 3 building names match hardcoded expected values
-- [ ] Run after any procgen or resource loading change as an additional determinism gate
+- [x] Write `ProcgenSnapshotTest`: for seed `0x1234` (4660), assert exact planet name, culture string, and at least 3 building names match hardcoded expected values
+- [x] Run after any procgen or resource loading change as an additional determinism gate
 
 **Files:** `ProcgenSnapshotTest.groovy` (new, test only)
-**Status:** `[ ] NOT STARTED`
+**Pinned values (seed 0x1234):** filament="Mu-993-Sync", planet="Hydraia", culture=analog/monolith/shogun, city="Free Dust Kingdom", country="Starford", street="Busy Terrace", buildings[0,1,2]="Impenetrable Unit","ObeliskWell","ObeliskWell"
+**Status:** `[x] COMPLETE — 2026-03-17` (90 discovered / 85 pass / 5 skipped / 0 failed)
 
 **Phase 0.5 Gates:** `./vinc.sh --test` — all new tests must pass alongside existing suite
 

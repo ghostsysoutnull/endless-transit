@@ -5,7 +5,7 @@
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
 
 - [x] Phase 0 — Baselines (61/61 green, seeds 0/500/9999 pinned, visual baseline at seed 12345)
-- [ ] Phase 0.5 — Test Coverage Gaps (8 safety-net tests) — 0.5a ✅
+- [x] Phase 0.5 — Test Coverage Gaps (8 safety-net tests) — all 8 complete (0.5a–0.5h ✅)
 - [ ] Phases 1–10 — See OOA_REFACTOR_PLAN.md for full breakdown
 
 ---
