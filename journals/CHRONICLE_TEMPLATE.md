@@ -1,6 +1,14 @@
 # Chronicle Template
-> How to write a chronicle log and retrospective for this project.
+> How to write a chronicle log for this project.
 > Reference this file whenever `/chronicle` is requested.
+
+---
+
+## The Format
+
+Chronicles follow the OBSERVER_LOG format — two layers, always:
+1. **THE NARRATIVE** — the vibe, the meaning, the feeling of the session in the language of the world
+2. **THE SUBSTRATE** — the technical facts: commits, files, metrics, what's next
 
 ---
 
@@ -14,69 +22,94 @@ to confirm it isn't already used.
 ## Step 2 — Create the journal log file
 
 **Path:** `journals/LOG_YYYYMMDD_HHMMSS_<LOG_ID>.md`
-**Naming:** use today's date and a rough time (24h, no colons).
 
 ```markdown
-# Chronicle: <Short Title>
-**Log ID:** <LOG_ID>
-**Date:** YYYY-MM-DD
+# [OBSERVER_LOG_0x<LOG_ID>] | YYYY-MM-DD
+
+## 🌌 THE NARRATIVE (The Vibe)
+
+> Multi-paragraph blockquote. Immersive prose written from the perspective of the
+> Vinculum Architect. Uses the game's vocabulary: substrate, lattice, neural link,
+> fragments, probes, void, amber, frequencies, pulse.
+>
+> Describes WHY the session mattered — the feeling, the problem that was lurking,
+> what changed in the nature of the substrate. Not a dry summary of what was done.
+> Short punchy paragraphs, each with a thematic angle.
+>
+> End with a sense of state: what does the substrate feel like now?
 
 ---
 
-## Summary
-One short paragraph. What changed, why it matters, net result (suite state, perf gain, etc.).
+## ⚙️ THE SUBSTRATE (The Tech)
+
+### 📍 LOCUS_CONTEXT
+(For gameplay/procgen sessions)
+- **MASTER_SEED:** `12345` (reference seed used)
+- **ACTIVE_LIP:** `0.0.0.0.0.0.0.0`
+- **SNAPSHOT:** `screenshots/...`
+
+(For OOA refactoring sessions — replace fields as needed)
+- **ACTIVE_PHASE:** Phase 2b — NameGenerator Lexicon Externalization
+- **REFACTOR_TARGET:** `NameGenerator.groovy` → `src/main/resources/names/buildings/`
+- **SAFETY_GATE:** `ProcgenSnapshotTest`, `DeterministicUniverseTest`
+
+(For infrastructure/tooling sessions)
+- **MASTER_SEED:** N/A (infrastructure work only)
+- **ACTIVE_LIP:** N/A
+- **SNAPSHOT:** reference file if applicable, else omit
+
+### 🛠️ IMPLEMENTATION_DELTA
+
+**Session label: [TAG_IN_CAPS]**
+
+(Use a table when multiple commits exist)
+| Commit | Item | Change |
+| :--- | :--- | :--- |
+| `abc1234` | Description | What changed |
+
+(Or bullet points with [TAGS] for single-commit sessions)
+- **[TAG]**: What was done and why it matters.
+
+Include key technical details: method names, file paths, before/after numbers,
+specific decisions made. This section is the permanent record — be precise.
+
+### 📈 ENTROPY_REPORT
+- **SUITE_STATE:** N discovered / N pass / N skipped / N failed | Duration: Xms
+- **TRAVERSAL_DEPTH:** Where we are in the overall arc (phase complete, gates satisfied, etc.)
+- **NEXT_PHASE:** What comes next
 
 ---
-
-## What Was Done
-
-### <Sub-task or Fix Label>
-Describe *what* the problem was, *why* it existed, and *what the fix was*.
-Include filenames, line numbers, or code snippets where they add clarity.
-One `###` block per meaningful unit of work.
-
----
-
-## Suite at Close
-`STATUS=PASS DISCOVERED=N SUCCEEDED=N FAILED=0 SKIPPED=N DURATION=Xms`
-(Run `./vinc.sh --test --agent 2>/dev/null` to get this line.)
-
----
-
-## Key Lesson
-**Bold headline.** One or two sentences on the most transferable insight from this session.
+*End of Fragment. Neural Trace Stabilized.*
 ```
 
 ---
 
 ## Step 3 — Update CHRONICLE_INDEX.md
 
-Add a new row at the **top** of the table (below the header), before the previous entry:
+Add a new row at the **top** of the table (below the header):
 
 ```markdown
-| **<LOG_ID>** | YYYY-MM-DD | **[TAG_IN_CAPS]** | One-line summary. Suite: N/N/N/N, duration Xms. |
+| **0x<LOG_ID>** | YYYY-MM-DD | **[TAG_IN_CAPS]** | One-line summary. Suite: N/N/N/N. |
 ```
-
-`TAG_IN_CAPS` examples: `PHASE_1_BUG_FIXES`, `TEST_SPEED_IMPROVEMENTS`, `PROCGEN_REFACTOR`.
 
 ---
 
-## Step 4 — Retrospective (phase completions only)
+## Step 4 — Retrospective (phase completions and significant sessions)
 
-Retros are written after completing a named phase (Phase 1, Phase 0.5, etc.), not for every session.
-For ad-hoc sessions (tooling fixes, speed improvements) a retro is optional but welcome.
+Retros are written after completing a named phase or significant session.
+For minor ad-hoc sessions a retro is optional.
 
 **Path:** `docs/retro/RETRO_<LABEL>.md`
 
 ```markdown
 # Retro: <Phase or Session Name>
 **Date:** YYYY-MM-DD | **Suite at close:** N discovered / N pass / N skipped / N failed | **Duration:** Xms
-**Chronicle:** journals/LOG_YYYYMMDD_HHMMSS_<LOG_ID>.md
+**Chronicle:** journals/LOG_YYYYMMDD_HHMMSS_0x<LOG_ID>.md
 
 ---
 
 ## What Went Well
-- Bullet points. Be specific — name the pattern or decision that worked.
+- Specific, named patterns or decisions that worked.
 
 ---
 
@@ -97,14 +130,29 @@ For ad-hoc sessions (tooling fixes, speed improvements) a retro is optional but 
 
 ## Lessons
 - **Bold headline.** One sentence elaboration.
-- Promote evergreen lessons to `tasks/lessons/<domain>.md` after writing them here.
+- Promote evergreen lessons to `tasks/lessons/<domain>.md`.
 ```
+
+---
+
+## Narrative Writing Guide
+
+The NARRATIVE section is the soul of the chronicle. Some principles:
+
+- **Use the world's vocabulary.** Substrate, lattice, neural link, fragments, void, pulse,
+  frequencies, amber, probes, waveform, trace. The chronicle exists inside the world.
+- **Write the problem as it felt, not as it was classified.** Not "there was a missing
+  initialisation" — "the instruments were lying."
+- **Short paragraphs.** Each one earns its place. No filler sentences.
+- **End with a state change.** The substrate is now different. What does it feel like?
+- **Never just paraphrase the SUBSTRATE section.** The NARRATIVE adds the dimension
+  the commit log cannot — intent, consequence, meaning.
 
 ---
 
 ## Checklist
 
-- [ ] Log file created at `journals/LOG_YYYYMMDD_HHMMSS_<LOG_ID>.md`
+- [ ] Log file created at `journals/LOG_YYYYMMDD_HHMMSS_0x<LOG_ID>.md`
 - [ ] `CHRONICLE_INDEX.md` updated (new row at top)
 - [ ] Retro written at `docs/retro/RETRO_<LABEL>.md` (if phase completion or warranted)
 - [ ] Any new lessons promoted to `tasks/lessons/<domain>.md`
