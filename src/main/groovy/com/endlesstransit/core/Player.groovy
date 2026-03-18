@@ -11,6 +11,11 @@ class Player {
     Location currentLocation
     int stepCount = 0
     Set<String> visitedLIPs = new LinkedHashSet<>()
+    // visitedPaths is intentionally absent from GameMemento.
+    // It is populated by SyncManager during session persistence but is never read by
+    // any game logic or UI renderer — only visitedLIPs drives rendering
+    // (Building.groovy, Corridor.groovy, SessionRecap.groovy).
+    // Omitting it from the memento is correct; it carries no load-bearing state.
     Set<String> visitedPaths = new LinkedHashSet<>()
     int resonantTracesCount = 0
     int coherence = 100
