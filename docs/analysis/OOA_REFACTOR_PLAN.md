@@ -26,7 +26,7 @@
 | 0 | Baselines | `[x] COMPLETE` | None |
 | 0.5 | Test Coverage Gaps | `[x] COMPLETE` | None |
 | 1 | Bug Fixes | `[x] COMPLETE` | Low |
-| 2 | Resource Loading | `[ ] NOT STARTED` | Low |
+| 2 | Resource Loading | `[x] COMPLETE` | Low |
 | 3 | Value Objects | `[x] COMPLETE` | Low |
 | 3c | Gematria Return Type Completion | `[x] COMPLETE` | Low |
 | 4 | Structural Extraction | `[ ] NOT STARTED` | Low |
@@ -223,11 +223,14 @@ drives rendering and game logic (`Building.groovy`, `Corridor.groovy`, `SessionR
 ### 2a — ThemeService Classpath Loading (OOA 1.4)
 `ThemeService.loadThemes()` uses `new File("src/main/resources/...")` — breaks in a JAR.
 
-- [ ] Replace filesystem loading with `getClass().getResourceAsStream(...)`
-- [ ] Verify all theme categories load correctly
+- [x] Replace filesystem loading with `getClass().getResourceAsStream(...)`
+- [x] Add `index.txt` per resource directory to enable classpath-safe enumeration (jar: URIs can't list directory contents)
+- [x] Convert `NameGenerator.loadLexiconFile()` to classpath simultaneously — consistency mandate
+- [x] Add `src/main/resources` to vinc.sh classpath for dev/test
+- [x] Verify all theme categories load correctly
 
-**Files:** `ThemeService.groovy` (1 file)
-**Status:** `[ ] NOT STARTED`
+**Files:** `ThemeService.groovy`, `NameGenerator.groovy`, `vinc.sh` + 5 index files
+**Status:** `[x] COMPLETE — 2026-03-18` | commit: dbe6e20
 
 ### 2b — NameGenerator Lexicon Externalization (OOA 1.3)
 Building/room name lexicons are hard-coded maps in `NameGenerator.groovy`.
