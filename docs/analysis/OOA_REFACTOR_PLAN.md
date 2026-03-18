@@ -173,23 +173,40 @@ changes that structural comparison misses.
 **Also depends on:** `docs/analysis/TEST_RUNNER_IMPROVEMENTS.md` — all 5 items complete before Phase 1 begins
 
 ### 1a — Floor Save/Restore Ordering (OOA 4.1)
-`Floor.enter()` resets `isCorridorActive = false` before mutation state is applied.
-The mutation state is overwritten and never restored correctly.
+`NavigationOrchestrator.enterLocation()` unconditionally resets `isCorridorActive = false`
+whenever a Floor is entered. During restore, `SyncManager` correctly applies mutation state
+(`isCorridorActive = true`) — but the subsequent navigation call to `enterLocation()` overwrites
+it back to `false`. The save/restore of corridor state is silently broken.
 
-- [ ] In `Floor.enter()`: apply `applyMutationState()` *before* the `isCorridorActive = false` reset
-- [ ] Verify `TracePersistenceTest` and `MnemonicReversalTest` pass
+> **Plan correction (2026-03-17):** Original description named `Floor.enter()` as the fix site,
+> but `Floor.enter()` has no such reset. The actual reset is at `NavigationOrchestrator.groovy:30`.
+> `CorridorPersistenceTest` remains correct — it catches the bug regardless of which file contains it.
 
-**Files:** `Floor.groovy` (1 file)
+- [ ] In `NavigationOrchestrator.enterLocation()`: remove the `((Floor)loc).isCorridorActive = false` reset
+- [ ] Rationale: `isCorridorActive` defaults to `false` on the field declaration — a fresh Floor
+  naturally starts in Elevator mode without an explicit reset. The reset only prevents saved
+  corridor state from being honoured on re-entry, which is the bug.
+- [ ] Verify `CorridorPersistenceTest`, `TracePersistenceTest`, and `MnemonicReversalTest` pass
+
+**Files:** `NavigationOrchestrator.groovy` (1 file)
 **Status:** `[ ] NOT STARTED`
 
 ### 1b — Player.visitedPaths in GameMemento (OOA 4.3)
-`visitedPaths` (high-level path tracking) is absent from `GameMemento` while `visitedLIPs` is present.
+`visitedPaths` (path-string-based visited tracking) is absent from `GameMemento`.
+Analysis confirmed: nothing outside `SyncManager` reads `visitedPaths` — only `visitedLIPs`
+drives rendering and game logic (`Building.groovy`, `Corridor.groovy`, `SessionRecap.groovy`).
+`visitedPaths` is saved/restored via `SyncManager` (file persistence) but is not load-bearing.
 
-- [ ] Confirm whether any UI element reads `visitedPaths` (analysis first)
-- [ ] If yes: add `visitedPaths` field to `GameMemento` + restore in `PersistenceService`
-- [ ] If unused: add a comment in `Player.groovy` documenting the intentional omission
+- [x] Confirmed: no UI element or game logic reads `visitedPaths` — `visitedLIPs` is the active collection
+- [ ] Add a comment in `Player.groovy` documenting the intentional omission from `GameMemento`
 
-**Files:** `GameMemento.groovy`, `PersistenceService.groovy` (2 files max)
+> **Plan correction (2026-03-17):** Original description stated `visitedLIPs` is present in
+> `GameMemento` — it is not. Neither field is in `GameMemento`. `GameMemento` holds only
+> `masterLocus`, `currentLIP`, `playerCoherence`, `inventory`, and `inputHistory`.
+> `PersistenceService` is not involved — `SyncManager` handles both fields via session trace.
+
+**Files:** `Player.groovy` (1 file, comment only)
+**Status:** `[ ] NOT STARTED`
 **Status:** `[ ] NOT STARTED`
 
 **Phase 1 Gates:** `./vinc.sh --test` — focus `TracePersistenceTest`, `MnemonicReversalTest`
