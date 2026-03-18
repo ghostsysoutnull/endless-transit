@@ -26,10 +26,10 @@ class CaptureVerificationTest {
         BridgeView bridgeView = new BridgeView()
         Player player = new Player()
         
-        // Clean up screenshots folder before starting
+        // Clean up only screenshot_*.txt files, preserving other files in the directory
         File dir = new File("screenshots")
-        if (dir.exists()) dir.deleteDir()
         dir.mkdirs()
+        dir.listFiles { f -> f.name.startsWith("screenshot_") }?.each { it.delete() }
 
         String expectedLIP = genesis.startLocation.getLIP()
         Terminal.println "Target Start Location: ${genesis.startLocation.getName()}"
