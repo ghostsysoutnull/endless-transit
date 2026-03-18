@@ -13,11 +13,11 @@
 
 | Item | Name | Status | Priority |
 | :--- | :--- | :--- | :--- |
-| T1 | TTY detection — suppress progress in piped mode | `[ ] NOT STARTED` | High |
-| T2 | SKIPPED count in summary | `[ ] NOT STARTED` | High |
-| T3 | Slow test threshold raised to 1000ms | `[ ] NOT STARTED` | Low |
-| T4 | Stack frame on failure | `[ ] NOT STARTED` | High |
-| T5 | `--agent` machine-readable output mode | `[ ] NOT STARTED` | Medium |
+| T1 | TTY detection — suppress progress in piped mode | `[x] COMPLETE` | High |
+| T2 | SKIPPED count in summary | `[x] COMPLETE` | High |
+| T3 | Slow test threshold raised to 1000ms | `[x] COMPLETE` | Low |
+| T4 | Stack frame on failure | `[x] COMPLETE` | High |
+| T5 | `--agent` machine-readable output mode | `[x] COMPLETE` | Medium |
 
 ---
 

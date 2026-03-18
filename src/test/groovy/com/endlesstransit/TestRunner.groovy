@@ -31,7 +31,8 @@ class TestRunner {
         def summaryListener = new SummaryGeneratingListener()
         
         boolean quiet = args.contains("--quiet") || args.contains("-q")
-        boolean isPiped = (System.console() == null)  // T1: piped/non-TTY — suppress progress lines
+        boolean agentMode = args.contains("--agent")  // T5: machine-readable single-line output
+        boolean isPiped = agentMode || (System.console() == null)  // T1: piped/non-TTY — suppress progress lines
         def startTimes = [:]
         def slowTests = []
         def testCount = 0
@@ -66,32 +67,37 @@ class TestRunner {
                     long duration = System.currentTimeMillis() - (startTimes[testIdentifier.uniqueId] ?: System.currentTimeMillis())
                     String name = getCleanName(testIdentifier)
 
-                    // T3: threshold raised to 1000ms — slow tests still printed even when piped (actionable)
+                    // T3: threshold raised to 1000ms — slow tests printed unless in agent mode (summary only)
                     if (duration > 1000) {
                         slowTests << [name: name, duration: duration, id: testIdentifier.uniqueId]
 
-                        boolean wasClinical = Terminal.clinicalMode
-                        Terminal.setClinical(false)
-                        if (!isPiped) Terminal.print("\r") // Clear current line (TTY only)
-                        Terminal.println(Terminal.colorize("  [VINC:SLOW] ", Terminal.CYAN) + "${name} (${duration} ms)")
-                        if (wasClinical) Terminal.setClinical(true)
+                        if (!agentMode) {
+                            boolean wasClinical = Terminal.clinicalMode
+                            Terminal.setClinical(false)
+                            if (!isPiped) Terminal.print("\r") // Clear current line (TTY only)
+                            Terminal.println(Terminal.colorize("  [VINC:SLOW] ", Terminal.CYAN) + "${name} (${duration} ms)")
+                            if (wasClinical) Terminal.setClinical(true)
+                        }
                     }
 
                     if (testExecutionResult.status == TestExecutionResult.Status.FAILED) {
-                        boolean wasClinical = Terminal.clinicalMode
-                        Terminal.setClinical(false)
-                        if (!isPiped) Terminal.print("\r") // Clear current line (TTY only)
-                        Terminal.println(Terminal.colorize("  [VINC:FAILURE] ${name}", Terminal.RED))
-                        if (testExecutionResult.throwable.isPresent()) {
-                            Throwable t = testExecutionResult.throwable.get()
-                            Terminal.println(Terminal.colorize("    >> ${t.message}", Terminal.RED))
-                            // T4: find first project stack frame so the agent knows exactly where to look
-                            StackTraceElement frame = t.stackTrace.find { it.className?.startsWith("com.endlesstransit") && it.fileName != null }
-                            if (frame) {
-                                Terminal.println(Terminal.colorize("    at ${frame.fileName}:${frame.lineNumber}", Terminal.RED))
+                        // In agent mode, failures are reported in the structured STATUS block — suppress inline output
+                        if (!agentMode) {
+                            boolean wasClinical = Terminal.clinicalMode
+                            Terminal.setClinical(false)
+                            if (!isPiped) Terminal.print("\r") // Clear current line (TTY only)
+                            Terminal.println(Terminal.colorize("  [VINC:FAILURE] ${name}", Terminal.RED))
+                            if (testExecutionResult.throwable.isPresent()) {
+                                Throwable t = testExecutionResult.throwable.get()
+                                Terminal.println(Terminal.colorize("    >> ${t.message}", Terminal.RED))
+                                // T4: find first project stack frame so the agent knows exactly where to look
+                                StackTraceElement frame = t.stackTrace.find { it.className?.startsWith("com.endlesstransit") && it.fileName != null }
+                                if (frame) {
+                                    Terminal.println(Terminal.colorize("    at ${frame.fileName}:${frame.lineNumber}", Terminal.RED))
+                                }
                             }
+                            if (wasClinical) Terminal.setClinical(true)
                         }
-                        if (wasClinical) Terminal.setClinical(true)
                     }
                 }
             }
@@ -115,9 +121,11 @@ class TestRunner {
         def targets = args.findAll { !it.startsWith("-") }
 
         if (!targets.isEmpty()) {
-            Terminal.setClinical(false)
-            Terminal.println Terminal.colorize("\n[VINCULUM_TARGETED_TEST_RUN: ${targets[0]}]", Terminal.CYAN)
-            Terminal.setClinical(true)
+            if (!agentMode) {
+                Terminal.setClinical(false)
+                Terminal.println Terminal.colorize("\n[VINCULUM_TARGETED_TEST_RUN: ${targets[0]}]", Terminal.CYAN)
+                Terminal.setClinical(true)
+            }
 
             // Check if it's a class or package
             String target = targets[0]
@@ -129,7 +137,7 @@ class TestRunner {
                 requestBuilder.filters(includeClassNamePatterns(".*${target}.*"))
             }
         } else {
-            if (!quiet) {
+            if (!quiet && !agentMode) {
                 Terminal.setClinical(false)
                 Terminal.println Terminal.colorize("\n[VINCULUM_FULL_SUITE_INITIATED]", Terminal.CYAN)
                 Terminal.setClinical(true)
@@ -155,6 +163,22 @@ class TestRunner {
         
         // T2: compute skipped count (discovered minus succeeded minus failed)
         long skipped = summary.getTestsFoundCount() - summary.getTestsSucceededCount() - summary.getTestsFailedCount()
+        boolean passed = summary.getTestsFailedCount() == 0
+
+        // T5: --agent mode emits one structured line (+ FAILURE lines) — no decoration, no ANSI
+        if (agentMode) {
+            String status = passed ? "PASS" : "FAIL"
+            println "STATUS=${status} DISCOVERED=${summary.getTestsFoundCount()} SUCCEEDED=${summary.getTestsSucceededCount()} FAILED=${summary.getTestsFailedCount()} SKIPPED=${skipped} DURATION=${totalDuration}ms"
+            if (!passed) {
+                summary.failures.each { failure ->
+                    Throwable t = failure.exception
+                    StackTraceElement frame = t?.stackTrace?.find { it.className?.startsWith("com.endlesstransit") && it.fileName != null }
+                    String location = frame ? "[${frame.fileName}:${frame.lineNumber}]" : ""
+                    println "FAILURE: ${failure.testIdentifier.displayName} ${location} >> ${t?.message}"
+                }
+            }
+            System.exit(passed ? 0 : 1)
+        }
 
         Terminal.println ""
         Terminal.println "--------------------------------------------------------------------------------"
@@ -175,7 +199,7 @@ class TestRunner {
             Terminal.println "--------------------------------------------------------------------------------"
         }
 
-        if (summary.getTestsFailedCount() > 0) {
+        if (!passed) {
             Terminal.println Terminal.colorize("\n[VINCULUM_TEST_SUITE_FAILED]", Terminal.RED)
             summary.failures.each { failure ->
                 Terminal.println Terminal.colorize("  >> ${failure.testIdentifier.displayName}: ${failure.exception.message}", Terminal.RED)

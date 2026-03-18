@@ -33,9 +33,15 @@ cd "$(dirname "$0")"
 # Routing Logic
 case "$1" in
     "--test")
-        vinculum_compile
-        echo -e "${CYAN}[VINC:EXECUTING_LOGIC_SUITE]${RESET}"
-        groovy -cp build/vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
+        # In --agent mode redirect compile/header to stderr so stdout carries only STATUS line
+        if echo "${@:2}" | grep -qw -- '--agent'; then
+            vinculum_compile >&2
+            groovy -cp build/vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
+        else
+            vinculum_compile
+            echo -e "${CYAN}[VINC:EXECUTING_LOGIC_SUITE]${RESET}"
+            groovy -cp build/vinc:src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
+        fi
         ;;
     "--compile")
         vinculum_compile
@@ -53,6 +59,8 @@ case "$1" in
         echo -e "Usage: ./vinc.sh [MODE] [ARGS]\n"
         echo -e "Modes:"
         echo -e "  --test        Run the full JUnit/Logic test suite (with auto-compile)."
+        echo -e "    -q          Quiet mode: suppress per-test progress (auto when piped)."
+        echo -e "    --agent     Machine-readable output: single STATUS=PASS/FAIL line."
         echo -e "  --compile     Perform a strict static type-check only."
         echo -e "  --scan        Run the SeedScanner explorer."
         echo -e "  --replay      Execute a deterministic replay."
