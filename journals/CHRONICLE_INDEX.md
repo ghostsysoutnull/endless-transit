@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x99fe1d4** | 2026-03-17 | **[PHASE_0.5_SAFETY_NET]** | 8 safety-net tests woven before OOA refactoring begins: corridor persistence, trace mapping, ancestor chains, rendering content, mapper depth, bridge structure, EventBus contract (disabled), and procgen snapshot. Suite: 90 discovered / 85 pass / 5 skipped. All dependency gates satisfied. |
 | **0x49aa17e** | 2026-03-17 | **[CONFIG_HOUSEKEEPING]** | Agent config layer hardened before OOA refactoring: OOA promoted to ACTIVE, March 6 safety mandate added, recovery prompt updated, session init protocol added to CODEX, stale @ include removed, Gemini sync obligation dropped for Claude-only effort. |
 | **0xF5C2** | 2026-03-17 | **[STRUCTURAL_CARTOGRAPHY]** | Full OO analysis; Claude agent configuration; 13-phase incremental refactor plan; 8 safety-net test gap specs; procgen lessons created; active task pointer set. |
 | **0x3F83** | 2026-03-17 | **[LOGIC_HARDENING_SYNC]** | Stabilized survival, navigation, and atmosphere synthesis logic; Codex synchronized. |
