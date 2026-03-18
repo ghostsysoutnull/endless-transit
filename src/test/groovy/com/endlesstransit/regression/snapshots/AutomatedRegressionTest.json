@@ -1,0 +1,5 @@
+{
+  "name": "AutomatedRegressionTest",
+  "seed": 12345,
+  "history": ["f", "01", "quit", "y", "y"]
+}
