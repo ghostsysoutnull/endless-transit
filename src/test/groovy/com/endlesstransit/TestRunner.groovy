@@ -31,6 +31,7 @@ class TestRunner {
         def summaryListener = new SummaryGeneratingListener()
         
         boolean quiet = args.contains("--quiet") || args.contains("-q")
+        boolean isPiped = (System.console() == null)  // T1: piped/non-TTY — suppress progress lines
         def startTimes = [:]
         def slowTests = []
         def testCount = 0
@@ -42,32 +43,36 @@ class TestRunner {
                 if (testIdentifier.isTest()) {
                     startTimes[testIdentifier.uniqueId] = System.currentTimeMillis()
                     testCount++
-                    
-                    boolean wasClinical = Terminal.clinicalMode
-                    Terminal.setClinical(false)
-                    if (!quiet) {
-                        Terminal.print(Terminal.colorize("  [VINC:TESTING] ", Terminal.CYAN))
-                        Terminal.println(getCleanName(testIdentifier))
-                    } else {
-                        // Print the name on the same line using \r to show current progress
-                        Terminal.print("\r  [VINC:RUNNING] ${getCleanName(testIdentifier)}".padRight(80))
+
+                    // T1: skip all progress output when piped — \r lines are noise in captured streams
+                    if (!isPiped) {
+                        boolean wasClinical = Terminal.clinicalMode
+                        Terminal.setClinical(false)
+                        if (!quiet) {
+                            Terminal.print(Terminal.colorize("  [VINC:TESTING] ", Terminal.CYAN))
+                            Terminal.println(getCleanName(testIdentifier))
+                        } else {
+                            // Print the name on the same line using \r to show current progress
+                            Terminal.print("\r  [VINC:RUNNING] ${getCleanName(testIdentifier)}".padRight(80))
+                        }
+                        if (wasClinical) Terminal.setClinical(true)
                     }
-                    if (wasClinical) Terminal.setClinical(true)
                 }
             }
-            
+
             @Override
             void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
                 if (testIdentifier.isTest()) {
                     long duration = System.currentTimeMillis() - (startTimes[testIdentifier.uniqueId] ?: System.currentTimeMillis())
                     String name = getCleanName(testIdentifier)
 
-                    if (duration > 500) {
+                    // T3: threshold raised to 1000ms — slow tests still printed even when piped (actionable)
+                    if (duration > 1000) {
                         slowTests << [name: name, duration: duration, id: testIdentifier.uniqueId]
-                        
+
                         boolean wasClinical = Terminal.clinicalMode
                         Terminal.setClinical(false)
-                        Terminal.print("\r") // Clear current line
+                        if (!isPiped) Terminal.print("\r") // Clear current line (TTY only)
                         Terminal.println(Terminal.colorize("  [VINC:SLOW] ", Terminal.CYAN) + "${name} (${duration} ms)")
                         if (wasClinical) Terminal.setClinical(true)
                     }
@@ -75,7 +80,7 @@ class TestRunner {
                     if (testExecutionResult.status == TestExecutionResult.Status.FAILED) {
                         boolean wasClinical = Terminal.clinicalMode
                         Terminal.setClinical(false)
-                        Terminal.print("\r") // Clear current line
+                        if (!isPiped) Terminal.print("\r") // Clear current line (TTY only)
                         Terminal.println(Terminal.colorize("  [VINC:FAILURE] ${name}", Terminal.RED))
                         if (testExecutionResult.throwable.isPresent()) {
                             Terminal.println(Terminal.colorize("    >> ${testExecutionResult.throwable.get().message}", Terminal.RED))
@@ -142,6 +147,9 @@ class TestRunner {
         long total = summary.getTestsSucceededCount() + summary.getTestsFailedCount()
         long totalDuration = System.currentTimeMillis() - globalStartTime
         
+        // T2: compute skipped count (discovered minus succeeded minus failed)
+        long skipped = summary.getTestsFoundCount() - summary.getTestsSucceededCount() - summary.getTestsFailedCount()
+
         Terminal.println ""
         Terminal.println "--------------------------------------------------------------------------------"
         Terminal.println "TEST EXECUTION SUMMARY"
@@ -149,11 +157,12 @@ class TestRunner {
         Terminal.println "TOTAL TESTS DISCOVERED : ${summary.getTestsFoundCount()}"
         Terminal.println "TESTS SUCCEEDED        : ${summary.getTestsSucceededCount()}"
         Terminal.println "TESTS FAILED           : ${summary.getTestsFailedCount()}"
+        Terminal.println "TESTS SKIPPED          : ${skipped}"
         Terminal.println "TOTAL DURATION         : ${totalDuration} ms"
         Terminal.println "--------------------------------------------------------------------------------"
 
         if (!slowTests.isEmpty()) {
-            Terminal.println Terminal.colorize("SLOW TESTS (> 500ms):", Terminal.CYAN)
+            Terminal.println Terminal.colorize("SLOW TESTS (> 1000ms):", Terminal.CYAN)
             slowTests.sort { -it.duration }.each { slow ->
                 Terminal.println "  - ${slow.name}: ${slow.duration} ms"
             }
