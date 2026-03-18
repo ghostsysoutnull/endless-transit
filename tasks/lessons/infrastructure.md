@@ -17,6 +17,10 @@
 - **Read the runner script before designing a loading strategy**: The test classpath is defined in `vinc.sh`, not `build.gradle` — they can diverge. Always check `vinc.sh` before assuming `getResourceAsStream()` or any classpath-based loading will work. In this project, `src/main/resources` is not on the test classpath.
 - **Consistency beats correctness-in-isolation**: When two services share the same loading pattern (both use filesystem paths), fix them together rather than converting one to a better pattern while leaving the other behind. Temporary divergence creates two patterns with no clear owner and obscures which is canonical.
 
+- **A failing test during authoring is information, not failure**: When a new test fails unexpectedly during the writing phase, investigate *why* before fixing the assertion. The failure may reveal a real production gap — as with the "not all SILENCE" test that surfaced the `TOPOLOGY_WARN` scenario in `populateCorridor`.
+- **Silent defaults on semantically meaningful values deserve a guard**: Any `?: fallback` where the fallback has a distinct domain meaning (e.g., `?: AnomalousTrace.SILENCE` masking a missing Country ancestor) should emit a log warning. Without it, hierarchy errors are invisible in production and tests.
+- **Standalone model objects require manual property setup**: `new Building(LocusSeed)` has `maxFloors=0` by default. Tests that create model objects outside the full procgen chain must set domain properties (`culture`, `timeline`, `maxFloors`, `apartmentsPerFloor`) explicitly, or `getFloor(0)` and similar accessors return null silently.
+
 ## Mistakes/Corrections
 - **Package Relocation**: When moving the entry point (`Main.groovy`), ensure it is within the package structure (`com.endlesstransit`) to avoid classpath collisions or import ambiguity.
 - **Verification Protocol**: Always use the `--test` parameter when executing `./vinc.sh` for verification. Avoid manual execution for logic or UI validation that can be automated via the test suite.

@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x3e7b9a1** | 2026-03-18 | **[PHASE_3_PRECHECK_HARDENING]** | Pre-Phase-3 safety net: 17 tests pinning RoomCategory (door trace contracts) and SpectralFrequency (resonance, master numbers, merge, keystone) contracts. TOPOLOGY_WARN guard added to populateCorridor. Full-hierarchy canary test for parent wiring. Suite: 107/102/5/0. |
 | **0xc4d2e8f** | 2026-03-18 | **[PHASE_2B_LEXICON_EXTERNALIZATION]** | Pre-phase housekeeping (lessons, backlog review, VibeRegressionTest rename + ModelOutput fix). Phase 2b: building lexicon moved from hardcoded Map to 12 resource files. Determinism confirmed. Suite: 89/84/5/0. |
 | **0xb7e4f1a** | 2026-03-18 | **[TEST_ARTIFACT_HYGIENE]** | Full audit of test-generated files: gitignore fixes, write-once baseline, CaptureVerificationTest dir fix, ReplayServiceTest cleanup, @TestFactory regression harness replacing Groovy code generation. Suite: 89/84/5/0. Working tree clean after every test run. |
 | **0xa3f91c2** | 2026-03-17 | **[TEST_SPEED_IMPROVEMENTS]** | Eliminated hardcoded sleeps in CaptureVerificationTest (3s→polling loop, ~50ms) and JournalTest (1100ms→50ms). Suite: 89/84/5/0, duration 6.5s→2.6s. No production code touched. |
