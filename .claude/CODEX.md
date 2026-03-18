@@ -50,6 +50,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --scan` where applicable).
 * Every new class created during refactoring MUST include `@CompileStatic`.
 * Run `/chronicle` after every completed phase to maintain session continuity.
+* Write a phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, retro second). Promote any evergreen lessons to `tasks/lessons/<domain>.md`.
 * The active task pointer in `CLAUDE.md` should reflect the current refactoring phase document, not a stale task.
 
 ### 2. Subagent Strategy

@@ -161,6 +161,7 @@ changes that structural comparison misses.
 **Status:** `[x] COMPLETE — 2026-03-17` (90 discovered / 85 pass / 5 skipped / 0 failed)
 
 **Phase 0.5 Gates:** `./vinc.sh --test` — all new tests must pass alongside existing suite
+**Retrospective:** `docs/retro/RETRO_PHASE_0.5.md`
 
 ---
 
@@ -580,9 +581,10 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 - If anything goes sideways: **STOP, revert, re-plan** — do not push through
 - After any user correction: update `tasks/lessons/<domain>.md`
 - Run `/chronicle` after every completed phase
+- Write phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, then retro)
 
 ---
 
-*Last updated: 2026-03-17 — Added Phase 0.5h (procgen snapshot), Phase O2 (CodeNarc), @PackageScope audit to Phase 5a, VisitedProgressTest update to Phase 8, git branching + @CompileStatic rules to Refactor Guard, O2 to dependency map.*
+*Last updated: 2026-03-17 — Added retro pointer for Phase 0.5; retro rule added to Refactor Guard; docs/retro/ established as per-phase retrospective location.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*
