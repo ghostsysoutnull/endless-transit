@@ -24,7 +24,7 @@
 | Phase | Name | Status | Risk |
 | :--- | :--- | :--- | :--- |
 | 0 | Baselines | `[x] COMPLETE` | None |
-| 0.5 | Test Coverage Gaps | `[ ] NOT STARTED` | None |
+| 0.5 | Test Coverage Gaps | `[ ] IN PROGRESS` | None |
 | 1 | Bug Fixes | `[ ] NOT STARTED` | Low |
 | 2 | Resource Loading | `[ ] NOT STARTED` | Low |
 | 3 | Value Objects | `[ ] NOT STARTED` | Low |
@@ -86,10 +86,10 @@ No test currently validates that `isCorridorActive = true` survives a save/resto
 The exact bug being fixed in Phase 1a has no regression test — if fixed incorrectly,
 nothing catches it.
 
-- [ ] Write `CorridorPersistenceTest`: enter a floor, activate corridor mode, `sync()`, restore, assert `isCorridorActive == true`
+- [x] Write `CorridorPersistenceTest`: enter a floor, activate corridor mode, `sync()`, restore, assert `isCorridorActive == true`
 
 **Files:** `CorridorPersistenceTest.groovy` (new, test only)
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-17` (62/62 green)
 
 ### 0.5b — AnomalousTrace Mapping Test (needed before Phase 3a)
 `AnomalousTrace.matches(String roomType)` is completely untested. A refactor to `RoomCategory`
