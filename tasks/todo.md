@@ -1,8 +1,22 @@
 # Endless Transit: Active Task List
 
-## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
+## 🔴 ACTIVE: [TEST_RUNNER_IMPROVEMENTS]
+**Objective:** Make ./vinc.sh --test genuinely agent-friendly before OOA refactoring begins.
+**Ref Document:** `docs/analysis/TEST_RUNNER_IMPROVEMENTS.md`
+**Blocks:** OOA Phase 1
+
+- [ ] T1 — TTY detection: suppress [VINC:RUNNING] lines when piped
+- [ ] T2 — Add SKIPPED count to summary
+- [ ] T3 — Raise slow test threshold to 1000ms
+- [ ] T4 — Stack frame on failure (file:line)
+- [ ] T5 — `--agent` machine-readable output mode
+
+---
+
+## 🟡 QUEUED: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
+**Blocked by:** TEST_RUNNER_IMPROVEMENTS
 
 - [x] Phase 0 — Baselines (61/61 green, seeds 0/500/9999 pinned, visual baseline at seed 12345)
 - [x] Phase 0.5 — Test Coverage Gaps (8 safety-net tests) — all 8 complete (0.5a–0.5h ✅)

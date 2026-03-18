@@ -170,6 +170,7 @@ changes that structural comparison misses.
 **OOA Items:** 4.1, 4.3
 **Max files per commit:** 2
 **Depends on:** Phase 0.5a (corridor persistence test must exist first)
+**Also depends on:** `docs/analysis/TEST_RUNNER_IMPROVEMENTS.md` — all 5 items complete before Phase 1 begins
 
 ### 1a — Floor Save/Restore Ordering (OOA 4.1)
 `Floor.enter()` resets `isCorridorActive = false` before mutation state is applied.
