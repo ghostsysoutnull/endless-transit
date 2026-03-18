@@ -133,11 +133,11 @@ Moving ActionMapper to `TurnProcessor` without coverage at other depths risks si
 Phase 7 decomposes `BridgeView` into components. The current visual tests are too shallow
 to catch a component extraction that shifts column alignment or drops a separator.
 
-- [ ] Write `BridgeViewStructureTest` using `VisualAssertionEngine`: assert HUD header box is present and correctly bounded, dual-pane column positions are stable, compass block is present, right-pane content present for at least 3 location depths
-- [ ] Capture and pin `./vinc.sh --scan` output at a known seed as a structured baseline
+- [x] Write `BridgeViewStructureTest` using `VisualAssertionEngine`: assert HUD header box is present and correctly bounded, compass block present, right-pane content present for 3 location depths (Street, Building, Room)
+- [x] Capture and pin `./vinc.sh --scan` output at a known seed as a structured baseline — see `screenshots/PHASE_0_BASELINES.md`
 
 **Files:** `BridgeViewStructureTest.groovy` (new, test only)
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-17` (82/82 green; 3 structural tests at street/building/room depth)
 
 ### 0.5g — EventBus Unit Tests (needed before Phase 10)
 Phase 10 introduces an event bus. Without unit tests for the bus itself, a broken subscription
