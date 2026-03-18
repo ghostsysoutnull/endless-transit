@@ -32,17 +32,17 @@ class ReplayServiceTest {
         String metadata = buffer.getMetadataHeader()
         tempScreenshot.text = metadata + "\n" + buffer.lines.join("\n")
         
-        // 3. Promote it
-        String result = ReplayService.promoteToTest(tempScreenshot, "AutomatedRegressionTest")
+        // 3. Promote it — use a temp name to avoid overwriting committed test files
+        String result = ReplayService.promoteToTest(tempScreenshot, "ReplayServiceTest_tmp")
         Terminal.println result
         assertTrue(result.contains("SUCCESS"))
-        
+
         // 4. Verify the file exists
-        File generatedTest = new File("src/test/groovy/com/endlesstransit/regression/AutomatedRegressionTest.groovy")
+        File generatedTest = new File("src/test/groovy/com/endlesstransit/regression/ReplayServiceTest_tmp.groovy")
         assertTrue(generatedTest.exists())
-        
-        // Cleanup
+
+        // Cleanup — always delete the generated file; it is scaffolding, not a real test
         tempScreenshot.delete()
-        // generatedTest.delete() // Keep it for a moment to inspect if needed
+        generatedTest.delete()
     }
 }
