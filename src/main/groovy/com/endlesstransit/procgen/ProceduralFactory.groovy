@@ -342,6 +342,9 @@ class ProceduralFactory {
     void populateCorridor(Corridor c) {
         LocusSeed locus = c.locus
         Country country = (Country) c.findAncestor(Country.class)
+        if (country == null) {
+            Terminal.println "[TOPOLOGY_WARN] populateCorridor: no Country ancestor for ${c.getLIP()} — trait defaults to Standard, all doors may resolve to SILENCE"
+        }
         String trait = country != null ? country.functionalTrait : "Standard"
 
         for (int i = 0; i < c.numApartments; i++) {

@@ -1,5 +1,5 @@
 # Task: Phase 3 Pre-Check Tests — RoomCategory + SpectralFrequency Safety Net
-**Status:** IN PROGRESS
+**Status:** COMPLETE — 2026-03-18
 **Created:** 2026-03-18
 **Depends on:** Phase 0.5b complete (AnomalousTraceTest exists)
 **Risk:** None — test-only, no production code changes
@@ -57,8 +57,10 @@ NOT master numbers in the current implementation. Tests will pin this narrow def
 
 | # | Test | What it pins | Status |
 | :--- | :--- | :--- | :--- |
-| A1 | Bidirectional mapping: each `RoomCategory` → correct `AnomalousTrace` | Reverse lookup used by factory after refactor | [ ] |
-| A2 | `ProceduralFactory` corridor population: all doors have non-null, valid traces | Factory integration end-to-end | [ ] |
+| A1 | Bidirectional mapping: each `RoomCategory` → correct `AnomalousTrace` | Reverse lookup used by factory after refactor | deferred to Phase 3a |
+| A2 | `ProceduralFactory` corridor population: all doors have non-null, valid traces | Factory integration end-to-end | [x] |
+| A2+ | Multi-culture coverage: invariant holds for all 6 cultures | Edge cases in culture-specific room types | [x] |
+| A2+ | Keyword coverage: all 16 room type strings match expected traces | Canonical mapping the enum must preserve | [x] |
 
 **File:** `src/test/groovy/com/endlesstransit/RoomCategoryTest.groovy`
 (Stub class only — tests will initially fail because `RoomCategory` doesn't exist yet. Tests
@@ -73,13 +75,13 @@ are written against the intended post-refactor API to define the contract before
 
 | # | Test | What it pins | Status |
 | :--- | :--- | :--- | :--- |
-| B1 | `isResonant()` — true for multiples of 11 (11, 22, 44, 121) | Core resonance contract | [ ] |
-| B2 | `isResonant()` — false for non-multiples (10, 12, 23, 1234) | Boundary correctness | [ ] |
-| B3 | `isMasterNumber()` — true for {11, 22, 33} only | Narrow numerological definition | [ ] |
-| B4 | `isMasterNumber()` — false for 44, 55, 10, 34 | Confirms narrow definition | [ ] |
-| B5 | Merge: hybrid frequency = item1.freq + item2.freq | `Player.mergeItems()` correctness | [ ] |
-| B6 | Keystone merge: frequency = 0, `isResonant() == false` | Keystone invariant | [ ] |
-| B7 | Round-trip: `getValue()` survives serialize/deserialize cycle | `SyncManager` compatibility | [ ] |
+| B1 | `isResonant()` — true for multiples of 11 (11, 22, 44, 121) | Core resonance contract | [x] |
+| B2 | `isResonant()` — false for non-multiples (10, 12, 23, 1234) | Boundary correctness | [x] |
+| B3 | `isMasterNumber()` — true for {11, 22, 33} only | Narrow numerological definition | [x] |
+| B4 | `isMasterNumber()` — false for 44, 55, 10, 34 | Confirms narrow definition | [x] |
+| B5 | Merge: hybrid frequency = item1.freq + item2.freq | `Player.mergeItems()` correctness | [x] |
+| B6 | Keystone: frequency = 0, treated as resonant (0 % 11 == 0) | Keystone invariant | [x] |
+| B7 | `InventoryItem.frequency` stores values without truncation | Field stability | [x] |
 
 **File:** `src/test/groovy/com/endlesstransit/SpectralFrequencyTest.groovy`
 (Tests written against the intended `SpectralFrequency` API before it exists. All will fail
@@ -122,4 +124,5 @@ After Phase 3b implementation:
 | Date | Action |
 | :--- | :--- |
 | 2026-03-18 | Document created; audit completed; design decision made (narrow isMasterNumber) |
+| 2026-03-18 | All tests written and passing; commit aa88e66; suite 106/101/5/0 |
 

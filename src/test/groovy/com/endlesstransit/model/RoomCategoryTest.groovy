@@ -1,5 +1,6 @@
 package com.endlesstransit.model
 
+import com.endlesstransit.core.Game
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
@@ -77,6 +78,43 @@ class RoomCategoryTest {
                     "Culture '${culture}', door[${i}]: trace must not be null (unmatched room type)")
             }
         }
+    }
+
+    /**
+     * A2 (full hierarchy): verifies that a corridor built via the complete procgen chain
+     * (Game → Street → Building → Floor → Corridor) has varied, non-SILENCE traces.
+     *
+     * This test distinguishes "correctly assigned SILENCE" from "SILENCE because Country
+     * ancestor was missing". A standalone Building has no Country ancestor, so its trait
+     * defaults to "Standard" — producing mostly SILENCE. A full-hierarchy corridor always
+     * has a Country with a functional trait, so its doors should reflect varied sensory cues.
+     *
+     * This is the canary test for hierarchy integrity: if parent wiring breaks during
+     * Phase 4, 5, or 6 refactoring, this test will catch it via the TOPOLOGY_WARN path.
+     */
+    @Test
+    void fullHierarchyCorridor_containsNonSilenceTraces() {
+        Game game = new Game(0x1234L)
+        Street street = (Street) game.currentLocation
+        street.ensureChildrenPopulated()
+
+        Building building = (Building) street.children.find { it instanceof Building }
+        assertNotNull(building, "Street must contain at least one Building")
+
+        Floor floor = building.getFloor(0)
+        assertNotNull(floor, "Building must have at least one Floor")
+
+        Corridor corridor = floor.getCorridor()
+        assertFalse(corridor.doors.isEmpty(), "Corridor must have at least one door")
+
+        Set<AnomalousTrace> traces = corridor.doors.collect { it.trace }.toSet()
+
+        // With a real Country ancestor the trait is drawn from the procgen chain.
+        // At least one door should reflect a specific sensory trace, not just Stillness.
+        // All-SILENCE here means Country ancestor is missing — hierarchy is broken.
+        assertTrue(traces.any { it != AnomalousTrace.SILENCE },
+            "Full-hierarchy corridor must have at least one non-SILENCE trace. " +
+            "All-SILENCE means Country ancestor was not found — check parent wiring.")
     }
 
     /**
