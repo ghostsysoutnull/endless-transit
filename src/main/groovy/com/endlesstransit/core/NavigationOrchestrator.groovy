@@ -24,11 +24,6 @@ class NavigationOrchestrator {
 
     void enterLocation(Location loc) {
         if (!loc) return
-        
-        // Vertical Traversal Refactor: Reset floor state to Elevator on entry
-        if (loc instanceof Floor) {
-            ((Floor)loc).isCorridorActive = false
-        }
 
         // Apartment Auto-Entry: Immediately transition to the first room
         if (loc instanceof Apartment) {
