@@ -14,6 +14,9 @@
 - **Verify the working tree after every test run**: Run `git status --short` immediately after `./vinc.sh --test`. A clean tree confirms no test is leaking artifacts. If anything appears dirty, investigate before the next commit — artifact pollution compounds silently across sessions.
 - **Code generation in tests signals a missing abstraction**: When every generated file shares the same structure with only data varying, the answer is a `@TestFactory` + data files (JSON, txt), not a template engine. Generated `.groovy` source files require compilation, pollute the source tree, and risk overwriting committed code.
 
+- **Read the runner script before designing a loading strategy**: The test classpath is defined in `vinc.sh`, not `build.gradle` — they can diverge. Always check `vinc.sh` before assuming `getResourceAsStream()` or any classpath-based loading will work. In this project, `src/main/resources` is not on the test classpath.
+- **Consistency beats correctness-in-isolation**: When two services share the same loading pattern (both use filesystem paths), fix them together rather than converting one to a better pattern while leaving the other behind. Temporary divergence creates two patterns with no clear owner and obscures which is canonical.
+
 ## Mistakes/Corrections
 - **Package Relocation**: When moving the entry point (`Main.groovy`), ensure it is within the package structure (`com.endlesstransit`) to avoid classpath collisions or import ambiguity.
 - **Verification Protocol**: Always use the `--test` parameter when executing `./vinc.sh` for verification. Avoid manual execution for logic or UI validation that can be automated via the test suite.
