@@ -42,7 +42,7 @@ class SpectralFrequencyContractTest {
         player.mergeItems(0, 1)
 
         def hybrid = player.inventory[0]
-        assertEquals(121, hybrid.frequency,
+        assertEquals(121, hybrid.frequency.value,
             "Hybrid frequency must equal the sum of parent frequencies (33 + 88 = 121)")
         assertEquals(beforeCount + 1, player.resonantTracesCount,
             "resonantTracesCount must increment when merged frequency is divisible by 11")
@@ -169,7 +169,7 @@ class SpectralFrequencyContractTest {
         player.mergeItems(0, 1)
 
         def hybrid = player.inventory[0]
-        assertEquals(300, hybrid.frequency,
+        assertEquals(300, hybrid.frequency.value,
             "Hybrid frequency must equal the sum of both parent frequencies (100 + 200 = 300)")
     }
 
@@ -182,7 +182,7 @@ class SpectralFrequencyContractTest {
         player.mergeItems(0, 1)
 
         def hybrid = player.inventory[0]
-        assertEquals(500, hybrid.frequency,
+        assertEquals(500, hybrid.frequency.value,
             "Merging 0Hz item with 500Hz item must produce 500Hz hybrid")
     }
 
@@ -209,7 +209,7 @@ class SpectralFrequencyContractTest {
 
         def keystone = player.inventory.find { it.isKeystone }
         assertNotNull(keystone, "Keystone must be created when building is primed")
-        assertEquals(0, keystone.frequency, "Keystone must have 0Hz frequency")
+        assertEquals(0, keystone.frequency.value, "Keystone must have 0Hz frequency")
         assertTrue(keystone.isKeystone, "Keystone item must be marked isKeystone = true")
 
         // Current behavior: 0 % 11 == 0 → treated as resonant
@@ -224,13 +224,13 @@ class SpectralFrequencyContractTest {
 
     @Test
     void inventoryItem_frequency_isStoredWithoutTruncation() {
-        assertEquals(1234, new InventoryItem("Fragment", 1234).frequency,
+        assertEquals(1234, new InventoryItem("Fragment", 1234).frequency.value,
             "Standard frequency must be stored and returned accurately")
-        assertEquals(0, new InventoryItem("Empty", 0).frequency,
+        assertEquals(0, new InventoryItem("Empty", 0).frequency.value,
             "Zero frequency must be stored and returned as 0")
-        assertEquals(99999, new InventoryItem("Heavy", 99999).frequency,
+        assertEquals(99999, new InventoryItem("Heavy", 99999).frequency.value,
             "Large frequency values must not be truncated")
-        assertEquals(11, new InventoryItem("Resonant", 11).frequency,
+        assertEquals(11, new InventoryItem("Resonant", 11).frequency.value,
             "Resonant boundary frequency (11) must be stored accurately")
     }
 }

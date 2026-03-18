@@ -6,19 +6,19 @@ import com.endlesstransit.*
 
 class InventoryItem {
     String name
-    int frequency
+    SpectralFrequency frequency
     int sessionMergeCount = 0
     boolean isKeystone = false
 
-    InventoryItem(String name, int frequency, int sessionMergeCount = 0, boolean isKeystone = false) {
+    InventoryItem(String name, int freqValue, int sessionMergeCount = 0, boolean isKeystone = false) {
         this.name = name
-        this.frequency = frequency
+        this.frequency = new SpectralFrequency(freqValue)
         this.sessionMergeCount = sessionMergeCount
         this.isKeystone = isKeystone
     }
 
     @Override
     String toString() {
-        return "$name: $frequency"
+        return "$name: ${frequency.value}"
     }
 }

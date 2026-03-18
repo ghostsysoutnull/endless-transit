@@ -40,11 +40,11 @@ class BridgeView implements ScreenshotProvider {
         } else {
             // Show all items now that we can scroll
             player.inventory.each { InventoryItem item ->
-                String freqStr = String.format("%04d", item.frequency)
-                
-                int signalStrength = (int)((item.frequency % 100) / 10 + 1)
+                String freqStr = String.format("%04d", item.frequency.value)
+
+                int signalStrength = (int)((item.frequency.value % 100) / 10 + 1)
                 String signalBar = ("█" * signalStrength) + ("░" * (10 - signalStrength))
-                String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
+                String phase = (item.frequency.value % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
                 Terminal.print "  ${Terminal.dim(freqStr)}Hz "
@@ -197,7 +197,7 @@ class BridgeView implements ScreenshotProvider {
         String bufferInfo = "TRACE_BUFFER: ${player.inventory.size()}/16 FRAGMENTS"
         if (!player.inventory.isEmpty()) {
             List<InventoryItem> last3 = player.inventory.takeRight(3).reverse()
-            List<Integer> freqs = last3.collect { it.frequency }
+            List<Integer> freqs = last3.collect { it.frequency.value }
             bufferInfo += " | RECENT: ${freqs.join(', ')}Hz"
         }
         Terminal.drawBoxedLine(bufferInfo, width, accent)

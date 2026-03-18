@@ -31,7 +31,7 @@ class SyncManager {
                 "visitedPaths": player.visitedPaths.toList(),
                 "inventory": player.inventory.collect { [
                     "name": it.name,
-                    "frequency": it.frequency,
+                    "frequency": it.frequency.value,
                     "sessionMergeCount": it.sessionMergeCount,
                     "isKeystone": it.isKeystone
                 ] }

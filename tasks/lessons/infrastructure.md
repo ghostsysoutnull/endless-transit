@@ -21,6 +21,8 @@
 - **Silent defaults on semantically meaningful values deserve a guard**: Any `?: fallback` where the fallback has a distinct domain meaning (e.g., `?: AnomalousTrace.SILENCE` masking a missing Country ancestor) should emit a log warning. Without it, hierarchy errors are invisible in production and tests.
 - **Standalone model objects require manual property setup**: `new Building(LocusSeed)` has `maxFloors=0` by default. Tests that create model objects outside the full procgen chain must set domain properties (`culture`, `timeline`, `maxFloors`, `apartmentsPerFloor`) explicitly, or `getFloor(0)` and similar accessors return null silently.
 
+- **The 5-file commit limit counts production files, not test-assertion updates**: Test assertions updated solely to adapt to a field type change carry no behavioral risk or architectural footprint. Counting them against the per-commit limit creates false pressure to defer them, which leaves the suite broken. Rule: max 5 *production* files per atomic commit; test-only assertion updates for the same change are free and should travel with it.
+
 ## Mistakes/Corrections
 - **Package Relocation**: When moving the entry point (`Main.groovy`), ensure it is within the package structure (`com.endlesstransit`) to avoid classpath collisions or import ambiguity.
 - **Verification Protocol**: Always use the `--test` parameter when executing `./vinc.sh` for verification. Avoid manual execution for logic or UI validation that can be automated via the test suite.

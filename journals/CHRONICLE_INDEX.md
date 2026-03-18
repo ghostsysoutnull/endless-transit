@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0xa2f5c83** | 2026-03-18 | **[PHASE_3_VALUE_OBJECTS]** | Phase 3a: RoomCategory enum (28 values, displayName + trace) replaces AnomalousTrace substring matching. Phase 3b: SpectralFrequency value object (isResonant, isMasterNumber) wraps InventoryItem.frequency. 4 test files updated to use .frequency.value. Suite: 107/102/5/0. |
 | **0x3e7b9a1** | 2026-03-18 | **[PHASE_3_PRECHECK_HARDENING]** | Pre-Phase-3 safety net: 17 tests pinning RoomCategory (door trace contracts) and SpectralFrequency (resonance, master numbers, merge, keystone) contracts. TOPOLOGY_WARN guard added to populateCorridor. Full-hierarchy canary test for parent wiring. Suite: 107/102/5/0. |
 | **0xc4d2e8f** | 2026-03-18 | **[PHASE_2B_LEXICON_EXTERNALIZATION]** | Pre-phase housekeeping (lessons, backlog review, VibeRegressionTest rename + ModelOutput fix). Phase 2b: building lexicon moved from hardcoded Map to 12 resource files. Determinism confirmed. Suite: 89/84/5/0. |
 | **0xb7e4f1a** | 2026-03-18 | **[TEST_ARTIFACT_HYGIENE]** | Full audit of test-generated files: gitignore fixes, write-once baseline, CaptureVerificationTest dir fix, ReplayServiceTest cleanup, @TestFactory regression harness replacing Groovy code generation. Suite: 89/84/5/0. Working tree clean after every test run. |

@@ -48,12 +48,12 @@ class Player {
             Terminal.println(Terminal.dim("  (Local buffer empty)"))
         } else {
             inventory.eachWithIndex { item, i ->
-                String freqStr = String.format("%04d", item.frequency)
-                
+                String freqStr = String.format("%04d", item.frequency.value)
+
                 // Restore "Graphics"
-                int signalStrength = (item.frequency % 100) / 10 + 1
+                int signalStrength = (item.frequency.value % 100) / 10 + 1
                 String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
-                String phase = (item.frequency % 2 == 0) ? "STABLE" : "SHIFTING"
+                String phase = (item.frequency.value % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
                 Terminal.print("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ")
@@ -93,7 +93,7 @@ class Player {
         boolean createKeystone = bldg != null && bldg.isPrimed() && !inventory.any { it.isKeystone && it.name.contains(bldg.name) }
 
         // Synthesize
-        int newFreq = createKeystone ? 0 : item1.frequency + item2.frequency
+        int newFreq = createKeystone ? 0 : item1.frequency.value + item2.frequency.value
         String newName = createKeystone ? "${bldg.name} Keystone" : "${item1.name.split(' ')[0]}-${item2.name.split(' ')[0]} Hybrid"
         int c1 = item1.sessionMergeCount ?: 0
         int c2 = item2.sessionMergeCount ?: 0
@@ -113,7 +113,7 @@ class Player {
             Terminal.println "New Fragment: ${Terminal.bold(newName)} (${newFreq}Hz)"
         }
         
-        if (newFreq % 11 == 0) {
+        if (new SpectralFrequency(newFreq).isResonant()) {
             resonantTracesCount++
             Terminal.println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
         }

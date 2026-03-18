@@ -183,9 +183,10 @@ class ProceduralFactory {
         // 3. Functional Naming
         Country country = (Country) r.findAncestor(Country.class)
         String trait = country != null ? country.functionalTrait : "Standard"
-        Map<String, String> nameData = NameGenerator.generateRoomName(culture, trait, locus)
+        Map<String, Object> nameData = NameGenerator.generateRoomName(culture, trait, locus)
         r.roomName = (String) nameData["name"]
-        r.roomType = (String) nameData["type"]
+        RoomCategory category = (RoomCategory) nameData["category"]
+        r.roomType = category.displayName
 
         // 4. Atmosphere
         VibeCapsule vibe = r.getVibe()
@@ -351,16 +352,16 @@ class ProceduralFactory {
             LocusSeed aptLocus = locus.branch(i)
             LocusSeed doorLocus = aptLocus.branch("DOOR")
             
-            // 1. Back-Propagation: Peek at the first room's type to decide the trace
+            // 1. Back-Propagation: Peek at the first room's category to decide the trace
             LocusSeed firstRoomLocus = aptLocus.branch(0)
-            String roomType = NameGenerator.generateRoomName(c.culture, trait, firstRoomLocus)["type"]
-            
+            RoomCategory roomCategory = (RoomCategory) NameGenerator.generateRoomName(c.culture, trait, firstRoomLocus)["category"]
+
             Door door = new Door(doorLocus)
-            door.trace = AnomalousTrace.values().find { it.matches(roomType) } ?: AnomalousTrace.SILENCE
-            
+            door.trace = roomCategory.trace
+
             // 2. Contextual Inscription logic (overrides Door's random one if room is significant)
             if (doorLocus.branch("INSCRIPTION_ROLL").checkProbability(0.2)) {
-                door.inscription = generateContextualInscription(roomType, doorLocus.branch("INSCRIPTION"))
+                door.inscription = generateContextualInscription(roomCategory.displayName, doorLocus.branch("INSCRIPTION"))
             }
 
             c.doors << door

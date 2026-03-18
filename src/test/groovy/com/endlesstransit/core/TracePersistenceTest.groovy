@@ -75,7 +75,7 @@ class TracePersistenceTest {
         assertEquals(originalVibe, freshGame.currentLocation.getVibe().toString(), "Environmental vibe mismatch after restore!")
         
         // 7. VERIFY Inventory
-        assertTrue(freshGame.player.inventory.any { it.name == "Test Fragment" && it.frequency == 1234 }, "Inventory item lost!")
+        assertTrue(freshGame.player.inventory.any { it.name == "Test Fragment" && it.frequency.value == 1234 }, "Inventory item lost!")
         
         // 8. VERIFY World Mutation (Breach)
         Building restoredBldg = (Building) freshGame.currentLocation.findAncestor(Building.class)

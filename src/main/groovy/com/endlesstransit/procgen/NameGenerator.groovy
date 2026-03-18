@@ -1,5 +1,6 @@
 package com.endlesstransit.procgen
 
+import com.endlesstransit.model.RoomCategory
 import groovy.transform.CompileStatic
 
 /**
@@ -96,30 +97,30 @@ class NameGenerator {
         "The Void-Watcher"
     ]
 
-    static Map<String, String> generateRoomName(String culture, String trait, LocusSeed locus) {
+    static Map<String, Object> generateRoomName(String culture, String trait, LocusSeed locus) {
         Random r = locus.nextRandom()
         Map lexicon = (Map) (buildingLexicon[culture] ?: buildingLexicon["monolith"])
-        
-        Map<String, List<String>> types = [
-            "Military": ["Security Station", "Barracks", "Armory", "Tactical Hub"],
-            "Research": ["Laboratory", "Neural Link Array", "Observation Deck", "Bio-Server"],
-            "Industrial": ["Power Plant", "Processing Core", "Maintenance Bay", "Fuel Depot"],
-            "Ceremonial": ["Prayer Hall", "Ritual Chamber", "Archive", "Memory Well"],
-            "Commercial": ["Trading Floor", "Logic Market", "Credit Hub", "Supply Node"],
-            "Agricultural": ["Hydroponic Bay", "Spore Farm", "Oxygen Sump", "Growth Chamber"]
+
+        Map<String, List<RoomCategory>> types = [
+            "Military"    : [RoomCategory.SECURITY_STATION, RoomCategory.BARRACKS, RoomCategory.ARMORY, RoomCategory.TACTICAL_HUB],
+            "Research"    : [RoomCategory.LABORATORY, RoomCategory.NEURAL_LINK_ARRAY, RoomCategory.OBSERVATION_DECK, RoomCategory.BIO_SERVER],
+            "Industrial"  : [RoomCategory.POWER_PLANT, RoomCategory.PROCESSING_CORE, RoomCategory.MAINTENANCE_BAY, RoomCategory.FUEL_DEPOT],
+            "Ceremonial"  : [RoomCategory.PRAYER_HALL, RoomCategory.RITUAL_CHAMBER, RoomCategory.ARCHIVE, RoomCategory.MEMORY_WELL],
+            "Commercial"  : [RoomCategory.TRADING_FLOOR, RoomCategory.LOGIC_MARKET, RoomCategory.CREDIT_HUB, RoomCategory.SUPPLY_NODE],
+            "Agricultural": [RoomCategory.HYDROPONIC_BAY, RoomCategory.SPORE_FARM, RoomCategory.OXYGEN_SUMP, RoomCategory.GROWTH_CHAMBER]
         ]
-        
-        List<String> traitTypes = (List<String>) (types[trait] ?: ["Standard Spatial Cell", "Generic Living Unit", "Transit Node", "Lattice Sub-Cell"])
-        String type = (String) traitTypes[r.nextInt(traitTypes.size())]
-        
+
+        List<RoomCategory> traitTypes = (List<RoomCategory>) (types[trait] ?: [RoomCategory.STANDARD_SPATIAL_CELL, RoomCategory.GENERIC_LIVING_UNIT, RoomCategory.TRANSIT_NODE, RoomCategory.LATTICE_SUB_CELL])
+        RoomCategory category = (RoomCategory) traitTypes[r.nextInt(traitTypes.size())]
+
         List<String> adjs = (List<String>) lexicon.adj
         List<String> nouns = (List<String>) lexicon.noun
         String adj = (String) adjs[r.nextInt(adjs.size())]
         String noun = (String) nouns[r.nextInt(nouns.size())]
         String hex = Integer.toHexString(r.nextInt(0xFF)).toUpperCase()
-        
+
         String name = "$adj $noun [0x$hex]"
-        return [name: name, type: type]
+        return [name: name, category: category]
     }
 
     static Map<String, Object> generateBuildingName(String culture, int floors, LocusSeed locus, int depth, boolean isNullZone, boolean isAbyssal) {

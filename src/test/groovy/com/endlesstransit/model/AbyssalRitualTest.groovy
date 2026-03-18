@@ -46,7 +46,7 @@ class AbyssalRitualTest {
         def keystone = game.player.inventory.find { it.name == "Alpha Keystone" }
         assertNotNull(keystone, "Keystone should be created in primed building")
         assertTrue(keystone.isKeystone, "Item should be marked as keystone")
-        assertEquals(0, keystone.frequency, "Keystone should have 0Hz frequency")
+        assertEquals(0, keystone.frequency.value, "Keystone should have 0Hz frequency")
     }
 
     @Test

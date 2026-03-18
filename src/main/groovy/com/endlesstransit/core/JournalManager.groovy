@@ -65,10 +65,10 @@ class JournalManager {
 
     static void logCapture(InventoryItem item, Location location = null) {
         sessionCaptures++
-        String entry = "[CAPTURE]   ${item.name} (${String.format("%04d", item.frequency)}Hz)"
+        String entry = "[CAPTURE]   ${item.name} (${String.format("%04d", item.frequency.value)}Hz)"
         sessionLog.append(entry + "\n")
         lastEntries << entry
-        writeToManifest("  >> [OBJ] ${item.name} (${item.frequency}Hz)")
+        writeToManifest("  >> [OBJ] ${item.name} (${item.frequency.value}Hz)")
 
         // Ritual Progress Tracking
         if (location != null) {
@@ -82,10 +82,10 @@ class JournalManager {
     
     static void logSynthesis(InventoryItem item, Location location = null) {
         sessionSyntheses++
-        String entry = "[SYNTHESIS] ${item.name} (${String.format("%04d", item.frequency)}Hz)"
+        String entry = "[SYNTHESIS] ${item.name} (${String.format("%04d", item.frequency.value)}Hz)"
         sessionLog.append(entry + "\n")
         lastEntries << entry
-        writeToManifest("  >> [SYN] ${item.name} (${item.frequency}Hz)")
+        writeToManifest("  >> [SYN] ${item.name} (${item.frequency.value}Hz)")
 
         // Ritual Progress Tracking
         if (location != null) {
