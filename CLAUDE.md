@@ -38,8 +38,8 @@ Latest journal state for session continuity:
 | Action | Command |
 | :--- | :--- |
 | **Run Game (Clinical)** | `./vinc.sh` (Fast, Auto-compile) |
-| **Run Tests (Commit gate)** | `./vinc.sh --test --agent 2>/dev/null` — full suite, mandatory before every commit |
-| **Run Tests (Inner loop)** | `./vinc.sh --test ClassName --agent 2>/dev/null` — targeted class only, fast feedback during implementation |
+| **Run Tests (Full suite)** | `./vinc.sh --test --agent 2>/dev/null` — run whenever codebase is coherent; mandatory before every commit |
+| **Run Tests (Inner loop)** | `./vinc.sh --test ClassName --agent 2>/dev/null` — multi-file migrations only, while callers are partially updated |
 | **Run Tests (Debug)** | `./vinc.sh --test -q` (20-line output with failure location) |
 | **Verification (Static)** | `./vinc.sh --compile` |
 | **Run Game (Player)** | `./run.sh` (Immersive Portal) |
