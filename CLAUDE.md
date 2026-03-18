@@ -38,7 +38,8 @@ Latest journal state for session continuity:
 | Action | Command |
 | :--- | :--- |
 | **Run Game (Clinical)** | `./vinc.sh` (Fast, Auto-compile) |
-| **Run Tests (Logic)** | `./vinc.sh --test -q` (Context-efficient) |
+| **Run Tests (Gate check)** | `./vinc.sh --test --agent 2>/dev/null` (1-line result) |
+| **Run Tests (Debug)** | `./vinc.sh --test -q` (20-line output with failure location) |
 | **Verification (Static)** | `./vinc.sh --compile` |
 | **Run Game (Player)** | `./run.sh` (Immersive Portal) |
 | **Seed Scan** | `./vinc.sh --scan` |
