@@ -24,7 +24,7 @@ class JournalTest {
         JournalManager.startSession(p)
         
         // Wait a bit to have some duration
-        Thread.sleep(1100)
+        Thread.sleep(50)
         
         p.stepCount = 42
         p.inventory.add(new InventoryItem("Test Fragment", 1234))

@@ -44,7 +44,11 @@ class CaptureVerificationTest {
         CaptureService.capture(bridgeView, [], new PlainFormatter())
         
         // 4. Wait for async executor
-        Thread.sleep(3000)
+        long deadline = System.currentTimeMillis() + 1000
+        while (System.currentTimeMillis() < deadline) {
+            if (dir.listFiles()?.length > 0) break
+            Thread.sleep(50)
+        }
         
         // 5. Verify file existence
         File[] files = dir.listFiles()
