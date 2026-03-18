@@ -83,7 +83,13 @@ class TestRunner {
                         if (!isPiped) Terminal.print("\r") // Clear current line (TTY only)
                         Terminal.println(Terminal.colorize("  [VINC:FAILURE] ${name}", Terminal.RED))
                         if (testExecutionResult.throwable.isPresent()) {
-                            Terminal.println(Terminal.colorize("    >> ${testExecutionResult.throwable.get().message}", Terminal.RED))
+                            Throwable t = testExecutionResult.throwable.get()
+                            Terminal.println(Terminal.colorize("    >> ${t.message}", Terminal.RED))
+                            // T4: find first project stack frame so the agent knows exactly where to look
+                            StackTraceElement frame = t.stackTrace.find { it.className?.startsWith("com.endlesstransit") && it.fileName != null }
+                            if (frame) {
+                                Terminal.println(Terminal.colorize("    at ${frame.fileName}:${frame.lineNumber}", Terminal.RED))
+                            }
                         }
                         if (wasClinical) Terminal.setClinical(true)
                     }
