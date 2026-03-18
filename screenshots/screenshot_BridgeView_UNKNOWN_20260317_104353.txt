@@ -1,8 +1,0 @@
-[VINCULUM_SNAPSHOT_METADATA]
-TIMESTAMP: Tue Mar 17 10:43:53 CDT 2026
-LOCATION: UNKNOWN
-SEED: null
-HISTORY: quitnow
-VERSION: 1.0.0-VINCULUM
---------------------------------------------------
-
