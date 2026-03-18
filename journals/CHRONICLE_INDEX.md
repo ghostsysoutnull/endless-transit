@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x1d159b8c** | 2026-03-17 | **[PHASE_1_BUG_FIXES]** | Removed unconditional isCorridorActive=false reset from NavigationOrchestrator (1a); documented visitedPaths intentional omission from GameMemento in Player (1b). Both plan corrections caught by reading source before coding. Suite: 89/84/5/0. |
 | **0x69ad8ae** | 2026-03-17 | **[TEST_RUNNER_IMPROVEMENTS]** | Vinculum diagnostics hardened: TTY detection eliminates piped noise (110→20 lines), SKIPPED count added, slow threshold 1000ms, stack frame on failure, --agent single-line mode. settings.json auto-allow configured. docs/retro/ established. Suite: 89/84/5/0. OOA Phase 1 now unblocked. |
 | **0x99fe1d4** | 2026-03-17 | **[PHASE_0.5_SAFETY_NET]** | 8 safety-net tests woven before OOA refactoring begins: corridor persistence, trace mapping, ancestor chains, rendering content, mapper depth, bridge structure, EventBus contract (disabled), and procgen snapshot. Suite: 90 discovered / 85 pass / 5 skipped. All dependency gates satisfied. |
 | **0x49aa17e** | 2026-03-17 | **[CONFIG_HOUSEKEEPING]** | Agent config layer hardened before OOA refactoring: OOA promoted to ACTIVE, March 6 safety mandate added, recovery prompt updated, session init protocol added to CODEX, stale @ include removed, Gemini sync obligation dropped for Claude-only effort. |

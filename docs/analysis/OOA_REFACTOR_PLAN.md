@@ -2,7 +2,7 @@
 **Created:** 2026-03-17
 **Last updated:** 2026-03-17
 **Based on:** `docs/analysis/OOA_REPORT.md`, `docs/analysis/TEST_COVERAGE_GAPS.md`
-**Status:** NOT STARTED
+**Status:** IN PROGRESS
 
 > **Prime Directive:** Zero behavioral change to the game. Same seed → same world. Same inputs → same outputs.
 > Every phase is independently releasable. No phase is complete until all three gates pass.
@@ -24,8 +24,8 @@
 | Phase | Name | Status | Risk |
 | :--- | :--- | :--- | :--- |
 | 0 | Baselines | `[x] COMPLETE` | None |
-| 0.5 | Test Coverage Gaps | `[ ] IN PROGRESS` | None |
-| 1 | Bug Fixes | `[ ] NOT STARTED` | Low |
+| 0.5 | Test Coverage Gaps | `[x] COMPLETE` | None |
+| 1 | Bug Fixes | `[x] COMPLETE` | Low |
 | 2 | Resource Loading | `[ ] NOT STARTED` | Low |
 | 3 | Value Objects | `[ ] NOT STARTED` | Low |
 | 4 | Structural Extraction | `[ ] NOT STARTED` | Low |
@@ -182,14 +182,14 @@ it back to `false`. The save/restore of corridor state is silently broken.
 > but `Floor.enter()` has no such reset. The actual reset is at `NavigationOrchestrator.groovy:30`.
 > `CorridorPersistenceTest` remains correct — it catches the bug regardless of which file contains it.
 
-- [ ] In `NavigationOrchestrator.enterLocation()`: remove the `((Floor)loc).isCorridorActive = false` reset
-- [ ] Rationale: `isCorridorActive` defaults to `false` on the field declaration — a fresh Floor
+- [x] In `NavigationOrchestrator.enterLocation()`: remove the `((Floor)loc).isCorridorActive = false` reset
+- [x] Rationale: `isCorridorActive` defaults to `false` on the field declaration — a fresh Floor
   naturally starts in Elevator mode without an explicit reset. The reset only prevents saved
   corridor state from being honoured on re-entry, which is the bug.
-- [ ] Verify `CorridorPersistenceTest`, `TracePersistenceTest`, and `MnemonicReversalTest` pass
+- [x] Verify `CorridorPersistenceTest`, `TracePersistenceTest`, and `MnemonicReversalTest` pass
 
 **Files:** `NavigationOrchestrator.groovy` (1 file)
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-17` | commit: e8fc3bd
 
 ### 1b — Player.visitedPaths in GameMemento (OOA 4.3)
 `visitedPaths` (path-string-based visited tracking) is absent from `GameMemento`.
@@ -198,7 +198,7 @@ drives rendering and game logic (`Building.groovy`, `Corridor.groovy`, `SessionR
 `visitedPaths` is saved/restored via `SyncManager` (file persistence) but is not load-bearing.
 
 - [x] Confirmed: no UI element or game logic reads `visitedPaths` — `visitedLIPs` is the active collection
-- [ ] Add a comment in `Player.groovy` documenting the intentional omission from `GameMemento`
+- [x] Add a comment in `Player.groovy` documenting the intentional omission from `GameMemento`
 
 > **Plan correction (2026-03-17):** Original description stated `visitedLIPs` is present in
 > `GameMemento` — it is not. Neither field is in `GameMemento`. `GameMemento` holds only
@@ -206,10 +206,10 @@ drives rendering and game logic (`Building.groovy`, `Corridor.groovy`, `SessionR
 > `PersistenceService` is not involved — `SyncManager` handles both fields via session trace.
 
 **Files:** `Player.groovy` (1 file, comment only)
-**Status:** `[ ] NOT STARTED`
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-17` | commit: 0798dd2
 
-**Phase 1 Gates:** `./vinc.sh --test` — focus `TracePersistenceTest`, `MnemonicReversalTest`
+**Phase 1 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=89 SUCCEEDED=84 FAILED=0 SKIPPED=5`
+**Retrospective:** `docs/retro/RETRO_PHASE_1.md`
 
 ---
 
