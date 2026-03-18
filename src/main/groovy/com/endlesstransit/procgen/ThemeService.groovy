@@ -5,10 +5,6 @@ import java.util.Random
 
 @CompileStatic
 class ThemeService {
-    final String CULTURES_DIR = "src/main/resources/themes/cultures"
-    final String TIMELINES_DIR = "src/main/resources/themes/timelines"
-    final String ATMOSPHERE_DIR = "src/main/resources/themes/atmosphere"
-
     Map<String, List<String>> cultures = new TreeMap<String, List<String>>()
     Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
     Map<String, Map<String, List<String>>> atmosphere = [
@@ -21,34 +17,23 @@ class ThemeService {
         loadThemes()
     }
 
+    private List<String> loadResourceLines(String resourcePath) {
+        InputStream stream = this.class.getResourceAsStream(resourcePath)
+        if (!stream) return []
+        return stream.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+    }
+
     private void loadThemes() {
-        File cultDir = new File(CULTURES_DIR)
-        if (cultDir.exists()) {
-            cultDir.eachFile { file ->
-                if (file.isFile()) {
-                    cultures[file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
-                }
-            }
+        for (String key in loadResourceLines("/themes/cultures/index.txt")) {
+            cultures[key] = loadResourceLines("/themes/cultures/${key}.txt")
         }
-        
-        File timeDir = new File(TIMELINES_DIR)
-        if (timeDir.exists()) {
-            timeDir.eachFile { file ->
-                if (file.isFile()) {
-                    timelines[file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
-                }
-            }
+        for (String key in loadResourceLines("/themes/timelines/index.txt")) {
+            timelines[key] = loadResourceLines("/themes/timelines/${key}.txt")
         }
-        
-        // Load Atmosphere
-        ["walls", "lighting", "structures"].each { category ->
-            File catDir = new File("${ATMOSPHERE_DIR}/${category}")
-            if (catDir.exists()) {
-                catDir.eachFile { file ->
-                    if (file.isFile()) {
-                        atmosphere[category][file.name.replace(".txt", "")] = file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
-                    }
-                }
+        for (String category in ["walls", "lighting", "structures"]) {
+            Map<String, List<String>> catMap = (Map<String, List<String>>) atmosphere[category]
+            for (String key in loadResourceLines("/themes/atmosphere/${category}/index.txt")) {
+                catMap[key] = loadResourceLines("/themes/atmosphere/${category}/${key}.txt")
             }
         }
     }

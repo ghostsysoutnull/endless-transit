@@ -14,7 +14,7 @@ function vinculum_compile() {
     echo -ne "${CYAN}[VINC:VERIFYING_SUBSTRATE...]${RESET} "
     rm -rf build/vinc && mkdir -p build/vinc  # purge stale .class files before recompile
     # Compile both main and test sources to ensure global integrity
-    if ! groovyc -cp src/main/groovy:src/test/groovy:lib/* -d build/vinc \
+    if ! groovyc -cp src/main/groovy:src/test/groovy:src/main/resources:lib/* -d build/vinc \
         src/main/groovy/com/endlesstransit/**/*.groovy \
         src/main/groovy/com/endlesstransit/*.groovy \
         src/test/groovy/com/endlesstransit/**/*.groovy \
@@ -36,11 +36,11 @@ case "$1" in
         # In --agent mode redirect compile/header to stderr so stdout carries only STATUS line
         if echo "${@:2}" | grep -qw -- '--agent'; then
             vinculum_compile >&2
-            groovy -cp build/vinc:src/main/groovy:src/test/groovy:lib/* src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
+            groovy -cp build/vinc:src/main/groovy:src/test/groovy:src/main/resources:lib/* src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
         else
             vinculum_compile
             echo -e "${CYAN}[VINC:EXECUTING_LOGIC_SUITE]${RESET}"
-            groovy -cp build/vinc:src/main/groovy:src/test/groovy:lib/* src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
+            groovy -cp build/vinc:src/main/groovy:src/test/groovy:src/main/resources:lib/* src/test/groovy/com/endlesstransit/TestRunner.groovy "${@:2}"
         fi
         ;;
     "--compile")

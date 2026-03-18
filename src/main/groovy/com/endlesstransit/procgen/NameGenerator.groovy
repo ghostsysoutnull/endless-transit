@@ -66,17 +66,17 @@ class NameGenerator {
         Map lexicon = new LinkedHashMap()
         for (String culture in ["rust", "neon", "baroque", "monolith", "void", "organic"]) {
             lexicon[culture] = [
-                "adj" : loadLexiconFile("src/main/resources/names/buildings/${culture}_adj.txt"),
-                "noun": loadLexiconFile("src/main/resources/names/buildings/${culture}_noun.txt")
+                "adj" : loadLexiconFile("/names/buildings/${culture}_adj.txt"),
+                "noun": loadLexiconFile("/names/buildings/${culture}_noun.txt")
             ]
         }
         return lexicon
     }
 
-    private static List<String> loadLexiconFile(String path) {
-        File file = new File(path)
-        if (!file.exists()) return []
-        return file.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+    private static List<String> loadLexiconFile(String resourcePath) {
+        InputStream stream = NameGenerator.class.getResourceAsStream(resourcePath)
+        if (!stream) return []
+        return stream.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
     }
 
     static final List<String> landmarkTitles = [
