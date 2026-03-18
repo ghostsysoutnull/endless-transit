@@ -4,6 +4,8 @@ import com.endlesstransit.model.*
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import static org.junit.jupiter.api.Assertions.*
 
 /**
@@ -90,31 +92,28 @@ class ProcgenSnapshotTest {
      * never the old 'type' String key. Guards against Phase 9 factory code silently falling back
      * to the removed key and receiving null at runtime.
      *
-     * Covers all 6 cultures × all 7 traits (including the Standard fallback).
+     * Each trait runs as a separate parameterized test so failures name the exact trait that broke.
+     * All 6 cultures are covered within each invocation.
      */
-    @Test
-    void generateRoomName_returnsCategoryKey_notTypeKey_acrossAllCulturesAndTraits() {
+    @ParameterizedTest(name = "trait={0}")
+    @ValueSource(strings = ["Military", "Research", "Industrial", "Ceremonial", "Commercial", "Agricultural", "Standard"])
+    void generateRoomName_returnsCategoryKey_notTypeKey(String trait) {
         LocusSeed locus = new LocusSeed(SNAPSHOT_SEED)
-        List<String> traits = ["Military", "Research", "Industrial", "Ceremonial", "Commercial", "Agricultural", "Standard"]
-        List<String> cultures = ["rust", "neon", "baroque", "monolith", "void", "organic"]
+        ["rust", "neon", "baroque", "monolith", "void", "organic"].each { String culture ->
+            Map<String, Object> result = NameGenerator.generateRoomName(culture, trait, locus.branch("${trait}_${culture}"))
 
-        traits.each { String trait ->
-            cultures.each { String culture ->
-                Map<String, Object> result = NameGenerator.generateRoomName(culture, trait, locus.branch("${trait}_${culture}"))
+            assertNull(result["type"],
+                "generateRoomName must not return 'type' key — it was removed in Phase 3a (culture=${culture})")
+            assertNotNull(result["category"],
+                "generateRoomName must return 'category' key (culture=${culture})")
+            assertTrue(result["category"] instanceof RoomCategory,
+                "'category' must be a RoomCategory, got: ${result['category']?.class?.simpleName} (culture=${culture})")
 
-                assertNull(result["type"],
-                    "generateRoomName must not return 'type' key — it was removed in Phase 3a (culture=${culture}, trait=${trait})")
-                assertNotNull(result["category"],
-                    "generateRoomName must return 'category' key (culture=${culture}, trait=${trait})")
-                assertTrue(result["category"] instanceof RoomCategory,
-                    "'category' value must be a RoomCategory instance, got: ${result['category']?.class?.simpleName} (culture=${culture}, trait=${trait})")
-
-                RoomCategory category = (RoomCategory) result["category"]
-                assertNotNull(category.displayName,
-                    "RoomCategory.displayName must not be null (culture=${culture}, trait=${trait})")
-                assertNotNull(category.trace,
-                    "RoomCategory.trace must not be null — every category must map to an AnomalousTrace (culture=${culture}, trait=${trait})")
-            }
+            RoomCategory category = (RoomCategory) result["category"]
+            assertNotNull(category.displayName,
+                "RoomCategory.displayName must not be null (culture=${culture})")
+            assertNotNull(category.trace,
+                "RoomCategory.trace must not be null (culture=${culture})")
         }
     }
 }
