@@ -15,7 +15,8 @@ import java.io.File
 @CompileStatic
 class Game {
     GameState state
-    
+    OutputFormatter fmt
+
     // Services
     NavigationOrchestrator navOrchestrator
     PersistenceService persistence
@@ -27,7 +28,8 @@ class Game {
     }
 
     Game(LocusSeed masterLocus, InputSource inputSource = null) {
-        ModelOutput.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
+        this.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
+        ProceduralFactory.instance.fmt = this.fmt
         this.state = new GameState(masterLocus, inputSource ?: InputHandler.defaultSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
         this.persistence = new PersistenceService(state, navOrchestrator)

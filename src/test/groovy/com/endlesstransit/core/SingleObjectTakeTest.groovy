@@ -23,6 +23,7 @@ class SingleObjectTakeTest {
 
         // Setup a room with exactly one object
         def room = new Room()
+        room.fmt = game.fmt
         room.objects = ["Singular Crystal"]
         room.markVisited()
 

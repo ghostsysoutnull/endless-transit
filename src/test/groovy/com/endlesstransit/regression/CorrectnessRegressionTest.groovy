@@ -13,7 +13,6 @@ class CorrectnessRegressionTest {
     @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
-        com.endlesstransit.model.ModelOutput.fmt = new StandardTerminalAdapter()
     }
 
     /**
@@ -46,7 +45,7 @@ class CorrectnessRegressionTest {
         String boldText = Terminal.bold("TEST") // "[1mTEST[0m" -> 4 visual chars, ~13 raw chars
         int targetWidth = 20
         
-        String padded = ModelOutput.fmt.padRight(boldText, targetWidth)
+        String padded = new StandardTerminalAdapter().padRight(boldText, targetWidth)
         int visualWidth = Terminal.getVisualWidth(padded)
         
         assertEquals(targetWidth, visualWidth, "Padded string should have visual width of $targetWidth")

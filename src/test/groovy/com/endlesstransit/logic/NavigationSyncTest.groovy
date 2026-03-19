@@ -7,13 +7,13 @@ import com.endlesstransit.core.*
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.*
 import com.endlesstransit.ui.Terminal
+import com.endlesstransit.ui.StandardTerminalAdapter
 
 class NavigationSyncTest {
 
     @BeforeEach
     void setup() {
         Terminal.initialize(true, true)
-        com.endlesstransit.model.ModelOutput.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
     }
 
     @Test
@@ -26,6 +26,7 @@ class NavigationSyncTest {
         building.apartmentsPerFloor = 5
         building.culture = "rust"
         building.timeline = "ancient"
+        building.fmt = new StandardTerminalAdapter()
         building.setParent(new Street("Test Street"))
 
         // Populate floors

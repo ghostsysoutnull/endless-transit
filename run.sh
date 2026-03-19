@@ -31,7 +31,7 @@ function show_help() {
 function compile_check() {
     echo -ne "${CYAN}[VINCULUM_VERIFICATION: COMPILING...]${RESET} "
     mkdir -p .build_check
-    if ! groovyc -cp src/main/groovy:src/test/groovy -d .build_check \
+    if ! groovyc -cp src/main/groovy:src/test/groovy:src/main/resources:lib/* -d .build_check \
         src/main/groovy/com/endlesstransit/**/*.groovy \
         src/main/groovy/com/endlesstransit/*.groovy \
         src/test/groovy/com/endlesstransit/**/*.groovy \
@@ -115,20 +115,20 @@ fi
 case "$1" in
     "--test")
         compile_check
-        groovy -cp src/main/groovy:src/test/groovy src/test/groovy/com/endlesstransit/AllTests.groovy
+        groovy -cp src/main/groovy:src/test/groovy:src/main/resources:lib/* src/test/groovy/com/endlesstransit/AllTests.groovy
         ;;
     "--seed-scan")
         compile_check
-        groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/procgen/SeedScanner.groovy "${@:2}"
+        groovy -cp src/main/groovy:src/main/resources:lib/* src/main/groovy/com/endlesstransit/procgen/SeedScanner.groovy "${@:2}"
         ;;
     "--replay")
         compile_check
-        groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/core/ReplayService.groovy "${@:2}"
+        groovy -cp src/main/groovy:src/main/resources:lib/* src/main/groovy/com/endlesstransit/core/ReplayService.groovy "${@:2}"
         ;;
     *)
         if [[ "$*" == *"--compile"* ]]; then
             compile_check
         fi
-        groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/Main.groovy "$@"
+        groovy -cp src/main/groovy:src/main/resources:lib/* src/main/groovy/com/endlesstransit/Main.groovy "$@"
         ;;
 esac

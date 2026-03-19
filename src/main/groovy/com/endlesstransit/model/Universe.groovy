@@ -114,7 +114,7 @@ class Universe extends Container {
                 if (fR.isVisited()) labelR += " [V]"
             }
             
-            lines << (ModelOutput.fmt.padRight(labelL, colWidth) + " | " + ModelOutput.fmt.padRight(labelR, colWidth))
+            lines << (effectiveFmt.padRight(labelL, colWidth) + " | " + effectiveFmt.padRight(labelR, colWidth))
         }
         lines << "-" * width
         return lines

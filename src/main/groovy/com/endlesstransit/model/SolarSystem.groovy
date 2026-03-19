@@ -75,7 +75,7 @@ class SolarSystem extends Container {
                 if (pR.isVisited()) labelR += " [V]"
             }
             
-            lines << ModelOutput.fmt.padRight(labelL, colWidth) + " | " + labelR
+            lines << effectiveFmt.padRight(labelL, colWidth) + " | " + labelR
         }
         lines << "-" * width
         return lines

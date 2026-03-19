@@ -12,10 +12,11 @@ class SurvivalPinningTest {
     void pinStandardDrain() {
         Game game = new Game(12345L, new MockInputSource(["01"]))
         game.player.coherence = 100.0
-        
+
         // Ensure standard location (not Abyssal, not Entropic)
         Room room = new Room()
         room.locus = new LocusSeed(1L)
+        room.fmt = game.fmt
         room.parent = new Apartment() // Default vibes are standard
         game.state.currentLocation = room
         
@@ -27,12 +28,13 @@ class SurvivalPinningTest {
     void pinAbyssalDrain() {
         Game game = new Game(12345L, new MockInputSource(["01"]))
         game.player.coherence = 100.0
-        
+
         // Mock Abyssal location
         def room = new Room() {
             @Override boolean isAbyssal() { return true }
         }
         room.locus = new LocusSeed(1L)
+        room.fmt = game.fmt
         room.parent = new Apartment()
         game.state.currentLocation = room
         
@@ -44,12 +46,13 @@ class SurvivalPinningTest {
     void pinEntropicDrain() {
         Game game = new Game(12345L, new MockInputSource(["01"]))
         game.player.coherence = 100.0
-        
+
         // Mock Entropic vibe
         def room = new Room() {
             @Override VibeCapsule getVibe() { return new VibeCapsule("entropic", "rust", "void") }
         }
         room.locus = new LocusSeed(1L)
+        room.fmt = game.fmt
         game.state.currentLocation = room
         
         game.processTurn()
@@ -60,13 +63,14 @@ class SurvivalPinningTest {
     void pinAbyssalEntropicDrain() {
         Game game = new Game(12345L, new MockInputSource(["01"]))
         game.player.coherence = 100.0
-        
+
         // Mock Abyssal + Entropic
         def room = new Room() {
             @Override boolean isAbyssal() { return true }
             @Override VibeCapsule getVibe() { return new VibeCapsule("entropic", "rust", "void") }
         }
         room.locus = new LocusSeed(1L)
+        room.fmt = game.fmt
         game.state.currentLocation = room
         
         game.processTurn()

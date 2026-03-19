@@ -34,7 +34,7 @@ class Country extends Container {
 
     @Override
     String getLatticeMeta() {
-        return ModelOutput.fmt.dim(" [TRAIT: ${functionalTrait.toUpperCase()}]")
+        return effectiveFmt.dim(" [TRAIT: ${functionalTrait.toUpperCase()}]")
     }
 
     Country(String name, LocusSeed locus = new LocusSeed(0L)) {
@@ -84,7 +84,7 @@ class Country extends Container {
                 if (cR.isVisited()) labelR += " [V]"
             }
             
-            lines << ModelOutput.fmt.padRight(labelL, colWidth) + " | " + labelR
+            lines << effectiveFmt.padRight(labelL, colWidth) + " | " + labelR
         }
         lines << "-" * width
         return lines

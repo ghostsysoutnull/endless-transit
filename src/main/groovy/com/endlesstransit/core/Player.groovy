@@ -10,6 +10,7 @@ class Player {
     List<InventoryItem> inventory
     Location currentLocation
     int stepCount = 0
+    SynthesisService synthesisService = new SynthesisService()
     Set<String> visitedLIPs = new LinkedHashSet<>()
     // visitedPaths is intentionally absent from GameMemento.
     // It is populated by SyncManager during session persistence but is never read by
@@ -88,32 +89,21 @@ class Player {
         def item2 = inventory[Math.min(idx1, idx2)]
         inventory.remove(Math.min(idx1, idx2))
 
-        // Keystone Synthesis Check
-        Building bldg = (Building) location?.findAncestor(Building.class)
-        boolean createKeystone = bldg != null && bldg.isPrimed() && !inventory.any { it.isKeystone && it.name.contains(bldg.name) }
-
-        // Synthesize
-        int newFreq = createKeystone ? 0 : item1.frequency.value + item2.frequency.value
-        String newName = createKeystone ? "${bldg.name} Keystone" : "${item1.name.split(' ')[0]}-${item2.name.split(' ')[0]} Hybrid"
-        int c1 = item1.sessionMergeCount ?: 0
-        int c2 = item2.sessionMergeCount ?: 0
-        int newMergeCount = c1 + c2 + 1
-        
-        def hybrid = new InventoryItem(newName, newFreq, newMergeCount, createKeystone)
+        InventoryItem hybrid = synthesisService.synthesize(item1, item2, location, inventory)
         inventory.add(hybrid)
         JournalManager.logSynthesis(hybrid, location)
 
-        if (createKeystone) {
-            Logger.info("KEYSTONE_CREATED: $newName")
+        if (hybrid.isKeystone) {
+            Logger.info("KEYSTONE_CREATED: ${hybrid.name}")
             Terminal.println Terminal.colorize("\n>>> CRITICAL_WAVEFORM_COLLAPSE: KEYSTONE_STABILIZED <<<", Terminal.YELLOW)
-            Terminal.println "The fragments merge into a silent, heavy anchor: ${Terminal.bold(newName)}"
+            Terminal.println "The fragments merge into a silent, heavy anchor: ${Terminal.bold(hybrid.name)}"
         } else {
-            Logger.info("Synthesized Hybrid: $newName ($newFreq Hz)")
+            Logger.info("Synthesized Hybrid: ${hybrid.name} (${hybrid.frequency.value} Hz)")
             Terminal.println Terminal.colorize("\n>>> SPECTRAL_SYNTHESIS_COMPLETE <<<", Terminal.L_CYAN)
-            Terminal.println "New Fragment: ${Terminal.bold(newName)} (${newFreq}Hz)"
+            Terminal.println "New Fragment: ${Terminal.bold(hybrid.name)} (${hybrid.frequency.value}Hz)"
         }
-        
-        if (new SpectralFrequency(newFreq).isResonant()) {
+
+        if (hybrid.frequency.isResonant()) {
             resonantTracesCount++
             Terminal.println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
         }

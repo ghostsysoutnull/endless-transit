@@ -13,7 +13,6 @@ class RegionalDivergenceTest {
     @BeforeEach
     void setup() {
         Terminal.initialize(true, true)
-        com.endlesstransit.model.ModelOutput.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
     }
 
     @Test

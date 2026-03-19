@@ -14,7 +14,6 @@ class LandmarkDiscoveryTest {
     void setup() {
         // Minimal setup for logic testing
         Terminal.initialize(true, true)
-        com.endlesstransit.model.ModelOutput.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
     }
 
     @Test

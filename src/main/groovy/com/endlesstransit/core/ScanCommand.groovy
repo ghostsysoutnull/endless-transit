@@ -27,23 +27,24 @@ class ScanCommand implements GameCommand, LatticeCommand {
 
     @Override
     boolean execute(Game game, String choice = null) {
+        OutputFormatter fmt = game.fmt
         Location loc = game.getCurrentLocation()
         Terminal.println ""
         Terminal.println Terminal.colorize(">>> LOCAL_LATTICE_SCAN_INITIATED [LOCUS: ${loc.getLIP()}]", Terminal.L_CYAN)
-        
+
         if (loc instanceof Corridor) {
-            renderCorridorScan((Corridor) loc, game.player)
+            renderCorridorScan((Corridor) loc, game.player, fmt)
         } else if (loc instanceof Floor) {
             Floor floor = (Floor) loc
             if (floor.isCorridorActive) {
-                renderCorridorScan(floor.getCorridor(), game.player)
+                renderCorridorScan(floor.getCorridor(), game.player, fmt)
             } else {
                 renderBuildingScan((Building) floor.parent, game.player)
             }
         } else if (loc instanceof Apartment) {
-            renderApartmentScan((Apartment) loc, game.player)
+            renderApartmentScan((Apartment) loc, game.player, fmt)
         } else if (loc instanceof Room && loc.parent instanceof Apartment) {
-            renderApartmentScan((Apartment) loc.parent, game.player)
+            renderApartmentScan((Apartment) loc.parent, game.player, fmt)
         } else {
             Terminal.println Terminal.dim("    No scan-compatible structure detected in this strata.")
         }
@@ -56,7 +57,7 @@ class ScanCommand implements GameCommand, LatticeCommand {
         return true 
     }
 
-    private void renderCorridorScan(Corridor corridor, Player player) {
+    private void renderCorridorScan(Corridor corridor, Player player, OutputFormatter fmt) {
         int wId = 2
         int wTrace = 10
         int wInscr = 14
@@ -75,7 +76,7 @@ class ScanCommand implements GameCommand, LatticeCommand {
         
         // Header Row
         Terminal.print("    " + Terminal.dim("│"))
-        Terminal.print("${ModelOutput.fmt.padRight("ID", wId)}${sep}${ModelOutput.fmt.padRight("TRACE", wTrace)}${sep}${ModelOutput.fmt.padRight("INSCRIPTION", wInscr)}${sep}${ModelOutput.fmt.padRight("MATERIAL", wMat)}${sep}${ModelOutput.fmt.padRight("STATE", wState)}${sep}${ModelOutput.fmt.padRight("ROOM_TYPE", wRoom)}")
+        Terminal.print("${fmt.padRight("ID", wId)}${sep}${fmt.padRight("TRACE", wTrace)}${sep}${fmt.padRight("INSCRIPTION", wInscr)}${sep}${fmt.padRight("MATERIAL", wMat)}${sep}${fmt.padRight("STATE", wState)}${sep}${fmt.padRight("ROOM_TYPE", wRoom)}")
         Terminal.println(Terminal.dim("│"))
         
         Terminal.println("    " + Terminal.dim(mid))
@@ -96,17 +97,17 @@ class ScanCommand implements GameCommand, LatticeCommand {
             if (!rms.isEmpty()) roomType = rms[0].roomType
 
             Terminal.print("    " + Terminal.dim("│"))
-            Terminal.print(ModelOutput.fmt.padRight(id, wId))
+            Terminal.print(fmt.padRight(id, wId))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(traceName, wTrace))
+            Terminal.print(fmt.padRight(traceName, wTrace))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(inscr, wInscr))
+            Terminal.print(fmt.padRight(inscr, wInscr))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(mat, wMat))
+            Terminal.print(fmt.padRight(mat, wMat))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(state, wState))
+            Terminal.print(fmt.padRight(state, wState))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(roomType, wRoom), wRoom))
+            Terminal.print(fmt.padRight(Terminal.ansiSafeTruncate(roomType, wRoom), wRoom))
             Terminal.println(Terminal.dim("│"))
         }
         Terminal.println("    " + Terminal.dim(bot))
@@ -151,7 +152,7 @@ class ScanCommand implements GameCommand, LatticeCommand {
         }
     }
 
-    private void renderApartmentScan(Apartment apartment, Player player) {
+    private void renderApartmentScan(Apartment apartment, Player player, OutputFormatter fmt) {
         int wId = 2
         int wFreq = 8
         int wWave = 6
@@ -170,7 +171,7 @@ class ScanCommand implements GameCommand, LatticeCommand {
         
         // Header
         Terminal.print("    " + Terminal.dim("│"))
-        Terminal.print("${ModelOutput.fmt.padRight("ID", wId)}${sep}${ModelOutput.fmt.padRight("FREQ", wFreq)}${sep}${ModelOutput.fmt.padRight("WAVE", wWave)}${sep}${ModelOutput.fmt.padRight("STATUS", wStat)}${sep}${ModelOutput.fmt.padRight("TYPE", wType)}${sep}${ModelOutput.fmt.padRight("IDENTIFIER", wIdent)}")
+        Terminal.print("${fmt.padRight("ID", wId)}${sep}${fmt.padRight("FREQ", wFreq)}${sep}${fmt.padRight("WAVE", wWave)}${sep}${fmt.padRight("STATUS", wStat)}${sep}${fmt.padRight("TYPE", wType)}${sep}${fmt.padRight("IDENTIFIER", wIdent)}")
         Terminal.println(Terminal.dim("│"))
         
         Terminal.println("    " + Terminal.dim(mid))
@@ -188,17 +189,17 @@ class ScanCommand implements GameCommand, LatticeCommand {
             if (room.isAnomaly) wave = Terminal.colorize("###", Terminal.RED)
 
             Terminal.print("    " + Terminal.dim("│"))
-            Terminal.print(ModelOutput.fmt.padRight(id, wId))
+            Terminal.print(fmt.padRight(id, wId))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(signature, wFreq))
+            Terminal.print(fmt.padRight(signature, wFreq))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(wave, wWave))
+            Terminal.print(fmt.padRight(wave, wWave))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(status, wStat))
+            Terminal.print(fmt.padRight(status, wStat))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(type, wType), wType))
+            Terminal.print(fmt.padRight(Terminal.ansiSafeTruncate(type, wType), wType))
             Terminal.print(sep)
-            Terminal.print(ModelOutput.fmt.padRight(Terminal.ansiSafeTruncate(name, wIdent), wIdent))
+            Terminal.print(fmt.padRight(Terminal.ansiSafeTruncate(name, wIdent), wIdent))
             Terminal.println(Terminal.dim("│"))
         }
         Terminal.println("    " + Terminal.dim(bot))

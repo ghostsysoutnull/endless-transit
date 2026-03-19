@@ -1,6 +1,5 @@
 package com.endlesstransit.core
 
-import com.endlesstransit.model.ModelOutput
 import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*

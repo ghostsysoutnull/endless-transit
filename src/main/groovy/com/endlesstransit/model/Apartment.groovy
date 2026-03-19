@@ -47,7 +47,7 @@ class Apartment extends Container {
         if (getTypeName() == "Crypt") {
             return "Crypt: $doorDescription. [ABYSSAL_RESONANCE_DETECTED]"
         }
-        String info = isAnomaly ? " [!] TEMPORAL_ANOMALY_DETECTED [!]" : "[TEMPORAL_MARKER: ${ModelOutput.fmt.colorize(timeline.toUpperCase(), "YELLOW")}]"
+        String info = isAnomaly ? " [!] TEMPORAL_ANOMALY_DETECTED [!]" : "[TEMPORAL_MARKER: ${effectiveFmt.colorize(timeline.toUpperCase(), "YELLOW")}]"
         return "Apartment: $doorDescription. $info"
     }
 
@@ -75,9 +75,9 @@ class Apartment extends Container {
     @Override
     List<String> getExtraContent(Player player, int width) {
         List<String> lines = []
-        lines << ModelOutput.fmt.colorize(" [APARTMENT_UNIT_ACCESS] ", "L_CYAN")
-        lines << ModelOutput.fmt.dim("Local unit entry-point. Internal cells detected: ${rooms.size()}")
-        lines << ModelOutput.fmt.dim("-" * width)
+        lines << effectiveFmt.colorize(" [APARTMENT_UNIT_ACCESS] ", "L_CYAN")
+        lines << effectiveFmt.dim("Local unit entry-point. Internal cells detected: ${rooms.size()}")
+        lines << effectiveFmt.dim("-" * width)
         
         return lines
     }

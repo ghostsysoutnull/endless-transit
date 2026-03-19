@@ -29,8 +29,8 @@
 | 2 | Resource Loading | `[x] COMPLETE` | Low |
 | 3 | Value Objects | `[x] COMPLETE` | Low |
 | 3c | Gematria Return Type Completion | `[x] COMPLETE` | Low |
-| 4 | Structural Extraction | `[ ] NOT STARTED` | Low |
-| 5 | Dependency Injection | `[ ] NOT STARTED` | Medium |
+| 4 | Structural Extraction | `[x] COMPLETE` | Low |
+| 5 | Dependency Injection | `[x] COMPLETE` | Medium |
 | 6 | GameState Decomposition | `[ ] NOT STARTED` | Medium |
 | 7 | BridgeView Decomposition | `[ ] NOT STARTED` | Medium |
 | 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
@@ -312,25 +312,26 @@ as a standalone bounded commit.
 `Room` re-implements ~40 lines already in `Container`: parent tracking, `findAncestor()`,
 `visited` flag, `locus` field, LIP construction.
 
-- [ ] Define `AbstractLeafLocation` (or `LeafLocation`) abstract class implementing the shared `Location` contract
-- [ ] `Room` extends `AbstractLeafLocation`, removing duplicated fields and methods
-- [ ] Verify `Room` behavior is identical
+- [x] Define `AbstractLeafLocation` (or `LeafLocation`) abstract class implementing the shared `Location` contract
+- [x] `Room` extends `AbstractLeafLocation`, removing duplicated fields and methods
+- [x] Verify `Room` behavior is identical
 
 **Files:** `AbstractLeafLocation.groovy` (new), `Room.groovy`
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-03-18`
 
 ### 4b — SynthesisService Extraction (OOA 2.4)
 `Player.mergeItems()` and resonance detection are behavioral policies that don't belong
 on the player data aggregate.
 
-- [ ] Create `SynthesisService` containing merge logic, keystone creation, and resonance detection
-- [ ] `Player.mergeItems()` delegates to `SynthesisService`
-- [ ] `QuantumBufferController` calls updated via `Player` (no direct change needed)
+- [x] Create `SynthesisService` containing merge logic, keystone creation, and resonance detection
+- [x] `Player.mergeItems()` delegates to `SynthesisService`
+- [x] `QuantumBufferController` calls updated via `Player` (no direct change needed)
 
-**Files:** `SynthesisService.groovy` (new), `Player.groovy`, `QuantumBufferController.groovy`
-**Status:** `[ ] NOT STARTED`
+**Files:** `SynthesisService.groovy` (new), `Player.groovy`
+**Status:** `[x] COMPLETE — 2026-03-18`
 
-**Phase 4 Gates:** `./vinc.sh --test` — focus `InventoryObjectTest`, `MergeLabelTest`, `AbyssalRitualTest`, `SingleObjectTakeTest`
+**Phase 4 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=118 SUCCEEDED=113 FAILED=0 SKIPPED=5`
+**Retrospective:** `docs/retro/RETRO_PHASE_4.md`
 
 ---
 

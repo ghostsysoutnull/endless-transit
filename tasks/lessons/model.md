@@ -12,6 +12,11 @@
 - **LIP-to-Location Resolution**: Implement a recursive `resolveLIP` function that can traverse the `Universe` hierarchy using an index path (e.g., `0.1.5`). This is the bridge between a stored memento and a live world object.
 - **Scenario Discovery (SeedScanner)**: Use the Specification Pattern (`WorldProbe`) to define world invariants. When scanning thousands of seeds, implement `shouldEnter(Location)` to prune subtrees that don't match the search criteria, drastically reducing scan time.
 
+- **Diff plan snippets against actual source before writing.** When a plan proposes code for a method that already has an implementation (e.g. `findAncestor`), compare the plan's version to the current source and both sibling implementations side-by-side. Plausible-looking variations can carry subtle semantic differences that no existing test covers. Side-by-side comparison catches them in seconds; post-commit discovery requires bisecting a confusing test failure.
+- **`type.isInstance(this)` vs `type.isInstance(parent)` is a load-bearing distinction in ancestor traversal.** The first allows self-matching (used in `Container.findAncestor` and `Room.findAncestor`); the second skips self entirely. When extracting `findAncestor` to a shared base class, verify which semantics every caller depends on before choosing the implementation.
+
+- **Directly-constructed model objects require explicit `fmt` injection**: `ProceduralFactory` sets `obj.fmt` on everything it creates. Tests that bypass the factory (`new Room()`, `new Building(locus)`) must set `obj.fmt` manually (e.g. `room.fmt = game.fmt` or `building.fmt = new StandardTerminalAdapter()`). Without this, any rendering method that calls `effectiveFmt` will NPE. This was masked before Phase 5 by the `ModelOutput.fmt` global fallback; after its removal, the requirement is explicit.
+
 ## Mistakes/Corrections
 - **Recursive Calls**: Ensure `getName()` or `getPath()` do not trigger infinite recursion in complex nested structures. Use direct type checks (`instanceof`) where property access might be circular.
 - **Indy Property Dispatch**: In Groovy, accessing a property (e.g., `rooms.add(x)` or `rooms.size()`) within its own class still triggers the getter. If the getter calls `ensureChildrenPopulated()`, it will loop indefinitely unless the guard flag is set upfront.

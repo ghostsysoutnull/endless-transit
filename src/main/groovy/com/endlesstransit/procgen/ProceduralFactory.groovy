@@ -9,22 +9,26 @@ import groovy.transform.CompileStatic
 class ProceduralFactory {
     static ProceduralFactory instance = new ProceduralFactory()
     ThemeService themeService = new ThemeService()
+    OutputFormatter fmt
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
         u.setLocus(locus)
+        u.fmt = fmt
         return u
     }
 
     CosmicFilament createFilament(Container parent, LocusSeed locus) {
         CosmicFilament f = new CosmicFilament(NameGenerator.generateFilamentName(locus), locus)
         f.setParent(parent)
+        f.fmt = fmt
         return f
     }
 
     GalacticSector createSector(Container parent, LocusSeed locus) {
         GalacticSector s = new GalacticSector(NameGenerator.generateSectorName(locus), locus)
         s.setParent(parent)
+        s.fmt = fmt
         return s
     }
 
@@ -32,12 +36,14 @@ class ProceduralFactory {
         String nullName = "Null Reach ${Integer.toHexString(locus.nextInt(0xFFF)).toUpperCase()}"
         NullSector s = new NullSector(nullName, locus)
         s.setParent(parent)
+        s.fmt = fmt
         return s
     }
 
     SolarSystem createSolarSystem(Container parent, LocusSeed locus) {
         SolarSystem s = new SolarSystem(NameGenerator.generateSolarSystemName(locus), locus)
         s.setParent(parent)
+        s.fmt = fmt
         return s
     }
 
@@ -71,7 +77,7 @@ class ProceduralFactory {
             "zenith": com.endlesstransit.ui.Terminal.BLUE
         ]
         p.localVibe.atmosphericColor = colorMap[primary] ?: com.endlesstransit.ui.Terminal.WHITE
-        
+        p.fmt = fmt
         return p
     }
 
@@ -81,19 +87,21 @@ class ProceduralFactory {
         
         List<String> traits = ["Ceremonial", "Military", "Industrial", "Agricultural", "Research", "Commercial"]
         c.functionalTrait = (String) locus.pickFrom(traits)
-        
+        c.fmt = fmt
         return c
     }
 
     City createCity(Container parent, LocusSeed locus) {
         City c = new City(NameGenerator.generateCityName(locus), locus)
         c.setParent(parent)
+        c.fmt = fmt
         return c
     }
 
     Street createStreet(Container parent, LocusSeed locus) {
         Street s = new Street(NameGenerator.generateStreetName(locus), locus)
         s.setParent(parent)
+        s.fmt = fmt
         return s
     }
 
@@ -133,19 +141,21 @@ class ProceduralFactory {
         Map<String, Object> nameData = NameGenerator.generateBuildingName(culture, b.maxFloors, locus, depth, isNull, isAbyssal)
         b.name = (String) nameData["name"]
         b.isLandmark = (boolean) nameData["isLandmark"]
-
+        b.fmt = fmt
         return b
     }
 
     Floor createFloor(Container parent, int number, int apartmentsPerFloor, String culture, String timeline, LocusSeed locus) {
         Floor f = new Floor(number, apartmentsPerFloor, culture, timeline, locus)
         f.setParent(parent)
+        f.fmt = fmt
         return f
     }
 
     Corridor createCorridor(Container parent, int numApartments, String culture, String timeline, LocusSeed locus) {
         Corridor c = new Corridor(numApartments, culture, timeline, locus)
         c.setParent(parent)
+        c.fmt = fmt
         return c
     }
 
@@ -160,7 +170,7 @@ class ProceduralFactory {
         } else if (vibe != null) {
             a.isAnomaly = true
         }
-        
+        a.fmt = fmt
         return a
     }
 
@@ -207,7 +217,7 @@ class ProceduralFactory {
         for (int i = 0; i < numFurniture; i++) {
             r.furniture << themeService.generateHybridObject(culture, timeline, furnRandom)
         }
-
+        r.fmt = fmt
         return r
     }
 

@@ -58,9 +58,9 @@ class Corridor extends Container {
     @Override
     List<String> getExtraContent(Player player, int width) {
         List<String> lines = []
-        lines << ModelOutput.fmt.colorize(" [LOCAL_ACCESS_LIST] ", "L_CYAN")
-        lines << ModelOutput.fmt.dim("Analyzing local horizontal artery...")
-        lines << ModelOutput.fmt.dim("-" * width)
+        lines << effectiveFmt.colorize(" [LOCAL_ACCESS_LIST] ", "L_CYAN")
+        lines << effectiveFmt.dim("Analyzing local horizontal artery...")
+        lines << effectiveFmt.dim("-" * width)
         
         List<Apartment> apts = getApartments()
         List<Door> drs = getDoors()
@@ -72,11 +72,11 @@ class Corridor extends Container {
             
             String aptPrefix = apt.getLIP() + "."
             boolean isVisited = apt.isVisited() || player.visitedLIPs.any { it.startsWith(aptPrefix) }
-            String visitedMarker = isVisited ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
+            String visitedMarker = isVisited ? effectiveFmt.colorize(" [V]", "GREEN") : ""
             
-            lines << "${ModelOutput.fmt.dim(id)} ${door.getDescription()}${visitedMarker}".toString()
+            lines << "${effectiveFmt.dim(id)} ${door.getDescription()}${visitedMarker}".toString()
         }
-        lines << ModelOutput.fmt.dim("-" * width)
+        lines << effectiveFmt.dim("-" * width)
         return lines
     }
 

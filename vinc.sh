@@ -48,11 +48,11 @@ case "$1" in
         ;;
     "--scan")
         vinculum_compile
-        groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/procgen/SeedScanner.groovy "${@:2}"
+        groovy -cp build/vinc:src/main/groovy:src/main/resources:lib/* src/main/groovy/com/endlesstransit/procgen/SeedScanner.groovy "${@:2}"
         ;;
     "--replay")
         vinculum_compile
-        groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/core/ReplayService.groovy "${@:2}"
+        groovy -cp build/vinc:src/main/groovy:src/main/resources:lib/* src/main/groovy/com/endlesstransit/core/ReplayService.groovy "${@:2}"
         ;;
     "--help")
         echo -e "${GREEN}Vinculum Clinical Interface (VINC)${RESET}"
@@ -69,6 +69,6 @@ case "$1" in
     *)
         vinculum_compile
         # Pass all arguments to Main
-        groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/Main.groovy "$@"
+        groovy -cp build/vinc:src/main/groovy:src/main/resources:lib/* src/main/groovy/com/endlesstransit/Main.groovy "$@"
         ;;
 esac

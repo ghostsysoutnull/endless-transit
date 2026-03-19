@@ -49,8 +49,8 @@ class Street extends Container {
         List<String> lines = []
         int colWidth = (width - 3).intdiv(2)
 
-        lines << ModelOutput.fmt.dim("Buildings on this street:")
-        lines << ModelOutput.fmt.dim("-" * width)
+        lines << effectiveFmt.dim("Buildings on this street:")
+        lines << effectiveFmt.dim("-" * width)
         List<Building> bldgs = getBuildings()
         for (int i = 0; i < bldgs.size(); i += 2) {
             Building bL = bldgs[i]
@@ -61,23 +61,23 @@ class Street extends Container {
 
             String bNameL = bL.getName()
             String nameL = bNameL.length() > 25 ? bNameL.substring(0, 22) + "..." : bNameL
-            if (bL.isLandmark) nameL = ModelOutput.fmt.colorize(ModelOutput.fmt.bold(nameL), "CYAN")
-            String visL = bL.isVisited() ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
+            if (bL.isLandmark) nameL = effectiveFmt.colorize(effectiveFmt.bold(nameL), "CYAN")
+            String visL = bL.isVisited() ? effectiveFmt.colorize(" [V]", "GREEN") : ""
             String labelL = "${numL}. ${nameL}${visL}"
-            String leftPart = ModelOutput.fmt.padRight(labelL, colWidth)
+            String leftPart = effectiveFmt.padRight(labelL, colWidth)
 
             String labelR = ""
             if (bR != null) {
                 String bNameR = bR.getName()
                 String nameR = bNameR.length() > 25 ? bNameR.substring(0, 22) + "..." : bNameR
-                if (bR.isLandmark) nameR = ModelOutput.fmt.colorize(ModelOutput.fmt.bold(nameR), "CYAN")
-                String visR = bR.isVisited() ? ModelOutput.fmt.colorize(" [V]", "GREEN") : ""
+                if (bR.isLandmark) nameR = effectiveFmt.colorize(effectiveFmt.bold(nameR), "CYAN")
+                String visR = bR.isVisited() ? effectiveFmt.colorize(" [V]", "GREEN") : ""
                 labelR = "${numR}. ${nameR}${visR}"
             }
 
-            lines << (leftPart + " | " + ModelOutput.fmt.padRight(labelR, colWidth))
+            lines << (leftPart + " | " + effectiveFmt.padRight(labelR, colWidth))
         }
-        lines << ModelOutput.fmt.dim("-" * width)
+        lines << effectiveFmt.dim("-" * width)
         return lines
     }
 
@@ -92,7 +92,7 @@ class Street extends Container {
     @Override
     String getDescription() {
         VibeCapsule v = getVibe()
-        String vInfo = v != null ? " | ${ModelOutput.fmt.dim("[TECH_ERA:")} ${ModelOutput.fmt.colorize(v.timeline.toUpperCase(), "YELLOW")}${ModelOutput.fmt.dim("]")} ${ModelOutput.fmt.dim("[RESONANCE:")} ${ModelOutput.fmt.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${ModelOutput.fmt.dim("]")}" : ""
+        String vInfo = v != null ? " | ${effectiveFmt.dim("[TECH_ERA:")} ${effectiveFmt.colorize(v.timeline.toUpperCase(), "YELLOW")}${effectiveFmt.dim("]")} ${effectiveFmt.dim("[RESONANCE:")} ${effectiveFmt.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${effectiveFmt.dim("]")}" : ""
         return "Street: $name$vInfo"
     }
 

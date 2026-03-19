@@ -17,6 +17,20 @@ improvement session is planned before the next phase begins.
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.
 
+> **Phase 4 cadence review completed — 2026-03-18.** One latent infrastructure issue surfaced
+> post-phase (not from retro): `--scan`, `--replay`, and game launch classpaths in `vinc.sh`
+> diverged from `--test` — `src/main/resources` was missing, causing silent load failures at
+> runtime while tests passed. Fixed immediately; lesson promoted to `tasks/lessons/infrastructure.md`.
+> Backlog otherwise clean. No workflow session required before Phase 5. Next scheduled review: Phase 7.
+
+> **Phase 5 note — 2026-03-18.** The pre-Commit-G grep for `ModelOutput.fmt` only caught
+> direct static field accesses. Tests depending on the ambient formatter *implicitly* (via
+> `getEffectiveFmt()` fallback on directly-constructed model objects) were invisible to the grep.
+> Future Service Locator removals should include: (1) grep for direct usage, AND (2) audit every
+> test file that constructs a model object outside the factory and exercises any rendering path.
+> Lesson promoted to `tasks/lessons/model.md`. No workflow session warranted — backlog clean.
+> Next scheduled review: Phase 7.
+
 ---
 
 ## 🟢 CLOSED

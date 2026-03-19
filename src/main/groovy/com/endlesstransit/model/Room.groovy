@@ -7,7 +7,7 @@ import groovy.transform.CompileStatic
 import java.util.Random
 
 @CompileStatic
-class Room implements Location {
+class Room extends AbstractLeafLocation {
     String color
     List<String> furniture = []
     String walls
@@ -17,30 +17,9 @@ class Room implements Location {
     String roomType
     Map<String, String> atmoTraits = [:]
     List<String> objects = []
-    Location parent
-    boolean visited = false
     String culture
     String timeline
     boolean isAnomaly = false
-    LocusSeed locus
-
-    @Override
-    LocusSeed getLocus() { return locus }
-
-    @Override
-    void setLocus(LocusSeed locus) { this.locus = locus }
-
-    @Override
-    String getLIP() {
-        int myIndex = getIndexInParent() - 1 
-        return "${parent.getLIP()}.$myIndex"
-    }
-
-    @Override
-    boolean isVisited() { return visited }
-
-    @Override
-    void markVisited() { this.visited = true }
 
     @Override
     int getIndexInParent() {
@@ -89,12 +68,6 @@ class Room implements Location {
     }
 
     @Override
-    void setParent(Location parent) { this.parent = parent }
-
-    @Override
-    Location getParent() { return parent }
-
-    @Override
     void processAction(Player player) {
         Random random = locus.branch("ACTION").branch(player.stepCount).nextRandom()
         if (random.nextInt(10) < 3) { 
@@ -102,21 +75,8 @@ class Room implements Location {
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
             player.inventory.add(item)
             JournalManager.logCapture(item, this)
-            ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", "YELLOW")
+            effectiveFmt.println effectiveFmt.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", "YELLOW")
         }
-    }
-
-    @Override
-    String getPath() {
-        if (parent != null) {
-            return "${parent.getPath()} > $roomName"
-        }
-        return roomName
-    }
-
-    @Override
-    int getDepth() {
-        return (parent != null) ? parent.getDepth() + 1 : 0
     }
 
     @Override
@@ -160,29 +120,23 @@ class Room implements Location {
         List<String> lines = []
         String accent = isAbyssal() ? "RED" : "L_CYAN"
         
-        lines << ModelOutput.fmt.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
-        lines << ModelOutput.fmt.dim("-" * width)
+        lines << effectiveFmt.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
+        lines << effectiveFmt.dim("-" * width)
         
-        String identPart = "IDENT: ${ModelOutput.fmt.bold(roomName)}"
+        String identPart = "IDENT: ${effectiveFmt.bold(roomName)}"
         String traitsPart = "ATMO_TRAITS: [OXY: ${atmoTraits["OXYGEN"]}] | [TEMP: ${atmoTraits["TEMP"]}]"
-        lines << ModelOutput.fmt.padRight(identPart, width.intdiv(2)) + " ║ " + traitsPart
+        lines << effectiveFmt.padRight(identPart, width.intdiv(2)) + " ║ " + traitsPart
         
-        String typePart = "TYPE:  ${ModelOutput.fmt.colorize(roomType, "YELLOW")}"
-        String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? ModelOutput.fmt.colorize("[DEGRADED]", "RED") : ModelOutput.fmt.colorize("[STABLE]", "GREEN")}"
-        lines << ModelOutput.fmt.padRight(typePart, width.intdiv(2)) + " ║ " + signalPart
+        String typePart = "TYPE:  ${effectiveFmt.colorize(roomType, "YELLOW")}"
+        String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? effectiveFmt.colorize("[DEGRADED]", "RED") : effectiveFmt.colorize("[STABLE]", "GREEN")}"
+        lines << effectiveFmt.padRight(typePart, width.intdiv(2)) + " ║ " + signalPart
         
-        lines << ModelOutput.fmt.dim("-" * width)
+        lines << effectiveFmt.dim("-" * width)
         return lines
     }
 
     @Override
     VibeCapsule getVibe() { return parent?.getVibe() }
-
-    @Override
-    Location findAncestor(Class type) {
-        if (type.isInstance(this)) return this
-        return parent?.findAncestor(type)
-    }
 
     @Override
     boolean isAbyssal() { return parent?.isAbyssal() ?: false }
@@ -220,46 +174,46 @@ class Room implements Location {
                     
                     if (isResonant) {
                         game.player.resonantTracesCount++
-                        ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
+                        effectiveFmt.println effectiveFmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
                     }
-                    ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", "CYAN")
+                    effectiveFmt.println effectiveFmt.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", "CYAN")
                     objects.remove(0)
                     game.instantRender = true
                     return
                 }
 
-                ModelOutput.fmt.println "\n" + ModelOutput.fmt.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", "L_CYAN")
+                effectiveFmt.println "\n" + effectiveFmt.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", "L_CYAN")
                 if (!objects.isEmpty()) {
-                    ModelOutput.fmt.println ModelOutput.fmt.dim("Local objects:")
+                    effectiveFmt.println effectiveFmt.dim("Local objects:")
                     objects.eachWithIndex { String obj, int i ->
-                        ModelOutput.fmt.println "${ModelOutput.fmt.colorize((i + 1).toString(), "YELLOW")}. Scan $obj"
+                        effectiveFmt.println "${effectiveFmt.colorize((i + 1).toString(), "YELLOW")}. Scan $obj"
                     }
                 }
                 
                 if (!game.player.inventory.isEmpty()) {
-                    ModelOutput.fmt.println ModelOutput.fmt.dim("\nBuffer fragments (to drop):")
+                    effectiveFmt.println effectiveFmt.dim("\nBuffer fragments (to drop):")
                     game.player.inventory.eachWithIndex { InventoryItem item, int i ->
-                        ModelOutput.fmt.println "${ModelOutput.fmt.colorize("d" + (i + 1), "YELLOW")}. Drop ${item.name}"
+                        effectiveFmt.println "${effectiveFmt.colorize("d" + (i + 1), "YELLOW")}. Drop ${item.name}"
                     }
                 }
-                ModelOutput.fmt.println "${ModelOutput.fmt.colorize("c", "YELLOW")}. Cancel"
+                effectiveFmt.println "${effectiveFmt.colorize("c", "YELLOW")}. Cancel"
                 
-                ModelOutput.fmt.print "\nINTERACT >> "
+                effectiveFmt.print "\nINTERACT >> "
                 String input = game.inputHandler.readLine().toLowerCase()
                 
                 if (input == "c" || input == "") {
-                    ModelOutput.fmt.println "Operation aborted."
+                    effectiveFmt.println "Operation aborted."
                 } else if (input.startsWith("d")) {
                     try {
                         int idx = input.substring(1).toInteger() - 1
                         if (idx >= 0 && idx < game.player.inventory.size()) {
                             InventoryItem item = game.player.inventory.remove(idx)
                             objects << item.name
-                            ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> Fragment ${item.name} dropped into local cell.", "YELLOW")
+                            effectiveFmt.println effectiveFmt.colorize(">>> Fragment ${item.name} dropped into local cell.", "YELLOW")
                             game.instantRender = true
                         }
                     } catch (Exception e) {
-                        ModelOutput.fmt.println "Invalid drop command."
+                        effectiveFmt.println "Invalid drop command."
                     }
                 } else {
                     try {
@@ -275,16 +229,16 @@ class Room implements Location {
                             
                             if (isResonant) {
                                 game.player.resonantTracesCount++
-                                ModelOutput.fmt.println ModelOutput.fmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
+                                effectiveFmt.println effectiveFmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
                             }
-                            ModelOutput.fmt.println ModelOutput.fmt.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", "CYAN")
+                            effectiveFmt.println effectiveFmt.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", "CYAN")
                             objects.remove(idx)
                             game.instantRender = true
                         } else {
-                            ModelOutput.fmt.println "Invalid selection."
+                            effectiveFmt.println "Invalid selection."
                         }
                     } catch (Exception e) {
-                        ModelOutput.fmt.println "Invalid input."
+                        effectiveFmt.println "Invalid input."
                     }
                 }
             }
@@ -316,19 +270,19 @@ class Room implements Location {
         String l = lightingDesc
 
         if (isAnomaly) {
-            s = ModelOutput.fmt.glitchText(s, 0.2)
-            w = ModelOutput.fmt.glitchText(w, 0.1)
-            l = ModelOutput.fmt.glitchText(l, 0.3)
+            s = effectiveFmt.glitchText(s, 0.2)
+            w = effectiveFmt.glitchText(w, 0.1)
+            l = effectiveFmt.glitchText(l, 0.3)
         }
 
-        description.append(ModelOutput.fmt.colorize(" [NEURAL_LINK_INTERPRETATION]:", ModelOutput.fmt.L_MAGENTA)).append("\n")
-        description.append("You are in $s. The walls are ${ModelOutput.fmt.colorize(color, "WHITE")} $w.\n")
-        description.append("The space is illuminated by ${ModelOutput.fmt.colorize(l, "YELLOW")}.\n")
+        description.append(effectiveFmt.colorize(" [NEURAL_LINK_INTERPRETATION]:", effectiveFmt.L_MAGENTA)).append("\n")
+        description.append("You are in $s. The walls are ${effectiveFmt.colorize(color, "WHITE")} $w.\n")
+        description.append("The space is illuminated by ${effectiveFmt.colorize(l, "YELLOW")}.\n")
         
         int wrapWidth = 80
         String furnitureStr = furniture.join(', ')
-        List<String> wrappedFurniture = ModelOutput.fmt.wrapText(furnitureStr, wrapWidth)
-        description.append("${ModelOutput.fmt.dim("FURNITURE:")} ")
+        List<String> wrappedFurniture = effectiveFmt.wrapText(furnitureStr, wrapWidth)
+        description.append("${effectiveFmt.dim("FURNITURE:")} ")
         wrappedFurniture.eachWithIndex { String line, int i ->
             if (i > 0) description.append("           ") 
             description.append(line).append("\n")
@@ -336,8 +290,8 @@ class Room implements Location {
         
         if (!objects.isEmpty()) {
             String objStr = objects.join(', ')
-            List<String> wrappedObjs = ModelOutput.fmt.wrapText(objStr, wrapWidth)
-            description.append("${ModelOutput.fmt.colorize("OBJECTS_DETECTED:", "CYAN")} ")
+            List<String> wrappedObjs = effectiveFmt.wrapText(objStr, wrapWidth)
+            description.append("${effectiveFmt.colorize("OBJECTS_DETECTED:", "CYAN")} ")
             wrappedObjs.eachWithIndex { String line, int i ->
                 if (i > 0) description.append("                  ") 
                 description.append(line).append("\n")

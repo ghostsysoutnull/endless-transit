@@ -34,7 +34,7 @@ class City extends Container {
 
     @Override
     String getLatticeMeta() {
-        return isRebelDistrict ? ModelOutput.fmt.colorize(" [UNAUTHORIZED_ZONE]", "RED") : ""
+        return isRebelDistrict ? effectiveFmt.colorize(" [UNAUTHORIZED_ZONE]", "RED") : ""
     }
 
     City(String name, LocusSeed locus = new LocusSeed(0L)) {
@@ -83,7 +83,7 @@ class City extends Container {
                 if (sR.isVisited()) labelR += " [V]"
             }
             
-            lines << (ModelOutput.fmt.padRight(labelL, colWidth) + " | " + ModelOutput.fmt.padRight(labelR, colWidth))
+            lines << (effectiveFmt.padRight(labelL, colWidth) + " | " + effectiveFmt.padRight(labelR, colWidth))
         }
         lines << "-" * width
         return lines

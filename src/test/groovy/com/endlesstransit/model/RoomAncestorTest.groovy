@@ -80,5 +80,17 @@ class RoomAncestorTest {
             "Corridor's direct parent must be its Floor ancestor")
         assertEquals(building, floor.parent,
             "Floor's direct parent must be its Building ancestor")
+
+        // --- getDepth() ---
+        assertTrue(room.getDepth() > 0, "Room depth must be positive")
+        assertEquals(apartment.getDepth() + 1, room.getDepth(),
+            "Room depth must equal its parent apartment depth + 1")
+
+        // --- getPath() ---
+        String path = room.getPath()
+        assertTrue(path.contains(room.getName()),
+            "Room path must contain the room name")
+        assertTrue(path.contains(apartment.getName()),
+            "Room path must contain at least one ancestor name segment")
     }
 }

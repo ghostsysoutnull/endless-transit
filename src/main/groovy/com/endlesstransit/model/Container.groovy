@@ -15,6 +15,9 @@ abstract class Container implements Location {
     boolean visited = false
     boolean childrenPopulated = false
     LocusSeed locus
+    OutputFormatter fmt
+
+    protected OutputFormatter getEffectiveFmt() { fmt }
 
     @Override
     LocusSeed getLocus() {

@@ -1,6 +1,5 @@
 package com.endlesstransit.ui
 
-import com.endlesstransit.model.ModelOutput
 import com.endlesstransit.model.OutputFormatter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +17,6 @@ class DisplayAdapterTest {
     @Test
     void testStandardAdapterInvariants() {
         OutputFormatter adapter = new StandardTerminalAdapter()
-        ModelOutput.fmt = adapter
 
         String label = "LOCUS_INDEX"
         int width = 20

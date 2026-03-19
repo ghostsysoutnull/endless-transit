@@ -36,7 +36,7 @@ class Planet extends Container {
     String getLatticeMeta() {
         VibeCapsule v = getVibe()
         if (v == null) return ""
-        return ModelOutput.fmt.dim(" [${isAbyssal() ? 'BEDROCK' : 'SURFACE'} | ERA: ${v.timeline.toUpperCase()}]")
+        return effectiveFmt.dim(" [${isAbyssal() ? 'BEDROCK' : 'SURFACE'} | ERA: ${v.timeline.toUpperCase()}]")
     }
 
     Planet(String name, LocusSeed locus = new LocusSeed(0)) {
@@ -61,8 +61,8 @@ class Planet extends Container {
     String getDescription() {
         VibeCapsule v = (VibeCapsule) getVibe()
         return "Planet: $name\n" + 
-               "${ModelOutput.fmt.dim("[RESONANCE:")} ${ModelOutput.fmt.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${ModelOutput.fmt.dim("]")} " + 
-               "${ModelOutput.fmt.dim("[TIMELINE:")} ${ModelOutput.fmt.colorize(v.timeline.toUpperCase(), "YELLOW")}${ModelOutput.fmt.dim("]")}"
+               "${effectiveFmt.dim("[RESONANCE:")} ${effectiveFmt.colorize(v.primaryCulture.toUpperCase(), v.atmosphericColor)}${effectiveFmt.dim("]")} " + 
+               "${effectiveFmt.dim("[TIMELINE:")} ${effectiveFmt.colorize(v.timeline.toUpperCase(), "YELLOW")}${effectiveFmt.dim("]")}"
     }
 
     @Override
@@ -87,7 +87,7 @@ class Planet extends Container {
                 if (cR.isVisited()) labelR += " [V]"
             }
             
-            lines << ModelOutput.fmt.padRight(labelL, colWidth) + " | " + labelR
+            lines << effectiveFmt.padRight(labelL, colWidth) + " | " + labelR
         }
         lines << "-" * width
         return lines

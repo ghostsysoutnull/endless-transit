@@ -21,7 +21,6 @@ class BridgeViewStructureTest {
     @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
-        com.endlesstransit.model.ModelOutput.fmt = new StandardTerminalAdapter()
     }
 
     @Test
