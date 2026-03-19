@@ -14,7 +14,7 @@
 1. **Column Alignment**: All borders MUST use icon-aware width logic.
 2. **Deterministic ANSI**: Use `Terminal` constants; no raw escape codes.
 3. **Mandatory Virtualization**: Output goes through `RenderSink`.
-4. **Adapter Pattern**: `TerminalAdapter` MUST be injected into `ModelOutput.fmt`.
+4. **Adapter Pattern**: `OutputFormatter` (e.g. `StandardTerminalAdapter`) is instantiated once in `Game` and injected into model objects via `ProceduralFactory`. The model accesses it as the `fmt` field — never via a static reference.
 
 ## 📡 Diagnostic Sinks
 - **Active System**: @docs/design/DIAGNOSTIC_SUITE_DESIGN.md
