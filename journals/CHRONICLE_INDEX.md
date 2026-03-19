@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0xb3c7a12** | 2026-03-18 | **[PHASE_5_CLEANUP]** | Removed `getEffectiveFmt()` migration scaffold: 113 call sites across 14 model classes renamed to `fmt` directly; getter deleted from both base classes; `model/CLAUDE.md` + `GEMINI.md` corrected. Suite: 118/113/5/0. |
 | **0xe5f2c1b** | 2026-03-18 | **[PHASE_5_DEPENDENCY_INJECTION]** | `ModelOutput.fmt` Service Locator eliminated. `OutputFormatter` injected via `Game` → `ProceduralFactory` → all 14 model classes. 7 commits (A–G). `ModelOutput.groovy` deleted. 9 test files cleaned. Suite: 118/113/5/0. Visual gate: seed 0 → 9-node match. |
 | **0xd7e3b2a** | 2026-03-18 | **[PHASE_4_STRUCTURAL_EXTRACTION]** | Pre-check: getDepth()/getPath() pinned in RoomAncestorTest. 4a: AbstractLeafLocation extracts ~40 lines from Room (parent, visited, locus, getLIP, getPath, getDepth, findAncestor). 4b: SynthesisService extracts keystone/frequency/name policy from Player.mergeItems(). Suite: 118/113/5/0. |
 | **0xf3a91c7** | 2026-03-18 | **[PRE_PHASE4_HOUSEKEEPING]** | ScanCommand resonance via SpectralFrequency.isResonant(). InventoryItem @CompileStatic. Phase 2a complete: ThemeService + NameGenerator converted to getResourceAsStream + index files; src/main/resources added to vinc.sh classpath. Suite: 114/109/5/0. |
