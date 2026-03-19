@@ -12,16 +12,23 @@
 ---
 
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
-**Blocked by:** ~~TEST_RUNNER_IMPROVEMENTS~~ ✅
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
-**Blocked by:** TEST_RUNNER_IMPROVEMENTS
+**Suite baseline:** 118 discovered / 113 pass / 5 skipped / 0 failed
 
-- [x] Phase 0 — Baselines (61/61 green, seeds 0/500/9999 pinned, visual baseline at seed 12345)
-- [x] Phase 0.5 — Test Coverage Gaps (8 safety-net tests) — all 8 complete (0.5a–0.5h ✅)
-- [x] Phase 1 — Bug Fixes (isCorridorActive reset removed, visitedPaths documented) ✅
-- [ ] Phase 2 — Resource Loading — **NEXT**
-- [ ] Phases 3–10 — See OOA_REFACTOR_PLAN.md for full breakdown
+- [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
+- [x] Phase 0.5 — Test Coverage Gaps (safety-net tests 0.5a–0.5h, all complete)
+- [x] Phase 1 — Bug Fixes (isCorridorActive reset removed, visitedPaths documented)
+- [x] Phase 2 — Resource Loading (ThemeService + NameGenerator → classpath; vinc.sh/run.sh classpath fixed)
+- [x] Phase 3 / 3c — Value Objects (RoomCategory enum, SpectralFrequency value object, Gematria return type)
+- [x] Phase 4 — Structural Extraction (AbstractLeafLocation, SynthesisService)
+- [x] Phase 5 — Dependency Injection (ModelOutput.fmt eliminated; fmt injected via ProceduralFactory)
+- [x] Phase 5 Cleanup — effectiveFmt getter removed; domain docs corrected
+- [ ] Phase 6 — GameState Decomposition — **NEXT**
+- [ ] Phase 7 — BridgeView Decomposition
+- [ ] Phase 8 — Floor State Pattern
+- [ ] Phase 9 — ProceduralFactory Split
+- [ ] Phase 10 — Domain Event System
 
 ---
 
@@ -58,7 +65,8 @@
 
 ---
 
-## 🏛️ RECENT LESSONS (Updated 2026-03-17)
-- **Safe-Accessors Mandate:** All child lists must use `getXXX()` getters — never access `this.list` directly (lazy-loading law).
-- **Structural Collapse Guard:** Never apply skeleton/template patterns to existing classes without reading full source first.
-- **Phase Gates:** Each OOA refactor phase is incomplete until all three gates pass: `--test`, `--scan` (model/ui), and `DeterministicUniverseTest` (procgen).
+## 🏛️ LESSONS
+See `tasks/lessons/` for the canonical, domain-organized lesson set:
+- `tasks/lessons/model.md` — lazy loading, ancestor traversal, DI injection patterns
+- `tasks/lessons/infrastructure.md` — classpath discipline, build cache, test artifact hygiene
+- `tasks/lessons/core.md` — value object migration, import management
