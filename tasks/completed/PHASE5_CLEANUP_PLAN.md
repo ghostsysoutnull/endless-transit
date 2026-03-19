@@ -163,9 +163,9 @@ For each file:
 
 | Commit | Description | Status |
 | :--- | :--- | :--- |
-| 1 | Fix stale domain docs | `[ ]` |
-| 2 | Rename call sites: Room, Building | `[ ]` |
-| 3 | Rename call sites: Floor, Street, Corridor | `[ ]` |
-| 4 | Rename call sites: NullSector, Planet, Apartment, Country, City | `[ ]` |
-| 5 | Rename call sites: Universe, SolarSystem, GalacticSector, CosmicFilament | `[ ]` |
-| 6 | Remove getter from Container + AbstractLeafLocation | `[ ]` |
+| 1 | Fix stale domain docs | `[x]` |
+| 2 | Rename call sites: Room, Building | `[x]` |
+| 3 | Rename call sites: Floor, Street, Corridor | `[x]` |
+| 4 | Rename call sites: NullSector, Planet, Apartment, Country, City | `[x]` |
+| 5 | Rename call sites: Universe, SolarSystem, GalacticSector, CosmicFilament | `[x]` |
+| 6 | Remove getter from Container + AbstractLeafLocation | `[x]` |

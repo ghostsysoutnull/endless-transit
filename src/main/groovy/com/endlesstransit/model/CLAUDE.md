@@ -7,7 +7,7 @@
 - **Behavioral Integrity**: Never strip narrative methods or unique UI logic during refactoring.
 - **Behavior-Driven Mutation**: State changes happen through domain-meaningful methods (e.g., `destabilize()`).
 - **Polymorphism Over Conditionals**: `Container` subclasses must implement `getMapSymbol()`/`getMapColor()` directly.
-- **Strict UI Decoupling**: The model MUST NOT import from `com.endlesstransit.ui`. Use `ModelOutput.fmt`.
+- **Strict UI Decoupling**: The model MUST NOT import from `com.endlesstransit.ui`. Use the injected `OutputFormatter fmt` field (set by `ProceduralFactory` at construction time).
 
 ## 📐 World Architecture
 - **Structure**: Recursive Composite Pattern (Universe -> Room).
@@ -18,7 +18,7 @@
 2. **Re-entrancy Guard**: Set `childrenPopulated = true` *before* calling `populateChildren()`.
 3. **Parent Referencing**: Correctly set `parent` upon population.
 4. **Mutation Persistence**: Use `mutationState` map keyed by LIP.
-5. **Output Abstraction**: All `Renderable` objects MUST use `ModelOutput.fmt`.
+5. **Output Abstraction**: All `Renderable` objects MUST use the injected `fmt` field directly.
 
 ## 🏛️ Verification Checklist
 - [ ] **Structural Crawl**: Deep hierarchy requests work.

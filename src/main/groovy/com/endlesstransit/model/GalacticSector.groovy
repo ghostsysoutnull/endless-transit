@@ -61,7 +61,7 @@ class GalacticSector extends Container {
                 if (sR.isVisited()) labelR += " [V]"
             }
             
-            lines << effectiveFmt.padRight(labelL, colWidth) + " | " + labelR
+            lines << fmt.padRight(labelL, colWidth) + " | " + labelR
         }
         lines << "-" * width
         return lines

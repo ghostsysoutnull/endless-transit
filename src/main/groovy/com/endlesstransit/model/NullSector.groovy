@@ -55,7 +55,7 @@ class NullSector extends Container {
             status = "SIGNAL_STRENGTH: ${signalStrength}% | FREQ_DRIFT: ${echoFrequency}Hz"
         }
         return "A pocket of absolute silence. Only the echoes of distant, dead civilizations remain.\n" +
-               effectiveFmt.colorize("[VOID_STATUS: $status]", "MAGENTA")
+               fmt.colorize("[VOID_STATUS: $status]", "MAGENTA")
     }
 
     @Override
@@ -85,7 +85,7 @@ class NullSector extends Container {
                 if (sR.isVisited()) labelR += " [V]"
             }
             
-            lines << effectiveFmt.padRight(labelL, colWidth) + " | " + labelR
+            lines << fmt.padRight(labelL, colWidth) + " | " + labelR
         }
         lines << "-" * width
         return lines
@@ -101,9 +101,9 @@ class NullSector extends Container {
                 signalStrength += new Random().nextInt(30) + 10
                 if (signalStrength >= 100) {
                     signalStrength = 100
-                    effectiveFmt.println effectiveFmt.colorize("\n>>> HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated.", "GREEN")
+                    fmt.println fmt.colorize("\n>>> HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated.", "GREEN")
                 } else {
-                    effectiveFmt.println effectiveFmt.colorize("\n>>> SCANNING_VOID: Signal strength increasing...", "CYAN")
+                    fmt.println fmt.colorize("\n>>> SCANNING_VOID: Signal strength increasing...", "CYAN")
                 }
                 game.instantRender = true
             }
@@ -115,7 +115,7 @@ class NullSector extends Container {
                     JournalManager.logCapture(item)
                     echoFound = true
                     signalStrength = 0
-                    effectiveFmt.println effectiveFmt.colorize("\n>>> VOID_RESONANCE: Echo captured and stabilized.", "MAGENTA")
+                    fmt.println fmt.colorize("\n>>> VOID_RESONANCE: Echo captured and stabilized.", "MAGENTA")
                     game.instantRender = true
                 }
             }

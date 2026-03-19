@@ -16,8 +16,6 @@ abstract class AbstractLeafLocation implements Location {
     LocusSeed locus
     OutputFormatter fmt
 
-    protected OutputFormatter getEffectiveFmt() { fmt }
-
     @Override LocusSeed getLocus() { locus }
     @Override void setLocus(LocusSeed locus) { this.locus = locus }
     @Override Location getParent() { parent }

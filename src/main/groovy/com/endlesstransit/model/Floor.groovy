@@ -70,7 +70,7 @@ class Floor extends Container {
         if (number < 0) {
             return "${getName()}. The air is thick with oily static and the hum of abyssal substrate."
         }
-        return "Floor ${number}. The air hums with the resonance of ${effectiveFmt.colorize(culture.toUpperCase(), "CYAN")} geometry."
+        return "Floor ${number}. The air hums with the resonance of ${fmt.colorize(culture.toUpperCase(), "CYAN")} geometry."
     }
 
     @Override
@@ -160,34 +160,34 @@ class Floor extends Container {
 
     private List<String> getElevatorDiagnostics(Player player, int width) {
         List<String> lines = []
-        lines << effectiveFmt.colorize(" [FLOOR_DIAGNOSTIC_SUITE] ", "L_CYAN")
-        lines << effectiveFmt.dim("Analyzing local strata resonance...")
-        lines << effectiveFmt.dim("-" * width)
+        lines << fmt.colorize(" [FLOOR_DIAGNOSTIC_SUITE] ", "L_CYAN")
+        lines << fmt.dim("Analyzing local strata resonance...")
+        lines << fmt.dim("-" * width)
         
         // Metadata
-        lines << "${effectiveFmt.padRight("IDENTIFIER", 15)}: ${getName()}".toString()
-        lines << "${effectiveFmt.padRight("TECH_ERA", 15)}: ${effectiveFmt.colorize(timeline.toUpperCase(), "YELLOW")}".toString()
-        lines << "${effectiveFmt.padRight("RESONANCE", 15)}: ${effectiveFmt.colorize(culture.toUpperCase(), "CYAN")}".toString()
+        lines << "${fmt.padRight("IDENTIFIER", 15)}: ${getName()}".toString()
+        lines << "${fmt.padRight("TECH_ERA", 15)}: ${fmt.colorize(timeline.toUpperCase(), "YELLOW")}".toString()
+        lines << "${fmt.padRight("RESONANCE", 15)}: ${fmt.colorize(culture.toUpperCase(), "CYAN")}".toString()
         
         // Visited Status
-        String visStatus = isVisited() ? effectiveFmt.colorize("TRUE", "GREEN") : effectiveFmt.dim("FALSE")
+        String visStatus = isVisited() ? fmt.colorize("TRUE", "GREEN") : fmt.dim("FALSE")
         if (parent instanceof Building) {
             def progress = ((Building) parent).getFloorProgress(this, player)
             if (progress.total > 0) {
-                visStatus += effectiveFmt.dim(" [PROBE: ${progress.visited}/${progress.total}]")
+                visStatus += fmt.dim(" [PROBE: ${progress.visited}/${progress.total}]")
             }
         }
-        lines << "${effectiveFmt.padRight("VISITED", 15)}: ${visStatus}".toString()
+        lines << "${fmt.padRight("VISITED", 15)}: ${visStatus}".toString()
         
         // Vibe Capsule Diagnostics
         VibeCapsule vibe = getVibe()
         if (vibe != null) {
-            lines << "${effectiveFmt.padRight("STABILITY", 15)}: ${String.format("%.2f%%", vibe.stabilityFactor * 100)}".toString()
-            lines << "${effectiveFmt.padRight("ATMOS_SHIFT", 15)}: ${vibe.latticeMutation.toUpperCase()}".toString()
+            lines << "${fmt.padRight("STABILITY", 15)}: ${String.format("%.2f%%", vibe.stabilityFactor * 100)}".toString()
+            lines << "${fmt.padRight("ATMOS_SHIFT", 15)}: ${vibe.latticeMutation.toUpperCase()}".toString()
         }
 
-        lines << effectiveFmt.dim("-" * width)
-        lines << effectiveFmt.dim("Local signal is ${effectiveFmt.colorize("STABLE", "GREEN")}. Corridor access authorized.")
+        lines << fmt.dim("-" * width)
+        lines << fmt.dim("Local signal is ${fmt.colorize("STABLE", "GREEN")}. Corridor access authorized.")
         
         return lines
     }

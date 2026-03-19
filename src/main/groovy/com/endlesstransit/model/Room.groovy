@@ -75,7 +75,7 @@ class Room extends AbstractLeafLocation {
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
             player.inventory.add(item)
             JournalManager.logCapture(item, this)
-            effectiveFmt.println effectiveFmt.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", "YELLOW")
+            fmt.println fmt.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", "YELLOW")
         }
     }
 
@@ -120,18 +120,18 @@ class Room extends AbstractLeafLocation {
         List<String> lines = []
         String accent = isAbyssal() ? "RED" : "L_CYAN"
         
-        lines << effectiveFmt.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
-        lines << effectiveFmt.dim("-" * width)
+        lines << fmt.colorize(" LOCAL_CELL_DIAGNOSTIC: ${getLIP()} ", accent)
+        lines << fmt.dim("-" * width)
         
-        String identPart = "IDENT: ${effectiveFmt.bold(roomName)}"
+        String identPart = "IDENT: ${fmt.bold(roomName)}"
         String traitsPart = "ATMO_TRAITS: [OXY: ${atmoTraits["OXYGEN"]}] | [TEMP: ${atmoTraits["TEMP"]}]"
-        lines << effectiveFmt.padRight(identPart, width.intdiv(2)) + " ║ " + traitsPart
+        lines << fmt.padRight(identPart, width.intdiv(2)) + " ║ " + traitsPart
         
-        String typePart = "TYPE:  ${effectiveFmt.colorize(roomType, "YELLOW")}"
-        String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? effectiveFmt.colorize("[DEGRADED]", "RED") : effectiveFmt.colorize("[STABLE]", "GREEN")}"
-        lines << effectiveFmt.padRight(typePart, width.intdiv(2)) + " ║ " + signalPart
+        String typePart = "TYPE:  ${fmt.colorize(roomType, "YELLOW")}"
+        String signalPart = "SIGNAL: ${atmoTraits["SIGNAL"]} | RESONANCE: ${isAnomaly ? fmt.colorize("[DEGRADED]", "RED") : fmt.colorize("[STABLE]", "GREEN")}"
+        lines << fmt.padRight(typePart, width.intdiv(2)) + " ║ " + signalPart
         
-        lines << effectiveFmt.dim("-" * width)
+        lines << fmt.dim("-" * width)
         return lines
     }
 
@@ -174,46 +174,46 @@ class Room extends AbstractLeafLocation {
                     
                     if (isResonant) {
                         game.player.resonantTracesCount++
-                        effectiveFmt.println effectiveFmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
+                        fmt.println fmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
                     }
-                    effectiveFmt.println effectiveFmt.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", "CYAN")
+                    fmt.println fmt.colorize("\n>>> AUTOMATIC_SCAN: ${name} captured. Frequency: ${freq}Hz", "CYAN")
                     objects.remove(0)
                     game.instantRender = true
                     return
                 }
 
-                effectiveFmt.println "\n" + effectiveFmt.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", "L_CYAN")
+                fmt.println "\n" + fmt.colorize(" [LOCAL_CELL_OBJECT_INTERACTION] ", "L_CYAN")
                 if (!objects.isEmpty()) {
-                    effectiveFmt.println effectiveFmt.dim("Local objects:")
+                    fmt.println fmt.dim("Local objects:")
                     objects.eachWithIndex { String obj, int i ->
-                        effectiveFmt.println "${effectiveFmt.colorize((i + 1).toString(), "YELLOW")}. Scan $obj"
+                        fmt.println "${fmt.colorize((i + 1).toString(), "YELLOW")}. Scan $obj"
                     }
                 }
                 
                 if (!game.player.inventory.isEmpty()) {
-                    effectiveFmt.println effectiveFmt.dim("\nBuffer fragments (to drop):")
+                    fmt.println fmt.dim("\nBuffer fragments (to drop):")
                     game.player.inventory.eachWithIndex { InventoryItem item, int i ->
-                        effectiveFmt.println "${effectiveFmt.colorize("d" + (i + 1), "YELLOW")}. Drop ${item.name}"
+                        fmt.println "${fmt.colorize("d" + (i + 1), "YELLOW")}. Drop ${item.name}"
                     }
                 }
-                effectiveFmt.println "${effectiveFmt.colorize("c", "YELLOW")}. Cancel"
+                fmt.println "${fmt.colorize("c", "YELLOW")}. Cancel"
                 
-                effectiveFmt.print "\nINTERACT >> "
+                fmt.print "\nINTERACT >> "
                 String input = game.inputHandler.readLine().toLowerCase()
                 
                 if (input == "c" || input == "") {
-                    effectiveFmt.println "Operation aborted."
+                    fmt.println "Operation aborted."
                 } else if (input.startsWith("d")) {
                     try {
                         int idx = input.substring(1).toInteger() - 1
                         if (idx >= 0 && idx < game.player.inventory.size()) {
                             InventoryItem item = game.player.inventory.remove(idx)
                             objects << item.name
-                            effectiveFmt.println effectiveFmt.colorize(">>> Fragment ${item.name} dropped into local cell.", "YELLOW")
+                            fmt.println fmt.colorize(">>> Fragment ${item.name} dropped into local cell.", "YELLOW")
                             game.instantRender = true
                         }
                     } catch (Exception e) {
-                        effectiveFmt.println "Invalid drop command."
+                        fmt.println "Invalid drop command."
                     }
                 } else {
                     try {
@@ -229,16 +229,16 @@ class Room extends AbstractLeafLocation {
                             
                             if (isResonant) {
                                 game.player.resonantTracesCount++
-                                effectiveFmt.println effectiveFmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
+                                fmt.println fmt.colorize("\n>>> HARMONIC_RESONANCE_DETECTED: Frequency amplified (+10%)", "GREEN")
                             }
-                            effectiveFmt.println effectiveFmt.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", "CYAN")
+                            fmt.println fmt.colorize(">>> Scanned ${name}. Frequency: ${freq}Hz", "CYAN")
                             objects.remove(idx)
                             game.instantRender = true
                         } else {
-                            effectiveFmt.println "Invalid selection."
+                            fmt.println "Invalid selection."
                         }
                     } catch (Exception e) {
-                        effectiveFmt.println "Invalid input."
+                        fmt.println "Invalid input."
                     }
                 }
             }
@@ -270,19 +270,19 @@ class Room extends AbstractLeafLocation {
         String l = lightingDesc
 
         if (isAnomaly) {
-            s = effectiveFmt.glitchText(s, 0.2)
-            w = effectiveFmt.glitchText(w, 0.1)
-            l = effectiveFmt.glitchText(l, 0.3)
+            s = fmt.glitchText(s, 0.2)
+            w = fmt.glitchText(w, 0.1)
+            l = fmt.glitchText(l, 0.3)
         }
 
-        description.append(effectiveFmt.colorize(" [NEURAL_LINK_INTERPRETATION]:", effectiveFmt.L_MAGENTA)).append("\n")
-        description.append("You are in $s. The walls are ${effectiveFmt.colorize(color, "WHITE")} $w.\n")
-        description.append("The space is illuminated by ${effectiveFmt.colorize(l, "YELLOW")}.\n")
+        description.append(fmt.colorize(" [NEURAL_LINK_INTERPRETATION]:", fmt.L_MAGENTA)).append("\n")
+        description.append("You are in $s. The walls are ${fmt.colorize(color, "WHITE")} $w.\n")
+        description.append("The space is illuminated by ${fmt.colorize(l, "YELLOW")}.\n")
         
         int wrapWidth = 80
         String furnitureStr = furniture.join(', ')
-        List<String> wrappedFurniture = effectiveFmt.wrapText(furnitureStr, wrapWidth)
-        description.append("${effectiveFmt.dim("FURNITURE:")} ")
+        List<String> wrappedFurniture = fmt.wrapText(furnitureStr, wrapWidth)
+        description.append("${fmt.dim("FURNITURE:")} ")
         wrappedFurniture.eachWithIndex { String line, int i ->
             if (i > 0) description.append("           ") 
             description.append(line).append("\n")
@@ -290,8 +290,8 @@ class Room extends AbstractLeafLocation {
         
         if (!objects.isEmpty()) {
             String objStr = objects.join(', ')
-            List<String> wrappedObjs = effectiveFmt.wrapText(objStr, wrapWidth)
-            description.append("${effectiveFmt.colorize("OBJECTS_DETECTED:", "CYAN")} ")
+            List<String> wrappedObjs = fmt.wrapText(objStr, wrapWidth)
+            description.append("${fmt.colorize("OBJECTS_DETECTED:", "CYAN")} ")
             wrappedObjs.eachWithIndex { String line, int i ->
                 if (i > 0) description.append("                  ") 
                 description.append(line).append("\n")

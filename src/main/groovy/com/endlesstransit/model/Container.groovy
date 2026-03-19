@@ -17,8 +17,6 @@ abstract class Container implements Location {
     LocusSeed locus
     OutputFormatter fmt
 
-    protected OutputFormatter getEffectiveFmt() { fmt }
-
     @Override
     LocusSeed getLocus() {
         return locus

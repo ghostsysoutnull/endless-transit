@@ -42,13 +42,13 @@ class Building extends Container {
         this.isBreached = true
         Logger.info("BUILDING_BREACHED: $name")
         
-        effectiveFmt.println ""
-        effectiveFmt.println effectiveFmt.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", "RED")
-        effectiveFmt.println effectiveFmt.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
+        fmt.println ""
+        fmt.println fmt.colorize(" [HARMONIC_INVERSION_PROTOCOL_ENGAGED] ", "RED")
+        fmt.println fmt.glitchText(">>> BREACHING_THE_BEDROCK_SUBSTRATE...", 0.3)
         com.endlesstransit.ui.Terminal.clock.sleep(1000)
-        effectiveFmt.println effectiveFmt.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", "YELLOW")
+        fmt.println fmt.colorize(">>> LATTICE_WEIGHT_NORMALIZED. APERTURE_OPENING_AT_ROOT.", "YELLOW")
         com.endlesstransit.ui.Terminal.clock.sleep(1000)
-        effectiveFmt.println ""
+        fmt.println ""
     }
 
     @Override
@@ -117,8 +117,8 @@ class Building extends Container {
 
     @Override
     String getLatticeMeta() {
-        if (isBreached) return effectiveFmt.colorize(" [BREACHED]", "RED")
-        return effectiveFmt.dim(" [FLOORS: $maxFloors]")
+        if (isBreached) return fmt.colorize(" [BREACHED]", "RED")
+        return fmt.dim(" [FLOORS: $maxFloors]")
     }
 
     /**
@@ -143,9 +143,9 @@ class Building extends Container {
     @Override
     void enter(Player player) {
         if (isLandmark && !isVisited()) {
-            effectiveFmt.println "\n" + effectiveFmt.colorize(" [UNIQUE_LOCUS_DETECTION] ", "YELLOW")
-            effectiveFmt.println effectiveFmt.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
-            effectiveFmt.println effectiveFmt.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
+            fmt.println "\n" + fmt.colorize(" [UNIQUE_LOCUS_DETECTION] ", "YELLOW")
+            fmt.println fmt.bold(">>> MAJOR_LANDMARK_DISCOVERED: $name")
+            fmt.println fmt.dim("Harmonic signature is abnormally stable. Data-harvest potential: HIGH.")
             com.endlesstransit.ui.Terminal.clock.sleep(1000)
         }
         markVisited()
@@ -154,10 +154,10 @@ class Building extends Container {
     @Override
     List<String> getExtraContent(Player player, int width) {
         List<String> lines = []
-        lines << effectiveFmt.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", "L_CYAN")
-        lines << effectiveFmt.dim("Analyzing vertical lattice structure...")
+        lines << fmt.colorize(" [BUILDING_STRATA_DIAGNOSTICS] ", "L_CYAN")
+        lines << fmt.dim("Analyzing vertical lattice structure...")
         
-        lines << effectiveFmt.dim("-" * width)
+        lines << fmt.dim("-" * width)
         
         // Define Column Widths - Optimized for 88 chars left pane
         int wId = 4
@@ -167,15 +167,15 @@ class Building extends Container {
         int wInt = 8
         
         // Header
-        String hId = effectiveFmt.padRight("[ID]", wId)
-        String hRad = effectiveFmt.padRight("[RAD]", wRad)
-        String hDes = effectiveFmt.padRight("[STRATA]", wDes)
-        String hZon = effectiveFmt.padRight("[FUNCTION]", wZon)
-        String hInt = effectiveFmt.padRight("[ST]", wInt)
+        String hId = fmt.padRight("[ID]", wId)
+        String hRad = fmt.padRight("[RAD]", wRad)
+        String hDes = fmt.padRight("[STRATA]", wDes)
+        String hZon = fmt.padRight("[FUNCTION]", wZon)
+        String hInt = fmt.padRight("[ST]", wInt)
         String hRes = "[RES]"
         
-        lines << effectiveFmt.bold("${hId}${hRad}${hDes}${hZon}${hInt}${hRes}")
-        lines << effectiveFmt.dim("-" * width)
+        lines << fmt.bold("${hId}${hRad}${hDes}${hZon}${hInt}${hRes}")
+        lines << fmt.dim("-" * width)
 
         // Find current floor index for the radar
         int currentFloorNum = -999
@@ -197,11 +197,11 @@ class Building extends Container {
             // Radar Logic: [>X<] for current, [ X ] for visited, [   ] for regular
             String radar = "[   ]"
             if (i == currentFloorNum) {
-                radar = effectiveFmt.colorize("[>X<]", "YELLOW")
+                radar = fmt.colorize("[>X<]", "YELLOW")
             } else if (floorObj != null && floorObj.isVisited()) {
                 radar = "[ X ]"
             } else if (i < 0) {
-                radar = effectiveFmt.colorize("[ ! ]", "RED")
+                radar = fmt.colorize("[ ! ]", "RED")
             }
 
             String designation = i == 0 ? "Lobby" : (i == maxFloors - 1 ? "Peak" : "Floor $i")
@@ -218,21 +218,21 @@ class Building extends Container {
             String progressLabel = ""
             if (floorObj != null) {
                 def progress = getFloorProgress(floorObj, player)
-                String visMarker = floorObj.isVisited() ? effectiveFmt.colorize("[V]", "GREEN") : ""
+                String visMarker = floorObj.isVisited() ? fmt.colorize("[V]", "GREEN") : ""
                 
                 if (progress.visited >= progress.total && progress.total > 0) {
-                    progressLabel = "$visMarker " + effectiveFmt.colorize("[CLEARED]", "GREEN")
+                    progressLabel = "$visMarker " + fmt.colorize("[CLEARED]", "GREEN")
                 } else if (progress.visited > 0) {
-                    progressLabel = "$visMarker " + effectiveFmt.colorize("[${progress.visited}/${progress.total}]", "CYAN")
+                    progressLabel = "$visMarker " + fmt.colorize("[${progress.visited}/${progress.total}]", "CYAN")
                 } else if (floorObj.isVisited()) {
                     progressLabel = visMarker
                 }
             }
 
-            String line = "${effectiveFmt.dim(effectiveFmt.padRight(idStr, wId))}${effectiveFmt.padRight(radar, wRad)}${effectiveFmt.padRight(designation, wDes)}${effectiveFmt.padRight(zone, wZon)}${effectiveFmt.padRight(integrity, wInt)}${resonance} ${progressLabel}"
+            String line = "${fmt.dim(fmt.padRight(idStr, wId))}${fmt.padRight(radar, wRad)}${fmt.padRight(designation, wDes)}${fmt.padRight(zone, wZon)}${fmt.padRight(integrity, wInt)}${resonance} ${progressLabel}"
             lines << line
         }
-        lines << effectiveFmt.dim("-" * width)
+        lines << fmt.dim("-" * width)
         return lines
     }
 
