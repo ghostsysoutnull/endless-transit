@@ -1,6 +1,6 @@
 # OOA Refactor Plan: Structural Hardening
 **Created:** 2026-03-17
-**Last updated:** 2026-03-17
+**Last updated:** 2026-09-11
 **Based on:** `docs/analysis/OOA_REPORT.md`, `docs/analysis/TEST_COVERAGE_GAPS.md`
 **Status:** IN PROGRESS
 
@@ -14,7 +14,8 @@
 | Gate | Command | What It Checks |
 | :--- | :--- | :--- |
 | **Logic** | `./vinc.sh --test` | Full test suite passes |
-| **Visual** | `./vinc.sh --scan` | No HUD/TUI regression (model/ui phases only) |
+| **Visual** | golden frames in `./vinc.sh --test` (`BridgeViewGoldenFrameTest`, `ViewComponentGoldenTest`) | No HUD/TUI regression — 36 frames byte-identical (since Phase 7; `--scan` never drew the HUD, WF-003) |
+| **Model** | `./vinc.sh --scan` | Seed 0 → 9-node match (world generation) |
 | **Determinism** | `DeterministicUniverseTest` | Same seed → same world (procgen/model phases only) |
 
 ---
@@ -613,7 +614,7 @@ Conditional branching in `Floor.getOptions()` eliminated.
 **Files:** `FloorState.groovy` (new), `ElevatorState.groovy` (new), `CorridorState.groovy` (new), `Floor.groovy`, `VisitedProgressTest.groovy`
 **Status:** `[ ] NOT STARTED`
 
-**Phase 8 Gates:** `./vinc.sh --test` — focus `AutoEntryTest`, `NavigationSyncTest`, `TracePersistenceTest`, `VisitedProgressTest` + `./vinc.sh --scan`
+**Phase 8 Gates:** `./vinc.sh --test` — focus `AutoEntryTest`, `NavigationSyncTest`, `TracePersistenceTest`, `VisitedProgressTest`; all 36 goldens unchanged (14, 28, 31, 32–36 render Floors — any diff is a finding, not something to regenerate over) + `./vinc.sh --scan`
 
 ---
 
@@ -740,7 +741,7 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 - Maximum **5 files** per atomic commit
 - Every new class MUST have `@CompileStatic`
 - `./vinc.sh --compile` after **every file change** in Phase 5+
-- `./vinc.sh --scan` **before and after** any phase touching `model` or `ui`
+- Goldens unchanged (`./vinc.sh --test`) and `./vinc.sh --scan` seed 0 → 9 **before and after** any phase touching `model` or `ui`; regenerate goldens only for an intended visual change
 - Each phase runs on its own git branch (`refactor/phase-N-name`); merge to `master` only when all gates pass
 - If anything goes sideways: **STOP, revert, re-plan** — do not push through
 - After any user correction: update `tasks/lessons/<domain>.md`
@@ -753,6 +754,6 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 
 ---
 
-*Last updated: 2026-03-17 — Added retro pointer for Phase 0.5; retro rule added to Refactor Guard; docs/retro/ established as per-phase retrospective location.*
+*Last updated: 2026-09-11 — Phase 7 complete and merged; visual gate redefined as the golden-frame suite (WF-003); post-Phase-7 housekeeping HK-001..004 merged; Phase 8 next.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*

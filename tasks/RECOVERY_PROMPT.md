@@ -3,7 +3,7 @@
 
 ## 🎯 Current Status
 - **Test Suite:** 179 discovered / 174 pass / 5 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Branch:** `master` @ `d021a66` (+ one docs commit). Working tree clean. Not pushed to `origin` (32+ commits ahead) — push only when the user says so.
+- **Branch:** `master`, pushed to `origin/master` (Phase 7 + housekeeping + docs). Working tree clean.
 - **Active Work:** None. Housekeeping backlog (`tasks/backlog/HOUSEKEEPING.md`) is empty.
 - **Next Phase:** Phase 8 — Floor State Pattern, **in a new session**.
 

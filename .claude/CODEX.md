@@ -65,7 +65,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ### 4. Verification & Visual Baselines
 * Never mark a task complete without proving it works.
-* **Visual Baseline Protocol**: Mandatory `./vinc.sh --scan` before and after any change to `model` or `ui`.
+* **Visual Baseline Protocol**: The UI gate is the golden-frame suite (`BridgeViewGoldenFrameTest` + `ViewComponentGoldenTest`, run by `./vinc.sh --test`) — 36 frames compared byte for byte. `./vinc.sh --scan` is a **model** gate (world generation); it never draws the HUD (WF-003). Regenerate goldens with `./vinc.sh --goldens` only after an intended visual change, review the diff, commit them with the change. Run both gates before and after any change to `model` or `ui`.
 * **Verification Protocol**:
     * **AI-TDD**: Create reproduction tests for all bug reports.
     * **Compilation Check**: Every change MUST pass `./vinc.sh --compile` (or `--test`).

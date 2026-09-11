@@ -43,7 +43,8 @@ Latest journal state for session continuity:
 | **Run Tests (Debug)** | `./vinc.sh --test -q` (20-line output with failure location) |
 | **Verification (Static)** | `./vinc.sh --compile` |
 | **Run Game (Player)** | `./run.sh` (Immersive Portal) |
-| **Seed Scan** | `./vinc.sh --scan` |
+| **Seed Scan (model gate)** | `./vinc.sh --scan` |
+| **Regenerate UI goldens** | `./vinc.sh --goldens` — only after an INTENDED visual change; review the diff, commit goldens with the change |
 | **Audit UI** | `.agents/vibe-check-ui.sh` |
 | **Audit Model** | `.agents/vibe-check-model.sh` |
 
