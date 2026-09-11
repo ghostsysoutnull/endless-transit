@@ -32,7 +32,7 @@
 | 4 | Structural Extraction | `[x] COMPLETE` | Low |
 | 5 | Dependency Injection | `[x] COMPLETE` | Medium |
 | 6 | GameState Decomposition | `[x] COMPLETE` | Medium |
-| 7 | BridgeView Decomposition | `[~] IN PROGRESS` | Medium |
+| 7 | BridgeView Decomposition | `[x] COMPLETE` | Medium |
 | 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
 | 10 | Domain Event System | `[ ] NOT STARTED` | High |
@@ -577,13 +577,21 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Status:** `[x] COMPLETE — 2026-09-11` | commit: 7dcf94e | suite 150/145/5/0 | goldens green (29) | 170-frame harness: 0 masked diffs | BridgeView 151 → 121 lines
 
 ### 7g — BridgeView as pure compositor
-- [ ] `BridgeView` only assembles components into final frame
-- [ ] All direct rendering logic removed
+- [x] **7g-i** `FrameGeometry` (130 / 90 / pane widths) replaces eight literal sites; `BridgeView.emit()`; compositor-only body — commit 9c05dc9
+- [x] **7g-ii** lattice components: the four leading-`\n` elements split byte-for-byte (golden 27 pins the `RED`-before-newline order) — commit 6f206d5
+- [x] **7g-iii** `ViewComponentGoldenTest`: 17 single-component frames rendered standalone match their goldens and contain no embedded newline — commit b9d3f6d
+- [x] `BridgeView` only assembles components into the final frame (adaptive split zip is the one layout step)
 
-**Files:** `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+> **Declared (2026-09-11):** the eight one-line `render*`/`print*` delegators stay as `BridgeView`'s public API
+> (`RenderingCoordinator`, `SessionRecap`, three tests, the harness). They hold no rendering logic; removing them
+> would touch six files for no behavioral gain.
 
-**Phase 7 Gates:** `./vinc.sh --test` (includes `BridgeViewGoldenFrameTest` — the pixel gate) + `./vinc.sh --scan` (model gate, seed 0 → 9 nodes)
+**Files:** `FrameGeometry.groovy` (new), `BridgeView.groovy`, `HUDHeaderComponent.groovy`, `LatticeTraceComponent.groovy`, `LatticeMapComponent.groovy`; test tree: `HudFrameHarness`, `ViewComponentGoldenTest` (new), `BridgeViewGoldenFrameTest`, `GoldenFrameGenerator`
+**Test blast radius:** harness signature (`captureAll()` → `Frames`) — 2 one-line edits
+**Status:** `[x] COMPLETE — 2026-09-11` | suite 167/162/5/0 | goldens: 29 via BridgeView + 17 standalone | BridgeView 579 → 120 lines
+
+**Phase 7 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=167 SUCCEEDED=162 FAILED=0 SKIPPED=5` (29 goldens via `BridgeView` + 17 standalone, all pixel-identical to the pre-phase capture) + `./vinc.sh --scan` ✅ seed 0 → 9 nodes
+**Retrospective:** `docs/retro/RETRO_PHASE_7.md`
 
 ---
 
