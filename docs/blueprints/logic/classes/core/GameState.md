@@ -16,8 +16,9 @@ The `GameState` is the **Central Source of Truth** for the entire simulation. It
 - **`inputHandler`**: Manages interaction with the `InputSource`.
 - **`mapper`**: The `ActionMapper` responsible for translating numeric inputs to menu labels.
 - **`navEngine`**: The `NavigationEngine` that handles input normalization and boundary checks.
-- **`bridgeView`**: The primary UI renderer for the "Bridge" HUD.
 - **`inventoryController`**: Manages complex inventory interactions (Merging/Synthesis).
+
+> `BridgeView` is no longer held here. Since OOA Phase 6a it is owned by `RenderingCoordinator` and exposed via `Game.getBridgeView()`.
 
 ---
 

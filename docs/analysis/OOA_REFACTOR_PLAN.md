@@ -31,7 +31,7 @@
 | 3c | Gematria Return Type Completion | `[x] COMPLETE` | Low |
 | 4 | Structural Extraction | `[x] COMPLETE` | Low |
 | 5 | Dependency Injection | `[x] COMPLETE` | Medium |
-| 6 | GameState Decomposition | `[ ] NOT STARTED` | Medium |
+| 6 | GameState Decomposition | `[ ] IN PROGRESS (6a done)` | Medium |
 | 7 | BridgeView Decomposition | `[ ] NOT STARTED` | Medium |
 | 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
@@ -397,12 +397,19 @@ accessed from a global static field.
 **Depends on:** Phase 5; Phase 0.5e (multi-depth ActionMapper test must exist first)
 
 ### 6a — Move BridgeView to RenderingCoordinator
-- [ ] `RenderingCoordinator` owns and instantiates `BridgeView`
-- [ ] Remove `bridgeView` field from `GameState`
-- [ ] Update all `state.bridgeView.*` call sites
+- [x] `RenderingCoordinator` owns and instantiates `BridgeView`
+- [x] Remove `bridgeView` field from `GameState`
+- [x] Update all `state.bridgeView.*` call sites
 
-**Files:** `RenderingCoordinator.groovy`, `GameState.groovy`, affected callers
-**Status:** `[ ] NOT STARTED`
+> **Execution note (2026-09-11):** Six production files exceeded the 4-file cap, so 6a ran as
+> two commits. 6a-i routed `QuitCommand`, `QuitNowCommand`, `CaptureCommand` through the existing
+> `Game.getBridgeView()` facade. 6a-ii moved ownership into `RenderingCoordinator` and pointed
+> the facade at `renderer.bridgeView`. Test blast radius was zero — every test reaches the view
+> via the facade or constructs its own `BridgeView`.
+
+**Files:** `RenderingCoordinator.groovy`, `GameState.groovy`, `Game.groovy`, `QuitCommand.groovy`, `QuitNowCommand.groovy`, `CaptureCommand.groovy`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commits: 7ad4aaa (6a-i), 7ece60a (6a-ii) | scan: identical to baseline
 
 ### 6b — Move ActionMapper + InputHandler to TurnProcessor
 - [ ] `TurnProcessor` owns `ActionMapper` and `InputHandler`

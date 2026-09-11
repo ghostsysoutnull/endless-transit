@@ -24,7 +24,7 @@
 - [x] Phase 4 — Structural Extraction (AbstractLeafLocation, SynthesisService)
 - [x] Phase 5 — Dependency Injection (ModelOutput.fmt eliminated; fmt injected via ProceduralFactory)
 - [x] Phase 5 Cleanup — effectiveFmt getter removed; domain docs corrected
-- [ ] Phase 6 — GameState Decomposition — **NEXT**
+- [ ] Phase 6 — GameState Decomposition — **IN PROGRESS** (6a BridgeView → RenderingCoordinator done; 6b next)
 - [ ] Phase 7 — BridgeView Decomposition
 - [ ] Phase 8 — Floor State Pattern
 - [ ] Phase 9 — ProceduralFactory Split
