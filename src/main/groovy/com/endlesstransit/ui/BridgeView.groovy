@@ -14,6 +14,7 @@ class BridgeView implements ScreenshotProvider {
     private final HUDHeaderComponent hudHeader = new HUDHeaderComponent()
     private final CompassComponent compass = new CompassComponent()
     private final LatticeTraceComponent latticeTrace = new LatticeTraceComponent()
+    private final LatticeMapComponent latticeMap = new LatticeMapComponent()
 
     BridgeView() {
         ScreenshotRegistry.register(this)
@@ -301,45 +302,7 @@ class BridgeView implements ScreenshotProvider {
     }
 
     void renderLatticeMap(Location currentLocation, Player player) {
-        if (!(currentLocation instanceof Container)) {
-            Terminal.println Terminal.colorize("\n>>> SCAN_ERROR: Current location does not support spatial projection.", Terminal.RED)
-            return
-        }
-        
-        Container container = (Container) currentLocation
-        int mapWidth = 30
-        int mapHeight = 15
-        Terminal.MapBuffer buffer = new Terminal.MapBuffer(mapWidth, mapHeight)
-        
-        Map<List<Integer>, Location> latticeMap = container.getLocalLatticeMap(mapWidth, mapHeight)
-        latticeMap.each { List<Integer> pos, Location loc ->
-            String symbol = loc.getMapSymbol()
-            String color = loc.isVisited() ? loc.getMapColor() : Terminal.dim(loc.getMapColor())
-            buffer.plot(pos[0], pos[1], symbol, color)
-        }
-        
-        if (player.coherence < 30) {
-            Random r = new Random()
-            int glitchCount = (int)((30 - player.coherence) / 2)
-            for (int i = 0; i < glitchCount; i++) {
-                buffer.plot(r.nextInt(mapWidth), r.nextInt(mapHeight), Terminal.glitchText("X", 1.0), Terminal.MAGENTA)
-            }
-        }
-        
-        Terminal.println "\n" + Terminal.colorize(" [NEURAL_LATTICE_PROJECTION] ", Terminal.L_CYAN)
-        Terminal.println ""
-        
-        VibeCapsule vibe = currentLocation.getVibe()
-        String accent = currentLocation.isAbyssal() ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
-        
-        Terminal.drawBoxTop(mapWidth + 2, accent)
-        buffer.render().each { line ->
-            Terminal.println Terminal.colorize(Terminal.BOX_V, accent) + line + Terminal.colorize(Terminal.BOX_V, accent)
-        }
-        Terminal.drawBoxBottom(mapWidth + 2, accent)
-        
-        Terminal.println "\n" + Terminal.dim("SCAN_ORIGIN: ") + Terminal.bold(currentLocation.getName())
-        Terminal.println Terminal.dim("LEGEND: ") + Terminal.dim("Visited: Bright | Unvisited: Dim | ") + Terminal.colorize("▲ You", Terminal.CYAN)
-        Terminal.println ""
+        RenderContext ctx = new RenderContext(currentLocation, player, null, null)
+        latticeMap.render(ctx, 130).each { String line -> Terminal.println(line) }
     }
 }
