@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x6c9e3a1** | 2026-09-11 | **[PHASE_6_GAMESTATE_DECOMPOSITION]** | `GameState` trimmed to a data container: `BridgeView` → `RenderingCoordinator` (6a), `ActionMapper` → `TurnProcessor` + `InputHandler` built in `Game` and injected (6b), `NavigationEngine` → `NavigationOrchestrator` (6c). Two pinning tests added after `/grill` found UNGUARDED paths. Coverage Claim Protocol added to CODEX; `/grill` command created (WF-002). 13 commits. Suite: 121/116/5/0. Scan identical. |
 | **0xb3c7a12** | 2026-03-18 | **[PHASE_5_CLEANUP]** | Removed `getEffectiveFmt()` migration scaffold: 113 call sites across 14 model classes renamed to `fmt` directly; getter deleted from both base classes; `model/CLAUDE.md` + `GEMINI.md` corrected. Suite: 118/113/5/0. |
 | **0xe5f2c1b** | 2026-03-18 | **[PHASE_5_DEPENDENCY_INJECTION]** | `ModelOutput.fmt` Service Locator eliminated. `OutputFormatter` injected via `Game` → `ProceduralFactory` → all 14 model classes. 7 commits (A–G). `ModelOutput.groovy` deleted. 9 test files cleaned. Suite: 118/113/5/0. Visual gate: seed 0 → 9-node match. |
 | **0xd7e3b2a** | 2026-03-18 | **[PHASE_4_STRUCTURAL_EXTRACTION]** | Pre-check: getDepth()/getPath() pinned in RoomAncestorTest. 4a: AbstractLeafLocation extracts ~40 lines from Room (parent, visited, locus, getLIP, getPath, getDepth, findAncestor). 4b: SynthesisService extracts keystone/frequency/name policy from Player.mergeItems(). Suite: 118/113/5/0. |

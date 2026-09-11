@@ -31,7 +31,7 @@
 | 3c | Gematria Return Type Completion | `[x] COMPLETE` | Low |
 | 4 | Structural Extraction | `[x] COMPLETE` | Low |
 | 5 | Dependency Injection | `[x] COMPLETE` | Medium |
-| 6 | GameState Decomposition | `[ ] IN PROGRESS (6a, 6b done)` | Medium |
+| 6 | GameState Decomposition | `[x] COMPLETE` | Medium |
 | 7 | BridgeView Decomposition | `[ ] NOT STARTED` | Medium |
 | 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
@@ -433,15 +433,23 @@ accessed from a global static field.
 **Status:** `[x] COMPLETE — 2026-09-11` | commits: 01da048 (6b-0), 73a5714 (6b-i), 2fa64d6 (6b-ii), d338d62 (6b-iii) | suite 119/114/5/0 | scan: identical to baseline
 
 ### 6c — Move NavigationEngine to NavigationOrchestrator
-- [ ] `NavigationOrchestrator` owns `NavigationEngine`
-- [ ] Remove `navEngine` from `GameState`
-- [ ] Update all `state.navEngine.*` call sites
-- [ ] Resolves OOA 4.2 (NavigationEngine placement) as a side effect
+- [x] `NavigationOrchestrator` owns `NavigationEngine`
+- [x] Remove `navEngine` from `GameState`
+- [x] Update all `state.navEngine.*` call sites
+- [x] Resolves OOA 4.2 (NavigationEngine placement) as a side effect
 
-**Files:** `NavigationOrchestrator.groovy`, `GameState.groovy`, affected callers
-**Status:** `[ ] NOT STARTED`
+> **Execution note (2026-09-11):** Three commits. **6c-0** added `NavigationEngineWiringTest` after
+> `/grill` found the engine's behaviors UNGUARDED — `MnemonicReversalTest` tests model option keys,
+> not the engine. **6c-i** routed `NavigationCommand` through the facade. **6c-ii** gave
+> `NavigationOrchestrator` the engine as a final field (constructor unchanged, so `AutoEntryTest`
+> untouched); `TurnProcessor` and `Game` read it through the orchestrator. Zero test edits.
 
-**Phase 6 Gates:** `./vinc.sh --test` + `./vinc.sh --scan`
+**Files:** `NavigationOrchestrator.groovy`, `TurnProcessor.groovy`, `Game.groovy`, `GameState.groovy`, `NavigationCommand.groovy`
+**Test blast radius:** `NavigationEngineWiringTest` (new) only
+**Status:** `[x] COMPLETE — 2026-09-11` | commits: b07f8c5 (6c-0), 40d95f2 (6c-i), ef29b84 (6c-ii) | suite 121/116/5/0 | scan: identical to baseline
+
+**Phase 6 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=121 SUCCEEDED=116 FAILED=0 SKIPPED=5` + `./vinc.sh --scan` ✅ identical to pre-phase baseline (seed 0 → 9-node match)
+**Retrospective:** `docs/retro/RETRO_PHASE_6.md`
 
 ---
 
