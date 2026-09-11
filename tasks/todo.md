@@ -14,7 +14,7 @@
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
-**Suite baseline:** 179 discovered / 174 pass / 5 skipped / 0 failed
+**Suite baseline:** 184 discovered / 179 pass / 5 skipped / 0 failed
 
 - [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
 - [x] Phase 0.5 — Test Coverage Gaps (safety-net tests 0.5a–0.5h, all complete)
@@ -27,8 +27,8 @@
 - [x] Phase 6 — GameState Decomposition (BridgeView → RenderingCoordinator; ActionMapper → TurnProcessor; InputHandler built in Game and injected; NavigationEngine → NavigationOrchestrator)
 - [x] Phase 7 — BridgeView Decomposition (8 `ViewComponent`s behind a 120-line compositor; golden-frame visual gate replaces the scan; WF-002 closed, WF-003 closed; HK-001..004 logged)
 - [x] Housekeeping (post-Phase-7): HK-001..004 cleared — deterministic HUD noise, controller out of `GameState`, one dispatch path, one inventory renderer
-- [ ] Phase 8 — Floor State Pattern — **NEXT** (new session; see `tasks/RECOVERY_PROMPT.md`)
-- [ ] Phase 9 — ProceduralFactory Split
+- [x] Phase 8 — Floor State Pattern (`FloorState` + `ElevatorState`/`CorridorState` singletons; `Floor.enterCorridor()`/`returnToElevator()`; polymorphic scan target; no `instanceof` on states)
+- [ ] Phase 9 — ProceduralFactory Split — **NEXT** (new session; see `tasks/RECOVERY_PROMPT.md`)
 - [ ] Phase 10 — Domain Event System
 
 ---

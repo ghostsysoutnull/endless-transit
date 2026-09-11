@@ -75,7 +75,7 @@ class LocationRenderingTest {
         assertTrue(buildingContent.any { it?.contains("BUILDING_STRATA_DIAGNOSTICS") },
             "Building extra content must include strata diagnostics header")
 
-        // ── Floor (elevator mode — isCorridorActive defaults to false) ────────────
+        // ── Floor (elevator mode — currentState defaults to ElevatorState) ────────
         String floorDesc = floor.getDescription()
         assertNotNull(floorDesc, "Floor description must not be null")
         assertTrue(floorDesc.contains("Floor") || floorDesc.contains("Layer"),
