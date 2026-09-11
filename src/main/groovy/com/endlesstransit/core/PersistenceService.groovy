@@ -13,10 +13,12 @@ import java.io.File
 class PersistenceService {
     private GameState state
     private NavigationOrchestrator navOrchestrator
+    private InputHandler inputHandler
 
-    PersistenceService(GameState state, NavigationOrchestrator navOrchestrator) {
+    PersistenceService(GameState state, NavigationOrchestrator navOrchestrator, InputHandler inputHandler) {
         this.state = state
         this.navOrchestrator = navOrchestrator
+        this.inputHandler = inputHandler
     }
 
     GameMemento createMemento() {
@@ -25,7 +27,7 @@ class PersistenceService {
             currentLIP: state.currentLocation.getLIP(),
             playerCoherence: state.player.coherence,
             inventory: new ArrayList<InventoryItem>(state.player.inventory),
-            inputHistory: new ArrayList<String>(state.inputHandler.getHistory())
+            inputHistory: new ArrayList<String>(inputHandler.getHistory())
         )
     }
 
@@ -34,8 +36,9 @@ class PersistenceService {
         state.player = new Player()
         state.player.coherence = memento.playerCoherence
         state.player.inventory.addAll(memento.inventory)
-        state.inputHandler = new InputHandler(state.inputHandler.source)
-        state.inputHandler.restoreHistory(memento.inputHistory)
+        // Restore history in place: the handler is shared with other services,
+        // so the instance must not be replaced (Phase 6b).
+        inputHandler.restoreHistory(memento.inputHistory)
         
         navOrchestrator.initializeWorld()
         

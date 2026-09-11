@@ -10,10 +10,12 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class RenderingCoordinator {
     private GameState state
+    private InputHandler inputHandler
     final BridgeView bridgeView
 
-    RenderingCoordinator(GameState state) {
+    RenderingCoordinator(GameState state, InputHandler inputHandler) {
         this.state = state
+        this.inputHandler = inputHandler
         this.bridgeView = new BridgeView()
     }
 
@@ -23,20 +25,20 @@ class RenderingCoordinator {
 
     void renderLatticeMap() {
         bridgeView.renderLatticeMap(state.currentLocation, state.player)
-        state.inputHandler.waitForEnter()
+        inputHandler.waitForEnter()
         state.instantRender = true
     }
 
     void renderLatticeTrace() {
         bridgeView.renderLatticeTrace(state.currentLocation)
-        state.inputHandler.waitForEnter()
+        inputHandler.waitForEnter()
         state.instantRender = true
     }
 
     void helpMenu() {
         Terminal.println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
         Terminal.println "\nmap/m: Spatial | ll/lattice: Tree | sync: Save | i: Buffer | glitch: Debug | q: Terminate"
-        state.inputHandler.waitForEnter()
+        inputHandler.waitForEnter()
         state.instantRender = true
     }
 
@@ -53,7 +55,7 @@ class RenderingCoordinator {
                 Terminal.println "${i + 1}. ${cmd.getLabel().padRight(10)}: ${cmd.getDescription()}" 
             }
             Terminal.print "GLITCH (c to cancel) >> "
-            String c = state.inputHandler.readLine().toLowerCase()
+            String c = inputHandler.readLine().toLowerCase()
             if (c == "c") break
             try {
                 int idx = c.toInteger() - 1

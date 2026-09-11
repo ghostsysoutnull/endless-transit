@@ -32,8 +32,8 @@ class Game {
         ProceduralFactory.instance.fmt = this.fmt
         this.state = new GameState(masterLocus, inputSource ?: InputHandler.defaultSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
-        this.persistence = new PersistenceService(state, navOrchestrator)
-        this.renderer = new RenderingCoordinator(state)
+        this.persistence = new PersistenceService(state, navOrchestrator, state.inputHandler)
+        this.renderer = new RenderingCoordinator(state, state.inputHandler)
         this.turnProcessor = new TurnProcessor(state, renderer, navOrchestrator)
         
         navOrchestrator.initializeWorld()
