@@ -27,8 +27,8 @@ class NavigationCommand implements GameCommand {
         if (!choice) return true
 
         GameState state = game.state
-        ActionMapper mapper = state.mapper
-        InputHandler handler = state.inputHandler
+        ActionMapper mapper = game.mapper
+        InputHandler handler = game.inputHandler
 
         Closure resolvedAction = mapper.resolve(choice, handler)
         if (resolvedAction) {
