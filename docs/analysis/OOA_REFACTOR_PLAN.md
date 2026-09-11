@@ -552,11 +552,13 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Status:** `[x] COMPLETE — 2026-09-11` | commit: 3633b44 | suite 149/144/5/0 | goldens green (28) | 170-frame harness: 0 masked diffs | BridgeView 308 → 186 lines
 
 ### 7e-ii — Extract DirectiveMenuComponent
-- [ ] `renderMenu` (label skip-list, `udfblts` collapsing, `EXECUTE_DIRECTIVE:` block) + `renderGlobalControls`
-- [ ] The compass stays in `CompassComponent` (7c); this component renders only what follows it
+- [x] **7e-ii-0** synthetic-option menu golden: the eight skip-list forms only produced above Street, a no-dot key, a plain directive, a three-entry nav line
+- [x] `renderMenu` (label skip-list, `udfblts` collapsing, `EXECUTE_DIRECTIVE:` block) + `renderGlobalControls` moved verbatim
+- [x] The compass stays in `CompassComponent` (7c); the `renderMenu` delegator calls it first
 
 **Files:** `DirectiveMenuComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 9fbdea5 | suite 150/145/5/0 | goldens green (29) | 170-frame harness: 0 masked diffs | BridgeView 186 → 151 lines
 
 ### 7f — Extract InventoryOverlayComponent
 **Files:** `InventoryOverlayComponent.groovy` (new), `BridgeView.groovy`
