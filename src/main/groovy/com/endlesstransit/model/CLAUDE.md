@@ -19,6 +19,7 @@
 3. **Parent Referencing**: Correctly set `parent` upon population.
 4. **Mutation Persistence**: Use `mutationState` map keyed by LIP.
 5. **Output Abstraction**: All `Renderable` objects MUST use the injected `fmt` field directly.
+6. **Floor Mode is a State**: `Floor.currentState` is a `FloorState` (`ElevatorState` / `CorridorState` singletons). Transition only via `enterCorridor()` / `returnToElevator()`; clients ask the Floor (`getOptions`, `getExtraContent`, `getScanTarget`) — never `instanceof` a state class.
 
 ## 🏛️ Verification Checklist
 - [ ] **Structural Crawl**: Deep hierarchy requests work.

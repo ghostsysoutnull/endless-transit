@@ -34,7 +34,7 @@
 | 5 | Dependency Injection | `[x] COMPLETE` | Medium |
 | 6 | GameState Decomposition | `[x] COMPLETE` | Medium |
 | 7 | BridgeView Decomposition | `[x] COMPLETE` | Medium |
-| 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
+| 8 | Floor State Pattern | `[x] COMPLETE` | Medium |
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
 | 10 | Domain Event System | `[ ] NOT STARTED` | High |
 | O1 | HeadlessRunner DSL | `[ ] NOT STARTED` | None |
@@ -599,22 +599,46 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 ## Phase 8 — Floor State Pattern
 **Goal:** Replace `isCorridorActive` boolean with explicit `ElevatorState`/`CorridorState` objects.
 Conditional branching in `Floor.getOptions()` eliminated.
-**OOA Items:** 2.2
+**OOA Items:** 2.2 (roadmap) / §4.11 (report)
 **Max files per commit:** 4
 **Depends on:** Phase 1a (ordering bug fixed)
 
+> **Execution note (2026-09-11):** Coverage audit found five UNGUARDED behaviors (corridor-mode menu order and
+> content delegation, back-to-elevator restore, the bedrock floor, mutation-state round trip, scan routing by mode).
+> **8-0** `FloorStateContractTest` pins all five, driving every transition through the option closures so it never
+> references the flag or its successor. **8a** moved the three private bodies by script (reverse-substitution check)
+> into stateless singletons; `Floor.enterCorridor()` / `returnToElevator()` are the only transitions. A temporary
+> `getIsCorridorActive()` delegator kept `ScanCommand` and three test reads compiling within the 4-file cap; **8b**
+> removed it. **8b-ii** (user review: "are you using instanceof?") replaced `ScanCommand`'s check on the concrete state
+> class with the polymorphic `FloorState.getScanTarget(Floor)`, replaced the deserialization ternary with an id → state
+> registry, and switched test assertions to `assertSame(<State>.INSTANCE, floor.currentState)`.
+>
+> **Declared deviations:** `FloorState` methods take the `Floor` as first argument (states are stateless singletons,
+> not per-floor objects). Mutation state serializes `"state": "ELEVATOR" | "CORRIDOR"` with **no legacy reader** for
+> the old boolean key (user decision — pre-Phase-8 traces restore in elevator mode). `ScanCommand.groovy` and two
+> more tests (`CorridorPersistenceTest`, `ActionMapperDepthTest`) were in the blast radius but not in the original
+> Files line.
+>
+> **Groovy STC finding:** an `instanceof` on a *field* inside its declaring `@CompileStatic` class narrows the field's
+> inferred type for methods compiled after it (surfaced as a `ClassCastException` in `getOptions`). Compare identity
+> or ask the state polymorphically; never `instanceof` a field in its own class. Lesson in `tasks/lessons/model.md`.
+
 ### Tasks
-- [ ] Define `FloorState` interface: `getOptions(Game)`, `getExtraContent(Player, int)`
-- [ ] Implement `ElevatorState` and `CorridorState`
-- [ ] Replace `isCorridorActive` in `Floor` with `FloorState currentState`
-- [ ] Update `Floor.getMutationState()` / `applyMutationState()` to serialize state type (not boolean)
-- [ ] **Update `VisitedProgressTest`**: it directly asserts `floor.isCorridorActive == true/false`;
-  update assertions to use the new `FloorState` API (e.g., `floor.currentState instanceof CorridorState`)
+- [x] **8-0** `FloorStateContractTest` (5 pins) — commit 18d9213
+- [x] Define `FloorState` interface: `getId()`, `getOptions(Floor, Game)`, `getExtraContent(Floor, Player, int)`, `getScanTarget(Floor)`
+- [x] Implement `ElevatorState` and `CorridorState` (stateless singletons, bodies moved verbatim) — commit b345b4b
+- [x] Replace `isCorridorActive` in `Floor` with `FloorState currentState` + `enterCorridor()` / `returnToElevator()`
+- [x] `Floor.getMutationState()` / `applyMutationState()` serialize the state id via an id → state registry
+- [x] **8b** `ScanCommand` + test reads off the flag; delegator removed — commit 6d537c2
+- [x] **8b-ii** polymorphic scan target; no `instanceof` on a state class anywhere in `src/` — commits 219bb73, 867e87d
+- [x] `VisitedProgressTest`, `CorridorPersistenceTest`, `ActionMapperDepthTest` migrated to the `FloorState` API
 
-**Files:** `FloorState.groovy` (new), `ElevatorState.groovy` (new), `CorridorState.groovy` (new), `Floor.groovy`, `VisitedProgressTest.groovy`
-**Status:** `[ ] NOT STARTED`
+**Files:** `FloorState.groovy` (new), `ElevatorState.groovy` (new), `CorridorState.groovy` (new), `Floor.groovy`, `ScanCommand.groovy`
+**Test blast radius:** `FloorStateContractTest` (new), `VisitedProgressTest`, `CorridorPersistenceTest`, `ActionMapperDepthTest`, `LocationRenderingTest` (comment)
+**Status:** `[x] COMPLETE — 2026-09-11` | commits: 18d9213 (8-0), b345b4b (8a), 6d537c2 (8b), 219bb73 (8b-ii-a), 867e87d (8b-ii-b)
 
-**Phase 8 Gates:** `./vinc.sh --test` — focus `AutoEntryTest`, `NavigationSyncTest`, `TracePersistenceTest`, `VisitedProgressTest`; all 36 goldens unchanged (14, 28, 31, 32–36 render Floors — any diff is a finding, not something to regenerate over) + `./vinc.sh --scan`
+**Phase 8 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=184 SUCCEEDED=179 FAILED=0 SKIPPED=5` (36 goldens byte-identical after every commit) + `./vinc.sh --scan` ✅ seed 0 → 9 nodes + `DeterministicUniverseTest` ✅
+**Retrospective:** `docs/retro/RETRO_PHASE_8.md`
 
 ---
 
@@ -754,6 +778,6 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 
 ---
 
-*Last updated: 2026-09-11 — Phase 7 complete and merged; visual gate redefined as the golden-frame suite (WF-003); post-Phase-7 housekeeping HK-001..004 merged; Phase 8 next.*
+*Last updated: 2026-09-11 — Phase 8 complete (Floor State Pattern; 5 commits); Phase 9 next.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*
