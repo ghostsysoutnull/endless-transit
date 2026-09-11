@@ -461,7 +461,7 @@ accessed from a global static field.
 
 > **Gate correction (2026-09-11, Phase 7 pre-grill — WF-003):** `./vinc.sh --scan` runs `SeedScanner`
 > only; it never constructs `BridgeView`, so it cannot detect a HUD regression. The visual gate for this
-> phase is `BridgeViewGoldenFrameTest` (Phase 7-0): 18 golden frames at seed 12345 covering every
+> phase is `BridgeViewGoldenFrameTest` (Phase 7-0): 23 golden frames at seed 12345 covering every
 > `BridgeView` public method, compared line-by-line with the time-seeded spectrogram bars masked
 > (`generateSystemTelemetry`, `BridgeView.groovy:354`, is the only non-determinism on the golden path).
 > **Mandatory:** golden-frame test green after every commit. `--scan` is retained as the model gate.
@@ -471,8 +471,9 @@ accessed from a global static field.
 > thin delegators on `BridgeView` until 7g), `CaptureVerificationTest` + `BridgeViewStructureTest` +
 > `HeadlessRunner` (`render`/`capture` — unchanged), `SessionRecap` in `src/main` (`printLatticeTrace`, 7d).
 >
-> **Plan gap, decide at 7e:** `renderMenu`, `renderGlobalControls`, and the left pane of
-> `renderAdaptiveBridge` are not named in any planned component.
+> **Plan gap resolved (2026-09-11):** `renderMenu` + `renderGlobalControls` → `DirectiveMenuComponent`
+> (7e-ii); the left pane of `renderAdaptiveBridge` → `NarrativePaneComponent` (7f-ii). The split
+> composition itself (zipping left/right lines through `splitBoxedLine`) stays in `BridgeView`.
 
 ### 7-0 — Golden-frame pinning test (Coverage Claim Protocol step 0)
 Audit of every assertion touching `BridgeView` output: `BridgeViewStructureTest` (boxed + 7 marker
@@ -486,9 +487,11 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 - [x] `BridgeViewGoldenFrameTest` (`@TestFactory`, one test per frame) compares against committed
   `src/test/groovy/com/endlesstransit/ui/golden/*.txt`; test never writes to `src/`
 - [x] Golden files generated once by a scratchpad script calling the same `captureAll`, then committed
+- [x] **7-0b** `GoldenFrameGenerator` + `./vinc.sh --goldens` (sole writer of `golden/*.txt`, stores bars pre-masked);
+  frames 18 → 23: Floor/Corridor/Apartment full renders + two ticker-mapping frames — commit adcd8fd
 
 **Files:** `HudFrameHarness.groovy` (new, test), `BridgeViewGoldenFrameTest.groovy` (new, test), `golden/*.txt`
-**Status:** `[x] COMPLETE — 2026-09-11` | commit: c43797f | suite 139/134/5/0 (18 golden frames, 319 lines; negative check: one corrupted glyph fails exactly that frame)
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: c43797f | suite 139/134/5/0 (now 23 golden frames, 463 lines; negative check: one corrupted glyph fails exactly that frame)
 
 
 ### 7a — Define ViewComponent interface
@@ -531,8 +534,22 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Files:** `TelemetryComponent.groovy` (new), `BridgeView.groovy`
 **Status:** `[ ] NOT STARTED`
 
+### 7e-ii — Extract DirectiveMenuComponent
+- [ ] `renderMenu` (label skip-list, `udfblts` collapsing, `EXECUTE_DIRECTIVE:` block) + `renderGlobalControls`
+- [ ] The compass stays in `CompassComponent` (7c); this component renders only what follows it
+
+**Files:** `DirectiveMenuComponent.groovy` (new), `BridgeView.groovy`
+**Status:** `[ ] NOT STARTED`
+
 ### 7f — Extract InventoryOverlayComponent
 **Files:** `InventoryOverlayComponent.groovy` (new), `BridgeView.groovy`
+**Status:** `[ ] NOT STARTED`
+
+### 7f-ii — Extract NarrativePaneComponent
+- [ ] Left pane of `renderAdaptiveBridge`: description wrap (with `glitchText` below 40 coherence) + `getExtraContent`
+- [ ] `renderAdaptiveBridge` remains in `BridgeView` as the split compositor
+
+**Files:** `NarrativePaneComponent.groovy` (new), `BridgeView.groovy`
 **Status:** `[ ] NOT STARTED`
 
 ### 7g — BridgeView as pure compositor
