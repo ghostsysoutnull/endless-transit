@@ -544,10 +544,12 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Status:** `[x] COMPLETE — 2026-09-11` | suite 149/144/5/0 | goldens green (28) | 170-frame harness: 0 masked diffs | BridgeView 398 → 308 lines
 
 ### 7e — Extract TelemetryComponent
-- [ ] Spectrogram, session logs, right-pane routing
+- [x] Spectrogram, decode logs ("session logs"), right-pane routing, universe/filament/local maps, abyssal static — six generators moved verbatim
+- [x] `ViewComponent` javadoc: `width` = width allotted by the compositor (pane width for a pane)
 
-**Files:** `TelemetryComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Files:** `TelemetryComponent.groovy` (new), `BridgeView.groovy`, `ViewComponent.groovy` (javadoc)
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 3633b44 | suite 149/144/5/0 | goldens green (28) | 170-frame harness: 0 masked diffs | BridgeView 308 → 186 lines
 
 ### 7e-ii — Extract DirectiveMenuComponent
 - [ ] `renderMenu` (label skip-list, `udfblts` collapsing, `EXECUTE_DIRECTIVE:` block) + `renderGlobalControls`
