@@ -44,33 +44,6 @@ class Player {
         coherence = Math.min(maxCoherence, Math.max(0, (coherence + delta.toDouble()) as int))
     }
 
-    void listInventory() {
-        if (inventory.isEmpty()) {
-            Terminal.println(Terminal.dim("  (Local buffer empty)"))
-        } else {
-            inventory.eachWithIndex { item, i ->
-                String freqStr = String.format("%04d", item.frequency.value)
-
-                // Restore "Graphics"
-                int signalStrength = (item.frequency.value % 100) / 10 + 1
-                String signalBar = "█" * signalStrength + "░" * (10 - signalStrength)
-                String phase = (item.frequency.value % 2 == 0) ? "STABLE" : "SHIFTING"
-                String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
-                
-                Terminal.print("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. ")
-                Terminal.print("${Terminal.dim(freqStr)}Hz ")
-                Terminal.print(Terminal.colorize(signalBar, signalColor))
-                Terminal.print("${Terminal.dim("[" + phase + "]")}")
-                String mergeLabel = ""
-                if (item.sessionMergeCount > 0) {
-                    String label = item.sessionMergeCount > 1 ? "SYNTHESIS_x${item.sessionMergeCount}" : "NEW_SYNTHESIS"
-                    mergeLabel = " " + Terminal.colorize("[" + label + "]", Terminal.GREEN)
-                }
-                Terminal.println(" >> ${Terminal.bold(item.name)}$mergeLabel")
-            }
-        }
-    }
-
     void dropItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             def removed = inventory.remove(index)

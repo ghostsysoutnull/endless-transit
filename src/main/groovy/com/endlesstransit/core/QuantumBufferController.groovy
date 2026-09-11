@@ -16,9 +16,7 @@ class QuantumBufferController {
         Location currentLocation = game.currentLocation
 
         while (true) {
-            Terminal.println "\n" + Terminal.colorize(" [QUANTUM_TRACE_BUFFER_INTERACE] ", Terminal.L_CYAN)
-            player.listInventory()
-            Terminal.println Terminal.dim("-------------------------------------------")
+            game.bridgeView.renderInventoryOverlay(player)   // numbered list, bars, phase, synthesis labels, SYNC_STATUS
             Terminal.println "${Terminal.colorize("d [num]", Terminal.YELLOW)}: Drop item  |  ${Terminal.colorize("m [n1] [n2]", Terminal.YELLOW)}: Merge items"
             Terminal.println "${Terminal.colorize("b", Terminal.YELLOW)}: Back to reality"
             
