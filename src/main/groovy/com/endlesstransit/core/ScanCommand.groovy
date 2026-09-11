@@ -36,7 +36,7 @@ class ScanCommand implements GameCommand, LatticeCommand {
             renderCorridorScan((Corridor) loc, game.player, fmt)
         } else if (loc instanceof Floor) {
             Floor floor = (Floor) loc
-            if (floor.isCorridorActive) {
+            if (floor.currentState instanceof CorridorState) {
                 renderCorridorScan(floor.getCorridor(), game.player, fmt)
             } else {
                 renderBuildingScan((Building) floor.parent, game.player)

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Phase 8-0 pre-check (Coverage Claim Protocol): pins the Floor mode contract before the
- * isCorridorActive boolean becomes a FloorState object.
+ * mode boolean becomes a FloorState object.
  *
  * Every transition is driven through the option closures ("c. Enter Corridor",
  * "b. Back to Elevator") so this test references neither the boolean nor its successor,

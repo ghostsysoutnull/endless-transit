@@ -45,12 +45,6 @@ class Floor extends Container {
         this.currentState = ElevatorState.INSTANCE
     }
 
-    /** TEMPORARY (Phase 8a; removed in 8b): keeps the isCorridorActive property readable for ScanCommand and tests. */
-    boolean getIsCorridorActive() {
-        // Identity check, not instanceof: Groovy STC lets an instanceof on a field narrow its type for later methods.
-        return currentState.is(CorridorState.INSTANCE)
-    }
-
     @Override
     String getSparklineLabel() {
         if (number < 0) return "${"▤"}-${Math.abs(number)}"

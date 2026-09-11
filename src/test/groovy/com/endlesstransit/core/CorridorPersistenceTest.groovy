@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
 
 /**
- * Phase 0.5a safety net: validates that isCorridorActive = true survives a full
+ * Phase 0.5a safety net: validates that a Floor in CorridorState survives a full
  * save/restore cycle via SyncManager. Required before Phase 1a (Floor.enter ordering fix)
  * to ensure the fix doesn't silently break corridor state reconstitution.
  */
@@ -40,16 +40,16 @@ class CorridorPersistenceTest {
         assertNotNull(floor, "No floor found in building")
         game.enterLocation(floor)
 
-        // enterLocation always resets isCorridorActive — assert baseline
+        // A freshly entered floor is in ElevatorState — assert baseline
         assertTrue(game.currentLocation instanceof Floor, "Should be at a Floor")
         Floor currentFloor = (Floor) game.currentLocation
-        assertFalse(currentFloor.isCorridorActive, "isCorridorActive must start false after enterLocation")
+        assertTrue(currentFloor.currentState instanceof ElevatorState, "Floor must start in ElevatorState after enterLocation")
 
         String floorLIP = currentFloor.getLIP()
 
         // Simulate player choosing "c. Enter Corridor"
         currentFloor.enterCorridor()
-        assertTrue(currentFloor.isCorridorActive, "isCorridorActive must be settable to true")
+        assertTrue(currentFloor.currentState instanceof CorridorState, "enterCorridor() must switch to CorridorState")
 
         // Sync (save state to session.trace)
         SyncManager.sync(game)
@@ -67,8 +67,8 @@ class CorridorPersistenceTest {
 
         // THE CRITICAL ASSERTION: corridor state must survive the full save/restore cycle
         Floor restoredFloor = (Floor) freshGame.currentLocation
-        assertTrue(restoredFloor.isCorridorActive,
-            "isCorridorActive must be true after restore — " +
+        assertTrue(restoredFloor.currentState instanceof CorridorState,
+            "Floor must be in CorridorState after restore — " +
             "mutation state must be applied AFTER any reset logic during location entry")
     }
 }
