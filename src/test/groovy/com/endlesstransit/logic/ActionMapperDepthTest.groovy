@@ -58,7 +58,7 @@ class ActionMapperDepthTest {
         Floor floor = (Floor) building.children.find { it instanceof Floor }
         assertNotNull(floor, "No floor found")
         game.enterLocation(floor)
-        floor.isCorridorActive = true  // activate corridor mode
+        floor.enterCorridor()  // activate corridor mode
 
         Map<String, Closure> corridorOptions = floor.getOptions(game)
         assertFalse(corridorOptions.isEmpty(), "Corridor mode must have apartment options")

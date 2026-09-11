@@ -87,7 +87,7 @@ class VisitedProgressTest {
         Terminal.println "Scan command execution finished."
 
         // 7. Test Vertical Reset (u/d should reset isCorridorActive)
-        floor.isCorridorActive = true
+        floor.enterCorridor()
         Floor nextFloor = building.getFloor(floor.number + 1)
         game.enterLocation(nextFloor)
         assertFalse(nextFloor.isCorridorActive, "Next floor should start in Elevator mode regardless of previous floor state")

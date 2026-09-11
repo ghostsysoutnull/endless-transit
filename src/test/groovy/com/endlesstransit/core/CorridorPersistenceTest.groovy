@@ -48,7 +48,7 @@ class CorridorPersistenceTest {
         String floorLIP = currentFloor.getLIP()
 
         // Simulate player choosing "c. Enter Corridor"
-        currentFloor.isCorridorActive = true
+        currentFloor.enterCorridor()
         assertTrue(currentFloor.isCorridorActive, "isCorridorActive must be settable to true")
 
         // Sync (save state to session.trace)
