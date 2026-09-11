@@ -7,7 +7,7 @@ import groovy.transform.CompileStatic
 /**
  * LatticeMapComponent: the `m` screen — a 30×15 MapBuffer projection of the current
  * container's children in a box, with origin and legend; or a SCAN_ERROR line when the
- * location is a leaf. Below 30% coherence it plots random glitch marks (HK-001).
+ * location is a leaf. Below 30% coherence it plots glitch marks seeded by FrameEntropy.
  *
  * Extracted verbatim from BridgeView.renderLatticeMap() in OOA Phase 7d-ii. Builds lines;
  * never prints. The width argument is unused (fixed 30×15).
@@ -41,10 +41,10 @@ class LatticeMapComponent implements ViewComponent {
         }
         
         if (player.coherence < 30) {
-            Random r = new Random()
+            Random r = FrameEntropy.forFrame(ctx)
             int glitchCount = (int)((30 - player.coherence) / 2)
             for (int i = 0; i < glitchCount; i++) {
-                buffer.plot(r.nextInt(mapWidth), r.nextInt(mapHeight), Terminal.glitchText("X", 1.0), Terminal.MAGENTA)
+                buffer.plot(r.nextInt(mapWidth), r.nextInt(mapHeight), Terminal.glitchText("X", 1.0, r), Terminal.MAGENTA)
             }
         }
         

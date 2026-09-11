@@ -166,8 +166,12 @@ class Terminal {
     }
 
     static String glitchText(String text, double probability = 0.05) {
+        return glitchText(text, probability, new Random())
+    }
+
+    /** Seeded variant used by the frame components (see FrameEntropy). */
+    static String glitchText(String text, double probability, Random r) {
         char[] chars = text.toCharArray()
-        Random r = new Random()
         String glitchChars = "█▓▒░/\\%!\$#*"
         
         for (int i = 0; i < chars.length; i++) {
