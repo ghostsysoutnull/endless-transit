@@ -12,6 +12,31 @@ improvement session is planned before the next phase begins.
 
 ## 🔴 OPEN
 
+> **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
+> required before Phase 2. Next scheduled review: Phase 4.
+
+> **Phase 4 cadence review completed — 2026-03-18.** One latent infrastructure issue surfaced
+> post-phase (not from retro): `--scan`, `--replay`, and game launch classpaths in `vinc.sh`
+> diverged from `--test` — `src/main/resources` was missing, causing silent load failures at
+> runtime while tests passed. Fixed immediately; lesson promoted to `tasks/lessons/infrastructure.md`.
+> Backlog otherwise clean. No workflow session required before Phase 5. Next scheduled review: Phase 7.
+
+> **Phase 5 note — 2026-03-18.** The pre-Commit-G grep for `ModelOutput.fmt` only caught
+> direct static field accesses. Tests depending on the ambient formatter *implicitly* (via
+> `getEffectiveFmt()` fallback on directly-constructed model objects) were invisible to the grep.
+> Future Service Locator removals should include: (1) grep for direct usage, AND (2) audit every
+> test file that constructs a model object outside the factory and exercises any rendering path.
+> Lesson promoted to `tasks/lessons/model.md`. No workflow session warranted — backlog clean.
+> Next scheduled review: Phase 7.
+
+> **Phase 7 cadence review completed — 2026-09-11.** WF-002 evaluated and closed (see CLOSED).
+> One new item surfaced by the Phase 7 pre-grill, WF-003, opened and closed in the same session via
+> Phase 7-0. No workflow session required before Phase 7. Next scheduled review: Phase 10.
+
+---
+
+## 🟢 CLOSED
+
 ### WF-002 — Plan review lacks an adversarial pass on coverage and lifecycle claims
 **Priority:** Medium
 **Source:** Phase 6b plan draft, 2026-09-11 (mid-session observation, not from a retro)
@@ -32,29 +57,30 @@ holds, replaces, (4) per-commit coherence, (5) deviations from the plan document
 with 6b-0) and found one mis-claim: `CorridorPersistenceTest` was listed as a focus test but goes
 through `SyncManager`, which never touches the handler. Dropped from the focus list. Blast-radius
 cross-check found no file missing from the plan.
-**Status:** IN PROGRESS — evaluate at the Phase 7 cadence review: did the six checks catch what
-went wrong in Phases 6c and 7, and did any check never fire (candidate for removal).
+**Resolution (Phase 7 cadence review):** Three runs — 6b, 6c, Phase 7a — all AMEND, each finding
+a real gap: 6b UNGUARDED restore-history (→ `MementoInputHistoryTest`) plus a mis-listed focus test;
+6c UNGUARDED engine behaviors (→ `NavigationEngineWiringTest`); 7a most `BridgeView` output UNGUARDED
+(→ `BridgeViewGoldenFrameTest`) plus the WF-003 gate finding. Per-check tally: check 1 fired 3×,
+check 2 1×, check 3 1×, check 5 2×; checks 4 and 6 never produced a non-PASS. Decision: keep all six —
+4 and 6 are the cheapest checks, and Phase 7 (seven sub-phases in one 579-line file) is the first phase
+where a mis-ordered commit or an unbounded revert is plausible. Re-evaluate at Phase 10.
+**Closed:** 2026-09-11 | Phase 7 cadence review
 
-> **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
-> required before Phase 2. Next scheduled review: Phase 4.
-
-> **Phase 4 cadence review completed — 2026-03-18.** One latent infrastructure issue surfaced
-> post-phase (not from retro): `--scan`, `--replay`, and game launch classpaths in `vinc.sh`
-> diverged from `--test` — `src/main/resources` was missing, causing silent load failures at
-> runtime while tests passed. Fixed immediately; lesson promoted to `tasks/lessons/infrastructure.md`.
-> Backlog otherwise clean. No workflow session required before Phase 5. Next scheduled review: Phase 7.
-
-> **Phase 5 note — 2026-03-18.** The pre-Commit-G grep for `ModelOutput.fmt` only caught
-> direct static field accesses. Tests depending on the ambient formatter *implicitly* (via
-> `getEffectiveFmt()` fallback on directly-constructed model objects) were invisible to the grep.
-> Future Service Locator removals should include: (1) grep for direct usage, AND (2) audit every
-> test file that constructs a model object outside the factory and exercises any rendering path.
-> Lesson promoted to `tasks/lessons/model.md`. No workflow session warranted — backlog clean.
-> Next scheduled review: Phase 7.
-
----
-
-## 🟢 CLOSED
+### WF-003 — UI-phase visual gate was a model-only probe
+**Priority:** Medium
+**Source:** Phase 7 pre-grill, 2026-09-11 (mid-session observation)
+**Problem:** The OOA plan required `./vinc.sh --scan` to be "pixel-identical" for Phase 7. `--scan`
+runs `SeedScanner` (procgen), never constructs `BridgeView`, and prints four lines — it verifies the
+world model, not the HUD. The only UI baseline (`screenshots/baseline_refactor_survival.txt`) is
+gitignored, write-once, a `toString()` blob containing a timestamp, and asserted for two marker strings
+only. Phases 5 and 6 reported "scan identical" as their visual gate; for `ui` changes that check was
+vacuous. A scratchpad harness (170 frames, 17 depths, seed 12345, run twice) also showed 16 frames are
+non-deterministic — the telemetry spectrogram is seeded from the wall clock (`BridgeView.groovy:354`) —
+so "pixel-identical" needs a mask.
+**Resolution:** `HudFrameHarness` + `BridgeViewGoldenFrameTest` (Phase 7-0) pin 18 golden frames
+covering every `BridgeView` public method, spectrogram bars masked. Phase 7 gate redefined in the OOA
+plan: golden frames + full suite; `--scan` retained as the model gate only.
+**Closed:** 2026-09-11 | Phase 7-0
 
 ### WF-001 — Build cache never purged between compiles
 **Priority:** High

@@ -32,7 +32,7 @@
 | 4 | Structural Extraction | `[x] COMPLETE` | Low |
 | 5 | Dependency Injection | `[x] COMPLETE` | Medium |
 | 6 | GameState Decomposition | `[x] COMPLETE` | Medium |
-| 7 | BridgeView Decomposition | `[ ] NOT STARTED` | Medium |
+| 7 | BridgeView Decomposition | `[~] IN PROGRESS` | Medium |
 | 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
 | 10 | Domain Event System | `[ ] NOT STARTED` | High |
@@ -459,12 +459,54 @@ accessed from a global static field.
 **Max files per commit:** 3
 **Depends on:** Phase 6; Phase 0.5f (BridgeView structural baseline tests must exist first)
 
-> **Mandatory:** `./vinc.sh --scan` before AND after every sub-phase. Pixel-identical output required.
+> **Gate correction (2026-09-11, Phase 7 pre-grill — WF-003):** `./vinc.sh --scan` runs `SeedScanner`
+> only; it never constructs `BridgeView`, so it cannot detect a HUD regression. The visual gate for this
+> phase is `BridgeViewGoldenFrameTest` (Phase 7-0): 18 golden frames at seed 12345 covering every
+> `BridgeView` public method, compared line-by-line with the time-seeded spectrogram bars masked
+> (`generateSystemTelemetry`, `BridgeView.groovy:354`, is the only non-determinism on the golden path).
+> **Mandatory:** golden-frame test green after every commit. `--scan` is retained as the model gate.
+>
+> **Test blast radius (whole phase):** `NavArrayTest` (calls private `getCompassLabel`, moves in 7c),
+> `InitialScreenTest` + `NewGameTest` (call `renderBridgeHUD`/`renderAdaptiveBridge` directly — keep
+> thin delegators on `BridgeView` until 7g), `CaptureVerificationTest` + `BridgeViewStructureTest` +
+> `HeadlessRunner` (`render`/`capture` — unchanged), `SessionRecap` in `src/main` (`printLatticeTrace`, 7d).
+>
+> **Plan gap, decide at 7e:** `renderMenu`, `renderGlobalControls`, and the left pane of
+> `renderAdaptiveBridge` are not named in any planned component.
+
+### 7-0 — Golden-frame pinning test (Coverage Claim Protocol step 0)
+Audit of every assertion touching `BridgeView` output: `BridgeViewStructureTest` (boxed + 7 marker
+strings), `VisualBaselinePinningTest` (2 markers), `NavArrayTest` (4 compass labels), `isBoxedCorrectly`
+(≥ 5 lines start/end with `║`). Everything else — header rows, sparkline/path truncation, radar, ticker,
+buffer preview, compass geometry, menu filtering, global controls, inventory overlay, lattice trace,
+lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
+
+- [ ] `HudFrameHarness` (test utility): `captureAll(seed)` renders each `BridgeView` method into the
+  virtual buffer per frame; `mask()` collapses cyan `█` runs
+- [ ] `BridgeViewGoldenFrameTest` (`@TestFactory`, one test per frame) compares against committed
+  `src/test/groovy/com/endlesstransit/ui/golden/*.txt`; test never writes to `src/`
+- [ ] Golden files generated once by a scratchpad script calling the same `captureAll`, then committed
+
+**Files:** `HudFrameHarness.groovy` (new, test), `BridgeViewGoldenFrameTest.groovy` (new, test), `golden/*.txt`
+**Status:** `[ ] NOT STARTED`
+
 
 ### 7a — Define ViewComponent interface
-- [ ] `ViewComponent` interface: `List<String> render(int width)`
+- [ ] **7a-i** `ViewComponent` interface: `List<String> render(RenderContext context, int width)` +
+  `RenderContext` (final `location`, `player`, `options`, `masterLocus`)
+- [ ] **7a-ii** `Terminal` gains `static String` line builders (`boxTop`, `boxedLine`, `splitBoxedLine`,
+  `boxSeparator`, `boxBottom`) returning exactly the fragments `draw*` print today, CHA sequences
+  included; each `draw*` becomes `println(builder(...))`. Signatures unchanged; only caller is `BridgeView`.
 
-**Files:** `ViewComponent.groovy` (new)
+> **Declared deviations (2026-09-11):** (a) the plan's `render(int width)` gives a component no way to
+> reach the location/player/options/locus — a `RenderContext` parameter is the smallest addition.
+> (b) 7a-ii is not in the original plan; without string builders the `List<String>` contract cannot be
+> honoured, since the only box builders print. Byte-equivalence: `MemorySink.print` appends fragments
+> and `println` flushes the line; `ConsoleSink` writes fragments straight to `System.out`; no fragment
+> contains `\n` — so `print a; print b; println c` ≡ `println(a+b+c)` in every sink. The one edge is
+> flush granularity on a real console (per fragment → per line), invisible in captured output.
+
+**Files:** `ViewComponent.groovy` (new), `RenderContext.groovy` (new) — 7a-i; `Terminal.groovy` — 7a-ii
 **Status:** `[ ] NOT STARTED`
 
 ### 7b — Extract HUDHeaderComponent
@@ -500,7 +542,7 @@ accessed from a global static field.
 **Files:** `BridgeView.groovy`
 **Status:** `[ ] NOT STARTED`
 
-**Phase 7 Gates:** `./vinc.sh --test` + `./vinc.sh --scan` (pixel-identical to Phase 0 baseline)
+**Phase 7 Gates:** `./vinc.sh --test` (includes `BridgeViewGoldenFrameTest` — the pixel gate) + `./vinc.sh --scan` (model gate, seed 0 → 9 nodes)
 
 ---
 
