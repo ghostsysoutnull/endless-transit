@@ -11,6 +11,7 @@ class BridgeView implements ScreenshotProvider {
     private Location lastLocation
     private LocusSeed lastLocus
     private List<String> lastHudFrame = []
+    private final HUDHeaderComponent hudHeader = new HUDHeaderComponent()
 
     BridgeView() {
         ScreenshotRegistry.register(this)
@@ -120,90 +121,8 @@ class BridgeView implements ScreenshotProvider {
     }
 
     void renderBridgeHUD(Location currentLocation, Player player) {
-        int width = 130
-        int splitPoint = 90
-        VibeCapsule vibe = currentLocation.getVibe()
-        boolean abyssal = currentLocation.isAbyssal()
-        String accent = abyssal ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
-        
-        Terminal.drawBoxTop(width, accent)
-        
-        // 1. Sparkline & Traversal
-        String sparkline = getLatticeSparkline(currentLocation)
-        String cohLabel = abyssal ? "INTEGRITY" : "COHERENCE"
-        String globalStats = "PULSE_TRAVERSAL: ${player.stepCount} | $cohLabel: ${player.coherence}%"
-        
-        int statsWidth = Terminal.getVisualWidth(sparkline) + Terminal.getVisualWidth(globalStats) + 3
-        String topPadding = " " * ((width - statsWidth) / 2).toInteger()
-        String topRow = "${topPadding}${sparkline} | ${globalStats}"
-        Terminal.drawBoxedLine(topRow, width, accent)
-        
-        // 2. Navigation Path
-        String path = currentLocation.getPath()
-        String prefix = abyssal ? "VOID_TRACE: " : "LOCUS_TRACE: "
-        int maxPathWidth = width - 6
-        if (Terminal.getVisualWidth(path) + prefix.length() > maxPathWidth) {
-            path = "..." + path.substring(path.length() - (maxPathWidth - prefix.length() - 3))
-        }
-        Terminal.drawBoxedLine("$prefix$path", width, accent)
-        
-        Terminal.drawBoxSeparator(width, accent, "light")
-        
-        // 3. Local Diagnostic & System Status
-        String identLabel = abyssal ? HUDLabels.VOID_IDENT : HUDLabels.LATTICE_IDENT
-        String ident = "$identLabel: ${currentLocation.getTypeName()} >> ${currentLocation.getName()}"
-        String sysDiag = currentLocation.getStatusSummary()
-        Terminal.drawSplitBoxedLine(ident, sysDiag, splitPoint, width, accent)
-        
-        String hashLabel = abyssal ? HUDLabels.VOID_HASH : HUDLabels.LOCUS_HASH
-        String depthLabel = abyssal ? HUDLabels.ABYSSAL_DEPTH : HUDLabels.HOP_DENSITY
-        String coords = "$hashLabel: ${currentLocation.getCoordinates()} | $depthLabel: ${currentLocation.getDepth()}"
-        String cohBar = cohLabel + ": " + renderCoherenceBar(player.coherence)
-        Terminal.drawSplitBoxedLine(coords, cohBar, splitPoint, width, accent)
-        
-        // Structural Alignment & Radar
-        int idx = currentLocation.getIndexInParent()
-        int total = currentLocation.getTotalInParent()
-        String leftBottom = ""
-        if (total > 0) {
-            String alignLabel = currentLocation.getIndexLabel()
-            
-            int radarLimit = 20
-            String radar = Terminal.renderRadar(idx, Math.min(total, radarLimit), accent)
-            if (total > radarLimit) radar += Terminal.dim(" ...")
-            leftBottom = "$alignLabel: $idx / $total | $radar"
-        }
-        
-        List<String> recentEvents = JournalManager.getRecentEvents(3).reverse()
-        String tickerTitle = abyssal ? "EVENT_TICKER: [PRESSURE_HIGH]" : "EVENT_TICKER: [SYNC_STABLE]"
-        Terminal.drawSplitBoxedLine(leftBottom, tickerTitle, splitPoint, width, accent)
-        
-        List<String> tickerLines = []
-        recentEvents.each { tickerLines << it }
-        if (abyssal && new Random().nextInt(10) < 3) {
-            String[] voices = ["It is cold down here.", "We see you.", "Return to the surface.", "Bedrock approaching."]
-            tickerLines.add(0, "[VOID] " + voices[new Random().nextInt(voices.length)])
-        }
-
-        for (int i = 0; i < 2; i++) {
-            String event = i < tickerLines.size() ? tickerLines[i] : ""
-            event = event.replace("[DISCOVERY] ", "LOC: ").replace("[CAPTURE] ", "OBJ: ").replace("[SYNTHESIS] ", "SYN: ")
-            Terminal.drawSplitBoxedLine("", Terminal.dim(event), splitPoint, width, accent)
-        }
-
-        Terminal.drawBoxSeparator(width, accent, "light")
-        
-        // 4. Trace Buffer Preview
-        String bufferInfo = "TRACE_BUFFER: ${player.inventory.size()}/16 FRAGMENTS"
-        if (!player.inventory.isEmpty()) {
-            List<InventoryItem> last3 = player.inventory.takeRight(3).reverse()
-            List<Integer> freqs = last3.collect { it.frequency.value }
-            bufferInfo += " | RECENT: ${freqs.join(', ')}Hz"
-        }
-        Terminal.drawBoxedLine(bufferInfo, width, accent)
-        Terminal.drawBoxBottom(width, accent)
-        
-        Terminal.println " " + Terminal.colorize("»» SCANNING_LOCAL_TOPOLOGY...", accent)
+        RenderContext ctx = new RenderContext(currentLocation, player, null, null)
+        hudHeader.render(ctx, 130).each { String line -> Terminal.println(line) }
     }
 
     void renderAdaptiveBridge(Location currentLocation, Player player, LocusSeed masterLocus) {
@@ -362,47 +281,6 @@ class BridgeView implements ScreenshotProvider {
         lines << " > Trace: ${currentLocation.getLIP()}".toString()
         lines << " > Stable: ${player.resonantTracesCount} items".toString()
         return lines
-    }
-
-    String getLatticeSparkline(Location currentLocation) {
-        VibeCapsule vibe = currentLocation.getVibe()
-        boolean abyssal = currentLocation.isAbyssal()
-        String accent = abyssal ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.L_CYAN)
-
-        List<String> line = []
-        Location p = currentLocation
-        while (p != null) {
-            String label = p.getSparklineLabel()
-            if (p == currentLocation) {
-                line << Terminal.colorize("[$label]", accent)
-            } else {
-                line << Terminal.dim(label)
-            }
-            p = p.parent
-        }
-        
-        int maxLatticeWidth = 50
-        while (line.size() > 2 && Terminal.getVisualWidth("LATTICE: " + line.reverse().join(" ") + " ...") > maxLatticeWidth) {
-            line.removeAt(0)
-        }
-        
-        String sparkline = line.reverse().join(" ")
-        if (Terminal.getVisualWidth("LATTICE: " + sparkline) > maxLatticeWidth) {
-             return "LATTICE: ... " + sparkline
-        }
-        
-        return "LATTICE: " + sparkline
-    }
-
-    String renderCoherenceBar(int coherence) {
-        int length = 10
-        int filled = (coherence * length / 100).toInteger()
-        String bar = "█" * filled + "░" * (length - filled)
-        String color = Terminal.GREEN
-        if (coherence < 30) color = Terminal.RED
-        else if (coherence < 70) color = Terminal.YELLOW
-        
-        return Terminal.colorize(bar, color)
     }
 
     private String getCompassLabel(String keyPrefix, Map options) {
