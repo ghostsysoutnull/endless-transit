@@ -33,19 +33,6 @@ improvement session is planned before the next phase begins.
 > One new item surfaced by the Phase 7 pre-grill, WF-003, opened and closed in the same session via
 > Phase 7-0. No workflow session required before Phase 7. Next scheduled review: Phase 10.
 
-### WF-004 — `/grill` has no design-integrity check
-**Priority:** Medium
-**Source:** Phase 8b, 2026-09-11 (user review mid-execution, not from a retro)
-**Problem:** The Phase 8 plan put `floor.currentState instanceof CorridorState` in `ScanCommand`. All six
-`/grill` checks passed — they verify coverage, edges, lifecycle, coherence, deviations and reversion, none of
-them asks whether the design honours the pattern being introduced. The user caught it after 8b was committed
-("are you using instanceof? Is that good OO design?"); fixing it cost two extra commits (8b-ii).
-**Proposed:** Not a seventh check (the command caps at six by design). Fold into check 2 (behavioral edges)
-or check 5 (deviations) a one-line "pattern integrity" question for any plan that introduces a
-State/Strategy/Visitor hierarchy: grep the planned client code for `instanceof <NewType>` or `.class ==`;
-any hit is an AMEND. Lesson already promoted to `tasks/lessons/model.md`.
-**Status:** OPEN — assess at the Phase 10 cadence review.
-
 ### WF-005 — Game loop crash handler terminates the test JVM
 **Priority:** High
 **Source:** Phase 8a, 2026-09-11 (mid-session observation; confirmed at the close-out audit)
@@ -66,6 +53,22 @@ attributed instead of the run dying.
 ---
 
 ## 🟢 CLOSED
+
+### WF-004 — `/grill` has no design-integrity check
+**Priority:** Medium
+**Source:** Phase 8b, 2026-09-11 (user review mid-execution, not from a retro)
+**Problem:** The Phase 8 plan put `floor.currentState instanceof CorridorState` in `ScanCommand`. All six
+`/grill` checks passed — they verify coverage, edges, lifecycle, coherence, deviations and reversion, none of
+them asks whether the design honours the pattern being introduced. The user caught it after 8b was committed
+("are you using instanceof? Is that good OO design?"); fixing it cost two extra commits (8b-ii).
+**Proposed:** Not a seventh check (the command caps at six by design). Fold into check 2 (behavioral edges)
+or check 5 (deviations) a one-line "pattern integrity" question for any plan that introduces a
+State/Strategy/Visitor hierarchy: grep the planned client code for `instanceof <NewType>` or `.class ==`;
+any hit is an AMEND. Lesson already promoted to `tasks/lessons/model.md`.
+**Resolution:** Folded into check 5 of `.claude/commands/grill.md` (no seventh check): any `instanceof`/`.class`/`getClass()`
+on a newly introduced State/Strategy/Factory/Visitor type in planned client code or tests is a FAIL. Applied the same
+session, before Phase 9 introduces a factory hierarchy.
+**Closed:** 2026-09-11 | Phase 8 close-out
 
 ### WF-002 — Plan review lacks an adversarial pass on coverage and lifecycle claims
 **Priority:** Medium

@@ -4,7 +4,7 @@
 ## 🎯 Current Status
 - **Test Suite:** 184 discovered / 179 pass / 5 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
 - **Branch:** `master` @ `a70f86e` + close-out docs commit (Phase 8 merged `--no-ff`). **Not yet pushed** to `origin/master`.
-- **Active Work:** None. Housekeeping backlog (`tasks/backlog/HOUSEKEEPING.md`) is empty. Workflow backlog: **WF-005 (High) — blocks Phase 9** (game-loop crash handler kills the test JVM; runner-only fix), WF-004 (Medium, review at Phase 10).
+- **Active Work:** None. Housekeeping backlog (`tasks/backlog/HOUSEKEEPING.md`) is empty. Workflow backlog: **WF-005 (High) — blocks Phase 9** (game-loop crash handler kills the test JVM; runner-only fix). WF-004 closed (grill check 5).
 - **Next Phase:** Phase 9 — ProceduralFactory Split, **in a new session**.
 
 ## ✅ State of the substrate in one paragraph
@@ -36,8 +36,7 @@ Initialize session for the Endless Transit substrate.
    read `ProceduralFactory.groovy` in full before proposing the `LocationFactory<T>` contract. Coverage to quote
    (open the files): `DeterministicUniverseTest`, `ProcgenSnapshotTest` (pinned values for seed 0x1234),
    `ProcgenVariabilityTest`, `SystemNameTest`, `LandmarkDiscoveryTest`. Any golden diff is a finding.
-   **Pattern integrity (WF-004):** if a plan introduces a factory/strategy hierarchy, grep the planned client code
-   for `instanceof <NewType>` — any hit is an AMEND before authorization.
+   Pattern integrity is now part of `/grill` check 5 (WF-004 closed).
 6. **Gates for a procgen phase:** `DeterministicUniverseTest` after every factory; full suite (goldens included) +
    `./vinc.sh --scan` seed 0 → 9 nodes after 9o. Max 3 production files per commit (Phase 9 cap).
 7. **Phase end:** merge `--no-ff`, `/chronicle`, `docs/retro/RETRO_PHASE_9.md`, promote lessons, refresh this file.
@@ -55,13 +54,13 @@ Initialize session for the Endless Transit substrate.
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
 | Floor state contract | `src/test/groovy/com/endlesstransit/model/FloorStateContractTest.groovy` |
 | Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (empty) |
-| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (WF-005 High — blocks Phase 9; WF-004 open; next review: Phase 10) |
+| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (WF-005 High — blocks Phase 9; next review: Phase 10) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model}.md` |
 | Safety mandates | `tasks/lessons/POST_MORTEM_2026_03_11.md`, `tasks/lessons/POST_MORTEM_2026_03_06.md` |
 
 ## ⚠️ Lessons carried into Phase 9
-- A State/Strategy hierarchy is defeated by one `instanceof` in a client; the plan must be grepped for it before authorization (WF-004).
+- A State/Strategy hierarchy is defeated by one `instanceof` in a client; `/grill` check 5 now greps for it (WF-004).
 - Never `instanceof` a field inside its own `@CompileStatic` class — the STC narrows it for later methods. Delegate instead.
 - An empty line from `./vinc.sh --test --agent` means the JVM died (`Game`'s crash handler calls `System.exit`). Treat as FAIL; rerun with `-q`.
 - Write pinning tests against the public surface (option closures, rendered lines), never the field being replaced — they then survive the refactor untouched.
