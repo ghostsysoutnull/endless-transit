@@ -481,20 +481,20 @@ strings), `VisualBaselinePinningTest` (2 markers), `NavArrayTest` (4 compass lab
 buffer preview, compass geometry, menu filtering, global controls, inventory overlay, lattice trace,
 lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 
-- [ ] `HudFrameHarness` (test utility): `captureAll(seed)` renders each `BridgeView` method into the
+- [x] `HudFrameHarness` (test utility): `captureAll(seed)` renders each `BridgeView` method into the
   virtual buffer per frame; `mask()` collapses cyan `█` runs
-- [ ] `BridgeViewGoldenFrameTest` (`@TestFactory`, one test per frame) compares against committed
+- [x] `BridgeViewGoldenFrameTest` (`@TestFactory`, one test per frame) compares against committed
   `src/test/groovy/com/endlesstransit/ui/golden/*.txt`; test never writes to `src/`
-- [ ] Golden files generated once by a scratchpad script calling the same `captureAll`, then committed
+- [x] Golden files generated once by a scratchpad script calling the same `captureAll`, then committed
 
 **Files:** `HudFrameHarness.groovy` (new, test), `BridgeViewGoldenFrameTest.groovy` (new, test), `golden/*.txt`
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: c43797f | suite 139/134/5/0 (18 golden frames, 319 lines; negative check: one corrupted glyph fails exactly that frame)
 
 
 ### 7a — Define ViewComponent interface
-- [ ] **7a-i** `ViewComponent` interface: `List<String> render(RenderContext context, int width)` +
+- [x] **7a-i** `ViewComponent` interface: `List<String> render(RenderContext context, int width)` +
   `RenderContext` (final `location`, `player`, `options`, `masterLocus`)
-- [ ] **7a-ii** `Terminal` gains `static String` line builders (`boxTop`, `boxedLine`, `splitBoxedLine`,
+- [x] **7a-ii** `Terminal` gains `static String` line builders (`boxTop`, `boxedLine`, `splitBoxedLine`,
   `boxSeparator`, `boxBottom`) returning exactly the fragments `draw*` print today, CHA sequences
   included; each `draw*` becomes `println(builder(...))`. Signatures unchanged; only caller is `BridgeView`.
 
@@ -507,7 +507,7 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 > flush granularity on a real console (per fragment → per line), invisible in captured output.
 
 **Files:** `ViewComponent.groovy` (new), `RenderContext.groovy` (new) — 7a-i; `Terminal.groovy` — 7a-ii
-**Status:** `[ ] NOT STARTED`
+**Status:** `[x] COMPLETE — 2026-09-11` | commits: 461efc9 (7a-i), 1d3d570 (7a-ii) | suite 139/134/5/0 | 170-frame harness: 0 masked diffs | scan: seed 0 → 9 nodes
 
 ### 7b — Extract HUDHeaderComponent
 - [ ] Traversal, path, ticker, buffer preview
