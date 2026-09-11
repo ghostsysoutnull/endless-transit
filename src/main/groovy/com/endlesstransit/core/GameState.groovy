@@ -3,7 +3,6 @@ package com.endlesstransit.core
 import com.endlesstransit.model.Location
 import com.endlesstransit.model.Universe
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.ui.BridgeView
 import groovy.transform.CompileStatic
 
 /**
@@ -19,7 +18,6 @@ class GameState {
     LocusSeed masterLocus
     
     // Components that manage aspects of the state
-    BridgeView bridgeView = new BridgeView()
     InputHandler inputHandler
     ActionMapper mapper = new ActionMapper()
     NavigationEngine navEngine = new NavigationEngine()

@@ -10,23 +10,25 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class RenderingCoordinator {
     private GameState state
+    final BridgeView bridgeView
 
     RenderingCoordinator(GameState state) {
         this.state = state
+        this.bridgeView = new BridgeView()
     }
 
     void renderCurrentState(Map<String, Closure> options) {
-        state.bridgeView.render(state.currentLocation, state.player, options, state.masterLocus)
+        bridgeView.render(state.currentLocation, state.player, options, state.masterLocus)
     }
 
     void renderLatticeMap() {
-        state.bridgeView.renderLatticeMap(state.currentLocation, state.player)
+        bridgeView.renderLatticeMap(state.currentLocation, state.player)
         state.inputHandler.waitForEnter()
         state.instantRender = true
     }
 
     void renderLatticeTrace() {
-        state.bridgeView.renderLatticeTrace(state.currentLocation)
+        bridgeView.renderLatticeTrace(state.currentLocation)
         state.inputHandler.waitForEnter()
         state.instantRender = true
     }

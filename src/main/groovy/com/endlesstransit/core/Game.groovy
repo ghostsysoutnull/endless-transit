@@ -49,7 +49,7 @@ class Game {
     InputHandler getInputHandler() { state.inputHandler }
     ActionMapper getMapper() { state.mapper }
     NavigationEngine getNavEngine() { state.navEngine }
-    BridgeView getBridgeView() { state.bridgeView }
+    BridgeView getBridgeView() { renderer.bridgeView }
     boolean getInstantRender() { state.instantRender }
     void setInstantRender(boolean v) { state.instantRender = v }
 
