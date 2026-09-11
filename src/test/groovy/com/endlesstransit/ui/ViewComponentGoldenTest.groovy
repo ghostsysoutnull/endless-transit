@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest
  * For each single-component golden frame, the component is rendered on its own (no
  * BridgeView) with the same RenderContext the compositor would build, and must
  *   (a) honour the ViewComponent contract — no element contains an embedded newline — and
- *   (b) match the committed golden line for line (spectrogram bars masked).
+ *   (b) match the committed golden line for line.
  * Composite frames (full renders, adaptive bridge, menu with compass) have no single
  * component and are covered by BridgeViewGoldenFrameTest instead.
  */
@@ -30,8 +30,8 @@ class ViewComponentGoldenTest {
                 }
                 File golden = HudFrameHarness.goldenFile(name)
                 assertTrue(golden.exists(), "Missing golden file ${golden.path}")
-                List<String> expected = HudFrameHarness.mask(HudFrameHarness.readGolden(golden))
-                List<String> got = HudFrameHarness.mask(lines)
+                List<String> expected = HudFrameHarness.readGolden(golden)
+                List<String> got = lines
                 assertEquals(expected, got, "Frame '${name}' rendered standalone differs from its golden")
             }
         }

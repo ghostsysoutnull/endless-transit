@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 
 /**
  * NarrativePaneComponent: the left pane of the adaptive bridge — the location description
- * (glitched below 40% coherence, HK-001) wrapped to the pane width, then a blank line and the
+ * (glitched below 40% coherence, seeded by FrameEntropy) wrapped to the pane width, then a blank line and the
  * location's extra content.
  *
  * Extracted verbatim from the first half of BridgeView.renderAdaptiveBridge() in OOA Phase
@@ -22,7 +22,7 @@ class NarrativePaneComponent implements ViewComponent {
         Player player = ctx.player
         int leftWidth = width
         String fullDesc = currentLocation.getDescription()
-        if (player.coherence < 40) fullDesc = Terminal.glitchText(fullDesc, 0.1)
+        if (player.coherence < 40) fullDesc = Terminal.glitchText(fullDesc, 0.1, FrameEntropy.forFrame(ctx))
         
         List<String> leftLines = []
         fullDesc.split("\n").each { leftLines.addAll(Terminal.wrapText(it, leftWidth)) }

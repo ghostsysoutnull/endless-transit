@@ -9,7 +9,6 @@ import com.endlesstransit.model.Container
 import com.endlesstransit.model.Location
 import com.endlesstransit.model.Room
 import groovy.transform.CompileStatic
-import java.util.regex.Pattern
 
 /**
  * Phase 7-0 golden-frame harness.
@@ -18,10 +17,8 @@ import java.util.regex.Pattern
  * for a fixed seed. Used by BridgeViewGoldenFrameTest (compare) and by the one-off
  * golden generator script (write). Both go through captureAll() so they cannot drift.
  *
- * Frames are chosen to stay on the deterministic path: no abyssal locations, no
- * coherence < 40 on the adaptive bridge (glitchText is random), no coherence < 30 on the
- * lattice map. The only remaining non-determinism — the wall-clock-seeded spectrogram in
- * generateSystemTelemetry — is neutralised by mask().
+ * Since HK-001 every source of HUD noise is seeded by FrameEntropy (location LIP + step
+ * count), so frames are compared raw — including bedrock (abyssal) and low-coherence ones.
  */
 @CompileStatic
 class HudFrameHarness {
@@ -29,22 +26,6 @@ class HudFrameHarness {
     static final long GOLDEN_SEED = 12345L
     static final File GOLDEN_DIR = new File("src/test/groovy/com/endlesstransit/ui/golden")
 
-    /** A run of cyan █ followed directly by reset: only the spectrogram emits this shape. */
-    private static final Pattern SPECTROGRAM_BAR = Pattern.compile("\\[36m█+\\[0m")
-    private static final String MASKED_BAR = "[36m█[0m"
-
-    static String mask(String line) {
-        return SPECTROGRAM_BAR.matcher(line).replaceAll(MASKED_BAR)
-    }
-
-    static List<String> mask(List<String> lines) {
-        return lines.collect { String l -> mask(l) }
-    }
-
-    /**
-     * Captures all golden frames for the given seed, in a fixed order.
-     * Frame order is load-bearing: player state (steps, coherence, visited) accumulates.
-     */
     /** Frames captured through BridgeView (`via`) and, where a single component produces the
      *  whole frame, the same frame rendered by that component alone (`direct`). */
     static class Frames {
@@ -52,6 +33,10 @@ class HudFrameHarness {
         final Map<String, List<String>> direct = new LinkedHashMap<>()
     }
 
+    /**
+     * Captures all golden frames for the given seed, in a fixed order.
+     * Frame order is load-bearing: player state (steps, coherence, visited) accumulates.
+     */
     static Frames captureAll(long seed = GOLDEN_SEED) {
         JournalManager.reset()               // static ticker state leaks between tests
         Terminal.initialize(true, true)
@@ -149,6 +134,26 @@ class HudFrameHarness {
             "Transition to Epsilon": {}, "Detect faint signal: Zeta": {}, "Pulse to Eta": {}, "Synchronize with Theta": {},
             "9. Plain Directive": {}, "t. Trace": {}, "s. Scan": {}, "b. Go back": {}] as Map<String, Closure>
         capture(frames, "29_street_menu_skiplist_renderMenu") { view.renderMenu(street, menuOpts) }
+
+        // 10. Low-coherence glitches, seeded since HK-001: description glitch below 40, map plots below 30.
+        game.player.coherence = 25
+        capture(frames, "30_room_coherence25_renderAdaptive", { view.renderAdaptiveBridge(room, game.player, game.masterLocus) })
+        capture(frames, "31_building_coherence25_latticeMap", { view.renderLatticeMap(building, game.player) }, { mapC.render(ctxOf(game, building), FrameGeometry.FRAME_WIDTH) })
+        game.player.coherence = 100
+
+        // 11. Bedrock — exactly what BreachBedrockCommand does. Abyssal labels, void voices, static.
+        //     Direct captures mirror the RenderContext the BridgeView delegator builds (no player for the trace).
+        Building bldg = (Building) building
+        bldg.isBreached = true
+        Location bedrock = bldg.getFloor(-1)
+        game.enterLocation(bedrock)
+        if (!bedrock.isAbyssal()) throw new IllegalStateException("Floor -1 is not abyssal")
+        Map<String, Closure> bedrockOptions = bedrock.getOptions(game)
+        capture(frames, "32_bedrock_render", { view.render(bedrock, game.player, bedrockOptions, game.masterLocus) })
+        capture(frames, "33_bedrock_renderBridgeHUD", { view.renderBridgeHUD(bedrock, game.player) }, { hud.render(ctxOf(game, bedrock), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "34_bedrock_renderAdaptive", { view.renderAdaptiveBridge(bedrock, game.player, game.masterLocus) })
+        capture(frames, "35_bedrock_latticeTrace", { view.renderLatticeTrace(bedrock) }, { traceC.render(new RenderContext(bedrock, null, null, null), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "36_bedrock_printLatticeDiag_glitch", { view.printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", bedrock, 0.1) }, { traceC.renderTrace(new RenderContext(bedrock, null, null, null), "[FINAL_NEURAL_TRACE_DIAGNOSTIC]", 0.1) })
 
         return frames
     }
