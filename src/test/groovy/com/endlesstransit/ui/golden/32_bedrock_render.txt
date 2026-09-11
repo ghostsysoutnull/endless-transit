@@ -1,0 +1,36 @@
+[90m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
+[90m║ [0m                           LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [2m⌂[0m [90m[▤-1][0m | PULSE_TRAVERSAL: 0 | INTEGRITY: 100%[130G[90m║[0m
+[90m║ [0mVOID_TRACE: ...nse 4 > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way > The Void-Watcher > Layer -0x1[130G[90m║[0m
+[90m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
+[90m║ [0mVOID_IDENT: Layer >> Layer -0x1[90G[90m║ [0mSYSTEM_STATUS: [ABYSS_SYNC][130G[90m║[0m
+[90m║ [0mVOID_HASH: 49.607 / 62.667 | ABYSSAL_DEPTH: 9[90G[90m║ [0mINTEGRITY: [32m██████████[0m[130G[90m║[0m
+[90m║ [0mSTRATA: 48 / 48 | [2m.. [0m[2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m[2m ...[0m[90G[90m║ [0mEVENT_TICKER: [PRESSURE_HIGH][130G[90m║[0m
+[90m║ [0m[90G[90m║ [0m[2mSYN: Keystone Z (0444Hz)[0m[130G[90m║[0m
+[90m║ [0m[90G[90m║ [0m[2mOBJ:   Fragment B (0211Hz)[0m[130G[90m║[0m
+[90m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
+[90m║ [0mTRACE_BUFFER: 3/16 FRAGMENTS | RECENT: 333, 211, 100Hz[130G[90m║[0m
+[90m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
+ [90m»» SCANNING_LOCAL_TOPOLOGY...[0m
+[90m║ [0mLayer -0x1. The air is thick with oily static and the hum of abyssal substrate.[90G[90m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[90m║[0m
+[90m║ [0m[90G[90m║ [0m [2mLATTICE_SY[31m#[0mC: [NOMINAL][0m[130G[90m║[0m
+[90m║ [0m[96m [FLOOR_DIAGNOSTIC_SUITE] [0m[90G[90m║ [0m[130G[90m║[0m
+[90m║ [0m[2mAnalyzing local strata resonance...[0m[90G[90m║ [0m [31m![0m2m[QUANTU[31m░[0m_SPECTROGRAM][31m☠[0m0m[130G[90m║[0m
+[90m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[90m║ [0m [36m█████[[31m?[0mm[130G[90m║[0m
+[90m║ [0mIDENTIFIER     : Layer -0x1[90G[90m║ [0m [36m██████[0m[130G[90m║[0m
+[90m║ [0mTECH_ERA       : [33mANALOG[0m[90G[90m║ [0m [31m![0m36m███[0m[130G[90m║[0m
+[90m║ [0mRESONANCE      : [36mABYSSAL[0m[90G[90m║ [0m [36m███████[0m[130G[90m║[0m
+[90m║ [0mVISITED        : [2mFALSE[0m[2m [PROBE: 0/57][0m[90G[90m║ [0m [31m▓[0m36m█[0m[130G[90m║[0m
+[90m║ [0mSTABILITY      : 83.08%[90G[90m║ [0m[130G[90m║[0m
+[90m║ [0mATMOS_SHIFT    : INDUSTRIAL[90G[90m║ [0m [2m[DECODE_LOGS][[31m▒[0mm[130G[90m║[0m
+[90m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[90m║ [0m > Trac[31m▓[0m: 0.0.0.0.0.[31m#[0m.0.0.0.47[130G[90m║[0m
+[90m║ [0m[2mLocal signal is [32mSTABLE[0m. Corridor access authorized.[0m[90G[90m║ [0m > Stable: 0 items[130G[90m║[0m
+[90m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
+                         [[1mU[0m] [2mGo Up[0m
+                          [37m║[0m
+      [37m[[1mL[0m] [2mLeave Floor[0m [0m[37m═══[╬]═══[0m[37m [·] [2m[0m[0m
+                          [37m║[0m
+                         [[1mD[0m] [2mGo Down[0m
+[2mEXECUTE_DIRECTIVE:[0m
+c. Enter Corridor
+[[33ml[0m] Leave Floor[2m | [0m[[33mu[0m] Go Up[2m | [0m[[33md[0m] Go Down
+[[33mi[0m] Buffer | [[36msync[0m] Save | [[96ms[0m] Scan | [[37mm[0m] Map | [[37mll[0m] Tree | [[32mp[0m] Snap | [[31mquit[0m] Quit

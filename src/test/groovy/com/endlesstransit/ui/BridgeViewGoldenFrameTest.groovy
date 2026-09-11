@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest
  * Phase 7-0 safety net for the BridgeView decomposition.
  *
  * Every frame produced by HudFrameHarness.captureAll() must match its committed golden file
- * line for line (after masking the wall-clock-seeded spectrogram bars). Any change to what
+ * line for line (raw — every source of HUD noise is seeded since HK-001). Any change to what
  * BridgeView emits — a shifted column, a dropped separator, a re-ordered row — fails here
  * with the first differing line.
  *
@@ -29,8 +29,8 @@ class BridgeViewGoldenFrameTest {
                 assertTrue(golden.exists(),
                     "Missing golden file ${golden.path} — generate it with the Phase 7-0 script and commit it.")
 
-                List<String> expected = HudFrameHarness.mask(HudFrameHarness.readGolden(golden))
-                List<String> got = HudFrameHarness.mask(lines)
+                List<String> expected = HudFrameHarness.readGolden(golden)
+                List<String> got = lines
 
                 int limit = Math.min(expected.size(), got.size())
                 for (int i = 0; i < limit; i++) {

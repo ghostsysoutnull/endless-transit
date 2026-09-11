@@ -9,7 +9,7 @@ import groovy.transform.CompileStatic
  * TelemetryComponent: the right pane of the adaptive bridge. Routed by depth — up to 7 a
  * map (local MapBuffer projection, or the universe / filament variants by getMapType()),
  * from 8 the system telemetry block (spectrogram + decode logs). Abyssal locations get
- * random static applied over the result (HK-001).
+ * static applied over the result. Spectrogram and static are seeded by FrameEntropy.
  *
  * The six generators moved verbatim from BridgeView in OOA Phase 7e. Builds lines; never
  * prints. The width argument is the pane width allotted by the compositor (38 at a
@@ -20,15 +20,15 @@ class TelemetryComponent implements ViewComponent {
 
     @Override
     List<String> render(RenderContext ctx, int width) {
-        List<String> lines = generateRightPaneContent(ctx.location, ctx.player, width, ctx.masterLocus)
+        Random r = FrameEntropy.forFrame(ctx)
+        List<String> lines = generateRightPaneContent(ctx.location, ctx.player, width, ctx.masterLocus, r)
         if (ctx.location.isAbyssal()) {
-            lines = applyAbyssalStatic(lines)
+            lines = applyAbyssalStatic(lines, r)
         }
         return lines
     }
 
-    private List<String> applyAbyssalStatic(List<String> lines) {
-        Random r = new Random()
+    private List<String> applyAbyssalStatic(List<String> lines, Random r) {
         String[] staticChars = ["?", "!", "☠", "░", "▒", "▓", "X", "#"]
         return lines.collect { line ->
             if (line.contains("[NEURAL_MAP") || line.contains("[SYSTEM_TELEMETRY")) return line
@@ -45,12 +45,12 @@ class TelemetryComponent implements ViewComponent {
         }
     }
 
-    private List<String> generateRightPaneContent(Location currentLocation, Player player, int width, LocusSeed masterLocus) {
+    private List<String> generateRightPaneContent(Location currentLocation, Player player, int width, LocusSeed masterLocus, Random r) {
         int depth = currentLocation.getDepth()
         if (depth <= 7) {
             return generateMacroMap(currentLocation, width, masterLocus)
         } else {
-            return generateSystemTelemetry(currentLocation, player, width)
+            return generateSystemTelemetry(currentLocation, player, width, r)
         }
     }
 
@@ -125,14 +125,13 @@ class TelemetryComponent implements ViewComponent {
         return lines
     }
 
-    private List<String> generateSystemTelemetry(Location currentLocation, Player player, int width) {
+    private List<String> generateSystemTelemetry(Location currentLocation, Player player, int width, Random r) {
         List<String> lines = []
         lines << " " + Terminal.colorize("[SYSTEM_TELEMETRY]", Terminal.L_CYAN)
         lines << " " + Terminal.dim("LATTICE_SYNC: [NOMINAL]")
         lines << ""
         lines << " " + Terminal.dim("[QUANTUM_SPECTROGRAM]")
         
-        Random r = new Random((System.currentTimeMillis() / 1000) as long)
         for (int i = 0; i < 5; i++) {
             int h = r.nextInt((int)(width / 4)) + 1
             lines << " " + Terminal.colorize("█" * h, Terminal.CYAN)

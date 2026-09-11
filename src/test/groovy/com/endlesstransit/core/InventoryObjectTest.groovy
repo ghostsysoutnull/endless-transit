@@ -25,10 +25,6 @@ class InventoryObjectTest {
         assertEquals("Key", player.inventory[0].name, "InventoryItem correctly stores name.")
         assertEquals(360, player.inventory[0].frequency.value, "InventoryItem correctly stores frequency.")
 
-        // Test listing format
-        Terminal.println "Visual check of inventory format:"
-        player.listInventory()
-
         Terminal.println "Inventory Object Tests Passed!"
     }
 }

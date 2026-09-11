@@ -5,12 +5,14 @@ import groovy.transform.CompileStatic
 
 /**
  * InventoryOverlayComponent: the [QUANTUM_TRACE_BUFFER_SYNC...] list of captured fragments —
- * frequency, signal bar, phase and name per item — with the SYNC_STATUS footer.
+ * number, frequency, signal bar, phase, name and synthesis label per item — with the
+ * SYNC_STATUS footer.
  *
  * Extracted verbatim from BridgeView.renderInventoryOverlay() in OOA Phase 7f. Builds lines;
  * never prints (the delegator flushes after printing, as the original did). Each item line
  * was four print fragments plus a println; here it is one element with the same bytes.
- * No production caller today — see HK-004 in tasks/backlog/HOUSEKEEPING.md.
+ * The single renderer of the trace buffer: the `i` command (QuantumBufferController) shows it
+ * above the drop/merge commands; item numbers are the ones those commands take (HK-004).
  */
 @CompileStatic
 class InventoryOverlayComponent implements ViewComponent {
@@ -27,7 +29,7 @@ class InventoryOverlayComponent implements ViewComponent {
             lines << (Terminal.dim("  (No spectral traces detected in local buffer) ")).toString()
         } else {
             // Show all items now that we can scroll
-            player.inventory.each { InventoryItem item ->
+            player.inventory.eachWithIndex { InventoryItem item, int i ->
                 String freqStr = String.format("%04d", item.frequency.value)
 
                 int signalStrength = (int)((item.frequency.value % 100) / 10 + 1)
@@ -35,7 +37,12 @@ class InventoryOverlayComponent implements ViewComponent {
                 String phase = (item.frequency.value % 2 == 0) ? "STABLE" : "SHIFTING"
                 String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
                 
-                lines << ("  ${Terminal.dim(freqStr)}Hz " + Terminal.colorize(signalBar, signalColor) + " ${Terminal.dim("[" + phase + "]")}" + " >> ${Terminal.bold(item.name)}").toString()
+                String mergeLabel = ""
+                if (item.sessionMergeCount > 0) {
+                    String label = item.sessionMergeCount > 1 ? "SYNTHESIS_x${item.sessionMergeCount}" : "NEW_SYNTHESIS"
+                    mergeLabel = " " + Terminal.colorize("[" + label + "]", Terminal.GREEN)
+                }
+                lines << ("${Terminal.colorize((i + 1).toString(), Terminal.YELLOW)}. " + "${Terminal.dim(freqStr)}Hz " + Terminal.colorize(signalBar, signalColor) + "${Terminal.dim("[" + phase + "]")}" + " >> ${Terminal.bold(item.name)}$mergeLabel").toString()
             }
         }
         lines << (Terminal.dim(" ----------------------------------------------------------------------")).toString()

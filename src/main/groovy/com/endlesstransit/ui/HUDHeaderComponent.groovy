@@ -78,9 +78,10 @@ class HUDHeaderComponent implements ViewComponent {
         
         List<String> tickerLines = []
         recentEvents.each { tickerLines << it }
-        if (abyssal && new Random().nextInt(10) < 3) {
+        Random r = FrameEntropy.forFrame(ctx)
+        if (abyssal && r.nextInt(10) < 3) {
             String[] voices = ["It is cold down here.", "We see you.", "Return to the surface.", "Bedrock approaching."]
-            tickerLines.add(0, "[VOID] " + voices[new Random().nextInt(voices.length)])
+            tickerLines.add(0, "[VOID] " + voices[r.nextInt(voices.length)])
         }
 
         for (int i = 0; i < 2; i++) {

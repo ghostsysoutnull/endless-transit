@@ -16,10 +16,10 @@
 [37m║ [0mThe space is illuminated by [33mthe warm cathode glow of a CRT monitor[0m.[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[2mFURNITURE:[0m keratin spine infused with vhs player[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
-[37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
-[37m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
-[37m║ [0mIDENT: [1mBreathing Nest [0x8C][0m                 ║ ATMO_TRAITS: [OXY: 14%] | [TEMP: 5°C][90G[37m║ [0m [36m█[0m[130G[37m║[0m
-[37m║ [0mTYPE:  [33mProcessing Core[0m                       ║ SIGNAL: [SHIELDED] | RESONANCE: [32m[STA...[0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
+[37m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[37m║ [0m [36m██[0m[130G[37m║[0m
+[37m║ [0mIDENT: [1mBreathing Nest [0x8C][0m                 ║ ATMO_TRAITS: [OXY: 14%] | [TEMP: 5°C][90G[37m║ [0m [36m████████[0m[130G[37m║[0m
+[37m║ [0mTYPE:  [33mProcessing Core[0m                       ║ SIGNAL: [SHIELDED] | RESONANCE: [32m[STA...[0m[90G[37m║ [0m [36m███████[0m[130G[37m║[0m
 [37m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [2m[DECODE_LOGS][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0[130G[37m║[0m

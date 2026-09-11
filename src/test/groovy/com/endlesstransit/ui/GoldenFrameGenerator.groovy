@@ -28,8 +28,7 @@ class GoldenFrameGenerator {
 
         int totalLines = 0
         frames.each { String name, List<String> lines ->
-            // Store masked: the wall-clock spectrogram would otherwise churn on every regeneration.
-            HudFrameHarness.writeGolden(HudFrameHarness.goldenFile(name), HudFrameHarness.mask(lines))
+            HudFrameHarness.writeGolden(HudFrameHarness.goldenFile(name), lines)
             totalLines += lines.size()
             System.err.println("golden: ${name} (${lines.size()} lines)")
         }

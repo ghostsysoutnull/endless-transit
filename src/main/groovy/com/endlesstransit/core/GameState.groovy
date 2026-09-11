@@ -16,9 +16,6 @@ class GameState {
     boolean instantRender = false
     boolean suppressRendering = false
     LocusSeed masterLocus
-    
-    // Components that manage aspects of the state
-    QuantumBufferController inventoryController = new QuantumBufferController()
 
     GameState(LocusSeed locus) {
         this.masterLocus = locus

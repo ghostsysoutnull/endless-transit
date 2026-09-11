@@ -29,6 +29,7 @@ class LatticeTraceComponent implements ViewComponent {
     List<String> renderTrace(RenderContext ctx, String title, double glitchIntensity) {
         Location currentLocation = ctx.location
         List<String> lines = []
+        Random glitchRng = FrameEntropy.forFrame(ctx)
         Map<String, String> icons = [
             "Universe": Terminal.ICON_UNI,
             "CosmicFilament": Terminal.ICON_FIL,
@@ -76,7 +77,7 @@ class LatticeTraceComponent implements ViewComponent {
             String output = "${Terminal.dim(depthStr)} $indent$branch$icon $type : $name$meta"
             
             if (glitchIntensity > 0) {
-                output = Terminal.glitchText(output, glitchIntensity)
+                output = Terminal.glitchText(output, glitchIntensity, glitchRng)
             }
 
             if (loc == currentLocation) {
