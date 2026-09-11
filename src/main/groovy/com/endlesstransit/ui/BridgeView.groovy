@@ -17,6 +17,7 @@ class BridgeView implements ScreenshotProvider {
     private final LatticeMapComponent latticeMap = new LatticeMapComponent()
     private final TelemetryComponent telemetry = new TelemetryComponent()
     private final DirectiveMenuComponent directives = new DirectiveMenuComponent()
+    private final InventoryOverlayComponent inventoryOverlay = new InventoryOverlayComponent()
 
     BridgeView() {
         ScreenshotRegistry.register(this)
@@ -37,31 +38,8 @@ class BridgeView implements ScreenshotProvider {
     }
 
     void renderInventoryOverlay(Player player) {
-        Terminal.println ""
-        String title = Terminal.colorize(" [QUANTUM_TRACE_BUFFER_SYNC...] ", Terminal.L_CYAN)
-        Terminal.println title
-        
-        if (player.inventory.isEmpty()) {
-            Terminal.println Terminal.dim("  (No spectral traces detected in local buffer) ")
-        } else {
-            // Show all items now that we can scroll
-            player.inventory.each { InventoryItem item ->
-                String freqStr = String.format("%04d", item.frequency.value)
-
-                int signalStrength = (int)((item.frequency.value % 100) / 10 + 1)
-                String signalBar = ("█" * signalStrength) + ("░" * (10 - signalStrength))
-                String phase = (item.frequency.value % 2 == 0) ? "STABLE" : "SHIFTING"
-                String signalColor = (phase == "STABLE") ? Terminal.CYAN : Terminal.MAGENTA
-                
-                Terminal.print "  ${Terminal.dim(freqStr)}Hz "
-                Terminal.print Terminal.colorize(signalBar, signalColor)
-                Terminal.print " ${Terminal.dim("[" + phase + "]")}"
-                Terminal.println " >> ${Terminal.bold(item.name)}"
-            }
-        }
-        Terminal.println Terminal.dim(" ----------------------------------------------------------------------")
-        Terminal.println Terminal.dim(" SYNC_STATUS: " + Terminal.colorize("NOMINAL", Terminal.GREEN))
-        Terminal.println ""
+        RenderContext ctx = new RenderContext(null, player, null, null)
+        inventoryOverlay.render(ctx, 130).each { String line -> Terminal.println(line) }
         Terminal.flush()
     }
 
