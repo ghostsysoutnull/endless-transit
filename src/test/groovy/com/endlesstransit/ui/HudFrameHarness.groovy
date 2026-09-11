@@ -116,6 +116,14 @@ class HudFrameHarness {
         game.player.coherence = 25
         capture(frames, "23_room_coherence25_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
 
+        // 7. Compass branches not reachable on the seed-12345 walk (7c-0 pre-check):
+        //    D active with U reciprocal, colon-form label, 12-char truncation, B on the left.
+        //    renderCompass reads only the location's vibe and the option keys, so synthetic options are exact.
+        Map<String, Closure> compassA = ["u. Go Up": {}, "d. Go Down": {}, "f. Go forward": {}, "l. Leave: The Long Building Name": {}] as Map<String, Closure>
+        Map<String, Closure> compassB = ["d. Go Down": {}, "b. Go back": {}] as Map<String, Closure>
+        capture(frames, "24_street_compass_u_d_f_lcolon_renderCompass") { view.renderCompass(street, compassA) }
+        capture(frames, "25_street_compass_d_b_renderCompass")          { view.renderCompass(street, compassB) }
+
         return frames
     }
 

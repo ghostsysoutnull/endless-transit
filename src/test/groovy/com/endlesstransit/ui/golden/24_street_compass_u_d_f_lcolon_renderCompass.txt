@@ -1,0 +1,5 @@
+                         [[1mU[0m] [2mGo Up[0m
+                          [37m║[0m
+  [37m[[1mL[0m] [2mThe Long Bui...[0m [0m[37m═══[╬]═══[0m[37m [[1mF[0m] [2mGo forward[0m[0m
+                          [37m║[0m
+                         [[1mD[0m] [2mGo Down[0m
