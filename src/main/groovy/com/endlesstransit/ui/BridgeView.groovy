@@ -13,6 +13,7 @@ class BridgeView implements ScreenshotProvider {
     private List<String> lastHudFrame = []
     private final HUDHeaderComponent hudHeader = new HUDHeaderComponent()
     private final CompassComponent compass = new CompassComponent()
+    private final LatticeTraceComponent latticeTrace = new LatticeTraceComponent()
 
     BridgeView() {
         ScreenshotRegistry.register(this)
@@ -290,67 +291,13 @@ class BridgeView implements ScreenshotProvider {
     }
 
     void renderLatticeTrace(Location currentLocation) {
-        printLatticeTrace("[NEURAL_LATTICE_TRACE_INITIATED]", currentLocation, 0.0)
-        Terminal.println ""
+        RenderContext ctx = new RenderContext(currentLocation, null, null, null)
+        latticeTrace.render(ctx, 130).each { String line -> Terminal.println(line) }
     }
 
     void printLatticeTrace(String title, Location currentLocation, double glitchIntensity = 0.0) {
-        Map<String, String> icons = [
-            "Universe": Terminal.ICON_UNI,
-            "CosmicFilament": Terminal.ICON_FIL,
-            "GalacticSector": Terminal.ICON_SEC,
-            "NullSector": Terminal.ICON_SEC,
-            "SolarSystem": Terminal.ICON_SYS,
-            "Planet": Terminal.ICON_PLT,
-            "Country": Terminal.ICON_CTR,
-            "City": Terminal.ICON_CTY,
-            "Street": Terminal.ICON_STR,
-            "Building": Terminal.ICON_BLD,
-            "Floor": Terminal.ICON_FLR,
-            "Corridor": Terminal.ICON_COR,
-            "Apartment": Terminal.ICON_APT,
-            "Room": Terminal.ICON_ROM
-        ]
-
-        List<Location> hierarchy = []
-        Location p = currentLocation
-        while (p != null) {
-            hierarchy << p
-            p = p.parent
-        }
-        hierarchy = hierarchy.reverse()
-
-        String header = Terminal.colorize(" $title ", title.contains("DIAGNOSTIC") ? Terminal.YELLOW : Terminal.L_CYAN)
-        Terminal.println "\n" + header
-        Terminal.println ""
-
-        hierarchy.eachWithIndex { Location loc, int i ->
-            String icon = icons[loc.getClass().simpleName] ?: "?"
-            String name = loc.getName()
-            String type = loc.getTypeLabel()
-            String meta = loc.getLatticeMeta()
-
-            String indent = ""
-            String branch = ""
-            if (i > 4) {
-                indent = "             " + ("    " * (i - 5))
-                branch = "└─ "
-            }
-
-            String depthStr = String.format("[%02d] ", i)
-            String output = "${Terminal.dim(depthStr)} $indent$branch$icon $type : $name$meta"
-            
-            if (glitchIntensity > 0) {
-                output = Terminal.glitchText(output, glitchIntensity)
-            }
-
-            if (loc == currentLocation) {
-                String accent = loc.isAbyssal() ? Terminal.GREY : Terminal.L_CYAN
-                Terminal.println Terminal.bold(" >> " + Terminal.colorize(Terminal.stripAnsi(output), accent))
-            } else {
-                Terminal.println "    " + output
-            }
-        }
+        RenderContext ctx = new RenderContext(currentLocation, null, null, null)
+        latticeTrace.renderTrace(ctx, title, glitchIntensity).each { String line -> Terminal.println(line) }
     }
 
     void renderLatticeMap(Location currentLocation, Player player) {
