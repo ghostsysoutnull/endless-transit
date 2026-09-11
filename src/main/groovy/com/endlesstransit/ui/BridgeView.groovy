@@ -18,6 +18,7 @@ class BridgeView implements ScreenshotProvider {
     private final TelemetryComponent telemetry = new TelemetryComponent()
     private final DirectiveMenuComponent directives = new DirectiveMenuComponent()
     private final InventoryOverlayComponent inventoryOverlay = new InventoryOverlayComponent()
+    private final NarrativePaneComponent narrative = new NarrativePaneComponent()
 
     BridgeView() {
         ScreenshotRegistry.register(this)
@@ -79,16 +80,7 @@ class BridgeView implements ScreenshotProvider {
         int rightWidth = (totalWidth - splitColumn) - 2
 
         // 1. Get Left Content
-        String fullDesc = currentLocation.getDescription()
-        if (player.coherence < 40) fullDesc = Terminal.glitchText(fullDesc, 0.1)
-        
-        List<String> leftLines = []
-        fullDesc.split("\n").each { leftLines.addAll(Terminal.wrapText(it, leftWidth)) }
-
-        List<String> extra = currentLocation.getExtraContent(player, leftWidth)
-        if (!extra.isEmpty()) {            leftLines << "" 
-            leftLines.addAll(extra)
-        }
+        List<String> leftLines = narrative.render(new RenderContext(currentLocation, player, null, masterLocus), leftWidth)
 
         // 2. Get Right Content (TelemetryComponent applies abyssal static itself)
         List<String> rightLines = telemetry.render(new RenderContext(currentLocation, player, null, masterLocus), rightWidth)
