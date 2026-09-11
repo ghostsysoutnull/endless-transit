@@ -16,6 +16,12 @@ class Floor extends Container {
     String timeline
     FloorState currentState = ElevatorState.INSTANCE
 
+    /** Persisted mode id → state; a new mode is one more entry here. */
+    private static final Map<String, FloorState> STATES_BY_ID = [
+        (ElevatorState.ID): (FloorState) ElevatorState.INSTANCE,
+        (CorridorState.ID): (FloorState) CorridorState.INSTANCE
+    ].asImmutable()
+
     @Override
     Map<String, Object> getMutationState() {
         return [
@@ -26,7 +32,7 @@ class Floor extends Container {
     @Override
     void applyMutationState(Map<String, Object> state) {
         if (state.containsKey("state")) {
-            this.currentState = CorridorState.ID.equals(state.state) ? CorridorState.INSTANCE : ElevatorState.INSTANCE
+            this.currentState = STATES_BY_ID.getOrDefault((String) state.state, ElevatorState.INSTANCE)
         }
     }
 
@@ -43,6 +49,11 @@ class Floor extends Container {
     /** Spatial pivot, corridor → elevator. The only way back to {@link ElevatorState}. */
     void returnToElevator() {
         this.currentState = ElevatorState.INSTANCE
+    }
+
+    /** What a lattice scan on this floor inspects; decided by the current mode, not by the caller. */
+    Location getScanTarget() {
+        return currentState.getScanTarget(this)
     }
 
     @Override

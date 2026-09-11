@@ -38,4 +38,9 @@ class CorridorState implements FloorState {
     List<String> getExtraContent(Floor floor, Player player, int width) {
         return floor.getCorridor().getExtraContent(player, width)
     }
+
+    @Override
+    Location getScanTarget(Floor floor) {
+        return floor.getCorridor()
+    }
 }

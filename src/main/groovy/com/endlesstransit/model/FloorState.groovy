@@ -22,4 +22,7 @@ interface FloorState {
 
     /** Right-pane content for {@code floor} in this mode. Caller has already populated children. */
     List<String> getExtraContent(Floor floor, Player player, int width)
+
+    /** What a lattice scan issued on {@code floor} inspects in this mode: the Building's strata or the Corridor. */
+    Location getScanTarget(Floor floor)
 }

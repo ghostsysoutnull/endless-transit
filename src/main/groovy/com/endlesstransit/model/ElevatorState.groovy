@@ -87,4 +87,9 @@ class ElevatorState implements FloorState {
 
         return lines
     }
+
+    @Override
+    Location getScanTarget(Floor floor) {
+        return floor.parent
+    }
 }
