@@ -10,6 +10,35 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+_(none — cleared 2026-09-11 before Phase 8)_
+
+---
+
+## 🟢 CLOSED
+
+### HK-001 — BridgeView draws randomness outside the seed chain
+**Resolution:** `FrameEntropy.forFrame(ctx)` (location LIP × 31 + player step count) seeds the spectrogram,
+abyssal static, void voices, map glitch plots and the description/trace glitches; `Terminal.glitchText`
+gained a seeded overload. Goldens are compared raw (mask removed) and gained 7 frames incl. five at
+bedrock. `./vinc.sh --goldens` twice → identical.
+**Closed:** 2026-09-11 | commits f3a3d9e (HK-001a), 4cd13c0 (HK-001b)
+
+### HK-002 — `GameState.inventoryController` is a service in a data container
+**Resolution:** `QuantumBufferController` is built once in `Game` (`game.inventoryController`); `GameState`
+holds data only. **Closed:** 2026-09-11 | commit fb8f092
+
+### HK-003 — `Game.processInput()` duplicates `NavigationCommand.execute()`
+**Resolution:** `TurnProcessor.dispatch(game, choice)` is the single "global command, else navigation" path;
+`handleInput` and `Game.processInput` both call it. **Closed:** 2026-09-11 | commit dc5b1aa
+
+### HK-004 — inventory overlay had no production caller
+**Resolution:** one renderer. `InventoryOverlayComponent` gained item numbers and synthesis labels (the
+format `Player.listInventory()` printed); `QuantumBufferController` shows it above the drop/merge
+commands; `Player.listInventory()` deleted; `QuantumBufferScreenTest` pins the screen.
+**Closed:** 2026-09-11 | commit d2bb2f6
+
+<details><summary>Original entries</summary>
+
 ### HK-001 — BridgeView draws randomness outside the seed chain
 **Found:** Phase 7 pre-grill, 2026-09-11
 **Sites** (line numbers as of commit `1d3d570`; they move as components are extracted — search by method):
@@ -38,8 +67,5 @@ reached only by the golden harness (frames 07, 19). Product decision: wire the o
 command (it is the richer render — signal bars and phase) or retire it and its two goldens. Not a
 Phase 7 change (zero behavior change).
 
----
+</details>
 
-## 🟢 CLOSED
-
-_(none yet)_
