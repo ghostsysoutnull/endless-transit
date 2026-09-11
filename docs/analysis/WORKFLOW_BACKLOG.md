@@ -12,7 +12,22 @@ improvement session is planned before the next phase begins.
 
 ## 🔴 OPEN
 
-*No open items.*
+### WF-002 — Plan review lacks an adversarial pass on coverage and lifecycle claims
+**Priority:** Medium
+**Source:** Phase 6b plan draft, 2026-09-11 (mid-session observation, not from a retro)
+**Problem:** The 6b draft asserted that an existing test pinned memento input-history restoration.
+It did not. The claim was made from the file name, not from reading the assertions, and the plan's
+"Risk assessment" section was built on it. User review caught it before any code changed. The
+existing Refactor Guard rules (blast-radius grep, 5-file cap, compile-per-file) all held; the gap
+was one level deeper — nothing required a coverage *claim* to be evidenced.
+**Immediate fix (applied 2026-09-11):** Coverage Claim Protocol added to `.claude/CODEX.md` §4;
+lesson recorded in `tasks/lessons/infrastructure.md`.
+**Proposed follow-up:** A `/grill` command in `.claude/commands/` that runs an adversarial checklist
+against a draft plan before it is presented: (1) coverage claims with quoted assertions,
+(2) behavioral edges each with a named guard, (3) lifecycle for ownership moves — who constructs,
+holds, replaces, (4) per-commit coherence, (5) deviations from the plan document, (6) reversion unit.
+**Decision:** Guideline applied now. Skill deferred to the Phase 7 cadence review so it is designed
+on evidence from Phases 6–7, not a single incident.
 
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.

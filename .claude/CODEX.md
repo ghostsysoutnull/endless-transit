@@ -70,6 +70,10 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
     * **AI-TDD**: Create reproduction tests for all bug reports.
     * **Compilation Check**: Every change MUST pass `./vinc.sh --compile` (or `--test`).
     * **Full Verification**: Run `./vinc.sh --test` before marking any major task complete.
+* **Coverage Claim Protocol**: Any plan statement of the form "test X guards behavior Y" MUST cite
+  the assertion lines that prove it, read from the test file in the current session. A file name or
+  a remembered purpose is not evidence. If no assertion exists, the plan marks the behavior
+  **UNGUARDED** and adds a pre-check test as step 0, committed before any production change.
 
 ---
 
