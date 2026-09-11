@@ -3,6 +3,7 @@ package com.endlesstransit.ui
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.JournalManager
+import com.endlesstransit.model.Apartment
 import com.endlesstransit.model.Container
 import com.endlesstransit.model.Location
 import com.endlesstransit.model.Room
@@ -72,36 +73,48 @@ class HudFrameHarness {
         capture(frames, "11_universe_renderAdaptive")  { view.renderAdaptiveBridge(universe, game.player, game.masterLocus) }
         capture(frames, "12_filament_renderAdaptive")  { view.renderAdaptiveBridge(filament, game.player, game.masterLocus) }
 
-        // 3. Descend children[0] to Building, then to Room — telemetry pane (masked)
+        // 3. Descend children[0]: Building, Floor, Corridor, Room — full render at each depth.
+        //    Depth >= 8 routes the right pane to the telemetry spectrogram (masked).
+        //    Entering the Apartment auto-enters its first Room, so the Apartment is rendered afterwards.
         Location walker = street
-        boolean buildingCaptured = false
+        int idx = 13
         while (!(walker instanceof Room)) {
             Container c = (Container) walker
             c.ensureChildrenPopulated()
             walker = c.children[0]
             game.enterLocation(walker)
             walker = game.currentLocation
-            if (!buildingCaptured) {
-                Location building = walker
-                capture(frames, "13_building_render") { view.render(building, game.player, building.getOptions(game), game.masterLocus) }
-                buildingCaptured = true
-            }
+            Location here = walker
+            String name = String.format("%02d_%s_render", idx++, here.getClass().simpleName.toLowerCase())
+            capture(frames, name) { view.render(here, game.player, here.getOptions(game), game.masterLocus) }
         }
         Location room = walker
-        capture(frames, "14_room_render") { view.render(room, game.player, room.getOptions(game), game.masterLocus) }
+        Location apartment = room.parent
+        if (!(apartment instanceof Apartment)) {
+            throw new IllegalStateException("Expected Room parent to be an Apartment, got ${apartment?.getClass()?.simpleName}")
+        }
+        capture(frames, "17_apartment_render") { view.render(apartment, game.player, apartment.getOptions(game), game.masterLocus) }
 
         // 4. Non-empty trace buffer — RECENT: preview and populated overlay
         game.player.inventory.add(new InventoryItem("Fragment A", 100))
         game.player.inventory.add(new InventoryItem("Fragment B", 211))
         game.player.inventory.add(new InventoryItem("Fragment C", 333))
-        capture(frames, "15_room_items_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
-        capture(frames, "16_room_items_inventoryOverlay") { view.renderInventoryOverlay(game.player) }
+        capture(frames, "18_room_items_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+        capture(frames, "19_room_items_inventoryOverlay") { view.renderInventoryOverlay(game.player) }
 
-        // 5. Coherence bar colour thresholds — header only (adaptive bridge glitches below 40)
+        // 5. Event ticker prefix mapping — two most recent events, newest first
+        //    (location = null keeps ritual side effects out of the frame)
+        JournalManager.logDiscovery("Golden Locus > Alpha Chamber")
+        JournalManager.logCapture(new InventoryItem("Fragment B", 211))
+        capture(frames, "20_room_ticker_loc_obj_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+        JournalManager.logSynthesis(new InventoryItem("Keystone Z", 444))
+        capture(frames, "21_room_ticker_obj_syn_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+
+        // 6. Coherence bar colour thresholds — header only (adaptive bridge glitches below 40)
         game.player.coherence = 65
-        capture(frames, "17_room_coherence65_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+        capture(frames, "22_room_coherence65_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
         game.player.coherence = 25
-        capture(frames, "18_room_coherence25_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+        capture(frames, "23_room_coherence25_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
 
         return frames
     }

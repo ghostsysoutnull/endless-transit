@@ -54,6 +54,11 @@ case "$1" in
         vinculum_compile
         groovy -cp build/vinc:src/main/groovy:src/main/resources:lib/* src/main/groovy/com/endlesstransit/core/ReplayService.groovy "${@:2}"
         ;;
+    "--goldens")
+        # Regenerate BridgeView golden frames (Phase 7-0). Same classpath as --test (needs src/test/groovy).
+        vinculum_compile
+        groovy -cp build/vinc:src/main/groovy:src/test/groovy:src/main/resources:lib/* src/test/groovy/com/endlesstransit/ui/GoldenFrameGenerator.groovy
+        ;;
     "--help")
         echo -e "${GREEN}Vinculum Clinical Interface (VINC)${RESET}"
         echo -e "Usage: ./vinc.sh [MODE] [ARGS]\n"
@@ -64,6 +69,7 @@ case "$1" in
         echo -e "  --compile     Perform a strict static type-check only."
         echo -e "  --scan        Run the SeedScanner explorer."
         echo -e "  --replay      Execute a deterministic replay."
+        echo -e "  --goldens     Regenerate BridgeView golden frames (only after an INTENDED visual change)."
         echo -e "  [DEFAULT]     Launch game instantly (with auto-compile)."
         ;;
     *)
