@@ -68,6 +68,14 @@ class TurnProcessor {
             break
         }
 
+        return dispatch(game, choice)
+    }
+
+    /**
+     * Routes one normalized choice: a global command if registered, otherwise navigation.
+     * The single dispatch path for the live loop (handleInput) and for Game.processInput.
+     */
+    boolean dispatch(Game game, String choice) {
         // 1. Check Global Commands
         GameCommand cmd = globalCommands[choice]
         if (cmd) {

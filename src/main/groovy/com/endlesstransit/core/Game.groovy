@@ -67,21 +67,7 @@ class Game {
      * Useful for automated testing of commands.
      */
     void processInput(String choice) {
-        // Handle global commands first (mimicking TurnProcessor.handleInput)
-        switch (choice) {
-            case "s": new ScanCommand().execute(this); return
-            case "sync": SyncManager.sync(this); return
-            case "map": renderer.renderLatticeMap(); return
-            case "lattice":
-            case "ll": renderer.renderLatticeTrace(); return
-        }
-
-        Closure action = turnProcessor.mapper.resolve(choice, turnProcessor.inputHandler)
-        if (action) {
-            state.player.stepCount++
-            navOrchestrator.navEngine.recordChoice(choice)
-            action.call()
-        }
+        turnProcessor.dispatch(this, choice)
     }
 
     void start() {
