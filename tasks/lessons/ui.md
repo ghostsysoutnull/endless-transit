@@ -10,6 +10,10 @@
 - **Output Virtualization (RenderSink)**: Decouple `System.out` from the UI by using a `RenderSink` abstraction. This allows the game to "render" to memory buffers (`MemorySink`) for screenshots or automated visual assertions without a physical terminal.
 - **Visual Assertion DSL**: Instead of brittle string matching, use a `VisualAssertionEngine` that operates on the `ScreenBuffer` to verify structural invariants (e.g., "is the HUD boxed correctly?").
 
+- **A gate that never draws the screen is not a UI gate**: `./vinc.sh --scan` runs `SeedScanner` and never constructs `BridgeView`; two phases reported "scan identical" as their visual gate for `ui` changes and the check was vacuous. Before trusting any gate, confirm what it exercises. The UI gate is `BridgeViewGoldenFrameTest` (goldens under `src/test/groovy/com/endlesstransit/ui/golden/`, regenerated only via `./vinc.sh --goldens` after an intended visual change). Phase 7, 2026-09-11.
+- **Random output cannot be pinned — run the capture twice first**: before choosing golden frames, capture every screen twice and diff. Anything that differs is masked with a documented regex (the wall-clock spectrogram) or excluded (abyssal voices/static, low-coherence glitches), and the cause is logged for a seed fix (HK-001). Never "pin" a frame you have not seen reproduce.
+- **Synthetic-input frames pin branches the seed walk never reaches**: a component that reads only its inputs (option keys, a location's vibe) can be rendered with hand-built inputs. Four such goldens closed every UNGUARDED verdict in Phase 7 (compass D-active, menu skip-list forms, deep lattice trace, map error at a leaf).
+
 ## Mistakes/Corrections
 - **Terminal Buffering**: Always call `System.out.flush()` after printing partial lines (like in `typewrite`) to ensure real-time feedback in all terminal emulators.
 - **Visual Width (Surrogates)**: Standard `String.length()` fails for emojis and symbolic icons. Use `codePointAt` iteration to correctly identify 2-cell wide characters for HUD alignment.

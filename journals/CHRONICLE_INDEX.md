@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x1111857** | 2026-09-11 | **[PHASE_7_BRIDGEVIEW_DECOMPOSITION]** | `BridgeView` (579 → 120 lines) decomposed into 8 `ViewComponent`s behind a compositor; `Terminal` string builders; `FrameGeometry`. Visual gate rebuilt: `--scan` never drew the HUD (WF-003) → 29 golden frames + 17 standalone, `./vinc.sh --goldens`. Six pre-check goldens from `/grill`. WF-002 closed. HK-001..004 logged. 31 commits, merged. Suite: 167/162/5/0. |
 | **0x6c9e3a1** | 2026-09-11 | **[PHASE_6_GAMESTATE_DECOMPOSITION]** | `GameState` trimmed to a data container: `BridgeView` → `RenderingCoordinator` (6a), `ActionMapper` → `TurnProcessor` + `InputHandler` built in `Game` and injected (6b), `NavigationEngine` → `NavigationOrchestrator` (6c). Two pinning tests added after `/grill` found UNGUARDED paths. Coverage Claim Protocol added to CODEX; `/grill` command created (WF-002). 13 commits. Suite: 121/116/5/0. Scan identical. |
 | **0xb3c7a12** | 2026-03-18 | **[PHASE_5_CLEANUP]** | Removed `getEffectiveFmt()` migration scaffold: 113 call sites across 14 model classes renamed to `fmt` directly; getter deleted from both base classes; `model/CLAUDE.md` + `GEMINI.md` corrected. Suite: 118/113/5/0. |
 | **0xe5f2c1b** | 2026-03-18 | **[PHASE_5_DEPENDENCY_INJECTION]** | `ModelOutput.fmt` Service Locator eliminated. `OutputFormatter` injected via `Game` → `ProceduralFactory` → all 14 model classes. 7 commits (A–G). `ModelOutput.groovy` deleted. 9 test files cleaned. Suite: 118/113/5/0. Visual gate: seed 0 → 9-node match. |
