@@ -14,7 +14,7 @@
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
-**Suite baseline:** 118 discovered / 113 pass / 5 skipped / 0 failed
+**Suite baseline:** 119 discovered / 114 pass / 5 skipped / 0 failed
 
 - [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
 - [x] Phase 0.5 — Test Coverage Gaps (safety-net tests 0.5a–0.5h, all complete)
@@ -24,7 +24,7 @@
 - [x] Phase 4 — Structural Extraction (AbstractLeafLocation, SynthesisService)
 - [x] Phase 5 — Dependency Injection (ModelOutput.fmt eliminated; fmt injected via ProceduralFactory)
 - [x] Phase 5 Cleanup — effectiveFmt getter removed; domain docs corrected
-- [ ] Phase 6 — GameState Decomposition — **IN PROGRESS** (6a BridgeView → RenderingCoordinator done; 6b next)
+- [ ] Phase 6 — GameState Decomposition — **IN PROGRESS** (6a, 6b done; 6c NavigationEngine → NavigationOrchestrator next)
 - [ ] Phase 7 — BridgeView Decomposition
 - [ ] Phase 8 — Floor State Pattern
 - [ ] Phase 9 — ProceduralFactory Split

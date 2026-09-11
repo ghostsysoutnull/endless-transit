@@ -26,8 +26,14 @@ lesson recorded in `tasks/lessons/infrastructure.md`.
 against a draft plan before it is presented: (1) coverage claims with quoted assertions,
 (2) behavioral edges each with a named guard, (3) lifecycle for ownership moves — who constructs,
 holds, replaces, (4) per-commit coherence, (5) deviations from the plan document, (6) reversion unit.
-**Decision:** Guideline applied now. Skill deferred to the Phase 7 cadence review so it is designed
-on evidence from Phases 6–7, not a single incident.
+**Decision (revised 2026-09-11):** Guideline applied. `/grill` built the same day as
+`.claude/commands/grill.md` (commit e56811b) so it could be exercised on a real plan immediately.
+**First run — Phase 6b plan:** verdict AMEND. Confirmed the UNGUARDED restore path (already amended
+with 6b-0) and found one mis-claim: `CorridorPersistenceTest` was listed as a focus test but goes
+through `SyncManager`, which never touches the handler. Dropped from the focus list. Blast-radius
+cross-check found no file missing from the plan.
+**Status:** IN PROGRESS — evaluate at the Phase 7 cadence review: did the six checks catch what
+went wrong in Phases 6c and 7, and did any check never fire (candidate for removal).
 
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.

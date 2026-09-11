@@ -31,7 +31,7 @@
 | 3c | Gematria Return Type Completion | `[x] COMPLETE` | Low |
 | 4 | Structural Extraction | `[x] COMPLETE` | Low |
 | 5 | Dependency Injection | `[x] COMPLETE` | Medium |
-| 6 | GameState Decomposition | `[ ] IN PROGRESS (6a done)` | Medium |
+| 6 | GameState Decomposition | `[ ] IN PROGRESS (6a, 6b done)` | Medium |
 | 7 | BridgeView Decomposition | `[ ] NOT STARTED` | Medium |
 | 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
@@ -412,12 +412,25 @@ accessed from a global static field.
 **Status:** `[x] COMPLETE — 2026-09-11` | commits: 7ad4aaa (6a-i), 7ece60a (6a-ii) | scan: identical to baseline
 
 ### 6b — Move ActionMapper + InputHandler to TurnProcessor
-- [ ] `TurnProcessor` owns `ActionMapper` and `InputHandler`
-- [ ] Remove both fields from `GameState`
-- [ ] Update all `state.mapper.*` and `state.inputHandler.*` call sites
+- [x] `TurnProcessor` owns `ActionMapper` and `InputHandler`
+- [x] Remove both fields from `GameState`
+- [x] Update all `state.mapper.*` and `state.inputHandler.*` call sites
 
-**Files:** `TurnProcessor.groovy`, `GameState.groovy`, affected callers
-**Status:** `[ ] NOT STARTED`
+> **Execution note (2026-09-11):** Ran as four commits. **6b-0** added `MementoInputHistoryTest`
+> after `/grill` found no test asserted history survives `Game.restore()` (Coverage Claim Protocol).
+> **6b-i** routed `NavigationCommand`, `QuitCommand`, `QuitNowCommand`, `CaptureCommand` and two
+> tests through the `Game` facade. **6b-ii** injected `InputHandler` into `RenderingCoordinator`
+> and `PersistenceService`; `restore()` now restores history in place instead of replacing the
+> instance. **6b-iii** moved `ActionMapper` into `TurnProcessor` and trimmed `GameState`
+> (constructor no longer takes an `InputSource`).
+>
+> **Declared deviation:** `InputHandler` is constructed in `Game` and injected into three
+> services, not owned solely by `TurnProcessor` — two of those services are built before it.
+> `TurnProcessor` holds the reference the facade exposes.
+
+**Files:** `TurnProcessor.groovy`, `Game.groovy`, `GameState.groovy`, `RenderingCoordinator.groovy`, `PersistenceService.groovy`, `NavigationCommand.groovy`, `QuitCommand.groovy`, `QuitNowCommand.groovy`, `CaptureCommand.groovy`
+**Test blast radius:** `MementoInputHistoryTest` (new), `NavigationSyncTest`, `ActionMapperDepthTest`, `AutoEntryTest`, `CoherenceDrainTest`
+**Status:** `[x] COMPLETE — 2026-09-11` | commits: 01da048 (6b-0), 73a5714 (6b-i), 2fa64d6 (6b-ii), d338d62 (6b-iii) | suite 119/114/5/0 | scan: identical to baseline
 
 ### 6c — Move NavigationEngine to NavigationOrchestrator
 - [ ] `NavigationOrchestrator` owns `NavigationEngine`
