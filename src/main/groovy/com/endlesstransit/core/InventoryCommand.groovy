@@ -12,7 +12,7 @@ class InventoryCommand implements GameCommand {
 
     @Override
     boolean execute(Game game, String choice = null) {
-        game.state.inventoryController.open(game)
+        game.inventoryController.open(game)
         return true
     }
 }

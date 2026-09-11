@@ -22,6 +22,7 @@ class Game {
     PersistenceService persistence
     TurnProcessor turnProcessor
     RenderingCoordinator renderer
+    final QuantumBufferController inventoryController = new QuantumBufferController()
 
     Game(long seedValue = System.currentTimeMillis(), InputSource inputSource = null) {
         this(new LocusSeed(seedValue), inputSource)
