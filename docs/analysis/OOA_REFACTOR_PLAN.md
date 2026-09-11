@@ -513,10 +513,12 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Status:** `[x] COMPLETE — 2026-09-11` | commits: 461efc9 (7a-i), 1d3d570 (7a-ii) | suite 139/134/5/0 | 170-frame harness: 0 masked diffs | scan: seed 0 → 9 nodes
 
 ### 7b — Extract HUDHeaderComponent
-- [ ] Traversal, path, ticker, buffer preview
+- [x] Traversal, path, ticker, buffer preview (+ `getLatticeSparkline`, `renderCoherenceBar` moved with it)
+- [x] `renderBridgeHUD` retained as a delegator until 7g (callers: `render()`, `NewGameTest`, `InitialScreenTest`)
 
 **Files:** `HUDHeaderComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 4f34342 | suite 144/139/5/0 | goldens green | 170-frame harness: 0 masked diffs | BridgeView 579 → 457 lines
 
 ### 7c — Extract CompassComponent
 **Files:** `CompassComponent.groovy` (new), `BridgeView.groovy`
