@@ -10,8 +10,7 @@ import groovy.transform.CompileStatic
  * location is a leaf. Below 30% coherence it plots random glitch marks (HK-001).
  *
  * Extracted verbatim from BridgeView.renderLatticeMap() in OOA Phase 7d-ii. Builds lines;
- * never prints. The width argument is unused (fixed 30×15). Three elements start with "\n"
- * exactly as the original printed them (the sinks split on newline) — to be normalised at 7g.
+ * never prints. The width argument is unused (fixed 30×15).
  */
 @CompileStatic
 class LatticeMapComponent implements ViewComponent {
@@ -22,7 +21,10 @@ class LatticeMapComponent implements ViewComponent {
         Player player = ctx.player
         List<String> lines = []
         if (!(currentLocation instanceof Container)) {
-            lines << (Terminal.colorize("\n>>> SCAN_ERROR: Current location does not support spatial projection.", Terminal.RED)).toString()
+            // Byte-preserving split of colorize("\n>>> ...", RED): the colour code preceded the
+            // newline in the original output, and golden 27 pins that byte order.
+            lines << Terminal.RED
+            lines << (">>> SCAN_ERROR: Current location does not support spatial projection." + Terminal.RESET)
             return lines
         }
         
@@ -46,7 +48,8 @@ class LatticeMapComponent implements ViewComponent {
             }
         }
         
-        lines << ("\n" + Terminal.colorize(" [NEURAL_LATTICE_PROJECTION] ", Terminal.L_CYAN)).toString()
+        lines << ""
+        lines << Terminal.colorize(" [NEURAL_LATTICE_PROJECTION] ", Terminal.L_CYAN)
         lines << ("").toString()
         
         VibeCapsule vibe = currentLocation.getVibe()
@@ -58,7 +61,8 @@ class LatticeMapComponent implements ViewComponent {
         }
         lines << Terminal.boxBottom(mapWidth + 2, accent)
         
-        lines << ("\n" + Terminal.dim("SCAN_ORIGIN: ") + Terminal.bold(currentLocation.getName())).toString()
+        lines << ""
+        lines << (Terminal.dim("SCAN_ORIGIN: ") + Terminal.bold(currentLocation.getName()))
         lines << (Terminal.dim("LEGEND: ") + Terminal.dim("Visited: Bright | Unvisited: Dim | ") + Terminal.colorize("▲ You", Terminal.CYAN)).toString()
         lines << ("").toString()
         return lines

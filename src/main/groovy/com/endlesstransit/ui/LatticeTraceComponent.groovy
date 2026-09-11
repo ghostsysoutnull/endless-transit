@@ -10,8 +10,7 @@ import groovy.transform.CompileStatic
  * DIAGNOSTIC title and, on abyssal exit, a glitch intensity).
  *
  * Extracted verbatim from BridgeView.printLatticeTrace() / renderLatticeTrace() in OOA
- * Phase 7d-i. Builds lines; never prints. Two elements start with "\n" exactly as the
- * original printed them (the sinks split on newline) — to be normalised at 7g.
+ * Phase 7d-i. Builds lines; never prints.
  */
 @CompileStatic
 class LatticeTraceComponent implements ViewComponent {
@@ -56,7 +55,8 @@ class LatticeTraceComponent implements ViewComponent {
         hierarchy = hierarchy.reverse()
 
         String header = Terminal.colorize(" $title ", title.contains("DIAGNOSTIC") ? Terminal.YELLOW : Terminal.L_CYAN)
-        lines << ("\n" + header).toString()
+        lines << ""
+        lines << header
         lines << ("").toString()
 
         hierarchy.eachWithIndex { Location loc, int i ->
