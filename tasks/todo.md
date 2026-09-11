@@ -28,6 +28,7 @@
 - [x] Phase 7 — BridgeView Decomposition (8 `ViewComponent`s behind a 120-line compositor; golden-frame visual gate replaces the scan; WF-002 closed, WF-003 closed; HK-001..004 logged)
 - [x] Housekeeping (post-Phase-7): HK-001..004 cleared — deterministic HUD noise, controller out of `GameState`, one dispatch path, one inventory renderer
 - [x] Phase 8 — Floor State Pattern (`FloorState` + `ElevatorState`/`CorridorState` singletons; `Floor.enterCorridor()`/`returnToElevator()`; polymorphic scan target; no `instanceof` on states)
+- [ ] **WF-005 (High) — blocks Phase 9**: test runner must survive `System.exit` from `Game`'s crash handler (`docs/analysis/WORKFLOW_BACKLOG.md`)
 - [ ] Phase 9 — ProceduralFactory Split — **NEXT** (new session; see `tasks/RECOVERY_PROMPT.md`)
 - [ ] Phase 10 — Domain Event System
 
