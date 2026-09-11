@@ -53,14 +53,14 @@ class VisitedProgressTest {
 
         // 2. Verify Elevator Mode on Entry
         game.enterLocation(floor)
-        assertTrue(floor.currentState instanceof ElevatorState, "Floor should start in Elevator mode")
+        assertSame(ElevatorState.INSTANCE, floor.currentState, "Floor should start in Elevator mode")
         def options = floor.getOptions(game)
         assertTrue(options.containsKey("c. Enter Corridor"), "Elevator should have corridor access")
         assertTrue(options.containsKey("u. Go Up") || options.containsKey("d. Go Down"), "Elevator should have vertical navigation")
 
         // 3. Switch to Corridor Mode
         options["c. Enter Corridor"].call()
-        assertTrue(floor.currentState instanceof CorridorState, "Floor should be in Corridor mode")
+        assertSame(CorridorState.INSTANCE, floor.currentState, "Floor should be in Corridor mode")
         def corridorOptions = floor.getOptions(game)
         assertTrue(corridorOptions.containsKey("b. Back to Elevator"), "Corridor should have back option")
         assertFalse(corridorOptions.containsKey("c. Enter Corridor"), "Corridor should not have enter corridor option")
@@ -90,7 +90,7 @@ class VisitedProgressTest {
         floor.enterCorridor()
         Floor nextFloor = building.getFloor(floor.number + 1)
         game.enterLocation(nextFloor)
-        assertTrue(nextFloor.currentState instanceof ElevatorState, "Next floor should start in Elevator mode regardless of previous floor state")
+        assertSame(ElevatorState.INSTANCE, nextFloor.currentState, "Next floor should start in Elevator mode regardless of previous floor state")
 
         Terminal.println "SUCCESS: Visited Progress Tracking and Spatial Pivot verified."
     }

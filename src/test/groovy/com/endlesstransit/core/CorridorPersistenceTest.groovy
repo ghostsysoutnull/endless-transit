@@ -43,13 +43,13 @@ class CorridorPersistenceTest {
         // A freshly entered floor is in ElevatorState — assert baseline
         assertTrue(game.currentLocation instanceof Floor, "Should be at a Floor")
         Floor currentFloor = (Floor) game.currentLocation
-        assertTrue(currentFloor.currentState instanceof ElevatorState, "Floor must start in ElevatorState after enterLocation")
+        assertSame(ElevatorState.INSTANCE, currentFloor.currentState, "Floor must start in ElevatorState after enterLocation")
 
         String floorLIP = currentFloor.getLIP()
 
         // Simulate player choosing "c. Enter Corridor"
         currentFloor.enterCorridor()
-        assertTrue(currentFloor.currentState instanceof CorridorState, "enterCorridor() must switch to CorridorState")
+        assertSame(CorridorState.INSTANCE, currentFloor.currentState, "enterCorridor() must switch to CorridorState")
 
         // Sync (save state to session.trace)
         SyncManager.sync(game)
@@ -67,7 +67,7 @@ class CorridorPersistenceTest {
 
         // THE CRITICAL ASSERTION: corridor state must survive the full save/restore cycle
         Floor restoredFloor = (Floor) freshGame.currentLocation
-        assertTrue(restoredFloor.currentState instanceof CorridorState,
+        assertSame(CorridorState.INSTANCE, restoredFloor.currentState,
             "Floor must be in CorridorState after restore — " +
             "mutation state must be applied AFTER any reset logic during location entry")
     }
