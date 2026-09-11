@@ -1,0 +1,2 @@
+[31m
+>>> SCAN_ERROR: Current location does not support spatial projection.[0m

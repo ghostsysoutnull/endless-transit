@@ -4,6 +4,7 @@ import com.endlesstransit.core.Game
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.model.Apartment
+import com.endlesstransit.model.Building
 import com.endlesstransit.model.Container
 import com.endlesstransit.model.Location
 import com.endlesstransit.model.Room
@@ -123,6 +124,15 @@ class HudFrameHarness {
         Map<String, Closure> compassB = ["d. Go Down": {}, "b. Go back": {}] as Map<String, Closure>
         capture(frames, "24_street_compass_u_d_f_lcolon_renderCompass") { view.renderCompass(street, compassA) }
         capture(frames, "25_street_compass_d_b_renderCompass")          { view.renderCompass(street, compassB) }
+
+        // 8. Lattice screens at depth (7d-0 pre-check). Coherence restored to 100 first: the map
+        //    adds random glitch plots below 30 (HK-001), and frame 23 left it at 25.
+        game.player.coherence = 100
+        Location building = room
+        while (!(building instanceof Building)) building = building.parent
+        capture(frames, "26_room_latticeTrace")          { view.renderLatticeTrace(room) }
+        capture(frames, "27_room_latticeMap_scanError")  { view.renderLatticeMap(room, game.player) }
+        capture(frames, "28_building_latticeMap")        { view.renderLatticeMap(building, game.player) }
 
         return frames
     }
