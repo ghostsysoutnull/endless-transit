@@ -521,8 +521,12 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Status:** `[x] COMPLETE — 2026-09-11` | commit: 4f34342 | suite 144/139/5/0 | goldens green | 170-frame harness: 0 masked diffs | BridgeView 579 → 457 lines
 
 ### 7c — Extract CompassComponent
+- [x] **7c-0** two synthetic-option compass goldens (D active + reciprocal X, colon-form label, 12-char truncation, B on the left) — commit 2432ac7
+- [x] `renderCompass` + `getCompassLabel` moved verbatim; two dead locals (`last`, `history` → referenced `lastHudFrame`) dropped; `renderCompass` delegator kept until 7g
+
 **Files:** `CompassComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** `NavArrayTest` (4 lines → `new CompassComponent().getCompassLabel`)
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 9c01da7 | suite 146/141/5/0 | goldens green (25) | 170-frame harness: 0 masked diffs | BridgeView 457 → 398 lines
 
 ### 7d — Extract LatticeComponents
 - [ ] `LatticeTraceComponent` and `LatticeMapComponent`
