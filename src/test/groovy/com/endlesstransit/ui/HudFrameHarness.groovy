@@ -134,6 +134,13 @@ class HudFrameHarness {
         capture(frames, "27_room_latticeMap_scanError")  { view.renderLatticeMap(room, game.player) }
         capture(frames, "28_building_latticeMap")        { view.renderLatticeMap(building, game.player) }
 
+        // 9. Menu skip-list forms only produced above Street (7e-ii-0 pre-check), a no-dot key,
+        //    a plain directive, and a three-entry nav line. renderMenu reads only the option keys.
+        Map<String, Closure> menuOpts = ["Go to Alpha": {}, "Travel to Beta": {}, "Visit Gamma": {}, "Land on Delta": {},
+            "Transition to Epsilon": {}, "Detect faint signal: Zeta": {}, "Pulse to Eta": {}, "Synchronize with Theta": {},
+            "9. Plain Directive": {}, "t. Trace": {}, "s. Scan": {}, "b. Go back": {}] as Map<String, Closure>
+        capture(frames, "29_street_menu_skiplist_renderMenu") { view.renderMenu(street, menuOpts) }
+
         return frames
     }
 
