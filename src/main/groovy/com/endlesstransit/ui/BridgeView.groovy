@@ -6,6 +6,15 @@ import com.endlesstransit.core.*
 import com.endlesstransit.procgen.*
 import groovy.transform.CompileStatic
 
+/**
+ * BridgeView: the frame compositor. Owns one instance of each ViewComponent, asks each for
+ * its lines, and prints them through the Terminal in frame order. Its only layout logic is
+ * the adaptive-bridge split, which zips the narrative and telemetry panes into boxed rows.
+ *
+ * The render* / print* methods are the public API used by RenderingCoordinator,
+ * SessionRecap and the tests; each delegates to exactly one component.
+ * Decomposed in OOA Phase 7 (579 → ~120 lines); geometry lives in FrameGeometry.
+ */
 @CompileStatic
 class BridgeView implements ScreenshotProvider {
     private Location lastLocation
@@ -38,10 +47,9 @@ class BridgeView implements ScreenshotProvider {
         )
     }
 
-    void renderInventoryOverlay(Player player) {
-        RenderContext ctx = new RenderContext(null, player, null, null)
-        inventoryOverlay.render(ctx, 130).each { String line -> Terminal.println(line) }
-        Terminal.flush()
+    /** Prints a component's lines, one println per element, in order. */
+    private static void emit(List<String> lines) {
+        lines.each { String line -> Terminal.println(line) }
     }
 
     void render(Location currentLocation, Player player, Map<String, Closure> options, LocusSeed masterLocus) {
@@ -58,34 +66,15 @@ class BridgeView implements ScreenshotProvider {
         }
     }
 
-    void renderMenu(Location currentLocation, Map<String, Closure> options) {
-        renderCompass(currentLocation, options)
-        RenderContext ctx = new RenderContext(currentLocation, null, options, null)
-        directives.renderDirectives(ctx).each { String line -> Terminal.println(line) }
-    }
-
-    void renderGlobalControls() {
-        directives.renderGlobalControls().each { String line -> Terminal.println(line) }
-    }
-
     void renderBridgeHUD(Location currentLocation, Player player) {
-        RenderContext ctx = new RenderContext(currentLocation, player, null, null)
-        hudHeader.render(ctx, 130).each { String line -> Terminal.println(line) }
+        emit(hudHeader.render(new RenderContext(currentLocation, player, null, null), FrameGeometry.FRAME_WIDTH))
     }
 
     void renderAdaptiveBridge(Location currentLocation, Player player, LocusSeed masterLocus) {
-        int splitColumn = 90
-        int totalWidth = 130
-        int leftWidth = splitColumn - 2
-        int rightWidth = (totalWidth - splitColumn) - 2
+        RenderContext ctx = new RenderContext(currentLocation, player, null, masterLocus)
+        List<String> leftLines = narrative.render(ctx, FrameGeometry.LEFT_PANE_WIDTH)
+        List<String> rightLines = telemetry.render(ctx, FrameGeometry.RIGHT_PANE_WIDTH)
 
-        // 1. Get Left Content
-        List<String> leftLines = narrative.render(new RenderContext(currentLocation, player, null, masterLocus), leftWidth)
-
-        // 2. Get Right Content (TelemetryComponent applies abyssal static itself)
-        List<String> rightLines = telemetry.render(new RenderContext(currentLocation, player, null, masterLocus), rightWidth)
-
-        // 4. Render
         int maxLines = Math.max(leftLines.size(), rightLines.size())
         VibeCapsule vibe = currentLocation.getVibe()
         String accent = currentLocation.isAbyssal() ? Terminal.GREY : (vibe?.atmosphericColor ?: Terminal.WHITE)
@@ -93,29 +82,39 @@ class BridgeView implements ScreenshotProvider {
         for (int i = 0; i < maxLines; i++) {
             String left = i < leftLines.size() ? leftLines[i] : ""
             String right = i < rightLines.size() ? rightLines[i] : ""
-            Terminal.drawSplitBoxedLine(left, right, splitColumn, totalWidth, accent)
+            Terminal.drawSplitBoxedLine(left, right, FrameGeometry.SPLIT_POINT, FrameGeometry.FRAME_WIDTH, accent)
         }
-        
-        Terminal.drawBoxBottom(totalWidth, accent)
+
+        Terminal.drawBoxBottom(FrameGeometry.FRAME_WIDTH, accent)
     }
 
     void renderCompass(Location currentLocation, Map options) {
-        RenderContext ctx = new RenderContext(currentLocation, null, (Map<String, Closure>) options, null)
-        compass.render(ctx, 130).each { String line -> Terminal.println(line) }
+        emit(compass.render(new RenderContext(currentLocation, null, (Map<String, Closure>) options, null), FrameGeometry.FRAME_WIDTH))
+    }
+
+    void renderMenu(Location currentLocation, Map<String, Closure> options) {
+        renderCompass(currentLocation, options)
+        emit(directives.renderDirectives(new RenderContext(currentLocation, null, options, null)))
+    }
+
+    void renderGlobalControls() {
+        emit(directives.renderGlobalControls())
+    }
+
+    void renderInventoryOverlay(Player player) {
+        emit(inventoryOverlay.render(new RenderContext(null, player, null, null), FrameGeometry.FRAME_WIDTH))
+        Terminal.flush()
     }
 
     void renderLatticeTrace(Location currentLocation) {
-        RenderContext ctx = new RenderContext(currentLocation, null, null, null)
-        latticeTrace.render(ctx, 130).each { String line -> Terminal.println(line) }
+        emit(latticeTrace.render(new RenderContext(currentLocation, null, null, null), FrameGeometry.FRAME_WIDTH))
     }
 
     void printLatticeTrace(String title, Location currentLocation, double glitchIntensity = 0.0) {
-        RenderContext ctx = new RenderContext(currentLocation, null, null, null)
-        latticeTrace.renderTrace(ctx, title, glitchIntensity).each { String line -> Terminal.println(line) }
+        emit(latticeTrace.renderTrace(new RenderContext(currentLocation, null, null, null), title, glitchIntensity))
     }
 
     void renderLatticeMap(Location currentLocation, Player player) {
-        RenderContext ctx = new RenderContext(currentLocation, player, null, null)
-        latticeMap.render(ctx, 130).each { String line -> Terminal.println(line) }
+        emit(latticeMap.render(new RenderContext(currentLocation, player, null, null), FrameGeometry.FRAME_WIDTH))
     }
 }

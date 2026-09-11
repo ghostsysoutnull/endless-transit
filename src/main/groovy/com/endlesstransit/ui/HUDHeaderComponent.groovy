@@ -15,9 +15,6 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class HUDHeaderComponent implements ViewComponent {
 
-    /** Column where the header's right pane starts (1-indexed CHA). */
-    static final int SPLIT_POINT = 90
-
     @Override
     List<String> render(RenderContext ctx, int width) {
         Location currentLocation = ctx.location
@@ -54,13 +51,13 @@ class HUDHeaderComponent implements ViewComponent {
         String identLabel = abyssal ? HUDLabels.VOID_IDENT : HUDLabels.LATTICE_IDENT
         String ident = "$identLabel: ${currentLocation.getTypeName()} >> ${currentLocation.getName()}"
         String sysDiag = currentLocation.getStatusSummary()
-        lines << Terminal.splitBoxedLine(ident, sysDiag, SPLIT_POINT, width, accent)
+        lines << Terminal.splitBoxedLine(ident, sysDiag, FrameGeometry.SPLIT_POINT, width, accent)
         
         String hashLabel = abyssal ? HUDLabels.VOID_HASH : HUDLabels.LOCUS_HASH
         String depthLabel = abyssal ? HUDLabels.ABYSSAL_DEPTH : HUDLabels.HOP_DENSITY
         String coords = "$hashLabel: ${currentLocation.getCoordinates()} | $depthLabel: ${currentLocation.getDepth()}"
         String cohBar = cohLabel + ": " + renderCoherenceBar(player.coherence)
-        lines << Terminal.splitBoxedLine(coords, cohBar, SPLIT_POINT, width, accent)
+        lines << Terminal.splitBoxedLine(coords, cohBar, FrameGeometry.SPLIT_POINT, width, accent)
         
         // Structural Alignment & Radar
         int idx = currentLocation.getIndexInParent()
@@ -77,7 +74,7 @@ class HUDHeaderComponent implements ViewComponent {
         
         List<String> recentEvents = JournalManager.getRecentEvents(3).reverse()
         String tickerTitle = abyssal ? "EVENT_TICKER: [PRESSURE_HIGH]" : "EVENT_TICKER: [SYNC_STABLE]"
-        lines << Terminal.splitBoxedLine(leftBottom, tickerTitle, SPLIT_POINT, width, accent)
+        lines << Terminal.splitBoxedLine(leftBottom, tickerTitle, FrameGeometry.SPLIT_POINT, width, accent)
         
         List<String> tickerLines = []
         recentEvents.each { tickerLines << it }
@@ -89,7 +86,7 @@ class HUDHeaderComponent implements ViewComponent {
         for (int i = 0; i < 2; i++) {
             String event = i < tickerLines.size() ? tickerLines[i] : ""
             event = event.replace("[DISCOVERY] ", "LOC: ").replace("[CAPTURE] ", "OBJ: ").replace("[SYNTHESIS] ", "SYN: ")
-            lines << Terminal.splitBoxedLine("", Terminal.dim(event), SPLIT_POINT, width, accent)
+            lines << Terminal.splitBoxedLine("", Terminal.dim(event), FrameGeometry.SPLIT_POINT, width, accent)
         }
 
         lines << Terminal.boxSeparator(width, accent, "light")
