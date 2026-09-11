@@ -7,38 +7,51 @@ The `Floor` class acts as a **Spatial Pivot Point**. It separates vertical trave
 
 ## ⚙️ Public API Behavior
 
-### 📍 Spatial Pivot Mode
-- **`isCorridorActive`**: The core state flag.
-    - `false` (Default): Player is at the Elevator. Options include `u/d` (vertical move) and `c` (enter corridor).
-    - `true`: Player is walking the hallway. Options include `b` (back to elevator) and room exploration via the child `Corridor`.
+### 📍 Spatial Pivot Mode (State pattern — OOA Phase 8)
+- **`currentState`**: a `FloorState`, one of two stateless singletons.
+    - `ElevatorState.INSTANCE` (Default): Player is at the Elevator. Options include `u/d` (vertical move) and `c` (enter corridor).
+    - `CorridorState.INSTANCE`: Player is walking the hallway. Options include `b` (back to elevator) and room exploration via the child `Corridor`.
+- **`enterCorridor()` / `returnToElevator()`**: the only transitions. Nothing outside `Floor` assigns the state.
+- **`getScanTarget()`**: what a lattice scan (`s`) inspects — the parent `Building` in elevator mode, the child `Corridor` in corridor mode. Clients ask the Floor; they never inspect the state class.
 
 ### 📍 Navigation
-- **`getElevatorOptions`**: 
-    - `u/d`: Requests `Building.getFloor(number +/- 1)` to move between floors.
-    - `j`: Breach the Bedrock action (available only at specific conditions).
-    - `c`: Transitions to `isCorridorActive = true`.
-- **`getCorridorOptions`**:
-    - `b`: Transitions back to `isCorridorActive = false`.
-    - Delegates other options to the `Corridor` child.
+- **`getOptions(game)`**: populates children, then delegates to `currentState.getOptions(this, game)`.
+    - `ElevatorState`:
+        - `u/d`: Requests `Building.getFloor(number +/- 1)` to move between floors.
+        - `j`: Breach the Bedrock action (available only at specific conditions).
+        - `c`: calls `floor.enterCorridor()`.
+    - `CorridorState`:
+        - `b`: calls `floor.returnToElevator()`.
+        - Delegates other options to the `Corridor` child (including its `l. Leave Corridor`).
 
 ### 📍 UI Rendering
-- **`getExtraContent`**:
-    - If Elevator: Returns the **Floor Diagnostic Suite** (Metadata like Tech Era, Resonance, Stability).
-    - If Corridor: Delegates to the child `Corridor.getExtraContent()`.
+- **`getExtraContent(player, width)`**: populates children, then delegates to `currentState.getExtraContent(this, player, width)`.
+    - `ElevatorState`: Returns the **Floor Diagnostic Suite** (Metadata like Tech Era, Resonance, Stability).
+    - `CorridorState`: Delegates to the child `Corridor.getExtraContent()`.
+
+### 📍 Persistence
+- **`getMutationState()`**: `["state": currentState.id]` — `"ELEVATOR"` or `"CORRIDOR"`.
+- **`applyMutationState(map)`**: looks the id up in an id → state registry; unknown ids fall back to `ElevatorState`. No reader for the pre-Phase-8 boolean key.
 
 ---
 
 ## 🔄 State Transitions
-- **`isCorridorActive`**: Toggled via `c` and `b` actions. This change triggers an `instantRender` for the UI to reflect the mode switch without a turn cycle penalty.
+- **`enterCorridor` / `returnToElevator`**: Triggered by the `c` and `b` actions. Each triggers an `instantRender` for the UI to reflect the mode switch without a turn cycle penalty.
 - **Abyssal Transformation**: If `number < 0`, the floor's culture is forced to `abyssal`, and symbols/labels change (e.g., `FLOOR` -> `LAYER`).
 
 ---
 
 ## 🔗 Dependencies
+- **`FloorState` / `ElevatorState` / `CorridorState`**: the mode objects (same package).
 - **`Building`**: Parent container; provides vertical navigation.
 - **`Corridor`**: Child container; provides horizontal unit exploration.
 - **`ProceduralFactory`**: Used to populate the floor with a corridor and apartments.
-- **`ModelOutput`**: For TUI diagnostic formatting.
+- **`OutputFormatter fmt`** (injected): For TUI diagnostic formatting.
+
+---
+
+## 🧪 Contract
+- `FloorStateContractTest` pins menu order, content delegation, bedrock behavior, mutation round trip and scan routing, driving every transition through the option closures.
 
 ---
 *Neural Map Stabilized.*

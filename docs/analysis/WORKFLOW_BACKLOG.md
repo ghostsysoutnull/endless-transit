@@ -46,6 +46,23 @@ State/Strategy/Visitor hierarchy: grep the planned client code for `instanceof <
 any hit is an AMEND. Lesson already promoted to `tasks/lessons/model.md`.
 **Status:** OPEN — assess at the Phase 10 cadence review.
 
+### WF-005 — Game loop crash handler terminates the test JVM
+**Priority:** High
+**Source:** Phase 8a, 2026-09-11 (mid-session observation; confirmed at the close-out audit)
+**Problem:** `Game.groovy` wraps the main loop in `catch (Throwable t)` → `Logger.reportCriticalFailure` →
+`System.exit(1)`. Four tests drive that loop (`HeadlessRunner`, `HeadlessSimulationTest`, `VisualBaselinePinningTest`,
+`RegressionHarnessTest`). When production code throws inside one of them, the crash handler kills the whole test
+JVM: `TestRunner` never reaches its summary, `--agent` prints **nothing** (exit 1, empty stdout and stderr), `-q`
+shows the failures reported so far and then stops without the summary block. The gate does not lie — it goes
+silent, which an unattended agent can misread. Reproduced in the scratchpad by shadowing `Floor` with the 8a
+`instanceof` variant: exit=1, zero bytes of output.
+**Proposed (test infrastructure only, no production change):** `TestRunner` installs a shutdown hook before
+`launcher.execute`; if the summary has not been reached when the hook fires it prints
+`STATUS=ABORTED REASON=jvm_exit_during_suite` (+ the last started test from the progress listener). Optional
+follow-up: `Game`'s handler rethrows when a `vinculum.test` system property is set, so the failing test is
+attributed instead of the run dying.
+**Status:** OPEN — High: per CODEX, blocks Phase 9 until resolved (a runner-only fix; one short session).
+
 ---
 
 ## 🟢 CLOSED

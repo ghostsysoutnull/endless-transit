@@ -12,7 +12,7 @@ The `NavigationOrchestrator` is responsible for world initialization, location t
 
 ### 📍 Transitions (`enterLocation`)
 1.  **Safety Check**: If the target location is null, the transition is aborted.
-2.  **Spatial Pivot Reset**: If entering a `Floor`, its `isCorridorActive` state is **forced to `false`** (resets to the elevator view).
+2.  **No Spatial Pivot Reset**: entering a `Floor` does **not** touch its `FloorState` (the forced elevator reset was removed in OOA Phase 1a — it overwrote restored corridor state; a fresh `Floor` starts in `ElevatorState` by construction).
 3.  **Apartment Auto-Entry**: If entering an `Apartment`, the orchestrator immediately transitions to the **first room** (`rms[0]`) to streamline exploration.
 4.  **Footprint Tracking**: Updates the player's `currentLocation` and marks the location (and its macro-scale ancestors) as **Visited**.
 5.  **Path Stability**: Recursively updates the player's visited paths for HUD/Journal tracking.

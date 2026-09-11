@@ -19,7 +19,7 @@
 
 - **The plan blessed an `instanceof` on the concrete state.** `ScanCommand` checking `currentState instanceof CorridorState` passed `/grill` and was committed in 8b. The user caught it. The fix (8b-ii) was the right one — `FloorState.getScanTarget(Floor)` — and it also exposed that the deserialization ternary was the same smell in a different coat. Two commits, ~40 minutes. Logged as WF-004.
 - **Groovy STC narrowed a field from an `instanceof` in another method.** The temporary delegator's `currentState instanceof CorridorState` made `getOptions()` emit a checkcast and throw in elevator mode. Seven tests failed with a ClassCastException at a line that contains no cast. Identity compare fixed it; the probe confirmed property reads from other classes do not leak. Lesson in `model.md`.
-- **`--agent` mode prints nothing on failure.** The first sign of the STC problem was an empty line where `STATUS=` should have been; `-q` was needed to see anything. Minor, but it cost one extra run.
+- **The suite went silent, not red.** The first sign of the STC problem was an empty line where `STATUS=` should have been. The close-out audit reproduced it: `Game`'s loop catch-all calls `System.exit(1)`, so the ClassCastException inside a loop-driven test killed the test JVM before the summary. Not a runner reporting bug — a production crash handler running inside the runner. Logged as WF-005 (High).
 
 ---
 
@@ -33,6 +33,7 @@
 
 ## Concerns for Upcoming Phases
 
+- **WF-005 (High) blocks Phase 9:** the test runner must survive a `System.exit` from production code (shutdown hook → `STATUS=ABORTED`). One short runner-only session before any Phase 9 code.
 - **WF-004:** `/grill` needs a pattern-integrity question when a plan introduces a State/Strategy hierarchy. Not a seventh check — fold into check 2 or 5. Assess at the Phase 10 cadence review.
 - **Phase 9 (ProceduralFactory split) is fourteen commits by design.** Determinism is the gate (`DeterministicUniverseTest` + `ProcgenSnapshotTest`); goldens will move only if generation order changes, which would be a finding.
 - **`@CompileStatic` and `instanceof` on fields:** Phase 9 factories will hold typed fields; the lesson applies. Delegate, do not inspect.

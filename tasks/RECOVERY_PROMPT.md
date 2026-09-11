@@ -4,7 +4,7 @@
 ## 🎯 Current Status
 - **Test Suite:** 184 discovered / 179 pass / 5 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
 - **Branch:** `master` @ `a70f86e` + close-out docs commit (Phase 8 merged `--no-ff`). **Not yet pushed** to `origin/master`.
-- **Active Work:** None. Housekeeping backlog (`tasks/backlog/HOUSEKEEPING.md`) is empty. Workflow backlog has one open item (WF-004, Medium, review at Phase 10).
+- **Active Work:** None. Housekeeping backlog (`tasks/backlog/HOUSEKEEPING.md`) is empty. Workflow backlog: **WF-005 (High) — blocks Phase 9** (game-loop crash handler kills the test JVM; runner-only fix), WF-004 (Medium, review at Phase 10).
 - **Next Phase:** Phase 9 — ProceduralFactory Split, **in a new session**.
 
 ## ✅ State of the substrate in one paragraph
@@ -28,16 +28,19 @@ Initialize session for the Endless Transit substrate.
 2. **Orient:** `git branch --show-current` = `master`; `git log --oneline -5`. Read `tasks/todo.md` and the Phase 9
    section of `docs/analysis/OOA_REFACTOR_PLAN.md`.
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=184 SUCCEEDED=179 FAILED=0 SKIPPED=5`.
-4. **Phase 9:** branch `refactor/phase-9-factory-split`. Plan on the Phase 9 section; `/grill` before asking for
+4. **WF-005 first (High, blocks Phase 9):** workflow session on `docs/analysis/WORKFLOW_BACKLOG.md` WF-005 — `TestRunner`
+   shutdown hook printing `STATUS=ABORTED` when `System.exit` fires mid-suite. Plan → `/grill` → authorize → execute →
+   close the item. No production change required.
+5. **Phase 9:** branch `refactor/phase-9-factory-split`. Plan on the Phase 9 section; `/grill` before asking for
    authorization; present plans ELI5 in chat, detail in the plan file. Phase 9 is one factory per commit (9a–9o);
    read `ProceduralFactory.groovy` in full before proposing the `LocationFactory<T>` contract. Coverage to quote
    (open the files): `DeterministicUniverseTest`, `ProcgenSnapshotTest` (pinned values for seed 0x1234),
    `ProcgenVariabilityTest`, `SystemNameTest`, `LandmarkDiscoveryTest`. Any golden diff is a finding.
    **Pattern integrity (WF-004):** if a plan introduces a factory/strategy hierarchy, grep the planned client code
    for `instanceof <NewType>` — any hit is an AMEND before authorization.
-5. **Gates for a procgen phase:** `DeterministicUniverseTest` after every factory; full suite (goldens included) +
+6. **Gates for a procgen phase:** `DeterministicUniverseTest` after every factory; full suite (goldens included) +
    `./vinc.sh --scan` seed 0 → 9 nodes after 9o. Max 3 production files per commit (Phase 9 cap).
-6. **Phase end:** merge `--no-ff`, `/chronicle`, `docs/retro/RETRO_PHASE_9.md`, promote lessons, refresh this file.
+7. **Phase end:** merge `--no-ff`, `/chronicle`, `docs/retro/RETRO_PHASE_9.md`, promote lessons, refresh this file.
 
 **END_PROMPT**
 
@@ -52,7 +55,7 @@ Initialize session for the Endless Transit substrate.
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
 | Floor state contract | `src/test/groovy/com/endlesstransit/model/FloorStateContractTest.groovy` |
 | Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (empty) |
-| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (WF-004 open; next review: Phase 10) |
+| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (WF-005 High — blocks Phase 9; WF-004 open; next review: Phase 10) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model}.md` |
 | Safety mandates | `tasks/lessons/POST_MORTEM_2026_03_11.md`, `tasks/lessons/POST_MORTEM_2026_03_06.md` |
@@ -60,5 +63,6 @@ Initialize session for the Endless Transit substrate.
 ## ⚠️ Lessons carried into Phase 9
 - A State/Strategy hierarchy is defeated by one `instanceof` in a client; the plan must be grepped for it before authorization (WF-004).
 - Never `instanceof` a field inside its own `@CompileStatic` class — the STC narrows it for later methods. Delegate instead.
+- An empty line from `./vinc.sh --test --agent` means the JVM died (`Game`'s crash handler calls `System.exit`). Treat as FAIL; rerun with `-q`.
 - Write pinning tests against the public surface (option closures, rendered lines), never the field being replaced — they then survive the refactor untouched.
 - Move bodies by script with a reverse-substitution check; confirm what a gate exercises before trusting it; read assertions before claiming coverage.

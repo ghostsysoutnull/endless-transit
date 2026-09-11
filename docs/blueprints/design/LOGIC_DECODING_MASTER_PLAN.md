@@ -33,7 +33,7 @@ Systematically extract, document, and verify all game rules, procedural logic, a
 - For each class in `src/main/groovy`, document:
     - **Responsibilities:** What does this class "know" and "do"?
     - **Public API Behavior:** Expected inputs/outputs for all critical methods.
-    - **State Transitions:** How internal state changes (e.g., `isCorridorActive`).
+    - **State Transitions:** How internal state changes (e.g., `Floor.currentState` via `enterCorridor()` / `returnToElevator()`).
     - **Dependencies:** Which other classes it relies on for its logic.
 
 ### 📦 Output

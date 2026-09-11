@@ -28,7 +28,7 @@ The loop resides in `Game.groovy` and follows a strict four-stage cycle for ever
 Navigation is not a simple "jump" between objects; it is a state transition managed by the `NavigationOrchestrator`.
 
 - **Entry Trigger**: `enterLocation(target)`
-    - **Reset**: If the target is a `Floor`, its `isCorridorActive` flag is reset to `false` (Elevator view).
+    - **No mode reset**: entering a `Floor` leaves its `FloorState` untouched (the unconditional elevator reset was removed in OOA Phase 1a so saved corridor state survives restore; a fresh `Floor` starts in `ElevatorState`).
     - **Auto-Entry**: If the target is an `Apartment`, it immediately cascades to the first `Room`.
     - **Trace**: The location and its ancestors are marked as `Visited` in the player's footprint.
 - **Back-Propagation**: `exitLocation()`
