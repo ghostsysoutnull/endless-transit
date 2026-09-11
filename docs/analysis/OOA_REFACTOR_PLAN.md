@@ -529,10 +529,19 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Status:** `[x] COMPLETE — 2026-09-11` | commit: 9c01da7 | suite 146/141/5/0 | goldens green (25) | 170-frame harness: 0 masked diffs | BridgeView 457 → 398 lines
 
 ### 7d — Extract LatticeComponents
-- [ ] `LatticeTraceComponent` and `LatticeMapComponent`
+- [x] **7d-0** three goldens: 13-level trace at Room, map SCAN_ERROR at Room (leaf), Building map with visited Floor — commit 5da008a
+- [x] **7d-i** `LatticeTraceComponent` (`render` = `ll` screen; `renderTrace(ctx, title, glitch)` for SessionRecap) — commit e6f8cab
+- [x] **7d-ii** `LatticeMapComponent` — commit 2393299
+- [x] Delegators kept: `renderLatticeTrace`, `printLatticeTrace` (SessionRecap ×3), `renderLatticeMap`
 
-**Files:** 2 new components, `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+> **Declared (2026-09-11):** five list elements across the two components keep a leading `\n` exactly as
+> the original `println` strings had it; the sinks split on newline so output is identical. Normalise at 7g
+> (split into separate elements) under the golden test. `renderTrace(ctx, title, glitch)` sits beside the
+> `ViewComponent` contract because title and glitch are not frame inputs.
+
+**Files:** `LatticeTraceComponent.groovy` (new), `LatticeMapComponent.groovy` (new), `BridgeView.groovy`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | suite 149/144/5/0 | goldens green (28) | 170-frame harness: 0 masked diffs | BridgeView 398 → 308 lines
 
 ### 7e — Extract TelemetryComponent
 - [ ] Spectrogram, session logs, right-pane routing
