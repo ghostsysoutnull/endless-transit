@@ -1,0 +1,8 @@
+
+[96m [QUANTUM_TRACE_BUFFER_SYNC...] [0m
+  [2m0100[0mHz [36m█░░░░░░░░░[0m [2m[STABLE][0m >> [1mFragment A[0m
+  [2m0211[0mHz [35m██░░░░░░░░[0m [2m[SHIFTING][0m >> [1mFragment B[0m
+  [2m0333[0mHz [35m████░░░░░░[0m [2m[SHIFTING][0m >> [1mFragment C[0m
+[2m ----------------------------------------------------------------------[0m
+[2m SYNC_STATUS: [32mNOMINAL[0m[0m
+

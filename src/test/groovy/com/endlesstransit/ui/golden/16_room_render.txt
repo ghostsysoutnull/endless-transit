@@ -1,0 +1,35 @@
+[37m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
+[37m║ [0m                         LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [2m⌂[0m [2m▤[0m [2m▅[0m [2m🚪[0m [37m[□][0m | PULSE_TRAVERSAL: 0 | COHERENCE: 100%[130G[37m║[0m
+[37m║ [0mLOCUS_TRACE: ...city > Low Way > The Void-Watcher > Floor 0 > Corridor > Pitted Concrete [VIBRATING] > Breathing Nest [0x8C][130G[37m║[0m
+[37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
+[37m║ [0mLATTICE_IDENT: Processing Core >> Breathing Nest [0x8C][90G[37m║ [0mATMOS: 14% | TEMP: 5°C[130G[37m║[0m
+[37m║ [0mLOCUS_HASH: 19.414 / 47.053 | HOP_DENSITY: 12[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m
+[37m║ [0mCELL: 1 / 9 | [37m[X][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m[90G[37m║ [0mEVENT_TICKER: [SYNC_STABLE][130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m[2m[0m[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m[2m[0m[130G[37m║[0m
+[37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
+[37m║ [0mTRACE_BUFFER: 0/16 FRAGMENTS[130G[37m║[0m
+[37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
+ [37m»» SCANNING_LOCAL_TOPOLOGY...[0m
+[37m║ [0m[37m [NEURAL_LINK_INTERPRETATION]:[0m[90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
+[37m║ [0mYou are in a spatial cell. The walls are [37mgreen[0m calcified shell-fragments.[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
+[37m║ [0mThe space is illuminated by [33mthe warm cathode glow of a CRT monitor[0m.[90G[37m║ [0m[130G[37m║[0m
+[37m║ [0m[2mFURNITURE:[0m keratin spine infused with vhs player[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0mIDENT: [1mBreathing Nest [0x8C][0m                 ║ ATMO_TRAITS: [OXY: 14%] | [TEMP: 5°C][90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0mTYPE:  [33mProcessing Core[0m                       ║ SIGNAL: [SHIELDED] | RESONANCE: [32m[STA...[0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[37m║ [0m[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m [2m[DECODE_LOGS][0m[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m > Stable: 0 items[130G[37m║[0m
+[37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
+                         [·] [2m[0m
+                          [37m║[0m
+   [37m[[1mL[0m] [2mExit Apartment[0m [0m[37m═══[╬]═══[0m[37m [[1mF[0m] [2mGo forward[0m[0m
+                          [37m║[0m
+                         [·] [2m[0m
+[2mEXECUTE_DIRECTIVE:[0m
+[[33ml[0m] Exit Apartment[2m | [0m[[33mf[0m] Go forward
+[[33mi[0m] Buffer | [[36msync[0m] Save | [[96ms[0m] Scan | [[37mm[0m] Map | [[37mll[0m] Tree | [[32mp[0m] Snap | [[31mquit[0m] Quit

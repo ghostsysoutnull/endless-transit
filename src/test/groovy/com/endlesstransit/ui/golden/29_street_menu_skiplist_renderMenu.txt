@@ -1,0 +1,8 @@
+                         [·] [2m[0m
+                          [37m║[0m
+          [37m[[1mB[0m] [2mGo back[0m [0m[37m═══[╬]═══[0m[37m [·] [2m[0m[0m
+                          [37m║[0m
+                         [·] [2m[0m
+[2mEXECUTE_DIRECTIVE:[0m
+9. Plain Directive
+[[33mt[0m] Trace[2m | [0m[[33ms[0m] Scan[2m | [0m[[33mb[0m] Go back

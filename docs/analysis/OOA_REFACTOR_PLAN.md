@@ -32,7 +32,7 @@
 | 4 | Structural Extraction | `[x] COMPLETE` | Low |
 | 5 | Dependency Injection | `[x] COMPLETE` | Medium |
 | 6 | GameState Decomposition | `[x] COMPLETE` | Medium |
-| 7 | BridgeView Decomposition | `[ ] NOT STARTED` | Medium |
+| 7 | BridgeView Decomposition | `[x] COMPLETE` | Medium |
 | 8 | Floor State Pattern | `[ ] NOT STARTED` | Medium |
 | 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
 | 10 | Domain Event System | `[ ] NOT STARTED` | High |
@@ -459,48 +459,139 @@ accessed from a global static field.
 **Max files per commit:** 3
 **Depends on:** Phase 6; Phase 0.5f (BridgeView structural baseline tests must exist first)
 
-> **Mandatory:** `./vinc.sh --scan` before AND after every sub-phase. Pixel-identical output required.
+> **Gate correction (2026-09-11, Phase 7 pre-grill — WF-003):** `./vinc.sh --scan` runs `SeedScanner`
+> only; it never constructs `BridgeView`, so it cannot detect a HUD regression. The visual gate for this
+> phase is `BridgeViewGoldenFrameTest` (Phase 7-0): 23 golden frames at seed 12345 covering every
+> `BridgeView` public method, compared line-by-line with the time-seeded spectrogram bars masked
+> (`generateSystemTelemetry`, `BridgeView.groovy:354`, is the only non-determinism on the golden path).
+> **Mandatory:** golden-frame test green after every commit. `--scan` is retained as the model gate.
+>
+> **Test blast radius (whole phase):** `NavArrayTest` (calls private `getCompassLabel`, moves in 7c),
+> `InitialScreenTest` + `NewGameTest` (call `renderBridgeHUD`/`renderAdaptiveBridge` directly — keep
+> thin delegators on `BridgeView` until 7g), `CaptureVerificationTest` + `BridgeViewStructureTest` +
+> `HeadlessRunner` (`render`/`capture` — unchanged), `SessionRecap` in `src/main` (`printLatticeTrace`, 7d).
+>
+> **Plan gap resolved (2026-09-11):** `renderMenu` + `renderGlobalControls` → `DirectiveMenuComponent`
+> (7e-ii); the left pane of `renderAdaptiveBridge` → `NarrativePaneComponent` (7f-ii). The split
+> composition itself (zipping left/right lines through `splitBoxedLine`) stays in `BridgeView`.
+
+### 7-0 — Golden-frame pinning test (Coverage Claim Protocol step 0)
+Audit of every assertion touching `BridgeView` output: `BridgeViewStructureTest` (boxed + 7 marker
+strings), `VisualBaselinePinningTest` (2 markers), `NavArrayTest` (4 compass labels), `isBoxedCorrectly`
+(≥ 5 lines start/end with `║`). Everything else — header rows, sparkline/path truncation, radar, ticker,
+buffer preview, compass geometry, menu filtering, global controls, inventory overlay, lattice trace,
+lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
+
+- [x] `HudFrameHarness` (test utility): `captureAll(seed)` renders each `BridgeView` method into the
+  virtual buffer per frame; `mask()` collapses cyan `█` runs
+- [x] `BridgeViewGoldenFrameTest` (`@TestFactory`, one test per frame) compares against committed
+  `src/test/groovy/com/endlesstransit/ui/golden/*.txt`; test never writes to `src/`
+- [x] Golden files generated once by a scratchpad script calling the same `captureAll`, then committed
+- [x] **7-0b** `GoldenFrameGenerator` + `./vinc.sh --goldens` (sole writer of `golden/*.txt`, stores bars pre-masked);
+  frames 18 → 23: Floor/Corridor/Apartment full renders + two ticker-mapping frames — commit adcd8fd
+
+**Files:** `HudFrameHarness.groovy` (new, test), `BridgeViewGoldenFrameTest.groovy` (new, test), `golden/*.txt`
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: c43797f | suite 139/134/5/0 (now 23 golden frames, 463 lines; negative check: one corrupted glyph fails exactly that frame)
+
 
 ### 7a — Define ViewComponent interface
-- [ ] `ViewComponent` interface: `List<String> render(int width)`
+- [x] **7a-i** `ViewComponent` interface: `List<String> render(RenderContext context, int width)` +
+  `RenderContext` (final `location`, `player`, `options`, `masterLocus`)
+- [x] **7a-ii** `Terminal` gains `static String` line builders (`boxTop`, `boxedLine`, `splitBoxedLine`,
+  `boxSeparator`, `boxBottom`) returning exactly the fragments `draw*` print today, CHA sequences
+  included; each `draw*` becomes `println(builder(...))`. Signatures unchanged; only caller is `BridgeView`.
 
-**Files:** `ViewComponent.groovy` (new)
-**Status:** `[ ] NOT STARTED`
+> **Declared deviations (2026-09-11):** (a) the plan's `render(int width)` gives a component no way to
+> reach the location/player/options/locus — a `RenderContext` parameter is the smallest addition.
+> (b) 7a-ii is not in the original plan; without string builders the `List<String>` contract cannot be
+> honoured, since the only box builders print. Byte-equivalence: `MemorySink.print` appends fragments
+> and `println` flushes the line; `ConsoleSink` writes fragments straight to `System.out`; no fragment
+> contains `\n` — so `print a; print b; println c` ≡ `println(a+b+c)` in every sink. The one edge is
+> flush granularity on a real console (per fragment → per line), invisible in captured output.
+
+**Files:** `ViewComponent.groovy` (new), `RenderContext.groovy` (new) — 7a-i; `Terminal.groovy` — 7a-ii
+**Status:** `[x] COMPLETE — 2026-09-11` | commits: 461efc9 (7a-i), 1d3d570 (7a-ii) | suite 139/134/5/0 | 170-frame harness: 0 masked diffs | scan: seed 0 → 9 nodes
 
 ### 7b — Extract HUDHeaderComponent
-- [ ] Traversal, path, ticker, buffer preview
+- [x] Traversal, path, ticker, buffer preview (+ `getLatticeSparkline`, `renderCoherenceBar` moved with it)
+- [x] `renderBridgeHUD` retained as a delegator until 7g (callers: `render()`, `NewGameTest`, `InitialScreenTest`)
 
 **Files:** `HUDHeaderComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 4f34342 | suite 144/139/5/0 | goldens green | 170-frame harness: 0 masked diffs | BridgeView 579 → 457 lines
 
 ### 7c — Extract CompassComponent
+- [x] **7c-0** two synthetic-option compass goldens (D active + reciprocal X, colon-form label, 12-char truncation, B on the left) — commit 2432ac7
+- [x] `renderCompass` + `getCompassLabel` moved verbatim; two dead locals (`last`, `history` → referenced `lastHudFrame`) dropped; `renderCompass` delegator kept until 7g
+
 **Files:** `CompassComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** `NavArrayTest` (4 lines → `new CompassComponent().getCompassLabel`)
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 9c01da7 | suite 146/141/5/0 | goldens green (25) | 170-frame harness: 0 masked diffs | BridgeView 457 → 398 lines
 
 ### 7d — Extract LatticeComponents
-- [ ] `LatticeTraceComponent` and `LatticeMapComponent`
+- [x] **7d-0** three goldens: 13-level trace at Room, map SCAN_ERROR at Room (leaf), Building map with visited Floor — commit 5da008a
+- [x] **7d-i** `LatticeTraceComponent` (`render` = `ll` screen; `renderTrace(ctx, title, glitch)` for SessionRecap) — commit e6f8cab
+- [x] **7d-ii** `LatticeMapComponent` — commit 2393299
+- [x] Delegators kept: `renderLatticeTrace`, `printLatticeTrace` (SessionRecap ×3), `renderLatticeMap`
 
-**Files:** 2 new components, `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+> **Declared (2026-09-11):** five list elements across the two components keep a leading `\n` exactly as
+> the original `println` strings had it; the sinks split on newline so output is identical. Normalise at 7g
+> (split into separate elements) under the golden test. `renderTrace(ctx, title, glitch)` sits beside the
+> `ViewComponent` contract because title and glitch are not frame inputs.
+
+**Files:** `LatticeTraceComponent.groovy` (new), `LatticeMapComponent.groovy` (new), `BridgeView.groovy`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | suite 149/144/5/0 | goldens green (28) | 170-frame harness: 0 masked diffs | BridgeView 398 → 308 lines
 
 ### 7e — Extract TelemetryComponent
-- [ ] Spectrogram, session logs, right-pane routing
+- [x] Spectrogram, decode logs ("session logs"), right-pane routing, universe/filament/local maps, abyssal static — six generators moved verbatim
+- [x] `ViewComponent` javadoc: `width` = width allotted by the compositor (pane width for a pane)
 
-**Files:** `TelemetryComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Files:** `TelemetryComponent.groovy` (new), `BridgeView.groovy`, `ViewComponent.groovy` (javadoc)
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 3633b44 | suite 149/144/5/0 | goldens green (28) | 170-frame harness: 0 masked diffs | BridgeView 308 → 186 lines
+
+### 7e-ii — Extract DirectiveMenuComponent
+- [x] **7e-ii-0** synthetic-option menu golden: the eight skip-list forms only produced above Street, a no-dot key, a plain directive, a three-entry nav line
+- [x] `renderMenu` (label skip-list, `udfblts` collapsing, `EXECUTE_DIRECTIVE:` block) + `renderGlobalControls` moved verbatim
+- [x] The compass stays in `CompassComponent` (7c); the `renderMenu` delegator calls it first
+
+**Files:** `DirectiveMenuComponent.groovy` (new), `BridgeView.groovy`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 9fbdea5 | suite 150/145/5/0 | goldens green (29) | 170-frame harness: 0 masked diffs | BridgeView 186 → 151 lines
 
 ### 7f — Extract InventoryOverlayComponent
+- [x] `renderInventoryOverlay` moved verbatim; per-item `print ×3 + println` → one element (same bytes); `flush()` stays in the delegator
+- [x] **Declared:** no production caller (the `i` command renders `QuantumBufferController`'s own screen) — HK-004
+
 **Files:** `InventoryOverlayComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 655931b | suite 150/145/5/0
+
+### 7f-ii — Extract NarrativePaneComponent
+- [x] Left pane of `renderAdaptiveBridge`: description wrap (with `glitchText` below 40 coherence) + `getExtraContent` — moved verbatim
+- [x] `renderAdaptiveBridge` remains in `BridgeView` as the split compositor (geometry, two pane renders, zip, bottom border)
+
+**Files:** `NarrativePaneComponent.groovy` (new), `BridgeView.groovy`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 7dcf94e | suite 150/145/5/0 | goldens green (29) | 170-frame harness: 0 masked diffs | BridgeView 151 → 121 lines
 
 ### 7g — BridgeView as pure compositor
-- [ ] `BridgeView` only assembles components into final frame
-- [ ] All direct rendering logic removed
+- [x] **7g-i** `FrameGeometry` (130 / 90 / pane widths) replaces eight literal sites; `BridgeView.emit()`; compositor-only body — commit 9c05dc9
+- [x] **7g-ii** lattice components: the four leading-`\n` elements split byte-for-byte (golden 27 pins the `RED`-before-newline order) — commit 6f206d5
+- [x] **7g-iii** `ViewComponentGoldenTest`: 17 single-component frames rendered standalone match their goldens and contain no embedded newline — commit b9d3f6d
+- [x] `BridgeView` only assembles components into the final frame (adaptive split zip is the one layout step)
 
-**Files:** `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+> **Declared (2026-09-11):** the eight one-line `render*`/`print*` delegators stay as `BridgeView`'s public API
+> (`RenderingCoordinator`, `SessionRecap`, three tests, the harness). They hold no rendering logic; removing them
+> would touch six files for no behavioral gain.
 
-**Phase 7 Gates:** `./vinc.sh --test` + `./vinc.sh --scan` (pixel-identical to Phase 0 baseline)
+**Files:** `FrameGeometry.groovy` (new), `BridgeView.groovy`, `HUDHeaderComponent.groovy`, `LatticeTraceComponent.groovy`, `LatticeMapComponent.groovy`; test tree: `HudFrameHarness`, `ViewComponentGoldenTest` (new), `BridgeViewGoldenFrameTest`, `GoldenFrameGenerator`
+**Test blast radius:** harness signature (`captureAll()` → `Frames`) — 2 one-line edits
+**Status:** `[x] COMPLETE — 2026-09-11` | suite 167/162/5/0 | goldens: 29 via BridgeView + 17 standalone | BridgeView 579 → 120 lines
+
+**Phase 7 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=167 SUCCEEDED=162 FAILED=0 SKIPPED=5` (29 goldens via `BridgeView` + 17 standalone, all pixel-identical to the pre-phase capture) + `./vinc.sh --scan` ✅ seed 0 → 9 nodes
+**Retrospective:** `docs/retro/RETRO_PHASE_7.md`
 
 ---
 

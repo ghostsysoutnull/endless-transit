@@ -1,0 +1,6 @@
+
+[96m [QUANTUM_TRACE_BUFFER_SYNC...] [0m
+[2m  (No spectral traces detected in local buffer) [0m
+[2m ----------------------------------------------------------------------[0m
+[2m SYNC_STATUS: [32mNOMINAL[0m[0m
+
