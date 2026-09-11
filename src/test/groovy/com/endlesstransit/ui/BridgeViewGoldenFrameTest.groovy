@@ -20,7 +20,7 @@ class BridgeViewGoldenFrameTest {
 
     @TestFactory
     List<DynamicTest> goldenFrames() {
-        Map<String, List<String>> actual = HudFrameHarness.captureAll()
+        Map<String, List<String>> actual = HudFrameHarness.captureAll().via
         assertFalse(actual.isEmpty(), "Harness produced no frames")
 
         return actual.collect { String name, List<String> lines ->

@@ -19,7 +19,7 @@ class GoldenFrameGenerator {
 
     static void main(String[] args) {
         Terminal.initialize(true, true, true)   // clinical: no console echo while capturing
-        Map<String, List<String>> frames = HudFrameHarness.captureAll()
+        Map<String, List<String>> frames = HudFrameHarness.captureAll().via
 
         File dir = HudFrameHarness.GOLDEN_DIR
         dir.mkdirs()

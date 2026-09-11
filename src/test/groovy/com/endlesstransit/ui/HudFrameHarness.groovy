@@ -45,27 +45,40 @@ class HudFrameHarness {
      * Captures all golden frames for the given seed, in a fixed order.
      * Frame order is load-bearing: player state (steps, coherence, visited) accumulates.
      */
-    static Map<String, List<String>> captureAll(long seed = GOLDEN_SEED) {
+    /** Frames captured through BridgeView (`via`) and, where a single component produces the
+     *  whole frame, the same frame rendered by that component alone (`direct`). */
+    static class Frames {
+        final Map<String, List<String>> via = new LinkedHashMap<>()
+        final Map<String, List<String>> direct = new LinkedHashMap<>()
+    }
+
+    static Frames captureAll(long seed = GOLDEN_SEED) {
         JournalManager.reset()               // static ticker state leaks between tests
         Terminal.initialize(true, true)
         Game game = new Game(seed)
         BridgeView view = game.bridgeView
-        Map<String, List<String>> frames = new LinkedHashMap<>()
+        Frames frames = new Frames()
+        // Standalone components for the `direct` captures (7g-iii): same inputs, no BridgeView.
+        HUDHeaderComponent hud = new HUDHeaderComponent()
+        CompassComponent compassC = new CompassComponent()
+        DirectiveMenuComponent menuC = new DirectiveMenuComponent()
+        InventoryOverlayComponent overlayC = new InventoryOverlayComponent()
+        LatticeTraceComponent traceC = new LatticeTraceComponent()
+        LatticeMapComponent mapC = new LatticeMapComponent()
 
         // 1. Street — every public method
         Location street = game.currentLocation
         Map<String, Closure> streetOptions = street.getOptions(game)
         capture(frames, "01_street_render")            { view.render(street, game.player, streetOptions, game.masterLocus) }
-        capture(frames, "02_street_renderBridgeHUD")   { view.renderBridgeHUD(street, game.player) }
+        capture(frames, "02_street_renderBridgeHUD", { view.renderBridgeHUD(street, game.player) }, { hud.render(ctxOf(game, street), FrameGeometry.FRAME_WIDTH) })
         capture(frames, "03_street_renderAdaptive")    { view.renderAdaptiveBridge(street, game.player, game.masterLocus) }
-        capture(frames, "04_street_renderCompass")     { view.renderCompass(street, streetOptions) }
+        capture(frames, "04_street_renderCompass", { view.renderCompass(street, streetOptions) }, { compassC.render(ctxOf(game, street, streetOptions), FrameGeometry.FRAME_WIDTH) })
         capture(frames, "05_street_renderMenu")        { view.renderMenu(street, streetOptions) }
-        capture(frames, "06_street_renderGlobalCtl")   { view.renderGlobalControls() }
-        capture(frames, "07_street_inventoryEmpty")    { view.renderInventoryOverlay(game.player) }
-        capture(frames, "08_street_latticeTrace")      { view.renderLatticeTrace(street) }
-        capture(frames, "09_street_latticeMap")        { view.renderLatticeMap(street, game.player) }
-        capture(frames, "10_street_printLatticeDiag")  { view.printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", street, 0.0) }
-
+        capture(frames, "06_street_renderGlobalCtl", { view.renderGlobalControls() }, { menuC.renderGlobalControls() })
+        capture(frames, "07_street_inventoryEmpty", { view.renderInventoryOverlay(game.player) }, { overlayC.render(ctxOf(game, street), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "08_street_latticeTrace", { view.renderLatticeTrace(street) }, { traceC.render(ctxOf(game, street), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "09_street_latticeMap", { view.renderLatticeMap(street, game.player) }, { mapC.render(ctxOf(game, street), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "10_street_printLatticeDiag", { view.printLatticeTrace("[FINAL_NEURAL_TRACE_DIAGNOSTIC]", street, 0.0) }, { traceC.renderTrace(ctxOf(game, street), "[FINAL_NEURAL_TRACE_DIAGNOSTIC]", 0.0) })
         // 2. Ancestors — the universe and filament map branches of the right pane
         Location universe = street
         while (universe.parent != null) universe = universe.parent
@@ -100,40 +113,36 @@ class HudFrameHarness {
         game.player.inventory.add(new InventoryItem("Fragment A", 100))
         game.player.inventory.add(new InventoryItem("Fragment B", 211))
         game.player.inventory.add(new InventoryItem("Fragment C", 333))
-        capture(frames, "18_room_items_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+        capture(frames, "18_room_items_renderBridgeHUD", { view.renderBridgeHUD(room, game.player) }, { hud.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
         capture(frames, "19_room_items_inventoryOverlay") { view.renderInventoryOverlay(game.player) }
 
         // 5. Event ticker prefix mapping — two most recent events, newest first
         //    (location = null keeps ritual side effects out of the frame)
         JournalManager.logDiscovery("Golden Locus > Alpha Chamber")
         JournalManager.logCapture(new InventoryItem("Fragment B", 211))
-        capture(frames, "20_room_ticker_loc_obj_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+        capture(frames, "20_room_ticker_loc_obj_renderBridgeHUD", { view.renderBridgeHUD(room, game.player) }, { hud.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
         JournalManager.logSynthesis(new InventoryItem("Keystone Z", 444))
-        capture(frames, "21_room_ticker_obj_syn_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
-
+        capture(frames, "21_room_ticker_obj_syn_renderBridgeHUD", { view.renderBridgeHUD(room, game.player) }, { hud.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
         // 6. Coherence bar colour thresholds — header only (adaptive bridge glitches below 40)
         game.player.coherence = 65
-        capture(frames, "22_room_coherence65_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
+        capture(frames, "22_room_coherence65_renderBridgeHUD", { view.renderBridgeHUD(room, game.player) }, { hud.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
         game.player.coherence = 25
-        capture(frames, "23_room_coherence25_renderBridgeHUD") { view.renderBridgeHUD(room, game.player) }
-
+        capture(frames, "23_room_coherence25_renderBridgeHUD", { view.renderBridgeHUD(room, game.player) }, { hud.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
         // 7. Compass branches not reachable on the seed-12345 walk (7c-0 pre-check):
         //    D active with U reciprocal, colon-form label, 12-char truncation, B on the left.
         //    renderCompass reads only the location's vibe and the option keys, so synthetic options are exact.
         Map<String, Closure> compassA = ["u. Go Up": {}, "d. Go Down": {}, "f. Go forward": {}, "l. Leave: The Long Building Name": {}] as Map<String, Closure>
         Map<String, Closure> compassB = ["d. Go Down": {}, "b. Go back": {}] as Map<String, Closure>
-        capture(frames, "24_street_compass_u_d_f_lcolon_renderCompass") { view.renderCompass(street, compassA) }
-        capture(frames, "25_street_compass_d_b_renderCompass")          { view.renderCompass(street, compassB) }
-
+        capture(frames, "24_street_compass_u_d_f_lcolon_renderCompass", { view.renderCompass(street, compassA) }, { compassC.render(ctxOf(game, street, compassA), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "25_street_compass_d_b_renderCompass", { view.renderCompass(street, compassB) }, { compassC.render(ctxOf(game, street, compassB), FrameGeometry.FRAME_WIDTH) })
         // 8. Lattice screens at depth (7d-0 pre-check). Coherence restored to 100 first: the map
         //    adds random glitch plots below 30 (HK-001), and frame 23 left it at 25.
         game.player.coherence = 100
         Location building = room
         while (!(building instanceof Building)) building = building.parent
-        capture(frames, "26_room_latticeTrace")          { view.renderLatticeTrace(room) }
-        capture(frames, "27_room_latticeMap_scanError")  { view.renderLatticeMap(room, game.player) }
-        capture(frames, "28_building_latticeMap")        { view.renderLatticeMap(building, game.player) }
-
+        capture(frames, "26_room_latticeTrace", { view.renderLatticeTrace(room) }, { traceC.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "27_room_latticeMap_scanError", { view.renderLatticeMap(room, game.player) }, { mapC.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
+        capture(frames, "28_building_latticeMap", { view.renderLatticeMap(building, game.player) }, { mapC.render(ctxOf(game, building), FrameGeometry.FRAME_WIDTH) })
         // 9. Menu skip-list forms only produced above Street (7e-ii-0 pre-check), a no-dot key,
         //    a plain directive, and a three-entry nav line. renderMenu reads only the option keys.
         Map<String, Closure> menuOpts = ["Go to Alpha": {}, "Travel to Beta": {}, "Visit Gamma": {}, "Land on Delta": {},
@@ -144,10 +153,15 @@ class HudFrameHarness {
         return frames
     }
 
-    private static void capture(Map<String, List<String>> frames, String name, Closure body) {
+    private static void capture(Frames frames, String name, Closure body, Closure<List<String>> direct = null) {
         Terminal.virtualBuffer.clear()
         body.call()
-        frames[name] = Terminal.virtualBuffer.getBuffer()
+        frames.via[name] = Terminal.virtualBuffer.getBuffer()
+        if (direct != null) frames.direct[name] = direct.call()
+    }
+
+    private static RenderContext ctxOf(Game game, Location location, Map<String, Closure> options = null) {
+        return new RenderContext(location, game.player, options, game.masterLocus)
     }
 
     static File goldenFile(String name) {
