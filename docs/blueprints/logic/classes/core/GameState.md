@@ -1,7 +1,7 @@
 # BEHAVIORAL SPEC: GameState (Core)
 
 ## 🌌 Responsibility
-The `GameState` is the **Central Source of Truth** for the entire simulation. It is a data-rich container that holds the current world state, player metrics, and the various engines that power the game loop.
+The `GameState` is the **Central Source of Truth** for the entire simulation. Since OOA Phase 6 it is a lean data container: world state, player, master seed, two render flags, and the inventory controller. The engines that power the game loop live in their owning services and are reached through the `Game` facade.
 
 ---
 
@@ -13,11 +13,11 @@ The `GameState` is the **Central Source of Truth** for the entire simulation. It
 - **`currentLocation`**: The `Location` where the player is currently positioned.
 
 ### 📍 Sub-System Instances
-- **`inputHandler`**: Manages interaction with the `InputSource`.
-- **`mapper`**: The `ActionMapper` responsible for translating numeric inputs to menu labels.
-- **`navEngine`**: The `NavigationEngine` that handles input normalization and boundary checks.
-- **`bridgeView`**: The primary UI renderer for the "Bridge" HUD.
 - **`inventoryController`**: Manages complex inventory interactions (Merging/Synthesis).
+
+> `BridgeView` is no longer held here. Since OOA Phase 6a it is owned by `RenderingCoordinator` and exposed via `Game.getBridgeView()`.
+> `NavigationEngine` is owned by `NavigationOrchestrator` since OOA Phase 6c and exposed via `Game.getNavEngine()`.
+> `InputHandler` and `ActionMapper` are no longer held here either. Since OOA Phase 6b the handler is built in `Game` and injected into `PersistenceService`, `RenderingCoordinator`, and `TurnProcessor`; the mapper is owned by `TurnProcessor`. Both are exposed via `Game.getInputHandler()` / `Game.getMapper()`. The `GameState` constructor takes only a `LocusSeed`.
 
 ---
 

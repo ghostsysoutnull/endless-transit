@@ -21,7 +21,7 @@ class QuitNowCommand implements GameCommand {
         Terminal.println Terminal.dim(" | FINALIZING_SNAPSHOT...")
         
         // Capture a final plain-text screenshot
-        CaptureService.capture(game.state.bridgeView, game.state.inputHandler.getHistory(), new PlainFormatter())
+        CaptureService.capture(game.bridgeView, game.inputHandler.getHistory(), new PlainFormatter())
         
         Terminal.println Terminal.colorize("[VINCULUM:SYSTEM_HALT]", Terminal.RED)
         return false // Terminate loop

@@ -26,7 +26,7 @@ class CaptureCommand implements GameCommand {
         Terminal.print Terminal.dim("[VINCULUM] ")
         Terminal.print "Initiating screen capture..."
         
-        CaptureService.capture(game.state.bridgeView, game.state.inputHandler.getHistory(), useAnsi ? new AnsiFormatter() : new PlainFormatter())
+        CaptureService.capture(game.bridgeView, game.inputHandler.getHistory(), useAnsi ? new AnsiFormatter() : new PlainFormatter())
         
         Terminal.println Terminal.colorize(" [OK]", Terminal.GREEN)
         Terminal.println Terminal.dim("  >> Snapshot routed to /screenshots/")

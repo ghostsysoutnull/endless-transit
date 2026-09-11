@@ -13,10 +13,10 @@ class CoherenceDrainTest {
 
     @BeforeEach
     void setup() {
-        state = new GameState(new LocusSeed(1L), new MockInputSource([]))
+        state = new GameState(new LocusSeed(1L))
         state.player = new Player()
         state.player.coherence = 100
-        turnProcessor = new TurnProcessor(state, null, null)
+        turnProcessor = new TurnProcessor(state, null, null, new InputHandler(new MockInputSource([])))
     }
 
     @Test

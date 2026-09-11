@@ -47,10 +47,10 @@ class NavigationSyncTest {
         def options = building.getOptions(game)
 
         // Try to resolve "05" using the ActionMapper
-        def mapper = game.state.mapper
+        def mapper = game.mapper
         mapper.update(options)
         
-        def inputHandler = game.state.inputHandler
+        def inputHandler = game.inputHandler
         def action = mapper.resolve("05", inputHandler)
         
         assertNotNull(action, "Should be able to resolve choice '05'")

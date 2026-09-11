@@ -10,31 +10,35 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class RenderingCoordinator {
     private GameState state
+    private InputHandler inputHandler
+    final BridgeView bridgeView
 
-    RenderingCoordinator(GameState state) {
+    RenderingCoordinator(GameState state, InputHandler inputHandler) {
         this.state = state
+        this.inputHandler = inputHandler
+        this.bridgeView = new BridgeView()
     }
 
     void renderCurrentState(Map<String, Closure> options) {
-        state.bridgeView.render(state.currentLocation, state.player, options, state.masterLocus)
+        bridgeView.render(state.currentLocation, state.player, options, state.masterLocus)
     }
 
     void renderLatticeMap() {
-        state.bridgeView.renderLatticeMap(state.currentLocation, state.player)
-        state.inputHandler.waitForEnter()
+        bridgeView.renderLatticeMap(state.currentLocation, state.player)
+        inputHandler.waitForEnter()
         state.instantRender = true
     }
 
     void renderLatticeTrace() {
-        state.bridgeView.renderLatticeTrace(state.currentLocation)
-        state.inputHandler.waitForEnter()
+        bridgeView.renderLatticeTrace(state.currentLocation)
+        inputHandler.waitForEnter()
         state.instantRender = true
     }
 
     void helpMenu() {
         Terminal.println "\n" + Terminal.colorize(" [SYSTEM_HELP_PROTOCOL] ", Terminal.L_CYAN)
         Terminal.println "\nmap/m: Spatial | ll/lattice: Tree | sync: Save | i: Buffer | glitch: Debug | q: Terminate"
-        state.inputHandler.waitForEnter()
+        inputHandler.waitForEnter()
         state.instantRender = true
     }
 
@@ -51,7 +55,7 @@ class RenderingCoordinator {
                 Terminal.println "${i + 1}. ${cmd.getLabel().padRight(10)}: ${cmd.getDescription()}" 
             }
             Terminal.print "GLITCH (c to cancel) >> "
-            String c = state.inputHandler.readLine().toLowerCase()
+            String c = inputHandler.readLine().toLowerCase()
             if (c == "c") break
             try {
                 int idx = c.toInteger() - 1

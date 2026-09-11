@@ -30,11 +30,11 @@ class ActionMapperDepthTest {
         Map<String, Closure> options = street.getOptions(game)
         assertFalse(options.isEmpty(), "Street must have building options")
 
-        ActionMapper mapper = game.state.mapper
+        ActionMapper mapper = game.mapper
         mapper.update(options)
 
         // "01" should resolve to the first building
-        Closure action = mapper.resolve("01", game.state.inputHandler)
+        Closure action = mapper.resolve("01", game.inputHandler)
         assertNotNull(action, "ActionMapper must resolve '01' at street level")
         action.call()
 
@@ -63,11 +63,11 @@ class ActionMapperDepthTest {
         Map<String, Closure> corridorOptions = floor.getOptions(game)
         assertFalse(corridorOptions.isEmpty(), "Corridor mode must have apartment options")
 
-        ActionMapper mapper = game.state.mapper
+        ActionMapper mapper = game.mapper
         mapper.update(corridorOptions)
 
         // "01" should resolve to the first apartment (auto-enters first Room)
-        Closure action = mapper.resolve("01", game.state.inputHandler)
+        Closure action = mapper.resolve("01", game.inputHandler)
         assertNotNull(action, "ActionMapper must resolve '01' at corridor depth")
         action.call()
 
@@ -93,11 +93,11 @@ class ActionMapperDepthTest {
         Map<String, Closure> roomOptions = game.currentLocation.getOptions(game)
         assertFalse(roomOptions.isEmpty(), "Room must have options")
 
-        ActionMapper mapper = game.state.mapper
+        ActionMapper mapper = game.mapper
         mapper.update(roomOptions)
 
         // "l" (Exit Apartment / leave) must always be resolvable from a Room
-        Closure leaveAction = mapper.resolve("l", game.state.inputHandler)
+        Closure leaveAction = mapper.resolve("l", game.inputHandler)
         assertNotNull(leaveAction, "ActionMapper must resolve 'l' (leave/exit) at room depth")
         leaveAction.call()
 
