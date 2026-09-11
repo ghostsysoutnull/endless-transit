@@ -13,7 +13,7 @@ class AutoEntryTest {
 
     @BeforeEach
     void setup() {
-        state = new GameState(new LocusSeed(1L), new MockInputSource([]))
+        state = new GameState(new LocusSeed(1L))
         state.player = new Player()
         nav = new NavigationOrchestrator(state)
     }

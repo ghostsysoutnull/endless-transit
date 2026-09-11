@@ -30,11 +30,12 @@ class Game {
     Game(LocusSeed masterLocus, InputSource inputSource = null) {
         this.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
         ProceduralFactory.instance.fmt = this.fmt
-        this.state = new GameState(masterLocus, inputSource ?: InputHandler.defaultSource)
+        this.state = new GameState(masterLocus)
+        InputHandler inputHandler = new InputHandler(inputSource ?: InputHandler.defaultSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
-        this.persistence = new PersistenceService(state, navOrchestrator, state.inputHandler)
-        this.renderer = new RenderingCoordinator(state, state.inputHandler)
-        this.turnProcessor = new TurnProcessor(state, renderer, navOrchestrator)
+        this.persistence = new PersistenceService(state, navOrchestrator, inputHandler)
+        this.renderer = new RenderingCoordinator(state, inputHandler)
+        this.turnProcessor = new TurnProcessor(state, renderer, navOrchestrator, inputHandler)
         
         navOrchestrator.initializeWorld()
     }
@@ -46,8 +47,8 @@ class Game {
     Player getPlayer() { state.player }
     void setPlayer(Player p) { state.player = p }
     LocusSeed getMasterLocus() { state.masterLocus }
-    InputHandler getInputHandler() { state.inputHandler }
-    ActionMapper getMapper() { state.mapper }
+    InputHandler getInputHandler() { turnProcessor.inputHandler }
+    ActionMapper getMapper() { turnProcessor.mapper }
     NavigationEngine getNavEngine() { state.navEngine }
     BridgeView getBridgeView() { renderer.bridgeView }
     boolean getInstantRender() { state.instantRender }
@@ -74,7 +75,7 @@ class Game {
             case "ll": renderer.renderLatticeTrace(); return
         }
 
-        Closure action = state.mapper.resolve(choice, state.inputHandler)
+        Closure action = turnProcessor.mapper.resolve(choice, turnProcessor.inputHandler)
         if (action) {
             state.player.stepCount++
             state.navEngine.recordChoice(choice)
@@ -90,7 +91,7 @@ class Game {
         if (new File(SyncManager.SAVE_FILE).exists()) {
             Terminal.println Terminal.dim("  [DETECTED_NEURAL_TRACE_SUBSTRATE]")
             Terminal.print Terminal.colorize("  Restore previous session? [y/N]: ", Terminal.YELLOW)
-            if (state.inputHandler.readLine().toLowerCase() == "y") persistence.restoreSession()
+            if (turnProcessor.inputHandler.readLine().toLowerCase() == "y") persistence.restoreSession()
         }
         
         try {
@@ -100,8 +101,8 @@ class Game {
 
                 // 2. Map Actions
                 Map<String, Closure> options = state.currentLocation.getOptions(this)
-                state.mapper.update(options)
-                state.navEngine.updateRepetitionContext(state.mapper, options)
+                turnProcessor.mapper.update(options)
+                state.navEngine.updateRepetitionContext(turnProcessor.mapper, options)
 
                 // 3. Render
                 if (!state.suppressRendering) {

@@ -18,14 +18,11 @@ class GameState {
     LocusSeed masterLocus
     
     // Components that manage aspects of the state
-    InputHandler inputHandler
-    ActionMapper mapper = new ActionMapper()
     NavigationEngine navEngine = new NavigationEngine()
     QuantumBufferController inventoryController = new QuantumBufferController()
 
-    GameState(LocusSeed locus, InputSource inputSource) {
+    GameState(LocusSeed locus) {
         this.masterLocus = locus
         this.player = new Player()
-        this.inputHandler = new InputHandler(inputSource)
     }
 }

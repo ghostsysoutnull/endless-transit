@@ -13,14 +13,17 @@ class TurnProcessor {
     private GameState state
     private RenderingCoordinator renderer
     private NavigationOrchestrator navOrchestrator
+    final InputHandler inputHandler
+    final ActionMapper mapper = new ActionMapper()
     
     private Map<String, GameCommand> globalCommands = [:]
     private NavigationCommand navCommand = new NavigationCommand()
 
-    TurnProcessor(GameState state, RenderingCoordinator renderer, NavigationOrchestrator navOrchestrator) {
+    TurnProcessor(GameState state, RenderingCoordinator renderer, NavigationOrchestrator navOrchestrator, InputHandler inputHandler) {
         this.state = state
         this.renderer = renderer
         this.navOrchestrator = navOrchestrator
+        this.inputHandler = inputHandler
         initializeGlobalCommands()
     }
 
@@ -57,8 +60,8 @@ class TurnProcessor {
     boolean handleInput(Game game) {
         String choice = ""
         while (true) {
-            String raw = state.inputHandler.getRawInput(state.mapper.getActionName(state.navEngine.lastChoice))
-            choice = state.navEngine.checkBoundaryReversal(raw, state.mapper) ?: state.inputHandler.normalize(raw, state.navEngine.lastChoice)
+            String raw = inputHandler.getRawInput(mapper.getActionName(state.navEngine.lastChoice))
+            choice = state.navEngine.checkBoundaryReversal(raw, mapper) ?: inputHandler.normalize(raw, state.navEngine.lastChoice)
 
             if (choice == "-2") continue
             break
@@ -77,7 +80,7 @@ class TurnProcessor {
     private void reboot() {
         Terminal.clearScreen()
         Terminal.println Terminal.colorize("!!! CRITICAL_COHERENCE_FAILURE !!! REBOOTING...", Terminal.RED)
-        state.inputHandler.waitForEnter()
+        inputHandler.waitForEnter()
         navOrchestrator.initializeWorld()
         state.player.adjustCoherence(100.0)
     }
