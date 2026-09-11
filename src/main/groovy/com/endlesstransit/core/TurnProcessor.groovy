@@ -60,8 +60,9 @@ class TurnProcessor {
     boolean handleInput(Game game) {
         String choice = ""
         while (true) {
-            String raw = inputHandler.getRawInput(mapper.getActionName(state.navEngine.lastChoice))
-            choice = state.navEngine.checkBoundaryReversal(raw, mapper) ?: inputHandler.normalize(raw, state.navEngine.lastChoice)
+            NavigationEngine navEngine = navOrchestrator.navEngine
+            String raw = inputHandler.getRawInput(mapper.getActionName(navEngine.lastChoice))
+            choice = navEngine.checkBoundaryReversal(raw, mapper) ?: inputHandler.normalize(raw, navEngine.lastChoice)
 
             if (choice == "-2") continue
             break

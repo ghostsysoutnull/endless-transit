@@ -49,7 +49,7 @@ class Game {
     LocusSeed getMasterLocus() { state.masterLocus }
     InputHandler getInputHandler() { turnProcessor.inputHandler }
     ActionMapper getMapper() { turnProcessor.mapper }
-    NavigationEngine getNavEngine() { state.navEngine }
+    NavigationEngine getNavEngine() { navOrchestrator.navEngine }
     BridgeView getBridgeView() { renderer.bridgeView }
     boolean getInstantRender() { state.instantRender }
     void setInstantRender(boolean v) { state.instantRender = v }
@@ -78,7 +78,7 @@ class Game {
         Closure action = turnProcessor.mapper.resolve(choice, turnProcessor.inputHandler)
         if (action) {
             state.player.stepCount++
-            state.navEngine.recordChoice(choice)
+            navOrchestrator.navEngine.recordChoice(choice)
             action.call()
         }
     }
@@ -102,7 +102,7 @@ class Game {
                 // 2. Map Actions
                 Map<String, Closure> options = state.currentLocation.getOptions(this)
                 turnProcessor.mapper.update(options)
-                state.navEngine.updateRepetitionContext(turnProcessor.mapper, options)
+                navOrchestrator.navEngine.updateRepetitionContext(turnProcessor.mapper, options)
 
                 // 3. Render
                 if (!state.suppressRendering) {
@@ -113,7 +113,7 @@ class Game {
                 if (!turnProcessor.handleInput(this)) break
             }
         } catch (Throwable t) {
-            Logger.reportCriticalFailure(state.currentLocation, state.player, state.navEngine.lastChoice, state.masterLocus, t)
+            Logger.reportCriticalFailure(state.currentLocation, state.player, navOrchestrator.navEngine.lastChoice, state.masterLocus, t)
             Terminal.println(Terminal.colorize("\n!!! CRITICAL SYSTEM FAILURE DETECTED !!!", Terminal.RED))
             System.exit(1)
         }

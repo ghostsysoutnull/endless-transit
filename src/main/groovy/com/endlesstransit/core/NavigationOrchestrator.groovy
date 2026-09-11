@@ -11,6 +11,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class NavigationOrchestrator {
     private GameState state
+    final NavigationEngine navEngine = new NavigationEngine()
 
     NavigationOrchestrator(GameState state) {
         this.state = state

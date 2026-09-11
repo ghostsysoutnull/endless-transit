@@ -18,7 +18,6 @@ class GameState {
     LocusSeed masterLocus
     
     // Components that manage aspects of the state
-    NavigationEngine navEngine = new NavigationEngine()
     QuantumBufferController inventoryController = new QuantumBufferController()
 
     GameState(LocusSeed locus) {
