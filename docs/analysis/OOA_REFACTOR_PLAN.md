@@ -561,15 +561,20 @@ lattice/universe/filament maps, coherence bar colours — is **UNGUARDED**.
 **Status:** `[x] COMPLETE — 2026-09-11` | commit: 9fbdea5 | suite 150/145/5/0 | goldens green (29) | 170-frame harness: 0 masked diffs | BridgeView 186 → 151 lines
 
 ### 7f — Extract InventoryOverlayComponent
+- [x] `renderInventoryOverlay` moved verbatim; per-item `print ×3 + println` → one element (same bytes); `flush()` stays in the delegator
+- [x] **Declared:** no production caller (the `i` command renders `QuantumBufferController`'s own screen) — HK-004
+
 **Files:** `InventoryOverlayComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 655931b | suite 150/145/5/0
 
 ### 7f-ii — Extract NarrativePaneComponent
-- [ ] Left pane of `renderAdaptiveBridge`: description wrap (with `glitchText` below 40 coherence) + `getExtraContent`
-- [ ] `renderAdaptiveBridge` remains in `BridgeView` as the split compositor
+- [x] Left pane of `renderAdaptiveBridge`: description wrap (with `glitchText` below 40 coherence) + `getExtraContent` — moved verbatim
+- [x] `renderAdaptiveBridge` remains in `BridgeView` as the split compositor (geometry, two pane renders, zip, bottom border)
 
 **Files:** `NarrativePaneComponent.groovy` (new), `BridgeView.groovy`
-**Status:** `[ ] NOT STARTED`
+**Test blast radius:** none
+**Status:** `[x] COMPLETE — 2026-09-11` | commit: 7dcf94e | suite 150/145/5/0 | goldens green (29) | 170-frame harness: 0 masked diffs | BridgeView 151 → 121 lines
 
 ### 7g — BridgeView as pure compositor
 - [ ] `BridgeView` only assembles components into final frame

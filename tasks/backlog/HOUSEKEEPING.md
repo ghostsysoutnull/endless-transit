@@ -31,6 +31,13 @@ spectrogram and cannot pin abyssal or low-coherence frames at all.
 **Found:** Phase 6 retro. Both resolve a choice, bump `stepCount`, record it, call the closure.
 Test-only path. Candidate: delegate one to the other.
 
+### HK-004 — `BridgeView.renderInventoryOverlay` (now `InventoryOverlayComponent`) has no production caller
+**Found:** Phase 7f pre-grill, 2026-09-11. The `i` command opens `QuantumBufferController.open()`, which
+prints its own `[QUANTUM_TRACE_BUFFER_INTERACE]` screen; the `[QUANTUM_TRACE_BUFFER_SYNC...]` overlay is
+reached only by the golden harness (frames 07, 19). Product decision: wire the overlay into the buffer
+command (it is the richer render — signal bars and phase) or retire it and its two goldens. Not a
+Phase 7 change (zero behavior change).
+
 ---
 
 ## 🟢 CLOSED
