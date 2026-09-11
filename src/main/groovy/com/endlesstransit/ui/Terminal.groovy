@@ -210,42 +210,11 @@ class Terminal {
     /**
      * Renders a boxed line of text. Uses ANSI Cursor Horizontal Absolute for perfect alignment.
      */
-    static void drawBoxedLine(String text, int width, String color = WHITE, boolean boldText = false) {
-        int innerWidth = width - 4
-        String safeText = ansiSafeTruncate(text, innerWidth)
-        
-        print colorize(BOX_V + " ", color)
-        print boldText ? bold(safeText) : safeText
-        
-        // Final border alignment using CHA
-        print "\u001b[${width}G"
-        println colorize(BOX_V, color)
-    }
 
     /**
      * Renders a boxed line split into two panes with a vertical separator.
      * Uses CHA for alignment of both the separator and the right border.
      */
-    static void drawSplitBoxedLine(String left, String right, int splitPoint, int width, String color = WHITE) {
-        // Left part
-        int leftInnerWidth = splitPoint - 4
-        String safeLeft = ansiSafeTruncate(left, leftInnerWidth)
-        print colorize(BOX_V + " ", color)
-        print safeLeft
-        
-        // Separator alignment using CHA (splitPoint is 1-indexed for CHA)
-        print "\u001b[${splitPoint}G"
-        print colorize(BOX_V + " ", color)
-        
-        // Right part
-        int rightInnerWidth = (width - splitPoint) - 3
-        String safeRight = ansiSafeTruncate(right, rightInnerWidth)
-        print safeRight
-        
-        // Right border alignment using CHA
-        print "\u001b[${width}G"
-        println colorize(BOX_V, color)
-    }
 
     /**
      * Removes ANSI escape codes from a string to calculate visible length.
@@ -303,31 +272,79 @@ class Terminal {
     /**
      * Renders a box header (Top).
      */
-    static void drawBoxTop(int width, String color = WHITE) {
-        println colorize(BOX_TL + (BOX_H * (width - 2)) + BOX_TR, color)
-    }
 
     /**
      * Renders a box footer (Bottom).
      */
-    static void drawBoxBottom(int width, String color = WHITE) {
-        println colorize(BOX_BL + (BOX_H * (width - 2)) + BOX_BR, color)
-    }
 
     /**
      * Renders a separator line between boxes.
      */
-    static void drawBoxSeparator(int width, String color = WHITE, String type = "heavy") {
-        String left = (type == "heavy") ? BOX_L_SEP : BOX_L_SEP_LIGHT
-        String right = (type == "heavy") ? BOX_R_SEP : BOX_R_SEP_LIGHT
-        String mid = (type == "heavy") ? BOX_H : BOX_H_LIGHT
-        println colorize(left + (mid * (width - 2)) + right, color)
-    }
 
     /**
      * Renders a 1D radar showing current position [ ] [X] [ ].
      * Auto-windows the view if total exceeds a specific limit to keep the index centered.
      */
+    // ── Box line builders (OOA Phase 7a-ii) ─────────────────────────────────
+    // Each returns exactly the byte sequence its draw* counterpart prints — CHA
+    // (\u001b[nG) alignment included — so a ViewComponent can build lines and
+    // BridgeView can print them with no change in output. draw* delegate here.
+
+    static String boxTop(int width, String color = WHITE) {
+        return colorize(BOX_TL + (BOX_H * (width - 2)) + BOX_TR, color)
+    }
+
+    static String boxedLine(String text, int width, String color = WHITE, boolean boldText = false) {
+        int innerWidth = width - 4
+        String safeText = ansiSafeTruncate(text, innerWidth)
+        return colorize(BOX_V + " ", color) +
+               (boldText ? bold(safeText) : safeText) +
+               "\u001b[${width}G" +                       // final border alignment using CHA
+               colorize(BOX_V, color)
+    }
+
+    static String splitBoxedLine(String left, String right, int splitPoint, int width, String color = WHITE) {
+        int leftInnerWidth = splitPoint - 4
+        String safeLeft = ansiSafeTruncate(left, leftInnerWidth)
+        int rightInnerWidth = (width - splitPoint) - 3
+        String safeRight = ansiSafeTruncate(right, rightInnerWidth)
+        return colorize(BOX_V + " ", color) + safeLeft +
+               "\u001b[${splitPoint}G" + colorize(BOX_V + " ", color) +   // separator (CHA, 1-indexed)
+               safeRight +
+               "\u001b[${width}G" + colorize(BOX_V, color)              // right border (CHA)
+    }
+
+    static String boxSeparator(int width, String color = WHITE, String type = "heavy") {
+        String left = (type == "heavy") ? BOX_L_SEP : BOX_L_SEP_LIGHT
+        String right = (type == "heavy") ? BOX_R_SEP : BOX_R_SEP_LIGHT
+        String mid = (type == "heavy") ? BOX_H : BOX_H_LIGHT
+        return colorize(left + (mid * (width - 2)) + right, color)
+    }
+
+    static String boxBottom(int width, String color = WHITE) {
+        return colorize(BOX_BL + (BOX_H * (width - 2)) + BOX_BR, color)
+    }
+
+    static void drawBoxTop(int width, String color = WHITE) {
+        println boxTop(width, color)
+    }
+
+    static void drawBoxedLine(String text, int width, String color = WHITE, boolean boldText = false) {
+        println boxedLine(text, width, color, boldText)
+    }
+
+    static void drawSplitBoxedLine(String left, String right, int splitPoint, int width, String color = WHITE) {
+        println splitBoxedLine(left, right, splitPoint, width, color)
+    }
+
+    static void drawBoxSeparator(int width, String color = WHITE, String type = "heavy") {
+        println boxSeparator(width, color, type)
+    }
+
+    static void drawBoxBottom(int width, String color = WHITE) {
+        println boxBottom(width, color)
+    }
+
     static String renderRadar(int index, int total, String activeColor = YELLOW, int windowSize = 10) {
         if (total <= 0) return ""
         
