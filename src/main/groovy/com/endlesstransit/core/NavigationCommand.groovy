@@ -33,7 +33,7 @@ class NavigationCommand implements GameCommand {
         Closure resolvedAction = mapper.resolve(choice, handler)
         if (resolvedAction) {
             state.player.stepCount++
-            state.navEngine.recordChoice(choice)
+            game.navEngine.recordChoice(choice)
             resolvedAction.call()
             return true
         }
