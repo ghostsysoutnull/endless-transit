@@ -12,6 +12,7 @@ class BridgeView implements ScreenshotProvider {
     private LocusSeed lastLocus
     private List<String> lastHudFrame = []
     private final HUDHeaderComponent hudHeader = new HUDHeaderComponent()
+    private final CompassComponent compass = new CompassComponent()
 
     BridgeView() {
         ScreenshotRegistry.register(this)
@@ -283,69 +284,9 @@ class BridgeView implements ScreenshotProvider {
         return lines
     }
 
-    private String getCompassLabel(String keyPrefix, Map options) {
-        String entryKey = (String) options.keySet().find { Object kObj -> 
-            String k = (String) kObj
-            k.toLowerCase().startsWith(keyPrefix.toLowerCase()) 
-        }
-        if (entryKey == null) return ""
-        
-        String label = entryKey
-        if (label.contains(": ")) {
-            label = label.substring(label.indexOf(": ") + 2)
-        } else if (label.contains(". ")) {
-            label = label.substring(label.indexOf(". ") + 2)
-        }
-        
-        if (label.length() > 15) label = label.substring(0, 12) + "..."
-        return label
-    }
-
     void renderCompass(Location currentLocation, Map options) {
-        VibeCapsule vibe = currentLocation.getVibe()
-        String accent = vibe?.atmosphericColor ?: Terminal.WHITE
-        
-        String lblU = getCompassLabel("u.", options)
-        String lblD = getCompassLabel("d.", options)
-        String lblF = getCompassLabel("f.", options)
-        String lblB = getCompassLabel("b.", options)
-        String lblL = getCompassLabel("l.", options)
-
-        // Get Last Choice for Reciprocal Trace (The "X" Marker)
-        String last = Terminal.virtualBuffer != null ? "none" : "none" // Safe default
-        // We can't easily get GameState here, but we can look at the history
-        List<String> history = Terminal.virtualBuffer != null ? lastHudFrame : []
-        
-        // Use a more robust way to get lastChoice: from the player's last move if possible
-        // For now, we use a simple heuristic: if we can go Down, but not Up, we likely came from Up.
-        String uMarker = "·"
-        String dMarker = "·"
-        
-        if (lblU) uMarker = Terminal.bold("U")
-        else if (lblD) uMarker = Terminal.colorize("X", Terminal.dim(Terminal.GREY)) // Reciprocal
-        
-        if (lblD) dMarker = Terminal.bold("D")
-        else if (lblU) dMarker = Terminal.colorize("X", Terminal.dim(Terminal.GREY)) // Reciprocal
-
-        String f = lblF ? Terminal.bold("F") : "·"
-        String b = lblB ? Terminal.bold("B") : "·"
-        String l = lblL ? Terminal.bold("L") : "·"
-
-        Terminal.println " " * 25 + "[$uMarker] ${Terminal.dim(lblU)}"
-        Terminal.println " " * 26 + Terminal.colorize("║", accent)
-        
-        String leftLabel = lblL ?: lblB
-        String leftIcon = lblL ? l : b
-        String leftSide = leftLabel ? "[$leftIcon] ${Terminal.dim(leftLabel)} " : ""
-        String center = "═══[╬]═══"
-        String rightSide = " [$f] ${Terminal.dim(lblF)}"
-        
-        int leftLen = Terminal.getVisualWidth(leftSide)
-        String leftPadding = " " * Math.max(0, 26 - leftLen - 4)
-        Terminal.println "${leftPadding}${Terminal.colorize(leftSide, accent)}${Terminal.colorize(center, accent)}${Terminal.colorize(rightSide, accent)}"
-        
-        Terminal.println " " * 26 + Terminal.colorize("║", accent)
-        Terminal.println " " * 25 + "[$dMarker] ${Terminal.dim(lblD)}"
+        RenderContext ctx = new RenderContext(currentLocation, null, (Map<String, Closure>) options, null)
+        compass.render(ctx, 130).each { String line -> Terminal.println(line) }
     }
 
     void renderLatticeTrace(Location currentLocation) {

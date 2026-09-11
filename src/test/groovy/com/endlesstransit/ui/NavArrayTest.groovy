@@ -23,11 +23,11 @@ class NavArrayTest {
             "l. Leave Building": {}
         ]
         
-        assertEquals("Go Up", game.bridgeView.getCompassLabel("u.", options))
-        assertEquals("Go Down", game.bridgeView.getCompassLabel("d.", options))
-        assertEquals("Leave Building", game.bridgeView.getCompassLabel("l.", options))
+        assertEquals("Go Up", new CompassComponent().getCompassLabel("u.", options))
+        assertEquals("Go Down", new CompassComponent().getCompassLabel("d.", options))
+        assertEquals("Leave Building", new CompassComponent().getCompassLabel("l.", options))
         // Special case: numbered options are not directions in the current logic
-        assertEquals("", game.bridgeView.getCompassLabel("f.", options))
+        assertEquals("", new CompassComponent().getCompassLabel("f.", options))
     }
 
     @Test
