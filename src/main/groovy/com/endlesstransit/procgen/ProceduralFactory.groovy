@@ -17,6 +17,7 @@ class ProceduralFactory {
     final BuildingFactory buildingFactory = new BuildingFactory(this)
     final StreetFactory streetFactory = new StreetFactory(this)
     final CityFactory cityFactory = new CityFactory(this)
+    final CountryFactory countryFactory = new CountryFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -89,13 +90,7 @@ class ProceduralFactory {
     }
 
     Country createCountry(Container parent, LocusSeed locus) {
-        Country c = new Country(NameGenerator.generateCountryName(locus), locus)
-        c.setParent(parent)
-        
-        List<String> traits = ["Ceremonial", "Military", "Industrial", "Agricultural", "Research", "Commercial"]
-        c.functionalTrait = (String) locus.pickFrom(traits)
-        c.fmt = fmt
-        return c
+        return countryFactory.create(parent, locus)
     }
 
     City createCity(Container parent, LocusSeed locus) {
@@ -177,18 +172,7 @@ class ProceduralFactory {
     }
 
     void populateCountry(Country c) {
-        // Ensure we have a local mutated vibe for this country based on the planet
-        if (c.localVibe == null) {
-            VibeCapsule parentVibe = c.getVibe()
-            if (parentVibe != null) {
-                c.localVibe = parentVibe.mutate(c.functionalTrait, c.locus.nextDouble() * 0.2 - 0.1)
-            }
-        }
-
-        int numCities = c.locus.nextInt(2, 10)
-        for (int i = 0; i < numCities; i++) {
-            c.addLocation(createCity(c, c.locus.branch(i)))
-        }
+        countryFactory.populate(c)
     }
 
     void populateCity(City c) {
