@@ -14,6 +14,7 @@ class ProceduralFactory {
     final ApartmentFactory apartmentFactory = new ApartmentFactory(this)
     final CorridorFactory corridorFactory = new CorridorFactory(this)
     final FloorFactory floorFactory = new FloorFactory(this)
+    final BuildingFactory buildingFactory = new BuildingFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -110,43 +111,7 @@ class ProceduralFactory {
     }
 
     Building createBuilding(Container parent, String culture, String timeline, LocusSeed locus, int depth, boolean isNull, boolean isAbyssal) {
-        Building b = new Building(locus)
-        b.culture = culture
-        b.timeline = timeline
-        b.setParent(parent)
-        
-        // 1. Determine Scale
-        int sizeRoll = locus.nextInt(100)
-        String sizeCat = "small"
-        if (sizeRoll > 90) sizeCat = "massive"
-        else if (sizeRoll > 70) sizeCat = "large"
-        else if (sizeRoll > 40) sizeCat = "medium"
-        
-        // 2. Set Constraints
-        switch (sizeCat) {
-            case "massive":
-                b.maxFloors = locus.nextInt(50, 100)
-                b.apartmentsPerFloor = locus.nextInt(10, 20)
-                break
-            case "large":
-                b.maxFloors = locus.nextInt(30, 50)
-                b.apartmentsPerFloor = locus.nextInt(8, 16)
-                break
-            case "medium":
-                b.maxFloors = locus.nextInt(10, 25)
-                b.apartmentsPerFloor = locus.nextInt(4, 10)
-                break
-            default:
-                b.maxFloors = locus.nextInt(3, 10)
-                b.apartmentsPerFloor = locus.nextInt(2, 6)
-        }
-
-        // 3. Generate Name
-        Map<String, Object> nameData = NameGenerator.generateBuildingName(culture, b.maxFloors, locus, depth, isNull, isAbyssal)
-        b.name = (String) nameData["name"]
-        b.isLandmark = (boolean) nameData["isLandmark"]
-        b.fmt = fmt
-        return b
+        return buildingFactory.create(parent, culture, timeline, locus, depth, isNull, isAbyssal)
     }
 
     Floor createFloor(Container parent, int number, int apartmentsPerFloor, String culture, String timeline, LocusSeed locus) {
@@ -265,9 +230,7 @@ class ProceduralFactory {
     }
 
     void populateBuilding(Building b) {
-        for (int i = 0; i < b.maxFloors; i++) {
-            b.addLocation(createFloor(b, i, b.apartmentsPerFloor, b.culture, b.timeline, b.locus.branch(i)))
-        }
+        buildingFactory.populate(b)
     }
 
     Apartment populateApartment(Apartment a) {
