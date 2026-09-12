@@ -22,6 +22,7 @@ class ProceduralFactory {
     final SolarSystemFactory solarSystemFactory = new SolarSystemFactory(this)
     final SectorFactory sectorFactory = new SectorFactory(this)
     final NullSectorFactory nullSectorFactory = new NullSectorFactory(this)
+    final FilamentFactory filamentFactory = new FilamentFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -31,10 +32,7 @@ class ProceduralFactory {
     }
 
     CosmicFilament createFilament(Container parent, LocusSeed locus) {
-        CosmicFilament f = new CosmicFilament(NameGenerator.generateFilamentName(locus), locus)
-        f.setParent(parent)
-        f.fmt = fmt
-        return f
+        return filamentFactory.create(parent, locus)
     }
 
     GalacticSector createSector(Container parent, LocusSeed locus) {
@@ -95,15 +93,7 @@ class ProceduralFactory {
     }
 
     void populateFilament(CosmicFilament f) {
-        int numNodes = f.locus.nextInt(4, 8)
-        for (int i = 0; i < numNodes; i++) {
-            LocusSeed childLocus = f.locus.branch(i)
-            if (f.locus.nextInt(100) < 30) {
-                f.addLocation(createNullSector(f, childLocus))
-            } else {
-                f.addLocation(createSector(f, childLocus))
-            }
-        }
+        filamentFactory.populate(f)
     }
 
     void populateSector(GalacticSector s) {
