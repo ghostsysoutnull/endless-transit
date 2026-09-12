@@ -13,6 +13,7 @@ class ProceduralFactory {
     final RoomFactory roomFactory = new RoomFactory(this)
     final ApartmentFactory apartmentFactory = new ApartmentFactory(this)
     final CorridorFactory corridorFactory = new CorridorFactory(this)
+    final FloorFactory floorFactory = new FloorFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -149,10 +150,7 @@ class ProceduralFactory {
     }
 
     Floor createFloor(Container parent, int number, int apartmentsPerFloor, String culture, String timeline, LocusSeed locus) {
-        Floor f = new Floor(number, apartmentsPerFloor, culture, timeline, locus)
-        f.setParent(parent)
-        f.fmt = fmt
-        return f
+        return floorFactory.create(parent, number, apartmentsPerFloor, culture, timeline, locus)
     }
 
     Corridor createCorridor(Container parent, int numApartments, String culture, String timeline, LocusSeed locus) {
@@ -282,8 +280,7 @@ class ProceduralFactory {
     }
 
     void populateFloor(Floor f) {
-        f.corridor = createCorridor(f, f.apartmentsPerFloor, f.culture, f.timeline, f.locus.branch("CORRIDOR"))
-        f.addLocation(f.corridor)
+        floorFactory.populate(f)
     }
 
     /**
@@ -291,16 +288,6 @@ class ProceduralFactory {
      * for a given floor without instantiating the full object tree.
      */
     int countSubLocations(Floor f) {
-        int total = 1 // The Corridor itself
-        int numApartments = f.apartmentsPerFloor
-        total += numApartments
-        
-        LocusSeed corridorLocus = f.locus.branch("CORRIDOR")
-        for (int i = 0; i < numApartments; i++) {
-            LocusSeed aptLocus = corridorLocus.branch(i)
-            int numRooms = aptLocus.nextInt(1, 10)
-            total += numRooms
-        }
-        return total
+        return floorFactory.countSubLocations(f)
     }
 }
