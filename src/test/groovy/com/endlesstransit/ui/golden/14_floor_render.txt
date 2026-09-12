@@ -1,6 +1,6 @@
 [37m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
 [37m║ [0m                            LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [2m⌂[0m [37m[▤][0m | PULSE_TRAVERSAL: 0 | COHERENCE: 100%[130G[37m║[0m
-[37m║ [0mLOCUS_TRACE: ...panse 4 > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way > The Void-Watcher > Floor 0[130G[37m║[0m
+[37m║ [0mLOCUS_TRACE: ... [VOID] > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way > The Void-Watcher > Floor 0[130G[37m║[0m
 [37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
 [37m║ [0mLATTICE_IDENT: Floor >> Floor 0[90G[37m║ [0mSYSTEM_DIAGNOSTIC: [NOMINAL][130G[37m║[0m
 [37m║ [0mLOCUS_HASH: 38.530 / 30.237 | HOP_DENSITY: 9[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m

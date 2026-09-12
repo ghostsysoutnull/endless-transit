@@ -3,11 +3,11 @@
 
     [2m[00] #[0m ∞ UNI*ERSE : Universe
     [2\[01] [0m » ▓OSMICFILAMENT : $lpha-546-Stran%
-    [2m[02] [0m ○ GALA%TICSECTOR : Secondary Expanse 4
-    *[2m[%!] [0m ░ SOLARSY$TEM : L$m*da Kapteyn
-    *2m[04] %0m ⊕ PLANET : Te\ar[2m [SURFAC█ | ER$: ANALOG][0m
-    [2m[0#] [0m              └─ ⬚ COUNTRY : Easter░ Frost Republic[2m [TRAIT: INDUS%RIAL][0m
-    █2m[06! [0m                  └─ 🏙 CITY : Clockci▒y[31m [UNAUTHORIZE/_ZONE][0m
-    [2m[07] #0m                      └─ ═ ░TREET : Low Way
-    [2m#08] [0m                          └─ ⌂ BUILDING : The #oid-Watcher[31m %BREACH#D][0m
-[1m >> [90m[09]                               └─ ▤ L/YER : La█er -0x1[0m[0m
+    [2m[02] [0m ○ NULL%ECTOR : Null Reach 331
+    [2m[03] *0m ☼ S%!ARSYS░EM : Lamb$a Kapt$y*
+    [2m[04] [*m ⊕ PLANE% : Terar[2m [S\RFACE | ERA: ANA█OG]$[0m
+    [2m[05] [0m              └─ ⬚ #OUNTRY : Eastern Frost Rep░blic[2m [TRAIT: INDUSTRIAL][0%
+    [2m[06] [█m                  └─ 🏙 !ITY : Clockcity[31m [U▒AUTHORIZED_ZONE][/m
+    [2m[07] [0m                      └─ ═ STR#ET : Lo░ Way
+    [2m[08] [0m                          └# ⌂ BUILDING : The Void-Watc#er[31m [BREACHED%[0m
+[1m >> [90m[#m[09]                               └─ ▤ LAYER : Laye/ -0x1[0m[0m

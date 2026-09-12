@@ -1,6 +1,6 @@
 [37m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
 [37m║ [0m                               LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [37m[═][0m | PULSE_TRAVERSAL: 0 | COHERENCE: 100%[130G[37m║[0m
-[37m║ [0mLOCUS_TRACE: ...pha-546-Strand > Secondary Expanse 4 > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way[130G[37m║[0m
+[37m║ [0mLOCUS_TRACE: Universe > ... > [VOID] > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way[130G[37m║[0m
 [37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
 [37m║ [0mLATTICE_IDENT: Street >> Low Way[90G[37m║ [0mSYNC: [STABLE][130G[37m║[0m
 [37m║ [0mLOCUS_HASH: 40.154 / 38.056 | HOP_DENSITY: 7[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m
@@ -19,9 +19,9 @@
 [37m║ [0m3. Soft Pod                                | 4. Living Chamber                     ...[0m[90G[37m║ [0m                                  [0m[130G[37m║[0m
 [37m║ [0m5. The Shell of The Web                    | 6. Unit 0xC2E Heights                 ...[0m[90G[37m║ [0m         [2m[37m[0m⌂[0m                        [0m[130G[37m║[0m
 [37m║ [0m7. LeafSpire                               | 8. SporeSpire                         ...[0m[90G[37m║ [0m                                  [0m[130G[37m║[0m
-[37m║ [0m9. The Nest of Light                       | 10. SporeReach                        ...[0m[90G[37m║ [0m                                [2m[37m[0m⌂[0m [0m[130G[37m║[0m
+[37m║ [0m9. [36m[1mApex of Lost Frequencies[0m[0m                | 10. SporeReach                        ...[0m[90G[37m║ [0m                           [2m[37m[0m⌂[0m    [2m[37m[0m⌂[0m [0m[130G[37m║[0m
 [37m║ [0m[2m-----------------------------------------------------------------------------------...[0m[90G[37m║ [0m     [2m[37m[0m⌂[0m                            [0m[130G[37m║[0m
-[37m║ [0m[90G[37m║ [0m               [2m[37m[0m⌂[0m [2m[37m[0m⌂[0m                [0m[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m               [2m[37m[0m⌂[0m                  [0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m                                  [0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m[2m[37m[0m⌂[0m  [2m[37m[0m⌂⌂[0m                             [0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [2m▲ You | ■ Node | ░ Void[0m[130G[37m║[0m
