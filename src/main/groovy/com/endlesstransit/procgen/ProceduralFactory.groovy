@@ -23,12 +23,10 @@ class ProceduralFactory {
     final SectorFactory sectorFactory = new SectorFactory(this)
     final NullSectorFactory nullSectorFactory = new NullSectorFactory(this)
     final FilamentFactory filamentFactory = new FilamentFactory(this)
+    final UniverseFactory universeFactory = new UniverseFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
-        Universe u = new Universe()
-        u.setLocus(locus)
-        u.fmt = fmt
-        return u
+        return universeFactory.create(locus)
     }
 
     CosmicFilament createFilament(Container parent, LocusSeed locus) {
@@ -86,10 +84,7 @@ class ProceduralFactory {
     // --- Population Strategies ---
 
     void populateUniverse(Universe u) {
-        int numFilaments = u.locus.nextInt(3, 7)
-        for (int i = 0; i < numFilaments; i++) {
-            u.addLocation(createFilament(u, u.locus.branch(i)))
-        }
+        universeFactory.populate(u)
     }
 
     void populateFilament(CosmicFilament f) {
