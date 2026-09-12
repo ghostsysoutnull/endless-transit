@@ -1,10 +1,21 @@
 package com.endlesstransit.procgen
-import com.endlesstransit.ui.Terminal
 
 import com.endlesstransit.model.*
 
 import groovy.transform.CompileStatic
 
+/**
+ * Registry facade over the per-type location factories (Phase 9).
+ *
+ * Every public {@code create*} / {@code populate*} method delegates to the factory that owns
+ * that type. The signatures are the pre-split ones, so model classes, core services and tests
+ * call this facade unchanged. {@link #populate(Container)} dispatches on the exact model class
+ * through a registry keyed by each factory's {@link LocationFactory#getType()}.
+ *
+ * Shared services live here: the single {@link ThemeService} and the {@code fmt} formatter,
+ * which {@code Game} injects after construction. Factories read both through their
+ * back-reference at call time, never at construction.
+ */
 @CompileStatic
 class ProceduralFactory {
     static ProceduralFactory instance = new ProceduralFactory()
@@ -24,7 +35,48 @@ class ProceduralFactory {
     final NullSectorFactory nullSectorFactory = new NullSectorFactory(this)
     final FilamentFactory filamentFactory = new FilamentFactory(this)
     final UniverseFactory universeFactory = new UniverseFactory(this)
-    
+
+    private final Map<Class<? extends Container>, LocationFactory<? extends Container>> registry
+
+    ProceduralFactory() {
+        Map<Class<? extends Container>, LocationFactory<? extends Container>> map = [:]
+        register(map, universeFactory)
+        register(map, filamentFactory)
+        register(map, sectorFactory)
+        register(map, nullSectorFactory)
+        register(map, solarSystemFactory)
+        register(map, planetFactory)
+        register(map, countryFactory)
+        register(map, cityFactory)
+        register(map, streetFactory)
+        register(map, buildingFactory)
+        register(map, floorFactory)
+        register(map, corridorFactory)
+        register(map, apartmentFactory)
+        registry = Collections.unmodifiableMap(map)
+    }
+
+    private static void register(Map<Class<? extends Container>, LocationFactory<? extends Container>> map,
+                                 LocationFactory<? extends Container> factory) {
+        map.put(factory.type, factory)
+    }
+
+    /** The factory registered for exactly {@code type}, or null when none is. */
+    public <T extends Container> LocationFactory<T> factoryFor(Class<T> type) {
+        return (LocationFactory<T>) registry.get(type)
+    }
+
+    /** Dispatches population on the exact model class of {@code location}. */
+    void populate(Container location) {
+        LocationFactory<Container> f = (LocationFactory<Container>) registry.get(location.getClass())
+        if (f == null) {
+            throw new IllegalStateException("No LocationFactory registered for ${location.getClass().simpleName}")
+        }
+        f.populate(location)
+    }
+
+    // --- Creation delegators (signatures unchanged since before the split) ---
+
     Universe createUniverse(LocusSeed locus) {
         return universeFactory.create(locus)
     }
@@ -81,7 +133,7 @@ class ProceduralFactory {
         return roomFactory.create(parent, culture, timeline, locus)
     }
 
-    // --- Population Strategies ---
+    // --- Population delegators ---
 
     void populateUniverse(Universe u) {
         universeFactory.populate(u)
