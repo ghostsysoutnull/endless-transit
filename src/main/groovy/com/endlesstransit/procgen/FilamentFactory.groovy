@@ -30,7 +30,9 @@ final class FilamentFactory implements LocationFactory<CosmicFilament> {
         int numNodes = f.locus.nextInt(4, 8)
         for (int i = 0; i < numNodes; i++) {
             LocusSeed childLocus = f.locus.branch(i)
-            if (f.locus.nextInt(100) < 30) {
+            // HK-007: roll per child on its own branch (the pre-2026-03-10 code advanced a Random per
+            // iteration; a pure draw on f.locus made every child of a filament share one roll).
+            if (childLocus.branch("NULL_ROLL").checkProbability(0.3)) {
                 f.addLocation(registry.createNullSector(f, childLocus))
             } else {
                 f.addLocation(registry.createSector(f, childLocus))

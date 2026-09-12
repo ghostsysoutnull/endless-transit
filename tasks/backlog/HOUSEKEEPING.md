@@ -24,16 +24,19 @@ facade become dead and can go with their callers.
 `city` and the City to `country` (messages say "City name" for `"Free Dust Kingdom"`, which is the Country). Literals are
 correct; rename the locals and messages. `InitialScreenTest.groovy:5` imports `ProceduralFactory` and never uses it.
 
-### HK-007 — `populateFilament` rolls the NullSector chance once per filament, not per child (decision needed)
-**Found:** Phase 9-0 capture, 2026-09-11. `FilamentFactory.populate` evaluates `f.locus.nextInt(100) < 30` inside the
-child loop, but `LocusSeed.nextInt` is pure, so every child of a filament gets the same roll: a filament is all
-`NullSector` or all `GalacticSector` (seed 0x1234: 7/7 null, pinned by `ProcgenDeepSnapshotTest`). Preserved verbatim in
-Phase 9. Rolling per child (`childLocus.branch("NULL_ROLL")`) is what the comment implies but **changes every world** —
-goldens, `ProcgenSnapshotTest`, `ProcgenDeepSnapshotTest` all move. Product call, not a refactor.
-
 ---
 
 ## 🟢 CLOSED
+
+### HK-007 — `populateFilament` rolled the NullSector chance once per filament, not per child
+**Found:** Phase 9-0 capture, 2026-09-11 (seed 0x1234: 7/7 null). **History:** before the 2026-03-10 seed migration
+(`e34acb4`) the loop advanced a stateful `Random` per iteration (`r.nextInt(10) < 3`); the migration replaced it with a
+pure draw on the parent seed, silently making the roll per filament. A regression, not a design.
+**Resolution:** `childLocus.branch("NULL_ROLL").checkProbability(0.3)`; `FilamentNullRollTest` guards the ~30 % rate and
+within-filament mixing (0 of 283 mixed before, fails on the old code). Intentional world change: 14 goldens regenerated
+and reviewed (seed 12345's sector is now a void — sector type/name, one null-lexicon building name, map glyphs, glitch
+noise); `ProcgenDeepSnapshotTest` filament pin updated; everything below the sector at seed 0x1234 unchanged.
+**Closed:** 2026-09-11 | commit f6f8fc8
 
 ### HK-001 — BridgeView draws randomness outside the seed chain
 **Resolution:** `FrameEntropy.forFrame(ctx)` (location LIP × 31 + player step count) seeds the spectrogram,

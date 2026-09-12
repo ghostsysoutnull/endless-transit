@@ -57,11 +57,10 @@ class ProcgenDeepSnapshotTest {
         CosmicFilament f = filament()
         List<Location> kids = f.getChildren()
         assertEquals(7, kids.size(), "filament child count")
-        // f.locus.nextInt(100) is pure, so the 30% roll is the same for every child of a filament
-        kids.eachWithIndex { Location k, int i ->
-            assertTrue(k instanceof NullSector, "child[$i] must be a NullSector at this seed, got ${k.class.simpleName}")
-        }
-        assertEquals("Null Reach 916", kids[0].name, "createNullSector name format")
+        // HK-007: each child rolls on childLocus.branch("NULL_ROLL"); FilamentNullRollTest guards the rate/mixing
+        List<String> expectedTypes = ["GalacticSector", "GalacticSector", "NullSector", "NullSector", "NullSector", "GalacticSector", "GalacticSector"]
+        assertEquals(expectedTypes, kids.collect { it.class.simpleName }, "per-child NullSector roll at this seed")
+        assertEquals("Null Reach 886", kids[2].name, "createNullSector name format")
     }
 
     // --- PlanetFactory: createPlanet colour map ---

@@ -1,6 +1,6 @@
 [37m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
 [37m║ [0m                              LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [37m[⌂][0m | PULSE_TRAVERSAL: 0 | COHERENCE: 100%[130G[37m║[0m
-[37m║ [0mLOCUS_TRACE: ...condary Expanse 4 > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way > The Void-Watcher[130G[37m║[0m
+[37m║ [0mLOCUS_TRACE: ...se > ... > [VOID] > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way > The Void-Watcher[130G[37m║[0m
 [37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
 [37m║ [0mLATTICE_IDENT: Building >> The Void-Watcher[90G[37m║ [0mSTRUCTURAL_STABLE[130G[37m║[0m
 [37m║ [0mLOCUS_HASH: 11.533 / 8.873 | HOP_DENSITY: 8[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m

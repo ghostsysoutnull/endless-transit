@@ -1,6 +1,6 @@
 [90m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
 [90m║ [0m                           LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [2m⌂[0m [90m[▤-1][0m | PULSE_TRAVERSAL: 0 | INTEGRITY: 100%[130G[90m║[0m
-[90m║ [0mVOID_TRACE: ...nse 4 > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way > The Void-Watcher > Layer -0x1[130G[90m║[0m
+[90m║ [0mVOID_TRACE: ...VOID] > Lambda Kapteyn > Terar > Eastern Frost Republic > Clockcity > Low Way > The Void-Watcher > Layer -0x1[130G[90m║[0m
 [90m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
 [90m║ [0mVOID_IDENT: Layer >> Layer -0x1[90G[90m║ [0mSYSTEM_STATUS: [ABYSS_SYNC][130G[90m║[0m
 [90m║ [0mVOID_HASH: 49.607 / 62.667 | ABYSSAL_DEPTH: 9[90G[90m║ [0mINTEGRITY: [32m██████████[0m[130G[90m║[0m
