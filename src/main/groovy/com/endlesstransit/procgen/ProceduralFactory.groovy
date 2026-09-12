@@ -19,6 +19,7 @@ class ProceduralFactory {
     final CityFactory cityFactory = new CityFactory(this)
     final CountryFactory countryFactory = new CountryFactory(this)
     final PlanetFactory planetFactory = new PlanetFactory(this)
+    final SolarSystemFactory solarSystemFactory = new SolarSystemFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -50,10 +51,7 @@ class ProceduralFactory {
     }
 
     SolarSystem createSolarSystem(Container parent, LocusSeed locus) {
-        SolarSystem s = new SolarSystem(NameGenerator.generateSolarSystemName(locus), locus)
-        s.setParent(parent)
-        s.fmt = fmt
-        return s
+        return solarSystemFactory.create(parent, locus)
     }
 
     Planet createPlanet(Container parent, LocusSeed locus) {
@@ -129,10 +127,7 @@ class ProceduralFactory {
     }
 
     void populateSolarSystem(SolarSystem s) {
-        int numPlanets = s.locus.nextInt(2, 10)
-        for (int i = 0; i < numPlanets; i++) {
-            s.addLocation(createPlanet(s, s.locus.branch(i)))
-        }
+        solarSystemFactory.populate(s)
     }
 
     void populatePlanet(Planet p) {
