@@ -20,6 +20,8 @@ class ProceduralFactory {
     final CountryFactory countryFactory = new CountryFactory(this)
     final PlanetFactory planetFactory = new PlanetFactory(this)
     final SolarSystemFactory solarSystemFactory = new SolarSystemFactory(this)
+    final SectorFactory sectorFactory = new SectorFactory(this)
+    final NullSectorFactory nullSectorFactory = new NullSectorFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -36,18 +38,11 @@ class ProceduralFactory {
     }
 
     GalacticSector createSector(Container parent, LocusSeed locus) {
-        GalacticSector s = new GalacticSector(NameGenerator.generateSectorName(locus), locus)
-        s.setParent(parent)
-        s.fmt = fmt
-        return s
+        return sectorFactory.create(parent, locus)
     }
 
     NullSector createNullSector(Container parent, LocusSeed locus) {
-        String nullName = "Null Reach ${Integer.toHexString(locus.nextInt(0xFFF)).toUpperCase()}"
-        NullSector s = new NullSector(nullName, locus)
-        s.setParent(parent)
-        s.fmt = fmt
-        return s
+        return nullSectorFactory.create(parent, locus)
     }
 
     SolarSystem createSolarSystem(Container parent, LocusSeed locus) {
@@ -112,18 +107,11 @@ class ProceduralFactory {
     }
 
     void populateSector(GalacticSector s) {
-        int numSystems = s.locus.nextInt(3, 7)
-        for (int i = 0; i < numSystems; i++) {
-            s.addLocation(createSolarSystem(s, s.locus.branch(i)))
-        }
+        sectorFactory.populate(s)
     }
 
     void populateNullSector(NullSector s) {
-        int numSystems = s.locus.nextInt(1, 2)
-        for (int i = 0; i < numSystems; i++) {
-            LocusSeed childLocus = s.locus.branch(i)
-            s.addLocation(createSolarSystem(s, childLocus))
-        }
+        nullSectorFactory.populate(s)
     }
 
     void populateSolarSystem(SolarSystem s) {
