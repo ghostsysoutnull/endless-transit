@@ -1,14 +1,14 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-11 (Phase 9 merged `--no-ff` @ `f032326` and pushed)
+**Last updated:** 2026-09-11 (Phase 9 merged @ `f032326`; HK-007 fixed and merged; pushed)
 
 ## 🎯 Current Status
-- **Test Suite:** 197 discovered / 192 pass / 5 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Branch:** `master`, pushed to `origin/master` (Phase 9 merged `--no-ff` @ `f032326`; suite + scan re-run green on `master`).
-  Working tree clean.
-- **Active Work:** Phase 9 close-out done (chronicle `0xa5b92b9`, `docs/retro/RETRO_PHASE_9.md`, lessons promoted).
-  Housekeeping backlog has three OPEN items (HK-005, HK-006, HK-007 — see `tasks/backlog/HOUSEKEEPING.md`).
+- **Test Suite:** 198 discovered / 193 pass / 5 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
+- **Branch:** `master`, pushed to `origin/master`. Working tree clean.
+- **Active Work:** none. Phase 9 closed (chronicle `0xa5b92b9`, `docs/retro/RETRO_PHASE_9.md`). HK-007 (per-child
+  NullSector roll — a regression from the March seed migration) fixed on `housekeeping/hk-007-filament-roll`, merged;
+  14 goldens regenerated intentionally and reviewed. Housekeeping backlog has two OPEN items (HK-005, HK-006).
   Workflow backlog clean; **Phase 10 is a cadence review point** (every 3 phases).
-- **Next Phase:** Phase 10 — Domain Event System, after (1) merging Phase 9, (2) the backlog cadence review.
+- **Next:** HK-005 + HK-006 in one bounded housekeeping session, then Phase 10 — Domain Event System.
 
 ## ✅ State of the substrate in one paragraph
 `ProceduralFactory` is a 198-line registry facade: every pre-split `create*` / `populate*` / `countSubLocations`
@@ -28,14 +28,14 @@ and the 36-frame golden gate are as described in the Phase 8 handover.
 Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
-2. **Orient:** `git branch --show-current` = `master`; `git log --oneline -5` (top: `f032326` merge). Read `tasks/todo.md`,
-   the Phase 9 + Phase 10 sections of `docs/analysis/OOA_REFACTOR_PLAN.md`, and `docs/retro/RETRO_PHASE_9.md`
-   "Concerns for Upcoming Phases".
-3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=197 SUCCEEDED=192 FAILED=0 SKIPPED=5`.
+2. **Orient:** `git branch --show-current` = `master`; `git log --oneline -5` (top: HK-007 merge, then `f032326` Phase 9
+   merge). Read `tasks/todo.md`, the Phase 9 + Phase 10 sections of `docs/analysis/OOA_REFACTOR_PLAN.md`, and
+   `docs/retro/RETRO_PHASE_9.md` "Concerns for Upcoming Phases".
+3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=198 SUCCEEDED=193 FAILED=0 SKIPPED=5`.
 4. **Cadence review (Phase 10 trigger):** open `docs/analysis/WORKFLOW_BACKLOG.md` (clean) and `tasks/backlog/HOUSEKEEPING.md`
-   (HK-005 registry dispatch from `Container.populateChildren`, 14 model files; HK-006 test hygiene; HK-007 filament
-   NullSector roll — **user decision, changes every world**). Recommend HK-005 + HK-006 as one bounded housekeeping session
-   before Phase 10; put HK-007 to the user as a question, do not act on it.
+   (HK-005 registry dispatch from `Container.populateChildren`, 14 model files in three batches ≤ 5; HK-006 test hygiene).
+   Recommended: one bounded housekeeping session for both (plan, `/grill`, execute, chronicle) before Phase 10.
+   `ProceduralFactoryRegistryTest` and `RoomAncestorTest:37` are the guards for HK-005.
 5. **Phase 10:** branch `refactor/phase-10-domain-events`. Re-read `EventBusTest` (`@Disabled`, stubs from 0.5g) and
    `JournalManager` call sites in `Player`, `Room`, `Building` before planning; `/grill` before asking for authorization;
    ELI5 in chat, detail in the plan file. Max 4 production files per commit (Phase 10 cap).
@@ -54,7 +54,7 @@ Initialize session for the Endless Transit substrate.
 | Per-type factories | `src/main/groovy/com/endlesstransit/procgen/{LocationFactory,*Factory}.groovy` |
 | Procgen pins | `src/test/groovy/com/endlesstransit/procgen/{ProcgenDeepSnapshotTest,ProcgenSnapshotTest,ProceduralFactoryRegistryTest}.groovy` |
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
-| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (HK-005, HK-006, HK-007 open) |
+| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (HK-005, HK-006 open; HK-007 closed @ f6f8fc8) |
 | Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (clean; review due: Phase 10) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md` |
@@ -62,7 +62,7 @@ Initialize session for the Endless Transit substrate.
 
 ## ⚠️ Lessons carried into Phase 10
 - Read the entropy primitive before an entropy-sensitive refactor: `LocusSeed` is pure; `nextRandom()` is the only stateful draw.
-- A pure roll inside a loop is one roll (HK-007 is the live example).
+- A pure roll inside a loop is one roll (HK-007 was the live example: a stateful `Random` migrated to a pure draw on the parent seed silently became per-filament; fixed by rolling on `childLocus.branch("NULL_ROLL")`).
 - Under `@CompileStatic`, register typed instances one call at a time; typed list literals of concrete fields fail STC.
 - A State/Strategy/Factory hierarchy is defeated by one `instanceof` in a client; `/grill` check 5 greps for it.
 - Write pinning tests against the public surface; capture literals from `master` before any production change; never regenerate them silently.
