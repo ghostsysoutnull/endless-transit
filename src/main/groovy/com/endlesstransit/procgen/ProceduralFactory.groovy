@@ -16,6 +16,7 @@ class ProceduralFactory {
     final FloorFactory floorFactory = new FloorFactory(this)
     final BuildingFactory buildingFactory = new BuildingFactory(this)
     final StreetFactory streetFactory = new StreetFactory(this)
+    final CityFactory cityFactory = new CityFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -98,10 +99,7 @@ class ProceduralFactory {
     }
 
     City createCity(Container parent, LocusSeed locus) {
-        City c = new City(NameGenerator.generateCityName(locus), locus)
-        c.setParent(parent)
-        c.fmt = fmt
-        return c
+        return cityFactory.create(parent, locus)
     }
 
     Street createStreet(Container parent, LocusSeed locus) {
@@ -194,24 +192,7 @@ class ProceduralFactory {
     }
 
     void populateCity(City c) {
-        if (c.localVibe == null) {
-            VibeCapsule parentVibe = c.getVibe()
-            if (parentVibe != null) {
-                // 10% chance to be a "rebel" district and flip resonances
-                if (c.locus.checkProbability(0.1)) {
-                    c.isRebelDistrict = true
-                    c.localVibe = new VibeCapsule(parentVibe.timeline, parentVibe.secondaryCulture, parentVibe.primaryCulture)
-                    c.localVibe.latticeMutation = parentVibe.latticeMutation
-                    c.localVibe.stabilityFactor = parentVibe.stabilityFactor
-                    c.localVibe.atmosphericColor = parentVibe.atmosphericColor
-                }
-            }
-        }
-
-        int numStreets = c.locus.nextInt(3, 15)
-        for (int i = 0; i < numStreets; i++) {
-            c.addLocation(createStreet(c, c.locus.branch(i)))
-        }
+        cityFactory.populate(c)
     }
 
     void populateStreet(Street s) {
