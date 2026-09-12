@@ -35,7 +35,7 @@
 | 6 | GameState Decomposition | `[x] COMPLETE` | Medium |
 | 7 | BridgeView Decomposition | `[x] COMPLETE` | Medium |
 | 8 | Floor State Pattern | `[x] COMPLETE` | Medium |
-| 9 | ProceduralFactory Split | `[ ] NOT STARTED` | Medium |
+| 9 | ProceduralFactory Split | `[x] COMPLETE` | Medium |
 | 10 | Domain Event System | `[ ] NOT STARTED` | High |
 | O1 | HeadlessRunner DSL | `[ ] NOT STARTED` | None |
 | O2 | CodeNarc Static Analysis | `[ ] NOT STARTED` | None |
@@ -650,25 +650,57 @@ Conditional branching in `Floor.getOptions()` eliminated.
 
 > One location type per commit. Run `DeterministicUniverseTest` after each.
 
-- [ ] **9a** Define `LocationFactory<T>` interface: `create(Container, LocusSeed) → T`, `populate(T)`
-- [ ] **9b** `RoomFactory`
-- [ ] **9c** `ApartmentFactory`
-- [ ] **9d** `CorridorFactory`
-- [ ] **9e** `FloorFactory`
-- [ ] **9f** `BuildingFactory`
-- [ ] **9g** `StreetFactory`
-- [ ] **9h** `CityFactory`
-- [ ] **9i** `CountryFactory`
-- [ ] **9j** `PlanetFactory`
-- [ ] **9k** `SolarSystemFactory`
-- [ ] **9l** `SectorFactory` / `NullSectorFactory`
-- [ ] **9m** `FilamentFactory`
-- [ ] **9n** `UniverseFactory`
-- [ ] **9o** `ProceduralFactory` reduced to registry facade
+> **Execution note (2026-09-11):** Coverage audit found nine factory behaviors with no assertion anywhere
+> in `src/test` (building scale ranges, planet colour map, country trait + vibe mutation, apartment vibe
+> match + object-pool drain, door inscriptions, room attributes/atmosphere/furniture/objects, the NullSector
+> roll, `countSubLocations`). **9-0** `ProcgenDeepSnapshotTest` pins all of them for seed 0x1234, one method
+> per factory-to-be, literals captured from `master` before any production change. Every body was then
+> lifted by script (`scratchpad/move_factory.py`: exact text, four listed substitutions, reverse
+> substitution asserted equal to the original before writing) — zero drift across 14 factories. Full suite
+> (goldens included) green after every commit; no golden moved.
+>
+> **Why verbatim moves are entropy-safe:** `LocusSeed` is `@Immutable` and every draw is a pure function of
+> `value` + a fixed branch key; only the `java.util.Random` from `nextRandom()` is stateful, and both uses
+> (room furniture, apartment object pool) moved inside their own method. The procgen lesson on "call order"
+> was corrected accordingly.
+>
+> **Declared deviations:** (1) no generic `create(Container, LocusSeed)` on the interface — five of fourteen
+> `create*` signatures carry culture/timeline/count arguments; each factory has a typed `create(...)` and
+> the facade delegates. (2) `RoomFactory` does not implement `LocationFactory` (Room is a leaf; a no-op
+> `populate` would lie). (3) Factories hold a back-reference to the facade (`registry`) and read `fmt`,
+> `themeService` and sibling factories at call time, because `Game` injects `fmt` after the singleton is
+> built and every `populate` creates children of another type. (4) `ThemeService` stays one instance on the
+> facade — the domain doc's `ThemeService.instance` never existed and was corrected. (5) The facade's
+> `populateApartment` still returns the apartment; the factory `populate` is void.
+>
+> **No caller changed:** every pre-split `create*`/`populate*`/`countSubLocations` signature survives as a
+> one-line delegator, so the 13 model classes, 4 core/procgen callers and 8 direct test callers were untouched.
+> `populate(Container)` and `factoryFor(Class)` are new; migrating `Container.populateChildren` to the
+> dispatcher is HK-005.
 
-**Status:** `[ ] NOT STARTED`
+- [x] **9-0** `ProcgenDeepSnapshotTest` (9 pins) — commit dc3e9f5
+- [x] **9a** `LocationFactory<T extends Container>`: `getType()`, `populate(T)` — commit 0f443af
+- [x] **9b** `RoomFactory` (create only) — e734a08
+- [x] **9c** `ApartmentFactory` — 615ea38
+- [x] **9d** `CorridorFactory` (+ private `generateContextualInscription`) — 6918399
+- [x] **9e** `FloorFactory` (+ `countSubLocations`) — a9690e2
+- [x] **9f** `BuildingFactory` — 62a211b
+- [x] **9g** `StreetFactory` — 0746fef
+- [x] **9h** `CityFactory` — f9b03c5
+- [x] **9i** `CountryFactory` — 806f581
+- [x] **9j** `PlanetFactory` — 03acb68
+- [x] **9k** `SolarSystemFactory` — d1688cc
+- [x] **9l** `SectorFactory` / `NullSectorFactory` — 3faae83
+- [x] **9m** `FilamentFactory` — 1908d47
+- [x] **9n** `UniverseFactory` — 593a310
+- [x] **9o** `ProceduralFactory` reduced to registry facade (`factoryFor`, `populate(Container)`; 435 → 198 lines) + `ProceduralFactoryRegistryTest` — 4d58ef5
 
-**Phase 9 Gates:** `DeterministicUniverseTest` after every factory. `./vinc.sh --test` after 9o.
+**Files:** `ProceduralFactory.groovy` + 15 new files in `procgen/` (`LocationFactory`, 14 factories)
+**Test blast radius:** `ProcgenDeepSnapshotTest` (new), `ProceduralFactoryRegistryTest` (new); zero edits to existing tests
+**Status:** `[x] COMPLETE — 2026-09-11` | 16 commits on `refactor/phase-9-factory-split`
+
+**Phase 9 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=197 SUCCEEDED=192 FAILED=0 SKIPPED=5` (36 goldens byte-identical after every commit) + `./vinc.sh --scan` ✅ seed 0 → 9 nodes + `DeterministicUniverseTest` ✅ + `grep -rn "instanceof .*Factory" src/` → 0
+**Retrospective:** `docs/retro/RETRO_PHASE_9.md`
 
 ---
 
@@ -778,6 +810,6 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 
 ---
 
-*Last updated: 2026-09-11 — Phase 8 complete (Floor State Pattern; 5 commits); Phase 9 next.*
+*Last updated: 2026-09-11 — Phase 9 complete (ProceduralFactory Split; 16 commits); Phase 10 next (backlog review cadence: Phase 10).*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*
