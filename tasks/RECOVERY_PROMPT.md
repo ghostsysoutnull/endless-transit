@@ -1,10 +1,10 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-11 (Phase 9 complete on its branch; merge to `master` pending user authorization)
+**Last updated:** 2026-09-11 (Phase 9 merged `--no-ff` @ `f032326` and pushed)
 
 ## 🎯 Current Status
 - **Test Suite:** 197 discovered / 192 pass / 5 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Branch:** `refactor/phase-9-factory-split` — 18 commits ahead of `master` @ `e18384d` (9-0, 9a–9o, docs, chronicle/retro).
-  **Not merged, not pushed.** Working tree clean.
+- **Branch:** `master`, pushed to `origin/master` (Phase 9 merged `--no-ff` @ `f032326`; suite + scan re-run green on `master`).
+  Working tree clean.
 - **Active Work:** Phase 9 close-out done (chronicle `0xa5b92b9`, `docs/retro/RETRO_PHASE_9.md`, lessons promoted).
   Housekeeping backlog has three OPEN items (HK-005, HK-006, HK-007 — see `tasks/backlog/HOUSEKEEPING.md`).
   Workflow backlog clean; **Phase 10 is a cadence review point** (every 3 phases).
@@ -28,20 +28,18 @@ and the 36-frame golden gate are as described in the Phase 8 handover.
 Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
-2. **Orient:** `git branch --show-current`; `git log --oneline master..HEAD | wc -l` (expect 18 on the phase branch, or 0
-   on `master` if already merged). Read `tasks/todo.md`, the Phase 9 + Phase 10 sections of `docs/analysis/OOA_REFACTOR_PLAN.md`,
-   and `docs/retro/RETRO_PHASE_9.md` "Concerns for Upcoming Phases".
+2. **Orient:** `git branch --show-current` = `master`; `git log --oneline -5` (top: `f032326` merge). Read `tasks/todo.md`,
+   the Phase 9 + Phase 10 sections of `docs/analysis/OOA_REFACTOR_PLAN.md`, and `docs/retro/RETRO_PHASE_9.md`
+   "Concerns for Upcoming Phases".
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=197 SUCCEEDED=192 FAILED=0 SKIPPED=5`.
-4. **If Phase 9 is unmerged:** ask for authorization, then `git checkout master && git merge --no-ff refactor/phase-9-factory-split`,
-   re-run the suite and `./vinc.sh --scan` (seed 0 → 9 nodes) on `master`, push only on a Directive.
-5. **Cadence review (Phase 10 trigger):** open `docs/analysis/WORKFLOW_BACKLOG.md` (clean) and `tasks/backlog/HOUSEKEEPING.md`
+4. **Cadence review (Phase 10 trigger):** open `docs/analysis/WORKFLOW_BACKLOG.md` (clean) and `tasks/backlog/HOUSEKEEPING.md`
    (HK-005 registry dispatch from `Container.populateChildren`, 14 model files; HK-006 test hygiene; HK-007 filament
    NullSector roll — **user decision, changes every world**). Recommend HK-005 + HK-006 as one bounded housekeeping session
    before Phase 10; put HK-007 to the user as a question, do not act on it.
-6. **Phase 10:** branch `refactor/phase-10-domain-events`. Re-read `EventBusTest` (`@Disabled`, stubs from 0.5g) and
+5. **Phase 10:** branch `refactor/phase-10-domain-events`. Re-read `EventBusTest` (`@Disabled`, stubs from 0.5g) and
    `JournalManager` call sites in `Player`, `Room`, `Building` before planning; `/grill` before asking for authorization;
    ELI5 in chat, detail in the plan file. Max 4 production files per commit (Phase 10 cap).
-7. **Phase end:** merge `--no-ff`, `/chronicle`, `docs/retro/RETRO_PHASE_10.md`, promote lessons, refresh this file.
+6. **Phase end:** merge `--no-ff`, `/chronicle`, `docs/retro/RETRO_PHASE_10.md`, promote lessons, refresh this file.
 
 **END_PROMPT**
 
