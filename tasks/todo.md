@@ -27,7 +27,7 @@
 - [x] Phase 6 — GameState Decomposition (BridgeView → RenderingCoordinator; ActionMapper → TurnProcessor; InputHandler built in Game and injected; NavigationEngine → NavigationOrchestrator)
 - [x] Phase 7 — BridgeView Decomposition (8 `ViewComponent`s behind a 120-line compositor; golden-frame visual gate replaces the scan; WF-002 closed, WF-003 closed; HK-001..004 logged)
 - [x] Housekeeping (post-Phase-7): HK-001..004 cleared — deterministic HUD noise, controller out of `GameState`, one dispatch path, one inventory renderer
-- [x] Phase 8 — Floor State Pattern (`FloorState` + `ElevatorState`/`CorridorState` singletons; `Floor.enterCorridor()`/`returnToElevator()`; polymorphic scan target; no `instanceof` on states)
+- [x] Phase 8 — Floor State Pattern (`FloorState` + `ElevatorState`/`CorridorState` singletons; `Floor.enterCorridor()`/`returnToElevator()`; polymorphic scan target; no `instanceof` on states; post-merge: WF-004 + WF-005 closed)
 - [ ] Phase 9 — ProceduralFactory Split — **NEXT** (new session; see `tasks/RECOVERY_PROMPT.md`)
 - [ ] Phase 10 — Domain Event System
 
