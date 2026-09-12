@@ -10,7 +10,26 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-_(none — cleared 2026-09-11 before Phase 8)_
+### HK-005 — `Container.populateChildren()` overrides still name their `populateX` method
+**Found:** Phase 9o, 2026-09-11. The registry facade dispatches `populate(Container)` on the exact class, but the
+13 model overrides (`Universe.groovy:80` … `Apartment.groovy:112`) still call `ProceduralFactory.instance.populateX(this)`
+and each imports `ProceduralFactory`. A `Container.populateChildren()` default of `ProceduralFactory.instance.populate(this)`
+removes 13 one-line overrides and 13 imports, and makes adding a location type a registry entry instead of an override.
+**Shape:** 14 model files → three batches of ≤ 5 under the Refactor Guard; `ProceduralFactoryRegistryTest` +
+`RoomAncestorTest:37` (every container non-empty) are the guards. Once migrated, the 13 `populateX` delegators on the
+facade become dead and can go with their callers.
+
+### HK-006 — Test hygiene in the procgen tree
+**Found:** Phase 9 coverage audit, 2026-09-11. `ProcgenSnapshotTest.groovy:62-73` binds the Country to a local named
+`city` and the City to `country` (messages say "City name" for `"Free Dust Kingdom"`, which is the Country). Literals are
+correct; rename the locals and messages. `InitialScreenTest.groovy:5` imports `ProceduralFactory` and never uses it.
+
+### HK-007 — `populateFilament` rolls the NullSector chance once per filament, not per child (decision needed)
+**Found:** Phase 9-0 capture, 2026-09-11. `FilamentFactory.populate` evaluates `f.locus.nextInt(100) < 30` inside the
+child loop, but `LocusSeed.nextInt` is pure, so every child of a filament gets the same roll: a filament is all
+`NullSector` or all `GalacticSector` (seed 0x1234: 7/7 null, pinned by `ProcgenDeepSnapshotTest`). Preserved verbatim in
+Phase 9. Rolling per child (`childLocus.branch("NULL_ROLL")`) is what the comment implies but **changes every world** —
+goldens, `ProcgenSnapshotTest`, `ProcgenDeepSnapshotTest` all move. Product call, not a refactor.
 
 ---
 

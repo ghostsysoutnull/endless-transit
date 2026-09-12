@@ -14,7 +14,7 @@
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
-**Suite baseline:** 184 discovered / 179 pass / 5 skipped / 0 failed
+**Suite baseline:** 197 discovered / 192 pass / 5 skipped / 0 failed
 
 - [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
 - [x] Phase 0.5 — Test Coverage Gaps (safety-net tests 0.5a–0.5h, all complete)
@@ -28,8 +28,8 @@
 - [x] Phase 7 — BridgeView Decomposition (8 `ViewComponent`s behind a 120-line compositor; golden-frame visual gate replaces the scan; WF-002 closed, WF-003 closed; HK-001..004 logged)
 - [x] Housekeeping (post-Phase-7): HK-001..004 cleared — deterministic HUD noise, controller out of `GameState`, one dispatch path, one inventory renderer
 - [x] Phase 8 — Floor State Pattern (`FloorState` + `ElevatorState`/`CorridorState` singletons; `Floor.enterCorridor()`/`returnToElevator()`; polymorphic scan target; no `instanceof` on states; post-merge: WF-004 + WF-005 closed)
-- [ ] Phase 9 — ProceduralFactory Split — **NEXT** (new session; see `tasks/RECOVERY_PROMPT.md`)
-- [ ] Phase 10 — Domain Event System
+- [x] Phase 9 — ProceduralFactory Split (`LocationFactory<T>` + 14 per-type factories; `ProceduralFactory` is a 198-line registry facade with every pre-split signature intact; `ProcgenDeepSnapshotTest` pins 9 previously unguarded behaviors; zero caller edits; 16 commits)
+- [ ] Phase 10 — Domain Event System — **NEXT** (backlog review cadence fires first; see `tasks/RECOVERY_PROMPT.md`)
 
 ---
 
