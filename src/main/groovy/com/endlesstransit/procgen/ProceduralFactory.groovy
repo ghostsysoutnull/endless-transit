@@ -15,6 +15,7 @@ class ProceduralFactory {
     final CorridorFactory corridorFactory = new CorridorFactory(this)
     final FloorFactory floorFactory = new FloorFactory(this)
     final BuildingFactory buildingFactory = new BuildingFactory(this)
+    final StreetFactory streetFactory = new StreetFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -104,10 +105,7 @@ class ProceduralFactory {
     }
 
     Street createStreet(Container parent, LocusSeed locus) {
-        Street s = new Street(NameGenerator.generateStreetName(locus), locus)
-        s.setParent(parent)
-        s.fmt = fmt
-        return s
+        return streetFactory.create(parent, locus)
     }
 
     Building createBuilding(Container parent, String culture, String timeline, LocusSeed locus, int depth, boolean isNull, boolean isAbyssal) {
@@ -217,16 +215,7 @@ class ProceduralFactory {
     }
 
     void populateStreet(Street s) {
-        int numPairs = s.locus.nextInt(2, 10)
-        VibeCapsule v = s.getVibe()
-        String culture = v != null ? v.primaryCulture : "monolith"
-        String timeline = v != null ? v.timeline : "ancient"
-        int depth = s.getDepth()
-        boolean isNull = s.findAncestor(NullSector.class) != null
-        boolean isAbyssal = s.isAbyssal()
-        for (int i = 0; i < numPairs * 2; i++) {
-            s.addLocation(createBuilding(s, culture, timeline, s.locus.branch(i), depth, isNull, isAbyssal))
-        }
+        streetFactory.populate(s)
     }
 
     void populateBuilding(Building b) {
