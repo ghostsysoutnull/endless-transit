@@ -11,6 +11,7 @@ class ProceduralFactory {
     ThemeService themeService = new ThemeService()
     OutputFormatter fmt
     final RoomFactory roomFactory = new RoomFactory(this)
+    final ApartmentFactory apartmentFactory = new ApartmentFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -161,18 +162,7 @@ class ProceduralFactory {
     }
 
     Apartment createApartment(Container parent, String doorDesc, String culture, String timeline, LocusSeed locus) {
-        Apartment a = new Apartment(doorDesc, culture, timeline, locus)
-        a.setParent(parent)
-        
-        VibeCapsule vibe = a.getVibe()
-        if (vibe != null && locus.nextDouble() > 0.01) { // 99% chance to match vibe
-            a.timeline = vibe.timeline
-            a.culture = vibe.pickCulture(locus.branch("CULTURE_SELECTOR"))
-        } else if (vibe != null) {
-            a.isAnomaly = true
-        }
-        a.fmt = fmt
-        return a
+        return apartmentFactory.create(parent, doorDesc, culture, timeline, locus)
     }
 
     Room createRoom(Container parent, String culture, String timeline, LocusSeed locus) {
@@ -285,26 +275,7 @@ class ProceduralFactory {
     }
 
     Apartment populateApartment(Apartment a) {
-        int numRooms = a.locus.nextInt(1, 10)
-        
-        List<String> objectPool = []
-        int totalObjects = a.locus.nextInt(5, 19)
-        Random objRandom = a.locus.branch("OBJECT_POOL").nextRandom()
-        for (int i = 0; i < totalObjects; i++) {
-            objectPool << themeService.generateHybridObject(a.culture, a.timeline, objRandom)
-        }
-
-        for (int i = 0; i < numRooms; i++) {
-            Room room = createRoom(a, a.culture, a.timeline, a.locus.branch(i))
-            a.addLocation(room)
-        }
-
-        int objIdx = 0
-        while (!objectPool.isEmpty()) {
-            int roomIdx = a.locus.branch("DIST_" + objIdx).nextInt(a.rooms.size())
-            a.rooms[roomIdx].objects << (String) objectPool.remove(0)
-            objIdx++
-        }
+        apartmentFactory.populate(a)
         return a
     }
 
