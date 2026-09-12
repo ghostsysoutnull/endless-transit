@@ -18,6 +18,7 @@ class ProceduralFactory {
     final StreetFactory streetFactory = new StreetFactory(this)
     final CityFactory cityFactory = new CityFactory(this)
     final CountryFactory countryFactory = new CountryFactory(this)
+    final PlanetFactory planetFactory = new PlanetFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -56,37 +57,7 @@ class ProceduralFactory {
     }
 
     Planet createPlanet(Container parent, LocusSeed locus) {
-        Planet p = new Planet(NameGenerator.generatePlanetName(locus), locus)
-        p.setParent(parent)
-        
-        // 1. Initialize Planetary Vibe Deterministically
-        String timeline = themeService.getRandomTimeline(locus.branch("TIMELINE"))
-        String primary = themeService.getRandomCulture(locus.branch("CULTURE_P"))
-        String secondary = themeService.getRandomCulture(locus.branch("CULTURE_S"))
-        
-        int attempts = 0
-        while (secondary == primary && attempts < 10) {
-            secondary = themeService.getRandomCulture(locus.branch("CULTURE_S_ALT" + attempts))
-            attempts++
-        }
-        
-        p.localVibe = new VibeCapsule(timeline, primary, secondary)
-        
-        // 2. Map color
-        Map<String, String> colorMap = [
-            "baroque": com.endlesstransit.ui.Terminal.YELLOW,
-            "gilded": com.endlesstransit.ui.Terminal.WHITE,
-            "monolith": com.endlesstransit.ui.Terminal.CYAN,
-            "neon": com.endlesstransit.ui.Terminal.L_CYAN,
-            "organic": com.endlesstransit.ui.Terminal.GREEN,
-            "rust": com.endlesstransit.ui.Terminal.RED,
-            "shogun": com.endlesstransit.ui.Terminal.MAGENTA,
-            "void": com.endlesstransit.ui.Terminal.GREY,
-            "zenith": com.endlesstransit.ui.Terminal.BLUE
-        ]
-        p.localVibe.atmosphericColor = colorMap[primary] ?: com.endlesstransit.ui.Terminal.WHITE
-        p.fmt = fmt
-        return p
+        return planetFactory.create(parent, locus)
     }
 
     Country createCountry(Container parent, LocusSeed locus) {
@@ -165,10 +136,7 @@ class ProceduralFactory {
     }
 
     void populatePlanet(Planet p) {
-        int numCountries = p.locus.nextInt(2, 8)
-        for (int i = 0; i < numCountries; i++) {
-            p.addLocation(createCountry(p, p.locus.branch(i)))
-        }
+        planetFactory.populate(p)
     }
 
     void populateCountry(Country c) {
