@@ -10,6 +10,7 @@ class ProceduralFactory {
     static ProceduralFactory instance = new ProceduralFactory()
     ThemeService themeService = new ThemeService()
     OutputFormatter fmt
+    final RoomFactory roomFactory = new RoomFactory(this)
     
     Universe createUniverse(LocusSeed locus) {
         Universe u = new Universe()
@@ -175,50 +176,7 @@ class ProceduralFactory {
     }
 
     Room createRoom(Container parent, String culture, String timeline, LocusSeed locus) {
-        Room r = new Room()
-        r.culture = culture
-        r.timeline = timeline
-        r.setLocus(locus)
-        r.setParent(parent)
-        
-        // 1. Initial Attributes
-        List<String> colors = ["white", "blue", "pink", "gray", "purple", "orange", "green", "red"]
-        r.color = (String) locus.pickFrom(colors)
-        
-        // 2. Anomaly Logic
-        if (parent instanceof Apartment) {
-            r.isAnomaly = ((Apartment)parent).isAnomaly
-        }
-
-        // 3. Functional Naming
-        Country country = (Country) r.findAncestor(Country.class)
-        String trait = country != null ? country.functionalTrait : "Standard"
-        Map<String, Object> nameData = NameGenerator.generateRoomName(culture, trait, locus)
-        r.roomName = (String) nameData["name"]
-        RoomCategory category = (RoomCategory) nameData["category"]
-        r.roomType = category.displayName
-
-        // 4. Atmosphere
-        VibeCapsule vibe = r.getVibe()
-        String mutation = vibe != null ? vibe.latticeMutation : "Standard"
-        Map<String, String> atmos = themeService.generateAtmosphere(culture, timeline, mutation, r.isAnomaly, trait, locus)
-        r.walls = atmos["walls"]
-        r.lightingDesc = atmos["lighting"]
-        r.structureDesc = atmos["structure"]
-
-        // 5. Atmo-Traits
-        r.atmoTraits["OXYGEN"] = "${locus.nextInt(12, 21)}%".toString()
-        r.atmoTraits["TEMP"] = "${locus.nextInt(5, 25)}°C".toString()
-        r.atmoTraits["SIGNAL"] = locus.nextBoolean() ? "[SHIELDED]" : "[CLEAR]"
-        
-        // 6. Furniture
-        int numFurniture = locus.nextInt(1, 3)
-        Random furnRandom = locus.branch("FURNITURE").nextRandom()
-        for (int i = 0; i < numFurniture; i++) {
-            r.furniture << themeService.generateHybridObject(culture, timeline, furnRandom)
-        }
-        r.fmt = fmt
-        return r
+        return roomFactory.create(parent, culture, timeline, locus)
     }
 
     // --- Population Strategies ---
