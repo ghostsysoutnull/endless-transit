@@ -33,8 +33,7 @@
 
 ## Concerns for Upcoming Phases
 
-- **WF-005 (High) blocks Phase 9:** the test runner must survive a `System.exit` from production code (shutdown hook → `STATUS=ABORTED`). One short runner-only session before any Phase 9 code.
-- **WF-004:** `/grill` needs a pattern-integrity question when a plan introduces a State/Strategy hierarchy. Not a seventh check — fold into check 2 or 5. Assess at the Phase 10 cadence review.
+- **WF-005 and WF-004 were closed in the same session** (runner abort hook; grill check 5 pattern-integrity question). Nothing blocks Phase 9.
 - **Phase 9 (ProceduralFactory split) is fourteen commits by design.** Determinism is the gate (`DeterministicUniverseTest` + `ProcgenSnapshotTest`); goldens will move only if generation order changes, which would be a finding.
 - **`@CompileStatic` and `instanceof` on fields:** Phase 9 factories will hold typed fields; the lesson applies. Delegate, do not inspect.
 - **Old `session.trace` files now restore in elevator mode.** Declared, accepted by the user, worth one line in any player-facing changelog.

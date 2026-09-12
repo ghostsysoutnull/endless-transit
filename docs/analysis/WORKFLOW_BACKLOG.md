@@ -33,6 +33,10 @@ improvement session is planned before the next phase begins.
 > One new item surfaced by the Phase 7 pre-grill, WF-003, opened and closed in the same session via
 > Phase 7-0. No workflow session required before Phase 7. Next scheduled review: Phase 10.
 
+---
+
+## 🟢 CLOSED
+
 ### WF-005 — Game loop crash handler terminates the test JVM
 **Priority:** High
 **Source:** Phase 8a, 2026-09-11 (mid-session observation; confirmed at the close-out audit)
@@ -48,11 +52,11 @@ silent, which an unattended agent can misread. Reproduced in the scratchpad by s
 `STATUS=ABORTED REASON=jvm_exit_during_suite` (+ the last started test from the progress listener). Optional
 follow-up: `Game`'s handler rethrows when a `vinculum.test` system property is set, so the failing test is
 attributed instead of the run dying.
-**Status:** OPEN — High: per CODEX, blocks Phase 9 until resolved (a runner-only fix; one short session).
-
----
-
-## 🟢 CLOSED
+**Resolution:** `TestRunner` registers a shutdown hook before `launcher.execute`; if the summary was not reached it
+prints `STATUS=ABORTED REASON=jvm_exit_during_suite LAST_STARTED=<test> STARTED=<n>` (agent mode) or a
+`[VINC:ABORTED]` line (other modes). Verified against the shadowed-`Floor` reproduction and the normal suite. No
+production change; the optional `Game` rethrow-under-property follow-up was not taken (user decision 2a).
+**Closed:** 2026-09-11 | Phase 8 close-out
 
 ### WF-004 — `/grill` has no design-integrity check
 **Priority:** Medium

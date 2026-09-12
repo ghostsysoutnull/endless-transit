@@ -36,6 +36,8 @@ class TestRunner {
         def startTimes = [:]
         def slowTests = []
         def testCount = 0
+        String lastStarted = null        // WF-005: named by the abort hook if the JVM dies mid-suite
+        boolean summaryReached = false   // WF-005: set once launcher.execute returns
 
         // Custom listener for clinical progress
         def progressListener = new TestExecutionListener() {
@@ -44,6 +46,7 @@ class TestRunner {
                 if (testIdentifier.isTest()) {
                     startTimes[testIdentifier.uniqueId] = System.currentTimeMillis()
                     testCount++
+                    lastStarted = getCleanName(testIdentifier)
 
                     // T1: skip all progress output when piped — \r lines are noise in captured streams
                     if (!isPiped) {
@@ -149,8 +152,23 @@ class TestRunner {
         def launcher = LauncherFactory.create()
         launcher.registerTestExecutionListeners(summaryListener, progressListener)
 
+        // WF-005: production code can call System.exit (Game's loop crash handler). Without this hook the
+        // JVM dies before the summary and --agent prints nothing at all. Uses System.out directly —
+        // Terminal is clinical here. No System.exit inside a shutdown hook.
+        Runtime.runtime.addShutdownHook(new Thread({
+            if (!summaryReached) {
+                if (agentMode) {
+                    System.out.println("STATUS=ABORTED REASON=jvm_exit_during_suite LAST_STARTED=${lastStarted} STARTED=${testCount}")
+                } else {
+                    System.out.println("\n  [VINC:ABORTED] JVM exited during the suite (System.exit from production code?) — last test started: ${lastStarted}")
+                }
+                System.out.flush()
+            }
+        } as Runnable))
+
         // 3. Execute
         launcher.execute(request)
+        summaryReached = true
 
         // 4. Report Summary
         // Reactivate standard output for the report
