@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic
 /**
  * RoomCategory: Typed enum replacing raw String room-type matching.
  * Each value carries its display name and the AnomalousTrace directly,
- * eliminating fragile substring matching in ProceduralFactory.populateCorridor().
+ * eliminating fragile substring matching in CorridorFactory.populate().
  */
 @CompileStatic
 enum RoomCategory {
