@@ -3,7 +3,6 @@ package com.endlesstransit.core
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.ProceduralFactory
-import com.endlesstransit.ui.Terminal
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.transform.CompileStatic

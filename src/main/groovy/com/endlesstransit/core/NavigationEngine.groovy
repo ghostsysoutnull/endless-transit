@@ -1,7 +1,6 @@
 package com.endlesstransit.core
 import com.endlesstransit.ui.Terminal
 
-import com.endlesstransit.model.Location
 import groovy.transform.CompileStatic
 
 /**

@@ -15,30 +15,9 @@
     </Violation>
   </File>
   <File path="main/groovy/com/endlesstransit/core/Game.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.ui.SessionRecap] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnnecessaryGroovyImport"/>
     <Violation ruleName="SystemExit">
       <Message><![CDATA[Violation in class com.endlesstransit.core.Game. Calling System.exit() is insecure and can expose a denial of service attack]]></Message>
     </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/core/InputHandler.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [java.util.Scanner] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
-  <File path="main/groovy/com/endlesstransit/core/NavigationEngine.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.model.Location] import is never referenced]]></Message>
-    </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/core/PersistenceService.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [java.io.File] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnnecessaryGroovyImport"/>
   </File>
   <File path="main/groovy/com/endlesstransit/core/Player.groovy">
     <Violation ruleName="CompileStatic">
@@ -60,9 +39,6 @@
     </Violation>
   </File>
   <File path="main/groovy/com/endlesstransit/core/SyncManager.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.ui.Terminal] import is never referenced]]></Message>
-    </Violation>
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "restore" is 64 lines]]></Message>
     </Violation>

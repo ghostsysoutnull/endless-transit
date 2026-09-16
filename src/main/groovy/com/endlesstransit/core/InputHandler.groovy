@@ -2,7 +2,6 @@ package com.endlesstransit.core
 
 import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
-import java.util.Scanner
 
 /**
  * InputHandler: Responsible for raw user interaction and input normalization.
