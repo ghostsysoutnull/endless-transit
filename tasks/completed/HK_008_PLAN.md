@@ -1,7 +1,14 @@
 # Housekeeping Plan: HK-008 — `ProceduralFactory` is an injected instance, not a static singleton
 **Created:** 2026-09-16 | **Grill:** AMEND (check 4 — c4 would leave the scanner's world without a formatter) → applied → CLEARED | **Branch:** `housekeeping/hk-008-factory-injection` (from `master` @ 2077ccb)
 **Backlog:** `tasks/backlog/HOUSEKEEPING.md` (HK-008, the last OPEN item) | **Baseline (verified on the branch):** 207 / 207 / 0 / 0, suite 2985 ms; `--scan` seed 0 → 9 nodes; tree clean
-**Status:** IN PROGRESS | **Record:** `tasks/completed/HK_008_PLAN.md` | **Commits:** filled in at close-out
+**Status:** COMPLETE (2026-09-16) | **Commits:** 2d6978e (plan), ad80a18 (c2 pin), d3cd6f2 (c3), d3d7d66 (c4), 2d3cac3 (c5), c6 = the docs commit carrying this line | **Suite at close:** 213 / 213 / 0 / 0 (2891 ms); 36 goldens unchanged; `--scan` seed 0 → 9
+
+> **Execution notes.** (1) The fail-loud guard fired in 18 tests across **12** files, one more than the child-accessor grep predicted: `SurvivalPinningTest`'s
+> hand-built `new Apartment()` parent is populated through `Room.getIndexInParent()`, and two hand-built *parents* (`StreetTest`'s City, `NavigationSyncTest`'s
+> Street) through `getIndexInParent()` → `parent.children.indexOf`. `NavArrayTest`'s hand-built Street did not fire. Lesson recorded in `tasks/lessons/model.md`.
+> (2) Suite duration 2985 → 3297 (c3) → 3357 (c4) → 2891 ms (c5): the per-Game `ThemeService` load is below run-to-run noise. (3) The step-0 test's own
+> sanity literal was wrong on first run (the Universe→Room chain is 13 levels — Sector *or* NullSector — not 14); fixed before commit, no production change involved.
+> (4) c4 and c5 shipped exactly as amended by the grill; no gate moved at any commit.
 
 > **Zero behavior change.** Same seed → same world; 36 goldens byte-identical; `--scan` seed 0 → 9 nodes.
 > What changes is *who holds the factory*: a `Game` owns one, hands it to its services, and every location the

@@ -10,19 +10,17 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-### HK-008 — `ProceduralFactory.instance` is still a static singleton
+*(none — the backlog is empty)*
+
+## 🟢 CLOSED
+
+### HK-008 — `ProceduralFactory.instance` was a static singleton
 **Found:** Phase 9 retro "Concerns", 2026-09-11 (OOA report §3.4 / §4 — singleton access noted in the original analysis).
 Phase 9 did not touch injection; fourteen per-type factories now hang off `ProceduralFactory.groovy:21`
 (`static ProceduralFactory instance = new ProceduralFactory()`), and `Game.groovy:33` injects `fmt` into the singleton
 after construction. Tests cannot swap the factory without mutating static state.
-**Shape:** the Phase 9 back-reference design makes this a single-site change — construct the facade in `Game`, inject
-`fmt` through the constructor, and pass the instance down. Blast radius is every `ProceduralFactory.instance` reader
-(the 13 `populateChildren` overrides until HK-005 lands, plus core/procgen/test callers) — grep before planning; do
-HK-005 first so the model side collapses to one `Container.populateChildren()` site. Not urgent; no behavior change.
-
----
-
-## 🟢 CLOSED
+**Resolution (three production commits, facade-first):** **c3** — `ProceduralFactory(OutputFormatter)` stamps itself on every container its delegators hand out (`Container.factory`); `Container.populateChildren()` and `Building` ask it; a hand-built container with no factory fails loud naming its class; 12 tests wire their hand-built objects as they already wire `fmt`. **c4** — `Game.factory` (final) is built with the game's `fmt` and injected into `NavigationOrchestrator` and `PersistenceService`; `WorldGenesis.createInitialWorld` and `SyncManager.restore` take it as a parameter. **c5** — the static is deleted, `fmt` is final, `SeedScanner` owns a factory with a real adapter (`LandmarkDiscoveryTest` no longer depends on test order). `FactoryWiringContractTest` (A: step-0 fmt identity, passes on `master`; B: factory identity + fail-loud; C: ownership, two games never share one). `GameState` and the 14 per-type factories untouched. Plan: `tasks/completed/HK_008_PLAN.md`.
+**Closed:** 2026-09-16 | commits 2d6978e (plan), ad80a18 (pin), d3cd6f2 (c3), d3d7d66 (c4), 2d3cac3 (c5) | suite 213/213/0/0, 36 goldens unchanged, scan seed 0 → 9
 
 ### HK-012 — The test suite overwrote and deleted the player's save file
 **Found:** 2026-09-16, from a user report ("restored my last session and got another world"). `transit.log` showed three
