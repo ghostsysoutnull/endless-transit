@@ -24,6 +24,17 @@ HK-005 first so the model side collapses to one `Container.populateChildren()` s
 
 ## 🟢 CLOSED
 
+### HK-012 — The test suite overwrote and deleted the player's save file
+**Found:** 2026-09-16, from a user report ("restored my last session and got another world"). `transit.log` showed three
+test-run sync/restore pairs at seeds 55555/77777 between the user's sessions. `TracePersistenceTest` (since `02b0748`, March 5)
+and `CorridorPersistenceTest` (Phase 0.5a) wrote the real `session.trace`; `HeadlessRunner` (since `25ad897`, March 12) deleted
+it before every headless run. Gitignored, so `git status` never showed it.
+**Resolution:** `Game.saveFile` (default `SyncManager.SAVE_FILE`) is the one path for prompt, sync and restore; `SyncManager.restore`
+and `PersistenceService.restoreSession` take it as a parameter. Both persistence tests round-trip through a temp file and assert the
+real file's existence, size and mtime are unchanged; the runner points its game at a nonexistent temp path. Verified: the real save
+was byte-for-byte and mtime-identical across a full suite run. Lesson in `tasks/lessons/infrastructure.md`. Plan: `tasks/completed/HK_012_PLAN.md`.
+**Closed:** 2026-09-16 | commits a854684 (plan), dc1d0a3 (fix)
+
 ### HK-011 — `JournalManager` was all-static
 **Found:** Phase 10 plan, 2026-09-16. Session state, file I/O, `getRecentEvents` (read by the HUD ticker) and `reset()` were static.
 **Resolution (three commits):** **a** — `RenderContext.recentEvents` (defaulted fifth field); `HUDHeaderComponent` reads it, the

@@ -35,6 +35,7 @@
 - [x] Housekeeping HK-010 (2026-09-16, behavior change by user decision): discovery journaling restored — `Player.markFootprint` publishes `LocationDiscovered` once per new macro path, journal subscribes `logDiscovery`; `DiscoveryEventContractTest` 4 pins; goldens 13–18 regenerated (first ticker line). 3 commits, merged, pushed.
 - [x] Housekeeping HK-009 (2026-09-16): `populateApartment` delegator deleted; two tests use the lazy path (the explicit call had double-populated every apartment — test-only). 2 commits, merged.
 - [x] Housekeeping HK-011 (2026-09-16): `JournalManager` is an instance owned by `Game`; ticker lines travel in `RenderContext.recentEvents`; ticker shows the discovered location's name (visual change, goldens 13–18). 4 commits, merged.
+- [x] Housekeeping HK-012 (2026-09-16, user report): the suite had overwritten/deleted the player's `session.trace` since March; `Game.saveFile` + temp files in tests + guard assertions. 2 commits, merged.
 - [ ] Next: optional O2 (CodeNarc — reshape as `./vinc.sh --lint`, no Gradle on the runner path) / O1 (HeadlessRunner DSL), or housekeeping HK-008 — user decision
 
 ---

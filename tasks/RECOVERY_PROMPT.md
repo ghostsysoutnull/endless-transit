@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (HK-011 merged @ `a307827`, chronicle `0xa307827`, retro `docs/retro/RETRO_HK_011.md`; earlier today HK-009 `a3f6e4d`, HK-010 `00194f4`)
+**Last updated:** 2026-09-16 (HK-012 merged; chronicle row `0x…` in the index; earlier today HK-011 `a307827`, HK-009 `a3f6e4d`, HK-010 `00194f4`)
 
 ## 🎯 Current Status
 - **Test Suite:** 207 discovered / 207 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
@@ -7,8 +7,8 @@
 - **Active Work:** none. **All ten planned OOA phases are complete.** Optional O1 (HeadlessRunner DSL) and O2 (CodeNarc)
   remain `NOT STARTED`. **HK-010 is CLOSED** (discovery journaling restored as `LocationDiscovered`, a behavior change by
   user decision; goldens 13–18 regenerated). **HK-009 CLOSED** (delegator deleted; the explicit call had double-populated apartments in two tests). **HK-011 CLOSED** (`JournalManager` is `Game.journal`; ticker lines travel in `RenderContext.recentEvents`; the ticker now shows the
-  discovered location's *name* — visual change by user decision, goldens 13–18). Housekeeping backlog has **one** OPEN item:
-  HK-008 (static `ProceduralFactory.instance`).
+  discovered location's *name* — visual change by user decision, goldens 13–18). **HK-012 CLOSED** (user report: the suite had overwritten/deleted the player's `session.trace` since March; `Game.saveFile` +
+  temp files in tests + guard assertions on the real file). Housekeeping backlog has **one** OPEN item: HK-008 (static `ProceduralFactory.instance`).
 - **Next:** user decision among O2 CodeNarc (recommended; reshape as `./vinc.sh --lint` — `vinc.sh` never invokes Gradle), HK-008, O1. The next cadence review
   (CODEX: every 3 phases) falls at whatever phase follows.
 
@@ -31,7 +31,7 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: chronicle/retro docs commit above the HK-011 merge). Read `tasks/todo.md`, `docs/retro/RETRO_HK_011.md`
+   (top: chronicle docs commit above the HK-012 merge). Read `tasks/todo.md`, `docs/retro/RETRO_HK_011.md`
    "Concerns for Upcoming Phases", and `tasks/backlog/HOUSEKEEPING.md` OPEN items.
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=207 SUCCEEDED=207 FAILED=0 SKIPPED=0`.
 4. **Ask before choosing:** there is no active phase. Present the options (O2 CodeNarc, HK-008, O1 DSL) and wait for a

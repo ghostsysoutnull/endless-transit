@@ -49,8 +49,8 @@ class PersistenceService {
         }
     }
 
-    void restoreSession() {
-        GameSession snapshot = SyncManager.restore(state.events)
+    void restoreSession(String saveFile) {
+        GameSession snapshot = SyncManager.restore(state.events, saveFile)
         if (!snapshot) return
         state.masterLocus = snapshot.locus
         state.player = snapshot.player

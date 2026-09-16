@@ -25,6 +25,8 @@ class Game {
     final QuantumBufferController inventoryController = new QuantumBufferController()
     /** The session scribe (HK-011): one per Game, attached to the bus, read by the HUD ticker. */
     final JournalManager journal = new JournalManager()
+    /** Where this game saves and restores its neural trace (HK-012). Tests point it at a scratch file. */
+    String saveFile = SyncManager.SAVE_FILE
 
     Game(long seedValue = System.currentTimeMillis(), InputSource inputSource = null) {
         this(new LocusSeed(seedValue), inputSource)
@@ -61,7 +63,7 @@ class Game {
 
     GameMemento createMemento() { persistence.createMemento() }
     void restore(GameMemento memento) { persistence.restore(memento) }
-    void restoreSession() { persistence.restoreSession() }
+    void restoreSession() { persistence.restoreSession(saveFile) }
 
     boolean processTurn() { turnProcessor.processTurn() }
     boolean handleInput() { turnProcessor.handleInput(this) }
@@ -79,10 +81,10 @@ class Game {
         Logger.info("Game started.")
         journal.startSession(state.player)
         
-        if (new File(SyncManager.SAVE_FILE).exists()) {
+        if (new File(saveFile).exists()) {
             Terminal.println Terminal.dim("  [DETECTED_NEURAL_TRACE_SUBSTRATE]")
             Terminal.print Terminal.colorize("  Restore previous session? [y/N]: ", Terminal.YELLOW)
-            if (turnProcessor.inputHandler.readLine().toLowerCase() == "y") persistence.restoreSession()
+            if (turnProcessor.inputHandler.readLine().toLowerCase() == "y") persistence.restoreSession(saveFile)
         }
         
         try {

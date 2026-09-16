@@ -19,28 +19,32 @@ class HeadlessRunner {
         // 2. Setup Mock Input
         MockInputSource mockInput = new MockInputSource(script)
         
-        // 3. Prevent Restore Prompt from hanging simulation
-        File trace = new File("session.trace")
-        if (trace.exists()) trace.delete()
-        
-        // 4. Initialize Game
+        // 3. Initialize Game
         Game game = new Game(locus, mockInput)
         game.state.suppressRendering = true
-        
-        // 4. Execute Simulation
+
+        // 4. Point the game at a scratch trace that does not exist, so the restore prompt never
+        //    appears and a script that syncs writes there. Never the player's session.trace —
+        //    this runner deleted it before every run from 2026-03-12 to 2026-09-16 (HK-012).
+        File scratchTrace = new File(System.getProperty("java.io.tmpdir"), "endless-transit-headless-${System.nanoTime()}.trace")
+        game.saveFile = scratchTrace.path
+
+        // 5. Execute Simulation
         try {
             game.start()
         } catch (Exception e) {
             Terminal.println "Simulation crashed: ${e.message}"
             e.printStackTrace()
+        } finally {
+            scratchTrace.delete()
         }
         
-        // 5. Final render to capture state
+        // 6. Final render to capture state
         game.state.suppressRendering = false
         Map<String, Closure> options = game.state.currentLocation.getOptions(game)
         game.renderer.renderCurrentState(options)
         
-        // 6. Capture final state from BridgeView
+        // 7. Capture final state from BridgeView
         return game.bridgeView.capture(game.inputHandler.getHistory())
     }
 }

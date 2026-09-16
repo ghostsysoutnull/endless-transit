@@ -18,8 +18,26 @@ class TracePersistenceTest {
     void execute() {
         Terminal.println "Running End-to-End Trace Persistence Test..."
 
+        // HK-012: never touch the player's save. Snapshot it, work on a scratch file, prove it afterwards.
+        File real = new File(SyncManager.SAVE_FILE)
+        boolean realExisted = real.exists()
+        long realStamp = realExisted ? real.lastModified() : -1L
+        long realSize = realExisted ? real.length() : -1L
+        File scratch = File.createTempFile("endless-transit-", ".trace")
+        try {
+            runRoundTrip(scratch)
+        } finally {
+            scratch.delete()
+        }
+        assertEquals(realExisted, real.exists(), "The player's save file must not be created or deleted by this test")
+        assertEquals(realStamp, realExisted ? real.lastModified() : -1L, "The player's save file must not be rewritten by this test")
+        assertEquals(realSize, realExisted ? real.length() : -1L, "The player's save file must not be rewritten by this test")
+    }
+
+    private static void runRoundTrip(File scratch) {
         long testSeed = 55555L
         Game game = new Game(testSeed)
+        game.saveFile = scratch.path
         
         // 1. Simulate Session: Navigate to a Room dynamically
         Location walker = game.currentLocation
@@ -62,10 +80,11 @@ class TracePersistenceTest {
         
         // 4. SYNC
         SyncManager.sync(game)
-        assertTrue(new File(SyncManager.SAVE_FILE).exists(), "Save file not created!")
-        
+        assertTrue(scratch.exists() && scratch.length() > 0, "Scratch save file not written!")
+
         // 5. RESTORE into a fresh Game
         Game freshGame = new Game(1L) // Start with wrong seed to prove restoration works
+        freshGame.saveFile = scratch.path
         freshGame.restoreSession()
         
         // 6. VERIFY Stability
