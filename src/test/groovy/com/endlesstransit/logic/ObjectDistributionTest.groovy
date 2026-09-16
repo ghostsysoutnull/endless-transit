@@ -3,6 +3,7 @@ package com.endlesstransit.logic
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.*
 import com.endlesstransit.ui.Terminal
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -10,7 +11,7 @@ class ObjectDistributionTest {
     @Test
     void testObjectDistributionVariance() {
         LocusSeed master = new LocusSeed(12345L)
-        ProceduralFactory factory = ProceduralFactory.instance
+        ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
         
         Map<Integer, Integer> distribution = [:].withDefault { 0 }
         int totalRooms = 0

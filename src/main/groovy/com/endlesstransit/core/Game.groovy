@@ -37,7 +37,6 @@ class Game {
     Game(LocusSeed masterLocus, InputSource inputSource = null) {
         this.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
         this.factory = new ProceduralFactory(fmt)
-        ProceduralFactory.instance.fmt = this.fmt   // HK-008 scaffolding until c5: SeedScanner still generates through the static
         this.state = new GameState(masterLocus)
         journal.attach(state.events)
         new RitualTracker().attach(state.events)

@@ -3,6 +3,7 @@ package com.endlesstransit.procgen
 import com.endlesstransit.model.*
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -15,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.*
  * this registry, so this test is what keeps it honest.
  */
 class ProceduralFactoryRegistryTest {
+    ProceduralFactory registry = new ProceduralFactory(new StandardTerminalAdapter())
+
 
     /** Every concrete Container in com.endlesstransit.model, grepped for `extends Container`. */
     static final List<Class<? extends Container>> CONTAINER_TYPES = [
@@ -37,7 +40,7 @@ class ProceduralFactoryRegistryTest {
     @Test
     void everyContainerType_hasAFactoryRegisteredUnderItsExactClass() {
         CONTAINER_TYPES.each { Class<? extends Container> type ->
-            LocationFactory<?> factory = ProceduralFactory.instance.factoryFor(type)
+            LocationFactory<?> factory = registry.factoryFor(type)
             assertNotNull(factory, "no LocationFactory registered for ${type.simpleName}")
             assertSame(type, factory.type, "${factory.class.simpleName}.getType() must be exactly ${type.simpleName}")
         }
@@ -46,12 +49,12 @@ class ProceduralFactoryRegistryTest {
 
     @Test
     void factoryFor_unregisteredType_returnsNull() {
-        assertNull(ProceduralFactory.instance.factoryFor(Orphan))
+        assertNull(registry.factoryFor(Orphan))
     }
 
     @Test
     void populate_dispatchesOnExactClass_pinnedForSeed0x1234() {
-        Universe u = ProceduralFactory.instance.createUniverse(new LocusSeed(0x1234L))
+        Universe u = registry.createUniverse(new LocusSeed(0x1234L))
         Container sector = (Container) u.getFilaments()[0].getChildren()[0]
         SolarSystem sys = (SolarSystem) sector.getChildren()[0]
         Street street = sys.getPlanets()[0].getCountries()[0].getCities()[0].getStreets()[0]
@@ -59,7 +62,7 @@ class ProceduralFactoryRegistryTest {
 
         // Mirror Container.ensureChildrenPopulated: flag first, so the read below does not re-populate.
         street.childrenPopulated = true
-        ProceduralFactory.instance.populate(street)
+        registry.populate(street)
 
         assertEquals(14, street.getChildren().size(), "populate(Container) must run StreetFactory.populate exactly once (ProcgenDeepSnapshotTest pins 14)")
         assertTrue(street.getChildren().every { it instanceof Building })
@@ -79,7 +82,7 @@ class ProceduralFactoryRegistryTest {
     @Test
     void populate_unregisteredType_throws() {
         IllegalStateException ex = assertThrows(IllegalStateException) {
-            ProceduralFactory.instance.populate(new Orphan())
+            registry.populate(new Orphan())
         }
         assertTrue(ex.message.contains("Orphan"), ex.message)
     }

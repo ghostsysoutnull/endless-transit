@@ -3,6 +3,7 @@ package com.endlesstransit.procgen
 import com.endlesstransit.model.*
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -20,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*
  * See: docs/analysis/OOA_REFACTOR_PLAN.md Phase 0.5h
  */
 class ProcgenSnapshotTest {
+    ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
+
 
     static final long SNAPSHOT_SEED = 0x1234L  // 4660
 
@@ -31,7 +34,7 @@ class ProcgenSnapshotTest {
     @Test
     void snapshot_planetNameAndCulture_pinnedForSeed0x1234() {
         LocusSeed locus = new LocusSeed(SNAPSHOT_SEED)
-        Universe universe = ProceduralFactory.instance.createUniverse(locus)
+        Universe universe = factory.createUniverse(locus)
 
         def filament = universe.getFilaments()[0]
         def sector = filament.getChildren()[0]
@@ -54,7 +57,7 @@ class ProcgenSnapshotTest {
     @Test
     void snapshot_buildingNames_pinnedForSeed0x1234() {
         LocusSeed locus = new LocusSeed(SNAPSHOT_SEED)
-        Universe universe = ProceduralFactory.instance.createUniverse(locus)
+        Universe universe = factory.createUniverse(locus)
 
         def filament = universe.getFilaments()[0]
         Planet planet = filament.getChildren()[0].getChildren()[0].getPlanets()[0]

@@ -4,11 +4,14 @@ import com.endlesstransit.model.*
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
 
 class DeterministicUniverseTest {
+    ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
+
 
     @BeforeEach
     void setUp() {
@@ -22,13 +25,13 @@ class DeterministicUniverseTest {
         LocusSeed testLocus = new LocusSeed(987654321L)
         
         // Universe A
-        Universe u1 = ProceduralFactory.instance.createUniverse(testLocus)
+        Universe u1 = factory.createUniverse(testLocus)
         String name1 = u1.getFilaments()[0].getName()
         String planetName1 = u1.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].name
         String vibe1 = u1.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].getVibe().toString()
         
         // Universe B
-        Universe u2 = ProceduralFactory.instance.createUniverse(testLocus)
+        Universe u2 = factory.createUniverse(testLocus)
         String name2 = u2.getFilaments()[0].getName()
         String planetName2 = u2.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].name
         String vibe2 = u2.getFilaments()[0].getChildren()[0].getChildren()[0].getPlanets()[0].getVibe().toString()

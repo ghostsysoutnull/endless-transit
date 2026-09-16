@@ -3,6 +3,7 @@ package com.endlesstransit.procgen
 import com.endlesstransit.model.*
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -20,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*
  * from Universe to Room. Never regenerate them silently: a diff here is a finding.
  */
 class ProcgenDeepSnapshotTest {
+    private static final ProceduralFactory FACTORY = new ProceduralFactory(new StandardTerminalAdapter())
+
 
     static final long SNAPSHOT_SEED = 0x1234L  // same seed as ProcgenSnapshotTest
 
@@ -31,7 +34,7 @@ class ProcgenDeepSnapshotTest {
     // --- walk helpers (children[0] at every level) ---
 
     private static CosmicFilament filament() {
-        Universe u = ProceduralFactory.instance.createUniverse(new LocusSeed(SNAPSHOT_SEED))
+        Universe u = FACTORY.createUniverse(new LocusSeed(SNAPSHOT_SEED))
         return u.getFilaments()[0]
     }
 
@@ -208,7 +211,7 @@ class ProcgenDeepSnapshotTest {
     @Test
     void floor_countSubLocations_agreesWithPopulation_pinnedForSeed0x1234() {
         Floor f = floor0()
-        int shadow = ProceduralFactory.instance.countSubLocations(f)
+        int shadow = FACTORY.countSubLocations(f)
         assertEquals(32, shadow, "countSubLocations literal for floor 0")
 
         Corridor c = f.getCorridor()

@@ -21,10 +21,8 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 class ProceduralFactory {
-    /** HK-008 scaffolding: removed once every reader holds its own instance. */
-    static ProceduralFactory instance = new ProceduralFactory(null)
     ThemeService themeService = new ThemeService()
-    OutputFormatter fmt
+    final OutputFormatter fmt
     final RoomFactory roomFactory = new RoomFactory(this)
     final ApartmentFactory apartmentFactory = new ApartmentFactory(this)
     final CorridorFactory corridorFactory = new CorridorFactory(this)
