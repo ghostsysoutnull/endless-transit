@@ -1,7 +1,7 @@
 # Housekeeping Plan: HK-011 — `JournalManager` becomes an instance owned by `Game`
 **Created:** 2026-09-16 | **Grill:** AMEND (three citation line ranges; deviations section added) → applied → CLEARED | **Branch:** `housekeeping/hk-011-journal-instance` (from `master` @ 6b22bf0)
 **Backlog:** `tasks/backlog/HOUSEKEEPING.md` (HK-011) | **Baseline:** 207 / 207 / 0 / 0 (re-verify before touching any file)
-**Project copy:** `tasks/HK_011_PLAN.md` (moved to `tasks/completed/` at close-out). **Directive:** execute with commit C.
+**Record:** `tasks/completed/HK_011_PLAN.md` | **Commits:** 84e5997 (plan), 5c0c0f2 (a), ea5cdcf (b), 90cbede (c) — C executed by directive.
 
 > **Commits A and B are refactors:** zero behavior change, 36 goldens byte-identical, `--scan` seed 0 → 9.
 > **Commit C is an intended visual change** (ticker shows the discovered location's *name*, not its path) and is the one

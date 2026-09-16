@@ -10,13 +10,6 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-### HK-011 — `JournalManager` is still all-static
-**Found:** Phase 10 plan, 2026-09-16 (same family as HK-008). The journal is a listener now (`attach(EventBus)`), but its
-session state, file I/O, `getRecentEvents` (read by `HUDHeaderComponent.groovy:75`) and `reset()` are static; tests and the
-golden harness reset it explicitly. **Shape:** instance owned by `Game`, `getRecentEvents` reaches the HUD through
-`RenderContext`, `startSession`/`saveSession` via the facade. Blast radius: `Game`, `QuitCommand`, `HUDHeaderComponent`,
-`RenderContext`, `JournalTest`, `HudFrameHarness` (+ ticker goldens must stay byte-identical). Not urgent.
-
 ### HK-008 — `ProceduralFactory.instance` is still a static singleton
 **Found:** Phase 9 retro "Concerns", 2026-09-11 (OOA report §3.4 / §4 — singleton access noted in the original analysis).
 Phase 9 did not touch injection; fourteen per-type factories now hang off `ProceduralFactory.groovy:21`
@@ -30,6 +23,17 @@ HK-005 first so the model side collapses to one `Container.populateChildren()` s
 ---
 
 ## 🟢 CLOSED
+
+### HK-011 — `JournalManager` was all-static
+**Found:** Phase 10 plan, 2026-09-16. Session state, file I/O, `getRecentEvents` (read by the HUD ticker) and `reset()` were static.
+**Resolution (three commits):** **a** — `RenderContext.recentEvents` (defaulted fifth field); `HUDHeaderComponent` reads it, the
+compositor supplies it (`HUDHeaderComponent.TICKER_DEPTH = 3`). **b** — `JournalManager` is an instance (`@CompileStatic`; `journalFile`/
+`lastEntryFile` properties; instance `reset()` kept as the test mirror of `startSession`); `Game.journal` (final) attaches it before
+`RitualTracker`, starts the session, hands it to `RenderingCoordinator` → `BridgeView(journal)`; `QuitCommand` saves through
+`game.journal`; `BridgeView()` without a journal gets an inert one. No static journal call remains. **c** (visual, user decision) —
+the ticker feed carries the location's *name* (`LOC: The Void-Watcher`); the journal file keeps the full path + vibe suffix;
+goldens 13–18 regenerated (line 7 only). Declared: `.journal_session_tmp` stays one shared path. Plan + grill: `tasks/completed/HK_011_PLAN.md`.
+**Closed:** 2026-09-16 | commits 84e5997 (plan), 5c0c0f2 (a), ea5cdcf (b), 90cbede (c)
 
 ### HK-009 — `populateApartment` was the last per-type populate delegator on the facade
 **Found:** HK-005 close-out, 2026-09-16. Two tests called it directly (`ObjectDistributionTest:22`, `ProcgenVariabilityTest:29`).
