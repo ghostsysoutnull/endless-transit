@@ -1,13 +1,11 @@
 package com.endlesstransit
 
-import com.endlesstransit.core.HeadlessRunner
 import com.endlesstransit.core.ReplayService
 import com.endlesstransit.ui.ScreenBuffer
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.procgen.LocusSeed
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
-import java.io.File
 
 class ReplayServiceTest {
 

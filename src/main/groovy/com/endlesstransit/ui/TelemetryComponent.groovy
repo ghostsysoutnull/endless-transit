@@ -89,7 +89,6 @@ class TelemetryComponent implements ViewComponent {
         int cy = (int)(h / 2)
         buffer.plot(cx, cy, "∞", Terminal.CYAN)
         
-        Random r = masterLocus.nextRandom()
         int numLines = 6
         for (int i = 0; i < numLines; i++) {
             double angle = (Math.PI * 2 / numLines) * i

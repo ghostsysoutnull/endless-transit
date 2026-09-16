@@ -9,7 +9,6 @@ import com.endlesstransit.ui.StandardTerminalAdapter
 import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 
-import java.util.concurrent.atomic.AtomicLong
 
 import com.endlesstransit.procgen.probes.BuildingFloorCountProbe
 import com.endlesstransit.procgen.probes.CultureProbe

@@ -3,7 +3,6 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.procgen.NameGenerator
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*

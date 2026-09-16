@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><CodeNarc url="https://codenarc.org" version="4.0.0">
+  <Report type="baseline"/>
+  <Project title="">
+    <SourceDirectory>src</SourceDirectory>
+  </Project>
+  <File path="main/groovy/com/endlesstransit/core/ScanCommand.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "renderCorridorScan" is 75 lines]]></Message>
+    </Violation>
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "renderApartmentScan" is 52 lines]]></Message>
+    </Violation>
+  </File>
+  <File path="main/groovy/com/endlesstransit/core/SyncManager.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "restore" is 64 lines]]></Message>
+    </Violation>
+  </File>
+  <File path="main/groovy/com/endlesstransit/model/Building.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "getExtraContent" is 84 lines]]></Message>
+    </Violation>
+  </File>
+  <File path="main/groovy/com/endlesstransit/model/Room.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "getOptions" is 103 lines]]></Message>
+    </Violation>
+  </File>
+  <File path="main/groovy/com/endlesstransit/ui/HUDHeaderComponent.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "render" is 90 lines]]></Message>
+    </Violation>
+  </File>
+  <File path="main/groovy/com/endlesstransit/ui/LatticeMapComponent.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "render" is 52 lines]]></Message>
+    </Violation>
+  </File>
+  <File path="main/groovy/com/endlesstransit/ui/LatticeTraceComponent.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "renderTrace" is 63 lines]]></Message>
+    </Violation>
+  </File>
+  <File path="main/groovy/com/endlesstransit/ui/SessionRecap.groovy">
+    <Violation ruleName="MethodSize">
+      <Message><![CDATA[Method "show" is 56 lines]]></Message>
+    </Violation>
+  </File>
+</CodeNarc>

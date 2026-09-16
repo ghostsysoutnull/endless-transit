@@ -2,7 +2,6 @@ package com.endlesstransit.core
 
 import groovy.transform.CompileStatic
 import com.endlesstransit.procgen.LocusSeed
-import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 

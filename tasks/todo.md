@@ -37,7 +37,8 @@
 - [x] Housekeeping HK-011 (2026-09-16): `JournalManager` is an instance owned by `Game`; ticker lines travel in `RenderContext.recentEvents`; ticker shows the discovered location's name (visual change, goldens 13–18). 4 commits, merged.
 - [x] Housekeeping HK-012 (2026-09-16, user report): the suite had overwritten/deleted the player's `session.trace` since March; `Game.saveFile` + temp files in tests + guard assertions. 2 commits, merged.
 - [x] Housekeeping HK-008 (2026-09-16): the last Service Locator is gone — `Game.factory` (final) is the one `ProceduralFactory`, injected into the services; every `Container` carries the registry that made it; `SeedScanner` and tests build their own. `FactoryWiringContractTest` pins fmt identity (step 0), factory identity, fail-loud, ownership. 6 commits, merged `f681c46`. Housekeeping backlog empty.
-- [ ] Next: optional O2 (CodeNarc — reshape as `./vinc.sh --lint`, no Gradle on the runner path) / O1 (HeadlessRunner DSL) — user decision
+- [x] O2 — CodeNarc as `./vinc.sh --lint` (2026-09-16): CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset with six Vinculum invariant rules, baseline-ratchet (100 → 9 entries: the nine long methods, HK-013); 83 dead imports + 4 unused locals gone, `Player` is `@CompileStatic`, `Game.start`/`ConsoleSink` declared in source; `--lint` is a merge gate. 13 commits on `refactor/o2-lint`.
+- [ ] Next: O1 (HeadlessRunner DSL) or HK-013 — user decision
 
 ---
 

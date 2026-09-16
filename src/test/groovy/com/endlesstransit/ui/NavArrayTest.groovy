@@ -15,7 +15,6 @@ class NavArrayTest {
 
     @Test
     void testCompassLabelExtraction() {
-        def game = new Game()
         def options = [
             "u. Go Up": {},
             "d. Go Down": {},

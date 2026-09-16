@@ -47,7 +47,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ### 1.5. Refactoring Branch Strategy
 * Each refactoring phase runs on its own git branch: `refactor/phase-N-short-name`.
-* Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --scan` where applicable).
+* Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --lint`, `./vinc.sh --scan` where applicable).
 * Every new class created during refactoring MUST include `@CompileStatic`.
 * Run `/chronicle` after every completed phase to maintain session continuity.
 * Write a phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, retro second). Promote any evergreen lessons to `tasks/lessons/<domain>.md`.
@@ -70,6 +70,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
     * **AI-TDD**: Create reproduction tests for all bug reports.
     * **Compilation Check**: Every change MUST pass `./vinc.sh --compile` (or `--test`).
     * **Full Verification**: Run `./vinc.sh --test` before marking any major task complete.
+    * **Lint Check (O2)**: `./vinc.sh --lint` must be green before any merge; `config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
 * **Coverage Claim Protocol**: Any plan statement of the form "test X guards behavior Y" MUST cite
   the assertion lines that prove it, read from the test file in the current session. A file name or
   a remembered purpose is not evidence. If no assertion exists, the plan marks the behavior

@@ -4,7 +4,6 @@ import com.endlesstransit.model.*
 import com.endlesstransit.procgen.*
 import com.endlesstransit.ui.*
 import groovy.transform.CompileStatic
-import java.io.File
 
 /**
  * PersistenceService: Manages saving, loading, and memento creation.

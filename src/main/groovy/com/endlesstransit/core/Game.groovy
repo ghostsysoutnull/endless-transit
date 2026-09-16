@@ -4,9 +4,7 @@ import com.endlesstransit.model.*
 import com.endlesstransit.ui.*
 import com.endlesstransit.procgen.*
 import com.endlesstransit.ui.Terminal
-import com.endlesstransit.ui.SessionRecap
 import groovy.transform.CompileStatic
-import java.io.File
 
 /**
  * Game: The high-level orchestrator of the Endless Transit engine.
@@ -78,6 +76,8 @@ class Game {
         turnProcessor.dispatch(this, choice)
     }
 
+    // WF-005: the loop's catch-all reports the failure and exits; the test runner's abort hook depends on it.
+    @SuppressWarnings('SystemExit')
     void start() {
         Terminal.println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")

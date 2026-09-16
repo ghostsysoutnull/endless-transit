@@ -1,7 +1,6 @@
 package com.endlesstransit.core
 
 import groovy.transform.CompileStatic
-import java.util.Scanner
 
 /**
  * Standard input source reading from the actual console.
