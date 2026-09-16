@@ -2,7 +2,6 @@ package com.endlesstransit.ui
 
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.InventoryItem
-import com.endlesstransit.core.JournalManager
 import com.endlesstransit.model.Apartment
 import com.endlesstransit.model.Building
 import com.endlesstransit.model.Container
@@ -40,10 +39,10 @@ class HudFrameHarness {
     static Frames captureAll(long seed = GOLDEN_SEED) {
         Terminal.initialize(true, true)
         Game game = new Game(seed)
-        // Reset AFTER construction: static ticker state leaks between tests, and the constructor
-        // publishes the start-locus discoveries (Street, City, Planet) that Game.start() ->
-        // startSession() wipes before the player sees a frame (HK-010, edge E1).
-        JournalManager.reset()
+        // Reset AFTER construction: the constructor publishes the start-locus discoveries
+        // (Street, City, Planet) that Game.start() -> startSession() wipes before the player
+        // sees a frame (HK-010, edge E1). The journal is the game's own since HK-011.
+        game.journal.reset()
         BridgeView view = game.bridgeView
         Frames frames = new Frames()
         // Standalone components for the `direct` captures (7g-iii): same inputs, no BridgeView.
@@ -106,10 +105,10 @@ class HudFrameHarness {
 
         // 5. Event ticker prefix mapping — two most recent events, newest first
         //    (location = null keeps ritual side effects out of the frame)
-        JournalManager.logDiscovery("Golden Locus > Alpha Chamber")
-        JournalManager.logCapture(new InventoryItem("Fragment B", 211))
+        game.journal.logDiscovery("Golden Locus > Alpha Chamber")
+        game.journal.logCapture(new InventoryItem("Fragment B", 211))
         capture(frames, "20_room_ticker_loc_obj_renderBridgeHUD", { view.renderBridgeHUD(room, game.player) }, { hud.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
-        JournalManager.logSynthesis(new InventoryItem("Keystone Z", 444))
+        game.journal.logSynthesis(new InventoryItem("Keystone Z", 444))
         capture(frames, "21_room_ticker_obj_syn_renderBridgeHUD", { view.renderBridgeHUD(room, game.player) }, { hud.render(ctxOf(game, room), FrameGeometry.FRAME_WIDTH) })
         // 6. Coherence bar colour thresholds — header only (adaptive bridge glitches below 40)
         game.player.coherence = 65
@@ -169,7 +168,8 @@ class HudFrameHarness {
     }
 
     private static RenderContext ctxOf(Game game, Location location, Map<String, Closure> options = null) {
-        return new RenderContext(location, game.player, options, game.masterLocus)
+        return new RenderContext(location, game.player, options, game.masterLocus,
+            game.journal.getRecentEvents(HUDHeaderComponent.TICKER_DEPTH))
     }
 
     static File goldenFile(String name) {

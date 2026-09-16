@@ -29,8 +29,7 @@ class JournalEventContractTest {
     @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
-        JournalManager.reset()
-        game = new Game()                       // sets ProceduralFactory.instance.fmt
+        game = new Game()                       // a new Game is a new journal (HK-011)                       // sets ProceduralFactory.instance.fmt
         bldg = new Building(new LocusSeed(0L))
         bldg.name = "Contract Tower"
         bldg.maxFloors = 1
@@ -57,7 +56,7 @@ class JournalEventContractTest {
 
         assertEquals(1, game.player.inventory.size(), "Object must land in the player's buffer")
         assertTrue(bldg.sampledFloors.contains(0), "Capture inside floor 0 must sample floor 0 on the building")
-        List<String> recent = JournalManager.getRecentEvents(1)
+        List<String> recent = game.journal.getRecentEvents(1)
         assertEquals(1, recent.size(), "Capture must add exactly one journal event")
         assertTrue(recent[0].startsWith("[CAPTURE]   Contract Crystal ("),
             "Journal event must be the capture line, got: ${recent[0]}")
@@ -74,7 +73,7 @@ class JournalEventContractTest {
 
         assertEquals(1, bldg.infusionCount, "One synthesis inside the building must add exactly one infusion")
         assertEquals(1, game.player.inventory.size(), "Two fragments must collapse into one hybrid")
-        List<String> recent = JournalManager.getRecentEvents(1)
+        List<String> recent = game.journal.getRecentEvents(1)
         assertEquals(1, recent.size(), "Synthesis must add exactly one journal event")
         assertTrue(recent[0].startsWith("[SYNTHESIS] ${game.player.inventory[0].name} ("),
             "Journal event must be the synthesis line, got: ${recent[0]}")
@@ -96,7 +95,7 @@ class JournalEventContractTest {
         InventoryItem hidden = game.player.inventory.last()
         assertEquals("Hidden Frequency", hidden.name)
         assertTrue(bldg.sampledFloors.contains(0), "Hidden-frequency capture must sample floor 0")
-        List<String> recent = JournalManager.getRecentEvents(1)
+        List<String> recent = game.journal.getRecentEvents(1)
         assertEquals(1, recent.size(), "Hidden-frequency capture must add exactly one journal event")
         assertTrue(recent[0].startsWith("[CAPTURE]   Hidden Frequency ("),
             "Journal event must be the capture line, got: ${recent[0]}")
@@ -115,7 +114,7 @@ class JournalEventContractTest {
 
         assertTrue(sector.echoFound, "Echo must be marked found")
         assertEquals("Spectral Echo", game.player.inventory.last().name)
-        List<String> recent = JournalManager.getRecentEvents(1)
+        List<String> recent = game.journal.getRecentEvents(1)
         assertEquals(1, recent.size(), "Echo capture must add exactly one journal event")
         assertTrue(recent[0].startsWith("[CAPTURE]   Spectral Echo ("),
             "Journal event must be the capture line, got: ${recent[0]}")

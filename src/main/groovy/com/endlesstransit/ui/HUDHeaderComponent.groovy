@@ -15,6 +15,9 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class HUDHeaderComponent implements ViewComponent {
 
+    /** Recent journal lines the ticker wants in RenderContext.recentEvents: two are shown, the abyssal voice may prepend one. */
+    static final int TICKER_DEPTH = 3
+
     @Override
     List<String> render(RenderContext ctx, int width) {
         Location currentLocation = ctx.location
@@ -72,7 +75,7 @@ class HUDHeaderComponent implements ViewComponent {
             leftBottom = "$alignLabel: $idx / $total | $radar"
         }
         
-        List<String> recentEvents = JournalManager.getRecentEvents(3).reverse()
+        List<String> recentEvents = ctx.recentEvents.reverse()
         String tickerTitle = abyssal ? "EVENT_TICKER: [PRESSURE_HIGH]" : "EVENT_TICKER: [SYNC_STABLE]"
         lines << Terminal.splitBoxedLine(leftBottom, tickerTitle, FrameGeometry.SPLIT_POINT, width, accent)
         

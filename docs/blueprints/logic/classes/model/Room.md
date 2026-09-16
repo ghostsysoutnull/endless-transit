@@ -37,7 +37,7 @@ The `Room` class is a terminal leaf in the simulation hierarchy. It manages loca
 - **`Apartment`**: Parent container.
 - **`Gematria`**: Used to calculate frequencies of local objects.
 - **`ModelOutput`**: For narrative synthesis and glitch effects.
-- **`JournalManager`**: Logs object captures and synthesis.
+- **`Player.capture(item, this)`**: the only door into the buffer; the journal and the Abyssal ritual react to the resulting domain event (Phase 10). `Room` never touches the journal.
 
 ---
 *Neural Map Stabilized.*

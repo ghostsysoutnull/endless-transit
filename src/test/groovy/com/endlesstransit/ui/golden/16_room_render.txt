@@ -5,7 +5,7 @@
 [37m║ [0mLATTICE_IDENT: Processing Core >> Breathing Nest [0x8C][90G[37m║ [0mATMOS: 14% | TEMP: 5°C[130G[37m║[0m
 [37m║ [0mLOCUS_HASH: 19.414 / 47.053 | HOP_DENSITY: 12[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m
 [37m║ [0mCELL: 1 / 9 | [37m[X][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m[90G[37m║ [0mEVENT_TICKER: [SYNC_STABLE][130G[37m║[0m
-[37m║ [0m[90G[37m║ [0m[2mLOC: Universe > ... > [VOID] > Lam...[0m[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m[2mLOC: The Void-Watcher[0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m[2m[0m[130G[37m║[0m
 [37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
 [37m║ [0mTRACE_BUFFER: 0/16 FRAGMENTS[130G[37m║[0m

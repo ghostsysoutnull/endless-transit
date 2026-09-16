@@ -22,6 +22,7 @@
 - **`BridgeView`** is a compositor only: it owns one instance of each `ViewComponent` and prints their lines in frame order.
 - **`ViewComponent.render(RenderContext, int width)`** returns lines and never prints; `width` is the width allotted by the compositor (`FrameGeometry`: frame 130, split 90, panes 88 / 38).
 - **Components:** `HUDHeaderComponent`, `NarrativePaneComponent`, `TelemetryComponent`, `CompassComponent`, `DirectiveMenuComponent`, `InventoryOverlayComponent`, `LatticeTraceComponent`, `LatticeMapComponent`.
+- **Frame inputs only:** a component reads `RenderContext` and nothing else — no `core` statics, no services. The ticker lines arrive as `ctx.recentEvents`, supplied by the compositor from `Game.journal` (HK-011); a component that reaches for `JournalManager` is a bug.
 - **Determinism:** every source of HUD noise draws from `FrameEntropy.forFrame(ctx)` (location LIP + step count). A `new Random()` in a component is a bug — it surfaces as a flaky golden.
 - **Box lines:** build with `Terminal.boxTop/boxedLine/splitBoxedLine/boxSeparator/boxBottom` (strings); `draw*` only print them.
 
