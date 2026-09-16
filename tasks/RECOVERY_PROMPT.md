@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (Player's Guide chronicle `0x9c4e17d`, merge `7dddfa2`; before that O2 chronicle `0x7b3e2c9`, retro `docs/retro/RETRO_O2.md`, merge `d5b15e2`)
+**Last updated:** 2026-09-16 (HK-014 manual/codex corrections merge `d55e4e6`; Player's Guide chronicle `0x9c4e17d`, merge `7dddfa2`; before that O2 chronicle `0x7b3e2c9`, retro `docs/retro/RETRO_O2.md`, merge `d5b15e2`)
 
 ## 🎯 Current Status
 - **Test Suite:** 213 discovered / 213 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
@@ -18,10 +18,13 @@
   Player's Guide** is live at `docs/terminal/guide/players_guide.md` (`[GUIDE]` in the site nav; every number read from source and cited
   inline as `<!-- File.groovy:NN -->`; collapsed spoilers/exploits; "Known quirks"). Writing it found **ten manual/codex claims the code
   contradicts → HK-014** and **five player-facing bugs → HK-015** (both OPEN in `tasks/backlog/HOUSEKEEPING.md`, with file:line each).
-  No source code changed; the manual/codex were not edited.
+  No source code changed. **HK-014 is CLOSED** (same day, merge `d55e4e6`): 11 manual/codex pages corrected in the in-fiction voice —
+  ten wrong numbers fixed, the world catalogue completed (10 cultures incl. four Minor, 8 eras, 6 traits, `ATMOS_SHIFT` = `Sector
+  Mutation` = trait, 15 floor zones), glossaries trimmed to symbols that exist. Live crawl all 200.
 - **Next:** user decision — **HK-015** (player-facing bugs; items 1 and 2 — the repeating room roll and the unconditional +15 — are
-  gameplay changes and need an explicit Directive), then **HK-014** (correct the manual/codex once the code is settled), or O1
-  (HeadlessRunner DSL), or HK-013 (nine long methods in the lint baseline). None has a plan yet.
+  gameplay changes and need an explicit Directive), or O1 (HeadlessRunner DSL), or HK-013 (nine long methods in the lint baseline).
+  None has a plan yet. Any HK-015 fix also edits `docs/terminal/guide/players_guide.md` ("Known quirks" / spoilers) and, where the
+  manual states the old behaviour, the matching manual page, in the same commit.
 
 ## ✅ State of the substrate in one paragraph
 `GameState.events` is the one `EventBus` (final, never replaced; exact-class dispatch in subscription order). `Player` is
@@ -45,11 +48,11 @@ Initialize session for the Endless Transit substrate.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
    (top: hand-off docs commit above chronicle `bed11ab` and the guide merge `7dddfa2`). Read `tasks/todo.md`,
    `journals/LOG_20260916_174944_0x9c4e17d.md` (the guide session: method, findings, bug list), and `tasks/backlog/HOUSEKEEPING.md`
-   OPEN items (HK-015, HK-014, HK-013).
+   OPEN items (HK-015, HK-013).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=213 SUCCEEDED=213 FAILED=0 SKIPPED=0`;
    `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=206 P1=0 P2=0 P3=0`.
 4. **Ask before choosing:** there is no active phase. Present the options — HK-015 (recommended first; items 1–2 need a gameplay
-   Directive), HK-014 (after HK-015), O1 (HeadlessRunner DSL), HK-013 (nine long methods; read `docs/retro/RETRO_O2.md` "Concerns") —
+   Directive), O1 (HeadlessRunner DSL), HK-013 (nine long methods; read `docs/retro/RETRO_O2.md` "Concerns") —
    and wait for a Directive. Any HK-015 fix edits `docs/terminal/guide/players_guide.md` in the same commit so the guide stays true.
 5. **Every task:** plan file → `/grill` → authorization → branch → ≤5 production files per commit → full suite + `--lint` after every
    commit → merge `--no-ff` → `/chronicle` → retro → lessons → refresh this file.
@@ -71,7 +74,7 @@ Initialize session for the Endless Transit substrate.
 | Factory wiring pins | `src/test/groovy/com/endlesstransit/procgen/FactoryWiringContractTest.groovy` (HK-008) |
 | Per-type factories | `src/main/groovy/com/endlesstransit/procgen/{LocationFactory,*Factory}.groovy` |
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
-| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-015 player-facing bugs, HK-014 manual/codex corrections, HK-013 nine long methods) |
+| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-015 player-facing bugs, HK-013 nine long methods; HK-014 closed) |
 | Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (clean) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md` |
