@@ -10,7 +10,14 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-*(none — the backlog is empty)*
+### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
+**Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
+`renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
+`SessionRecap.show` (56), `LatticeMapComponent.render` (52), `LatticeTraceComponent.renderTrace` (63), `HUDHeaderComponent.render` (90).
+They are the only entries in `config/lint/baseline.xml`; each entry carries the method's current length, so the first edit to any
+of them resurfaces the violation — pay it down then, or in a bounded housekeeping commit (extract by script, reverse-substitution
+check, goldens as the gate for the four `ui` methods). Regenerate the baseline with `./vinc.sh --lint --baseline` and commit the
+shrunken file with the change.
 
 ## 🟢 CLOSED
 

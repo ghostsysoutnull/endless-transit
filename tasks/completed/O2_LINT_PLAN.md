@@ -1,7 +1,17 @@
 # Plan: O2 — `./vinc.sh --lint`: CodeNarc static analysis as a Vinculum mode
 **Created:** 2026-09-16 | **Grill:** AMEND (check 1 — c10 evidence was compile-only; check 5 — naming rules from the O2 goal line undeclared) → applied → CLEARED | **Branch:** `refactor/o2-lint` (from `master` @ d1a1c78)
 **Source:** `docs/analysis/OOA_REFACTOR_PLAN.md` § Optional Phase O2 | **Baseline (verified this session):** 213 / 213 / 0 / 0 (3688 ms); tree clean
-**Status:** IN PROGRESS (authorized 2026-09-16)
+**Status:** COMPLETE (2026-09-16) | **Commits:** 44b56b1 (c1), 1613f8e (c2), 8e0ae21 / 12faf07 / 9a9227d (c3–c5), 6292bdc / 9650d45 (c6–c7), d39931f (c8), 2f1423c + ae0c973 (c9, c9b), 5941966 (c10), 16a7abe (c11), c12 = the docs commit carrying this line | **Gates at close:** suite 213/213/0/0, 36 goldens unchanged, `--scan` seed 0 → 9, `LINT=PASS FILES=206 P1=0 P2=0 P3=0`
+
+> **Execution notes.** (1) c2 baselined **100** entries, not ≈98: the prototype had exempted `ConsoleSink` by file name, the shipped
+> ruleset does not (c11 annotates it instead). (2) The import script deleted the same line twice when one import was flagged by both
+> `UnusedImport` and `UnnecessaryGroovyImport` (`Apartment.groovy`'s `java.util.Random`); the assertion fired before any write, the
+> script was deduped, c4 re-ran clean. (3) Two `UnnecessaryGroovyImport` hits in the test tree (`TracePersistenceTest`,
+> `CaptureVerificationTest`) were missing from the c9 list, which had been built from `UnusedImport` per-file counts only — landed
+> as **c9b**, test-only. (4) c10 shipped as the single annotation, no STOP. (5) Negative check at c2 recorded in the commit message:
+> a scratch `LintProbe.groovy` with `println` + `static X instance =` → `LINT=FAIL` exit 1 naming `Println` and `NoStaticInstance`;
+> removed → `LINT=PASS` exit 0. (6) Every fix commit's baseline diff was removals only (checked by the commit script, which aborts
+> on any `+<Violation`). Final baseline: the nine `MethodSize` rows → HK-013.
 
 > **Zero behavior change.** Same seed → same world; 36 goldens byte-identical; `--scan` seed 0 → 9 nodes. Every production edit
 > in this plan is an import deletion, an unused local deletion, an annotation, or lint infrastructure. The one edit with any

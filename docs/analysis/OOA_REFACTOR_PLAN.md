@@ -1,6 +1,6 @@
 # OOA Refactor Plan: Structural Hardening
 **Created:** 2026-03-17
-**Last updated:** 2026-09-16
+**Last updated:** 2026-09-16 (O2 complete)
 **Based on:** `docs/analysis/OOA_REPORT.md`, `docs/analysis/TEST_COVERAGE_GAPS.md`
 **Status:** IN PROGRESS
 
@@ -16,6 +16,7 @@
 | **Logic** | `./vinc.sh --test` | Full test suite passes |
 | **Visual** | golden frames in `./vinc.sh --test` (`BridgeViewGoldenFrameTest`, `ViewComponentGoldenTest`) | No HUD/TUI regression — 36 frames byte-identical (since Phase 7; `--scan` never drew the HUD, WF-003) |
 | **Model** | `./vinc.sh --scan` | Seed 0 → 9-node match (world generation) |
+| **Lint** | `./vinc.sh --lint` | House rules + Vinculum invariants (CodeNarc); `config/lint/baseline.xml` may only shrink (since O2) |
 | **Determinism** | `DeterministicUniverseTest` | Same seed → same world (procgen/model phases only) |
 
 ---
@@ -38,7 +39,7 @@
 | 9 | ProceduralFactory Split | `[x] COMPLETE` | Medium |
 | 10 | Domain Event System | `[x] COMPLETE` | High |
 | O1 | HeadlessRunner DSL | `[ ] NOT STARTED` | None |
-| O2 | CodeNarc Static Analysis | `[ ] NOT STARTED` | None |
+| O2 | CodeNarc Static Analysis (`./vinc.sh --lint`) | `[x] COMPLETE` | None |
 
 ---
 
@@ -761,25 +762,41 @@ Eliminates the `model → core` dependency violation (`Building` calling `Journa
 
 ---
 
-## Optional Phase O2 — CodeNarc Static Analysis
-**Goal:** Add CodeNarc to the Gradle build to catch naming violations, unused imports, `println`
-leakage, and method complexity drift that accumulates across a large refactoring effort.
-**Depends on:** None (purely additive to build infrastructure; ideally done before Phase 1)
+## Optional Phase O2 — CodeNarc Static Analysis (`./vinc.sh --lint`)
+**Goal:** Catch `println` leakage, unused imports, missing `@CompileStatic`, method/class size drift and — as CodeNarc
+generic rules — the project's own invariants (no static singletons, no `instanceof` on a state/factory/event, the model never
+touches the journal or the UI). One command, one exit code, one line of output.
+**Depends on:** None
+
+> **Premise correction (2026-09-16):** the original tasks said "add the `codenarc` plugin to `build.gradle`" and "verify
+> `./vinc.sh --compile` still passes with CodeNarc enabled". `vinc.sh` never invokes Gradle, so a Gradle plugin would never run on
+> the path the agent and the gates use. O2 was re-planned as a `vinc.sh` mode on the runner's own classpath convention
+> (`lib/lint/`, four committed jars: CodeNarc 4.0.0 built for Groovy 5, GMetrics 3.0.0, slf4j-api/nop); `--compile` is untouched.
+> `NoSystemExit` does not exist — the rule is `SystemExit`. Plan and evidence: `tasks/completed/O2_LINT_PLAN.md`.
+>
+> **Execution note:** the gate shipped green on its first commit because c2 baselined all existing debt (100 entries) into
+> `config/lint/baseline.xml`; c3–c11 paid it down (83 unused/unnecessary imports in 38 files, 4 unused locals, `Player` gained
+> `@CompileStatic`, the two intentional leaks — `Game.start`'s WF-005 exit and `ConsoleSink` — are declared in source with
+> `@SuppressWarnings`). The baseline now holds exactly the nine methods over 50 lines (**HK-013**); its entries carry the method's
+> current length, so the first edit to any of them resurfaces the violation. Every commit ≤ 5 production files; suite, 36 goldens and
+> `--scan` unchanged throughout. Negative check at c2: a scratch file with `println` + `static X instance =` → `LINT=FAIL` exit 1 naming both rules.
+>
+> **Declared deviations:** no Gradle; ruleset is a Groovy DSL (`config/lint/vinc-ruleset.groovy`), not XML; test tree exempt from
+> `CompileStatic`/`MethodSize`/`ClassSize` (dynamic by design); `Main.groovy`, `TestRunner`, `GoldenFrameGenerator` exempt from
+> print/exit rules by file name; naming rules not enabled; no automated self-test of the lint mode (manual negative check, recorded).
 
 ### Tasks
-- [ ] Add `codenarc` plugin to `build.gradle`
-- [ ] Create `config/codenarc/codenarc.xml` rule set — enable at minimum:
-  - `NoSystemExit`, `SystemErrPrint`, `SystemOutPrint` — catch `println` leakage
-  - `UnusedImport`, `UnnecessaryGroovyImport` — keep imports clean during refactoring
-  - `MethodSize` (max 50 lines), `ClassSize` (max 500 lines) — flag growing classes
-  - `CompileStatic` — warn when new classes omit `@CompileStatic`
-- [ ] Fix any existing violations (expected to be few given existing discipline)
-- [ ] Verify `./vinc.sh --compile` still passes with CodeNarc enabled
+- [x] `./vinc.sh --lint [--agent] [--baseline]` on `lib/lint/*` — c2
+- [x] `config/lint/vinc-ruleset.groovy`: `SystemExit`, `SystemErrPrint`, `SystemOutPrint`, `Println`; `UnusedImport`,
+  `UnnecessaryGroovyImport`, `DuplicateImport`; `MethodSize` (50), `ClassSize` (500); `CompileStatic`; `UnusedVariable`,
+  `UnusedPrivateField`, `UnusedPrivateMethod`; six Vinculum invariant rules (`IllegalRegex` ×4, `IllegalClassReference`, `IllegalPackageReference`) — c2
+- [x] Existing violations fixed (imports, unused locals, `Player` `@CompileStatic`, declared exits/sinks) — c3–c11; the nine long methods baselined as HK-013
+- [x] `--lint` is a merge gate (CODEX § 1.5 and § 4; `CLAUDE.md` tooling table)
 
-**Files:** `build.gradle`, `config/codenarc/codenarc.xml` (new)
-**Status:** `[ ] NOT STARTED`
+**Files:** `vinc.sh`, `config/lint/vinc-ruleset.groovy` (new), `config/lint/baseline.xml` (new, generated), `lib/lint/*.jar` (4, new); 29 production files (import/local deletions, 3 annotations); 11 test files
+**Status:** `[x] COMPLETE — 2026-09-16` | commits 44b56b1 (c1 plan), 1613f8e (c2), 8e0ae21 / 12faf07 / 9a9227d (c3–c5 model), 6292bdc / 9650d45 (c6–c7 core+procgen+Main), d39931f (c8 ui), 2f1423c / ae0c973 (c9 tests), 5941966 (c10 Player), 16a7abe (c11)
 
-**Gates:** `./vinc.sh --compile` passes with zero CodeNarc violations
+**Gates:** `./vinc.sh --lint --agent` ✅ `LINT=PASS FILES=206 P1=0 P2=0 P3=0` + `./vinc.sh --test` ✅ `213/213/0/0` (36 goldens unchanged) + `./vinc.sh --scan` ✅ seed 0 → 9
 
 ---
 
@@ -833,6 +850,7 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 - Every new class MUST have `@CompileStatic`
 - `./vinc.sh --compile` after **every file change** in Phase 5+
 - Goldens unchanged (`./vinc.sh --test`) and `./vinc.sh --scan` seed 0 → 9 **before and after** any phase touching `model` or `ui`; regenerate goldens only for an intended visual change
+- `./vinc.sh --lint` green before merge (recommended after every commit); `config/lint/baseline.xml` is regenerated only with `--lint --baseline`, reviewed, and may only shrink
 - Each phase runs on its own git branch (`refactor/phase-N-name`); merge to `master` only when all gates pass
 - If anything goes sideways: **STOP, revert, re-plan** — do not push through
 - After any user correction: update `tasks/lessons/<domain>.md`
@@ -845,6 +863,6 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 
 ---
 
-*Last updated: 2026-09-16 — Phase 10 complete; housekeeping HK-005..012 closed (backlog empty). O1/O2 optional. Next cadence review falls at whatever phase follows.*
+*Last updated: 2026-09-16 — Phase 10 complete; housekeeping HK-005..012 closed; O2 complete (`./vinc.sh --lint`, HK-013 logged). O1 optional. Next cadence review falls at whatever phase follows.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*

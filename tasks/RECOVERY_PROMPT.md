@@ -1,18 +1,21 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (HK-008 chronicle `0xf681c46`, retro `docs/retro/RETRO_HK_008.md`; merge `f681c46`; earlier today session chronicle `0xf7c7745`, HK-012 `fe739f4`, HK-011 `a307827`, HK-009 `a3f6e4d`, HK-010 `00194f4`)
+**Last updated:** 2026-09-16 (O2 complete on `refactor/o2-lint`, **unmerged, no chronicle/retro yet**; before that HK-008 chronicle `0xf681c46`, merge `f681c46`)
 
 ## 🎯 Current Status
 - **Test Suite:** 213 discovered / 213 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Branch:** `master`, pushed. Working tree clean. Verify with `git status -sb`.
-- **Active Work:** none. **All ten planned OOA phases are complete.** Optional O1 (HeadlessRunner DSL) and O2 (CodeNarc)
-  remain `NOT STARTED`. **HK-010 is CLOSED** (discovery journaling restored as `LocationDiscovered`, a behavior change by
+- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=206 P1=0 P2=0 P3=0` (new gate, O2)
+- **Branch:** `refactor/o2-lint`, 13 commits ahead of `master` (c1–c12), **not merged**. Working tree clean. Verify with `git status -sb`.
+- **Active Work:** O2 is **implemented and gated but not closed**: chronicle → `docs/retro/RETRO_O2.md` → merge `--no-ff` → push are
+  pending explicit go-ahead. **O2 (`./vinc.sh --lint`) is COMPLETE on the branch**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
+  `config/lint/vinc-ruleset.groovy` (house rules + six Vinculum invariant rules), baseline-ratchet `config/lint/baseline.xml` (now
+  exactly the nine long methods → **HK-013**, the one OPEN backlog item), 83 dead imports + 4 unused locals gone, `Player` is
+  `@CompileStatic`, `Game.start` / `ConsoleSink` carry `@SuppressWarnings` in source. Plan + execution notes: `tasks/completed/O2_LINT_PLAN.md`.
+  Optional O1 (HeadlessRunner DSL) remains `NOT STARTED`. **HK-010 is CLOSED** (discovery journaling restored as `LocationDiscovered`, a behavior change by
   user decision; goldens 13–18 regenerated). **HK-009 CLOSED** (delegator deleted; the explicit call had double-populated apartments in two tests). **HK-011 CLOSED** (`JournalManager` is `Game.journal`; ticker lines travel in `RenderContext.recentEvents`; the ticker now shows the
   discovered location's *name* — visual change by user decision, goldens 13–18). **HK-012 CLOSED** (user report: the suite had overwritten/deleted the player's `session.trace` since March; `Game.saveFile` +
   temp files in tests + guard assertions on the real file). **HK-008 CLOSED** (the last Service Locator: `Game.factory` is the one `ProceduralFactory`, injected into
   the services; every `Container` carries the registry that made it and `populateChildren()` asks it; `SeedScanner` and tests build their own; `FactoryWiringContractTest`).
-  **The housekeeping backlog is empty.**
-- **Next:** user decision between O2 CodeNarc (recommended; reshape as `./vinc.sh --lint` — `vinc.sh` never invokes Gradle) and O1. The next cadence review
-  (CODEX: every 3 phases) falls at whatever phase follows.
+- **Next:** close O2 (chronicle, retro, merge, push), then user decision: O1 or HK-013.
 
 ## ✅ State of the substrate in one paragraph
 `GameState.events` is the one `EventBus` (final, never replaced; exact-class dispatch in subscription order). `Player` is
@@ -33,13 +36,14 @@ production sites that replace the player on restore hand in the state bus. No mo
 Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
-2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: chronicle docs commit above the HK-008 merge). Read `tasks/todo.md`, `docs/retro/RETRO_HK_008.md`
-   "Concerns for Upcoming Phases", and `tasks/backlog/HOUSEKEEPING.md` OPEN items.
-3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=213 SUCCEEDED=213 FAILED=0 SKIPPED=0`.
-4. **Ask before choosing:** there is no active phase and the housekeeping backlog is empty. Present the options (O2 CodeNarc as a
-   `vinc.sh --lint` mode, O1 DSL) and wait for a Directive.
-5. **Every task:** plan file → `/grill` → authorization → branch → ≤4 production files per commit → full suite after every
+2. **Orient:** `git branch --show-current` — expect `refactor/o2-lint` if O2 is still unmerged (else `master`); `git status -sb`;
+   `git log --oneline -14` (top: `docs(O2 c12)`). Read `tasks/todo.md`, `tasks/completed/O2_LINT_PLAN.md` (execution notes),
+   and `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-013).
+3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=213 SUCCEEDED=213 FAILED=0 SKIPPED=0`;
+   `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=206 P1=0 P2=0 P3=0`.
+4. **If O2 is unmerged:** ask for the go-ahead to `/chronicle`, write `docs/retro/RETRO_O2.md`, merge `--no-ff` to `master`, push.
+   **Then ask before choosing:** O1 (HeadlessRunner DSL) or HK-013 (nine long methods in the lint baseline). Wait for a Directive.
+5. **Every task:** plan file → `/grill` → authorization → branch → ≤5 production files per commit → full suite + `--lint` after every
    commit → merge `--no-ff` → `/chronicle` → retro → lessons → refresh this file.
 
 **END_PROMPT**
@@ -49,7 +53,8 @@ Initialize session for the Endless Transit substrate.
 ## 🏛️ Context Links
 | Resource | Path |
 | :--- | :--- |
-| Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (Phase 10 section has the execution record) |
+| Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (O2 section rewritten; Phase 10 section has the execution record) |
+| Lint mode | `vinc.sh` (`--lint`), `config/lint/vinc-ruleset.groovy`, `config/lint/baseline.xml` (one writer: `--lint --baseline`), `lib/lint/*.jar`; plan `tasks/completed/O2_LINT_PLAN.md` |
 | Latest chronicles | `journals/CHRONICLE_INDEX.md` (0xf681c46 HK-008, 0xf7c7745 session wrap, 0xfe739f4 HK-012) |
 | Retros | `docs/retro/RETRO_HK_008.md`, `docs/retro/RETRO_SESSION_20260916.md`, `docs/retro/RETRO_PHASE_10.md` |
 | Event system | `src/main/groovy/com/endlesstransit/core/{EventBus,DomainEvent,ItemCaptured,SynthesisPerformed,RitualTracker,JournalManager}.groovy`, `Player.capture`, `GameState.events` |
@@ -57,13 +62,15 @@ Initialize session for the Endless Transit substrate.
 | Factory wiring pins | `src/test/groovy/com/endlesstransit/procgen/FactoryWiringContractTest.groovy` (HK-008) |
 | Per-type factories | `src/main/groovy/com/endlesstransit/procgen/{LocationFactory,*Factory}.groovy` |
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
-| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (empty) |
+| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (HK-013 open: nine long methods in the lint baseline) |
 | Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (clean) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md` |
 | Safety mandates | `tasks/lessons/POST_MORTEM_2026_03_11.md`, `tasks/lessons/POST_MORTEM_2026_03_06.md` |
 
 ## ⚠️ Lessons carried forward
+- A new gate ships green on its first commit: baseline the debt, ratchet it down; the baseline has one writer and its diff may only remove (O2).
+- Verify rule names and CLI behavior against the jar with a scratchpad prototype — the plan said `NoSystemExit` and Gradle; neither existed on this runner (O2).
 - An import is not a call; a caller-less public method is a regression to `git log -S`, not a feature to wire (Phase 10).
 - When a service becomes a listener, audit its side effects first — a model mutation inside it is a game rule (Phase 10).
 - A bus outlives the aggregate that publishes on it: channel on the never-replaced object, injected by constructor (Phase 10).
