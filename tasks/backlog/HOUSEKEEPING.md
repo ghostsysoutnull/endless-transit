@@ -31,17 +31,6 @@ guide in the same commit so it stays true. Items 1 and 2 change gameplay — **u
 Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
 (real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine).
 
-### HK-014 — Manual and codex state numbers the code contradicts
-**Found:** 2026-09-16, chronicle `0x9c4e17d`. The Player's Guide is the source-verified reference; the lore pages under
-`docs/terminal/manual/` and `docs/terminal/codex/` were written before the code was read and disagree in at least ten places:
-16-slot buffer cap (`link_navigation.md:29`, `synthesis_theory.md:12` — there is no cap); +30% "stabilized" merge (`synthesis_theory.md:21` —
-every merge is +15); 0.5x/1.0x/2.0x era drain table (`coherence_optimization.md:16-19` — 1x, ×2 only for `entropic`); consonant values
-10/20/30/40/50 (`gematria_specifications.md:17-25` — A=1…Z=26); item "shatter" (`synthesis_theory.md:33` — none); ritual = 70% of floors +
-7 resonant fragments (`the_inversion_ritual.md:13,18` — every floor + 7 merges, keystone on the 8th); `target [ID]` command
-(`lattice_hunting.md:16` — none); 5% integrity per move below bedrock (`coherence_optimization.md:29` — drain ×2); "drains per step"
-(per prompt); `⬚` for Galactic Sector (`the_lattice_atlas.md:16` — it is `○`). Do this **after HK-015** so the manual is corrected once.
-Keep the in-fiction voice; change only the facts. Gate: link crawl + the guide's static check script pattern (see `0x9c4e17d`).
-
 ### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
 **Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
 `renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
@@ -52,6 +41,23 @@ check, goldens as the gate for the four `ui` methods). Regenerate the baseline w
 shrunken file with the change.
 
 ## 🟢 CLOSED
+
+### HK-014 — Manual and codex stated numbers the code contradicts, and omitted half the world's catalogue
+**Found:** 2026-09-16, chronicle `0x9c4e17d`. Ten claims in `docs/terminal/manual/` and `docs/terminal/codex/` disagreed with the source
+(16-slot cap, +30% stabilized merge, 0.5x/2.0x era table, consonant values 10–50, item "shatter", ritual = 70% floors + 7 resonant
+fragments, `target [ID]`, 5% per move below bedrock, "drains per step", `⬚` for sector). User review added the gaps: the codex named
+6 of 10 cultures, 5 of 8 eras (two of them nonexistent), none of the 6 country traits, no `ATMOS_SHIFT`/`Sector Mutation`, and the
+atlas invented floor zones.
+**Resolution:** 11 pages corrected in the in-fiction voice, facts only: drain per pulse (1/2/4), +15 flat, ordinal Gematria with a
+recomputed worked example (Rust Piston = 1512/1663 Hz, not stabilized), the real ritual recipe (every floor + 7 syntheses inside,
+keystone on the 8th, 0 Hz, consumed by `j`), unbounded buffer with the two drop semantics, hybrid naming, Null Reach echo (capital `S`),
+landmarks 1-in-25 / 1-in-12 with no special loot, endless layers with pressure saturating at −10. Atlas gains sections for the ten
+cultures (six Great, four Minor with borrowed Monolith geometry), eight eras, six traits (with `ATMOS_SHIFT` = `Sector Mutation` =
+trait), and the fifteen height-based floor zones. Codex gains four Minor Culture entries and a `[DIAGNOSTIC_READOUTS]` glossary;
+map/waveform glossaries trimmed to the symbols that exist (`¤`, `[■]`, `-------`, `○`-as-visited removed). Guide gains an
+`ATMOS_SHIFT` + floor-zone paragraph. Not touched: `installation_guide.md`, `system_initialization.md`, `system_specifications.md`,
+`lip_addressing.md` (no contradictions found).
+**Closed:** 2026-09-16 | docs only | link crawl green after Pages build
 
 ### HK-008 — `ProceduralFactory.instance` was a static singleton
 **Found:** Phase 9 retro "Concerns", 2026-09-11 (OOA report §3.4 / §4 — singleton access noted in the original analysis).

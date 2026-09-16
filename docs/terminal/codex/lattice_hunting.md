@@ -11,26 +11,25 @@ This node details protocols for identifying high-value targets within the proced
 ## [THE 2D_MAP_READOUT]
 At the macro scale (City and up), the 2D map provides a spatial overview of nearby nodes. 
 
-*   **Cluster Analysis:** Look for areas where multiple `■` (Stable Nodes) are grouped together. High density usually correlates with higher fragment counts.
-*   **Void Identification:** `░` (Void/Null) symbols indicate high-entropy zones. While dangerous, these zones often contain unique "Spectral Echoes" that carry rare master-number frequencies.
-*   **The "Target" Vector:** Use the `target [ID]` command to lock onto a specific node. The HUD will then provide a coarse vector (e.g., NORTH-WEST) to guide your navigation through the lists.
+*   **Node Reading:** `■` marks a child node; dim nodes are unvisited, bright nodes are visited. The map is a projection of the container you stand in — it shows nothing about fragment counts.
+*   **Void Identification:** On the filament menu, a conduit labelled `VOID_REACH` leads to a **Null Reach**. Each holds exactly one **Spectral Echo** (1,000–9,999 Hz). Issue the capital `S` directive until the signal reaches 100, then `c` to capture. Buildings beneath a Null Reach are twice as likely to be Landmarks.
+*   **No Targeting:** The lattice offers no vector-lock. Navigation is by list; use `ll` for your ancestry and `m` for your siblings.
 
 ## [APERTURE_SCAN_TELEMETRY]
 Inside a building, the **Corridor Aperture Scan** provides a direct readout of the rooms ahead.
 
-*   **Designation Decoding:** Room names are not random. 
-    *   *Industrial* rooms like "Processing Core" or "Maintenance Bay" have a higher chance of mechanical objects.
-    *   *Research* rooms like "Neural Link Array" are prone to high-frequency digital fragments.
-*   **Resonance Signatures:** Pay close attention to the **Hz (Hertz)** and **Waveform** columns. 
-    *   A `[DEGRADED]` waveform with a `###` visual indicates an anomaly—high risk, but often contains rare loot.
-    *   A `≈≈≈` waveform indicates a **Stabilized Signature**, which provides a coherence bonus upon capture.
+*   **Designation Decoding:** Room types are chosen by the Country's **Trait**, four per Trait. They shape the name and the description of a cell; the objects inside come from the planet's Culture and Era.
+*   **Door Traces:** Every door in the corridor list carries a sensory trace that reports the type of the first cell behind it, and the trace never lies: *frost* is a Memory Well; *ozone* is a Laboratory, Neural Link Array, Bio-Server, Power Plant or Processing Core; *clicking* is a Security Station, Armory, Maintenance Bay or Supply Node; a *low thrum* is a Barracks, Tactical Hub, Fuel Depot or Credit Hub; *stillness* is any of the rest. A `[DATA_VAULT]` inscription guarantees a Laboratory or Bio-Server; `!! DANGER !!` guarantees a Security Station or Armory.
+*   **Resonance Signatures:** In the Apartment scan, watch the **Hz** and **Waveform** columns.
+    *   A `###` waveform marks a temporal anomaly — a one-in-a-hundred apartment whose cells are glitched.
+    *   A `≈≈≈` waveform marks a **Stabilized Signature** (frequency divisible by 11). It is counted in your `RESONANT_TRACES` tally; it grants no Coherence.
 
 ## [THE "LANDMARK" PING]
-Some buildings appear in **BOLD CYAN** on the street list. These are **Legendary Landmarks** (e.g., *The Eye of the Web*). 
-*   **Protocol:** Entering a Landmark should be your highest priority. They are mathematically "anchored" points in the web and often contain items with ultra-pure Gematria values.
+Some buildings appear in **BOLD CYAN** on the street list. These are **Legendary Landmarks** (e.g., *The Eye of the Web*, *The Void-Watcher*) — one building in twenty-five on an ordinary street, one in twelve beneath a Null Reach.
+*   **Protocol:** A Landmark announces itself on first entry. Its strata and cells are cut from the same procedural cloth as any other building; the name and the discovery are the reward.
 
 ## [PRO-TIPS]
-1.  **Macro before Micro:** Always check the Map `[m]` before entering a building. If the building is surrounded by Void nodes, the Abyssal Pressure inside will be higher.
+1.  **Read the Header:** The street header shows `[TECH_ERA: …]` and `[RESONANCE: …]`. An ENTROPIC Era doubles every pulse; the RESONANCE Culture is the one whose cells amplify your captures by 10%.
 2.  **Breadcrumb Tracking:** If you enter a room and see `[Visited]` or `[V]`, you have already harvested its primary signal. Move forward to maximize step-to-fragment efficiency.
 
 ---
