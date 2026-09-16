@@ -59,10 +59,4 @@
       <Message><![CDATA[Method "show" is 56 lines]]></Message>
     </Violation>
   </File>
-  <File path="test/groovy/com/endlesstransit/core/TracePersistenceTest.groovy">
-    <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
-  <File path="test/groovy/com/endlesstransit/ui/CaptureVerificationTest.groovy">
-    <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
 </CodeNarc>
