@@ -1,6 +1,6 @@
 # OOA Refactor Plan: Structural Hardening
 **Created:** 2026-03-17
-**Last updated:** 2026-09-11
+**Last updated:** 2026-09-16
 **Based on:** `docs/analysis/OOA_REPORT.md`, `docs/analysis/TEST_COVERAGE_GAPS.md`
 **Status:** IN PROGRESS
 
@@ -36,7 +36,7 @@
 | 7 | BridgeView Decomposition | `[x] COMPLETE` | Medium |
 | 8 | Floor State Pattern | `[x] COMPLETE` | Medium |
 | 9 | ProceduralFactory Split | `[x] COMPLETE` | Medium |
-| 10 | Domain Event System | `[ ] NOT STARTED` | High |
+| 10 | Domain Event System | `[x] COMPLETE` | High |
 | O1 | HeadlessRunner DSL | `[ ] NOT STARTED` | None |
 | O2 | CodeNarc Static Analysis | `[ ] NOT STARTED` | None |
 
@@ -711,18 +711,44 @@ Eliminates the `model → core` dependency violation (`Building` calling `Journa
 **Max files per commit:** 4
 **Depends on:** Phase 4b; Phase 0.5g (EventBus unit tests must exist first)
 
+> **Execution note (2026-09-16):** The pre-plan read found three premises wrong. (1) `Building` never called the
+> journal — it only imported it; the real call sites were `Room` ×3, `NullSector` ×1 (`logCapture`) and `Player` ×1
+> (`logSynthesis`). (2) `logDiscovery` has had **no production caller since `7930dc3` (2026-03-05)**, when path tracking
+> moved into `Player.markFootprint` and the call was dropped; restoring it is a behavior change (journal file, live HUD
+> ticker, `Network Expansion` count) and is logged as **HK-010**, not done here. (3) The journal owned a game rule: its
+> `logCapture`/`logSynthesis` advanced the Abyssal ritual (`Building.notifySampled`, `infusionCount++`).
+>
+> Coverage audit found seven UNGUARDED behaviors (journal + ritual effects of every capture/synthesis path; `EventBusTest`
+> was `@Disabled`). **10-0** `JournalEventContractTest` pins the four paths on the public surface, all driven through
+> `game.player`. `/grill` returned AMEND on checks 2 and 3 (two undeclared edges, below), then CLEARED.
+>
+> **Declared deviations:** two event types, not four (`LocationEntered` → HK-010; `RitualCompleted` has no producer or
+> consumer). `JournalManager` stays static internally and becomes a listener through `attach(EventBus)` (de-static-ing →
+> **HK-011**); this keeps `HudFrameHarness` and ticker goldens 20/21 untouched. New domain method `Player.capture(item,
+> where)` replaces the four `inventory.add + logCapture` pairs; `Player` is the sole publisher. The bus lives in
+> `GameState` (final, never replaced) and reaches `Player` by constructor, because `Player` is replaced on restore
+> (`PersistenceService.restore`, `SyncManager.restore`). A `new Player()` outside `GameState` gets an inert bus: it no longer
+> journals or advances the ritual (E1 — six test sites, none asserting either). `Game.setPlayer` is a test-only injection
+> point (E2). Journal attaches before the tracker (E3, today's write-then-ritual order). `NullSector` now passes itself as
+> the capture location; no `Building` sits above it, so the tracker no-ops as before (E4). The ritual tracker is a
+> listener because the plan names ritual tracking a cross-cutting concern; its bodies moved verbatim.
+
 ### Tasks
-- [ ] **10a** Define `DomainEvent` base class + `EventBus` (subscribe/publish)
-- [ ] **10b** Define event types: `LocationEntered`, `ItemCaptured`, `SynthesisPerformed`, `RitualCompleted`
-- [ ] **10c** Convert `JournalManager` to `EventBus` listener (subscribe to all event types)
-- [ ] **10d** Replace `JournalManager.logDiscovery()` calls in `Player`, `Room` with event publications
-- [ ] **10e** Replace `JournalManager.logCapture()` / `logSynthesis()` calls in `Building` with event publications
-- [ ] **10f** Remove the `model → core` import once all direct calls are eliminated
+- [x] **10-0** `JournalEventContractTest` (4 pins, passes on master) — commit 329d880
+- [x] **10a** `EventBus` implemented (exact-class dispatch, subscription order); `EventBusTest` enabled (skips 5 → 0) — 497c053
+- [x] **10b** `ItemCaptured`, `SynthesisPerformed` (`DomainEvent` base unchanged, `lip`/`itemName` derived) — 7185807
+- [x] **10c-i** `GameState.events`; `Player(EventBus = new EventBus())`; restore paths pass the state bus — ee6a7df
+- [x] **10c-ii** `Player.capture()` + `mergeItems` publishes; `JournalManager.attach`; `RitualTracker`; wired in `Game` — e4fb3fb
+- [x] **10d** `Room` ×3 / `NullSector` ×1 → `player.capture(item, this)`; ritual blocks and `Location` params removed from the journal — 25c5ada
+- [x] **10e-i..iv** dead `JournalManager` import dropped from 13 model classes (4 commits, cap honoured) — e1c9720, eb46c28, e3d0333, 7d7c788
+- [x] `grep -rn "JournalManager" src/main/groovy/com/endlesstransit/model` → 0; `grep -rn "instanceof <event>" src/` → 0
 
-**Files:** `DomainEvent.groovy` (new), `EventBus.groovy` (new), event type classes (new), `JournalManager.groovy`, `Player.groovy`, `Room.groovy`, `Building.groovy`
-**Status:** `[ ] NOT STARTED`
+**Files:** `EventBus.groovy`, `ItemCaptured.groovy` (new), `SynthesisPerformed.groovy` (new), `RitualTracker.groovy` (new), `GameState.groovy`, `Player.groovy`, `PersistenceService.groovy`, `SyncManager.groovy`, `Game.groovy`, `JournalManager.groovy`, `Room.groovy`, `NullSector.groovy`, 13 import-only model files
+**Test blast radius:** `JournalEventContractTest` (new), `EventBusTest` (un-disabled); zero edits to existing tests
+**Status:** `[x] COMPLETE — 2026-09-16` | 10 commits on `refactor/phase-10-domain-events`
 
-**Phase 10 Gates:** `./vinc.sh --test` — focus `JournalTest`, `AbyssalRitualTest`, `LandmarkDiscoveryTest`
+**Phase 10 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=203 SUCCEEDED=203 FAILED=0 SKIPPED=0` (36 goldens byte-identical after every commit) + `./vinc.sh --scan` ✅ seed 0 → 9 nodes before and after + `DeterministicUniverseTest` ✅
+**Retrospective:** `docs/retro/RETRO_PHASE_10.md`
 
 ---
 
@@ -810,6 +836,6 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 
 ---
 
-*Last updated: 2026-09-11 — Phase 9 complete (ProceduralFactory Split; 16 commits); Phase 10 next (backlog review cadence: Phase 10).*
+*Last updated: 2026-09-16 — Phase 10 complete (Domain Event System; 10 commits). All planned phases done; O1/O2 optional. Next cadence review falls at whatever phase follows.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*

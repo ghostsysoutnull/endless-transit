@@ -13,6 +13,7 @@
 - **Primary Loop**: Managed via `TurnProcessor`.
 - **Orchestration**: Logic partitioned across `NavigationOrchestrator`, `ActionMapper`, and `RenderingCoordinator`.
 - **Persistence**: Exclusive management by `PersistenceService` via `GameMemento`.
+- **Domain Events (Phase 10)**: `GameState.events` is the one `EventBus` (final, never replaced). `Player` is the sole publisher (`capture` → `ItemCaptured`, `mergeItems` → `SynthesisPerformed`). Listeners are attached once in `Game`: `JournalManager.attach` then `RitualTracker.attach`. A listener is a **typed subscription per event class** — never `instanceof` an event. A `Player` built outside `GameState` carries an inert bus.
 
 ## 🏗️ Technical Invariants
 1. **Turn Integrity**: Every turn MUST update `ActionMapper`.

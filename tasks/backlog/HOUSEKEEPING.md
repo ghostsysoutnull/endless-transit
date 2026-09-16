@@ -10,6 +10,22 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-010 — Discovery journaling has been dead in production since 2026-03-05
+**Found:** Phase 10 pre-plan read, 2026-09-16. `JournalManager.logDiscovery` has no caller in `src/main`; the call was
+dropped in `7930dc3` when macro-path tracking moved into `Player.markFootprint`. Since then `[DISCOVERY]`/`[LOC]` journal
+lines, the `Network Expansion: N macro-locations mapped` summary count and `LOC:` ticker lines exist only in
+`JournalTest` and the golden harness. **Restoring it is a behavior change** (journal file, live HUD ticker), which is why
+Phase 10 did not do it. **Shape:** decide first whether it is wanted. If yes: `LocationEntered(location)` published from
+`Player.markFootprint` when `visitedPaths.add(path)` is new, `JournalManager.attach` subscribes `logDiscovery(path,
+location)`, a pin on the journal `[LOC] <path>` line first, own commit, own chronicle line. 2 production files.
+
+### HK-011 — `JournalManager` is still all-static
+**Found:** Phase 10 plan, 2026-09-16 (same family as HK-008). The journal is a listener now (`attach(EventBus)`), but its
+session state, file I/O, `getRecentEvents` (read by `HUDHeaderComponent.groovy:75`) and `reset()` are static; tests and the
+golden harness reset it explicitly. **Shape:** instance owned by `Game`, `getRecentEvents` reaches the HUD through
+`RenderContext`, `startSession`/`saveSession` via the facade. Blast radius: `Game`, `QuitCommand`, `HUDHeaderComponent`,
+`RenderContext`, `JournalTest`, `HudFrameHarness` (+ ticker goldens must stay byte-identical). Not urgent.
+
 ### HK-009 — `populateApartment` is the last per-type populate delegator on the facade
 **Found:** HK-005 close-out, 2026-09-16. Twelve `populate*` delegators were deleted with their callers; `populateApartment`
 stayed because two tests call it directly on a factory-built apartment (`ObjectDistributionTest.groovy:22`,
