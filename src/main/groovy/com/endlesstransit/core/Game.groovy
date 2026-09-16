@@ -54,6 +54,8 @@ class Game {
     Player getPlayer() { state.player }
     void setPlayer(Player p) { state.player = p }
     LocusSeed getMasterLocus() { state.masterLocus }
+    /** The world generator this game's locations were created by (HK-008; owned by Game from c4). */
+    ProceduralFactory getFactory() { ProceduralFactory.instance }
     InputHandler getInputHandler() { turnProcessor.inputHandler }
     ActionMapper getMapper() { turnProcessor.mapper }
     NavigationEngine getNavEngine() { navOrchestrator.navEngine }

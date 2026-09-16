@@ -14,6 +14,10 @@ import static org.junit.jupiter.api.Assertions.*
  * down to the first Room is the Game's own {@code fmt}, and so is the formatter on a world
  * rebuilt by a trace restore. Nothing asserted this before; rendering merely proved the
  * formatter was non-null (LocationRenderingTest).
+ *
+ * Part B (HK-008 c3): every container the registry hands out remembers the registry that made it,
+ * including lazily populated descendants and the on-demand abyssal floor; a container built by hand
+ * with no registry fails loud on first lazy access, naming its class.
  */
 class FactoryWiringContractTest {
 
@@ -85,5 +89,46 @@ class FactoryWiringContractTest {
         assertEquals(realExisted, real.exists(), "The player's save file must not be created or deleted by this test")
         assertEquals(realStamp, realExisted ? real.lastModified() : -1L, "The player's save file must not be rewritten by this test")
         assertEquals(realSize, realExisted ? real.length() : -1L, "The player's save file must not be rewritten by this test")
+    }
+
+    // --- Part B: factory identity ---
+
+    @Test
+    void B1_everyGeneratedLocation_carriesTheGamesFactory() {
+        Game game = new Game(0x1234L)
+        for (Location node : firstChildChain(game.universe)) {
+            if (node instanceof Container) {
+                assertSame(game.factory, ((Container) node).factory, "${node.getTypeName()} ${node.getName()} must carry game.factory")
+            }
+        }
+    }
+
+    @Test
+    void B2_onDemandAbyssalFloor_carriesTheBuildingsFactory() {
+        ProceduralFactory factory = new ProceduralFactory(new com.endlesstransit.ui.StandardTerminalAdapter())
+        Building bldg = new Building(new LocusSeed(0L))
+        bldg.factory = factory
+        bldg.name = "Deep"
+        bldg.culture = "monolith"
+        bldg.timeline = "ancient"
+        bldg.maxFloors = 10
+        bldg.apartmentsPerFloor = 2
+        bldg.isBreached = true
+
+        Floor layer = bldg.getFloor(-1)
+        assertNotNull(layer, "Breached building must create the abyssal floor on demand")
+        assertSame(factory, layer.factory, "Abyssal floor must carry the building's factory")
+        Corridor artery = layer.getCorridor()
+        assertSame(factory, artery.factory, "Abyssal corridor must carry the building's factory")
+        assertSame(factory, artery.getApartments()[0].factory, "Abyssal apartment must carry the building's factory")
+    }
+
+    @Test
+    void B3_containerBuiltOutsideTheRegistry_failsLoudOnFirstLazyAccess() {
+        Building bldg = new Building(new LocusSeed(0L))
+        bldg.maxFloors = 1
+        IllegalStateException ex = assertThrows(IllegalStateException) { bldg.getFloor(0) }
+        assertTrue(ex.message.contains("Building"), ex.message)
+        assertTrue(ex.message.contains("factory"), ex.message)
     }
 }

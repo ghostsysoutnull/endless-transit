@@ -4,6 +4,8 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -29,6 +31,7 @@ class AbyssalRitualTest {
     void testKeystoneGeneration() {
         def game = new Game()
         def bldg = new Building(new LocusSeed(0L))
+        bldg.factory = game.factory
         bldg.name = "Alpha"
         bldg.maxFloors = 1
         bldg.apartmentsPerFloor = 2
@@ -52,6 +55,7 @@ class AbyssalRitualTest {
     @Test
     void testTerminologyShift() {
         def bldg = new Building(new LocusSeed(0L))
+        bldg.factory = new ProceduralFactory(new StandardTerminalAdapter())
         bldg.name = "Deep"
         bldg.culture = "monolith"
         bldg.timeline = "ancient"

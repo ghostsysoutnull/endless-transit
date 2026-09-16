@@ -29,7 +29,7 @@ class JournalEventContractTest {
     @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
-        game = new Game()                       // a new Game is a new journal (HK-011)                       // sets ProceduralFactory.instance.fmt
+        game = new Game()                       // a new Game is a new journal (HK-011); hand-built objects borrow its fmt and factory
         bldg = new Building(new LocusSeed(0L))
         bldg.name = "Contract Tower"
         bldg.maxFloors = 1
@@ -37,6 +37,7 @@ class JournalEventContractTest {
         bldg.culture = "monolith"
         bldg.timeline = "ancient"
         bldg.fmt = game.fmt
+        bldg.factory = game.factory
         floor = bldg.getFloor(0)
         room = floor.getCorridor().getApartments()[0].getRooms()[0]
         assertNotNull(room, "Chain Building > Floor > Corridor > Apartment > Room must resolve")
@@ -106,6 +107,7 @@ class JournalEventContractTest {
     void nullSectorEchoCapture_journalsCapture() {
         NullSector sector = new NullSector("Contract Void", new LocusSeed(7L))
         sector.fmt = game.fmt
+        sector.factory = game.factory
         sector.signalStrength = 100
 
         Closure capture = sector.getOptions(game)["c. Capture Spectral Echo"]

@@ -22,6 +22,7 @@ class MnemonicReversalTest {
         
         // Test Room Reversal Logic
         def apartment = new Apartment("Test Door", "rust", "ancient", new LocusSeed(12345L))
+        apartment.factory = game.factory
         apartment.ensureChildrenPopulated()
         def rooms = apartment.rooms
 
@@ -43,6 +44,7 @@ class MnemonicReversalTest {
 
         // Test Floor Reversal
         def building = new Building()
+        building.factory = game.factory
         building.maxFloors = 5
         def floor0 = building.getFloor(0)
         def floor0Ops = floor0.getOptions(game)

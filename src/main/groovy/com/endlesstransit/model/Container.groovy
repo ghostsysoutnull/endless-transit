@@ -16,6 +16,8 @@ abstract class Container implements Location {
     boolean childrenPopulated = false
     LocusSeed locus
     OutputFormatter fmt
+    /** The registry that created this container; set by the facade, or by hand for a test-built object (HK-008). */
+    ProceduralFactory factory
 
     @Override
     LocusSeed getLocus() {
@@ -110,11 +112,15 @@ abstract class Container implements Location {
     }
 
     /**
-     * Lazy population (HK-005): asks the registry facade for the factory registered under this
-     * exact class. A Container subclass with no registered factory fails loud on first access.
+     * Lazy population (HK-005): asks the registry that created this container for the factory
+     * registered under this exact class. A Container subclass with no registered factory fails loud
+     * on first access; so does a container built outside the registry with no {@code factory} set (HK-008).
      */
     void populateChildren() {
-        ProceduralFactory.instance.populate(this)
+        if (factory == null) {
+            throw new IllegalStateException("${getClass().simpleName} was built outside the registry - set .factory before its children are accessed")
+        }
+        factory.populate(this)
     }
 
     List<Location> getChildren() {

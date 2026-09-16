@@ -26,7 +26,10 @@ class StreetTest {
         game.currentLocation = universe
 
         def street = new Street("Test Ave", new LocusSeed(999L))
-        street.setParent(new City("Test City"))
+        street.factory = game.factory
+        def city = new City("Test City")
+        city.factory = game.factory
+        street.setParent(city)
         street.ensureChildrenPopulated()
 
         Terminal.println "Street: ${street.name} has ${street.buildings.size()} buildings."

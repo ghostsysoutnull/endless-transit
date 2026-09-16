@@ -15,12 +15,14 @@ import groovy.transform.CompileStatic
  * removed in HK-005 and HK-009; {@code populate(Container)} is the only population entry point.
  *
  * Shared services live here: the single {@link ThemeService} and the {@code fmt} formatter,
- * which {@code Game} injects after construction. Factories read both through their
- * back-reference at call time, never at construction.
+ * given to the constructor. Factories read both through their back-reference at call time.
+ * The facade stamps its identity on every {@link Container} it hands out ({@code factory}), so
+ * lazy population dispatches back to the registry that created the location (HK-008).
  */
 @CompileStatic
 class ProceduralFactory {
-    static ProceduralFactory instance = new ProceduralFactory()
+    /** HK-008 scaffolding: removed once every reader holds its own instance. */
+    static ProceduralFactory instance = new ProceduralFactory(null)
     ThemeService themeService = new ThemeService()
     OutputFormatter fmt
     final RoomFactory roomFactory = new RoomFactory(this)
@@ -40,7 +42,8 @@ class ProceduralFactory {
 
     private final Map<Class<? extends Container>, LocationFactory<? extends Container>> registry
 
-    ProceduralFactory() {
+    ProceduralFactory(OutputFormatter fmt) {
+        this.fmt = fmt
         Map<Class<? extends Container>, LocationFactory<? extends Container>> map = [:]
         register(map, universeFactory)
         register(map, filamentFactory)
@@ -63,6 +66,12 @@ class ProceduralFactory {
         map.put(factory.type, factory)
     }
 
+    /** Every container leaves through here: it remembers the registry that made it. */
+    private <T extends Container> T wire(T location) {
+        location.factory = this
+        return location
+    }
+
     /** The factory registered for exactly {@code type}, or null when none is. */
     public <T extends Container> LocationFactory<T> factoryFor(Class<T> type) {
         return (LocationFactory<T>) registry.get(type)
@@ -80,55 +89,55 @@ class ProceduralFactory {
     // --- Creation delegators (signatures unchanged since before the split) ---
 
     Universe createUniverse(LocusSeed locus) {
-        return universeFactory.create(locus)
+        return wire(universeFactory.create(locus))
     }
 
     CosmicFilament createFilament(Container parent, LocusSeed locus) {
-        return filamentFactory.create(parent, locus)
+        return wire(filamentFactory.create(parent, locus))
     }
 
     GalacticSector createSector(Container parent, LocusSeed locus) {
-        return sectorFactory.create(parent, locus)
+        return wire(sectorFactory.create(parent, locus))
     }
 
     NullSector createNullSector(Container parent, LocusSeed locus) {
-        return nullSectorFactory.create(parent, locus)
+        return wire(nullSectorFactory.create(parent, locus))
     }
 
     SolarSystem createSolarSystem(Container parent, LocusSeed locus) {
-        return solarSystemFactory.create(parent, locus)
+        return wire(solarSystemFactory.create(parent, locus))
     }
 
     Planet createPlanet(Container parent, LocusSeed locus) {
-        return planetFactory.create(parent, locus)
+        return wire(planetFactory.create(parent, locus))
     }
 
     Country createCountry(Container parent, LocusSeed locus) {
-        return countryFactory.create(parent, locus)
+        return wire(countryFactory.create(parent, locus))
     }
 
     City createCity(Container parent, LocusSeed locus) {
-        return cityFactory.create(parent, locus)
+        return wire(cityFactory.create(parent, locus))
     }
 
     Street createStreet(Container parent, LocusSeed locus) {
-        return streetFactory.create(parent, locus)
+        return wire(streetFactory.create(parent, locus))
     }
 
     Building createBuilding(Container parent, String culture, String timeline, LocusSeed locus, int depth, boolean isNull, boolean isAbyssal) {
-        return buildingFactory.create(parent, culture, timeline, locus, depth, isNull, isAbyssal)
+        return wire(buildingFactory.create(parent, culture, timeline, locus, depth, isNull, isAbyssal))
     }
 
     Floor createFloor(Container parent, int number, int apartmentsPerFloor, String culture, String timeline, LocusSeed locus) {
-        return floorFactory.create(parent, number, apartmentsPerFloor, culture, timeline, locus)
+        return wire(floorFactory.create(parent, number, apartmentsPerFloor, culture, timeline, locus))
     }
 
     Corridor createCorridor(Container parent, int numApartments, String culture, String timeline, LocusSeed locus) {
-        return corridorFactory.create(parent, numApartments, culture, timeline, locus)
+        return wire(corridorFactory.create(parent, numApartments, culture, timeline, locus))
     }
 
     Apartment createApartment(Container parent, String doorDesc, String culture, String timeline, LocusSeed locus) {
-        return apartmentFactory.create(parent, doorDesc, culture, timeline, locus)
+        return wire(apartmentFactory.create(parent, doorDesc, culture, timeline, locus))
     }
 
     Room createRoom(Container parent, String culture, String timeline, LocusSeed locus) {

@@ -1,5 +1,7 @@
 package com.endlesstransit.logic
 
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
@@ -10,11 +12,13 @@ import com.endlesstransit.procgen.LocusSeed
 class AutoEntryTest {
     GameState state
     NavigationOrchestrator nav
+    ProceduralFactory factory
 
     @BeforeEach
     void setup() {
         state = new GameState(new LocusSeed(1L))
         state.player = new Player()
+        factory = new ProceduralFactory(new StandardTerminalAdapter())
         nav = new NavigationOrchestrator(state)
     }
 
@@ -22,6 +26,8 @@ class AutoEntryTest {
     void "test apartment auto entry"() {
         def corridor = new Corridor(1, "rust", "ancient", new LocusSeed(1L))
         def apt = new Apartment("Standard Door", "rust", "ancient", new LocusSeed(1L))
+        corridor.factory = factory
+        apt.factory = factory
         corridor.addLocation(apt)
         apt.parent = corridor
         

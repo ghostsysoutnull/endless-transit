@@ -6,7 +6,6 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
-import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -126,7 +125,7 @@ class Building extends Container {
     Map<String, Integer> getFloorProgress(Floor floor, Player player) {
         String floorPrefix = floor.getLIP() + "."
         int visitedCount = (int) player.visitedLIPs.count { it.startsWith(floorPrefix) }
-        int totalCount = ProceduralFactory.instance.countSubLocations(floor)
+        int totalCount = factory.countSubLocations(floor)
         return [visited: visitedCount, total: totalCount]
     }
 
@@ -249,7 +248,7 @@ class Building extends Container {
         
         // Handle abyssal floors if not in the initial list (e.g. during a breach)
         if (f == null && number < 0 && isBreached) {
-            f = ProceduralFactory.instance.createFloor(this, number, apartmentsPerFloor, culture, timeline, locus.branch(number))
+            f = factory.createFloor(this, number, apartmentsPerFloor, culture, timeline, locus.branch(number))
             this.addLocation(f)
         }
         
