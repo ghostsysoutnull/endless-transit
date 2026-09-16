@@ -66,7 +66,7 @@ Initialize session for the Endless Transit substrate.
 | :--- | :--- |
 | Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (O2 section rewritten; Phase 10 section has the execution record) |
 | Lint mode | `vinc.sh` (`--lint`), `config/lint/vinc-ruleset.groovy`, `config/lint/baseline.xml` (one writer: `--lint --baseline`), `lib/lint/*.jar`; plan `tasks/completed/O2_LINT_PLAN.md` |
-| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0x9c4e17d Player's Guide, 0x7b3e2c9 O2, 0xf681c46 HK-008) |
+| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0x3d7a5e2 HK-014 manual corrections + atlas, 0x9c4e17d Player's Guide, 0x7b3e2c9 O2) |
 | Player's Guide (source-verified reference) | `docs/terminal/guide/players_guide.md`; live at `https://ghostsysoutnull.github.io/endless-transit/terminal/guide/players_guide.html`; site is GitHub legacy Pages from `master:/docs` (no local build; branches are never published) |
 | Retros | `docs/retro/RETRO_O2.md`, `docs/retro/RETRO_HK_008.md`, `docs/retro/RETRO_SESSION_20260916.md` |
 | Event system | `src/main/groovy/com/endlesstransit/core/{EventBus,DomainEvent,ItemCaptured,SynthesisPerformed,RitualTracker,JournalManager}.groovy`, `Player.capture`, `GameState.events` |
