@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (HK-010 merged @ `00194f4`; chronicle `0x00194f4`; retro `docs/retro/RETRO_HK_010.md`)
+**Last updated:** 2026-09-16 (HK-009 merged @ `a3f6e4d`, chronicle `0xa3f6e4d`; HK-010 @ `00194f4`, retro `docs/retro/RETRO_HK_010.md`)
 
 ## 🎯 Current Status
 - **Test Suite:** 207 discovered / 207 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
@@ -31,7 +31,7 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: chronicle/retro docs commit above `00194f4` HK-010 merge). Read `tasks/todo.md`, `docs/retro/RETRO_HK_010.md`
+   (top: chronicle docs commit above `a3f6e4d` HK-009 merge). Read `tasks/todo.md`, `docs/retro/RETRO_HK_010.md`
    "Concerns for Upcoming Phases", and `tasks/backlog/HOUSEKEEPING.md` OPEN items.
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=207 SUCCEEDED=207 FAILED=0 SKIPPED=0`.
 4. **Ask before choosing:** there is no active phase. Present the options (O2 CodeNarc, HK-011, HK-008,
@@ -48,7 +48,7 @@ Initialize session for the Endless Transit substrate.
 | Resource | Path |
 | :--- | :--- |
 | Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (Phase 10 section has the execution record) |
-| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0x00194f4 HK-010, 0xd02ac2e Phase 10, 0xd5d26bc HK-005/006) |
+| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0xa3f6e4d HK-009, 0x00194f4 HK-010, 0xd02ac2e Phase 10) |
 | Retros | `docs/retro/RETRO_PHASE_10.md`, `docs/retro/RETRO_HOUSEKEEPING_HK_005_006.md` |
 | Event system | `src/main/groovy/com/endlesstransit/core/{EventBus,DomainEvent,ItemCaptured,SynthesisPerformed,RitualTracker,JournalManager}.groovy`, `Player.capture`, `GameState.events` |
 | Event pins | `src/test/groovy/com/endlesstransit/core/{JournalEventContractTest,EventBusTest}.groovy` |
