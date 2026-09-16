@@ -15,25 +15,25 @@ class JournalTest {
         // Use a test-specific file
         String testFile = "journal_test.txt"
         String lastEntryFile = "journal-last-entry_test.txt"
-        JournalManager.reset()
-        JournalManager.JOURNAL_FILE = testFile
-        JournalManager.LAST_ENTRY_FILE = lastEntryFile
+        JournalManager journal = new JournalManager()
+        journal.journalFile = testFile
+        journal.lastEntryFile = lastEntryFile
         
         Player p = new Player()
         p.stepCount = 10
-        JournalManager.startSession(p)
+        journal.startSession(p)
         
         // Wait a bit to have some duration
         Thread.sleep(50)
         
         p.stepCount = 42
         p.inventory.add(new InventoryItem("Test Fragment", 1234))
-        JournalManager.logCapture(p.inventory[0])
-        JournalManager.logDiscovery("Universe > Alpha > Building 1")
+        journal.logCapture(p.inventory[0])
+        journal.logDiscovery("Universe > Alpha > Building 1")
         
         File f = new File(testFile)
         File fLast = new File(lastEntryFile)
-        JournalManager.saveSession(p)
+        journal.saveSession(p)
         
         assertTrue(f.exists(), "Journal file should exist")
         assertTrue(fLast.exists(), "Last entry file should exist")

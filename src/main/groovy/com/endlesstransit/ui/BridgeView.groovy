@@ -28,8 +28,11 @@ class BridgeView implements ScreenshotProvider {
     private final DirectiveMenuComponent directives = new DirectiveMenuComponent()
     private final InventoryOverlayComponent inventoryOverlay = new InventoryOverlayComponent()
     private final NarrativePaneComponent narrative = new NarrativePaneComponent()
+    /** Source of the header ticker lines (HK-011). A BridgeView built without one gets an inert, never-attached journal. */
+    private final JournalManager journal
 
-    BridgeView() {
+    BridgeView(JournalManager journal = new JournalManager()) {
+        this.journal = journal
         ScreenshotRegistry.register(this)
     }
 
@@ -68,7 +71,7 @@ class BridgeView implements ScreenshotProvider {
 
     void renderBridgeHUD(Location currentLocation, Player player) {
         emit(hudHeader.render(new RenderContext(currentLocation, player, null, null,
-            JournalManager.getRecentEvents(HUDHeaderComponent.TICKER_DEPTH)), FrameGeometry.FRAME_WIDTH))
+            journal.getRecentEvents(HUDHeaderComponent.TICKER_DEPTH)), FrameGeometry.FRAME_WIDTH))
     }
 
     void renderAdaptiveBridge(Location currentLocation, Player player, LocusSeed masterLocus) {

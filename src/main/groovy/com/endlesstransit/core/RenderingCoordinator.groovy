@@ -13,10 +13,10 @@ class RenderingCoordinator {
     private InputHandler inputHandler
     final BridgeView bridgeView
 
-    RenderingCoordinator(GameState state, InputHandler inputHandler) {
+    RenderingCoordinator(GameState state, InputHandler inputHandler, JournalManager journal) {
         this.state = state
         this.inputHandler = inputHandler
-        this.bridgeView = new BridgeView()
+        this.bridgeView = new BridgeView(journal)
     }
 
     void renderCurrentState(Map<String, Closure> options) {

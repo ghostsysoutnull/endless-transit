@@ -23,6 +23,8 @@ class Game {
     TurnProcessor turnProcessor
     RenderingCoordinator renderer
     final QuantumBufferController inventoryController = new QuantumBufferController()
+    /** The session scribe (HK-011): one per Game, attached to the bus, read by the HUD ticker. */
+    final JournalManager journal = new JournalManager()
 
     Game(long seedValue = System.currentTimeMillis(), InputSource inputSource = null) {
         this(new LocusSeed(seedValue), inputSource)
@@ -32,12 +34,12 @@ class Game {
         this.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
         ProceduralFactory.instance.fmt = this.fmt
         this.state = new GameState(masterLocus)
-        JournalManager.attach(state.events)
+        journal.attach(state.events)
         new RitualTracker().attach(state.events)
         InputHandler inputHandler = new InputHandler(inputSource ?: InputHandler.defaultSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
         this.persistence = new PersistenceService(state, navOrchestrator, inputHandler)
-        this.renderer = new RenderingCoordinator(state, inputHandler)
+        this.renderer = new RenderingCoordinator(state, inputHandler, journal)
         this.turnProcessor = new TurnProcessor(state, renderer, navOrchestrator, inputHandler)
         
         navOrchestrator.initializeWorld()
@@ -75,7 +77,7 @@ class Game {
     void start() {
         Terminal.println(Terminal.colorize("Welcome to Endless Transit!", Terminal.L_CYAN))
         Logger.info("Game started.")
-        JournalManager.startSession(state.player)
+        journal.startSession(state.player)
         
         if (new File(SyncManager.SAVE_FILE).exists()) {
             Terminal.println Terminal.dim("  [DETECTED_NEURAL_TRACE_SUBSTRATE]")

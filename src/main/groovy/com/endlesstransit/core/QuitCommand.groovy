@@ -19,7 +19,7 @@ class QuitCommand implements GameCommand {
         if (game.inputHandler.readLine().toLowerCase() == "y") {
             Terminal.print Terminal.colorize("Synchronize neural trace before termination? [Y/n]: ", Terminal.CYAN)
             if (game.inputHandler.readLine().toLowerCase() != "n") SyncManager.sync(game)
-            JournalManager.saveSession(state.player)
+            game.journal.saveSession(state.player)
             SessionRecap.show(state.currentLocation, state.player, game.bridgeView)
             return false // Terminate loop
         }
