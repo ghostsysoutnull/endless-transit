@@ -3,11 +3,6 @@
   <Project title="">
     <SourceDirectory>src</SourceDirectory>
   </Project>
-  <File path="main/groovy/com/endlesstransit/core/Game.groovy">
-    <Violation ruleName="SystemExit">
-      <Message><![CDATA[Violation in class com.endlesstransit.core.Game. Calling System.exit() is insecure and can expose a denial of service attack]]></Message>
-    </Violation>
-  </File>
   <File path="main/groovy/com/endlesstransit/core/ScanCommand.groovy">
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "renderCorridorScan" is 75 lines]]></Message>
@@ -29,14 +24,6 @@
   <File path="main/groovy/com/endlesstransit/model/Room.groovy">
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "getOptions" is 103 lines]]></Message>
-    </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/ui/ConsoleSink.groovy">
-    <Violation ruleName="SystemOutPrint">
-      <Message><![CDATA[Violation in class com.endlesstransit.ui.ConsoleSink. System.out.print should be replaced with something more robust]]></Message>
-    </Violation>
-    <Violation ruleName="SystemOutPrint">
-      <Message><![CDATA[Violation in class com.endlesstransit.ui.ConsoleSink. System.out.println should be replaced with something more robust]]></Message>
     </Violation>
   </File>
   <File path="main/groovy/com/endlesstransit/ui/HUDHeaderComponent.groovy">

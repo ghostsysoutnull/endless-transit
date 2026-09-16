@@ -2,6 +2,8 @@ package com.endlesstransit.ui
 
 import groovy.transform.CompileStatic
 
+/** The one physical sink. Everything else prints through a RenderSink, never System.out. */
+@SuppressWarnings('SystemOutPrint')
 @CompileStatic
 class ConsoleSink implements RenderSink {
     @Override
