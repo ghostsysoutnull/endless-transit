@@ -19,9 +19,11 @@ The `ProceduralFactory` is the central "architect" of the simulation. It manages
     - Coordinates with `ThemeService` to generate descriptions and hybrid objects (furniture).
 
 ### 📍 Recursive Population Strategies
-- **`populate[Location](location)`**: 
-    - Each method uses the location's `LocusSeed` to branch and create its children (e.g., `populateBuilding` creates `maxFloors` floors).
-    - **`populateCorridor` (Back-Propagation)**: Peeks at the first room's type in each apartment to determine the door's `AnomalousTrace` (e.g., if the room is a `Bio-Server`, the trace might be `LATTICE`).
+- **`populate(Container location)`** (Phase 9o / HK-005): 
+    - `Container.populateChildren()` calls this on first lazy access; it dispatches on the location's exact class to the `LocationFactory` registered for it (`factoryFor(Class)`). An unregistered `Container` subclass fails loud (`IllegalStateException`).
+    - Each `<Type>Factory.populate(T)` uses the location's `LocusSeed` to branch and create its children (e.g., `BuildingFactory.populate` creates `maxFloors` floors).
+    - **`CorridorFactory.populate` (Back-Propagation)**: Peeks at the first room's type in each apartment to determine the door's `AnomalousTrace` (e.g., if the room is a `Bio-Server`, the trace might be `LATTICE`).
+    - `populateApartment(Apartment)` is the one remaining per-type delegator (two direct test callers, HK-009).
 - **`countSubLocations(Floor)`**: 
     - A unique logic path that deterministically calculates the total number of sub-locations (Corridor, Apartments, Rooms) *without* building the full object tree. 
     - **Note**: This is critical for computing [PROBED: X/Y] progress labels.

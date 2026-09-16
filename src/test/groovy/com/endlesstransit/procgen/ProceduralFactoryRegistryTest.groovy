@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.*
  * Phase 9o: pins the registry facade contract.
  *
  * Every Container subclass in the model has exactly one LocationFactory registered under its
- * own class, and populate(Container) dispatches to it. The dispatcher is not yet called by
- * production code (Container.populateChildren overrides still name their populateX method —
- * HK-005); this test is what keeps the registry honest until then.
+ * own class, and populate(Container) dispatches to it. Since HK-005, Container.populateChildren()
+ * is the production caller of the dispatcher: every lazy population in the world goes through
+ * this registry, so this test is what keeps it honest.
  */
 class ProceduralFactoryRegistryTest {
 
@@ -63,6 +63,17 @@ class ProceduralFactoryRegistryTest {
 
         assertEquals(14, street.getChildren().size(), "populate(Container) must run StreetFactory.populate exactly once (ProcgenDeepSnapshotTest pins 14)")
         assertTrue(street.getChildren().every { it instanceof Building })
+    }
+
+    @Test
+    void lazyAccess_unregisteredType_failsLoudOnFirstAccess() {
+        // HK-005: Container.populateChildren() dispatches through populate(Container).
+        // Container.ensureChildrenPopulated sets the flag BEFORE populating, so only the first
+        // access throws; a second access would return an empty list silently.
+        IllegalStateException ex = assertThrows(IllegalStateException) {
+            new Orphan().getChildren().size()
+        }
+        assertTrue(ex.message.contains("Orphan"), ex.message)
     }
 
     @Test

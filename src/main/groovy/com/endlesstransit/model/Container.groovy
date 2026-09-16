@@ -1,5 +1,6 @@
 package com.endlesstransit.model
 import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
@@ -109,8 +110,12 @@ abstract class Container implements Location {
         }
     }
 
+    /**
+     * Lazy population (HK-005): asks the registry facade for the factory registered under this
+     * exact class. A Container subclass with no registered factory fails loud on first access.
+     */
     void populateChildren() {
-        // To be overridden by subclasses for lazy loading
+        ProceduralFactory.instance.populate(this)
     }
 
     List<Location> getChildren() {

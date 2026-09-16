@@ -6,7 +6,6 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 
@@ -27,11 +26,6 @@ class GalacticSector extends Container {
     GalacticSector(String name, LocusSeed locus = new LocusSeed(0)) {
         this.name = name
         this.locus = locus
-    }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateSector(this)
     }
 
     @Override

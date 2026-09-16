@@ -6,7 +6,6 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 
@@ -73,11 +72,6 @@ class Universe extends Container {
             current = container.children[childIndex]
         }
         return current
-    }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateUniverse(this)
     }
 
     @Override

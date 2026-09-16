@@ -244,11 +244,6 @@ class Building extends Container {
         }
     }
 
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateBuilding(this)
-    }
-
     Floor getFloor(int number) {
         // floors access will trigger populateChildren() via LazyLocusList
         Floor f = floors.find { it.number == number }

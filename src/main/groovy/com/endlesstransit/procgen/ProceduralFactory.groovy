@@ -7,10 +7,12 @@ import groovy.transform.CompileStatic
 /**
  * Registry facade over the per-type location factories (Phase 9).
  *
- * Every public {@code create*} / {@code populate*} method delegates to the factory that owns
- * that type. The signatures are the pre-split ones, so model classes, core services and tests
- * call this facade unchanged. {@link #populate(Container)} dispatches on the exact model class
- * through a registry keyed by each factory's {@link LocationFactory#getType()}.
+ * Every public {@code create*} method delegates to the factory that owns that type; the
+ * signatures are the pre-split ones, so factories, core services and tests call this facade
+ * unchanged. Population is registry dispatch: {@code Container.populateChildren()} calls
+ * {@link #populate(Container)}, which selects the factory registered under the exact model
+ * class ({@link LocationFactory#getType()}). The per-type {@code populate*} delegators were
+ * removed in HK-005; {@code populateApartment} remains for two direct test callers.
  *
  * Shared services live here: the single {@link ThemeService} and the {@code fmt} formatter,
  * which {@code Game} injects after construction. Factories read both through their
@@ -133,59 +135,13 @@ class ProceduralFactory {
         return roomFactory.create(parent, culture, timeline, locus)
     }
 
-    // --- Population delegators ---
-
-    void populateUniverse(Universe u) {
-        universeFactory.populate(u)
-    }
-
-    void populateFilament(CosmicFilament f) {
-        filamentFactory.populate(f)
-    }
-
-    void populateSector(GalacticSector s) {
-        sectorFactory.populate(s)
-    }
-
-    void populateNullSector(NullSector s) {
-        nullSectorFactory.populate(s)
-    }
-
-    void populateSolarSystem(SolarSystem s) {
-        solarSystemFactory.populate(s)
-    }
-
-    void populatePlanet(Planet p) {
-        planetFactory.populate(p)
-    }
-
-    void populateCountry(Country c) {
-        countryFactory.populate(c)
-    }
-
-    void populateCity(City c) {
-        cityFactory.populate(c)
-    }
-
-    void populateStreet(Street s) {
-        streetFactory.populate(s)
-    }
-
-    void populateBuilding(Building b) {
-        buildingFactory.populate(b)
-    }
+    // --- Population ---
+    // populate(Container) above is the production path (HK-005: Container.populateChildren()).
+    // populateApartment is retained for two direct test callers (HK-009).
 
     Apartment populateApartment(Apartment a) {
         apartmentFactory.populate(a)
         return a
-    }
-
-    void populateCorridor(Corridor c) {
-        corridorFactory.populate(c)
-    }
-
-    void populateFloor(Floor f) {
-        floorFactory.populate(f)
     }
 
     /**

@@ -2,7 +2,6 @@ package com.endlesstransit.ui
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach

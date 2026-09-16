@@ -7,7 +7,6 @@ import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -39,11 +38,6 @@ class NullSector extends Container {
 
     @Override
     String getPath() { return "Universe > ... > [VOID]" }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateNullSector(this)
-    }
 
     @Override
     String getDescription() {

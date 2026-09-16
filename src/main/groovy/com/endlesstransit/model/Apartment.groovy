@@ -6,7 +6,6 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.procgen.ProceduralFactory
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
@@ -105,11 +104,6 @@ class Apartment extends Container {
         if (location instanceof Room) {
             this.rooms.add((Room)location)
         }
-    }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateApartment(this)
     }
     
     @Override

@@ -10,19 +10,13 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-### HK-005 — `Container.populateChildren()` overrides still name their `populateX` method
-**Found:** Phase 9o, 2026-09-11. The registry facade dispatches `populate(Container)` on the exact class, but the
-13 model overrides (`Universe.groovy:80` … `Apartment.groovy:112`) still call `ProceduralFactory.instance.populateX(this)`
-and each imports `ProceduralFactory`. A `Container.populateChildren()` default of `ProceduralFactory.instance.populate(this)`
-removes 13 one-line overrides and 13 imports, and makes adding a location type a registry entry instead of an override.
-**Shape:** 14 model files → three batches of ≤ 5 under the Refactor Guard; `ProceduralFactoryRegistryTest` +
-`RoomAncestorTest:37` (every container non-empty) are the guards. Once migrated, the 13 `populateX` delegators on the
-facade become dead and can go with their callers.
-
-### HK-006 — Test hygiene in the procgen tree
-**Found:** Phase 9 coverage audit, 2026-09-11. `ProcgenSnapshotTest.groovy:62-73` binds the Country to a local named
-`city` and the City to `country` (messages say "City name" for `"Free Dust Kingdom"`, which is the Country). Literals are
-correct; rename the locals and messages. `InitialScreenTest.groovy:5` imports `ProceduralFactory` and never uses it.
+### HK-009 — `populateApartment` is the last per-type populate delegator on the facade
+**Found:** HK-005 close-out, 2026-09-16. Twelve `populate*` delegators were deleted with their callers; `populateApartment`
+stayed because two tests call it directly on a factory-built apartment (`ObjectDistributionTest.groovy:22`,
+`ProcgenVariabilityTest.groovy:29`). Both read `apt.rooms` afterwards, which triggers the lazy path a second time.
+**Shape:** migrate the two callers to `ProceduralFactory.instance.populate(apt)` (or simply drop the explicit call and let
+`apt.rooms` populate lazily — read both tests first to see whether the explicit call is load-bearing), then delete the
+delegator. 1 production file, 2 test files, no behavior change.
 
 ### HK-008 — `ProceduralFactory.instance` is still a static singleton
 **Found:** Phase 9 retro "Concerns", 2026-09-11 (OOA report §3.4 / §4 — singleton access noted in the original analysis).
@@ -37,6 +31,20 @@ HK-005 first so the model side collapses to one `Container.populateChildren()` s
 ---
 
 ## 🟢 CLOSED
+
+### HK-005 — `Container.populateChildren()` overrides still named their `populateX` method
+**Resolution:** `Container.populateChildren()` defaults to `ProceduralFactory.instance.populate(this)`; the 13 one-line
+overrides and 12 `ProceduralFactory` imports are gone (`Building` keeps its import for `createFloor`/`countSubLocations`).
+Three batches (5/5/4 model files), then the 12 orphaned facade delegators deleted (198 → 154 lines); `populateApartment`
+retained for two test callers → HK-009. Declared edge: an unregistered `Container` subclass now fails loud on first lazy
+access — pinned by `ProceduralFactoryRegistryTest.lazyAccess_unregisteredType_failsLoudOnFirstAccess`. 36 goldens unchanged;
+scan seed 0 → 9 nodes. Plan + grill record: `tasks/completed/HK_005_006_PLAN.md`.
+**Closed:** 2026-09-16 | commits 0332f9a, 9b5e7e3, 66a154f, 01d7f48
+
+### HK-006 — Test hygiene in the procgen tree
+**Resolution:** `ProcgenSnapshotTest` locals renamed for the level they hold (Planet → Country → City → Street) and the two
+messages swapped; literals unchanged. `InitialScreenTest` unused import removed.
+**Closed:** 2026-09-16 | commit 82c7253
 
 ### HK-007 — `populateFilament` rolled the NullSector chance once per filament, not per child
 **Found:** Phase 9-0 capture, 2026-09-11 (seed 0x1234: 7/7 null). **History:** before the 2026-03-10 seed migration
@@ -70,6 +78,20 @@ commands; `Player.listInventory()` deleted; `QuantumBufferScreenTest` pins the s
 **Closed:** 2026-09-11 | commit d2bb2f6
 
 <details><summary>Original entries</summary>
+
+### HK-005 — `Container.populateChildren()` overrides still name their `populateX` method
+**Found:** Phase 9o, 2026-09-11. The registry facade dispatches `populate(Container)` on the exact class, but the
+13 model overrides (`Universe.groovy:80` … `Apartment.groovy:112`) still call `ProceduralFactory.instance.populateX(this)`
+and each imports `ProceduralFactory`. A `Container.populateChildren()` default of `ProceduralFactory.instance.populate(this)`
+removes 13 one-line overrides and 13 imports, and makes adding a location type a registry entry instead of an override.
+**Shape:** 14 model files → three batches of ≤ 5 under the Refactor Guard; `ProceduralFactoryRegistryTest` +
+`RoomAncestorTest:37` (every container non-empty) are the guards. Once migrated, the 13 `populateX` delegators on the
+facade become dead and can go with their callers.
+
+### HK-006 — Test hygiene in the procgen tree
+**Found:** Phase 9 coverage audit, 2026-09-11. `ProcgenSnapshotTest.groovy:62-73` binds the Country to a local named
+`city` and the City to `country` (messages say "City name" for `"Free Dust Kingdom"`, which is the Country). Literals are
+correct; rename the locals and messages. `InitialScreenTest.groovy:5` imports `ProceduralFactory` and never uses it.
 
 ### HK-001 — BridgeView draws randomness outside the seed chain
 **Found:** Phase 7 pre-grill, 2026-09-11

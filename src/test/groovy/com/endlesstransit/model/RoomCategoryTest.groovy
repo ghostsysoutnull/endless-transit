@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Phase 3a pre-check safety net: pins the door trace assignment contract in
- * ProceduralFactory.populateCorridor().
+ * CorridorFactory.populate().
  *
  * The current implementation resolves traces via AnomalousTrace.matches(String roomType).
  * Phase 3a will replace this with a RoomCategory enum — the bidirectional mapping
@@ -28,7 +28,7 @@ class RoomCategoryTest {
     /**
      * Builds a properly configured Building and navigates to floor 0's Corridor.
      * Building fields must be set manually when constructing outside the full procgen chain,
-     * because Building.populateChildren() → populateBuilding() reads these fields directly.
+     * because Building.populateChildren() → BuildingFactory.populate() reads these fields directly.
      */
     private Corridor buildCorridor(String culture, long seed, int numApartments = 4) {
         Building bldg = new Building(new LocusSeed(seed))
@@ -44,7 +44,7 @@ class RoomCategoryTest {
     /**
      * A2 — Core invariant: every door in a populated corridor has a non-null AnomalousTrace.
      * A null trace means the room type string had no match in AnomalousTrace, which is a
-     * silent failure. The fallback ?: AnomalousTrace.SILENCE in populateCorridor() means
+     * silent failure. The fallback ?: AnomalousTrace.SILENCE in CorridorFactory.populate() means
      * this should always be non-null — but this test will catch if that fallback is removed.
      */
     @Test

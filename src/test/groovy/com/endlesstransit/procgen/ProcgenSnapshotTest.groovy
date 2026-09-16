@@ -59,18 +59,18 @@ class ProcgenSnapshotTest {
         def filament = universe.getFilaments()[0]
         Planet planet = filament.getChildren()[0].getChildren()[0].getPlanets()[0]
         planet.ensureChildrenPopulated()
-        def city = planet.getChildren()[0]
-        city.ensureChildrenPopulated()
-        def country = city.getChildren()[0]
+        def country = planet.getChildren()[0]
         country.ensureChildrenPopulated()
-        Street street = (Street) country.getChildren().find { it instanceof Street }
-                     ?: (Street) country.getChildren()[0]
+        def city = country.getChildren()[0]
+        city.ensureChildrenPopulated()
+        Street street = (Street) city.getChildren().find { it instanceof Street }
+                     ?: (Street) city.getChildren()[0]
         street.ensureChildrenPopulated()
 
-        assertEquals("Free Dust Kingdom", city.name,
-            "City name must match pinned value for seed 0x1234")
-        assertEquals("Starford", country.name,
+        assertEquals("Free Dust Kingdom", country.name,
             "Country name must match pinned value for seed 0x1234")
+        assertEquals("Starford", city.name,
+            "City name must match pinned value for seed 0x1234")
         assertEquals("Busy Terrace", street.name,
             "Street name must match pinned value for seed 0x1234")
 
