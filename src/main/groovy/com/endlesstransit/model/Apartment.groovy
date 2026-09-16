@@ -2,13 +2,9 @@ package com.endlesstransit.model
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
-import com.endlesstransit.core.InventoryItem
-import com.endlesstransit.core.Logger
-import com.endlesstransit.procgen.Gematria
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 
-import java.util.Random
 
 @CompileStatic
 class Apartment extends Container {
