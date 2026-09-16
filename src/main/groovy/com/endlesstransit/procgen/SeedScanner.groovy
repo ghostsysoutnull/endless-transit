@@ -5,6 +5,7 @@ import com.endlesstransit.model.Container
 import com.endlesstransit.model.Universe
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 
@@ -20,6 +21,9 @@ import com.endlesstransit.procgen.probes.CultureProbe
  */
 @CompileStatic
 class SeedScanner {
+
+    /** The scanner's own world generator (HK-008): scan output never renders, but a found location may be. */
+    private final ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
 
     static void main(String[] args) {
         long startSeed = 0
@@ -79,7 +83,7 @@ class SeedScanner {
             LocusSeed currentLocus = new LocusSeed(startLocus.value + i)
             if (i % 10 == 0) Terminal.println("[VINCULUM_SEED_SCANNER] Seed: ${currentLocus.value} (${i}/${count})...")
             
-            Universe universe = ProceduralFactory.instance.createUniverse(currentLocus)
+            Universe universe = factory.createUniverse(currentLocus)
             
             nodeCount = 0
             Location match = findInHierarchy(universe, probe)

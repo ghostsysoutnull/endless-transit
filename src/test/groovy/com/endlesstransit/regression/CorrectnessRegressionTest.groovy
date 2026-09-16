@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
 
 class CorrectnessRegressionTest {
+    ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
+
 
     @BeforeEach
     void setUp() {
@@ -23,7 +25,7 @@ class CorrectnessRegressionTest {
     void testObjectDiversity() {
         LocusSeed seed = new LocusSeed(123456789L)
         // Generate a room with many objects
-        def room = (Room) ProceduralFactory.instance.createRoom(null, "monolith", "ancient", seed)
+        def room = (Room) factory.createRoom(null, "monolith", "ancient", seed)
         
         // Ensure some objects exist
         room.objects = ["Object A", "Object B", "Object C"]

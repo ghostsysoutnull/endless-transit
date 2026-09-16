@@ -17,7 +17,7 @@ class SurvivalPinningTest {
         Room room = new Room()
         room.locus = new LocusSeed(1L)
         room.fmt = game.fmt
-        room.parent = new Apartment() // Default vibes are standard
+        room.parent = new Apartment(factory: game.factory) // Default vibes are standard
         game.state.currentLocation = room
         
         game.processTurn()
@@ -35,7 +35,7 @@ class SurvivalPinningTest {
         }
         room.locus = new LocusSeed(1L)
         room.fmt = game.fmt
-        room.parent = new Apartment()
+        room.parent = new Apartment(factory: game.factory)
         game.state.currentLocation = room
         
         game.processTurn()
@@ -85,7 +85,7 @@ class SurvivalPinningTest {
         // Standard drain (1.0) will push it to -0.5, triggering reboot
         Room room = new Room()
         room.locus = new LocusSeed(1L)
-        room.parent = new Apartment()
+        room.parent = new Apartment(factory: game.factory)
         game.state.currentLocation = room
         
         game.processTurn()

@@ -2,6 +2,7 @@ package com.endlesstransit.ui
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
+import com.endlesstransit.procgen.ProceduralFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
@@ -19,6 +20,7 @@ class CyberTerminalTest {
 
         def player = new Player()
         def universe = new Universe()
+        universe.factory = new ProceduralFactory(new StandardTerminalAdapter())
         def filament = universe.filaments[0]
         def sector = filament.children[0] // GalacticSector or NullSector
         def system = sector.children[0]   // SolarSystem

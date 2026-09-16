@@ -3,6 +3,8 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.LocusSeed
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
@@ -18,7 +20,9 @@ class StructuralConsistencyTest {
     void execute() {
         Terminal.println "Running Structural Consistency Test..."
 
+        def factory = new ProceduralFactory(new StandardTerminalAdapter())
         def building = new Building(new LocusSeed(12345L))
+        building.factory = factory
         Terminal.println "Generated Building: ${building.name} with ${building.maxFloors} floors and ${building.apartmentsPerFloor} apartments per floor."
 
         for (int i = 0; i < building.maxFloors; i++) {
@@ -30,6 +34,7 @@ class StructuralConsistencyTest {
 
         Terminal.println "\nVerifying Street TUI generation..."
         def street = new Street("Test Ave")
+        street.factory = factory
         assertTrue(street.buildings.size() >= 4, "Street has too few buildings: ${street.buildings.size()}")
         Terminal.println "SUCCESS: Street has ${street.buildings.size()} buildings (multiple pairs)."
 

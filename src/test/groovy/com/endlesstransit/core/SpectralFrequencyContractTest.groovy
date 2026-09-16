@@ -5,6 +5,8 @@ import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -193,6 +195,7 @@ class SpectralFrequencyContractTest {
     @Test
     void keystone_hasZeroFrequency_andIsResonant() {
         def bldg = new Building(new LocusSeed(0L))
+        bldg.factory = new ProceduralFactory(new StandardTerminalAdapter())
         bldg.name = "TestTower"
         bldg.maxFloors = 1
         bldg.infusionCount = 7

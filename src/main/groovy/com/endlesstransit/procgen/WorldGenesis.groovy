@@ -52,8 +52,8 @@ class WorldGenesis {
      * Creates a new universe and performs a deep crawl to find a suitable starting location.
      * Hierarchy: Universe > Filament > Sector > System > Planet > Country > City > Street
      */
-    static GenesisResult createInitialWorld(LocusSeed masterLocus) {
-        Universe universe = ProceduralFactory.instance.createUniverse(masterLocus)
+    static GenesisResult createInitialWorld(ProceduralFactory factory, LocusSeed masterLocus) {
+        Universe universe = factory.createUniverse(masterLocus)
         
         // Deep traversal to find a starting Street
         // 1. Filament

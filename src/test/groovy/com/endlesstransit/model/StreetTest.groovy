@@ -3,7 +3,6 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.LocusSeed
-import com.endlesstransit.procgen.ProceduralFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
@@ -20,13 +19,16 @@ class StreetTest {
         Terminal.println "Running Street TUI and Options Test..."
 
         def player = new Player()
-        def universe = ProceduralFactory.instance.createUniverse(new LocusSeed(12345L))
         def game = new Game()
+        def universe = game.factory.createUniverse(new LocusSeed(12345L))
         game.player = player
         game.currentLocation = universe
 
         def street = new Street("Test Ave", new LocusSeed(999L))
-        street.setParent(new City("Test City"))
+        street.factory = game.factory
+        def city = new City("Test City")
+        city.factory = game.factory
+        street.setParent(city)
         street.ensureChildrenPopulated()
 
         Terminal.println "Street: ${street.name} has ${street.buildings.size()} buildings."

@@ -27,7 +27,10 @@ class NavigationSyncTest {
         building.culture = "rust"
         building.timeline = "ancient"
         building.fmt = new StandardTerminalAdapter()
-        building.setParent(new Street("Test Street"))
+        building.factory = new ProceduralFactory(new StandardTerminalAdapter())
+        def parentStreet = new Street("Test Street")
+        parentStreet.factory = building.factory
+        building.setParent(parentStreet)
 
         // Populate floors
         building.ensureChildrenPopulated()

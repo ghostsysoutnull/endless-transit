@@ -2,6 +2,7 @@ package com.endlesstransit.procgen
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.*
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
@@ -18,6 +19,7 @@ class SystemNameTest {
         Terminal.println "Running System Name Prefix Test..."
 
         def universe = new Universe()
+        universe.factory = new ProceduralFactory(new StandardTerminalAdapter())
         boolean foundSystem = false
 
         // Traverse down to find some solar systems

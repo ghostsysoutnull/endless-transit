@@ -1,5 +1,6 @@
 package com.endlesstransit.logic
 
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
@@ -20,7 +21,7 @@ class RegionalDivergenceTest {
         int totalCities = 1000
         int rebelCities = 0
         
-        ProceduralFactory factory = ProceduralFactory.instance
+        ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
         
         for (int i = 0; i < totalCities; i++) {
             LocusSeed seed = new LocusSeed(1000L + i)

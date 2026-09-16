@@ -4,6 +4,8 @@ import com.endlesstransit.core.Game
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
+import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -32,6 +34,7 @@ class RoomCategoryTest {
      */
     private Corridor buildCorridor(String culture, long seed, int numApartments = 4) {
         Building bldg = new Building(new LocusSeed(seed))
+        bldg.factory = new ProceduralFactory(new StandardTerminalAdapter())
         bldg.culture = culture
         bldg.timeline = "ancient"
         bldg.maxFloors = 1

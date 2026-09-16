@@ -3,16 +3,19 @@ import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.ProceduralFactory
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
 class ProcgenVariabilityTest {
+    ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
+
     @Test
     void testApartmentVariability() {
         LocusSeed streetLocus = new LocusSeed(987654321L)
         
         // Generate a building and populate some floors
-        def building = ProceduralFactory.instance.createBuilding(null, "rust", "ancient", streetLocus.branch(0), 10, false, false)
+        def building = factory.createBuilding(null, "rust", "ancient", streetLocus.branch(0), 10, false, false)
         
         Terminal.println "Testing Building: ${building.name}"
         
@@ -56,7 +59,7 @@ class ProcgenVariabilityTest {
         Set<String> buildingNames = []
         
         for (int i = 0; i < 20; i++) {
-            def b = ProceduralFactory.instance.createBuilding(null, "monolith", "ancient", streetLocus.branch(i), 10, false, false)
+            def b = factory.createBuilding(null, "monolith", "ancient", streetLocus.branch(i), 10, false, false)
             floorCounts << b.maxFloors
             buildingNames << b.name
         }

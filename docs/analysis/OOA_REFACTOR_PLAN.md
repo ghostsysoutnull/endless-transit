@@ -754,6 +754,11 @@ Eliminates the `model → core` dependency violation (`Building` calling `Journa
 > `Player.markFootprint` once per new macro path and journaled by `logDiscovery`. Goldens 13–18 regenerated (first ticker
 > line). Record: `tasks/completed/HK_010_PLAN.md`. Suite 207/207/0/0.
 
+> **HK-008 closed (2026-09-16):** the last Service Locator (`ProceduralFactory.instance`) is gone. `Game.factory` (final) is built with the game's `fmt` and
+> injected into `NavigationOrchestrator` and `PersistenceService`; every `Container` carries the registry that created it (`factory`) and `populateChildren()`
+> asks it; `SeedScanner` and tests build their own. `FactoryWiringContractTest` pins fmt identity (step 0), factory identity, fail-loud, ownership.
+> Record: `tasks/completed/HK_008_PLAN.md`. Suite 213/213/0/0.
+
 ---
 
 ## Optional Phase O2 — CodeNarc Static Analysis
@@ -840,6 +845,6 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 
 ---
 
-*Last updated: 2026-09-16 — Phase 10 complete (Domain Event System; 10 commits). All planned phases done; O1/O2 optional. Next cadence review falls at whatever phase follows.*
+*Last updated: 2026-09-16 — Phase 10 complete; housekeeping HK-005..012 closed (backlog empty). O1/O2 optional. Next cadence review falls at whatever phase follows.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*

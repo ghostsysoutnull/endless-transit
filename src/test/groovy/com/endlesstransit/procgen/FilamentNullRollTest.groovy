@@ -3,6 +3,7 @@ package com.endlesstransit.procgen
 import com.endlesstransit.model.*
 import com.endlesstransit.ui.Terminal
 import org.junit.jupiter.api.BeforeEach
+import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
@@ -16,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*
  * (both give ~30%) and mixing within a filament (only per-child rolls produce it).
  */
 class FilamentNullRollTest {
+    ProceduralFactory factory = new ProceduralFactory(new StandardTerminalAdapter())
+
 
     @BeforeEach
     void setUp() {
@@ -26,7 +29,7 @@ class FilamentNullRollTest {
     void nullSectorRoll_isPerChild_andNearThirtyPercent() {
         int nulls = 0, total = 0, mixedFilaments = 0, filaments = 0
         for (long seed = 1L; seed <= 60L; seed++) {
-            Universe u = ProceduralFactory.instance.createUniverse(new LocusSeed(seed))
+            Universe u = factory.createUniverse(new LocusSeed(seed))
             for (CosmicFilament f : u.getFilaments()) {
                 List<Location> kids = f.getChildren()
                 int n = kids.count { it instanceof NullSector } as int
