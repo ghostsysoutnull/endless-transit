@@ -1,7 +1,7 @@
 # Housekeeping Plan: HK-012 — The test suite must never touch the player's save file
 **Created:** 2026-09-16 | **Grill:** AMEND (two citation ranges) → applied → CLEARED | **Branch:** `housekeeping/hk-012-save-file-isolation` (from `master` @ c754117)
 **Backlog:** new entry HK-012 (written at close-out, found and closed in the same session) | **Baseline:** 207 / 207 / 0 / 0
-**Project copy:** `tasks/HK_012_PLAN.md` (moved to `tasks/completed/` at close-out).
+**Record:** `tasks/completed/HK_012_PLAN.md` | **Commits:** a854684 (plan), dc1d0a3 (fix). Save file 14593 bytes / mtime 1789586421 before and after the suite.
 
 > **Zero behavior change for the player.** The game still saves to and restores from `session.trace` in the working directory.
 > What changes is that tests and the headless runner save to, restore from, or skip a *scratch* file instead of the real one.
