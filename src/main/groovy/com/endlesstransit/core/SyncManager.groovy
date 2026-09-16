@@ -52,7 +52,7 @@ class SyncManager {
     /**
      * Loads the game state from a JSON file and reconstitutes the world into a GameSession.
      */
-    static GameSession restore() {
+    static GameSession restore(EventBus events) {
         File file = new File(SAVE_FILE)
         if (!file.exists()) {
             Logger.info("RESTORE_FAILED: No trace substrate found at $SAVE_FILE")
@@ -68,7 +68,7 @@ class SyncManager {
             Universe universe = ProceduralFactory.instance.createUniverse(locus)
             
             // 1. Reconstitute Player
-            Player player = new Player()
+            Player player = new Player(events)
             Map playerState = (Map) snapshot["player"]
             player.coherence = (int) playerState["coherence"]
             player.stepCount = (int) playerState["stepCount"]

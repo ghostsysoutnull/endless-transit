@@ -9,6 +9,8 @@ import com.endlesstransit.ui.Terminal
 class Player {
     List<InventoryItem> inventory
     Location currentLocation
+    /** Domain event channel; GameState hands in its bus, a standalone Player gets an inert one (Phase 10). */
+    final EventBus events
     int stepCount = 0
     SynthesisService synthesisService = new SynthesisService()
     Set<String> visitedLIPs = new LinkedHashSet<>()
@@ -22,7 +24,8 @@ class Player {
     int coherence = 100
     int maxCoherence = 100
 
-    Player() {
+    Player(EventBus events = new EventBus()) {
+        this.events = events
         inventory = new ArrayList<InventoryItem>()
         stepCount = 0
         coherence = 100
@@ -42,6 +45,15 @@ class Player {
 
     void adjustCoherence(Number delta) {
         coherence = Math.min(maxCoherence, Math.max(0, (coherence + delta.toDouble()) as int))
+    }
+
+    /**
+     * The one way an item enters the buffer from the world: adds it and publishes
+     * ItemCaptured so the journal and the ritual tracker can react (Phase 10).
+     */
+    void capture(InventoryItem item, Location where) {
+        inventory.add(item)
+        events.publish(new ItemCaptured(item, where))
     }
 
     void dropItem(int index) {
@@ -64,7 +76,7 @@ class Player {
 
         InventoryItem hybrid = synthesisService.synthesize(item1, item2, location, inventory)
         inventory.add(hybrid)
-        JournalManager.logSynthesis(hybrid, location)
+        events.publish(new SynthesisPerformed(hybrid, location))
 
         if (hybrid.isKeystone) {
             Logger.info("KEYSTONE_CREATED: ${hybrid.name}")

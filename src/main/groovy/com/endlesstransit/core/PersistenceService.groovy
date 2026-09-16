@@ -33,7 +33,7 @@ class PersistenceService {
 
     void restore(GameMemento memento) {
         state.masterLocus = memento.masterLocus
-        state.player = new Player()
+        state.player = new Player(state.events)
         state.player.coherence = memento.playerCoherence
         state.player.inventory.addAll(memento.inventory)
         // Restore history in place: the handler is shared with other services,
@@ -50,7 +50,7 @@ class PersistenceService {
     }
 
     void restoreSession() {
-        GameSession snapshot = SyncManager.restore()
+        GameSession snapshot = SyncManager.restore(state.events)
         if (!snapshot) return
         state.masterLocus = snapshot.locus
         state.player = snapshot.player

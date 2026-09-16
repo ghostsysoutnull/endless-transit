@@ -1,15 +1,12 @@
 package com.endlesstransit.core
 
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
 /**
- * Phase 0.5g safety net: validates EventBus contract before Phase 10 implements it.
- * All tests are @Disabled until Phase 10 — this file defines the API contract.
+ * Phase 0.5g safety net, live since Phase 10a: the EventBus contract.
  * See: docs/analysis/OOA_REFACTOR_PLAN.md Phase 10
  */
-@Disabled("EventBus not yet implemented — Phase 10")
 class EventBusTest {
 
     @Test

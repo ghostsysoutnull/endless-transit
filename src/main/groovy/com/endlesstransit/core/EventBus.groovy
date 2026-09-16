@@ -3,23 +3,38 @@ package com.endlesstransit.core
 import groovy.transform.CompileStatic
 
 /**
- * EventBus: Subscribe/publish bus for domain events.
- * Stub — Phase 10 will fill in the full implementation.
- * See: docs/analysis/OOA_REFACTOR_PLAN.md Phase 10
+ * EventBus: Subscribe/publish bus for domain events (Phase 10).
+ *
+ * Dispatch is by the event's exact class, in subscription order. Listeners are
+ * closures taking the event; a listener registered for a subtype never sees
+ * events of another type, so subscribers dispatch polymorphically through the
+ * subscription itself — no listener ever inspects the event's class.
  */
 @CompileStatic
 class EventBus {
-    private Map<Class<? extends DomainEvent>, List<Closure>> listeners = [:]
+    private final Map<Class<? extends DomainEvent>, List<Closure>> listeners = new LinkedHashMap<>()
 
     void subscribe(Class<? extends DomainEvent> eventType, Closure listener) {
-        throw new UnsupportedOperationException("EventBus not yet implemented — Phase 10")
+        List<Closure> registered = listeners.get(eventType)
+        if (registered == null) {
+            registered = []
+            listeners.put(eventType, registered)
+        }
+        registered.add(listener)
     }
 
     void publish(DomainEvent event) {
-        throw new UnsupportedOperationException("EventBus not yet implemented — Phase 10")
+        List<Closure> registered = listeners.get(event.getClass())
+        if (registered == null) return
+        for (Closure listener : new ArrayList<Closure>(registered)) {
+            listener.call(event)
+        }
     }
 
     void unsubscribe(Class<? extends DomainEvent> eventType, Closure listener) {
-        throw new UnsupportedOperationException("EventBus not yet implemented — Phase 10")
+        List<Closure> registered = listeners.get(eventType)
+        if (registered != null) {
+            registered.removeIf { Closure c -> c.is(listener) }
+        }
     }
 }

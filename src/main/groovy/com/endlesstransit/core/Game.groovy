@@ -32,6 +32,8 @@ class Game {
         this.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
         ProceduralFactory.instance.fmt = this.fmt
         this.state = new GameState(masterLocus)
+        JournalManager.attach(state.events)
+        new RitualTracker().attach(state.events)
         InputHandler inputHandler = new InputHandler(inputSource ?: InputHandler.defaultSource)
         this.navOrchestrator = new NavigationOrchestrator(state)
         this.persistence = new PersistenceService(state, navOrchestrator, inputHandler)

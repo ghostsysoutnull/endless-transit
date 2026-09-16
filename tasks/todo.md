@@ -14,7 +14,7 @@
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
-**Suite baseline:** 199 discovered / 194 pass / 5 skipped / 0 failed
+**Suite baseline:** 203 discovered / 203 pass / 0 skipped / 0 failed
 
 - [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
 - [x] Phase 0.5 — Test Coverage Gaps (safety-net tests 0.5a–0.5h, all complete)
@@ -31,7 +31,8 @@
 - [x] Phase 9 — ProceduralFactory Split (`LocationFactory<T>` + 14 per-type factories; `ProceduralFactory` is a 198-line registry facade with every pre-split signature intact; `ProcgenDeepSnapshotTest` pins 9 previously unguarded behaviors; zero caller edits; 16 commits)
 - [x] Phase 10 cadence review (2026-09-16): workflow backlog clean; grill check 5 covers Observer listeners; HK-008 logged
 - [x] Housekeeping HK-005 + HK-006 (2026-09-16): `Container.populateChildren()` dispatches through the registry; 13 overrides + 12 facade delegators gone; procgen test hygiene. HK-008, HK-009 open.
-- [ ] Phase 10 — Domain Event System — **NEXT** (fresh session; see `tasks/RECOVERY_PROMPT.md`)
+- [x] Phase 10 — Domain Event System (2026-09-16): `EventBus` live, `ItemCaptured`/`SynthesisPerformed`, `Player.capture` sole publisher, `JournalManager` + `RitualTracker` typed listeners; no model class imports the journal; 10 commits. HK-010 (dead discovery journaling since March), HK-011 (static journal) logged.
+- [ ] Next: optional O1 (HeadlessRunner DSL) / O2 (CodeNarc), or housekeeping HK-008..011 — user decision
 
 ---
 
