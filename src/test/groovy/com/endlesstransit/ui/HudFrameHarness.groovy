@@ -169,7 +169,8 @@ class HudFrameHarness {
     }
 
     private static RenderContext ctxOf(Game game, Location location, Map<String, Closure> options = null) {
-        return new RenderContext(location, game.player, options, game.masterLocus)
+        return new RenderContext(location, game.player, options, game.masterLocus,
+            JournalManager.getRecentEvents(HUDHeaderComponent.TICKER_DEPTH))
     }
 
     static File goldenFile(String name) {

@@ -67,7 +67,8 @@ class BridgeView implements ScreenshotProvider {
     }
 
     void renderBridgeHUD(Location currentLocation, Player player) {
-        emit(hudHeader.render(new RenderContext(currentLocation, player, null, null), FrameGeometry.FRAME_WIDTH))
+        emit(hudHeader.render(new RenderContext(currentLocation, player, null, null,
+            JournalManager.getRecentEvents(HUDHeaderComponent.TICKER_DEPTH)), FrameGeometry.FRAME_WIDTH))
     }
 
     void renderAdaptiveBridge(Location currentLocation, Player player, LocusSeed masterLocus) {
