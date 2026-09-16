@@ -68,39 +68,13 @@
     </Violation>
   </File>
   <File path="main/groovy/com/endlesstransit/model/Building.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.InventoryItem] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.procgen.Gematria] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.procgen.NameGenerator] import is never referenced]]></Message>
-    </Violation>
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "getExtraContent" is 84 lines]]></Message>
     </Violation>
   </File>
-  <File path="main/groovy/com/endlesstransit/model/Container.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.InventoryItem] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Logger] import is never referenced]]></Message>
-    </Violation>
-  </File>
   <File path="main/groovy/com/endlesstransit/model/Room.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.procgen.LocusSeed] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnnecessaryGroovyImport"/>
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "getOptions" is 103 lines]]></Message>
-    </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/model/Street.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.InventoryItem] import is never referenced]]></Message>
     </Violation>
   </File>
   <File path="main/groovy/com/endlesstransit/procgen/SeedScanner.groovy">

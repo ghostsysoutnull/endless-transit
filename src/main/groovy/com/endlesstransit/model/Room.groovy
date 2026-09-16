@@ -1,10 +1,8 @@
 package com.endlesstransit.model
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 
-import java.util.Random
 
 @CompileStatic
 class Room extends AbstractLeafLocation {
