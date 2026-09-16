@@ -54,7 +54,7 @@ class SyncManager {
      * saveFile is the game's configured path (Game.saveFile; SAVE_FILE by default) — tests
      * point it at a scratch file so the player's save is never touched (HK-012).
      */
-    static GameSession restore(EventBus events, String saveFile) {
+    static GameSession restore(ProceduralFactory factory, EventBus events, String saveFile) {
         File file = new File(saveFile)
         if (!file.exists()) {
             Logger.info("RESTORE_FAILED: No trace substrate found at $saveFile")
@@ -67,7 +67,7 @@ class SyncManager {
             LocusSeed locus = new LocusSeed(seedValue)
             Logger.info("RESTORE_INITIATED: Reconstituting trace from ${new Date(snapshot.timestamp as long)} (Locus: $locus)")
             
-            Universe universe = ProceduralFactory.instance.createUniverse(locus)
+            Universe universe = factory.createUniverse(locus)
             
             // 1. Reconstitute Player
             Player player = new Player(events)

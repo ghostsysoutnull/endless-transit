@@ -1,6 +1,7 @@
 package com.endlesstransit.core
 
 import com.endlesstransit.model.*
+import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.WorldGenesis
 import com.endlesstransit.ui.*
 import groovy.transform.CompileStatic
@@ -11,14 +12,16 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class NavigationOrchestrator {
     private GameState state
+    private final ProceduralFactory factory
     final NavigationEngine navEngine = new NavigationEngine()
 
-    NavigationOrchestrator(GameState state) {
+    NavigationOrchestrator(GameState state, ProceduralFactory factory) {
         this.state = state
+        this.factory = factory
     }
 
     void initializeWorld() {
-        WorldGenesis.GenesisResult result = WorldGenesis.createInitialWorld(state.masterLocus)
+        WorldGenesis.GenesisResult result = WorldGenesis.createInitialWorld(factory, state.masterLocus)
         state.universe = result.universe
         enterLocation(result.startLocation)
     }

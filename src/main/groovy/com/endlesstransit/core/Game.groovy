@@ -16,6 +16,8 @@ import java.io.File
 class Game {
     GameState state
     OutputFormatter fmt
+    /** The world generator (HK-008): one per game, built with this game's formatter, never a static. */
+    final ProceduralFactory factory
 
     // Services
     NavigationOrchestrator navOrchestrator
@@ -34,13 +36,14 @@ class Game {
 
     Game(LocusSeed masterLocus, InputSource inputSource = null) {
         this.fmt = new com.endlesstransit.ui.StandardTerminalAdapter()
-        ProceduralFactory.instance.fmt = this.fmt
+        this.factory = new ProceduralFactory(fmt)
+        ProceduralFactory.instance.fmt = this.fmt   // HK-008 scaffolding until c5: SeedScanner still generates through the static
         this.state = new GameState(masterLocus)
         journal.attach(state.events)
         new RitualTracker().attach(state.events)
         InputHandler inputHandler = new InputHandler(inputSource ?: InputHandler.defaultSource)
-        this.navOrchestrator = new NavigationOrchestrator(state)
-        this.persistence = new PersistenceService(state, navOrchestrator, inputHandler)
+        this.navOrchestrator = new NavigationOrchestrator(state, factory)
+        this.persistence = new PersistenceService(state, navOrchestrator, inputHandler, factory)
         this.renderer = new RenderingCoordinator(state, inputHandler, journal)
         this.turnProcessor = new TurnProcessor(state, renderer, navOrchestrator, inputHandler)
         
@@ -54,8 +57,6 @@ class Game {
     Player getPlayer() { state.player }
     void setPlayer(Player p) { state.player = p }
     LocusSeed getMasterLocus() { state.masterLocus }
-    /** The world generator this game's locations were created by (HK-008; owned by Game from c4). */
-    ProceduralFactory getFactory() { ProceduralFactory.instance }
     InputHandler getInputHandler() { turnProcessor.inputHandler }
     ActionMapper getMapper() { turnProcessor.mapper }
     NavigationEngine getNavEngine() { navOrchestrator.navEngine }

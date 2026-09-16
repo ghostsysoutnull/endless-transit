@@ -4,6 +4,7 @@ import com.endlesstransit.model.Location
 import com.endlesstransit.core.*
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.procgen.WorldGenesis
+import com.endlesstransit.procgen.ProceduralFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import static org.junit.jupiter.api.Assertions.*
@@ -22,7 +23,7 @@ class CaptureVerificationTest {
         
         // 1. Setup a dummy game state
         LocusSeed seed = new LocusSeed(12345L)
-        WorldGenesis.GenesisResult genesis = WorldGenesis.createInitialWorld(seed)
+        WorldGenesis.GenesisResult genesis = WorldGenesis.createInitialWorld(new ProceduralFactory(new StandardTerminalAdapter()), seed)
         BridgeView bridgeView = new BridgeView()
         Player player = new Player()
         

@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*
  * Part B (HK-008 c3): every container the registry hands out remembers the registry that made it,
  * including lazily populated descendants and the on-demand abyssal floor; a container built by hand
  * with no registry fails loud on first lazy access, naming its class.
+ *
+ * Part C (HK-008 c4): the Game owns its factory: a restored world is rebuilt by the restoring game's
+ * factory, and two games in one JVM never share one (the old "last game wins the fmt" hazard).
  */
 class FactoryWiringContractTest {
 
@@ -80,6 +83,8 @@ class FactoryWiringContractTest {
 
             assertEquals(room.getLIP(), freshGame.currentLocation.getLIP(), "Sanity: restore landed on the saved room")
             assertSame(freshGame.fmt, freshGame.universe.fmt, "Restored universe must carry the restoring game's fmt")
+            assertSame(freshGame.factory, freshGame.universe.factory, "C1: restored universe must carry the restoring game's factory")
+            assertNotSame(game.factory, freshGame.factory, "C1: the restoring game does not reuse the saving game's factory")
             for (Location node : ancestors(freshGame.currentLocation)) {
                 assertSame(freshGame.fmt, node.fmt, "Restored ${node.getTypeName()} ${node.getName()} must carry freshGame.fmt")
             }
@@ -130,5 +135,20 @@ class FactoryWiringContractTest {
         IllegalStateException ex = assertThrows(IllegalStateException) { bldg.getFloor(0) }
         assertTrue(ex.message.contains("Building"), ex.message)
         assertTrue(ex.message.contains("factory"), ex.message)
+    }
+
+    // --- Part C: ownership ---
+
+    @Test
+    void C2_twoGamesInOneJvm_holdIndependentFactoriesAndFormatters() {
+        Game a = new Game(1L)
+        Game b = new Game(1L)
+        assertNotSame(a.factory, b.factory, "Each game builds its own factory")
+        assertNotSame(a.fmt, b.fmt, "Each game builds its own formatter")
+        assertSame(a.factory, a.universe.factory, "a's world was made by a's factory")
+        assertSame(b.factory, b.universe.factory, "b's world was made by b's factory")
+        assertSame(a.fmt, a.universe.fmt, "a's world still renders through a.fmt after b was built")
+        assertSame(a.fmt, a.factory.fmt, "a's factory carries a.fmt")
+        assertSame(b.fmt, b.factory.fmt, "b's factory carries b.fmt")
     }
 }

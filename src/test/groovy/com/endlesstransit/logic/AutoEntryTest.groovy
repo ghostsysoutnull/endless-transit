@@ -19,7 +19,7 @@ class AutoEntryTest {
         state = new GameState(new LocusSeed(1L))
         state.player = new Player()
         factory = new ProceduralFactory(new StandardTerminalAdapter())
-        nav = new NavigationOrchestrator(state)
+        nav = new NavigationOrchestrator(state, factory)
     }
 
     @Test

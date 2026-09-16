@@ -14,11 +14,13 @@ class PersistenceService {
     private GameState state
     private NavigationOrchestrator navOrchestrator
     private InputHandler inputHandler
+    private final ProceduralFactory factory
 
-    PersistenceService(GameState state, NavigationOrchestrator navOrchestrator, InputHandler inputHandler) {
+    PersistenceService(GameState state, NavigationOrchestrator navOrchestrator, InputHandler inputHandler, ProceduralFactory factory) {
         this.state = state
         this.navOrchestrator = navOrchestrator
         this.inputHandler = inputHandler
+        this.factory = factory
     }
 
     GameMemento createMemento() {
@@ -50,12 +52,12 @@ class PersistenceService {
     }
 
     void restoreSession(String saveFile) {
-        GameSession snapshot = SyncManager.restore(state.events, saveFile)
+        GameSession snapshot = SyncManager.restore(factory, state.events, saveFile)
         if (!snapshot) return
         state.masterLocus = snapshot.locus
         state.player = snapshot.player
         state.currentLocation = snapshot.currentLocation
-        state.universe = (Universe) state.currentLocation.findAncestor(Universe.class) ?: ProceduralFactory.instance.createUniverse(state.masterLocus)
+        state.universe = (Universe) state.currentLocation.findAncestor(Universe.class) ?: factory.createUniverse(state.masterLocus)
         state.instantRender = true
     }
 }
