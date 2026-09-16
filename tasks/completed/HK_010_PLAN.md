@@ -1,7 +1,7 @@
 # Housekeeping Plan: HK-010 — Restore discovery journaling as a domain event
 **Created:** 2026-09-16 | **Grill:** AMEND (two citation line numbers) → applied → CLEARED | **Branch:** `housekeeping/hk-010-discovery-events` (from `master` @ 327d758)
 **Backlog:** `tasks/backlog/HOUSEKEEPING.md` (HK-010) | **Baseline:** 203 / 203 / 0 / 0 (re-verify with `./vinc.sh --test --agent 2>/dev/null` before touching any file)
-**Project copy:** `tasks/HK_010_PLAN.md` (moved to `tasks/completed/` at close-out).
+**Record:** `tasks/completed/HK_010_PLAN.md` | **Commits:** 6590c97 (plan), 06ed2d4 (code + test + goldens)
 
 > **This is a behavior change, not a refactor.** The player gets back a feature that has been silently dead since 2026-03-05:
 > `[DISCOVERY]`/`[LOC]` journal lines, the `Network Expansion: N macro-locations mapped` summary count, and `LOC:` lines in the

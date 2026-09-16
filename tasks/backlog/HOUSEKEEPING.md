@@ -10,15 +10,6 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-### HK-010 — Discovery journaling has been dead in production since 2026-03-05
-**Found:** Phase 10 pre-plan read, 2026-09-16. `JournalManager.logDiscovery` has no caller in `src/main`; the call was
-dropped in `7930dc3` when macro-path tracking moved into `Player.markFootprint`. Since then `[DISCOVERY]`/`[LOC]` journal
-lines, the `Network Expansion: N macro-locations mapped` summary count and `LOC:` ticker lines exist only in
-`JournalTest` and the golden harness. **Restoring it is a behavior change** (journal file, live HUD ticker), which is why
-Phase 10 did not do it. **Shape:** decide first whether it is wanted. If yes: `LocationEntered(location)` published from
-`Player.markFootprint` when `visitedPaths.add(path)` is new, `JournalManager.attach` subscribes `logDiscovery(path,
-location)`, a pin on the journal `[LOC] <path>` line first, own commit, own chronicle line. 2 production files.
-
 ### HK-011 — `JournalManager` is still all-static
 **Found:** Phase 10 plan, 2026-09-16 (same family as HK-008). The journal is a listener now (`attach(EventBus)`), but its
 session state, file I/O, `getRecentEvents` (read by `HUDHeaderComponent.groovy:75`) and `reset()` are static; tests and the
@@ -47,6 +38,19 @@ HK-005 first so the model side collapses to one `Container.populateChildren()` s
 ---
 
 ## 🟢 CLOSED
+
+### HK-010 — Discovery journaling has been dead in production since 2026-03-05
+**Found:** Phase 10 pre-plan read, 2026-09-16. `JournalManager.logDiscovery` lost its only caller in `7930dc3` when path
+tracking moved into `Player.markFootprint`; `[DISCOVERY]`/`[LOC]` lines, `Network Expansion` and `LOC:` ticker lines had
+no producer for six months. **User decision 2026-09-16: restore it** (behavior change, own branch).
+**Resolution:** `Player.markFootprint` publishes `LocationDiscovered` once per path new to `visitedPaths` (macro only);
+`JournalManager.attach` subscribes it to `logDiscovery`. Named `LocationDiscovered`, not `LocationEntered`: it fires once
+per new path, and the ancestor loop discovers a City/Planet the player never entered. `DiscoveryEventContractTest` (4 pins,
+RED on the old code). `HudFrameHarness` resets the journal *after* `new Game` (mirrors `startSession`); goldens 13–18
+regenerated — first ticker line only. Declared: the 37-char ticker pane truncates every `LOC:` line to
+`LOC: Universe > ... > [VOID] > Lam...` (March contract; a name-based ticker line is a separate HUD decision).
+Plan + grill record: `tasks/completed/HK_010_PLAN.md`.
+**Closed:** 2026-09-16 | commits 6590c97 (plan), 06ed2d4
 
 ### HK-005 — `Container.populateChildren()` overrides still named their `populateX` method
 **Resolution:** `Container.populateChildren()` defaults to `ProceduralFactory.instance.populate(this)`; the 13 one-line

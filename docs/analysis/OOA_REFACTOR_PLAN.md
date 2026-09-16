@@ -750,6 +750,10 @@ Eliminates the `model → core` dependency violation (`Building` calling `Journa
 **Phase 10 Gates:** `./vinc.sh --test` ✅ `STATUS=PASS DISCOVERED=203 SUCCEEDED=203 FAILED=0 SKIPPED=0` (36 goldens byte-identical after every commit) + `./vinc.sh --scan` ✅ seed 0 → 9 nodes before and after + `DeterministicUniverseTest` ✅
 **Retrospective:** `docs/retro/RETRO_PHASE_10.md`
 
+> **HK-010 closed (2026-09-16, behavior change by user decision):** the third event, `LocationDiscovered`, is published by
+> `Player.markFootprint` once per new macro path and journaled by `logDiscovery`. Goldens 13–18 regenerated (first ticker
+> line). Record: `tasks/completed/HK_010_PLAN.md`. Suite 207/207/0/0.
+
 ---
 
 ## Optional Phase O2 — CodeNarc Static Analysis

@@ -13,7 +13,7 @@
 - **Primary Loop**: Managed via `TurnProcessor`.
 - **Orchestration**: Logic partitioned across `NavigationOrchestrator`, `ActionMapper`, and `RenderingCoordinator`.
 - **Persistence**: Exclusive management by `PersistenceService` via `GameMemento`.
-- **Domain Events (Phase 10)**: `GameState.events` is the one `EventBus` (final, never replaced). `Player` is the sole publisher (`capture` → `ItemCaptured`, `mergeItems` → `SynthesisPerformed`). Listeners are attached once in `Game`: `JournalManager.attach` then `RitualTracker.attach`. A listener is a **typed subscription per event class** — never `instanceof` an event. A `Player` built outside `GameState` carries an inert bus.
+- **Domain Events (Phase 10, HK-010)**: `GameState.events` is the one `EventBus` (final, never replaced). `Player` is the sole publisher (`capture` → `ItemCaptured`, `mergeItems` → `SynthesisPerformed`, `markFootprint` → `LocationDiscovered` once per new macro path). Listeners are attached once in `Game`: `JournalManager.attach` then `RitualTracker.attach`. A listener is a **typed subscription per event class** — never `instanceof` an event. A `Player` built outside `GameState` carries an inert bus. The `Game` constructor publishes the start-locus discoveries; `Game.start()` → `startSession` wipes them, so the journal and ticker never show the starting locus (test harnesses that build a `Game` reset the journal *after* construction).
 
 ## 🏗️ Technical Invariants
 1. **Turn Integrity**: Every turn MUST update `ActionMapper`.
