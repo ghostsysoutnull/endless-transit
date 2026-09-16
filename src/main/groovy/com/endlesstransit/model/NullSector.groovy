@@ -3,7 +3,6 @@ import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
-import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
 import com.endlesstransit.procgen.LocusSeed
@@ -105,8 +104,7 @@ class NullSector extends Container {
             if (signalStrength >= 100) {
                 options["c. Capture Spectral Echo"] = {
                     InventoryItem item = new InventoryItem("Spectral Echo", echoFrequency)
-                    game.player.inventory.add(item)
-                    JournalManager.logCapture(item)
+                    game.player.capture(item, this)
                     echoFound = true
                     signalStrength = 0
                     fmt.println fmt.colorize("\n>>> VOID_RESONANCE: Echo captured and stabilized.", "MAGENTA")

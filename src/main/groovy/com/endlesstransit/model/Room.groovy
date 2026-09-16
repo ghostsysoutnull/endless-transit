@@ -73,8 +73,7 @@ class Room extends AbstractLeafLocation {
         if (random.nextInt(10) < 3) { 
             int randomNum = random.nextInt(9000000) + 1000000 
             InventoryItem item = new InventoryItem("Hidden Frequency", randomNum)
-            player.inventory.add(item)
-            JournalManager.logCapture(item, this)
+            player.capture(item, this)
             fmt.println fmt.colorize(">>> SPECTRAL_DEVIATION: Extracted Frequency ${randomNum} <<<", "YELLOW")
         }
     }
@@ -169,8 +168,7 @@ class Room extends AbstractLeafLocation {
                     boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
                     SpectralFrequency freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
                     InventoryItem item = new InventoryItem(name, freq.value)
-                    game.player.inventory.add(item)
-                    JournalManager.logCapture(item, this)
+                    game.player.capture(item, this)
                     
                     if (isResonant) {
                         game.player.resonantTracesCount++
@@ -224,8 +222,7 @@ class Room extends AbstractLeafLocation {
                             boolean isResonant = vibe != null && this.culture == vibe.primaryCulture
                             SpectralFrequency freq = Gematria.calculateFrequency(name, getDepth(), isResonant)
                             InventoryItem item = new InventoryItem(name, freq.value)
-                            game.player.inventory.add(item)
-                            JournalManager.logCapture(item, this)
+                            game.player.capture(item, this)
                             
                             if (isResonant) {
                                 game.player.resonantTracesCount++

@@ -72,37 +72,20 @@ class JournalManager {
         writeToManifest("  >> [LOC] $path$vibeInfo")
     }
 
-    static void logCapture(InventoryItem item, Location location = null) {
+    static void logCapture(InventoryItem item) {
         sessionCaptures++
         String entry = "[CAPTURE]   ${item.name} (${String.format("%04d", item.frequency.value)}Hz)"
         sessionLog.append(entry + "\n")
         lastEntries << entry
         writeToManifest("  >> [OBJ] ${item.name} (${item.frequency.value}Hz)")
-
-        // Ritual Progress Tracking
-        if (location != null) {
-            Building bldg = (Building) location.findAncestor(Building.class)
-            Floor floor = (Floor) location.findAncestor(Floor.class)
-            if (bldg != null && floor != null) {
-                bldg.notifySampled(floor.number)
-            }
-        }
     }
     
-    static void logSynthesis(InventoryItem item, Location location = null) {
+    static void logSynthesis(InventoryItem item) {
         sessionSyntheses++
         String entry = "[SYNTHESIS] ${item.name} (${String.format("%04d", item.frequency.value)}Hz)"
         sessionLog.append(entry + "\n")
         lastEntries << entry
         writeToManifest("  >> [SYN] ${item.name} (${item.frequency.value}Hz)")
-
-        // Ritual Progress Tracking
-        if (location != null) {
-            Building bldg = (Building) location.findAncestor(Building.class)
-            if (bldg != null) {
-                bldg.infusionCount++
-            }
-        }
     }
 
     static List<String> getRecentEvents(int count) {
