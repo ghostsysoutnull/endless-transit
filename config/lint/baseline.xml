@@ -64,93 +64,10 @@
       <Message><![CDATA[Method "show" is 56 lines]]></Message>
     </Violation>
   </File>
-  <File path="test/groovy/com/endlesstransit/ReplayServiceTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.HeadlessRunner] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
-  <File path="test/groovy/com/endlesstransit/TestRunner.groovy">
-    <Violation ruleName="UnusedVariable">
-      <Message><![CDATA[The variable [total] in class com.endlesstransit.TestRunner is not used]]></Message>
-    </Violation>
-  </File>
-  <File path="test/groovy/com/endlesstransit/core/GameMementoTest.groovy">
-    <Violation ruleName="UnusedVariable">
-      <Message><![CDATA[The variable [startCoherence] in class com.endlesstransit.core.GameMementoTest is not used]]></Message>
-    </Violation>
-  </File>
-  <File path="test/groovy/com/endlesstransit/core/JournalTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Game] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Logger] import is never referenced]]></Message>
-    </Violation>
-  </File>
-  <File path="test/groovy/com/endlesstransit/core/QuitNowTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.ui.StandardTerminalAdapter] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
-  <File path="test/groovy/com/endlesstransit/core/StartupTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.InventoryItem] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Logger] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.JournalManager] import is never referenced]]></Message>
-    </Violation>
-  </File>
   <File path="test/groovy/com/endlesstransit/core/TracePersistenceTest.groovy">
     <Violation ruleName="UnnecessaryGroovyImport"/>
   </File>
-  <File path="test/groovy/com/endlesstransit/model/AbyssalRitualTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Player] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.JournalManager] import is never referenced]]></Message>
-    </Violation>
-  </File>
-  <File path="test/groovy/com/endlesstransit/model/FloorCrashTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Player] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.InventoryItem] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Logger] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.JournalManager] import is never referenced]]></Message>
-    </Violation>
-  </File>
-  <File path="test/groovy/com/endlesstransit/procgen/GematriaTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.procgen.NameGenerator] import is never referenced]]></Message>
-    </Violation>
-  </File>
-  <File path="test/groovy/com/endlesstransit/ui/BridgeViewStructureTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Player] import is never referenced]]></Message>
-    </Violation>
-  </File>
   <File path="test/groovy/com/endlesstransit/ui/CaptureVerificationTest.groovy">
     <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
-  <File path="test/groovy/com/endlesstransit/ui/InitialScreenTest.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.procgen.LocusSeed] import is never referenced]]></Message>
-    </Violation>
-  </File>
-  <File path="test/groovy/com/endlesstransit/ui/NavArrayTest.groovy">
-    <Violation ruleName="UnusedVariable">
-      <Message><![CDATA[The variable [game] in class com.endlesstransit.ui.NavArrayTest is not used]]></Message>
-    </Violation>
   </File>
 </CodeNarc>

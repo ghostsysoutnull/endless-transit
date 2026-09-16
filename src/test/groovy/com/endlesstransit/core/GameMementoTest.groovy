@@ -23,7 +23,6 @@ class GameMementoTest {
         // Initial state
         Location startLoc = game.currentLocation
         String startLIP = startLoc.getLIP()
-        int startCoherence = game.player.coherence
         
         // 2. Play a few steps
         game.processTurn() // Turn 1 (enter/process action)

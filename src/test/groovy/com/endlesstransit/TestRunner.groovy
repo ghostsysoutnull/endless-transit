@@ -176,7 +176,6 @@ class TestRunner {
 
         def summary = summaryListener.getSummary()
 
-        long total = summary.getTestsSucceededCount() + summary.getTestsFailedCount()
         long totalDuration = System.currentTimeMillis() - globalStartTime
         
         // T2: compute skipped count (discovered minus succeeded minus failed)

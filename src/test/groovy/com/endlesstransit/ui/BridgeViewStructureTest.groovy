@@ -1,7 +1,6 @@
 package com.endlesstransit.ui
 
 import com.endlesstransit.core.Game
-import com.endlesstransit.core.Player
 import com.endlesstransit.model.*
 import com.endlesstransit.procgen.LocusSeed
 import org.junit.jupiter.api.Test

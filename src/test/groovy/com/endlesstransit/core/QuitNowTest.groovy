@@ -1,9 +1,7 @@
 package com.endlesstransit.core
 
-import com.endlesstransit.ui.StandardTerminalAdapter
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
-import java.io.File
 
 class QuitNowTest {
     @Test
