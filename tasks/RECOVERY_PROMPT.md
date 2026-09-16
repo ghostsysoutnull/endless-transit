@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (HK-011 merged; chronicle + retro `docs/retro/RETRO_HK_011.md`; earlier today HK-009 `a3f6e4d`, HK-010 `00194f4`)
+**Last updated:** 2026-09-16 (HK-011 merged @ `a307827`, chronicle `0xa307827`, retro `docs/retro/RETRO_HK_011.md`; earlier today HK-009 `a3f6e4d`, HK-010 `00194f4`)
 
 ## 🎯 Current Status
 - **Test Suite:** 207 discovered / 207 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
@@ -48,7 +48,7 @@ Initialize session for the Endless Transit substrate.
 | Resource | Path |
 | :--- | :--- |
 | Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (Phase 10 section has the execution record) |
-| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0xa3f6e4d HK-009, 0x00194f4 HK-010, 0xd02ac2e Phase 10) |
+| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0xa307827 HK-011, 0xa3f6e4d HK-009, 0x00194f4 HK-010) |
 | Retros | `docs/retro/RETRO_PHASE_10.md`, `docs/retro/RETRO_HOUSEKEEPING_HK_005_006.md` |
 | Event system | `src/main/groovy/com/endlesstransit/core/{EventBus,DomainEvent,ItemCaptured,SynthesisPerformed,RitualTracker,JournalManager}.groovy`, `Player.capture`, `GameState.events` |
 | Event pins | `src/test/groovy/com/endlesstransit/core/{JournalEventContractTest,EventBusTest}.groovy` |
