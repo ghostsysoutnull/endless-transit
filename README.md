@@ -31,7 +31,7 @@ To initialize the neural link, ensure you have **Groovy 4.x+** installed, then e
 ---
 
 ## 📚 [NEURAL_LINK_MANUAL]
-For complete operational protocols, world lore, and technical whitepapers, visit the **[Official Manual](https://bpatini.github.io/endless-transit/)**.
+For complete operational protocols, world lore, and technical whitepapers, visit the **[Official Manual](https://ghostsysoutnull.github.io/endless-transit/)**.
 
 *   **[SYSTEM_INITIALIZATION](docs/manual/SYSTEM_INITIALIZATION.md)**: Narrative intro and objectives.
 *   **[LATTICE_ATLAS](docs/manual/THE_LATTICE_ATLAS.md)**: Geography and the 6 Great Cultures.
