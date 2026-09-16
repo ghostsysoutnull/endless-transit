@@ -1,7 +1,7 @@
 # Housekeeping Plan: HK-009 — Delete the last per-type populate delegator
 **Created:** 2026-09-16 | **Grill:** AMEND (corridor "peek" does not populate; one more deep-snapshot token) → applied → CLEARED | **Branch:** `housekeeping/hk-009-populate-apartment` (from `master` @ c3e1822)
 **Backlog:** `tasks/backlog/HOUSEKEEPING.md` (HK-009) | **Baseline:** 207 / 207 / 0 / 0 (re-verify before touching any file)
-**Project copy:** `tasks/HK_009_PLAN.md` (moved to `tasks/completed/` at close-out).
+**Record:** `tasks/completed/HK_009_PLAN.md` | **Commits:** 05ec641 (plan), 6a7c813 (code). Step 0 result: explicit call → all room counts even (544 vs 272); lazy-only → 1..10.
 
 > **Prime directive:** zero production behavior change. No production caller exists; the only callers are two tests.
 > 36 goldens byte-identical. `--scan` seed 0 → 9 nodes.

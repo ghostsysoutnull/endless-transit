@@ -33,7 +33,8 @@
 - [x] Housekeeping HK-005 + HK-006 (2026-09-16): `Container.populateChildren()` dispatches through the registry; 13 overrides + 12 facade delegators gone; procgen test hygiene. HK-008, HK-009 open.
 - [x] Phase 10 — Domain Event System (2026-09-16): `EventBus` live, `ItemCaptured`/`SynthesisPerformed`, `Player.capture` sole publisher, `JournalManager` + `RitualTracker` typed listeners; no model class imports the journal; 10 commits. HK-010 (dead discovery journaling since March), HK-011 (static journal) logged.
 - [x] Housekeeping HK-010 (2026-09-16, behavior change by user decision): discovery journaling restored — `Player.markFootprint` publishes `LocationDiscovered` once per new macro path, journal subscribes `logDiscovery`; `DiscoveryEventContractTest` 4 pins; goldens 13–18 regenerated (first ticker line). 3 commits, merged, pushed.
-- [ ] Next: optional O2 (CodeNarc, recommended) / O1 (HeadlessRunner DSL), or housekeeping HK-008, HK-009, HK-011 — user decision
+- [x] Housekeeping HK-009 (2026-09-16): `populateApartment` delegator deleted; two tests use the lazy path (the explicit call had double-populated every apartment — test-only). 2 commits, merged.
+- [ ] Next: optional O2 (CodeNarc — reshape as `./vinc.sh --lint`, no Gradle on the runner path) / O1 (HeadlessRunner DSL), or housekeeping HK-008, HK-011 — user decision
 
 ---
 
