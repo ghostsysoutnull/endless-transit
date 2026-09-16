@@ -42,6 +42,15 @@ class JournalManager {
         sessionLog.append("======================================================================\n")
     }
 
+    /**
+     * Listens to the domain events the journal records (Phase 10). One typed
+     * subscription per event; the journal never inspects an event's class.
+     */
+    static void attach(EventBus bus) {
+        bus.subscribe(ItemCaptured) { ItemCaptured e -> logCapture(e.item) }
+        bus.subscribe(SynthesisPerformed) { SynthesisPerformed e -> logSynthesis(e.item) }
+    }
+
     private static void writeToManifest(String entry) {
         new File(TEMP_MANIFEST).append(entry + "\n")
     }

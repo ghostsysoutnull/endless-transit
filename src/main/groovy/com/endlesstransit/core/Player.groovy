@@ -47,6 +47,15 @@ class Player {
         coherence = Math.min(maxCoherence, Math.max(0, (coherence + delta.toDouble()) as int))
     }
 
+    /**
+     * The one way an item enters the buffer from the world: adds it and publishes
+     * ItemCaptured so the journal and the ritual tracker can react (Phase 10).
+     */
+    void capture(InventoryItem item, Location where) {
+        inventory.add(item)
+        events.publish(new ItemCaptured(item, where))
+    }
+
     void dropItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             def removed = inventory.remove(index)
@@ -67,7 +76,7 @@ class Player {
 
         InventoryItem hybrid = synthesisService.synthesize(item1, item2, location, inventory)
         inventory.add(hybrid)
-        JournalManager.logSynthesis(hybrid, location)
+        events.publish(new SynthesisPerformed(hybrid, location))
 
         if (hybrid.isKeystone) {
             Logger.info("KEYSTONE_CREATED: ${hybrid.name}")
