@@ -3,17 +3,6 @@
   <Project title="">
     <SourceDirectory>src</SourceDirectory>
   </Project>
-  <File path="main/groovy/com/endlesstransit/Main.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.Player] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.InventoryItem] import is never referenced]]></Message>
-    </Violation>
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [com.endlesstransit.core.JournalManager] import is never referenced]]></Message>
-    </Violation>
-  </File>
   <File path="main/groovy/com/endlesstransit/core/Game.groovy">
     <Violation ruleName="SystemExit">
       <Message><![CDATA[Violation in class com.endlesstransit.core.Game. Calling System.exit() is insecure and can expose a denial of service attack]]></Message>
@@ -23,12 +12,6 @@
     <Violation ruleName="CompileStatic">
       <Message><![CDATA[Class should be marked with one of @GrailsCompileStatic, @CompileStatic or @CompileDynamic]]></Message>
     </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/core/RealTerminalSource.groovy">
-    <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
-  <File path="main/groovy/com/endlesstransit/core/ReplayService.groovy">
-    <Violation ruleName="UnnecessaryGroovyImport"/>
   </File>
   <File path="main/groovy/com/endlesstransit/core/ScanCommand.groovy">
     <Violation ruleName="MethodSize">
@@ -52,14 +35,6 @@
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "getOptions" is 103 lines]]></Message>
     </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/procgen/SeedScanner.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [java.util.concurrent.atomic.AtomicLong] import is never referenced]]></Message>
-    </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/procgen/ThemeService.groovy">
-    <Violation ruleName="UnnecessaryGroovyImport"/>
   </File>
   <File path="main/groovy/com/endlesstransit/ui/CaptureService.groovy">
     <Violation ruleName="UnnecessaryGroovyImport"/>
