@@ -43,12 +43,13 @@ class JournalManager {
     }
 
     /**
-     * Listens to the domain events the journal records (Phase 10). One typed
-     * subscription per event; the journal never inspects an event's class.
+     * Listens to the domain events the journal records (Phase 10; discovery restored in
+     * HK-010). One typed subscription per event; the journal never inspects an event's class.
      */
     static void attach(EventBus bus) {
         bus.subscribe(ItemCaptured) { ItemCaptured e -> logCapture(e.item) }
         bus.subscribe(SynthesisPerformed) { SynthesisPerformed e -> logSynthesis(e.item) }
+        bus.subscribe(LocationDiscovered) { LocationDiscovered e -> logDiscovery(e.path, e.location) }
     }
 
     private static void writeToManifest(String entry) {

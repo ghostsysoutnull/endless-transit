@@ -38,9 +38,12 @@ class HudFrameHarness {
      * Frame order is load-bearing: player state (steps, coherence, visited) accumulates.
      */
     static Frames captureAll(long seed = GOLDEN_SEED) {
-        JournalManager.reset()               // static ticker state leaks between tests
         Terminal.initialize(true, true)
         Game game = new Game(seed)
+        // Reset AFTER construction: static ticker state leaks between tests, and the constructor
+        // publishes the start-locus discoveries (Street, City, Planet) that Game.start() ->
+        // startSession() wipes before the player sees a frame (HK-010, edge E1).
+        JournalManager.reset()
         BridgeView view = game.bridgeView
         Frames frames = new Frames()
         // Standalone components for the `direct` captures (7g-iii): same inputs, no BridgeView.

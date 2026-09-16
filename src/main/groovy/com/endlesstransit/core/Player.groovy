@@ -35,11 +35,12 @@ class Player {
         String lip = location.getLIP()
         visitedLIPs.add(lip)
         
-        // Also track high-level paths for the journal/HUD
-        boolean isMacro = !(location instanceof Floor || location instanceof Corridor || 
+        // Also track high-level paths for the journal/HUD. A path new to visitedPaths is a
+        // discovery: publish it so the journal can record it (HK-010).
+        boolean isMacro = !(location instanceof Floor || location instanceof Corridor ||
                             location instanceof Apartment || location instanceof Room)
-        if (isMacro) {
-            visitedPaths.add(location.getPath())
+        if (isMacro && visitedPaths.add(location.getPath())) {
+            events.publish(new LocationDiscovered(location))
         }
     }
 
