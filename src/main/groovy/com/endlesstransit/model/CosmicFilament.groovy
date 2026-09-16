@@ -6,7 +6,6 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 
@@ -35,11 +34,6 @@ class CosmicFilament extends Container {
         this.locus = locus
         Random r = locus.nextRandom()
         this.conduitID = "0x" + Integer.toHexString(r.nextInt(0xFFFF))
-    }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateFilament(this)
     }
 
     @Override
