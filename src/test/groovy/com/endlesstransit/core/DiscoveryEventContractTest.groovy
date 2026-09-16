@@ -60,18 +60,16 @@ class DiscoveryEventContractTest {
         assertTrue(p.visitedLIPs.contains(floor.getLIP()), "The Floor footprint itself is still recorded")
     }
 
-    // D2 — the journal line, exact format, through real navigation
+    // D2 — the ticker line through real navigation: the location's name (HK-011c);
+    //      the full path + vibe suffix lives in the journal file (D4)
     @Test
     void enteringBuilding_journalsDiscoveryLine() {
         game.journal.reset()
         game.enterLocation(building)
 
-        VibeCapsule v = building.getVibe()
-        assertNotNull(v, "Building must resolve a vibe through its ancestors")
         List<String> recent = game.journal.getRecentEvents(1)
         assertEquals(1, recent.size(), "Entering a new building must add exactly one journal event")
-        assertEquals("[DISCOVERY] ${building.getPath()} [Era: ${v.timeline}, Resonance: ${v.primaryCulture}]".toString(),
-            recent[0])
+        assertEquals("[DISCOVERY] ${building.getName()}".toString(), recent[0])
     }
 
     // D3 — re-entry and descending to a Floor add no further discovery
@@ -104,6 +102,10 @@ class DiscoveryEventContractTest {
             game.journal.saveSession(game.player)
 
             String content = f.text
+            VibeCapsule v = building.getVibe()
+            assertNotNull(v, "Building must resolve a vibe through its ancestors")
+            assertTrue(content.contains("[DISCOVERY] ${building.getPath()} [Era: ${v.timeline}, Resonance: ${v.primaryCulture}]"),
+                "Session log must carry the full path with the vibe suffix, got:\n$content")
             assertTrue(content.contains("  >> [LOC] ${building.getPath()}"),
                 "Manifest must list the discovered building, got:\n$content")
             assertTrue(content.contains("Network Expansion:     1 macro-locations mapped"),

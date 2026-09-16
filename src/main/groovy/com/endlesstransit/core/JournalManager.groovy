@@ -73,7 +73,9 @@ class JournalManager {
 
         String entry = "[DISCOVERY] $path$vibeInfo"
         sessionLog.append(entry + "\n")
-        lastEntries << entry
+        // Ticker feed (HK-011c): the HUD pane is 37 chars wide, so the ticker shows the
+        // location's name; the journal file above keeps the full path.
+        lastEntries << "[DISCOVERY] ${location != null ? location.getName() : path}".toString()
         writeToManifest("  >> [LOC] $path$vibeInfo")
     }
 
