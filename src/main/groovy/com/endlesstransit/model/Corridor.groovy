@@ -5,7 +5,6 @@ import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -132,11 +131,6 @@ class Corridor extends Container {
         } else if (location instanceof Door) {
             this.doors.add((Door)location)
         }
-    }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateCorridor(this)
     }
 
     @Override

@@ -3,7 +3,6 @@ import com.endlesstransit.core.Game
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -131,11 +130,6 @@ class Floor extends Container {
     }
     
     int apartmentsPerFloor
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateFloor(this)
-    }
 
     @Override
     String getMapSymbol() {
