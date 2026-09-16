@@ -26,7 +26,7 @@ class ProcgenVariabilityTest {
             def corridor = floor.getCorridor()
             
             corridor.apartments.each { apt ->
-                ProceduralFactory.instance.populateApartment(apt)
+                // Lazy population on first read (HK-009); the former explicit call doubled every apartment.
                 roomCounts << apt.rooms.size()
                 
                 int totalAptObjects = 0

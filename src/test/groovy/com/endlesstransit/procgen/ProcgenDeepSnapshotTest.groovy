@@ -143,7 +143,7 @@ class ProcgenDeepSnapshotTest {
         assertEquals("Industrial Barrier [PITTED]", doors[2].getMinimalDescription())
     }
 
-    // --- ApartmentFactory: createApartment vibe match + populateApartment object pool ---
+    // --- ApartmentFactory: createApartment vibe match + ApartmentFactory.populate object pool ---
 
     @Test
     void apartment_vibeMatchAndObjectPool_pinnedForSeed0x1234() {
@@ -153,8 +153,8 @@ class ProcgenDeepSnapshotTest {
         assertFalse(a.isAnomaly, "not on the 1% anomaly path at this seed")
 
         List<Room> rooms = a.getRooms()
-        assertEquals(1, rooms.size(), "populateApartment room count")
-        int pool = a.locus.nextInt(5, 19)  // pure: the same draw populateApartment makes
+        assertEquals(1, rooms.size(), "ApartmentFactory.populate room count")
+        int pool = a.locus.nextInt(5, 19)  // pure: the same draw ApartmentFactory.populate makes
         assertEquals(15, pool, "object pool size drawn for this seed")
         int distributed = rooms.sum { Room r -> r.objects.size() } as int
         assertEquals(pool, distributed, "every pooled object lands in some room")

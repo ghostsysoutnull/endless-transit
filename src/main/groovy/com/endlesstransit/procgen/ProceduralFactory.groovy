@@ -12,7 +12,7 @@ import groovy.transform.CompileStatic
  * unchanged. Population is registry dispatch: {@code Container.populateChildren()} calls
  * {@link #populate(Container)}, which selects the factory registered under the exact model
  * class ({@link LocationFactory#getType()}). The per-type {@code populate*} delegators were
- * removed in HK-005; {@code populateApartment} remains for two direct test callers.
+ * removed in HK-005 and HK-009; {@code populate(Container)} is the only population entry point.
  *
  * Shared services live here: the single {@link ThemeService} and the {@code fmt} formatter,
  * which {@code Game} injects after construction. Factories read both through their
@@ -136,13 +136,7 @@ class ProceduralFactory {
     }
 
     // --- Population ---
-    // populate(Container) above is the production path (HK-005: Container.populateChildren()).
-    // populateApartment is retained for two direct test callers (HK-009).
-
-    Apartment populateApartment(Apartment a) {
-        apartmentFactory.populate(a)
-        return a
-    }
+    // populate(Container) above is the one population path (HK-005: Container.populateChildren()).
 
     /**
      * Deterministically counts the total number of sub-locations (Corridor, Apartments, Rooms)

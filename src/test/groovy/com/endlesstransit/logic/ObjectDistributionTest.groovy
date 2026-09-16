@@ -19,8 +19,9 @@ class ObjectDistributionTest {
         for (int i = 0; i < apartmentsTested; i++) {
             LocusSeed aptLocus = master.branch("APT_" + i)
             Apartment apt = factory.createApartment(null, "Test Door", "monolith", "ancient", aptLocus)
-            factory.populateApartment(apt)
-            
+
+            // Lazy population on first read (HK-009): the former explicit factory call
+            // populated every apartment twice (a nested lazy populate fired inside it).
             apt.rooms.each { room ->
                 int count = room.objects.size()
                 distribution[count]++

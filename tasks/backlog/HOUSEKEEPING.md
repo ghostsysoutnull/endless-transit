@@ -17,14 +17,6 @@ golden harness reset it explicitly. **Shape:** instance owned by `Game`, `getRec
 `RenderContext`, `startSession`/`saveSession` via the facade. Blast radius: `Game`, `QuitCommand`, `HUDHeaderComponent`,
 `RenderContext`, `JournalTest`, `HudFrameHarness` (+ ticker goldens must stay byte-identical). Not urgent.
 
-### HK-009 — `populateApartment` is the last per-type populate delegator on the facade
-**Found:** HK-005 close-out, 2026-09-16. Twelve `populate*` delegators were deleted with their callers; `populateApartment`
-stayed because two tests call it directly on a factory-built apartment (`ObjectDistributionTest.groovy:22`,
-`ProcgenVariabilityTest.groovy:29`). Both read `apt.rooms` afterwards, which triggers the lazy path a second time.
-**Shape:** migrate the two callers to `ProceduralFactory.instance.populate(apt)` (or simply drop the explicit call and let
-`apt.rooms` populate lazily — read both tests first to see whether the explicit call is load-bearing), then delete the
-delegator. 1 production file, 2 test files, no behavior change.
-
 ### HK-008 — `ProceduralFactory.instance` is still a static singleton
 **Found:** Phase 9 retro "Concerns", 2026-09-11 (OOA report §3.4 / §4 — singleton access noted in the original analysis).
 Phase 9 did not touch injection; fourteen per-type factories now hang off `ProceduralFactory.groovy:21`
@@ -38,6 +30,15 @@ HK-005 first so the model side collapses to one `Container.populateChildren()` s
 ---
 
 ## 🟢 CLOSED
+
+### HK-009 — `populateApartment` was the last per-type populate delegator on the facade
+**Found:** HK-005 close-out, 2026-09-16. Two tests called it directly (`ObjectDistributionTest:22`, `ProcgenVariabilityTest:29`).
+**Resolution:** delegator deleted; both tests read `apt.rooms` and let `Container.populateChildren()` → `populate(Container)`
+fill the apartment. **Finding (verified by script before the change):** the explicit call populated every apartment *twice* —
+inside `ApartmentFactory.populate` the first lazy read of `a.rooms` fired a nested populate, so room counts were all even
+(544 rooms across 50 apartments vs 272 lazy-only). Test-only; neither test asserted absolute counts. Variance assertions hold
+on the single-population shape. `grep populateApartment src/` → 0. Plan + grill record: `tasks/completed/HK_009_PLAN.md`.
+**Closed:** 2026-09-16 | commits 05ec641 (plan), 6a7c813
 
 ### HK-010 — Discovery journaling has been dead in production since 2026-03-05
 **Found:** Phase 10 pre-plan read, 2026-09-16. `JournalManager.logDiscovery` lost its only caller in `7930dc3` when path
