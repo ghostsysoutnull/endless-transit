@@ -9,6 +9,8 @@ import com.endlesstransit.ui.Terminal
 class Player {
     List<InventoryItem> inventory
     Location currentLocation
+    /** Domain event channel; GameState hands in its bus, a standalone Player gets an inert one (Phase 10). */
+    final EventBus events
     int stepCount = 0
     SynthesisService synthesisService = new SynthesisService()
     Set<String> visitedLIPs = new LinkedHashSet<>()
@@ -22,7 +24,8 @@ class Player {
     int coherence = 100
     int maxCoherence = 100
 
-    Player() {
+    Player(EventBus events = new EventBus()) {
+        this.events = events
         inventory = new ArrayList<InventoryItem>()
         stepCount = 0
         coherence = 100

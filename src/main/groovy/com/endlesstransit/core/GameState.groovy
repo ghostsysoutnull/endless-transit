@@ -13,12 +13,13 @@ class GameState {
     Universe universe
     Location currentLocation
     Player player
+    final EventBus events = new EventBus()
     boolean instantRender = false
     boolean suppressRendering = false
     LocusSeed masterLocus
 
     GameState(LocusSeed locus) {
         this.masterLocus = locus
-        this.player = new Player()
+        this.player = new Player(events)
     }
 }
