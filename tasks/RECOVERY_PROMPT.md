@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (session chronicle `0xf7c7745`, retro `docs/retro/RETRO_SESSION_20260916.md`; HK-012 `fe739f4`; earlier today HK-011 `a307827`, HK-009 `a3f6e4d`, HK-010 `00194f4`)
+**Last updated:** 2026-09-16 (HK-008 chronicle `0xf681c46`, retro `docs/retro/RETRO_HK_008.md`; merge `f681c46`; earlier today session chronicle `0xf7c7745`, HK-012 `fe739f4`, HK-011 `a307827`, HK-009 `a3f6e4d`, HK-010 `00194f4`)
 
 ## 🎯 Current Status
 - **Test Suite:** 213 discovered / 213 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
@@ -34,7 +34,7 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: chronicle docs commit above the HK-012 merge). Read `tasks/todo.md`, `docs/retro/RETRO_HK_011.md`
+   (top: chronicle docs commit above the HK-008 merge). Read `tasks/todo.md`, `docs/retro/RETRO_HK_008.md`
    "Concerns for Upcoming Phases", and `tasks/backlog/HOUSEKEEPING.md` OPEN items.
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` — expect `STATUS=PASS DISCOVERED=213 SUCCEEDED=213 FAILED=0 SKIPPED=0`.
 4. **Ask before choosing:** there is no active phase and the housekeeping backlog is empty. Present the options (O2 CodeNarc as a
@@ -50,8 +50,8 @@ Initialize session for the Endless Transit substrate.
 | Resource | Path |
 | :--- | :--- |
 | Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (Phase 10 section has the execution record) |
-| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0xf7c7745 session wrap, 0xfe739f4 HK-012, 0xa307827 HK-011) |
-| Retros | `docs/retro/RETRO_PHASE_10.md`, `docs/retro/RETRO_HOUSEKEEPING_HK_005_006.md` |
+| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0xf681c46 HK-008, 0xf7c7745 session wrap, 0xfe739f4 HK-012) |
+| Retros | `docs/retro/RETRO_HK_008.md`, `docs/retro/RETRO_SESSION_20260916.md`, `docs/retro/RETRO_PHASE_10.md` |
 | Event system | `src/main/groovy/com/endlesstransit/core/{EventBus,DomainEvent,ItemCaptured,SynthesisPerformed,RitualTracker,JournalManager}.groovy`, `Player.capture`, `GameState.events` |
 | Event pins | `src/test/groovy/com/endlesstransit/core/{JournalEventContractTest,EventBusTest}.groovy` |
 | Factory wiring pins | `src/test/groovy/com/endlesstransit/procgen/FactoryWiringContractTest.groovy` (HK-008) |
@@ -70,3 +70,4 @@ Initialize session for the Endless Transit substrate.
 - A disabled test guards nothing; quote assertions from enabled tests only (Coverage Claim Protocol).
 - A State/Strategy/Factory/Observer hierarchy is defeated by one `instanceof` in a client; for events the client is the listener.
 - Move bodies by script; assert on the construct, not the token; chain `edit && test && commit`.
+- Population is reached through `getIndexInParent()` too: a hand-built *parent* needs `factory` and `fmt` like any other hand-built container (HK-008).

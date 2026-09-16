@@ -36,7 +36,7 @@
 - [x] Housekeeping HK-009 (2026-09-16): `populateApartment` delegator deleted; two tests use the lazy path (the explicit call had double-populated every apartment — test-only). 2 commits, merged.
 - [x] Housekeeping HK-011 (2026-09-16): `JournalManager` is an instance owned by `Game`; ticker lines travel in `RenderContext.recentEvents`; ticker shows the discovered location's name (visual change, goldens 13–18). 4 commits, merged.
 - [x] Housekeeping HK-012 (2026-09-16, user report): the suite had overwritten/deleted the player's `session.trace` since March; `Game.saveFile` + temp files in tests + guard assertions. 2 commits, merged.
-- [x] Housekeeping HK-008 (2026-09-16): the last Service Locator is gone — `Game.factory` (final) is the one `ProceduralFactory`, injected into the services; every `Container` carries the registry that made it; `SeedScanner` and tests build their own. `FactoryWiringContractTest` pins fmt identity (step 0), factory identity, fail-loud, ownership. 5 commits on `housekeeping/hk-008-factory-injection`. Housekeeping backlog empty.
+- [x] Housekeeping HK-008 (2026-09-16): the last Service Locator is gone — `Game.factory` (final) is the one `ProceduralFactory`, injected into the services; every `Container` carries the registry that made it; `SeedScanner` and tests build their own. `FactoryWiringContractTest` pins fmt identity (step 0), factory identity, fail-loud, ownership. 6 commits, merged `f681c46`. Housekeeping backlog empty.
 - [ ] Next: optional O2 (CodeNarc — reshape as `./vinc.sh --lint`, no Gradle on the runner path) / O1 (HeadlessRunner DSL) — user decision
 
 ---
