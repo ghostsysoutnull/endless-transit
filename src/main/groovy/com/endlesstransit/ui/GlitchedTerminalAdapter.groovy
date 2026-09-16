@@ -2,7 +2,6 @@ package com.endlesstransit.ui
 
 import com.endlesstransit.model.OutputFormatter
 import groovy.transform.CompileStatic
-import java.util.Random
 
 /**
  * GlitchedTerminalAdapter: A Decorator for OutputFormatter.

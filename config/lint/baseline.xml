@@ -36,9 +36,6 @@
       <Message><![CDATA[Method "getOptions" is 103 lines]]></Message>
     </Violation>
   </File>
-  <File path="main/groovy/com/endlesstransit/ui/CaptureService.groovy">
-    <Violation ruleName="UnnecessaryGroovyImport"/>
-  </File>
   <File path="main/groovy/com/endlesstransit/ui/ConsoleSink.groovy">
     <Violation ruleName="SystemOutPrint">
       <Message><![CDATA[Violation in class com.endlesstransit.ui.ConsoleSink. System.out.print should be replaced with something more robust]]></Message>
@@ -46,9 +43,6 @@
     <Violation ruleName="SystemOutPrint">
       <Message><![CDATA[Violation in class com.endlesstransit.ui.ConsoleSink. System.out.println should be replaced with something more robust]]></Message>
     </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/ui/GlitchedTerminalAdapter.groovy">
-    <Violation ruleName="UnnecessaryGroovyImport"/>
   </File>
   <File path="main/groovy/com/endlesstransit/ui/HUDHeaderComponent.groovy">
     <Violation ruleName="MethodSize">
@@ -65,19 +59,9 @@
       <Message><![CDATA[Method "renderTrace" is 63 lines]]></Message>
     </Violation>
   </File>
-  <File path="main/groovy/com/endlesstransit/ui/ScreenBuffer.groovy">
-    <Violation ruleName="UnusedImport">
-      <Message><![CDATA[The [java.time.LocalDateTime] import is never referenced]]></Message>
-    </Violation>
-  </File>
   <File path="main/groovy/com/endlesstransit/ui/SessionRecap.groovy">
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "show" is 56 lines]]></Message>
-    </Violation>
-  </File>
-  <File path="main/groovy/com/endlesstransit/ui/TelemetryComponent.groovy">
-    <Violation ruleName="UnusedVariable">
-      <Message><![CDATA[The variable [r] in class com.endlesstransit.ui.TelemetryComponent is not used]]></Message>
     </Violation>
   </File>
   <File path="test/groovy/com/endlesstransit/ReplayServiceTest.groovy">
