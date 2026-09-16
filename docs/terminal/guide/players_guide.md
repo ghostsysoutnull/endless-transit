@@ -323,6 +323,16 @@ merge. <!-- HUDHeaderComponent.groovy:90-94 -->
 **The frame colour** is the planet's main culture: rust is red, neon is bright cyan, baroque yellow, monolith cyan,
 organic green, void grey, shogun magenta, zenith blue, gilded white. <!-- PlanetFactory.groovy:40-51 -->
 
+**ATMOS_SHIFT and Sector Mutation** are the same thing under two names: the country's trait, in capitals. The floor
+diagnostic calls it `ATMOS_SHIFT`, the country screen calls it `Sector Mutation`, and above country level it reads
+`STANDARD`. `STABILITY` on the same floor diagnostic is the share of apartments that follow the planet's main
+culture, between 75% and 90%. <!-- VibeCapsule.groovy:12-27, CountryFactory.groovy:37, ElevatorState.groovy:81-82 -->
+
+**Floor zone names** in the building lobby are picked by height, not by what is on the floor. Floor 0 is always
+`TRANSIT_LOBBY` and the top floor is always `PEAK_OBSERVATORY`. Floors 1 to 4 draw from four basement-style names,
+the four floors under the top draw from four executive names, and everything between draws from four living names.
+The rooms behind the doors are chosen by the country's trait, not by the zone. <!-- Building.groovy:72-84 -->
+
 ## Saving, quitting and seeds
 
 **`sync`** writes `session.trace` in the folder you launched from. It stores the world's seed, your position,

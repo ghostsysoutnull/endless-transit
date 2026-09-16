@@ -20,7 +20,7 @@ Advanced operational advice for surviving the deep strata.
 
 ### 2. THE_LATTICE_ENCYCLOPEDIA (Lore)
 Encyclopedic knowledge of the procedural world.
-*   [\[CULTURAL_ORIGINS\]]({{ "/terminal/codex/cultural_origins.html" | relative_url }}) - A deep-dive into the 6 Great Cultures.
+*   [\[CULTURAL_ORIGINS\]]({{ "/terminal/codex/cultural_origins.html" | relative_url }}) - A deep-dive into the Six Great Cultures and the Four Minor Cultures.
 *   [\[ICONOGRAPHY_GLOSSARY\]]({{ "/terminal/codex/iconography_glossary.html" | relative_url }}) - Visual guide to HUD and Map symbols.
 *   [\[THE_BEDROCK_SHIFT\]]({{ "/terminal/codex/the_bedrock_shift.html" | relative_url }}) - The history of the Abyssal Substrate.
 

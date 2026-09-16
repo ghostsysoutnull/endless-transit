@@ -18,18 +18,25 @@ The neural link recognizes single-character mnemonics for rapid traversal.
 | **[f]** | Forward | Move to the next room in an Apartment. |
 | **[b]** | Back | Move to the previous room in an Apartment. |
 | **[l]** | Leave | Exit the current container (e.g., leave a Building to the Street). |
-| **[t]** | Interact | Scan or drop objects within a local cell. |
+| **[c]** | Corridor | From a floor's elevator, step into the corridor. |
+| **[j]** | Breach | At the Peak of a primed building, with its Keystone: breach the Bedrock. |
+| **[t]** | Interact | Capture (`1`…`N`) or drop (`d1`…`dN`) objects within a local cell. |
+| **[s]** | Scan | Aperture scan of the corridor, the surrounding strata, or the apartment. |
 | **[i]** | Buffer | Open the Quantum Trace Buffer (Inventory). |
 | **[m]** | Map | Refresh the 2D spatial Neural Map (Macro Scale). |
-| **[lattice]** | Tree | View the full vertical world hierarchy trace. |
+| **[ll]** | Tree | View the full vertical world hierarchy trace (`lattice` also works). |
+| **[p]** | Snapshot | Capture the bridge to `screenshots/` (`P` keeps the colour codes). |
 | **[sync]** | Save | Synchronize your neural trace to the substrate. |
+| **[quit]** | Terminate | Confirm, optionally sync, and sever the link. |
+
+An empty directive (Enter alone) repeats your last movement — or reverses it when the way ahead has run out.
 
 ## [QUANTUM TRACE BUFFER]
 Accessing your buffer `[i]` allows you to manage harvested fragments.
-*   **Capacity:** You can store up to 16 spectral fragments simultaneously.
-*   **Dropping:** Use `d [ID]` to release a fragment into the local cell.
-*   **Merging:** Use `m [ID1] [ID2]` to synthesize two fragments into a new hybrid.
-*   **Stabilization:** If a synthesis result is divisible by 11, it is **Stabilized**, granting a significant Coherence boost.
+*   **Capacity:** The buffer has no ceiling. The `/16` on the HUD is a legacy calibration mark.
+*   **Dropping:** Use `d [ID]` to dissolve a fragment. To leave one in the local cell for later, use `d[ID]` from the room's `[t]` menu instead.
+*   **Merging:** Use `m [ID1] [ID2]` to synthesize two fragments into a new hybrid. Every synthesis restores **+15 Coherence**.
+*   **Stabilization:** If a synthesis result is divisible by 11, it is **Stabilized** and added to your `RESONANT_TRACES` tally.
 
 ## [THE COMMAND BRIDGE (HUD)]
 Your terminal header is a high-fidelity data deck providing real-time telemetry:

@@ -13,7 +13,7 @@ Located in the **Lattice Sparkline** at the top of your bridge.
 
 *   `∞` : **THE UNIMATRIX ROOT** — The origin point of all procedural seeds.
 *   `»` : **COSMIC FILAMENT** — A high-bandwidth data-conduit.
-*   `⬚` : **GALACTIC SECTOR** — A major matter cluster.
+*   `○` : **GALACTIC SECTOR / NULL REACH** — A major matter cluster, or the hollow that replaces one.
 *   `☼` : **SOLAR SYSTEM** — A localized gravitational well.
 *   `⊕` : **PLANET** — A container of cultural resonance.
 *   `🏙` : **CITY** — A dense urban grid node.
@@ -23,25 +23,35 @@ Located in the **Lattice Sparkline** at the top of your bridge.
 *   `▅` : **CORRIDOR** — An internal scan hub.
 *   `🚪` : **APARTMENT** — A cluster of rooms.
 *   `□` : **SHARD (ROOM)** — The atomic cell of the lattice.
+*   `☠` : **ABYSSAL** — Any node below a breached Bedrock, whatever its scale.
 
 ## [NEURAL_MAP_SYMBOLS]
-Used within the 2D spatial map readout.
+Used within the 2D spatial map readout (`m`), which projects the children of the container you stand in.
 
 *   `▲` : **YOU (THE OBSERVER)** — Your current neural anchor point.
-*   `■` : **STABLE NODE** — A confirmed, navigable location.
-*   `○` : **VISITED NODE** — A location previously scanned or entered.
-*   `░` : **VOID / NULL ZONE** — A high-entropy region with active drain.
-*   `☠` : **ABYSSAL BREACH** — A location where the bedrock has been compromised.
-*   `¤` : **SPECTRAL ECHO** — A faint trace of a non-player entity.
-*   `[■]` : **TACTICAL TARGET** — A node currently pinned for navigation.
+*   `■` : **NODE** — A child location. Dim: unvisited. Bright: visited.
+*   `░` : **VOID** — Empty projection space.
+*   `☠` : **ABYSSAL NODE** — A child below a breached Bedrock.
+*   `X` (magenta) : **STATIC** — Corruption that spreads across the map as Coherence falls below 30.
 
 ## [RESONANCE_WAVEFORMS]
-Used in the **Aperture Scan** and **Spectrogram** panes.
+Used in the **Apartment Aperture Scan**.
 
-*   `~~~~~~~` : **STABLE** — Nominal frequency.
-*   `≈≈≈≈≈≈≈` : **HARMONIC** — High-signal resonance (Bonus potential).
-*   `#######` : **DEGRADED** — Glitched/Anomalous signal (High risk).
-*   `-------` : **ENCRYPTED** — Locked or inaccessible signature.
+*   `~~~` : **STABLE** — Nominal frequency.
+*   `≈≈≈` : **HARMONIC** — A Stabilized signature (frequency divisible by 11).
+*   `###` : **DEGRADED** — A temporal anomaly (one apartment in a hundred).
+
+## [DIAGNOSTIC_READOUTS]
+Terms that appear on headers and diagnostic suites.
+
+*   **TECH_ERA** — The planet's Temporal Era, shown on every street header. ENTROPIC doubles the drain.
+*   **RESONANCE** — The planet's primary Culture, shown beside the Era. Cells of this Culture amplify captures by 10%.
+*   **TRAIT** — The Country's Functional Trait: CEREMONIAL, MILITARY, INDUSTRIAL, AGRICULTURAL, RESEARCH or COMMERCIAL. Selects the four room types of every building in the Country.
+*   **SECTOR MUTATION / ATMOS_SHIFT** — The same Trait, reported on the Country screen and on every floor's diagnostic suite respectively. Reads `STANDARD` above the Country scale.
+*   **STABILITY** — The share of apartments that follow the planet's primary Culture rather than its secondary (75–90%).
+*   **LOCUS_HASH** — A stable procedural signature of the cell. It is not a coordinate.
+*   **HOP_DENSITY** — Your depth in the hierarchy: the Universe is 0, every Shard is 12.
+*   **PULSE_TRAVERSAL** — Successful movements this session. Scans, maps and buffer checks cost Coherence but do not advance it.
 
 ---
 *Next Node: [\[THE_BEDROCK_SHIFT\]]({{ "/terminal/codex/the_bedrock_shift.html" | relative_url }})*

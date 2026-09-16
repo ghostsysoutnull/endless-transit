@@ -8,33 +8,33 @@ map_type: strategy
 
 The **Quantum Trace Buffer** is your only way to influence the laws of the Lattice. Merging fragments is not just a cleanup task; it is a tactical stabilization of your neural link.
 
-## [THE 16-FRAGMENT CONSTRAINT]
-Your buffer has a hard limit of 16 items. If you reach this limit, you must either **Drop** or **Merge** items to capture new signals.
+## [THE UNBOUNDED BUFFER]
+The buffer has no ceiling. The `/16` calibration mark on the HUD is a legacy of an earlier link protocol; the substrate will hold as many fragments as you can carry.
 
-*   **Dropping:** Releasing a fragment into a local cell preserves it. You can return to this room later to re-capture it (provided you remember the path or LIP).
+*   **Dropping into a cell:** From a room's `[t]` menu, `d[ID]` releases a fragment onto the floor of that cell. The cell remembers it across synchronizations. Return to the room to re-capture it.
+*   **Dropping from the buffer:** `d [ID]` in the buffer screen dissolves the fragment. It is gone.
 *   **Merging:** Permanently consumes two items to create a hybrid. This is the only way to gain Coherence during an expedition.
 
 ## [MASTER_NUMBER_HUNTS]
-When two fragments are merged, their Gematria frequencies are combined. 
+When two fragments are merged, their Gematria frequencies are **summed**.
 
-*   **The Target:** Aim for a result divisible by **11**.
-*   **The Reward:** Stabilized synthesis provides a **+30% Coherence bonus** instead of the standard +15%.
-*   **High-Level Strategy:** Keep a "Reference Fragment" with a known frequency (e.g., 100Hz) and use it to adjust the frequency of incoming items toward a master number.
+*   **The Target:** A result divisible by **11** is a Stabilized waveform.
+*   **The Reward:** Every synthesis restores **+15 Coherence**, stabilized or not. A stabilized result adds one to your `RESONANT_TRACES` tally, reported in the telemetry pane and at link termination. The tally is a record of craft; it confers no other bonus.
+*   **High-Level Strategy:** Keep a "Reference Fragment" with a known frequency and use it to steer sums toward multiples of 11 if the tally matters to you.
 
 ## [KEYSTONE_CONSTRUCTION]
-Keystones are specialized high-density fragments required to breach the Bedrock.
+Keystones are the anchors required to breach the Bedrock. They are not built from special fragments; they are what a primed building gives you.
 
-*   **Infusion:** To create a Keystone, you must "Infuse" a building anchor point with resonant fragments.
-*   **Purity:** The more "Master Numbers" used in the infusion process, the higher the **Keystone Purity**.
-*   **Impact:** A High-Purity Keystone reduces the Abyssal Pressure drain once you enter the substrate.
+*   **Priming:** A building is primed once **every floor** has yielded at least one capture and **seven syntheses** have been performed inside it.
+*   **Synthesis:** The **next synthesis inside a primed building** — the eighth, counting from cold — collapses into the **Building Keystone** instead of a hybrid. Any two fragments will do.
+*   **Nature:** A Keystone reads **0 Hz**. It is named for its building, you hold at most one per building, and the Breach consumes it.
 
 ## [THE "HYBRID" OVERFLOW]
-As fragments are merged multiple times, their names become complex (e.g., "Rusty Hub infused with Plasma Sump"). 
-*   **Data Tip:** Recursive merging increases the complexity of the signal. Extremely high-merge-count items have a small chance to "Shatter," but if they stabilize, they become **Pure Frequencies** (Keystones).
+A hybrid takes the **first word** of each parent, joined with a dash: "Rusted Chain" and "Paper Lantern" become **Rusted-Paper Hybrid**. Recursive merging keeps only the first word again, so long chains converge on the same few names. The buffer shows a `SYNTHESIS_x<n>` badge for the session's merge count; it clears when you leave the buffer screen. Nothing shatters.
 
 ## [PRO-TIPS]
-1.  **Don't Rush Synthesis:** If your Coherence is at 95%, merging items is a waste of a restoration cycle. Wait until you are below 70% to maximize the value of the merge.
-2.  **Item Hoarding:** If you find a fragment with a Master Number (11, 22, 33...), **do not merge it** into a random hybrid. Save it for Keystone synthesis at the Peak of a building.
+1.  **Don't Rush Synthesis:** If your Coherence is at 95, merging items is a waste of a restoration cycle. Wait until you are below 70 to maximize the value of the merge.
+2.  **Merge Where It Counts:** A synthesis performed on a street or in orbit restores Coherence but infuses no building. Do your seven inside the building you intend to breach.
 
 ---
 *Next Node: [\[CULTURAL_ORIGINS\]]({{ "/terminal/codex/cultural_origins.html" | relative_url }})*

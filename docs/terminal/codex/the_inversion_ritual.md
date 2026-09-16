@@ -6,36 +6,36 @@ map_type: telemetry
 
 # TECHNICAL_SUBSTRATE: The Inversion Ritual
 
-The **Harmonic Inversion Ritual** is the only method for accessing the **Abyssal Substrate** beneath a stable building. It is a four-stage process of atmospheric data harvesting and frequency synthesis.
+The **Harmonic Inversion Ritual** is the only method for accessing the **Abyssal Substrate** beneath a stable building. It is a four-stage process of strata sampling and frequency synthesis. Choose the building with care: every floor must be sampled, and a Peak may stand a hundred floors up.
 
 ## [STAGE 1: STRATA_SAMPLING]
-The building's anchor point must be "mapped" through physical traversal.
-*   **The Requirement:** The Observer must visit at least **70% of the floors** in a building.
-*   **Data Harvest:** Each floor visit records a "Structural Trace." Once enough traces are collected, the ritual interface unlocks at the building's Peak.
+The building's anchor point must be "mapped" through harvest.
+*   **The Requirement:** The Observer must capture at least one fragment on **every floor** of the building, from the Transit Lobby to the Peak Observatory. Visiting is not enough; a capture on the floor is the trace.
+*   **Data Harvest:** The building's status line reads `INFUSION_ACTIVE: n` once Stage 2 begins, and the strata table marks each cleared floor. Layers below the Bedrock never count.
 
 ## [STAGE 2: FRAGMENT_INFUSION]
-The building's "Frequency Well" must be primed with external data.
-*   **The Requirement:** The Observer must sacrifice **7 resonant fragments** from their buffer.
-*   **Resonance:** Items matching the building's local culture provide a "Purity Bonus" to the final synthesis.
+The building's "Frequency Well" must be primed with synthesis.
+*   **The Requirement:** The Observer must perform **seven syntheses while inside the building**. Any two fragments will serve; resonance is not required.
+*   **Locality:** A synthesis performed outside the building restores Coherence but infuses nothing.
 
 ## [STAGE 3: KEYSTONE_SYNTHESIS]
-Once the building is sampled and infused, the data is compressed into a **Building Keystone**.
-*   **The Object:** The Keystone is a high-density spectral fragment unique to that specific building.
-*   **Persistence:** The Keystone is stored in the **Quantum Trace Buffer** and can be used to re-enter the building's substrate even after a neural link restoration.
+Once the building is sampled and infused, the **next synthesis performed inside it** collapses into the **Building Keystone** — the eighth merge counting from a cold building, which means at least nine fragments in total.
+*   **The Object:** The Keystone reads **0 Hz** and carries the building's name. You hold at most one per building.
+*   **Persistence:** The Keystone is stored in the **Quantum Trace Buffer** and survives synchronization. So does the building's priming — but a Coherence reboot regenerates the web and erases it.
 
 ## [STAGE 4: THE_BEDROCK_BREACH]
-With the Keystone active, the "Breach" directive becomes available.
-*   **Execution:** Initiating the breach inverts the building's vertical polarity.
-*   **Transition:** The Observer descends through Floor 0 into the **Abyssal Layers**. 
-*   **System Shift:** Standard terminology (Room, Floor) is replaced by substrate terminology (Shard, Layer).
+With the Keystone in the buffer, the `j. Breach the Bedrock` directive appears in the elevator of the **Peak** floor.
+*   **Execution:** Initiating the breach consumes the Keystone and inverts the building's vertical polarity.
+*   **Transition:** Return to Floor 0, where `d` now reads *Descend into the Substrate*. The Observer descends into the **Abyssal Layers** — and there is no lowest layer.
+*   **System Shift:** Standard terminology (Room, Floor, Corridor, Apartment) is replaced by substrate terminology (Shard, Layer, Artery, Crypt). Every map glyph becomes `☠`, every pulse costs double, and terminating the link from below yields a different farewell.
 
 ## [RITUAL_SUMMARY]
 | Step | Action | Mechanical Result |
 | :--- | :--- | :--- |
-| **01** | Traverse Floors | Unlocks Ritual at Peak |
-| **02** | Infuse Fragments | Priming the Frequency Well |
-| **03** | Synthesize | Creation of Building Keystone |
-| **04** | Breach | Descent into Substrate |
+| **01** | Capture on every floor | Strata sampled |
+| **02** | Seven syntheses inside the building | Frequency Well primed |
+| **03** | One more synthesis inside | Building Keystone (0 Hz) |
+| **04** | `j` at the Peak, then `d` at Floor 0 | Descent into Substrate |
 
 ---
 *Next Node: [\[LIP_ADDRESSING\]]({{ "/terminal/codex/lip_addressing.html" | relative_url }})*
