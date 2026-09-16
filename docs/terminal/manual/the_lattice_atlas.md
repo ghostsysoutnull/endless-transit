@@ -130,6 +130,37 @@ The Building's status line reports `STRUCTURAL_STABLE`, then `INFUSION_ACTIVE: n
 
 **Anomalies.** One apartment in a hundred is a **Temporal Anomaly**: the header reads `[!] TEMPORAL_ANOMALY_DETECTED [!]`, its atmosphere reads `[UNSTABLE]`, and every cell's description is glitched. Separately, one cell in twenty has a glitched atmosphere of its own, each of walls, lighting and structure re-themed on a coin flip.
 
+## [THE_NAMING_OF_THINGS]
+Every name in the web is drawn from a fixed lexicon by the node's own seed. Learn the patterns and a name tells you what scale you are reading before you read the icon.
+
+| Scale | Pattern | Lexicon | Examples |
+| :--- | :--- | :--- | :--- |
+| **Universe** | fixed | — | *The Endless Universe* |
+| **Filament** | Greek–number–Type | 12 Greek letters (*Alpha … Mu*), a number under 999, one of *Strand, Thread, Web, Link, Sync, Stream, Flow, Pulse* | *Mu-993-Sync*, *Theta-41-Thread* |
+| **Sector** | Descriptor Noun Number | *Outer, Inner, Core, Rim, Void, Prime, Secondary, Tertiary, Quaternary* + *Sector, Quadrant, Grid, Matrix, Zone, Region, Reach, Expanse* + a number under 99 | *Core Matrix 17*, *Rim Expanse 4* |
+| **Null Reach** | Null Reach HEX | a three-digit hexadecimal | *Null Reach 886* |
+| **Solar System** | Star Suffix | 16 star-prefixes (*Alpha, Proxima, Sirius, Vega, Rigel, Antares, Betelgeuse, Altair, Deneb, Polaris, Zeta, Epsilon, Omicron, Sigma, Tau, Lambda*) + 11 suffixes (*Prime, Minor, Major, Borealis, Australis, Centauri, Ceti, Eridani, Groombridge, Kapteyn, Luyten*) | *Vega Borealis*, *Omicron Luyten* |
+| **Planet** | Stem + ending | 16 stems (*Ter, Neo, Xen, Kry, Vex, Zion, Aura, Nova, Eden, Gaia, Hydra, Nyx, Orion, Phoe, Rhea, Styx*) + 14 endings (*ra, on, os, is, us, ia, ea, ax, ox, un, ar, el, im, um*) | *Hydraia*, *Kryox*, *Nyxel* |
+| **Country** | Prefix Core Polity | *The United, Great, New, Old, Western, Eastern, Northern, Southern, Imperial, Democratic, Holy, Free* + *Arid, Frost, Verdant, Iron, Storm, Shadow, Light, Dust, Glacier, Jungle, Desert, Ocean* + *Republic, Kingdom, Empire, Federation, Sovereignty, Union, Territories, Lands, Domain* | *Free Dust Kingdom*, *Holy Glacier Sovereignty* |
+| **City** | Material + settlement | *Silver, Gold, Black, White, Iron, Steel, Neon, Cyber, Steam, Clock, Void, Star, Cloud, Rain* fused with *town, city, burg, ville, port, gate, haven, peak, spire, bridge, fall, cross, well, ford* | *Starford*, *Clockhaven*, *Voidspire* |
+| **Street** | Adjective Way | *High, Low, Main, Grand, Broad, Dark, Bright, Old, New, Quiet, Busy, Long, Short, Hidden* + *Way, Road, Street, Avenue, Lane, Drive, Path, Walk, Boulevard, Terrace, Row, Circle, Loop, Alley* | *Busy Terrace*, *Hidden Loop* |
+| **Building** | three tiers | see [BUILDINGS_AND_LANDMARKS] | *Impenetrable Unit*, *Unit 0x3F Spire*, *The Void-Watcher* |
+| **Floor** | zone by height | see [FLOOR_ZONES] | *TRANSIT_LOBBY*, *NEURAL_UPLINK* |
+| **Cell** | Adjective Noun [0xHH] | the Culture's building lexicon + a two-digit hexadecimal | *Grey Unit [0x55]*, *Pulsing Nexus [0xA2]* |
+
+Names above the Building are Culture-blind: a Sector is *Core Matrix 17* whether it holds Rust or Baroque. From the Building down, the words belong to the Culture. Six Cultures own a lexicon; the four Minor Cultures borrow Monolith's.
+
+| Culture | Adjectives | Nouns |
+| :--- | :--- | :--- |
+| **Rust** | Corroded, Oxidized, Patchwork, Scrapyard, Weathered, Fading, Dusty, Assembled | Shell, Stack, Monolith, Heap, Vault, Husk, Anchor, Frame |
+| **Neon** | Vibrant, Fluorescent, Flickering, Synthetic, Digital, Glitchy, Pulsing, Lucid | Hub, Nexus, Array, Node, Core, Circuit, Relay, Grid |
+| **Baroque** | Ornate, Golden, Cathedral, Sacred, Opulent, Marble, Grand, Sanctum | Gallery, Archive, Palace, Temple, Sanctum, Hall, Cathedral, Altar |
+| **Monolith** (also Gilded, Shogun, Zenith, Abyssal) | Brutalist, Concrete, Silent, Impenetrable, Grey, Eternal, Static, Cold | Slab, Tower, Obelisk, Block, Unit, Monolith, Foundation, Pillar |
+| **Void** | Hollow, Empty, Silent, Ghostly, Drifting, Dark, Abyssal, Stellar | Void, Shadow, Echo, Aperture, Gravity, Well, Horizon, Reach |
+| **Organic** | Living, Grown, Pulsing, Verdant, Breathing, Soft, Neural, Fungal | Pod, Spore, Nest, Shell, Chamber, Limb, Leaf, Root |
+
+Relics are named differently: every furnishing and object is a **Culture word** and an **Era word** joined by *with* or *infused with* — *floppy disk with hexagonal pillar*, *shoji screen infused with quantum core*. The Gematria Engine reads only the consonants, so the longest names ring loudest.
+
 ## [THE BEDROCK SUBSTRATE]
 Beneath every building lies the **Bedrock**. Through the ritual of **Harmonic Inversion**, an Observer can "Breach" this bedrock to enter the **Abyssal Substrate**. Here, the terminology of the world changes:
 *   Floors become **Layers**.
