@@ -1,12 +1,11 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (O2 complete on `refactor/o2-lint`, **unmerged, no chronicle/retro yet**; before that HK-008 chronicle `0xf681c46`, merge `f681c46`)
+**Last updated:** 2026-09-16 (O2 chronicle `0x7b3e2c9`, retro `docs/retro/RETRO_O2.md`; merge `d5b15e2`; before that HK-008 chronicle `0xf681c46`, merge `f681c46`)
 
 ## 🎯 Current Status
 - **Test Suite:** 213 discovered / 213 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=206 P1=0 P2=0 P3=0` (new gate, O2)
-- **Branch:** `refactor/o2-lint`, 13 commits ahead of `master` (c1–c12), **not merged**. Working tree clean. Verify with `git status -sb`.
-- **Active Work:** O2 is **implemented and gated but not closed**: chronicle → `docs/retro/RETRO_O2.md` → merge `--no-ff` → push are
-  pending explicit go-ahead. **O2 (`./vinc.sh --lint`) is COMPLETE on the branch**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
+- **Branch:** `master`, pushed. Working tree clean. Verify with `git status -sb`.
+- **Active Work:** none. **All ten OOA phases and O2 are complete**, merged and pushed. **O2 (`./vinc.sh --lint`)**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
   `config/lint/vinc-ruleset.groovy` (house rules + six Vinculum invariant rules), baseline-ratchet `config/lint/baseline.xml` (now
   exactly the nine long methods → **HK-013**, the one OPEN backlog item), 83 dead imports + 4 unused locals gone, `Player` is
   `@CompileStatic`, `Game.start` / `ConsoleSink` carry `@SuppressWarnings` in source. Plan + execution notes: `tasks/completed/O2_LINT_PLAN.md`.
@@ -15,7 +14,7 @@
   discovered location's *name* — visual change by user decision, goldens 13–18). **HK-012 CLOSED** (user report: the suite had overwritten/deleted the player's `session.trace` since March; `Game.saveFile` +
   temp files in tests + guard assertions on the real file). **HK-008 CLOSED** (the last Service Locator: `Game.factory` is the one `ProceduralFactory`, injected into
   the services; every `Container` carries the registry that made it and `populateChildren()` asks it; `SeedScanner` and tests build their own; `FactoryWiringContractTest`).
-- **Next:** close O2 (chronicle, retro, merge, push), then user decision: O1 or HK-013.
+- **Next:** user decision — O1 (HeadlessRunner DSL) or HK-013 (nine long methods in the lint baseline). Neither has a plan yet.
 
 ## ✅ State of the substrate in one paragraph
 `GameState.events` is the one `EventBus` (final, never replaced; exact-class dispatch in subscription order). `Player` is
@@ -36,13 +35,13 @@ production sites that replace the player on restore hand in the state bus. No mo
 Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
-2. **Orient:** `git branch --show-current` — expect `refactor/o2-lint` if O2 is still unmerged (else `master`); `git status -sb`;
-   `git log --oneline -14` (top: `docs(O2 c12)`). Read `tasks/todo.md`, `tasks/completed/O2_LINT_PLAN.md` (execution notes),
+2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
+   (top: chronicle docs commit above the O2 merge `d5b15e2`). Read `tasks/todo.md`, `tasks/completed/O2_LINT_PLAN.md` (execution notes),
    and `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-013).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=213 SUCCEEDED=213 FAILED=0 SKIPPED=0`;
    `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=206 P1=0 P2=0 P3=0`.
-4. **If O2 is unmerged:** ask for the go-ahead to `/chronicle`, write `docs/retro/RETRO_O2.md`, merge `--no-ff` to `master`, push.
-   **Then ask before choosing:** O1 (HeadlessRunner DSL) or HK-013 (nine long methods in the lint baseline). Wait for a Directive.
+4. **Ask before choosing:** there is no active phase. Present the options — O1 (HeadlessRunner DSL) or HK-013 (nine long methods in
+   the lint baseline; read `docs/retro/RETRO_O2.md` "Concerns") — and wait for a Directive.
 5. **Every task:** plan file → `/grill` → authorization → branch → ≤5 production files per commit → full suite + `--lint` after every
    commit → merge `--no-ff` → `/chronicle` → retro → lessons → refresh this file.
 
@@ -55,8 +54,8 @@ Initialize session for the Endless Transit substrate.
 | :--- | :--- |
 | Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (O2 section rewritten; Phase 10 section has the execution record) |
 | Lint mode | `vinc.sh` (`--lint`), `config/lint/vinc-ruleset.groovy`, `config/lint/baseline.xml` (one writer: `--lint --baseline`), `lib/lint/*.jar`; plan `tasks/completed/O2_LINT_PLAN.md` |
-| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0xf681c46 HK-008, 0xf7c7745 session wrap, 0xfe739f4 HK-012) |
-| Retros | `docs/retro/RETRO_HK_008.md`, `docs/retro/RETRO_SESSION_20260916.md`, `docs/retro/RETRO_PHASE_10.md` |
+| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0x7b3e2c9 O2, 0xf681c46 HK-008, 0xf7c7745 session wrap) |
+| Retros | `docs/retro/RETRO_O2.md`, `docs/retro/RETRO_HK_008.md`, `docs/retro/RETRO_SESSION_20260916.md` |
 | Event system | `src/main/groovy/com/endlesstransit/core/{EventBus,DomainEvent,ItemCaptured,SynthesisPerformed,RitualTracker,JournalManager}.groovy`, `Player.capture`, `GameState.events` |
 | Event pins | `src/test/groovy/com/endlesstransit/core/{JournalEventContractTest,EventBusTest}.groovy` |
 | Factory wiring pins | `src/test/groovy/com/endlesstransit/procgen/FactoryWiringContractTest.groovy` (HK-008) |
