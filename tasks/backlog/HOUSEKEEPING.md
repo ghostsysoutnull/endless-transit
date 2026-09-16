@@ -24,6 +24,16 @@ facade become dead and can go with their callers.
 `city` and the City to `country` (messages say "City name" for `"Free Dust Kingdom"`, which is the Country). Literals are
 correct; rename the locals and messages. `InitialScreenTest.groovy:5` imports `ProceduralFactory` and never uses it.
 
+### HK-008 — `ProceduralFactory.instance` is still a static singleton
+**Found:** Phase 9 retro "Concerns", 2026-09-11 (OOA report §3.4 / §4 — singleton access noted in the original analysis).
+Phase 9 did not touch injection; fourteen per-type factories now hang off `ProceduralFactory.groovy:21`
+(`static ProceduralFactory instance = new ProceduralFactory()`), and `Game.groovy:33` injects `fmt` into the singleton
+after construction. Tests cannot swap the factory without mutating static state.
+**Shape:** the Phase 9 back-reference design makes this a single-site change — construct the facade in `Game`, inject
+`fmt` through the constructor, and pass the instance down. Blast radius is every `ProceduralFactory.instance` reader
+(the 13 `populateChildren` overrides until HK-005 lands, plus core/procgen/test callers) — grep before planning; do
+HK-005 first so the model side collapses to one `Container.populateChildren()` site. Not urgent; no behavior change.
+
 ---
 
 ## 🟢 CLOSED

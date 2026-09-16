@@ -33,6 +33,19 @@ improvement session is planned before the next phase begins.
 > One new item surfaced by the Phase 7 pre-grill, WF-003, opened and closed in the same session via
 > Phase 7-0. No workflow session required before Phase 7. Next scheduled review: Phase 10.
 
+> **Phase 10 cadence review completed — 2026-09-11.** Backlog clean: zero OPEN items, no High trigger.
+> Retro concerns since Phase 7 all accounted for (WF-004/WF-005 closed inside Phase 8; HK-007 closed;
+> Phase 9 "dispatcher has no production caller" = HK-005; the static-singleton concern logged as HK-008).
+> **WF-002 re-evaluation (six grill checks, ~12 runs):** check 1 fired in 6b, 6c, 7a, 7c, 7d, 7e-ii, 8 (5 rows),
+> 9 (9 rows + one unsupportable claim); check 2 once (Phase 9 double-populate test); check 3 once (6b);
+> check 5 twice, and it missed the Phase 8 `instanceof` until WF-004 patched it; checks 4 and 6 never non-PASS.
+> Decision: keep all six — Phase 10 is the first High-risk phase and 10f (import removal) only compiles once
+> every caller has migrated, which is exactly what checks 4 and 6 guard. One gap closed the same session:
+> check 5's pattern-integrity grep listed State/Strategy/Factory/Visitor; Phase 10 introduces an Observer
+> hierarchy, so listener `instanceof` on event subtypes was added to the row. No workflow session required.
+> Recommended order: HK-005 + HK-006 housekeeping session (HK-005 touches `Building`, which Phase 10 also
+> edits), then Phase 10. Next scheduled review: Phase 13, or the next phase after Phase 10 if the plan ends there.
+
 ---
 
 ## 🟢 CLOSED
