@@ -8,11 +8,6 @@
       <Message><![CDATA[Violation in class com.endlesstransit.core.Game. Calling System.exit() is insecure and can expose a denial of service attack]]></Message>
     </Violation>
   </File>
-  <File path="main/groovy/com/endlesstransit/core/Player.groovy">
-    <Violation ruleName="CompileStatic">
-      <Message><![CDATA[Class should be marked with one of @GrailsCompileStatic, @CompileStatic or @CompileDynamic]]></Message>
-    </Violation>
-  </File>
   <File path="main/groovy/com/endlesstransit/core/ScanCommand.groovy">
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "renderCorridorScan" is 75 lines]]></Message>
