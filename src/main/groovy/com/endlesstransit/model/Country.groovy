@@ -6,7 +6,6 @@ import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
 import com.endlesstransit.procgen.Gematria
 import com.endlesstransit.procgen.NameGenerator
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -40,11 +39,6 @@ class Country extends Container {
     Country(String name, LocusSeed locus = new LocusSeed(0L)) {
         this.name = name
         this.locus = locus
-    }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateCountry(this)
     }
 
     @Override

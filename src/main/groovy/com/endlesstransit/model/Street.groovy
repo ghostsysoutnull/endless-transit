@@ -4,7 +4,6 @@ import com.endlesstransit.core.Player
 import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Logger
 import com.endlesstransit.core.JournalManager
-import com.endlesstransit.procgen.ProceduralFactory
 import com.endlesstransit.procgen.LocusSeed
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
@@ -31,11 +30,6 @@ class Street extends Container {
     Street(String name, LocusSeed locus = new LocusSeed(0)) {
         this.name = name
         this.locus = locus
-    }
-
-    @Override
-    void populateChildren() {
-        ProceduralFactory.instance.populateStreet(this)
     }
 
     @Override
