@@ -10,6 +10,38 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
+**Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
+documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
+guide in the same commit so it stays true. Items 1 and 2 change gameplay — **user decision required** before touching them.
+1. **Passive room roll repeats.** `Room.processAction` (`model/Room.groovy:70`) seeds from `locus.branch("ACTION").branch(player.stepCount)`,
+   and `stepCount` only advances on navigation (`core/NavigationCommand.groovy:35`). A 30% hit therefore repeats, with the same value,
+   on every prompt spent standing still — unlimited identical "Hidden Frequency" items for 1 coherence each, and each one marks the
+   floor sampled for the ritual. Fix needs a per-prompt component in the seed (or a once-per-visit flag); pin with a test that stands
+   still N prompts and asserts at most one capture.
+2. **`m 1 1` is free coherence.** `QuantumBufferController.groovy:44` grants `adjustCoherence(15)` after `Player.mergeItems`, whose
+   guards (`core/Player.groovy:70-71`, same index / out of range) return silently. Make `mergeItems` report success (boolean or the
+   hybrid) and grant only on success; pin: `m 1 1` leaves coherence unchanged.
+3. **`run.sh --seed` is inert.** `run.sh:25` advertises it; `Main.groovy:10` is `new Game()` and never reads `args`. Parse `--seed <long>`
+   in `Main` and pass it to `Game(long)`. Pin: headless launch with a seed produces the pinned seed-4660 street.
+4. **`q` is unbound.** `RenderingCoordinator.groovy:40` prints `q: Terminate`; `TurnProcessor.groovy:30-43` has no `q`. Either alias `q` →
+   `quit` in `InputHandler.normalize` or drop it from the help line.
+5. **Null Reach echo scan needs capital `S`.** `NullSector.groovy:90` offers `s. Scan for spectral echoes`, but lowercase `s` is taken by
+   the global scan first (`TurnProcessor.groovy:80`). Rename the option key (e.g. `e.`) — do not change the global table.
+Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
+(real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine).
+
+### HK-014 — Manual and codex state numbers the code contradicts
+**Found:** 2026-09-16, chronicle `0x9c4e17d`. The Player's Guide is the source-verified reference; the lore pages under
+`docs/terminal/manual/` and `docs/terminal/codex/` were written before the code was read and disagree in at least ten places:
+16-slot buffer cap (`link_navigation.md:29`, `synthesis_theory.md:12` — there is no cap); +30% "stabilized" merge (`synthesis_theory.md:21` —
+every merge is +15); 0.5x/1.0x/2.0x era drain table (`coherence_optimization.md:16-19` — 1x, ×2 only for `entropic`); consonant values
+10/20/30/40/50 (`gematria_specifications.md:17-25` — A=1…Z=26); item "shatter" (`synthesis_theory.md:33` — none); ritual = 70% of floors +
+7 resonant fragments (`the_inversion_ritual.md:13,18` — every floor + 7 merges, keystone on the 8th); `target [ID]` command
+(`lattice_hunting.md:16` — none); 5% integrity per move below bedrock (`coherence_optimization.md:29` — drain ×2); "drains per step"
+(per prompt); `⬚` for Galactic Sector (`the_lattice_atlas.md:16` — it is `○`). Do this **after HK-015** so the manual is corrected once.
+Keep the in-fiction voice; change only the facts. Gate: link crawl + the guide's static check script pattern (see `0x9c4e17d`).
+
 ### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
 **Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
 `renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
