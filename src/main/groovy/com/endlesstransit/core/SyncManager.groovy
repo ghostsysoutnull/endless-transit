@@ -41,8 +41,8 @@ class SyncManager {
 
         try {
             def json = new JsonBuilder(snapshot)
-            new File(SAVE_FILE).write(json.toPrettyString())
-            Logger.info("SYNC_COMPLETE: Trace stabilized at $SAVE_FILE")
+            new File(game.saveFile).write(json.toPrettyString())
+            Logger.info("SYNC_COMPLETE: Trace stabilized at ${game.saveFile}")
         } catch (Exception e) {
             Logger.error("SYNC_FAILED: Failed to write trace to substrate.", e)
             throw e
@@ -51,11 +51,13 @@ class SyncManager {
 
     /**
      * Loads the game state from a JSON file and reconstitutes the world into a GameSession.
+     * saveFile is the game's configured path (Game.saveFile; SAVE_FILE by default) — tests
+     * point it at a scratch file so the player's save is never touched (HK-012).
      */
-    static GameSession restore(EventBus events) {
-        File file = new File(SAVE_FILE)
+    static GameSession restore(EventBus events, String saveFile) {
+        File file = new File(saveFile)
         if (!file.exists()) {
-            Logger.info("RESTORE_FAILED: No trace substrate found at $SAVE_FILE")
+            Logger.info("RESTORE_FAILED: No trace substrate found at $saveFile")
             return null
         }
 
