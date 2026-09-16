@@ -158,6 +158,37 @@ pre {
     overflow-x: auto;
 }
 
+/* Tables (site-wide): boxed like the HUD; wide ones scroll instead of pushing the page out */
+table {
+    border-collapse: collapse;
+    margin: 1em 0 1.5em 0;
+    font-size: 0.92rem;
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+th, td {
+    border: 1px solid var(--dim-text);
+    padding: 5px 10px;
+    vertical-align: top;
+    text-align: left;
+}
+
+th {
+    color: #ffffff;
+    background: rgba(0, 255, 255, 0.08);
+}
+
+tbody tr:nth-child(even) {
+    background: rgba(0, 255, 255, 0.03);
+}
+
+tbody tr:hover {
+    background: rgba(0, 255, 255, 0.09);
+}
+
 /* Telemetry Elements */
 .telemetry-header {
     font-weight: bold;
@@ -254,23 +285,6 @@ pre {
 .guide p, .guide li {
     color: #c8ffff;
     max-width: 78ch;
-}
-
-.guide table {
-    border-collapse: collapse;
-    margin: 1em 0 1.5em 0;
-    font-size: 0.92rem;
-}
-
-.guide th, .guide td {
-    border: 1px solid var(--dim-text);
-    padding: 4px 10px;
-    vertical-align: top;
-}
-
-.guide th {
-    color: #ffffff;
-    background: rgba(0, 255, 255, 0.08);
 }
 
 .guide .toc {
