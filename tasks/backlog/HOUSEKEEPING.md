@@ -10,6 +10,25 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-016 — Procedural variety: objects, furniture and atmosphere repeat; three room lines collapse to one string
+**Found:** 2026-09-16, user report while playing ("lack of variation in the objects on the rooms"), confirmed and widened by
+`docs/analysis/VARIETY_AUDIT.md` (six seeds, 1,354 rooms; 200-seed distribution probe). **Content phase, not a refactor** — every
+step changes generated worlds (procgen snapshots + goldens move), so it runs on its own branch with its own pins; user decision on
+scope before starting.
+- **Objects/furniture** (`ThemeService.generateHybridObject`, `ApartmentFactory.groovy:44,55`, `RoomFactory.groovy:57-60`): one
+  generator for both, 8 × 8 items × 2 phrasings, timeline fixed per planet and two cultures per planet → ≤ 256 strings per planet;
+  measured 143–198 distinct of 283–719 in six floors, 25–40 % of apartments repeat an object, some rooms list one twice.
+- **Atmosphere** (`ThemeService.groovy:85-93`, silent fallback): no structures file for Industrial/Commercial → `a spatial cell` in
+  every room of ⅓ of countries (1,105/1,354 sampled); no lighting for digital/future/atomic/entropic → `a dim, flickering glow`
+  on 52 % of planets; no walls for gilded/rust/shogun/void/zenith → monolith walls.
+- **Room names** (`NameGenerator.groovy:100-120`): lexicon for 6 of 10 cultures (shogun/gilded/zenith get monolith names); 64 real
+  names per culture, uniqueness comes from the hex serial and does not count. **Doors**: 56 briefs, 2–3 identical per corridor.
+  Corridor/floor/apartment/building descriptions are single templates.
+- **Plan (audit §4), in this order:** (1) fill the missing resource files + log when a fallback fires; (2) shuffled-deck dealing,
+  furniture ≠ objects, timeline drift like culture drift, more phrasings, category-based room names, description variants;
+  (3) grow lists (8 → ~16 items, 5 → ~10 atmosphere, lexicons ~12×12, doors ~12/12). Step-0 pins listed in the audit.
+  Gates: `DeterministicUniverseTest`, `--scan` seed 0 → 9, reviewed golden/snapshot regeneration, guide/manual edited in the same commit.
+
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
 documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the

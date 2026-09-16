@@ -40,7 +40,7 @@
 - [x] O2 — CodeNarc as `./vinc.sh --lint` (2026-09-16): CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset with six Vinculum invariant rules, baseline-ratchet (100 → 9 entries: the nine long methods, HK-013); 83 dead imports + 4 unused locals gone, `Player` is `@CompileStatic`, `Game.start`/`ConsoleSink` declared in source; `--lint` is a merge gate. 13 commits on `refactor/o2-lint`.
 - [x] Docs (2026-09-16): README site link fixed (was 404, wrong owner domain); **Player's Guide** live at `docs/terminal/guide/players_guide.md` — plain-language, every number read from source and cited inline, `[GUIDE]` nav entry, page-scoped styles; chronicle `0x9c4e17d`. Ten manual/codex claims found false → **HK-014**; five player-facing bugs surfaced → **HK-015**.
 - [x] Housekeeping HK-014 (2026-09-16): manual + codex corrected against the source (11 pages) — ten wrong numbers fixed in the in-fiction voice; the world catalogue completed (10 cultures, 8 eras, 6 traits, `ATMOS_SHIFT` explained, 15 floor zones); glossaries trimmed to symbols that exist.
-- [ ] Next: user decision — **HK-015** (player-facing bugs; items 1–2 are gameplay changes), or O1 (HeadlessRunner DSL), or HK-013 (nine long methods)
+- [ ] Next: user decision — **HK-016** (procgen variety, content phase; audit `docs/analysis/VARIETY_AUDIT.md`), **HK-015** (player-facing bugs; items 1–2 are gameplay changes), or O1 (HeadlessRunner DSL), or HK-013 (nine long methods)
 
 ---
 
