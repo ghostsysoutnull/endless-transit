@@ -3,7 +3,7 @@
 
 ## 🎯 Current Status
 - **Test Suite:** 256 discovered / 256 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Latest chronicle:** `0x4f767c3` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
+- **Latest chronicle:** `0x6aaede9` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013)
 - **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints, all still stamped `Baselined (not audited)`)
 - **Branch:** `master`. The last *code* merge is `0033981` (HK-019); everything after it is docs and tooling. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
@@ -13,7 +13,7 @@
   - **HK-013** eight long methods left in the lint baseline (extract or re-baseline with a reason — never reformat to the recorded length).
   - **O1** HeadlessRunner DSL (optional, not started). **WF-006** (Low) complexity metric beside `MethodSize`, at the next cadence review.
   - **Undecided user question:** should the debug glitch `KEYSTONE` also prime the building? Today it gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions (diagnosed in the HK-019 session, nothing changed, not in the backlog).
-  - **Candidate diet (user call):** the chronicle index and the lessons files are included in every session and are large.
+  - **Candidate lessons diet (user call, deferred):** `tasks/lessons/` (~7,000 words) is loaded every session; rewriting bullets as rule + pointer needs bullet-by-bullet user review. New lessons already follow that form (CODEX). The chronicle index is no longer included.
 - **Known declared edges (HK-019):** a direct `game.exitLocation()` and the debug `BREACH` teleport do not reset corridor mode; old saves heal on the first `l`. Pre-HK-018 Keystones open nothing (bound by LIP, no name fallback).
 
 ## 🚀 How to Resume
