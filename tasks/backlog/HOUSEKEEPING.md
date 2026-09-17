@@ -11,6 +11,7 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 ## 🔴 OPEN
 
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
+**In progress 2026-09-17** — branch `housekeeping/hk-015-player-bugs`, plan `tasks/active/HK_015_PLAN.md` (user decisions: item 1 once per step + saved, `q` aliased, echo roll seeded, all five items).
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
 documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
 guide in the same commit so it stays true. Items 1 and 2 change gameplay — **user decision required** before touching them.
