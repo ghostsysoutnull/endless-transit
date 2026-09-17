@@ -53,3 +53,16 @@ check": followed; no pattern hierarchy introduced. 6 Reversion — each commit r
 ## Declared
 - Only `restore` is paid down here; the other eight long methods stay in HK-013.
 - R5 writes an error to the log through `Logger.error` — that is the production behavior being pinned, not test noise to suppress.
+
+---
+
+## Execution record (2026-09-16)
+| # | Commit | Result |
+| :-- | :--- | :--- |
+| c0 | `bb1fd19` | plan |
+| c1 | `7789002` | `RestoreContractTest` 5 pins green on master · 250/250 · LINT PASS |
+| c2 | see `git log` (`refactor(HK-013): SyncManager.restore split…`) | script: three blocks, reverse-substitution check passed (zero drift) · 250/250 · baseline diff = 5 deleted lines (one entry), 0 added · 9 → 8 · goldens 0 moved · scan seed 0 → 9 |
+| c3 | this commit | lesson, HK-013 entry (8 remain), WF-006 (Low), HK-018 record pointer |
+
+**Notes.** R5 became two pins (unparseable JSON; valid JSON that fails inside the player block) — the second is the one that proves a helper's exception still lands in `restore`'s catch.
+After the extraction lint was already green *before* re-baselining (a stale baseline entry matches nothing); the regeneration is what makes the debt list honest.

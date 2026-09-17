@@ -134,3 +134,5 @@ the plumbing existed, so its RED was not demonstrated separately — the restore
 (3) **Lint ratchet fired:** the new restore argument made `SyncManager.restore` 65 lines against its baselined 64. The two trailing constructor arguments share a line so the method
 stays at its recorded length; the baseline was not touched. HK-013 still owns that method.
 (4) Found while editing the guide: its corridor row said "There is no `l` here" — corridor mode does offer `l. Leave Corridor` (it is half of the trap). Corrected in c2.
+
+**Follow-up (2026-09-16):** note (3) above was a formatting dodge; it was undone and `restore` extracted properly in HK-013 slice 1 (`tasks/completed/HK_013_RESTORE_PLAN.md`).

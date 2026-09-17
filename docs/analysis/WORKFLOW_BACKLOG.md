@@ -46,6 +46,15 @@ improvement session is planned before the next phase begins.
 > Recommended order: HK-005 + HK-006 housekeeping session (HK-005 touches `Building`, which Phase 10 also
 > edits), then Phase 10. Next scheduled review: Phase 13, or the next phase after Phase 10 if the plan ends there.
 
+### WF-006 — `MethodSize` measures lines; a line break can satisfy it
+**Priority:** Low | **Found:** 2026-09-16 (HK-018 → HK-013 slice 1; user question: "is this good computer science?")
+The 50-line rule found real multi-job methods (all nine baseline entries), but raw length is a proxy: it was dodged once with a line join
+(HK-018, undone in HK-013 slice 1), it treats 64 → 65 like 40 → 140, and a re-wrap could trip it with no real change. **Evaluate at the next
+cadence review, against the jar with a scratchpad prototype (O2 lesson):** `CyclomaticComplexity` and/or `AbcMetric` beside or instead of
+`MethodSize`; whether `MethodSize` can ignore blank/comment lines; how each behaves with the message-keyed baseline (does the message embed the
+score, i.e. does the ratchet still fire on change?); what the current tree scores. Decision options: keep as is / add complexity beside length /
+replace. Until then: `MethodSize` stays a merge gate, with the "extract or re-baseline with a reason" rule in `tasks/lessons/infrastructure.md`.
+
 ---
 
 ## 🟢 CLOSED
