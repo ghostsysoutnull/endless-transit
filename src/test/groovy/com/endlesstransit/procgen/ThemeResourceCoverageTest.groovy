@@ -147,4 +147,9 @@ class ThemeResourceCoverageTest {
     void everyLightingFileHasAtLeast10Lines() {
         service.atmosphere["lighting"].each { String k, List<String> v -> assertFloor("lighting/${k}", v, k == "abyssal" ? 8 : 10) }
     }
+
+    @Test
+    void everyStructuresFileHasAtLeast10Lines() {
+        service.atmosphere["structures"].each { String k, List<String> v -> assertFloor("structures/${k}", v, k == "abyssal" ? 8 : 10) }
+    }
 }
