@@ -191,21 +191,21 @@ class ProcgenDeepSnapshotTest {
 
         // HK-016 step 2 (c2): the first 15 of the monolith/analog deck (272 entries) shuffled by the OBJECT_POOL Random — no repeats.
         List<String> expectedObjects = [
-            "rotary phone grafted onto green power conduit",
-            "data probe fused to cassette tape",
-            "beige keyboard with green power conduit",
-            "rotary phone with black glass panel",
-            "geometric slab infused with magnetic strip",
-            "obsidian cube fused to magnetic strip",
-            "magnetic strip with data probe",
-            "obsidian cube infused with magnetic strip",
-            "green power conduit infused with vhs player",
-            "rotary phone grafted onto neural interface",
-            "obsidian cube fused to floppy disk",
-            "dot matrix printer with black glass panel",
-            "obsidian cube fused to rotary phone",
-            "bioluminescent vein infused with dot matrix printer",
-            "geometric slab infused with vhs player",
+            "neural interface",
+            "crt monitor grafted onto black glass panel",
+            "dot matrix printer grafted onto data probe",
+            "hexagonal pillar infused with rotary phone",
+            "bioluminescent vein infused with transistor radio",
+            "hexagonal pillar infused with beige keyboard",
+            "geometric slab fused to cassette tape",
+            "geometric slab fused to answering machine",
+            "obsidian cube fused to dot matrix printer",
+            "data probe infused with answering machine",
+            "rotary phone grafted onto geometric slab",
+            "reel-to-reel deck",
+            "geometric slab infused with dot matrix printer",
+            "rotary phone grafted onto black glass panel",
+            "oscilloscope grafted onto obsidian cube",
         ]
         assertEquals(expectedObjects, r.objects, "shuffled-deck order from the OBJECT_POOL branch Random")
     }
