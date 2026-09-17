@@ -10,6 +10,14 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-020 — Global command aliases live in two places
+**Found:** 2026-09-17, user OO review of HK-015. `InputHandler.normalize:57-60` holds a hardcoded list of global words and two aliases
+(`m` → `map`, `q` → `quit`, the second added by HK-015); `TurnProcessor.initializeGlobalCommands` holds the command table and a third alias
+(`ll` → `lattice`). Two owners for one fact: a new global command must be added in both or it is case-sensitive by accident.
+**Fix design (needs its own plan + grill — small ownership move):** the command table owns keys *and* aliases (a `GlobalCommands` object built by
+`TurnProcessor`), and `normalize` asks it instead of carrying a list. Pin first: which keys are deliberately case-sensitive today
+(`s`, `ll`, `p`/`P`, `quitnow` — guide `:102-103`), `InputHandlerNormalizeTest` for the rest. No player-visible change intended.
+
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
 **In progress 2026-09-17** — branch `housekeeping/hk-015-player-bugs`, plan `tasks/active/HK_015_PLAN.md` (user decisions: item 1 once per step + saved, `q` aliased, echo roll seeded, all five items).
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
