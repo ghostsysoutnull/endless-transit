@@ -9,6 +9,8 @@ class ThemeService {
     Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
     /** HK-016 step 2: the condition words furniture is described in (themes/conditions.txt). */
     List<String> conditions = []
+    /** HK-016 step 2: description variants per location kind (themes/descriptions/<kind>.txt, indexed). */
+    Map<String, List<String>> descriptions = new TreeMap<String, List<String>>()
     Map<String, Map<String, List<String>>> atmosphere = [
         "walls": new TreeMap<String, List<String>>(),
         "lighting": new TreeMap<String, List<String>>(),
@@ -33,6 +35,9 @@ class ThemeService {
             timelines[key] = loadResourceLines("/themes/timelines/${key}.txt")
         }
         conditions = loadResourceLines("/themes/conditions.txt")
+        for (String key in loadResourceLines("/themes/descriptions/index.txt")) {
+            descriptions[key] = loadResourceLines("/themes/descriptions/${key}.txt")
+        }
         for (String category in ["walls", "lighting", "structures"]) {
             Map<String, List<String>> catMap = (Map<String, List<String>>) atmosphere[category]
             for (String key in loadResourceLines("/themes/atmosphere/${category}/index.txt")) {
@@ -163,6 +168,20 @@ class ThemeService {
             out << (condition ? "${condition} ${items[i]}".toString() : (String) items[i])
         }
         return out
+    }
+
+    /**
+     * HK-016 step 2: one of the kind's description variants, chosen by the location's own seed at
+     * creation (the factory stores it on the model). Null, with a warning, when the file is missing —
+     * the model then keeps its built-in sentence.
+     */
+    String descriptionVariant(String kind, LocusSeed locus) {
+        List<String> pool = descriptions[kind]
+        if (!pool) {
+            Terminal.println "[THEME_WARN] no descriptions file for '${kind}' — using the built-in sentence"
+            return null
+        }
+        return (String) pool[locus.branch("DESC").nextInt(pool.size())]
     }
 
     /** One object drawn with replacement from the deck (HK-016 step 2: one nextInt per call). */

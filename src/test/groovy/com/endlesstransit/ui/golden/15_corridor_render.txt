@@ -11,7 +11,7 @@
 [37m║ [0mTRACE_BUFFER: 0/16 FRAGMENTS[130G[37m║[0m
 [37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
  [37m»» SCANNING_LOCAL_TOPOLOGY...[0m
-[37m║ [0mA long corridor with multiple doors. [THEME: ORGANIC][90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
+[37m║ [0mA narrow service corridor, doors set flush into either wall. [THEME: ORGANIC][90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
 [37m║ [0m[96m [LOCAL_ACCESS_LIST] [0m[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[2mAnalyzing local horizontal artery...[0m[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m

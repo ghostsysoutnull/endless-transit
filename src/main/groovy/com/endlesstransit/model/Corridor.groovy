@@ -12,6 +12,8 @@ class Corridor extends Container {
     int numApartments
     String culture
     String timeline
+    /** HK-016 step 2: the sentence the factory dealt this corridor (themes/descriptions/corridor.txt); null = the built-in one. */
+    String descriptionVariant
 
     List<Door> getDoors() {
         return doors
@@ -41,7 +43,7 @@ class Corridor extends Container {
 
     @Override
     String getDescription() {
-        String base = (getTypeName() == "Artery") ? "A pulsing, organic artery of data" : "A long corridor with multiple doors"
+        String base = (getTypeName() == "Artery") ? "A pulsing, organic artery of data" : (descriptionVariant ?: "A long corridor with multiple doors")
         return "$base. [THEME: ${culture.toUpperCase()}]"
     }
 

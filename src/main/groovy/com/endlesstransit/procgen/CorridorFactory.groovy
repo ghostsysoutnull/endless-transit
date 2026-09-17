@@ -24,6 +24,7 @@ final class CorridorFactory implements LocationFactory<Corridor> {
         Corridor c = new Corridor(numApartments, culture, timeline, locus)
         c.setParent(parent)
         c.fmt = registry.fmt
+        c.descriptionVariant = registry.themeService.descriptionVariant("corridor", locus)   // HK-016 step 2
         return c
     }
 

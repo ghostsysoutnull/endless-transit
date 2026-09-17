@@ -109,6 +109,29 @@ class ProcgenVarietyContractTest {
         assertTrue(rooms > 300, "sample had only ${rooms} rooms")
     }
 
+    // --- 2f: corridor and floor sentences come from resource files and vary ------------------------
+
+    @Test
+    void corridorDescriptions_areFileVariants_andVary() {
+        List<String> variants = factory.themeService.descriptions["corridor"]
+        assertTrue(variants.size() >= 4, "themes/descriptions/corridor.txt must hold at least 4 lines")
+        Set<String> seen = [] as Set
+        SEEDS.each { long seed ->
+            Street street = (Street) WorldGenesis.createInitialWorld(factory, new LocusSeed(seed)).startLocation
+            street.buildings.take(3).each { Building b ->
+                (0..<Math.min(3, b.maxFloors)).each { int f ->
+                    Corridor c = b.getFloor(f).getCorridor()
+                    String desc = c.getDescription()
+                    assertTrue(desc.endsWith(". [THEME: ${c.culture.toUpperCase()}]".toString()), "corridor suffix lost: ${desc}")
+                    String base = desc.substring(0, desc.length() - ". [THEME: ${c.culture.toUpperCase()}]".length())
+                    assertTrue(variants.contains(base), "'${base}' is not a corridor.txt line")
+                    seen << base
+                }
+            }
+        }
+        assertTrue(seen.size() > 1, "every corridor on the sample read the same sentence: ${seen}")
+    }
+
     // --- 2a/2b: shuffled-deck dealing --------------------------------------------------------------
 
     @Test
