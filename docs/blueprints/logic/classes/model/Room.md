@@ -41,3 +41,4 @@ The `Room` class is a terminal leaf in the simulation hierarchy. It manages loca
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: Room.groovy @ 1c7d7b4cc4*

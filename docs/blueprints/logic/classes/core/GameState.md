@@ -34,3 +34,4 @@ The `GameState` is the **Central Source of Truth** for the entire simulation. Si
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: GameState.groovy @ d122d45d36*

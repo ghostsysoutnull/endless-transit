@@ -32,3 +32,4 @@ The `VibeCapsule` is the **Thematic DNA** of a location. It defines the cultural
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: VibeCapsule.groovy @ f271e5674c*

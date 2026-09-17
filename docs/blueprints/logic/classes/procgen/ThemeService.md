@@ -32,3 +32,4 @@ The `ThemeService` is the "aesthetic synthesizer" of the simulation. It maps abs
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: ThemeService.groovy @ d70778af21*

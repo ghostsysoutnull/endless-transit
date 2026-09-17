@@ -36,3 +36,4 @@ The `NavigationOrchestrator` is responsible for world initialization, location t
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: NavigationOrchestrator.groovy @ 048803af34*

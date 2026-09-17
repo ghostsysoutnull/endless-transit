@@ -34,3 +34,4 @@ The `LocusSeed` is the "genetic code" of a location. It encapsulates the simulat
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: LocusSeed.groovy @ d90a9ed6d8*

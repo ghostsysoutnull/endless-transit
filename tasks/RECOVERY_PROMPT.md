@@ -1,11 +1,13 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (HK-019 chronicle `0x0033981`, merge `0033981` — **HK-019 CLOSED**; HK-013 slice 1 chronicle `0xe66fca4`, merge `e66fca4`; HK-018 chronicle `0x7ca28f8`, merge `7ca28f8` — **HK-018 CLOSED**; HK-016 step 3 chronicle `0x0408475`, merge `0408475` — **HK-016 CLOSED**; step 2 chronicle `0x0c49e5d`, merge `0c49e5d`; step 1 chronicle `0x36653e2`, merge `36653e2`; HK-017 merge `926e731`; before that the variety audit chronicle `0x5e1c9a4`, merge `53c3727`; HK-014 `d55e4e6`; Player's Guide `0x9c4e17d`; O2 `0x7b3e2c9`)
+**Last updated:** 2026-09-17 (WF-007 chronicle `0x8885fa2` — **WF-007 CLOSED**, `/close-wave` + `./vinc.sh --docs`; HK-019 chronicle `0x0033981`, merge `0033981` — **HK-019 CLOSED**; HK-013 slice 1 chronicle `0xe66fca4`, merge `e66fca4`; HK-018 chronicle `0x7ca28f8`, merge `7ca28f8` — **HK-018 CLOSED**; HK-016 step 3 chronicle `0x0408475`, merge `0408475` — **HK-016 CLOSED**; step 2 chronicle `0x0c49e5d`, merge `0c49e5d`; step 1 chronicle `0x36653e2`, merge `36653e2`; HK-017 merge `926e731`; before that the variety audit chronicle `0x5e1c9a4`, merge `53c3727`; HK-014 `d55e4e6`; Player's Guide `0x9c4e17d`; O2 `0x7b3e2c9`)
 
 ## 🎯 Current Status
 - **Test Suite:** 256 discovered / 256 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
+- **Latest chronicle:** `0x8885fa2` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0` (baseline: 8 entries)
+- **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS D1=ok(256) D2=ok(0x8885fa2) D3=ok(15)` (15 blueprints, all still stamped `Baselined (not audited)`)
 - **Branch:** `master`, pushed at the end of the HK-019 session on the user's word (code merge `0033981`, chronicle, handover audit; the push republishes the Player's Guide page — its corridor row changed). If `git status -sb` shows ahead/behind, something happened after this file was written — ask. Working tree clean except the player's untracked `session.trace.bak-hk018`. Verify with `git status -sb`.
-- **Active Work:** none — but **WF-007 (High) is open and, per CODEX, blocks the next phase until assessed** (see Next). **All ten OOA phases and O2 are complete**, merged and pushed. **O2 (`./vinc.sh --lint`)**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
+- **Active Work:** none, and nothing blocks the next phase. **WF-007 CLOSED (2026-09-17, chronicle `0x8885fa2`, no source change):** every wave now closes through `/close-wave` (`.claude/commands/close-wave.md`, ten rows, ends in a table — the word "closed" is its output only) and `./vinc.sh --docs` (D1 suite count, D2 this file's `Latest chronicle` line, D3 blueprint stamps by `git hash-object`; a touched class breaks its blueprint's stamp until the blueprint is re-read and re-stamped `Verified against`). The WF-007 work sits on top of the HK-019 push — check `git status -sb` for ahead; push only on the user's word. **All ten OOA phases and O2 are complete**, merged and pushed. **O2 (`./vinc.sh --lint`)**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
   `config/lint/vinc-ruleset.groovy` (house rules + six Vinculum invariant rules), baseline-ratchet `config/lint/baseline.xml` (now
   then exactly the nine long methods → **HK-013**; 8 remain since slice 1), 83 dead imports + 4 unused locals gone, `Player` is
   `@CompileStatic`, `Game.start` / `ConsoleSink` carry `@SuppressWarnings` in source. Plan + execution notes: `tasks/completed/O2_LINT_PLAN.md`.
@@ -71,7 +73,7 @@
   lesson in `tasks/lessons/infrastructure.md` (nine-point close-out list) and **WF-007 (High)**.
 - **HK-013 slice 1 (2026-09-16, chronicle `0xe66fca4`):** `SyncManager.restore` split into `restorePlayer`/`applyMutations`/`remarkFootprints` (by script; `RestoreContractTest` 5 pins first); lint baseline 9 → 8.
   Rule: when the ratchet fires on a baselined method, extract or re-baseline with a stated reason — never reformat to the recorded length. **WF-006 (Low)**: evaluate a complexity metric beside `MethodSize` at the next cadence review.
-- **Next:** **first, WF-007 (High, `docs/analysis/WORKFLOW_BACKLOG.md`)** — make the close-out doc audit a gate (the list in `.claude/commands/chronicle.md` and/or a `./vinc.sh --docs` check); it blocks the next phase until the user has assessed it. Then user decision — no active phase. **HK-015** (player-facing bugs, now also the double `l` after an apartment; items 1–2 — the repeating room roll and the unconditional +15 — are
+- **Next:** user decision — no active phase, nothing blocking. **HK-015** (player-facing bugs, now also the double `l` after an apartment; items 1–2 — the repeating room roll and the unconditional +15 — are
   gameplay changes and need an explicit Directive; every fix edits `docs/terminal/guide/players_guide.md` in the same commit), **HK-013** (8 long
   methods left in the lint baseline), **O1** (HeadlessRunner DSL), or a new audit. None has a plan yet. To grow any procgen list now: append lines to its
   file, run the suite (size and no-duplicate floors are pinned), simulate the goldens, re-pin from the run.
@@ -96,15 +98,15 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: docs-only merges from the HK-019 close-out — `Merge docs/hk-019-doc-audit` or later; the last *code* merge is `0033981`, HK-019; `master` was pushed at session close). Read `tasks/todo.md`, the latest journal in `journals/` (`0x0033981` HK-019, this session; `0xe66fca4` HK-013 slice 1 and `0x7ca28f8` HK-018 before it),
-   `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), `docs/analysis/WORKFLOW_BACKLOG.md` OPEN items (**WF-007 High**, WF-006 Low), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
+   (top: the WF-007 workflow merge or later — docs and tooling only; the last *code* merge is `0033981`, HK-019). Read `tasks/todo.md`, the latest journal in `journals/` (`0x8885fa2` WF-007; `0x0033981` HK-019 and `0xe66fca4` HK-013 slice 1 before it),
+   `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), `docs/analysis/WORKFLOW_BACKLOG.md` OPEN items (WF-006 Low), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
    planned (the simulate → expected-set → allow-list re-pin chain).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=256 SUCCEEDED=256 FAILED=0 SKIPPED=0`;
-   `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0`; `./vinc.sh --scan` → seed 0, 9 nodes.
-4. **Ask before choosing:** there is no active phase. Say first that **WF-007 (High) blocks the next phase until assessed**. Then present the options — WF-007, HK-015 (items 1–2 need a gameplay Directive), O1, HK-013, optional "glitch `KEYSTONE` also primes" — and wait for a
+   `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0`; `./vinc.sh --scan` → seed 0, 9 nodes; `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
+4. **Ask before choosing:** there is no active phase. Present the options — HK-015 (items 1–2 need a gameplay Directive), O1, HK-013, optional "glitch `KEYSTONE` also primes" — and wait for a
    Directive. The user likes decisions as numbered questions with lettered options and a marked preference, answered in one word.
 5. **Every task:** plan file → `/grill` → authorization → branch → ≤5 production files per commit → full suite + `--lint` after every
-   commit → merge `--no-ff` → `/chronicle` → retro → lessons → refresh this file → **run the nine-point close-out list (`tasks/lessons/infrastructure.md`, "Close the session") and show it filled in, before saying "closed"**.
+   commit → merge `--no-ff` → **`/close-wave`** (doc audit → `/chronicle` → retro → lessons → this file → `./vinc.sh --docs`) **and show its ten-row table, before saying "closed"**.
 
 **END_PROMPT**
 
@@ -130,7 +132,8 @@ Initialize session for the Endless Transit substrate.
 | Per-type factories | `src/main/groovy/com/endlesstransit/procgen/{LocationFactory,*Factory}.groovy` |
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
 | Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-015 player-facing bugs, HK-013 long methods, 8 remain; HK-019, HK-018, HK-016 (three steps), HK-017, HK-014 closed) |
-| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: **WF-007 High — close-out doc audit is not mechanical**; WF-006 Low — complexity metric beside `MethodSize`) |
+| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-006 Low — complexity metric beside `MethodSize`; WF-007 closed) |
+| Close-out protocol | `.claude/commands/close-wave.md` + `./vinc.sh --docs` (`.agents/docs-check.sh`) — WF-007 |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md` |
 | Safety mandates | `tasks/lessons/POST_MORTEM_2026_03_11.md`, `tasks/lessons/POST_MORTEM_2026_03_06.md` |

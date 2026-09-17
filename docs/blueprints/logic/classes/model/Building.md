@@ -41,3 +41,4 @@ The `Building` class represents a vertical container of `Floor` units. It manage
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: Building.groovy @ 6f3a7baa60*

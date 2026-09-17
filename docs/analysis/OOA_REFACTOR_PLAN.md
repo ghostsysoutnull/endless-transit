@@ -854,7 +854,7 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 - Each phase runs on its own git branch (`refactor/phase-N-name`); merge to `master` only when all gates pass
 - If anything goes sideways: **STOP, revert, re-plan** — do not push through
 - After any user correction: update `tasks/lessons/<domain>.md`
-- Run `/chronicle` after every completed phase
+- Close every wave with `/close-wave` (doc audit → `/chronicle` → retro → recovery prompt → `./vinc.sh --docs` green); "closed" is that command's output only (WF-007)
 - Write phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, then retro)
 - Log any workflow friction from the retro to `docs/analysis/WORKFLOW_BACKLOG.md`
 - Every 3 phases (Phase 1, 4, 7, 10): review backlog before starting next phase
@@ -863,6 +863,6 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 
 ---
 
-*Last updated: 2026-09-16 — Phase 10 complete; housekeeping HK-005..012 closed; O2 complete (`./vinc.sh --lint`, HK-013 logged). Since then (housekeeping, records in `tasks/completed/`): HK-014, HK-016 (three steps), HK-017, HK-018, HK-013 slice 1, HK-019 closed. **WF-007 (High) open — assess before the next phase.** O1 optional. Next cadence review falls at whatever phase follows.*
+*Last updated: 2026-09-17 — Phase 10 complete; housekeeping HK-005..012 closed; O2 complete (`./vinc.sh --lint`, HK-013 logged). Since then (housekeeping, records in `tasks/completed/`): HK-014, HK-016 (three steps), HK-017, HK-018, HK-013 slice 1, HK-019 closed. WF-007 closed 2026-09-17 (`/close-wave` + `./vinc.sh --docs`); nothing blocks the next phase. O1 optional. Next cadence review falls at whatever phase follows.*
 *No source code changes are authorized by this document.*
 *To begin a phase, issue an explicit Directive per the Vinculum Protocol in `.claude/CODEX.md`.*

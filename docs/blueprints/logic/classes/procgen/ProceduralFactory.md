@@ -43,3 +43,4 @@ The `ProceduralFactory` is the central "architect" of the simulation. It manages
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: ProceduralFactory.groovy @ a7ed203098*
