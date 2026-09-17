@@ -26,9 +26,9 @@ Latest journal state for session continuity:
 ---
 
 ## 🚀 Active Architecture & Roadmap
-- **Active Task:** @docs/analysis/OOA_REFACTOR_PLAN.md
+- **Active Task:** none — see `tasks/todo.md`. The OOA refactor plan (all phases complete) is `docs/analysis/OOA_REFACTOR_PLAN.md` — read on demand, not included.
 
-- **📜 Chronicles & Lore:** @journals/CHRONICLE_INDEX.md
+- **📜 Chronicles & Lore:** `journals/` (index included above)
 - **Backlog:** @tasks/backlog/
 
 ---

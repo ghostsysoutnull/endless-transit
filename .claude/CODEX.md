@@ -72,6 +72,17 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
     * **Full Verification**: Run `./vinc.sh --test` before marking any major task complete.
     * **Lint Check (O2)**: `./vinc.sh --lint` must be green before any merge; `config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
     * **Docs Check (WF-007)**: `./vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, and every class blueprint stamped with its class's current hash. A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
+* **The Gates** (mandatory after every phase; the full history is in `docs/analysis/OOA_REFACTOR_PLAN.md`, read on demand):
+
+| Gate | Command | Checks |
+| :--- | :--- | :--- |
+| Logic | `./vinc.sh --test` | full suite |
+| Visual | golden frames inside `--test` | 36 HUD frames byte-identical |
+| Model | `./vinc.sh --scan` | seed 0 → 9-node match |
+| Lint | `./vinc.sh --lint` | house rules + invariants; baseline may only shrink |
+| Determinism | `DeterministicUniverseTest` | same seed → same world (procgen/model changes) |
+| Docs | `./vinc.sh --docs` | handover facts + blueprint stamps (at close-out) |
+
 * **Coverage Claim Protocol**: Any plan statement of the form "test X guards behavior Y" MUST cite
   the assertion lines that prove it, read from the test file in the current session. A file name or
   a remembered purpose is not evidence. If no assertion exists, the plan marks the behavior
