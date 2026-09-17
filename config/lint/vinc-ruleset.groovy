@@ -42,6 +42,9 @@ ruleset {
     // HK-001: every source of HUD noise draws from FrameEntropy.
     IllegalRegex { name = 'NoRandomInViewComponent'; regex = /new\s+Random\s*\(\s*\)/; applyToFileNames = '*Component.groovy'
                    description = 'HK-001: HUD noise must come from FrameEntropy.forFrame(ctx)' }
+    // HK-015: every roll in the world comes from a LocusSeed (procgen: Strict Determinism).
+    IllegalRegex { name = 'NoUnseededRandomInWorld'; regex = /new\s+Random\s*\(\s*\)/; applyToFilesMatching = '.*/main/.*/(model|procgen)/.*'
+                   description = 'HK-015: world rolls are seeded — locus.branch(...).nextRandom(), never new Random()' }
     // model invariant 7: the model never touches the journal.
     IllegalClassReference { name = 'ModelNeverTouchesJournal'; classNames = 'com.endlesstransit.core.JournalManager'
                             applyToFilesMatching = '.*/main/.*/model/.*'; description = 'model invariant 7: publish an event instead' }

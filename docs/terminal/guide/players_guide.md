@@ -112,7 +112,7 @@ Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87
 | Floor, elevator | `u` up, `d` down, `c` into the corridor, `l` leave the building. On the top floor, `j` appears once you can breach. |
 | Floor, corridor | `b` back to the elevator, numbered doors, `l` leave to the building (it skips the elevator; the floor is back at the elevator on your next visit). On the top floor, `j` appears here too once you can breach. |
 | Room | `t` interact, `f` next room, `b` previous room, `l` from the first room back to the corridor. |
-| Null Reach | `S` (capital) to scan for an echo, `c` to capture it once the signal is strong enough. |
+| Null Reach | `e` to scan for an echo, `c` to capture it once the signal is strong enough. |
 
 ### The `t` menu inside a room
 
@@ -186,8 +186,8 @@ object. It prints `>>> SPECTRAL_DEVIATION` in yellow when it happens. One roll p
 standing still (`i`, `s`, `help`) never roll again, and reloading a save does not either. <!-- Room.groovy:69-78, Player.groovy claimPassiveRoll -->
 
 **Echoes in the void.** A `VOID_REACH` on the filament menu is a **Null Reach**. It holds one **Spectral Echo**,
-worth 1,000 to 9,999 Hz, and the only way to get it is to type a capital `S` a few times until the signal reaches
-100, then `c`. Lowercase `s` is stolen by the global scan command. One echo per reach, ever.
+worth 1,000 to 9,999 Hz, and the way to get it is to type `e` a few times until the signal reaches 100, then `c`. Each scan adds 10 to 39,
+fixed by the reach and your step count, so the same walk gives the same readings. One echo per reach, ever.
 <!-- NullSector.groovy:89-110, TurnProcessor.groovy:80 -->
 
 ## Reading doors before you open them
@@ -389,8 +389,6 @@ These are things the game says that are not true, or things that work differentl
 fixed in a future version.
 
 * `TRACE_BUFFER: n/16` suggests a cap of 16. There is no cap.
-* In a Null Reach, the menu offers `s. Scan for spectral echoes`, but lowercase `s` runs the global scan instead.
-  Type capital `S`.
 * After a screenshot the game says it went to `/screenshots/`. It is `screenshots/` relative to where you launched.
   <!-- CaptureCommand.groovy:32, CaptureService.groovy:21 -->
 * A door marked `(VISITED)` in the corridor text never appears; visited status is shown as `[V]` in the door list
@@ -434,7 +432,6 @@ Come back after a reload and it is still there. You can stash a Keystone in a ro
 
 ### Things that were built and never wired up
 
-* A `Spectral Echo` mini-game that is only reachable with a capital `S`.
 * A door trace called `METALLIC_TEARING`, with full text about structural stress, assigned to no room type.
 * A scrawled `_it_hums_` inscription for abandoned rooms. There are no abandoned rooms.
 * Lootable containers with names like `Quantum Vault` and `Sealed Terminal`. The generator exists, nothing calls it.
