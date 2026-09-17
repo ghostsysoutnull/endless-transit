@@ -6,3 +6,7 @@ Inverted
 Writhing
 Eyeless
 Null
+Corrupted
+Dangling
+Leaking
+Unbound

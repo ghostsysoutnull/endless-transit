@@ -6,3 +6,7 @@ Membrane
 Sigil
 Altar
 Exception
+Stack
+Socket
+Fault
+Kernel

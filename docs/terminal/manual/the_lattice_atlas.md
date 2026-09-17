@@ -154,12 +154,12 @@ Names above the Building are Culture-blind: a Sector is *Core Matrix 17* whether
 | :--- | :--- | :--- |
 | **Rust** | Corroded, Oxidized, Patchwork, Scrapyard, Weathered, Fading, Dusty, Assembled | Shell, Stack, Monolith, Heap, Vault, Husk, Anchor, Frame |
 | **Neon** | Vibrant, Fluorescent, Flickering, Synthetic, Digital, Glitchy, Pulsing, Lucid | Hub, Nexus, Array, Node, Core, Circuit, Relay, Grid |
-| **Baroque** | Ornate, Golden, Cathedral, Sacred, Opulent, Marble, Grand, Sanctum | Gallery, Archive, Palace, Temple, Sanctum, Hall, Cathedral, Altar |
+| **Baroque** | Ornate, Golden, Cathedral, Sacred, Opulent, Marble, Grand, Sanctum, Gilt, Vaulted, Solemn, Baroque | Gallery, Archive, Palace, Temple, Sanctum, Hall, Cathedral, Altar, Chapel, Vestry, Cloister, Spire |
 | **Monolith** | Brutalist, Concrete, Silent, Impenetrable, Grey, Eternal, Static, Cold | Slab, Tower, Obelisk, Block, Unit, Monolith, Foundation, Pillar |
 | **Gilded** | Gilded, Velvet, Brass, Crystal, Ornate, Mahogany, Opulent, Clockwork | Salon, Gallery, Atrium, Parlour, Conservatory, Manor, Ballroom, Ledger |
 | **Shogun** | Lacquered, Silent, Folded, Cedar, Ashen, Vermilion, Paper, Moonlit | Pavilion, Shrine, Garden, Dojo, Keep, Teahouse, Lantern, Bridge |
 | **Zenith** | Marble, Ivory, Laurel, Olympian, Sunlit, Alabaster, Columned, Serene | Forum, Temple, Colonnade, Basilica, Agora, Pantheon, Rotunda, Acropolis |
-| **Abyssal** | Recursive, Unhandled, Orphaned, Severed, Inverted, Writhing, Eyeless, Null | Vertex, Thread, Partition, Cyst, Membrane, Sigil, Altar, Exception |
+| **Abyssal** | Recursive, Unhandled, Orphaned, Severed, Inverted, Writhing, Eyeless, Null, Corrupted, Dangling, Leaking, Unbound | Vertex, Thread, Partition, Cyst, Membrane, Sigil, Altar, Exception, Stack, Socket, Fault, Kernel |
 | **Void** | Hollow, Empty, Silent, Ghostly, Drifting, Dark, Abyssal, Stellar | Void, Shadow, Echo, Aperture, Gravity, Well, Horizon, Reach |
 | **Organic** | Living, Grown, Pulsing, Verdant, Breathing, Soft, Neural, Fungal | Pod, Spore, Nest, Shell, Chamber, Limb, Leaf, Root |
 
