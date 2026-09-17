@@ -239,7 +239,8 @@ Coherence" is not in the game. All merges give 15.
 
 **Keystones.** When a building is primed (next section) and you merge two items while inside it, you get that
 building's Keystone instead of a hybrid. It is worth 0 Hz, and it is the key to the basement. You only ever hold
-one per building. <!-- SynthesisService.groovy:16-19 -->
+one per building, and it opens only that building, even if another one has the same name.
+<!-- SynthesisService.groovy:16, Building.groovy:37-39 -->
 
 ## The ritual and the bedrock
 
@@ -270,10 +271,10 @@ down there come from a special word list of 28 entries that you never see above 
 
 <div class="warn" markdown="1">
 **Dying resets the ritual.** A reboot rebuilds the building, so sampled floors, merge count and the breach are all
-lost. Your Keystone survives in the buffer, but it only fits the `j` check if its name still matches the building's,
-and a game update that changes the name lists can rename a building between sessions (known quirk, may be fixed
-later: the Keystone should remember the building's address, not its name). If that happens, the building is still
-primed, so merging two more items inside it forges a fresh Keystone. Sync before you attempt the breach anyway.
+lost. Your Keystone survives in the buffer and still fits: it remembers the building's address in the world, not its
+name, so it keeps working even if a game update renames the building. <!-- Building.groovy:37-39 --> A Keystone forged
+before that fix remembers nothing and opens nothing; the building is still primed, so merging two more items inside it
+forges a working one. Sync before you attempt the breach anyway.
 </div>
 
 ## Where to go

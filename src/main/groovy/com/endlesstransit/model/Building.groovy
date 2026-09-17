@@ -34,9 +34,9 @@ class Building extends Container {
         return sampledFloors.size() >= maxFloors && infusionCount >= 7
     }
 
-    /** The item in this buffer that opens this building's Bedrock, or null (HK-018: the one Keystone rule). */
+    /** The item in this buffer that opens this building's Bedrock, or null (HK-018: bound by LIP; the name is display only). */
     InventoryItem keystoneIn(List<InventoryItem> inventory) {
-        return inventory.find { InventoryItem it -> it.isKeystone && it.name.contains(name) }
+        return inventory.find { InventoryItem it -> it.isKeystone && it.boundLip == getLIP() }
     }
 
     void breach() {

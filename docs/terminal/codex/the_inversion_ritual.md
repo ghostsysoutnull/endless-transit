@@ -20,7 +20,7 @@ The building's "Frequency Well" must be primed with synthesis.
 
 ## [STAGE 3: KEYSTONE_SYNTHESIS]
 Once the building is sampled and infused, the **next synthesis performed inside it** collapses into the **Building Keystone** — the eighth merge counting from a cold building, which means at least nine fragments in total.
-*   **The Object:** The Keystone reads **0 Hz** and carries the building's name. You hold at most one per building.
+*   **The Object:** The Keystone reads **0 Hz** and carries the building's name, but it is anchored to the building's **locus address**, not to the name: a renamed structure still answers to it, and a namesake does not. You hold at most one per building.
 *   **Persistence:** The Keystone is stored in the **Quantum Trace Buffer** and survives synchronization. So does the building's priming — but a Coherence reboot regenerates the web and erases it.
 
 ## [STAGE 4: THE_BEDROCK_BREACH]

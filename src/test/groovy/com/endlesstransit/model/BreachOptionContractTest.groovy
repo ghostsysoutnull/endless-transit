@@ -136,6 +136,54 @@ class BreachOptionContractTest {
     }
 
     @Test
+    void aForgedKeystoneStillOpensItsBuildingAfterTheBuildingIsRenamed() {
+        Game game = new Game(SEED)
+        Building bldg = buildings(game)[0]
+        prime(bldg)
+        Floor peak = peakOf(game, bldg)
+        InventoryItem keystone = forgeKeystone(game, peak)
+        assertEquals(bldg.getLIP(), keystone.boundLip, "A forged Keystone is bound to its building's LIP")
+
+        bldg.name = "Renamed By A Content Update"
+
+        assertTrue(peak.getOptions(game).containsKey(BREACH), "The Keystone is bound by LIP: a renamed building must still open")
+    }
+
+    @Test
+    void aKeystoneWithNoBoundLipOpensNothingAndDoesNotBlockForging() {
+        Game game = new Game(SEED)
+        Building bldg = buildings(game)[0]
+        prime(bldg)
+        Floor peak = peakOf(game, bldg)
+        game.player.inventory << new InventoryItem("${bldg.name} Keystone", 0, 0, true)
+
+        assertFalse(peak.getOptions(game).containsKey(BREACH), "A matching name alone must not open the building")
+
+        InventoryItem forged = forgeKeystone(game, peak)
+        assertEquals(bldg.getLIP(), forged.boundLip, "An unbound Keystone must not block forging the bound one")
+        assertTrue(peak.getOptions(game).containsKey(BREACH), "The bound Keystone opens the building")
+    }
+
+    @Test
+    void aBoundKeystoneDoesNotOpenAnotherBuildingOfTheSameName() {
+        Game game = new Game(SEED)
+        Building first = buildings(game)[0]
+        Building twin = buildings(game)[1]
+        twin.name = first.name
+        prime(first)
+        prime(twin)
+        forgeKeystone(game, peakOf(game, first))
+
+        Floor twinPeak = peakOf(game, twin)
+        assertFalse(twinPeak.getOptions(game).containsKey(BREACH), "The first building's Keystone must not open its namesake")
+
+        InventoryItem twinKeystone = forgeKeystone(game, twinPeak)
+        assertEquals(twin.getLIP(), twinKeystone.boundLip, "The namesake forges its own Keystone")
+        assertEquals(2, game.player.inventory.count { it.isKeystone }, "One Keystone per building, not per name")
+        assertTrue(twinPeak.getOptions(game).containsKey(BREACH), "The namesake's own Keystone opens it")
+    }
+
+    @Test
     void keystoneSurvivesSyncAndRestore() {
         // HK-012: never touch the player's save. Work on a scratch file and prove the real one is untouched.
         File real = new File(SyncManager.SAVE_FILE)
@@ -157,6 +205,7 @@ class BreachOptionContractTest {
             fresh.restoreSession()
 
             assertEquals(1, fresh.player.inventory.count { it.isKeystone }, "The Keystone flag must survive sync/restore")
+            assertEquals(bldg.getLIP(), fresh.player.inventory.find { it.isKeystone }.boundLip, "The Keystone's bound LIP must survive sync/restore")
             Floor restoredPeak = (Floor) fresh.currentLocation
             assertTrue(restoredPeak.getOptions(fresh).containsKey(BREACH), "A restored Keystone must still open its building")
         } finally {

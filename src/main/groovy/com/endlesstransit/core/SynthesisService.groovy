@@ -13,8 +13,7 @@ class SynthesisService {
     InventoryItem synthesize(InventoryItem item1, InventoryItem item2,
                              Location location, List<InventoryItem> currentInventory) {
         Building bldg = (Building) location?.findAncestor(Building.class)
-        boolean createKeystone = bldg != null && bldg.isPrimed() &&
-            !currentInventory.any { it.isKeystone && it.name.contains(bldg.name) }
+        boolean createKeystone = bldg != null && bldg.isPrimed() && bldg.keystoneIn(currentInventory) == null
 
         int newFreq     = createKeystone ? 0 : item1.frequency.value + item2.frequency.value
         String newName  = createKeystone
@@ -22,6 +21,6 @@ class SynthesisService {
             : "${item1.name.split(' ')[0]}-${item2.name.split(' ')[0]} Hybrid"
         int newMergeCount = (item1.sessionMergeCount ?: 0) + (item2.sessionMergeCount ?: 0) + 1
 
-        return new InventoryItem(newName, newFreq, newMergeCount, createKeystone)
+        return new InventoryItem(newName, newFreq, newMergeCount, createKeystone, createKeystone ? bldg.getLIP() : null)
     }
 }

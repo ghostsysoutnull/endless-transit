@@ -32,7 +32,8 @@ class SyncManager {
                     "name": it.name,
                     "frequency": it.frequency.value,
                     "sessionMergeCount": it.sessionMergeCount,
-                    "isKeystone": it.isKeystone
+                    "isKeystone": it.isKeystone,
+                    "boundLip": it.boundLip
                 ] }
             ],
             "mutations": gatherMutations(game)
@@ -83,7 +84,7 @@ class SyncManager {
                     (String) item["name"], 
                     (int) item["frequency"], 
                     (int) item["sessionMergeCount"], 
-                    (boolean) item["isKeystone"]
+                    (boolean) item["isKeystone"], (String) item["boundLip"]
                 ))
             }
 
