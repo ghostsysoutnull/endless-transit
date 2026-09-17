@@ -12,6 +12,11 @@ improvement session is planned before the next phase begins.
 
 ## 🔴 OPEN
 
+### WF-008 — `/close-wave` applies ten rows to every wave and makes the handover grow
+**Priority:** Medium | **Found:** 2026-09-17 (user review of WF-007: "too token hungry … a much larger scope than it should")
+Measured: WF-007's close-out wrote as many words as its work (~2,200 each), the same facts seven times; the recovery prompt is 2,960 words, 1,100 of them
+per-wave history; `CLAUDE.md` includes the finished OOA plan (7,493 words) in every session. Plan: `tasks/WF_008_PLAN.md`.
+
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.
 
