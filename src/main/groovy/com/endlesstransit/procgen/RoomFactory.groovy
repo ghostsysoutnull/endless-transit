@@ -56,9 +56,8 @@ final class RoomFactory {
         // 6. Furniture
         int numFurniture = locus.nextInt(1, 3)
         Random furnRandom = locus.branch("FURNITURE").nextRandom()
-        for (int i = 0; i < numFurniture; i++) {
-            r.furniture << registry.themeService.generateHybridObject(culture, timeline, furnRandom)
-        }
+        // HK-016 step 2: furniture is a conditioned culture item, disjoint from the object deck.
+        r.furniture.addAll(registry.themeService.generateFurniture(culture, numFurniture, furnRandom))
         r.fmt = registry.fmt
         return r
     }

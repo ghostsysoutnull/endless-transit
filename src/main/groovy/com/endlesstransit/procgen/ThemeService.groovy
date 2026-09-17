@@ -7,6 +7,8 @@ import groovy.transform.CompileStatic
 class ThemeService {
     Map<String, List<String>> cultures = new TreeMap<String, List<String>>()
     Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
+    /** HK-016 step 2: the condition words furniture is described in (themes/conditions.txt). */
+    List<String> conditions = []
     Map<String, Map<String, List<String>>> atmosphere = [
         "walls": new TreeMap<String, List<String>>(),
         "lighting": new TreeMap<String, List<String>>(),
@@ -30,6 +32,7 @@ class ThemeService {
         for (String key in loadResourceLines("/themes/timelines/index.txt")) {
             timelines[key] = loadResourceLines("/themes/timelines/${key}.txt")
         }
+        conditions = loadResourceLines("/themes/conditions.txt")
         for (String category in ["walls", "lighting", "structures"]) {
             Map<String, List<String>> catMap = (Map<String, List<String>>) atmosphere[category]
             for (String key in loadResourceLines("/themes/atmosphere/${category}/index.txt")) {
@@ -143,6 +146,23 @@ class ThemeService {
         deck.addAll(cAssets)
         deck.addAll(tAssets)
         return Collections.unmodifiableList(deck)
+    }
+
+    /**
+     * HK-016 step 2: furniture is a culture item in a condition ("overturned tatami mat"), never a
+     * hybrid — the FURNITURE line stops reading as a second objects line. Items are dealt without
+     * replacement (a shuffled copy of the culture list), each with a condition drawn by r.
+     */
+    List<String> generateFurniture(String culture, int count, Random r) {
+        List<String> items = new ArrayList<String>(getCultureAssets(culture))
+        if (!items) return (List<String>) (1..count).collect { "Strange Fixture" }
+        Collections.shuffle(items, r)
+        List<String> out = []
+        for (int i = 0; i < Math.min(count, items.size()); i++) {
+            String condition = conditions ? (String) conditions[r.nextInt(conditions.size())] : null
+            out << (condition ? "${condition} ${items[i]}".toString() : (String) items[i])
+        }
+        return out
     }
 
     /** One object drawn with replacement from the deck (HK-016 step 2: one nextInt per call). */

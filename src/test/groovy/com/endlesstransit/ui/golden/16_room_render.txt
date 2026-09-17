@@ -15,7 +15,7 @@
 [37m║ [0mYou are in a maintenance pit ringed by chain hoists and drip trays. The walls are[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
 [37m║ [0m[37mgreen[0m calcified shell-fragments.[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0mThe space is illuminated by [33mthe warm cathode glow of a CRT monitor[0m.[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
-[37m║ [0m[2mFURNITURE:[0m chitinous plate[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0m[2mFURNITURE:[0m dust-covered chitinous plate[90G[37m║ [0m [36m█[0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
 [37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m██[0m[130G[37m║[0m
 [37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [36m████████[0m[130G[37m║[0m

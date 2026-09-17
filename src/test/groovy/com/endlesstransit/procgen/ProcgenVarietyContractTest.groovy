@@ -39,6 +39,31 @@ class ProcgenVarietyContractTest {
         return out
     }
 
+    // --- 2c: furniture is a conditioned culture item, disjoint from the object deck ---------------
+
+    @Test
+    void furnitureIsConditionedCultureItem_neverAnObject_noRepeatInRoom() {
+        List<String> conditions = factory.themeService.conditions
+        assertTrue(conditions.size() >= 8, "themes/conditions.txt must hold at least 8 lines")
+        int rooms = 0
+        sampleApartments().each { Apartment a ->
+            List<String> items = factory.themeService.getCultureAssets(a.culture)
+            List<String> deck = factory.themeService.objectDeck(a.culture, a.timeline)
+            a.rooms.each { Room r ->
+                rooms++
+                assertTrue(r.furniture.size() in 1..3, "1-3 furnishings per room")
+                assertEquals(r.furniture.size(), (r.furniture as Set).size(), "furniture repeats in ${r.getLIP()}: ${r.furniture}")
+                r.furniture.each { String f ->
+                    int cut = f.indexOf(' ')
+                    assertTrue(cut > 0 && conditions.contains(f.substring(0, cut)) && items.contains(f.substring(cut + 1)),
+                        "'${f}' is not '<condition> <${a.culture} item>'")
+                    assertFalse(deck.contains(f), "furniture '${f}' is also an object form")
+                }
+            }
+        }
+        assertTrue(rooms > 300, "sample had only ${rooms} rooms")
+    }
+
     // --- 2a/2b: shuffled-deck dealing --------------------------------------------------------------
 
     @Test

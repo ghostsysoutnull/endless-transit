@@ -185,8 +185,8 @@ class ProcgenDeepSnapshotTest {
         assertEquals("[CLEAR]", r.atmoTraits["SIGNAL"])
         assertEquals(3, r.atmoTraits.size())
 
-        // HK-016 step 2 (c2): one nextInt per object from the deck; c3 gives furniture its own generator.
-        assertEquals(["bioluminescent vein fused to crt monitor"], r.furniture, "furniture from the FURNITURE branch Random")
+        // HK-016 step 2 (c3): furniture is a conditioned culture item from the FURNITURE branch Random, never a hybrid.
+        assertEquals(["cracked neural interface"], r.furniture, "furniture from the FURNITURE branch Random")
 
         // HK-016 step 2 (c2): the first 15 of the monolith/analog deck (272 entries) shuffled by the OBJECT_POOL Random — no repeats.
         List<String> expectedObjects = [
