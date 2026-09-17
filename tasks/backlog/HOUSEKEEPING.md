@@ -10,6 +10,11 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-019 — Corridor mode is sticky: a floor left with `l` from the corridor never shows `u`/`d` again until `b`
+**Found:** 2026-09-16, the "Left open" line of HK-018. A floor remembers corridor mode across re-entry; the corridor's `l` exits to the
+building without passing the elevator, so the next visit opens on the corridor menu. **Fix (behavior change, user decisions D1a/D2/D3):**
+the corridor-mode `l` returns the floor to elevator mode as it leaves (`Floor.leave`). Plan: `tasks/active/HK_019_PLAN.md`.
+
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
 documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
