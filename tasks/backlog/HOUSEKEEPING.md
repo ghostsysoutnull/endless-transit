@@ -61,6 +61,18 @@ shrunken file with the change.
 
 ## 🟢 CLOSED
 
+### HK-017 — Narrative pane wrapped to 88 columns; the split box holds 86 (every pane-wide row ended in `...`)
+**Found:** 2026-09-16, HK-016 step-1 plan grill (simulation of the new Industrial structure line wrapped the room sentence and the
+first line ended `The walls are g...`). `FrameGeometry.LEFT_PANE_WIDTH` was `SPLIT_POINT - 2` (88) while `Terminal.splitBoxedLine`
+keeps `splitPoint - 4` (86) on the left — measured: 86 fits, 87–88 truncated. Pre-existing on every frame: the dashed separator,
+the two-column building/filament lists and the room's `RESONANCE: [STA...` were all laid out at 88 and cut.
+**Resolution (`54f3f19`, branch `housekeeping/hk-017-pane-wrap`):** `LEFT_PANE_WIDTH = SPLIT_POINT - 4`; pin `FrameGeometryContractTest`
+(pane-wide line survives the box; a wrap landing on the limit is never truncated; both red on the old constant); 12 goldens regenerated,
+44 changed lines, every one the artifact disappearing. **Noted, not fixed:** `RIGHT_PANE_WIDTH` (38) is also one wider than the box keeps
+(37) and `boxedLine`/`splitBoxedLine` truncate one column short of the physical capacity everywhere — the telemetry pane never wraps and
+sizes at `width - 4`, so it is unreachable today; if a right-pane row ever reaches 38 columns, align `ansiSafeTruncate`'s inner widths
+with the physical columns (left `splitPoint - 3`, right `width - splitPoint - 2`) rather than shrinking the pane again.
+
 ### HK-014 — Manual and codex stated numbers the code contradicts, and omitted half the world's catalogue
 **Found:** 2026-09-16, chronicle `0x9c4e17d`. Ten claims in `docs/terminal/manual/` and `docs/terminal/codex/` disagreed with the source
 (16-slot cap, +30% stabilized merge, 0.5x/2.0x era table, consonant values 10–50, item "shatter", ritual = 70% floors + 7 resonant
