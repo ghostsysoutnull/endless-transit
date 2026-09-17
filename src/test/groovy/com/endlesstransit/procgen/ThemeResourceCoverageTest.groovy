@@ -152,4 +152,13 @@ class ThemeResourceCoverageTest {
     void everyStructuresFileHasAtLeast10Lines() {
         service.atmosphere["structures"].each { String k, List<String> v -> assertFloor("structures/${k}", v, k == "abyssal" ? 8 : 10) }
     }
+
+    @Test
+    void everyLexiconHasAtLeast12AdjectivesAnd12Nouns() {
+        service.cultures.keySet().each { String culture ->
+            Map lexicon = (Map) NameGenerator.buildingLexicon[culture]
+            assertFloor("lexicon ${culture} adj", (List<String>) lexicon.adj, 12)
+            assertFloor("lexicon ${culture} noun", (List<String>) lexicon.noun, 12)
+        }
+    }
 }
