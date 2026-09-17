@@ -1,0 +1,8 @@
+Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.
+Synth-Glass Slab|A pristine synth-glass barrier, reflecting the corridor's dim light.
+Pitted Concrete|A massive brutalist slab of pitted concrete.
+Reinforced Polymer|A reinforced polymer.
+Oxidized Metal Hatch|A oxidized metal hatch.
+Pristine Ceramic|A pristine ceramic.
+Brutalist Slab|A massive brutalist slab of pitted concrete.
+Industrial Barrier|A industrial barrier.
