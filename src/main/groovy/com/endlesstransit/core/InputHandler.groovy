@@ -54,7 +54,8 @@ class InputHandler {
 
         // Global Commands
         String lower = input.toLowerCase()
-        if (lower in ["i", "sync", "map", "m", "lattice", "glitch", "help", "quit"]) {
+        if (lower in ["i", "sync", "map", "m", "lattice", "glitch", "help", "quit", "q"]) {
+            if (lower == "q") return "quit"
             return lower == "m" ? "map" : lower
         }
         if (lower == "?") return "help"

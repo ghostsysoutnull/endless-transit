@@ -95,11 +95,11 @@ Keys are checked in this order: first the global commands, then whatever the cur
 | `P` | Same, but with colour codes. Not mentioned anywhere in the game. |
 | `help` or `?` | One line listing a few commands. |
 | `glitch` | Opens the debug menu. See the spoilers section. |
-| `quit` | Asks for confirmation, offers to save, prints an ending. |
+| `quit`, `q` | Asks for confirmation, offers to save, prints an ending. |
 | `quitnow` | Exits immediately, no confirmation, no save. Hidden. |
 | Enter alone | Repeats your last move. If that move is now impossible but its opposite is possible, it turns you around instead. <!-- NavigationEngine.groovy:42-55 --> |
 
-Case matters for some of these and not others. `i`, `m`, `map`, `sync`, `lattice`, `glitch`, `help` and `quit`
+Case matters for some of these and not others. `i`, `m`, `map`, `sync`, `lattice`, `glitch`, `help`, `quit` and `q`
 work in any case. `s`, `ll`, `p`, `P` and `quitnow` must be typed exactly. <!-- InputHandler.groovy:57 -->
 Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87 -->
 
@@ -388,7 +388,6 @@ seeds for a building with at least that many floors, or that culture, and prints
 These are things the game says that are not true, or things that work differently from how they look. They may be
 fixed in a future version.
 
-* The help line lists `q: Terminate`. Pressing `q` does nothing. Use `quit`. <!-- RenderingCoordinator.groovy:40 -->
 * `TRACE_BUFFER: n/16` suggests a cap of 16. There is no cap.
 * In a Null Reach, the menu offers `s. Scan for spectral echoes`, but lowercase `s` runs the global scan instead.
   Type capital `S`.
