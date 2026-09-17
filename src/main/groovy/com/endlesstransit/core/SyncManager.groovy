@@ -25,6 +25,7 @@ class SyncManager {
             "player": [
                 "coherence": player.coherence,
                 "stepCount": player.stepCount,
+                "lastRollStep": player.lastRollStep,
                 "currentLIP": game.currentLocation.getLIP(),
                 "footprints": player.visitedLIPs.toList(),
                 "visitedPaths": player.visitedPaths.toList(),
@@ -95,6 +96,7 @@ class SyncManager {
         Player player = new Player(events)
         player.coherence = (int) playerState["coherence"]
         player.stepCount = (int) playerState["stepCount"]
+        player.lastRollStep = playerState["lastRollStep"] != null ? (int) playerState["lastRollStep"] : -1
         player.visitedLIPs.addAll((List<String>) playerState["footprints"])
         player.visitedPaths.addAll((List<String>) playerState["visitedPaths"])
         

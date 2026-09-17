@@ -180,10 +180,10 @@ the alphabet positions of the consonants (B is 2, Z is 26, vowels count nothing)
 room in the game sits at depth 12. Long names with lots of consonants are worth more. If the room's culture matches
 the planet's main culture, which is true most of the time, you get another 10%. <!-- Gematria.groovy:11-33, Room.groovy:166 -->
 
-**The free lottery.** Every time you press Enter while standing in a room, there is a 30% chance the game hands
-you a **Hidden Frequency** worth between one million and ten million hertz, about a thousand times any normal
-object. It prints `>>> SPECTRAL_DEVIATION` in yellow when it happens. <!-- Room.groovy:69-77 --> See the spoilers section
-for why this is even better than it sounds.
+**The free lottery.** Every time you *move* inside an apartment (step into a room, go `b` or `f`, or use `t`), there
+is a 30% chance the room hands you a **Hidden Frequency** worth between one million and ten million hertz, about a thousand times any normal
+object. It prints `>>> SPECTRAL_DEVIATION` in yellow when it happens. One roll per move: prompts spent
+standing still (`i`, `s`, `help`) never roll again, and reloading a save does not either. <!-- Room.groovy:69-78, Player.groovy claimPassiveRoll -->
 
 **Echoes in the void.** A `VOID_REACH` on the filament menu is a **Null Reach**. It holds one **Spectral Echo**,
 worth 1,000 to 9,999 Hz, and the only way to get it is to type a capital `S` a few times until the signal reaches
@@ -415,20 +415,12 @@ The ending you see on `quit` depends on where you are and how much you have seen
 
 Twenty places is easy. One trip into one apartment marks the apartment, the room, and every ancestor on the way.
 
-### The Hidden Frequency farm
-
-The 30% room lottery is seeded by your step count, and your step count only changes when you *move*. So if the
-lottery pays out on a given prompt, it pays out again, with the identical number, on every prompt you spend in
-that room without moving. Press Enter repeatedly and collect an unlimited stack of identical seven-figure items for
-one Coherence each. Each one also counts as a capture on that floor for the ritual. <!-- Room.groovy:70, NavigationCommand.groovy:35 -->
-This is a bug and it may be fixed later.
-
 ### Free Coherence
 
 In the buffer screen, `m 1 1` is rejected as a merge because both indexes are the same. The 15 Coherence is
 granted anyway. Net result: +14 per prompt, forever. <!-- Player.groovy:70, QuantumBufferController.groovy:44 --> Also a bug.
 
-Combined with the farm above, you can never die and never run out of items. The game is still fun. Just be aware.
+With this you can never die. The game is still fun. Just be aware.
 
 ### The debug menu
 

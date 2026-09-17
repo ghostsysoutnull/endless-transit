@@ -13,6 +13,8 @@ class Player {
     /** Domain event channel; GameState hands in its bus, a standalone Player gets an inert one (Phase 10). */
     final EventBus events
     int stepCount = 0
+    /** The step on which a room last rolled its passive capture; saved with stepCount (HK-015). */
+    int lastRollStep = -1
     SynthesisService synthesisService = new SynthesisService()
     Set<String> visitedLIPs = new LinkedHashSet<>()
     // visitedPaths is intentionally absent from GameMemento.
@@ -56,6 +58,16 @@ class Player {
     void capture(InventoryItem item, Location where) {
         inventory.add(item)
         events.publish(new ItemCaptured(item, where))
+    }
+
+    /**
+     * A room may roll its passive capture once per step. Steps only advance on navigation, so without
+     * this a winning roll repeated on every prompt spent standing still (HK-015).
+     */
+    boolean claimPassiveRoll() {
+        if (lastRollStep == stepCount) return false
+        lastRollStep = stepCount
+        return true
     }
 
     void dropItem(int index) {
