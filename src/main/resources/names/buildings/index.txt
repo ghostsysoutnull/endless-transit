@@ -1,6 +1,8 @@
 baroque
+gilded
 monolith
 neon
 organic
 rust
+shogun
 void
