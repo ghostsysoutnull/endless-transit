@@ -1,9 +1,9 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (HK-018 chronicle `0x7ca28f8`, merge `7ca28f8` — **HK-018 CLOSED**; HK-016 step 3 chronicle `0x0408475`, merge `0408475` — **HK-016 CLOSED**; step 2 chronicle `0x0c49e5d`, merge `0c49e5d`; step 1 chronicle `0x36653e2`, merge `36653e2`; HK-017 merge `926e731`; before that the variety audit chronicle `0x5e1c9a4`, merge `53c3727`; HK-014 `d55e4e6`; Player's Guide `0x9c4e17d`; O2 `0x7b3e2c9`)
+**Last updated:** 2026-09-16 (HK-013 slice 1 chronicle `0xe66fca4`, merge `e66fca4`; HK-018 chronicle `0x7ca28f8`, merge `7ca28f8` — **HK-018 CLOSED**; HK-016 step 3 chronicle `0x0408475`, merge `0408475` — **HK-016 CLOSED**; step 2 chronicle `0x0c49e5d`, merge `0c49e5d`; step 1 chronicle `0x36653e2`, merge `36653e2`; HK-017 merge `926e731`; before that the variety audit chronicle `0x5e1c9a4`, merge `53c3727`; HK-014 `d55e4e6`; Player's Guide `0x9c4e17d`; O2 `0x7b3e2c9`)
 
 ## 🎯 Current Status
-- **Test Suite:** 245 discovered / 245 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=210 P1=0 P2=0 P3=0`
+- **Test Suite:** 250 discovered / 250 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
+- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=211 P1=0 P2=0 P3=0` (baseline: 8 entries)
 - **Branch:** `master`, pushed. Working tree clean. Verify with `git status -sb`.
 - **Active Work:** none. **All ten OOA phases and O2 are complete**, merged and pushed. **O2 (`./vinc.sh --lint`)**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
   `config/lint/vinc-ruleset.groovy` (house rules + six Vinculum invariant rules), baseline-ratchet `config/lint/baseline.xml` (now
@@ -58,6 +58,8 @@
   `Building.keystoneIn` (`isKeystone && boundLip == getLIP()`) + `Floor.addBreachOption`, asked by both floor states; `InventoryItem.boundLip` set at forging, saved/restored;
   **no name fallback** — pre-fix Keystones open nothing (the player starts a new game). `BreachOptionContractTest` 9 pins. 36 goldens unchanged. Record: `tasks/completed/HK_018_PLAN.md`.
   The player's `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
+- **HK-013 slice 1 (2026-09-16, chronicle `0xe66fca4`):** `SyncManager.restore` split into `restorePlayer`/`applyMutations`/`remarkFootprints` (by script; `RestoreContractTest` 5 pins first); lint baseline 9 → 8.
+  Rule: when the ratchet fires on a baselined method, extract or re-baseline with a stated reason — never reformat to the recorded length. **WF-006 (Low)**: evaluate a complexity metric beside `MethodSize` at the next cadence review.
 - **Next:** user decision — no active phase. **HK-015** (player-facing bugs; items 1–2 — the repeating room roll and the unconditional +15 — are
   gameplay changes and need an explicit Directive; every fix edits `docs/terminal/guide/players_guide.md` in the same commit), **HK-013** (nine long
   methods in the lint baseline), **O1** (HeadlessRunner DSL), or a new audit. None has a plan yet. To grow any procgen list now: append lines to its
@@ -86,8 +88,8 @@ Initialize session for the Endless Transit substrate.
    (top: the HK-018 chronicle merge). Read `tasks/todo.md`, the latest journal in `journals/` (`0x7ca28f8`, this session),
    `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
    planned (the simulate → expected-set → allow-list re-pin chain).
-3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=245 SUCCEEDED=245 FAILED=0 SKIPPED=0`;
-   `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=210 P1=0 P2=0 P3=0`; `./vinc.sh --scan` → seed 0, 9 nodes.
+3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=250 SUCCEEDED=250 FAILED=0 SKIPPED=0`;
+   `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=211 P1=0 P2=0 P3=0`; `./vinc.sh --scan` → seed 0, 9 nodes.
 4. **Ask before choosing:** there is no active phase. Present the options — HK-015 (items 1–2 need a gameplay Directive), O1, HK-013 — and wait for a
    Directive. The user likes decisions as numbered questions with lettered options and a marked preference, answered in one word.
 5. **Every task:** plan file → `/grill` → authorization → branch → ≤5 production files per commit → full suite + `--lint` after every
