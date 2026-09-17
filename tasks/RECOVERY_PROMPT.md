@@ -1,8 +1,8 @@
 # RECOVERY HANDOVER: [OOA_STRUCTURAL_REFACTORING]
-**Last updated:** 2026-09-16 (HK-016 step 2 chronicle `0x0c49e5d`, merge `0c49e5d`; step 1 chronicle `0x36653e2`, merge `36653e2`; HK-017 merge `926e731`; before that the variety audit chronicle `0x5e1c9a4`, merge `53c3727`; HK-014 `d55e4e6`; Player's Guide `0x9c4e17d`; O2 `0x7b3e2c9`)
+**Last updated:** 2026-09-16 (HK-016 step 3 chronicle `0x0408475`, merge `0408475` — **HK-016 CLOSED**; step 2 chronicle `0x0c49e5d`, merge `0c49e5d`; step 1 chronicle `0x36653e2`, merge `36653e2`; HK-017 merge `926e731`; before that the variety audit chronicle `0x5e1c9a4`, merge `53c3727`; HK-014 `d55e4e6`; Player's Guide `0x9c4e17d`; O2 `0x7b3e2c9`)
 
 ## 🎯 Current Status
-- **Test Suite:** 227 discovered / 227 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
+- **Test Suite:** 236 discovered / 236 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=209 P1=0 P2=0 P3=0`
 - **Branch:** `master`, pushed. Working tree clean. Verify with `git status -sb`.
 - **Active Work:** none. **All ten OOA phases and O2 are complete**, merged and pushed. **O2 (`./vinc.sh --lint`)**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
@@ -21,6 +21,13 @@
   No source code changed. **HK-014 is CLOSED** (same day, merge `d55e4e6`): 11 manual/codex pages corrected in the in-fiction voice —
   ten wrong numbers fixed, the world catalogue completed (10 cultures incl. four Minor, 8 eras, 6 traits, `ATMOS_SHIFT` = `Sector
   Mutation` = trait, 15 floor zones), glossaries trimmed to symbols that exist. Live crawl all 200.
+- **HK-016 step 3 (2026-09-16, chronicle `0x0408475`, merge `0408475`) — HK-016 CLOSED:** every list grown to the audit's sizes (relics 16 per
+  culture/era, atmosphere 10 per file, conditions 16, lexicons 12+12, doors 12/12/12; abyssal lists left as the largest); door materials/states (with
+  narratives) and default inscription words are `themes/doors/*.txt` (`ThemeService.doorMaterials/doorStates/doorWords`; `Door(locus, materialPool,
+  statePool)`, built-in defaults for hand-built doors; `DoorAppearance.materialNarrative/stateNarrative`); `generateFurniture` never doubles a relic's
+  first word; nine size-floor pins in `ThemeResourceCoverageTest`. Probe: objects distinct 143–198 → 261–545, furniture → 177–285, door briefs 106 → 160/252,
+  0 repeats. 18 commits, each re-pinned from a run by an allow-list script that refused once (a second building-name pin, `ProcgenDeepSnapshotTest:117`).
+  Record: `tasks/completed/HK_016_STEP3_PLAN.md`; retro `docs/retro/RETRO_HK_016_STEP3.md`.
 - **HK-016 step 2 (2026-09-16, chronicle `0x0c49e5d`, merge `0c49e5d`):** structural variety, all six items: `ThemeService.objectDeck` (items × items ×
   4 forms + singles = 272 per culture/era), `ApartmentFactory` shuffles and deals it (no object repeats in an apartment — pinned on six seeds);
   `generateFurniture` = `<condition> <culture item>` from `themes/conditions.txt`; `VibeCapsule.secondaryTimeline` + `pickTimeline` (drawn per planet,
@@ -45,10 +52,10 @@
   root causes, the ordered three-step plan and both probe scripts: `docs/analysis/VARIETY_AUDIT.md`. Logged as **HK-016** — a
   **content phase** (every step moves `ProcgenSnapshotTest`/`ProcgenDeepSnapshotTest` literals and goldens; own branch; step-0 pins listed
   in the audit §4). No source change.
-- **Next:** user decision — **HK-016 step 3** (content only, grow every list: culture/era items 8 → ~16, atmosphere 5 → ~10, conditions 8 → ~16,
-  lexicon adjectives/nouns 8 → ~12, door materials/states 8/7 → ~12/12; every list change re-orders every deck, so every pinned object list and most
-  room/apartment goldens move once per list — one list per commit, simulate, regenerate, review; the probe's distinct counts and no-repeat rate are the
-  gate, stated as ceilings). Or **HK-015** (player-facing bugs; items 1–2 need a gameplay Directive), O1, HK-013. None has a plan yet.
+- **Next:** user decision — no active phase. **HK-015** (player-facing bugs; items 1–2 — the repeating room roll and the unconditional +15 — are
+  gameplay changes and need an explicit Directive; every fix edits `docs/terminal/guide/players_guide.md` in the same commit), **HK-013** (nine long
+  methods in the lint baseline), **O1** (HeadlessRunner DSL), or a new audit. None has a plan yet. To grow any procgen list now: append lines to its
+  file, run the suite (size and no-duplicate floors are pinned), simulate the goldens, re-pin from the run.
 
 ## ✅ State of the substrate in one paragraph
 `GameState.events` is the one `EventBus` (final, never replaced; exact-class dispatch in subscription order). `Player` is
@@ -70,13 +77,12 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: the HK-016 step-2 chronicle merge). Read `tasks/todo.md`, the latest journal in `journals/` (`0x0c49e5d`, this session),
-   `docs/analysis/VARIETY_AUDIT.md` §4 (step 1 + step 2 DONE blocks, step 3) if HK-016 continues, `tasks/completed/HK_016_STEP2_PLAN.md` for the
-   simulate-then-gate chain, and `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-016 step 3, HK-015, HK-013).
+   (top: the HK-016 step-3 chronicle merge). Read `tasks/todo.md`, the latest journal in `journals/` (`0x0408475`, this session),
+   `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
+   planned (the simulate → expected-set → allow-list re-pin chain).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=220 SUCCEEDED=220 FAILED=0 SKIPPED=0`;
    `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=209 P1=0 P2=0 P3=0`; `./vinc.sh --scan` → seed 0, 9 nodes.
-4. **Ask before choosing:** there is no active phase. Present the options — HK-016 step 3 (content only; every list change moves every deck — simulate per commit and gate the
-   regeneration on the simulated frame set, as step 2 did), HK-015 (items 1–2 need a gameplay Directive), O1, HK-013 — and wait for a
+4. **Ask before choosing:** there is no active phase. Present the options — HK-015 (items 1–2 need a gameplay Directive), O1, HK-013 — and wait for a
    Directive. The user likes decisions as numbered questions with lettered options and a marked preference, answered in one word.
 5. **Every task:** plan file → `/grill` → authorization → branch → ≤5 production files per commit → full suite + `--lint` after every
    commit → merge `--no-ff` → `/chronicle` → retro → lessons → refresh this file.
@@ -91,10 +97,11 @@ Initialize session for the Endless Transit substrate.
 | Active refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (O2 section rewritten; Phase 10 section has the execution record) |
 | Lint mode | `vinc.sh` (`--lint`), `config/lint/vinc-ruleset.groovy`, `config/lint/baseline.xml` (one writer: `--lint --baseline`), `lib/lint/*.jar`; plan `tasks/completed/O2_LINT_PLAN.md` |
 | Variety audit | `docs/analysis/VARIETY_AUDIT.md` (HK-016: findings table, root causes, ordered plan, §4 step 1 DONE block with the after-table, probe scripts) |
+| HK-016 step 3 record | `tasks/completed/HK_016_STEP3_PLAN.md` (decisions, grill, per-family predicted vs actual movement, execution notes); retro `docs/retro/RETRO_HK_016_STEP3.md`; resource lists `src/main/resources/themes/{cultures,timelines,atmosphere/*,descriptions,doors}/`, `conditions.txt`, `names/buildings/` — every one with a size floor in `ThemeResourceCoverageTest` |
 | HK-016 step 2 record | `tasks/completed/HK_016_STEP2_PLAN.md` (decisions, grill, per-commit simulated vs actual movement, execution notes); retro `docs/retro/RETRO_HK_016_STEP2.md`; pins `src/test/groovy/com/endlesstransit/procgen/ProcgenVarietyContractTest.groovy` |
 | HK-016 step 1 record | `tasks/completed/HK_016_STEP1_PLAN.md` (grill, overlay simulation, per-commit gate movement, content appendix); retro `docs/retro/RETRO_HK_016_STEP1.md` |
 | Resource coverage pins | `src/test/groovy/com/endlesstransit/procgen/ThemeResourceCoverageTest.groovy`; `src/test/groovy/com/endlesstransit/ui/FrameGeometryContractTest.groovy` (HK-017) |
-| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0x0c49e5d HK-016 step 2, 0x36653e2 HK-016 step 1 + HK-017, 0x5e1c9a4 variety audit, 0x3d7a5e2 HK-014 manual corrections + atlas, 0x9c4e17d Player's Guide, 0x7b3e2c9 O2) |
+| Latest chronicles | `journals/CHRONICLE_INDEX.md` (0x0408475 HK-016 step 3, 0x0c49e5d HK-016 step 2, 0x36653e2 HK-016 step 1 + HK-017, 0x5e1c9a4 variety audit, 0x3d7a5e2 HK-014 manual corrections + atlas, 0x9c4e17d Player's Guide, 0x7b3e2c9 O2) |
 | Player's Guide (source-verified reference) | `docs/terminal/guide/players_guide.md`; live at `https://ghostsysoutnull.github.io/endless-transit/terminal/guide/players_guide.html`; site is GitHub legacy Pages from `master:/docs` (no local build; branches are never published) |
 | Retros | `docs/retro/RETRO_O2.md`, `docs/retro/RETRO_HK_008.md`, `docs/retro/RETRO_SESSION_20260916.md` |
 | Event system | `src/main/groovy/com/endlesstransit/core/{EventBus,DomainEvent,ItemCaptured,SynthesisPerformed,RitualTracker,JournalManager}.groovy`, `Player.capture`, `GameState.events` |
@@ -102,7 +109,7 @@ Initialize session for the Endless Transit substrate.
 | Factory wiring pins | `src/test/groovy/com/endlesstransit/procgen/FactoryWiringContractTest.groovy` (HK-008) |
 | Per-type factories | `src/main/groovy/com/endlesstransit/procgen/{LocationFactory,*Factory}.groovy` |
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
-| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-016 step 3, HK-015 player-facing bugs, HK-013 nine long methods; HK-017, HK-014 closed) |
+| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-015 player-facing bugs, HK-013 nine long methods; HK-016 (three steps), HK-017, HK-014 closed) |
 | Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (clean) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md` |
@@ -125,3 +132,5 @@ Initialize session for the Endless Transit substrate.
 - Run a new pin RED and GREEN before trusting it (the coverage pin contradicted itself for monolith on first run).
 - Predict golden movement from the golden world's facts (the golden city is a rebel district); a deck's distinct count is a ceiling — state targets as ceilings and no-repeat rates (HK-016 step 2).
 - Gate golden regeneration mechanically on the simulated frame set; a red demo that fails to compile is inconclusive (HK-016 step 2).
+- Re-pin literals by allow-list script that refuses any other drift; grep the test tree for the *literal* before writing a coverage row (HK-016 step 3).
+- Externalise a list before growing it, behind a zero-diff gate; every generator list is a file with a pinned size floor (HK-016 step 3).
