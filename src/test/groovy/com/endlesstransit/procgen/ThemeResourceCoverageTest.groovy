@@ -105,4 +105,17 @@ class ThemeResourceCoverageTest {
             assertTrue(ownSeen, "room names for '${culture}' never used its own lexicon (monolith's instead)")
         }
     }
+
+    // --- HK-016 step 3: list floors (grown lists are the ceiling now; a shrunken list is a regression) ---
+
+    private static void assertFloor(String what, List<String> lines, int floor) {
+        assertNotNull(lines, "${what}: missing")
+        assertTrue(lines.size() >= floor, "${what}: ${lines.size()} lines, floor is ${floor}")
+        assertEquals(lines.size(), (lines as Set).size(), "${what}: duplicate lines")
+    }
+
+    @Test
+    void everyEraHasAtLeast16Items() {
+        service.timelines.each { String k, List<String> v -> assertFloor("timelines/${k}", v, 16) }
+    }
 }
