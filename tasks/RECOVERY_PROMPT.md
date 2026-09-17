@@ -4,7 +4,7 @@
 ## 🎯 Current Status
 - **Test Suite:** 256 discovered / 256 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0` (baseline: 8 entries)
-- **Branch:** `master`, **NOT pushed — ahead of `origin/master` (`c8ae695`) by the whole HK-019 session** (code merge `0033981`, chronicle merge, handover-audit merge). Pushing needs the user's word ("push"); pushing `master` also republishes the Player's Guide page (its corridor row changed). Working tree clean except the player's untracked `session.trace.bak-hk018`. Verify with `git status -sb`.
+- **Branch:** `master`, pushed at the end of the HK-019 session on the user's word (code merge `0033981`, chronicle, handover audit; the push republishes the Player's Guide page — its corridor row changed). If `git status -sb` shows ahead/behind, something happened after this file was written — ask. Working tree clean except the player's untracked `session.trace.bak-hk018`. Verify with `git status -sb`.
 - **Active Work:** none — but **WF-007 (High) is open and, per CODEX, blocks the next phase until assessed** (see Next). **All ten OOA phases and O2 are complete**, merged and pushed. **O2 (`./vinc.sh --lint`)**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset
   `config/lint/vinc-ruleset.groovy` (house rules + six Vinculum invariant rules), baseline-ratchet `config/lint/baseline.xml` (now
   then exactly the nine long methods → **HK-013**; 8 remain since slice 1), 83 dead imports + 4 unused locals gone, `Player` is
@@ -96,12 +96,12 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: docs-only merges from the HK-019 close-out — `Merge docs/hk-019-doc-audit` or later; the last *code* merge is `0033981`, HK-019; `master` was left **ahead of origin, unpushed** — ask the user before pushing). Read `tasks/todo.md`, the latest journal in `journals/` (`0x0033981` HK-019, this session; `0xe66fca4` HK-013 slice 1 and `0x7ca28f8` HK-018 before it),
+   (top: docs-only merges from the HK-019 close-out — `Merge docs/hk-019-doc-audit` or later; the last *code* merge is `0033981`, HK-019; `master` was pushed at session close). Read `tasks/todo.md`, the latest journal in `journals/` (`0x0033981` HK-019, this session; `0xe66fca4` HK-013 slice 1 and `0x7ca28f8` HK-018 before it),
    `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), `docs/analysis/WORKFLOW_BACKLOG.md` OPEN items (**WF-007 High**, WF-006 Low), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
    planned (the simulate → expected-set → allow-list re-pin chain).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=256 SUCCEEDED=256 FAILED=0 SKIPPED=0`;
    `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0`; `./vinc.sh --scan` → seed 0, 9 nodes.
-4. **Ask before choosing:** there is no active phase. Say first that **WF-007 (High) blocks the next phase until assessed**, and that `master` is unpushed. Then present the options — WF-007, HK-015 (items 1–2 need a gameplay Directive), O1, HK-013, optional "glitch `KEYSTONE` also primes" — and wait for a
+4. **Ask before choosing:** there is no active phase. Say first that **WF-007 (High) blocks the next phase until assessed**. Then present the options — WF-007, HK-015 (items 1–2 need a gameplay Directive), O1, HK-013, optional "glitch `KEYSTONE` also primes" — and wait for a
    Directive. The user likes decisions as numbered questions with lettered options and a marked preference, answered in one word.
 5. **Every task:** plan file → `/grill` → authorization → branch → ≤5 production files per commit → full suite + `--lint` after every
    commit → merge `--no-ff` → `/chronicle` → retro → lessons → refresh this file → **run the nine-point close-out list (`tasks/lessons/infrastructure.md`, "Close the session") and show it filled in, before saying "closed"**.
