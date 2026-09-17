@@ -49,7 +49,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * Each refactoring phase runs on its own git branch: `refactor/phase-N-short-name`.
 * Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --lint`, `./vinc.sh --scan` where applicable).
 * Every new class created during refactoring MUST include `@CompileStatic`.
-* Close every wave (phase, HK item, WF item, docs session) with `/close-wave` — it audits the docs, invokes `/chronicle`, writes the retro and makes the recovery prompt true, then runs `./vinc.sh --docs`. **The words "closed" or "merged" appear in chat only as the output of `/close-wave`, under its ten-row table** (WF-007).
+* Close every wave (phase, HK item, WF item, docs session, one-line fix) with `/close-wave`, **at the tier the command selects from the diff** (Trivial / Light / Full, WF-008) — it finds what the wave made false, makes the recovery prompt true and runs `./vinc.sh --docs`; chronicle and retro belong to the Full tier or to a named add-on reason. **The words "closed" or "merged" appear in chat only as the output of `/close-wave`, under its ten-row table** (WF-007).
 * Write a phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, retro second). Promote any evergreen lessons to `tasks/lessons/<domain>.md`.
 * The active task pointer in `CLAUDE.md` should reflect the current refactoring phase document, not a stale task.
 
