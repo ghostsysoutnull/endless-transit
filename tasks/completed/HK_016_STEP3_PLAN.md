@@ -2,7 +2,17 @@
 **Created:** 2026-09-16 | **Grill (on the ★ design):** AMEND (check 2: the door constructor's inscription pool is dead code — the factory's six words are the real pool; two existing items begin with a condition word, so a doubled word is possible today) → applied → **CLEARED pending the decisions below** | **Branch:** `content/hk-016-step3` (from `master` @ 3a1f95c)
 **Backlog:** `tasks/backlog/HOUSEKEEPING.md` (HK-016, step 3 of 3) | **Audit:** `docs/analysis/VARIETY_AUDIT.md` §3.5, §4 step 3 + the step-2 ceiling correction | **Step 2 record:** `tasks/completed/HK_016_STEP2_PLAN.md`
 **Baseline (master `3a1f95c`):** 227 / 227 / 0 / 0; `LINT=PASS FILES=209`; `--scan` seed 0 → 9; probe: objects distinct 203–369 per seed (0 repeats per apartment), furniture 83–123 distinct, 32 cell names per culture-country, 56 door briefs
-**Status:** DRAFT — no source change authorized by this document
+**Status:** COMPLETE (2026-09-16) | **Commits:** fcdca97 (c1), ecf55f9/0c85c42 (eras), ed7654f/94a87c1 (cultures), 299e0c0 (conditions + F2 guard), a45639a/a63da0d (walls), 92711c0/7388ec8 (lighting), a1e61fb/f756261 (structures), a8e90ce/25d89ba/a19dd62/9822b2c/ce37817 (lexicons), 76b6624/3963a32 (doors move, zero diff), 26cc658 (doors grow), c11 = the docs commit carrying this line | **Suite at close:** 236 / 236 / 0 / 0; `LINT=PASS FILES=209`; `--scan` seed 0 → 9 before and after
+
+> **Execution notes.** (1) Every commit ran through one chain: compile → simulate → moved frames must be inside the row's set → re-pin only the
+> commit's allowed literals (`repin.py`, exit 2 on any other drift) → goldens if anything moved → suite + lint → commit. (2) The chain stopped once, at
+> c8b: `ProcgenDeepSnapshotTest:117` pins the 0x1234 building name a second time ("precondition: building name"); the plan's coverage row had it under
+> "must not change". The key was added to the map and the commit resumed — the stop was the tool doing its job, not a defect in the change.
+> (3) c8c moved 12 frames, including the street lattice map (09): building names feed the map's projected coordinates (`Container.groovy`), so a
+> lexicon change moves plots as well as lists — inside the allowed set, but worth knowing for step-3-style content phases. (4) c6a moved goldens
+> 16/30 (the golden room is digital) while the 0x1234 room's analog pick landed on the same index by chance — a SAME literal with a moved golden is
+> consistent, not suspicious. (5) c9b's zero-diff gate held: 36 goldens and all door literals byte-identical with the lists loaded from files.
+> (6) The four generic door narratives ("A oxidized metal hatch.") were rewritten in c10 as declared; narratives are not pinned or in goldens.
 
 > **Content phase, last step.** Steps 1 and 2 made every list the binding constraint: a planet's object ceiling is `items × items × 4 + singles`
 > per culture/era pair, furniture is `conditions × items` per culture, cell names are `adjectives × 4` per culture-country, doors are

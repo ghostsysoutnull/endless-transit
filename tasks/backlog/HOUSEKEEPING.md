@@ -10,6 +10,39 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
+**Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
+documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
+guide in the same commit so it stays true. Items 1 and 2 change gameplay — **user decision required** before touching them.
+1. **Passive room roll repeats.** `Room.processAction` (`model/Room.groovy:70`) seeds from `locus.branch("ACTION").branch(player.stepCount)`,
+   and `stepCount` only advances on navigation (`core/NavigationCommand.groovy:35`). A 30% hit therefore repeats, with the same value,
+   on every prompt spent standing still — unlimited identical "Hidden Frequency" items for 1 coherence each, and each one marks the
+   floor sampled for the ritual. Fix needs a per-prompt component in the seed (or a once-per-visit flag); pin with a test that stands
+   still N prompts and asserts at most one capture.
+2. **`m 1 1` is free coherence.** `QuantumBufferController.groovy:44` grants `adjustCoherence(15)` after `Player.mergeItems`, whose
+   guards (`core/Player.groovy:70-71`, same index / out of range) return silently. Make `mergeItems` report success (boolean or the
+   hybrid) and grant only on success; pin: `m 1 1` leaves coherence unchanged.
+3. **`run.sh --seed` is inert.** `run.sh:25` advertises it; `Main.groovy:10` is `new Game()` and never reads `args`. Parse `--seed <long>`
+   in `Main` and pass it to `Game(long)`. Pin: headless launch with a seed produces the pinned seed-4660 street.
+4. **`q` is unbound.** `RenderingCoordinator.groovy:40` prints `q: Terminate`; `TurnProcessor.groovy:30-43` has no `q`. Either alias `q` →
+   `quit` in `InputHandler.normalize` or drop it from the help line.
+5. **Null Reach echo scan needs capital `S`.** `NullSector.groovy:90` offers `s. Scan for spectral echoes`, but lowercase `s` is taken by
+   the global scan first (`TurnProcessor.groovy:80`). Rename the option key (e.g. `e.`) — do not change the global table.
+Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
+(real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine);
+`Door.groovy:23-26` rolls its own inscription with the same seed `CorridorFactory:51` rolls, so the constructor's pool is dead code (HK-016 step 3, F1).
+
+### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
+**Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
+`renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
+`SessionRecap.show` (56), `LatticeMapComponent.render` (52), `LatticeTraceComponent.renderTrace` (63), `HUDHeaderComponent.render` (90).
+They are the only entries in `config/lint/baseline.xml`; each entry carries the method's current length, so the first edit to any
+of them resurfaces the violation — pay it down then, or in a bounded housekeeping commit (extract by script, reverse-substitution
+check, goldens as the gate for the four `ui` methods). Regenerate the baseline with `./vinc.sh --lint --baseline` and commit the
+shrunken file with the change.
+
+## 🟢 CLOSED
+
 ### HK-016 — Procedural variety: objects, furniture and atmosphere repeat; three room lines collapse to one string
 **Found:** 2026-09-16, user report while playing ("lack of variation in the objects on the rooms"), confirmed and widened by
 `docs/analysis/VARIETY_AUDIT.md` (six seeds, 1,354 rooms; 200-seed distribution probe). **Content phase, not a refactor** — every
@@ -41,39 +74,14 @@ scope before starting.
   `<culture adjective> <category>` with adjectives dealt per apartment, hex gone; corridor and floor sentences from `themes/descriptions/*.txt`.
   `ProcgenVarietyContractTest` (7 pins, each shown red against the previous commit). Probe: objects distinct 143–198 → 203–369 per seed; the
   per-planet ceiling moved from 256 to ≈ 1,100 (4 decks × 272) — the primary pair's single deck of 272 still caps a 700-object sample, which is
-  exactly what **step 3 (grow lists) is for**. 12 goldens moved across the branch, every diff simulated before regeneration. **Step 3 OPEN.**
-
-### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
-**Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
-documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
-guide in the same commit so it stays true. Items 1 and 2 change gameplay — **user decision required** before touching them.
-1. **Passive room roll repeats.** `Room.processAction` (`model/Room.groovy:70`) seeds from `locus.branch("ACTION").branch(player.stepCount)`,
-   and `stepCount` only advances on navigation (`core/NavigationCommand.groovy:35`). A 30% hit therefore repeats, with the same value,
-   on every prompt spent standing still — unlimited identical "Hidden Frequency" items for 1 coherence each, and each one marks the
-   floor sampled for the ritual. Fix needs a per-prompt component in the seed (or a once-per-visit flag); pin with a test that stands
-   still N prompts and asserts at most one capture.
-2. **`m 1 1` is free coherence.** `QuantumBufferController.groovy:44` grants `adjustCoherence(15)` after `Player.mergeItems`, whose
-   guards (`core/Player.groovy:70-71`, same index / out of range) return silently. Make `mergeItems` report success (boolean or the
-   hybrid) and grant only on success; pin: `m 1 1` leaves coherence unchanged.
-3. **`run.sh --seed` is inert.** `run.sh:25` advertises it; `Main.groovy:10` is `new Game()` and never reads `args`. Parse `--seed <long>`
-   in `Main` and pass it to `Game(long)`. Pin: headless launch with a seed produces the pinned seed-4660 street.
-4. **`q` is unbound.** `RenderingCoordinator.groovy:40` prints `q: Terminate`; `TurnProcessor.groovy:30-43` has no `q`. Either alias `q` →
-   `quit` in `InputHandler.normalize` or drop it from the help line.
-5. **Null Reach echo scan needs capital `S`.** `NullSector.groovy:90` offers `s. Scan for spectral echoes`, but lowercase `s` is taken by
-   the global scan first (`TurnProcessor.groovy:80`). Rename the option key (e.g. `e.`) — do not change the global table.
-Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
-(real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine).
-
-### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
-**Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
-`renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
-`SessionRecap.show` (56), `LatticeMapComponent.render` (52), `LatticeTraceComponent.renderTrace` (63), `HUDHeaderComponent.render` (90).
-They are the only entries in `config/lint/baseline.xml`; each entry carries the method's current length, so the first edit to any
-of them resurfaces the violation — pay it down then, or in a bounded housekeeping commit (extract by script, reverse-substitution
-check, goldens as the gate for the four `ui` methods). Regenerate the baseline with `./vinc.sh --lint --baseline` and commit the
-shrunken file with the change.
-
-## 🟢 CLOSED
+  exactly what **step 3 (grow lists) is for**. 12 goldens moved across the branch, every diff simulated before regeneration.
+- **Step 3 CLOSED (2026-09-16, branch `content/hk-016-step3`, `fcdca97`…`26cc658`, plan `tasks/completed/HK_016_STEP3_PLAN.md`) — HK-016 CLOSED:**
+  every list grown (relics 16 per culture/era, atmosphere 10 per file, conditions 16, lexicons 12+12, doors 12/12/12); doors' lists and narratives
+  moved to `themes/doors/*.txt` (zero-diff refactor, then growth); a condition never doubles a relic's first word; size pins per family in
+  `ThemeResourceCoverageTest`. Probe: objects distinct 143–198 → 261–545 per seed, furniture 138–192 → 177–285, door briefs 106 → 160 of 252,
+  every culture shows 11–12 of its 12 adjectives, 0 repeats per apartment. 18 commits, each re-pinned from a run with a script that refuses any
+  literal drift outside the commit's family; the chain stopped once (a second pin of the 0x1234 building name at `ProcgenDeepSnapshotTest:117`
+  the map had missed) and resumed after the key was added.
 
 ### HK-017 — Narrative pane wrapped to 88 columns; the split box holds 86 (every pane-wide row ended in `...`)
 **Found:** 2026-09-16, HK-016 step-1 plan grill (simulation of the new Industrial structure line wrapped the room sentence and the
