@@ -187,25 +187,25 @@ class ProcgenDeepSnapshotTest {
         assertEquals(3, r.atmoTraits.size())
 
         // HK-016 step 2 (c3): furniture is a conditioned culture item from the FURNITURE branch Random, never a hybrid.
-        assertEquals(["cracked neural interface"], r.furniture, "furniture from the FURNITURE branch Random")
+        assertEquals(["pristine hexagonal tile"], r.furniture, "furniture from the FURNITURE branch Random")
 
         // HK-016 step 2 (c2): the first 15 of the monolith/analog deck (272 entries) shuffled by the OBJECT_POOL Random — no repeats.
         List<String> expectedObjects = [
-            "neural interface",
-            "crt monitor grafted onto black glass panel",
-            "dot matrix printer grafted onto data probe",
-            "hexagonal pillar infused with rotary phone",
-            "bioluminescent vein infused with transistor radio",
-            "hexagonal pillar infused with beige keyboard",
-            "geometric slab fused to cassette tape",
-            "geometric slab fused to answering machine",
-            "obsidian cube fused to dot matrix printer",
-            "data probe infused with answering machine",
-            "rotary phone grafted onto geometric slab",
-            "reel-to-reel deck",
-            "geometric slab infused with dot matrix printer",
-            "rotary phone grafted onto black glass panel",
-            "oscilloscope grafted onto obsidian cube",
+            "floppy disk with bioluminescent vein",
+            "obsidian cube infused with answering machine",
+            "vhs player with null terminal",
+            "transistor radio grafted onto bioluminescent vein",
+            "dot matrix printer grafted onto black glass panel",
+            "neural interface infused with dot matrix printer",
+            "null terminal infused with cassette tape",
+            "data probe fused to dot matrix printer",
+            "hexagonal pillar infused with punch card stack",
+            "ticker tape spool with null terminal",
+            "basalt bench infused with punch card stack",
+            "basalt bench infused with crt monitor",
+            "oscilloscope",
+            "hexagonal tile fused to cassette tape",
+            "obsidian cube infused with dot matrix printer",
         ]
         assertEquals(expectedObjects, r.objects, "shuffled-deck order from the OBJECT_POOL branch Random")
     }
