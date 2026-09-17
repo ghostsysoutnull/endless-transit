@@ -78,9 +78,10 @@ class Player {
         }
     }
 
-    void mergeItems(int idx1, int idx2, Location location = null) {
-        if (idx1 == idx2) return
-        if (idx1 < 0 || idx1 >= inventory.size() || idx2 < 0 || idx2 >= inventory.size()) return
+    /** Returns false, touching nothing, when the two indexes do not name two different buffer items (HK-015). */
+    boolean mergeItems(int idx1, int idx2, Location location = null) {
+        if (idx1 == idx2) return false
+        if (idx1 < 0 || idx1 >= inventory.size() || idx2 < 0 || idx2 >= inventory.size()) return false
 
         // Take items out
         def item1 = inventory[Math.max(idx1, idx2)]
@@ -106,5 +107,6 @@ class Player {
             resonantTracesCount++
             Terminal.println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
         }
+        return true
     }
 }

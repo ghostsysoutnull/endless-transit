@@ -415,13 +415,6 @@ The ending you see on `quit` depends on where you are and how much you have seen
 
 Twenty places is easy. One trip into one apartment marks the apartment, the room, and every ancestor on the way.
 
-### Free Coherence
-
-In the buffer screen, `m 1 1` is rejected as a merge because both indexes are the same. The 15 Coherence is
-granted anyway. Net result: +14 per prompt, forever. <!-- Player.groovy:70, QuantumBufferController.groovy:44 --> Also a bug.
-
-With this you can never die. The game is still fun. Just be aware.
-
 ### The debug menu
 
 Type `glitch` at any prompt. You get a numbered menu; `c` cancels. <!-- RenderingCoordinator.groovy:45-71 -->
