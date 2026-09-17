@@ -9,7 +9,8 @@ The `Room` class is a terminal leaf in the simulation hierarchy. It manages loca
 
 ### 📍 Interaction & Scanning
 - **`processAction(Player)`**: 
-    - **Chance**: 30% per action taken.
+    - **Once per step (HK-015)**: first asks `player.claimPassiveRoll()`; a step already rolled returns at once, so prompts spent standing still (and a restore onto the same step) never roll again.
+    - **Chance**: 30% per step.
     - **Result**: Extracts a random "Hidden Frequency" into the player's inventory.
     - **Deterministic**: Uses `locus.branch("ACTION").branch(player.stepCount)` for stability.
 - **`getOptions(Game)`**:
@@ -36,9 +37,9 @@ The `Room` class is a terminal leaf in the simulation hierarchy. It manages loca
 ## 🔗 Dependencies
 - **`Apartment`**: Parent container.
 - **`Gematria`**: Used to calculate frequencies of local objects.
-- **`ModelOutput`**: For narrative synthesis and glitch effects.
+- **Injected `fmt` (`OutputFormatter`)**: narrative synthesis, wrapping and glitch effects (`ModelOutput` was removed in Phase 5).
 - **`Player.capture(item, this)`**: the only door into the buffer; the journal and the Abyssal ritual react to the resulting domain event (Phase 10). `Room` never touches the journal.
 
 ---
 *Neural Map Stabilized.*
-*Baselined (not audited) against: Room.groovy @ 1c7d7b4cc4*
+*Verified against: Room.groovy @ 1288170597*

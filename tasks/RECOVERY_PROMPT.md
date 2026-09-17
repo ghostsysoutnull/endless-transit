@@ -1,15 +1,16 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-17 (WF-008). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-17 (HK-015). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
-- **Test Suite:** 256 discovered / 256 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Latest chronicle:** `0x6aaede9` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
-- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013)
-- **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints, all still stamped `Baselined (not audited)`)
-- **Branch:** `master`. The last *code* merge is `0033981` (HK-019); everything after it is docs and tooling. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
+- **Test Suite:** 271 discovered / 271 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
+- **Latest chronicle:** `0xa47cdb6` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
+- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=218 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013)
+- **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room` is `Verified`, 14 still `Baselined (not audited)`)
+- **Branch:** `master`. The last *code* merge is `a47cdb6` (HK-015). If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
 - **Active Work:** none; nothing blocks the next phase. All ten OOA phases and O2 are complete. Every wave closes through `/close-wave`, which picks its own tier from the diff (WF-007, WF-008).
 - **Next — user decision, none has a plan yet:**
-  - **HK-015** player-facing bugs (`tasks/backlog/HOUSEKEEPING.md`; items 1–2 are gameplay changes and need an explicit Directive; every fix edits `docs/terminal/guide/players_guide.md` in the same commit; includes the double `l` after an apartment).
+  - **HK-020** global command aliases have two owners (`InputHandler.normalize` list + `TurnProcessor` table); needs its own plan + grill; pin the deliberately case-sensitive keys first.
+  - **HK-021** residue of HK-015, low value: dead `Door.visited`, `/screenshots/` message, a dropped Keystone loses its flag, double `l` after an apartment, dead inscription pool. Any player-visible fix edits `docs/terminal/guide/players_guide.md` in the same commit.
   - **HK-013** eight long methods left in the lint baseline (extract or re-baseline with a reason — never reformat to the recorded length).
   - **O1** HeadlessRunner DSL (optional, not started). **WF-006** (Low) complexity metric beside `MethodSize`, at the next cadence review.
   - **Undecided user question:** should the debug glitch `KEYSTONE` also prime the building? Today it gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions (diagnosed in the HK-019 session, nothing changed, not in the backlog).
@@ -28,7 +29,7 @@ Initialize session for the Endless Transit substrate.
    `journals/CHRONICLE_INDEX.md` (open a log only when its wave matters to the task), the OPEN items of `tasks/backlog/HOUSEKEEPING.md` and
    `docs/analysis/WORKFLOW_BACKLOG.md`. For a content change, read the execution notes of `tasks/completed/HK_016_STEP3_PLAN.md` first
    (simulate → expected set → allow-list re-pin). The OOA plan is no longer loaded automatically — read `docs/analysis/OOA_REFACTOR_PLAN.md` on demand.
-3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=256 …`; `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
+3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=271 …`; `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
    `./vinc.sh --scan` → seed 0, 9 nodes; `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
 4. **Ask before choosing:** there is no active phase. Present the options under **Next** and wait for a Directive. The user likes decisions as
    numbered questions with lettered options and a marked preference, answered in one word — and short plain-language summaries in chat.
@@ -45,7 +46,7 @@ Initialize session for the Endless Transit substrate.
 | History | `journals/CHRONICLE_INDEX.md` → `journals/LOG_*`; retros `docs/retro/`; finished plans and execution records `tasks/completed/` |
 | Law + commands | `.claude/CODEX.md`; `.claude/commands/{grill,chronicle,close-wave}.md`; `./vinc.sh --help` |
 | Gate internals | lint: `config/lint/vinc-ruleset.groovy`, `config/lint/baseline.xml` (one writer: `--lint --baseline`), `lib/lint/`; docs: `.agents/docs-check.sh`; goldens: `src/test/groovy/com/endlesstransit/ui/golden/` (one writer: `--goldens`) |
-| Backlogs | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-015, HK-013); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-006 Low) |
+| Backlogs | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-020, HK-021, HK-013); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-006 Low) |
 | Completed refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (per-phase execution records) |
 | Domain invariants | `src/main/groovy/com/endlesstransit/{core,model,ui,procgen}/CLAUDE.md`; class blueprints `docs/blueprints/logic/classes/` (stamped; see `/close-wave` row 3) |
 | Lessons + safety mandates | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md`; `tasks/lessons/POST_MORTEM_2026_03_{06,11}.md` |

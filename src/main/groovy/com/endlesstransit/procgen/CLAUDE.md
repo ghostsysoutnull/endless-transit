@@ -17,7 +17,7 @@
 1. **Vertical Branching**: `locus.branch(index)` for child locations.
 2. **Horizontal Variability**: `locus.nextRandom()` for sequential attributes.
 3. **Immutability**: `LocusSeed` is an immutable value object.
-4. **Service Determinism**: Never use static `Random` in utilities.
+4. **Service Determinism**: Never use static `Random` in utilities. A bare `new Random()` anywhere under `model/` or `procgen/` fails lint (`NoUnseededRandomInWorld`, HK-015).
 
 ## 🏛️ Verification Checklist
 - [ ] **Seed Stability**: Same seed produces same world.
