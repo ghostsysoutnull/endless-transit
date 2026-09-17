@@ -3,7 +3,7 @@
 
 ## 🎯 Current Status
 - **Test Suite:** 256 discovered / 256 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Latest chronicle:** `0x8885fa2` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
+- **Latest chronicle:** `0x4f767c3` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013)
 - **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints, all still stamped `Baselined (not audited)`)
 - **Branch:** `master`. The last *code* merge is `0033981` (HK-019); everything after it is docs and tooling. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
@@ -50,5 +50,5 @@ Initialize session for the Endless Transit substrate.
 | Domain invariants | `src/main/groovy/com/endlesstransit/{core,model,ui,procgen}/CLAUDE.md`; class blueprints `docs/blueprints/logic/classes/` (stamped; see `/close-wave` row 3) |
 | Lessons + safety mandates | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md`; `tasks/lessons/POST_MORTEM_2026_03_{06,11}.md` |
 | Content (procgen lists) | `src/main/resources/{themes,names}/` — every list has a size floor in `ThemeResourceCoverageTest`; audit `docs/analysis/VARIETY_AUDIT.md` |
-| Contract pins by area | events `core/{JournalEventContractTest,EventBusTest}`; factory wiring `procgen/FactoryWiringContractTest`; floor `model/{FloorStateContractTest,BreachOptionContractTest,CorridorLeaveContractTest}`; restore `RestoreContractTest`; variety `procgen/ProcgenVarietyContractTest` (all under `src/test/groovy/com/endlesstransit/`) |
+| Contract pins by area | events `core/{JournalEventContractTest,EventBusTest}`; factory wiring `procgen/FactoryWiringContractTest`; floor `model/{FloorStateContractTest,BreachOptionContractTest,CorridorLeaveContractTest}`; restore `core/RestoreContractTest`; variety `procgen/ProcgenVarietyContractTest` (all under `src/test/groovy/com/endlesstransit/`) |
 | Player docs + site | `docs/terminal/` (guide: `docs/terminal/guide/players_guide.md`, every number cited from source); live at `https://ghostsysoutnull.github.io/endless-transit/` — GitHub Pages from `master:/docs`, so **a push republishes the site**; branches are never published |

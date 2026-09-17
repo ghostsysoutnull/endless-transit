@@ -49,6 +49,7 @@
 - [x] Housekeeping HK-013 slice 1 (2026-09-16): `SyncManager.restore` under 50 lines (three helpers, by script); `RestoreContractTest` 5 pins; lint baseline 9 → 8; lesson "no formatting dodges"; WF-006 logged. Merged `e66fca4`.
 - [x] Housekeeping HK-019 (2026-09-16, behavior change by user decision): the corridor's `l` hands the floor back to the elevator (`Floor.leave`), so a floor left from the corridor opens on `u`/`d`/`c` next visit; `CorridorLeaveContractTest` 6 pins; 36 goldens unchanged. 4 commits on `housekeeping/hk-019-corridor-reset`.
 - [x] Workflow WF-007 (2026-09-17, user proposal): the close-out is a gate — `/close-wave` (ten rows, ends in a table; "closed" is its output only) + `./vinc.sh --docs` (suite count, latest chronicle, blueprint stamps; 15 blueprints baselined). No source change. 6 commits on `workflow/wf-007-close-wave`.
+- [x] Workflow WF-008 (2026-09-17, user review): `/close-wave` tiers, recovery prompt capped (D4), OOA plan no longer auto-loaded — chronicle `0x4f767c3`.
 - [ ] Next: user decision — **HK-015** (player-facing bugs; items 1–2 are gameplay changes; + a dropped Keystone loses its flag), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
 
 ---

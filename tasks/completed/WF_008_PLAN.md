@@ -91,6 +91,12 @@ example ids and row-2 phrases become neutral.
 - After c3: `grep -c DeterministicUniverseTest .claude/CODEX.md` ≥ 1; `grep -c '@docs/analysis/OOA' CLAUDE.md` = 0.
 - Word counts before/after reported for the skill, the recovery prompt and the always-loaded set.
 
+## Execution record (2026-09-17) — chronicle `0x4f767c3`
+- **Commits:** `eb7f16c` c1, `d0ef2e0` c2, `95c163f` c3, `f3886dc` c4, `4f767c3` row-2 fixes, then the close-out.
+- **Tier dry run:** HK-019 code → Full; WF-007 → Light (+Chronicle +Retro); the "pushed" fix → Trivial; WF-008 → Light (+Chronicle +Lessons).
+- **Gates:** `STATUS=PASS 256/256/0/0`; `LINT=PASS FILES=212`; `DOCS=PASS … D4=ok`; D4 red on the old 2,960-word prompt (scratch copy).
+- **Deviations:** skill 1,110 words (plan: ≤ 979); one orphan lesson rehomed to `infrastructure.md`; the Lessons add-on was not predicted by the plan (the user's review is a correction).
+
 ## Out of scope
 Rewriting old chronicle index rows or lessons files (both always-loaded and large — a candidate for a later diet, user call);
 auditing the 15 blueprints; WF-006.

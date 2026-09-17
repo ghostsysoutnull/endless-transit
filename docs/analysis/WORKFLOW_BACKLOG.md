@@ -12,11 +12,6 @@ improvement session is planned before the next phase begins.
 
 ## 🔴 OPEN
 
-### WF-008 — `/close-wave` applies ten rows to every wave and makes the handover grow
-**Priority:** Medium | **Found:** 2026-09-17 (user review of WF-007: "too token hungry … a much larger scope than it should")
-Measured: WF-007's close-out wrote as many words as its work (~2,200 each), the same facts seven times; the recovery prompt is 2,960 words, 1,100 of them
-per-wave history; `CLAUDE.md` includes the finished OOA plan (7,493 words) in every session. Plan: `tasks/WF_008_PLAN.md`.
-
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.
 
@@ -63,6 +58,14 @@ replace. Until then: `MethodSize` stays a merge gate, with the "extract or re-ba
 ---
 
 ## 🟢 CLOSED
+
+### WF-008 — `/close-wave` applies ten rows to every wave and makes the handover grow
+**Priority:** Medium | **Found:** 2026-09-17 (user review of WF-007: "too token hungry … a much larger scope than it should")
+Measured: WF-007's close-out wrote as many words as its work (~2,200 each), the same facts seven times; the recovery prompt is 2,960 words, 1,100 of them
+per-wave history; `CLAUDE.md` includes the finished OOA plan (7,493 words) in every session.
+**Resolution:** the command picks its tier from the diff (Trivial / Light / Full), judgment may only add rows with a named reason, one record per wave with word budgets;
+recovery prompt cut to current state (755 words) and capped by `--docs` D4; the finished OOA plan is read on demand, its Gates table moved to CODEX § 4.
+Record: `tasks/completed/WF_008_PLAN.md`. **Closed:** 2026-09-17 | chronicle `0x4f767c3`
 
 ### WF-007 — The close-out doc audit is not mechanical; the user has to ask "are all docs updated?" every session
 **Priority:** High | **Found:** 2026-09-16 (HK-019 close; user correction: "every time I need to ask you if all docs are updated and they never are")
