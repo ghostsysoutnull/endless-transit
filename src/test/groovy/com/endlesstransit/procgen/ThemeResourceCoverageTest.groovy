@@ -123,4 +123,18 @@ class ThemeResourceCoverageTest {
     void everyCultureHasAtLeast16Items() {
         service.cultures.each { String k, List<String> v -> assertFloor("cultures/${k}", v, 16) }
     }
+
+    @Test
+    void conditions_atLeast16_andNeverDoubleARelicsFirstWord() {
+        assertFloor("conditions", service.conditions, 16)
+        // F2 guard: a furnishing never starts with the same word twice ("flickering flickering light tube").
+        service.cultures.keySet().each { String culture ->
+            (0..<40).each { int i ->
+                service.generateFurniture(culture, 3, new LocusSeed(3000L + i).branch(culture).nextRandom()).each { String f ->
+                    String[] w = f.split(" ")
+                    assertTrue(w.length < 2 || w[0] != w[1], "doubled first word in '${f}'")
+                }
+            }
+        }
+    }
 }

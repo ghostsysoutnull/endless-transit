@@ -164,7 +164,13 @@ class ThemeService {
         Collections.shuffle(items, r)
         List<String> out = []
         for (int i = 0; i < Math.min(count, items.size()); i++) {
-            String condition = conditions ? (String) conditions[r.nextInt(conditions.size())] : null
+            String condition = null
+            if (conditions) {
+                int ci = r.nextInt(conditions.size())
+                // HK-016 step 3 (F2): never double a relic's first word ("flickering flickering light tube").
+                if (((String) items[i]).startsWith(conditions[ci] + " ")) ci = (ci + 1) % conditions.size()
+                condition = (String) conditions[ci]
+            }
             out << (condition ? "${condition} ${items[i]}".toString() : (String) items[i])
         }
         return out
