@@ -152,12 +152,12 @@ Names above the Building are Culture-blind: a Sector is *Core Matrix 17* whether
 
 | Culture | Adjectives | Nouns |
 | :--- | :--- | :--- |
-| **Rust** | Corroded, Oxidized, Patchwork, Scrapyard, Weathered, Fading, Dusty, Assembled | Shell, Stack, Monolith, Heap, Vault, Husk, Anchor, Frame |
+| **Rust** | Corroded, Oxidized, Patchwork, Scrapyard, Weathered, Fading, Dusty, Assembled, Flaking, Riveted, Sooty, Buckled | Shell, Stack, Monolith, Heap, Vault, Husk, Anchor, Frame, Yard, Silo, Pit, Girder |
 | **Neon** | Vibrant, Fluorescent, Flickering, Synthetic, Digital, Glitchy, Pulsing, Lucid, Buzzing, Chrome, Holographic, Wet | Hub, Nexus, Array, Node, Core, Circuit, Relay, Grid, Arcade, Booth, Terminal, Strip |
 | **Baroque** | Ornate, Golden, Cathedral, Sacred, Opulent, Marble, Grand, Sanctum, Gilt, Vaulted, Solemn, Baroque | Gallery, Archive, Palace, Temple, Sanctum, Hall, Cathedral, Altar, Chapel, Vestry, Cloister, Spire |
 | **Monolith** | Brutalist, Concrete, Silent, Impenetrable, Grey, Eternal, Static, Cold, Featureless, Basalt, Sealed, Unbroken | Slab, Tower, Obelisk, Block, Unit, Monolith, Foundation, Pillar, Vault, Cube, Plinth, Shaft |
 | **Gilded** | Gilded, Velvet, Brass, Crystal, Ornate, Mahogany, Opulent, Clockwork, Burnished, Lacquered, Polished, Velvet-Lined | Salon, Gallery, Atrium, Parlour, Conservatory, Manor, Ballroom, Ledger, Study, Lounge, Vault, Pavilion |
-| **Shogun** | Lacquered, Silent, Folded, Cedar, Ashen, Vermilion, Paper, Moonlit | Pavilion, Shrine, Garden, Dojo, Keep, Teahouse, Lantern, Bridge |
+| **Shogun** | Lacquered, Silent, Folded, Cedar, Ashen, Vermilion, Paper, Moonlit, Quiet, Tiled, Ink-Black, Ceremonial | Pavilion, Shrine, Garden, Dojo, Keep, Teahouse, Lantern, Bridge, Hall, Gatehouse, Courtyard, Tower |
 | **Zenith** | Marble, Ivory, Laurel, Olympian, Sunlit, Alabaster, Columned, Serene | Forum, Temple, Colonnade, Basilica, Agora, Pantheon, Rotunda, Acropolis |
 | **Abyssal** | Recursive, Unhandled, Orphaned, Severed, Inverted, Writhing, Eyeless, Null, Corrupted, Dangling, Leaking, Unbound | Vertex, Thread, Partition, Cyst, Membrane, Sigil, Altar, Exception, Stack, Socket, Fault, Kernel |
 | **Void** | Hollow, Empty, Silent, Ghostly, Drifting, Dark, Abyssal, Stellar | Void, Shadow, Echo, Aperture, Gravity, Well, Horizon, Reach |

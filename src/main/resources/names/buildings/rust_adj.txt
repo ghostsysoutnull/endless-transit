@@ -6,3 +6,7 @@ Weathered
 Fading
 Dusty
 Assembled
+Flaking
+Riveted
+Sooty
+Buckled

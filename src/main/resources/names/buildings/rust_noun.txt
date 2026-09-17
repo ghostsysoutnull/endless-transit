@@ -6,3 +6,7 @@ Vault
 Husk
 Anchor
 Frame
+Yard
+Silo
+Pit
+Girder
