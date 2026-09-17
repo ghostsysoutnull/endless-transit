@@ -74,3 +74,12 @@ Order (each step backed by tool output from this session; from memory = FAIL, as
 ## Out of scope
 Auditing the 15 blueprints now; blueprints for the other 124 classes; WF-006; any `--docs` check beyond D1–D3 (add one
 only when a close-out misses something a script could have caught).
+
+---
+
+## Execution record (2026-09-17)
+- **Commits:** `4f31661` c1 plan · `14708b6` c2 `--docs` + stamps · `463bd98` c3 `/close-wave` · `3f92f2e` c4 law · `8885fa2` dogfood fix (row 1) · c5 close-out (this commit).
+- **Red first:** unstamped tree → `DOCS=FAIL D1=ok(256) D2=FAIL D3=FAIL(15)`. After stamping → `DOCS=PASS D1=ok(256) D2=ok(0x0033981) D3=ok(15)`.
+- **Red, one per check (scratch copy, `DOCS_ROOT`):** `VINC_DISCOVERED=257` → D1 names `RECOVERY_PROMPT.md` and `todo.md`; a new top index row → D2 names the recovery prompt and the newest `LOG_*`; one byte appended to a copied `Floor.groovy` → D3 names `model/Floor.md` (`2196f64c3c` vs `55cb304e2b`). Control copy green.
+- **Deviation:** the dogfood run found `/close-wave` row 1 ("code merged") impossible for a no-`src/` wave closing on its own branch; row amended (`8885fa2`). Chronicle id is therefore the last work commit, not a merge hash.
+- **Gates at close:** suite 256/256/0/0 · `LINT=PASS FILES=212` · `DOCS=PASS D1=ok(256) D2=ok(0x8885fa2) D3=ok(15)` · zero files under `src/` changed.
