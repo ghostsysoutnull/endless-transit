@@ -19,7 +19,7 @@
 3. **Parent Referencing**: Correctly set `parent` upon population.
 4. **Mutation Persistence**: Use `mutationState` map keyed by LIP.
 5. **Output Abstraction**: All `Renderable` objects MUST use the injected `fmt` field directly.
-6. **Floor Mode is a State**: `Floor.currentState` is a `FloorState` (`ElevatorState` / `CorridorState` singletons). Transition only via `enterCorridor()` / `returnToElevator()`; clients ask the Floor (`getOptions`, `getExtraContent`, `getScanTarget`) — never `instanceof` a state class.
+6. **Floor Mode is a State**: `Floor.currentState` is a `FloorState` (`ElevatorState` / `CorridorState` singletons). Transition only via `enterCorridor()` / `returnToElevator()`; the corridor's `l` leaves through `Floor.leave(game)`, which returns the floor to the elevator first (HK-019); clients ask the Floor (`getOptions`, `getExtraContent`, `getScanTarget`) — never `instanceof` a state class.
 7. **The model never touches the journal**: no model class imports `JournalManager`. An item enters the buffer only through `player.capture(item, this)`; the journal and the Abyssal ritual react to the resulting domain event (Phase 10).
 
 ## 🏛️ Verification Checklist

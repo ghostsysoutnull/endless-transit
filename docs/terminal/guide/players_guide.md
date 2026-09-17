@@ -110,7 +110,7 @@ Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87
 | Universe down to street | Numbered children, and `l` to go back up one level. |
 | Building lobby | Numbered floors, top floor first, and `l` to leave. |
 | Floor, elevator | `u` up, `d` down, `c` into the corridor, `l` leave the building. On the top floor, `j` appears once you can breach. |
-| Floor, corridor | `b` back to the elevator, numbered doors, `l` leave to the building (it skips the elevator). On the top floor, `j` appears here too once you can breach. |
+| Floor, corridor | `b` back to the elevator, numbered doors, `l` leave to the building (it skips the elevator; the floor is back at the elevator on your next visit). On the top floor, `j` appears here too once you can breach. |
 | Room | `t` interact, `f` next room, `b` previous room, `l` from the first room back to the corridor. |
 | Null Reach | `S` (capital) to scan for an echo, `c` to capture it once the signal is strong enough. |
 

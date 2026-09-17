@@ -31,6 +31,7 @@ guide in the same commit so it stays true. Items 1 and 2 change gameplay — **u
 Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
 (real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine);
 a Keystone dropped in a room is stored as its name only and comes back as a plain item (`Room.groovy:168`, `InventoryItem` rebuilt without `isKeystone`/`boundLip`), so the guide's "You can stash a Keystone in a room" is false (HK-018, E5);
+after leaving an apartment the player stands on the Corridor *location* (menu without `b`), and `l` leads to the Floor's corridor-mode screen (same doors, with `b`) — two near-identical screens, `l` twice to reach the building (HK-019, D2);
 `Door.groovy:23-26` rolls its own inscription with the same seed `CorridorFactory:51` rolls, so the constructor's pool is dead code (HK-016 step 3, F1).
 
 ### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline) — **8 remain**
@@ -47,6 +48,18 @@ shrunken file with the change.
 
 ## 🟢 CLOSED
 
+### HK-019 — Corridor mode was sticky: a floor left with `l` from the corridor never showed `u`/`d` again until `b`
+**CLOSED 2026-09-16** — branch `housekeeping/hk-019-corridor-reset`, commits `25fbd6c` (plan), `75567f2` (step-0 pins), `3d99343` (the change).
+Plan + record: `tasks/completed/HK_019_PLAN.md`.
+**Found:** the "Left open" line of HK-018. A floor remembered corridor mode across re-entry and the corridor's `l` exits to the building without
+passing the elevator, so the next visit opened on the corridor menu (probe, seed 12345).
+**Fix (behavior change, user decisions D1a/D2/D3):** corridor mode means "standing in the corridor" — `Floor.leave(game)` returns the floor to the
+elevator and exits; `CorridorState` re-routes the Corridor's own leave key to it (`Container.leaveLabel()`, same key, same slot). Coming back from an
+apartment and saving inside the corridor both keep corridor mode. `CorridorLeaveContractTest` 6 pins (3 green on master first; 3 shown RED on an
+assertion before the change). 36 goldens unchanged. Grill AMEND → CLEARED.
+**Left open (declared):** the debug `BREACH` teleport still leaves a corridor-mode floor behind (E2); old saves heal on the first `l` (E3);
+the double `l` after an apartment → HK-015.
+
 ### HK-018 — A Keystone was bound to its building by *name*, and `j` was hidden in corridor mode
 **CLOSED 2026-09-16** — branch `housekeeping/hk-018-breach-rule`, commits `8b1d492` (plan), `d02416d` (step-0 pins), `935a9e1` (visibility), `28dc724` (binding).
 Plan + record: `tasks/completed/HK_018_PLAN.md`.
@@ -57,7 +70,7 @@ presses `b` never sees the elevator again. The 21:58 rename workaround *had* wor
 **Fix (behavior change, user decisions 1a/2a, no backward compatibility):** the rule lives on the model — `Building.keystoneIn` (`isKeystone && boundLip == getLIP()`)
 and `Floor.addBreachOption`, asked by both floor states; `InventoryItem.boundLip` set at forging, saved/restored. A Keystone forged before the fix opens nothing and
 does not block forging. `BreachOptionContractTest` 9 pins (5 green on master first; 1 + 3 shown RED on an assertion before their change). 36 goldens unchanged.
-**Left open (noted, not fixed):** corridor mode is still sticky and `l` still skips the elevator — it no longer hides anything ritual-critical, but `u`/`d` remain elevator-only.
+**Left open (noted, not fixed):** corridor mode is still sticky and `l` still skips the elevator — it no longer hides anything ritual-critical, but `u`/`d` remain elevator-only. → **fixed by HK-019.**
 <details><summary>Original entry</summary>
 
 ### HK-018 — A Keystone is bound to its building by *name*, so a content update strands it
