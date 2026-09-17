@@ -55,7 +55,10 @@
 - **HK-018 (2026-09-16, logged, not fixed):** user report after the step-3 merge — a primed building, top floor, keystone in the buffer, no `j`.
   Cause (diagnosed from the player's save, read-only): the keystone is matched by *building name* (`ElevatorState.groovy:31`) and the step-3
   lexicon growth renamed the building (PodReach → HollowReach). Fix design + pins + a workaround are in the backlog entry. The guide's
-  "the name will match" sentence is corrected.
+  "the name will match" sentence is corrected. **The rename workaround did not work** (21:58): restored fine, still no `j`, and the player
+  reports the building's floor count mismatching — the name is not the whole cause. Step 0 next session: a test that restores a copy of
+  the player's save (`session.trace`, backup `session.trace.bak-hk018`, both untracked and owned by the player — copy, never edit) into a
+  headless game and prints name / maxFloors / sampledFloors / isPrimed / top-floor options. Details in the HK-018 entry.
 - **Next:** user decision — no active phase. **HK-018** (small: bind the keystone to the building's LIP, name fallback for old saves), **HK-015** (player-facing bugs; items 1–2 — the repeating room roll and the unconditional +15 — are
   gameplay changes and need an explicit Directive; every fix edits `docs/terminal/guide/players_guide.md` in the same commit), **HK-013** (nine long
   methods in the lint baseline), **O1** (HeadlessRunner DSL), or a new audit. None has a plan yet. To grow any procgen list now: append lines to its

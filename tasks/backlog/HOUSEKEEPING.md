@@ -29,6 +29,17 @@ keystone's own name are name-bound.
 **Workaround for the reported game (the player's file, never edited by a tool or test):** in `session.trace` change the item name
 `PodReach Keystone` to `HollowReach Keystone` and restore; `j` appears on floor 4. Or forge a new keystone: the building is still primed, so
 the next merge inside it yields `HollowReach Keystone`.
+**Attempt (2026-09-16 21:58, did not work — the name is not the whole story):** with the player's consent the save was backed up
+(`session.trace.bak-hk018`, untracked) and the one string renamed to `HollowReach Keystone`; the file parsed and the game restored it
+(`transit.log`: RESTORE_INITIATED 21:58:37, then `Entering Floor 4` ×3). Still no `j`, and the player reports **the number of floors now
+mismatches** in that building. Facts at that moment: save holds `currentLIP 0.2.0.0.1.0.0.1.1`, building mutation `infusionCount 40,
+sampledFloors [1,2,3,4,0], isBreached false`, floor-4 mutation `state: CORRIDOR`; a scanner-built world for the seed resolves that LIP to
+`HollowReach`, `maxFloors 5`, organic, not a landmark — with today's lists *and* with the pre-step-3 lists (`git archive 3a1f95c`). So either
+the game's restored building differs from the scanner's (floor count, name, or the mutation not applied — check `SyncManager.restore:91-97`
+and `Building.applyMutationState`, and print `bldg.name`, `bldg.maxFloors`, `bldg.sampledFloors`, `bldg.isPrimed()` from a restore of this
+exact file), or the floor the player stands on is not `maxFloors - 1` as the game now counts it (`ElevatorState.groovy:28-30` offers `j` only on
+the top floor). **Next session, step 0:** reproduce with a test that restores a copy of this save into a headless game and asserts the
+top-floor options — before touching the design fix. The player's original save is the `.bak-hk018` file; the edited one is in place.
 
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
