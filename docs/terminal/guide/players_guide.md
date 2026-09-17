@@ -95,11 +95,11 @@ Keys are checked in this order: first the global commands, then whatever the cur
 | `P` | Same, but with colour codes. Not mentioned anywhere in the game. |
 | `help` or `?` | One line listing a few commands. |
 | `glitch` | Opens the debug menu. See the spoilers section. |
-| `quit` | Asks for confirmation, offers to save, prints an ending. |
+| `quit`, `q` | Asks for confirmation, offers to save, prints an ending. |
 | `quitnow` | Exits immediately, no confirmation, no save. Hidden. |
 | Enter alone | Repeats your last move. If that move is now impossible but its opposite is possible, it turns you around instead. <!-- NavigationEngine.groovy:42-55 --> |
 
-Case matters for some of these and not others. `i`, `m`, `map`, `sync`, `lattice`, `glitch`, `help` and `quit`
+Case matters for some of these and not others. `i`, `m`, `map`, `sync`, `lattice`, `glitch`, `help`, `quit` and `q`
 work in any case. `s`, `ll`, `p`, `P` and `quitnow` must be typed exactly. <!-- InputHandler.groovy:57 -->
 Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87 -->
 
@@ -112,7 +112,7 @@ Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87
 | Floor, elevator | `u` up, `d` down, `c` into the corridor, `l` leave the building. On the top floor, `j` appears once you can breach. |
 | Floor, corridor | `b` back to the elevator, numbered doors, `l` leave to the building (it skips the elevator; the floor is back at the elevator on your next visit). On the top floor, `j` appears here too once you can breach. |
 | Room | `t` interact, `f` next room, `b` previous room, `l` from the first room back to the corridor. |
-| Null Reach | `S` (capital) to scan for an echo, `c` to capture it once the signal is strong enough. |
+| Null Reach | `e` to scan for an echo, `c` to capture it once the signal is strong enough. |
 
 ### The `t` menu inside a room
 
@@ -180,14 +180,14 @@ the alphabet positions of the consonants (B is 2, Z is 26, vowels count nothing)
 room in the game sits at depth 12. Long names with lots of consonants are worth more. If the room's culture matches
 the planet's main culture, which is true most of the time, you get another 10%. <!-- Gematria.groovy:11-33, Room.groovy:166 -->
 
-**The free lottery.** Every time you press Enter while standing in a room, there is a 30% chance the game hands
-you a **Hidden Frequency** worth between one million and ten million hertz, about a thousand times any normal
-object. It prints `>>> SPECTRAL_DEVIATION` in yellow when it happens. <!-- Room.groovy:69-77 --> See the spoilers section
-for why this is even better than it sounds.
+**The free lottery.** Every time you *move* inside an apartment (step into a room, go `b` or `f`, or use `t`), there
+is a 30% chance the room hands you a **Hidden Frequency** worth between one million and ten million hertz, about a thousand times any normal
+object. It prints `>>> SPECTRAL_DEVIATION` in yellow when it happens. One roll per move: prompts spent
+standing still (`i`, `s`, `help`) never roll again, and reloading a save does not either. <!-- Room.groovy:69-78, Player.groovy claimPassiveRoll -->
 
 **Echoes in the void.** A `VOID_REACH` on the filament menu is a **Null Reach**. It holds one **Spectral Echo**,
-worth 1,000 to 9,999 Hz, and the only way to get it is to type a capital `S` a few times until the signal reaches
-100, then `c`. Lowercase `s` is stolen by the global scan command. One echo per reach, ever.
+worth 1,000 to 9,999 Hz, and the way to get it is to type `e` a few times until the signal reaches 100, then `c`. Each scan adds 10 to 39,
+fixed by the reach and your step count, so the same walk gives the same readings. One echo per reach, ever.
 <!-- NullSector.groovy:89-110, TurnProcessor.groovy:80 -->
 
 ## Reading doors before you open them
@@ -360,10 +360,10 @@ to `journal.txt` and prints an ending. <!-- QuitCommand.groovy:16-27 -->
 **Finding your seed.** There is no seed on screen. Press `p`; the screenshot file's header has a `SEED:` line.
 <!-- ScreenBuffer.groovy:35 -->
 
-**Playing a specific seed.** `./run.sh --seed` is listed in the launcher's help but is ignored by the game; every
-new game uses the current time. <!-- Game.groovy:31, Main.groovy:10 --> The only way to replay a seed is to restore a save,
-or to open `session.trace` in a text editor and change the `masterLocus` number before answering `y` to the restore
-prompt.
+**Playing a specific seed.** `./run.sh --seed <n>` starts a new game on master seed `n` (a whole number, negative
+allowed); without it a new game uses the current time. A value that is not a whole number is refused before the
+game starts. <!-- LaunchArgs.groovy, Main.groovy, Game.groovy:31 --> You can also restore a save, or open `session.trace`
+in a text editor and change the `masterLocus` number before answering `y` to the restore prompt.
 
 **The seed scanner.** `./vinc.sh --scan <start> <count> building <floors>` or `... culture <name>` searches
 seeds for a building with at least that many floors, or that culture, and prints the first seed that matches.
@@ -388,11 +388,7 @@ seeds for a building with at least that many floors, or that culture, and prints
 These are things the game says that are not true, or things that work differently from how they look. They may be
 fixed in a future version.
 
-* The help line lists `q: Terminate`. Pressing `q` does nothing. Use `quit`. <!-- RenderingCoordinator.groovy:40 -->
-* `./run.sh --seed <n>` is accepted and ignored. <!-- run.sh:25, Main.groovy:10 -->
 * `TRACE_BUFFER: n/16` suggests a cap of 16. There is no cap.
-* In a Null Reach, the menu offers `s. Scan for spectral echoes`, but lowercase `s` runs the global scan instead.
-  Type capital `S`.
 * After a screenshot the game says it went to `/screenshots/`. It is `screenshots/` relative to where you launched.
   <!-- CaptureCommand.groovy:32, CaptureService.groovy:21 -->
 * A door marked `(VISITED)` in the corridor text never appears; visited status is shown as `[V]` in the door list
@@ -415,21 +411,6 @@ The ending you see on `quit` depends on where you are and how much you have seen
 
 Twenty places is easy. One trip into one apartment marks the apartment, the room, and every ancestor on the way.
 
-### The Hidden Frequency farm
-
-The 30% room lottery is seeded by your step count, and your step count only changes when you *move*. So if the
-lottery pays out on a given prompt, it pays out again, with the identical number, on every prompt you spend in
-that room without moving. Press Enter repeatedly and collect an unlimited stack of identical seven-figure items for
-one Coherence each. Each one also counts as a capture on that floor for the ritual. <!-- Room.groovy:70, NavigationCommand.groovy:35 -->
-This is a bug and it may be fixed later.
-
-### Free Coherence
-
-In the buffer screen, `m 1 1` is rejected as a merge because both indexes are the same. The 15 Coherence is
-granted anyway. Net result: +14 per prompt, forever. <!-- Player.groovy:70, QuantumBufferController.groovy:44 --> Also a bug.
-
-Combined with the farm above, you can never die and never run out of items. The game is still fun. Just be aware.
-
 ### The debug menu
 
 Type `glitch` at any prompt. You get a numbered menu; `c` cancels. <!-- RenderingCoordinator.groovy:45-71 -->
@@ -451,7 +432,6 @@ Come back after a reload and it is still there. You can stash a Keystone in a ro
 
 ### Things that were built and never wired up
 
-* A `Spectral Echo` mini-game that is only reachable with a capital `S`.
 * A door trace called `METALLIC_TEARING`, with full text about structural stress, assigned to no room type.
 * A scrawled `_it_hums_` inscription for abandoned rooms. There are no abandoned rooms.
 * Lootable containers with names like `Quantum Vault` and `Sealed Terminal`. The generator exists, nothing calls it.

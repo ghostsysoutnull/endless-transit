@@ -67,6 +67,7 @@ class Room extends AbstractLeafLocation {
 
     @Override
     void processAction(Player player) {
+        if (!player.claimPassiveRoll()) return
         Random random = locus.branch("ACTION").branch(player.stepCount).nextRandom()
         if (random.nextInt(10) < 3) { 
             int randomNum = random.nextInt(9000000) + 1000000 

@@ -39,9 +39,12 @@ class QuantumBufferController {
                 } else if (cmd == "m" && parts.size() > 2) {
                     int idx1 = parts[1].toInteger() - 1
                     int idx2 = parts[2].toInteger() - 1
-                    player.mergeItems(idx1, idx2, currentLocation)
-                    // Synthesis restores coherence
-                    player.adjustCoherence(15)
+                    // Synthesis restores coherence; a refused merge restores nothing (HK-015)
+                    if (player.mergeItems(idx1, idx2, currentLocation)) {
+                        player.adjustCoherence(15)
+                    } else {
+                        Terminal.println "Invalid buffer command."
+                    }
                 } else {
                     Terminal.println "Invalid buffer command."
                 }

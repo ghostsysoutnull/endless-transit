@@ -12,7 +12,7 @@ This node details protocols for identifying high-value targets within the proced
 At the macro scale (City and up), the 2D map provides a spatial overview of nearby nodes. 
 
 *   **Node Reading:** `■` marks a child node; dim nodes are unvisited, bright nodes are visited. The map is a projection of the container you stand in — it shows nothing about fragment counts.
-*   **Void Identification:** On the filament menu, a conduit labelled `VOID_REACH` leads to a **Null Reach**. Each holds exactly one **Spectral Echo** (1,000–9,999 Hz). Issue the capital `S` directive until the signal reaches 100, then `c` to capture. Buildings beneath a Null Reach are twice as likely to be Landmarks.
+*   **Void Identification:** On the filament menu, a conduit labelled `VOID_REACH` leads to a **Null Reach**. Each holds exactly one **Spectral Echo** (1,000–9,999 Hz). Issue the `e` directive until the signal reaches 100, then `c` to capture. Buildings beneath a Null Reach are twice as likely to be Landmarks.
 *   **No Targeting:** The lattice offers no vector-lock. Navigation is by list; use `ll` for your ancestry and `m` for your siblings.
 
 ## [APERTURE_SCAN_TELEMETRY]

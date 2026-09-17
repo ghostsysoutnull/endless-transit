@@ -13,6 +13,8 @@ class Player {
     /** Domain event channel; GameState hands in its bus, a standalone Player gets an inert one (Phase 10). */
     final EventBus events
     int stepCount = 0
+    /** The step on which a room last rolled its passive capture; saved with stepCount (HK-015). */
+    int lastRollStep = -1
     SynthesisService synthesisService = new SynthesisService()
     Set<String> visitedLIPs = new LinkedHashSet<>()
     // visitedPaths is intentionally absent from GameMemento.
@@ -58,6 +60,16 @@ class Player {
         events.publish(new ItemCaptured(item, where))
     }
 
+    /**
+     * A room may roll its passive capture once per step. Steps only advance on navigation, so without
+     * this a winning roll repeated on every prompt spent standing still (HK-015).
+     */
+    boolean claimPassiveRoll() {
+        if (lastRollStep == stepCount) return false
+        lastRollStep = stepCount
+        return true
+    }
+
     void dropItem(int index) {
         if (index >= 0 && index < inventory.size()) {
             def removed = inventory.remove(index)
@@ -66,9 +78,10 @@ class Player {
         }
     }
 
-    void mergeItems(int idx1, int idx2, Location location = null) {
-        if (idx1 == idx2) return
-        if (idx1 < 0 || idx1 >= inventory.size() || idx2 < 0 || idx2 >= inventory.size()) return
+    /** Returns false, touching nothing, when the two indexes do not name two different buffer items (HK-015). */
+    boolean mergeItems(int idx1, int idx2, Location location = null) {
+        if (idx1 == idx2) return false
+        if (idx1 < 0 || idx1 >= inventory.size() || idx2 < 0 || idx2 >= inventory.size()) return false
 
         // Take items out
         def item1 = inventory[Math.max(idx1, idx2)]
@@ -94,5 +107,6 @@ class Player {
             resonantTracesCount++
             Terminal.println Terminal.colorize("!!! RESONANCE DETECTED: Waveform stabilized !!!", Terminal.GREEN)
         }
+        return true
     }
 }

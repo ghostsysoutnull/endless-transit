@@ -87,8 +87,10 @@ class NullSector extends Container {
         Map<String, Closure> options = getBaseOptions(game)
         
         if (!echoFound) {
-            options["s. Scan for spectral echoes"] = {
-                signalStrength += new Random().nextInt(30) + 10
+            options["e. Scan for spectral echoes"] = {
+                // Seeded by locus + step: the step advances before a navigation option runs (HK-015)
+                Random roll = locus.branch("ECHO").branch(game.player.stepCount).nextRandom()
+                signalStrength += roll.nextInt(30) + 10
                 if (signalStrength >= 100) {
                     signalStrength = 100
                     fmt.println fmt.colorize("\n>>> HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated.", "GREEN")

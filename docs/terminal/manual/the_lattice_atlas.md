@@ -92,7 +92,7 @@ Below the Bedrock every layer is the **ABYSSAL_SUBSTRATE**. Zone names are label
 Where a Filament's conduit fails to terminate in matter, it terminates in a **Null Reach**. Three nodes in ten are Reaches; the Filament menu marks them `VOID_REACH` where a Sector reads `MATTER_CLUSTER`.
 
 *   **Hollow:** A Reach holds one or two Solar Systems where a Sector holds up to seven. Its coordinates read `UNKNOWN` and its path reads `[VOID]`; the web does not know where it is.
-*   **The Echo:** Each Reach holds exactly one **Spectral Echo**, a fragment of 1,000–9,999 Hz with no cultural signature. Issue the `S` directive (capital) to scan; each scan raises the signal by 10–39 until it locks at 100, then `c` captures. The Echo is harvested once and never returns.
+*   **The Echo:** Each Reach holds exactly one **Spectral Echo**, a fragment of 1,000–9,999 Hz with no cultural signature. Issue the `e` directive to scan; each scan raises the signal by 10–39 until it locks at 100, then `c` captures. The Echo is harvested once and never returns.
 *   **The Anchor Effect:** Buildings beneath a Reach are twice as likely to be Landmarks — one in twelve rather than one in twenty-five.
 *   **The Caveat:** The Echo scan is the one roll in the web that the seed does not govern. Two Observers on the same seed may need a different number of scans.
 
