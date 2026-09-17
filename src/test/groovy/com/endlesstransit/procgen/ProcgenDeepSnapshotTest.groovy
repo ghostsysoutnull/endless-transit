@@ -133,17 +133,17 @@ class ProcgenDeepSnapshotTest {
 
         assertEquals(AnomalousTrace.HUMMING, doors[0].trace)
         assertNull(doors[0].inscription, "door[0] failed the 20% inscription roll")
-        assertEquals("Heavy Bulkhead [COLD]", doors[0].getMinimalDescription())
+        assertEquals("Bone-Lattice Aperture [PITTED]", doors[0].getMinimalDescription())
 
         assertEquals(AnomalousTrace.CLICKING, doors[1].trace)
         assertNotNull(doors[1].inscription, "door[1] passed the 20% inscription roll")
         assertEquals("VOID_SINK", doors[1].inscription.text, "default pool word from generateContextualInscription")
         assertEquals(InscriptionStyle.SCRAWLED, doors[1].inscription.style)
-        assertEquals("_void_sink_ Heavy Bulkhead [RUSTED]", doors[1].getMinimalDescription())
+        assertEquals("_void_sink_ Bone-Lattice Aperture", doors[1].getMinimalDescription())
 
         assertEquals(AnomalousTrace.CLICKING, doors[2].trace)
         assertNull(doors[2].inscription)
-        assertEquals("Industrial Barrier [PITTED]", doors[2].getMinimalDescription())
+        assertEquals("Heavy Bulkhead [HUMMING]", doors[2].getMinimalDescription())
     }
 
     // --- ApartmentFactory: createApartment vibe match + ApartmentFactory.populate object pool ---

@@ -16,16 +16,16 @@
 [37m║ [0m[96m [LOCAL_ACCESS_LIST] [0m[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[2mAnalyzing local horizontal artery...[0m[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
 [37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [36m█████[0m[130G[37m║[0m
-[37m║ [0m[2m01.[0m Pitted Concrete [VIBRATING][90G[37m║ [0m [36m███████[0m[130G[37m║[0m
-[37m║ [0m[2m02.[0m Oxidized Metal Hatch [PITTED][90G[37m║ [0m [36m██████[0m[130G[37m║[0m
-[37m║ [0m[2m03.[0m Brutalist Slab[90G[37m║ [0m [36m█████[0m[130G[37m║[0m
-[37m║ [0m[2m04.[0m Industrial Barrier[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
-[37m║ [0m[2m05.[0m Reinforced Polymer [VIBRATING][90G[37m║ [0m[130G[37m║[0m
-[37m║ [0m[2m06.[0m Heavy Bulkhead [VIBRATING][90G[37m║ [0m [2m[DECODE_LOGS][0m[130G[37m║[0m
-[37m║ [0m[2m07.[0m Brutalist Slab [RUSTED][90G[37m║ [0m > Trace: 0.0.0.0.0.0.0.0.0.0.0[130G[37m║[0m
-[37m║ [0m[2m08.[0m Oxidized Metal Hatch [COLD][90G[37m║ [0m > Stable: 0 items[130G[37m║[0m
-[37m║ [0m[2m09.[0m Pristine Ceramic [RUSTED][90G[37m║ [0m[130G[37m║[0m
-[37m║ [0m[2m10.[0m Industrial Barrier [POLISHED][90G[37m║ [0m[130G[37m║[0m
+[37m║ [0m[2m01.[0m Brutalist Slab [WEEPING][90G[37m║ [0m [36m███████[0m[130G[37m║[0m
+[37m║ [0m[2m02.[0m Synth-Glass Slab [POLISHED][90G[37m║ [0m [36m██████[0m[130G[37m║[0m
+[37m║ [0m[2m03.[0m Lacquered Timber Gate [FROZEN][90G[37m║ [0m [36m█████[0m[130G[37m║[0m
+[37m║ [0m[2m04.[0m Heavy Bulkhead [POLISHED][90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
+[37m║ [0m[2m05.[0m Frosted Crystal Pane [HUMMING][90G[37m║ [0m[130G[37m║[0m
+[37m║ [0m[2m06.[0m Oxidized Metal Hatch [COLD][90G[37m║ [0m [2m[DECODE_LOGS][0m[130G[37m║[0m
+[37m║ [0m[2m07.[0m Brutalist Slab [COLD][90G[37m║ [0m > Trace: 0.0.0.0.0.0.0.0.0.0.0[130G[37m║[0m
+[37m║ [0m[2m08.[0m Reinforced Polymer[90G[37m║ [0m > Stable: 0 items[130G[37m║[0m
+[37m║ [0m[2m09.[0m Reinforced Polymer [POLISHED][90G[37m║ [0m[130G[37m║[0m
+[37m║ [0m[2m10.[0m Heavy Bulkhead [COLD][90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m[130G[37m║[0m
 [37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
                          [·] [2m[0m

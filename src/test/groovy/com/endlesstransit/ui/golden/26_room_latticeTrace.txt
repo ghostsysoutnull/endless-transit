@@ -12,6 +12,6 @@
     [2m[08] [0m                          └─ ⌂ BUILDING : The Void-Watcher[2m [FLOORS: 47][0m
     [2m[09] [0m                              └─ ▤ FLOOR : Floor 0
     [2m[10] [0m                                  └─ ▅ CORRIDOR : Corridor
-    [2m[11] [0m                                      └─ 🚪 APARTMENT : Pitted Concrete [VIBRATING]
+    [2m[11] [0m                                      └─ 🚪 APARTMENT : Brutalist Slab [WEEPING]
 [1m >> [96m[12]                                           └─ □ ROOM : Veined Processing Core[0m[0m
 

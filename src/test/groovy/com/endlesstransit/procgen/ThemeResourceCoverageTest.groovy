@@ -168,4 +168,13 @@ class ThemeResourceCoverageTest {
         service.doorMaterials.each { String m, String n -> assertTrue(n as boolean, "material '${m}' has no narrative") }
         service.doorStates.each { String s, String n -> assertTrue(n as boolean, "state '${s}' has no narrative") }
     }
+
+    @Test
+    void doorLists_atLeast12_andEveryMaterialAndStateHasANarrative() {
+        assertFloor("doors/materials", service.doorMaterials.keySet().toList(), 12)
+        assertFloor("doors/states", service.doorStates.keySet().toList(), 12)
+        assertFloor("doors/inscriptions", service.doorWords, 12)
+        service.doorMaterials.each { String m, String n -> assertTrue(n as boolean, "material '${m}' has no narrative") }
+        service.doorStates.each { String s, String n -> assertTrue(n as boolean, "state '${s}' has no narrative") }
+    }
 }

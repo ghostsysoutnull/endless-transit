@@ -5,3 +5,8 @@ Stable|The structure appears stable.
 Pitted|The surface is heavily scarred by micro-impacts and substrate decay.
 Polished|The surface is perfectly smooth and sterile.
 Static|The door is totally motionless, appearing almost like a static image.
+Scorched|The surface is blackened in a fan shape, as if something burned its way out.
+Weeping|Moisture beads along the seams and runs in slow lines.
+Humming|A steady hum is felt through the frame rather than heard.
+Frozen|A rime of frost has sealed the edges shut.
+Warped|The panel has bowed outward and no longer meets its frame.
