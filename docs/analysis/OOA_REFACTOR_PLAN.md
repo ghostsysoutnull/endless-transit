@@ -854,7 +854,7 @@ Phase O2 (CodeNarc) ── independent (ideally before Phase 1)
 - Each phase runs on its own git branch (`refactor/phase-N-name`); merge to `master` only when all gates pass
 - If anything goes sideways: **STOP, revert, re-plan** — do not push through
 - After any user correction: update `tasks/lessons/<domain>.md`
-- Run `/chronicle` after every completed phase
+- Close every wave with `/close-wave` (doc audit → `/chronicle` → retro → recovery prompt → `./vinc.sh --docs` green); "closed" is that command's output only (WF-007)
 - Write phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, then retro)
 - Log any workflow friction from the retro to `docs/analysis/WORKFLOW_BACKLOG.md`
 - Every 3 phases (Phase 1, 4, 7, 10): review backlog before starting next phase
