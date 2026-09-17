@@ -114,7 +114,7 @@ class ProcgenDeepSnapshotTest {
     @Test
     void building_scale_pinnedForSeed0x1234() {
         Building b = building()
-        assertEquals("Impenetrable Unit", b.name, "precondition: building name")
+        assertEquals("Eternal Shaft", b.name, "precondition: building name")
         assertEquals(3, b.maxFloors, "createBuilding maxFloors (small category)")
         assertEquals(5, b.apartmentsPerFloor, "createBuilding apartmentsPerFloor (small category)")
         assertFalse(b.isLandmark, "createBuilding landmark flag")
@@ -133,17 +133,17 @@ class ProcgenDeepSnapshotTest {
 
         assertEquals(AnomalousTrace.HUMMING, doors[0].trace)
         assertNull(doors[0].inscription, "door[0] failed the 20% inscription roll")
-        assertEquals("Heavy Bulkhead [COLD]", doors[0].getMinimalDescription())
+        assertEquals("Bone-Lattice Aperture [PITTED]", doors[0].getMinimalDescription())
 
         assertEquals(AnomalousTrace.CLICKING, doors[1].trace)
         assertNotNull(doors[1].inscription, "door[1] passed the 20% inscription roll")
         assertEquals("VOID_SINK", doors[1].inscription.text, "default pool word from generateContextualInscription")
         assertEquals(InscriptionStyle.SCRAWLED, doors[1].inscription.style)
-        assertEquals("_void_sink_ Heavy Bulkhead [RUSTED]", doors[1].getMinimalDescription())
+        assertEquals("_void_sink_ Bone-Lattice Aperture", doors[1].getMinimalDescription())
 
         assertEquals(AnomalousTrace.CLICKING, doors[2].trace)
         assertNull(doors[2].inscription)
-        assertEquals("Industrial Barrier [PITTED]", doors[2].getMinimalDescription())
+        assertEquals("Heavy Bulkhead [HUMMING]", doors[2].getMinimalDescription())
     }
 
     // --- ApartmentFactory: createApartment vibe match + ApartmentFactory.populate object pool ---
@@ -169,17 +169,17 @@ class ProcgenDeepSnapshotTest {
     void room_attributes_pinnedForSeed0x1234() {
         Room r = room()
         // HK-016 step 2 (c5): "<dealt adjective> <category>"; the hex serial is gone.
-        assertEquals("Silent Fuel Depot", r.roomName)
+        assertEquals("Unbroken Fuel Depot", r.roomName)
         assertEquals("Fuel Depot", r.roomType, "RoomCategory.displayName")
         assertEquals("green", r.color)
         assertFalse(r.isAnomaly, "copied from the apartment")
         assertEquals("monolith", r.culture)
         assertEquals("analog", r.timeline)
 
-        assertEquals("seamless dark alloy", r.walls)
+        assertEquals("hexagonal ceramic tiles, unbroken", r.walls)
         assertEquals("the warm cathode glow of a CRT monitor", r.lightingDesc)
         // HK-016 step 1: Industrial has its own structures file; before it, this was the silent fallback "a spatial cell".
-        assertEquals("gantry-braced architecture that vibrates with every pulse", r.structureDesc)
+        assertEquals("a compressor hall lined with gauges", r.structureDesc)
 
         assertEquals("15%", r.atmoTraits["OXYGEN"])
         assertEquals("17°C", r.atmoTraits["TEMP"])
@@ -187,25 +187,25 @@ class ProcgenDeepSnapshotTest {
         assertEquals(3, r.atmoTraits.size())
 
         // HK-016 step 2 (c3): furniture is a conditioned culture item from the FURNITURE branch Random, never a hybrid.
-        assertEquals(["cracked neural interface"], r.furniture, "furniture from the FURNITURE branch Random")
+        assertEquals(["sagging hexagonal tile"], r.furniture, "furniture from the FURNITURE branch Random")
 
         // HK-016 step 2 (c2): the first 15 of the monolith/analog deck (272 entries) shuffled by the OBJECT_POOL Random — no repeats.
         List<String> expectedObjects = [
-            "rotary phone grafted onto green power conduit",
-            "data probe fused to cassette tape",
-            "beige keyboard with green power conduit",
-            "rotary phone with black glass panel",
-            "geometric slab infused with magnetic strip",
-            "obsidian cube fused to magnetic strip",
-            "magnetic strip with data probe",
-            "obsidian cube infused with magnetic strip",
-            "green power conduit infused with vhs player",
-            "rotary phone grafted onto neural interface",
-            "obsidian cube fused to floppy disk",
-            "dot matrix printer with black glass panel",
-            "obsidian cube fused to rotary phone",
-            "bioluminescent vein infused with dot matrix printer",
-            "geometric slab infused with vhs player",
+            "floppy disk with bioluminescent vein",
+            "obsidian cube infused with answering machine",
+            "vhs player with null terminal",
+            "transistor radio grafted onto bioluminescent vein",
+            "dot matrix printer grafted onto black glass panel",
+            "neural interface infused with dot matrix printer",
+            "null terminal infused with cassette tape",
+            "data probe fused to dot matrix printer",
+            "hexagonal pillar infused with punch card stack",
+            "ticker tape spool with null terminal",
+            "basalt bench infused with punch card stack",
+            "basalt bench infused with crt monitor",
+            "oscilloscope",
+            "hexagonal tile fused to cassette tape",
+            "obsidian cube infused with dot matrix printer",
         ]
         assertEquals(expectedObjects, r.objects, "shuffled-deck order from the OBJECT_POOL branch Random")
     }

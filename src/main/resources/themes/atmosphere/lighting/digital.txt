@@ -3,3 +3,8 @@ status LEDs blinking green and amber along an ethernet hub
 a screensaver's slow colours crawling across the ceiling
 the translucent glow of a tower case lit from within
 pale light leaking around a frosted glass disc
+the cyan glow of a loading bar
+a monitor cycling through screensaver stars
+a wall of LEDs blinking out of sync
+a scanner's green line sweeping the floor
+the pale flicker of a failing backlight

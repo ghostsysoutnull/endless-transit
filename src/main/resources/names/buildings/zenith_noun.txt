@@ -6,3 +6,7 @@ Agora
 Pantheon
 Rotunda
 Acropolis
+Portico
+Atrium
+Shrine
+Terrace

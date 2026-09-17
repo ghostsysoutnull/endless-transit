@@ -6,3 +6,7 @@ Ashen
 Vermilion
 Paper
 Moonlit
+Quiet
+Tiled
+Ink-Black
+Ceremonial

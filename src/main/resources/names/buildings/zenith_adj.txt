@@ -6,3 +6,7 @@ Sunlit
 Alabaster
 Columned
 Serene
+Gilded
+Radiant
+Fluted
+Olympic

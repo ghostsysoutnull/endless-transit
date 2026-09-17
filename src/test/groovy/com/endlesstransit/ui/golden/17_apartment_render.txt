@@ -1,9 +1,9 @@
 [37m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
 [37m║ [0m                          LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [2m⌂[0m [2m▤[0m [2m▅[0m [37m[🚪][0m | PULSE_TRAVERSAL: 0 | COHERENCE: 100%[130G[37m║[0m
-[37m║ [0mLOCUS_TRACE: ...n Frost Republic > Clockcity > Low Way > The Void-Watcher > Floor 0 > Corridor > Pitted Concrete [VIBRATING][130G[37m║[0m
+[37m║ [0mLOCUS_TRACE: ...tern Frost Republic > Clockcity > Low Way > The Void-Watcher > Floor 0 > Corridor > Brutalist Slab [WEEPING][130G[37m║[0m
 [37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
-[37m║ [0mLATTICE_IDENT: Apartment >> Pitted Concrete [VIBRATING][90G[37m║ [0mATMOS: [NOMINAL][130G[37m║[0m
-[37m║ [0mLOCUS_HASH: 55.492 / 26.935 | HOP_DENSITY: 11[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m
+[37m║ [0mLATTICE_IDENT: Apartment >> Brutalist Slab [WEEPING][90G[37m║ [0mATMOS: [NOMINAL][130G[37m║[0m
+[37m║ [0mLOCUS_HASH: 9.465 / 44.028 | HOP_DENSITY: 11[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m
 [37m║ [0mUNIT: 1 / 10 | [37m[X][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m[90G[37m║ [0mEVENT_TICKER: [SYNC_STABLE][130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m[2mLOC: The Void-Watcher[0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m[2m[0m[130G[37m║[0m
@@ -11,7 +11,7 @@
 [37m║ [0mTRACE_BUFFER: 0/16 FRAGMENTS[130G[37m║[0m
 [37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
  [37m»» SCANNING_LOCAL_TOPOLOGY...[0m
-[37m║ [0mApartment: Pitted Concrete [VIBRATING]. [TEMPORAL_MARKER: [33mDIGITAL[0m][90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
+[37m║ [0mApartment: Brutalist Slab [WEEPING]. [TEMPORAL_MARKER: [33mDIGITAL[0m][90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
 [37m║ [0m[96m [APARTMENT_UNIT_ACCESS] [0m[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[2mLocal unit entry-point. Internal cells detected: 9[0m[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
@@ -31,14 +31,14 @@
                           [37m║[0m
                          [·] [2m[0m
 [2mEXECUTE_DIRECTIVE:[0m
-01. Enter Room: Fungal Processing Core
-02. Enter Room: Pulsing Power Plant
-03. Enter Room: Living Maintenance Bay
-04. Enter Room: Soft Processing Core
-05. Enter Room: Grown Maintenance Bay
-06. Enter Room: Breathing Power Plant
-07. Enter Room: Neural Processing Core
-08. Enter Room: Verdant Maintenance Bay
-09. Enter Room: Fungal Maintenance Bay
+01. Enter Room: Veined Processing Core
+02. Enter Room: Verdant Power Plant
+03. Enter Room: Grown Maintenance Bay
+04. Enter Room: Living Processing Core
+05. Enter Room: Ribbed Maintenance Bay
+06. Enter Room: Fungal Power Plant
+07. Enter Room: Sporing Processing Core
+08. Enter Room: Pulsing Maintenance Bay
+09. Enter Room: Damp Maintenance Bay
 [[33ml[0m] Leave Apartment
 [[33mi[0m] Buffer | [[36msync[0m] Save | [[96ms[0m] Scan | [[37mm[0m] Map | [[37mll[0m] Tree | [[32mp[0m] Snap | [[31mquit[0m] Quit

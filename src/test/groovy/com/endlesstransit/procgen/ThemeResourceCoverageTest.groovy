@@ -105,4 +105,76 @@ class ThemeResourceCoverageTest {
             assertTrue(ownSeen, "room names for '${culture}' never used its own lexicon (monolith's instead)")
         }
     }
+
+    // --- HK-016 step 3: list floors (grown lists are the ceiling now; a shrunken list is a regression) ---
+
+    private static void assertFloor(String what, List<String> lines, int floor) {
+        assertNotNull(lines, "${what}: missing")
+        assertTrue(lines.size() >= floor, "${what}: ${lines.size()} lines, floor is ${floor}")
+        assertEquals(lines.size(), (lines as Set).size(), "${what}: duplicate lines")
+    }
+
+    @Test
+    void everyEraHasAtLeast16Items() {
+        service.timelines.each { String k, List<String> v -> assertFloor("timelines/${k}", v, 16) }
+    }
+
+    @Test
+    void everyCultureHasAtLeast16Items() {
+        service.cultures.each { String k, List<String> v -> assertFloor("cultures/${k}", v, 16) }
+    }
+
+    @Test
+    void conditions_atLeast16_andNeverDoubleARelicsFirstWord() {
+        assertFloor("conditions", service.conditions, 16)
+        // F2 guard: a furnishing never starts with the same word twice ("flickering flickering light tube").
+        service.cultures.keySet().each { String culture ->
+            (0..<40).each { int i ->
+                service.generateFurniture(culture, 3, new LocusSeed(3000L + i).branch(culture).nextRandom()).each { String f ->
+                    String[] w = f.split(" ")
+                    assertTrue(w.length < 2 || w[0] != w[1], "doubled first word in '${f}'")
+                }
+            }
+        }
+    }
+
+    @Test
+    void everyWallsFileHasAtLeast10Lines() {
+        service.atmosphere["walls"].each { String k, List<String> v -> assertFloor("walls/${k}", v, k == "abyssal" ? 8 : 10) }
+    }
+
+    @Test
+    void everyLightingFileHasAtLeast10Lines() {
+        service.atmosphere["lighting"].each { String k, List<String> v -> assertFloor("lighting/${k}", v, k == "abyssal" ? 8 : 10) }
+    }
+
+    @Test
+    void everyStructuresFileHasAtLeast10Lines() {
+        service.atmosphere["structures"].each { String k, List<String> v -> assertFloor("structures/${k}", v, k == "abyssal" ? 8 : 10) }
+    }
+
+    @Test
+    void everyLexiconHasAtLeast12AdjectivesAnd12Nouns() {
+        service.cultures.keySet().each { String culture ->
+            Map lexicon = (Map) NameGenerator.buildingLexicon[culture]
+            assertFloor("lexicon ${culture} adj", (List<String>) lexicon.adj, 12)
+            assertFloor("lexicon ${culture} noun", (List<String>) lexicon.noun, 12)
+        }
+    }
+
+    @Test
+    void doorLists_loadedFromFiles_everyMaterialAndStateHasANarrative() {
+        assertTrue(service.doorMaterials.size() >= 8 && service.doorStates.size() >= 7 && service.doorWords.size() >= 6, "door lists loaded")
+        service.doorMaterials.each { String m, String n -> assertTrue(n as boolean, "material '${m}' has no narrative") }
+        service.doorStates.each { String s, String n -> assertTrue(n as boolean, "state '${s}' has no narrative") }
+    }
+
+    @Test
+    void doorLists_atLeast12_andEveryMaterialAndStateHasANarrative() {
+        assertFloor("doors/materials", service.doorMaterials.keySet().toList(), 12)
+        assertFloor("doors/states", service.doorStates.keySet().toList(), 12)
+        assertFloor("doors/inscriptions", service.doorWords, 12)
+        service.doorMaterials.each { String m, String n -> assertTrue(n as boolean, "material '${m}' has no narrative") }
+        service.doorStates.each { String s, String n -> assertTrue(n as boolean, "state '${s}' has no narrative") }
+    }
 }

@@ -9,6 +9,10 @@ class ThemeService {
     Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
     /** HK-016 step 2: the condition words furniture is described in (themes/conditions.txt). */
     List<String> conditions = []
+    /** HK-016 step 3: door materials and states (name -> narrative) and the default inscription words (themes/doors/*.txt). */
+    Map<String, String> doorMaterials = new LinkedHashMap<String, String>()
+    Map<String, String> doorStates = new LinkedHashMap<String, String>()
+    List<String> doorWords = []
     /** HK-016 step 2: description variants per location kind (themes/descriptions/<kind>.txt, indexed). */
     Map<String, List<String>> descriptions = new TreeMap<String, List<String>>()
     Map<String, Map<String, List<String>>> atmosphere = [
@@ -27,6 +31,16 @@ class ThemeService {
         return stream.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
     }
 
+    /** "Name|narrative" lines, in file order; a line without "|" maps to an empty narrative. */
+    private Map<String, String> loadNarrativeLines(String resourcePath) {
+        Map<String, String> out = new LinkedHashMap<String, String>()
+        for (String line in loadResourceLines(resourcePath)) {
+            int cut = line.indexOf('|')
+            out[cut < 0 ? line : line.substring(0, cut).trim()] = cut < 0 ? "" : line.substring(cut + 1).trim()
+        }
+        return out
+    }
+
     private void loadThemes() {
         for (String key in loadResourceLines("/themes/cultures/index.txt")) {
             cultures[key] = loadResourceLines("/themes/cultures/${key}.txt")
@@ -38,6 +52,9 @@ class ThemeService {
         for (String key in loadResourceLines("/themes/descriptions/index.txt")) {
             descriptions[key] = loadResourceLines("/themes/descriptions/${key}.txt")
         }
+        doorMaterials = loadNarrativeLines("/themes/doors/materials.txt")
+        doorStates = loadNarrativeLines("/themes/doors/states.txt")
+        doorWords = loadResourceLines("/themes/doors/inscriptions.txt")
         for (String category in ["walls", "lighting", "structures"]) {
             Map<String, List<String>> catMap = (Map<String, List<String>>) atmosphere[category]
             for (String key in loadResourceLines("/themes/atmosphere/${category}/index.txt")) {
@@ -164,7 +181,13 @@ class ThemeService {
         Collections.shuffle(items, r)
         List<String> out = []
         for (int i = 0; i < Math.min(count, items.size()); i++) {
-            String condition = conditions ? (String) conditions[r.nextInt(conditions.size())] : null
+            String condition = null
+            if (conditions) {
+                int ci = r.nextInt(conditions.size())
+                // HK-016 step 3 (F2): never double a relic's first word ("flickering flickering light tube").
+                if (((String) items[i]).startsWith(conditions[ci] + " ")) ci = (ci + 1) % conditions.size()
+                condition = (String) conditions[ci]
+            }
             out << (condition ? "${condition} ${items[i]}".toString() : (String) items[i])
         }
         return out

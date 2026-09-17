@@ -3,3 +3,8 @@ reinforced bunker-like geometry
 spatial cell with tactical telemetry projected on the floor
 narrow kill-zone corridor layout
 armored transit-node architecture
+a briefing room with the map torn down
+a magazine of empty racks and chains
+a watch post with a slit for a window
+a gas-lock chamber with two sealed doors
+a drill floor marked in faded lines

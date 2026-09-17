@@ -3,3 +3,8 @@ a non-Euclidean chamber whose far wall is also its floor
 a probability-field cell that resolves only while observed
 space stretched thin around a dormant quantum core
 a time-dilated alcove where echoes arrive before their source
+a corridor that ends where it began
+a room whose ceiling is another floor
+a stairwell that descends into its own top
+an alcove folded inside a larger alcove
+a chamber lit by its own reflection

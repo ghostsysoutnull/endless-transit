@@ -1,7 +1,7 @@
 # Procgen Variety Audit
 **Created:** 2026-09-16
 **Trigger:** user report — "a lack of variation in the objects on the rooms"
-**Status:** ANALYSIS — no source change authorized by this document. Remediation is tracked as **HK-016** (`tasks/backlog/HOUSEKEEPING.md`).
+**Status:** REMEDIATED — HK-016 steps 1–3 closed 2026-09-16 (see the DONE blocks in §4). No source change is authorized by this document.
 
 > **Verdict:** the report is correct, and rooms are not the worst case. Objects and furniture on a planet come from a
 > pool capped at 256 strings; three of the room's four description lines collapse to a *single* string for large parts
@@ -130,6 +130,25 @@ Add a log line in `generateAtmosphere` when a fallback fires (the missing-file g
 Culture and timeline items 8 → ~16; atmosphere pools 5 → ~10; room lexicons 8×8 → ~12×12; door materials/states 8/7 → ~12/12.
 With step 2 in place a planet's object space becomes roughly 16 × 16 × 4 phrasings × 2 cultures × 2 timelines ≈ 4,000.
 Doing this first would mostly evaporate on the current template; that is the reason for the order.
+
+> **Step 3 DONE (2026-09-16) — HK-016 CLOSED.** Plan and execution record: `tasks/completed/HK_016_STEP3_PLAN.md`. Every list grown to the audit's
+> sizes (relics 16 per culture and era, atmosphere 10 per file, conditions 16, lexicons 12 + 12, doors 12 / 12 / 12; abyssal lists left as the
+> largest). Doors' materials, states (with narratives) and default inscription words moved to `themes/doors/*.txt` first as a zero-diff refactor.
+> Probe re-run, same six seeds, same walk — **audit → step 2 → step 3**:
+>
+> | seed | objects distinct/total | furniture distinct/total | walls / lighting / structure distinct | apts with a repeat |
+> | :-- | :-- | :-- | :-- | :-- |
+> | 0 | 184 → 311 → **381**/406 | 185 → 117 → **264**/447 | 10/6/6 → 12/7/8 → **22/22/14** | 11 → 0 → **0** |
+> | 12345 | 193 → 369 → **513**/599 | 192 → 123 → **285**/560 | 17/15/9 → 17/16/13 → **22/31/18** | 17 → 0 → **0** |
+> | 0x1234 | 160 → 290 → **545**/719 | 161 → 90 → **266**/589 | 10/10/1 → 19/14/12 → **31/22/18** | 25 → 0 → **0** |
+> | 500 | 198 → 299 → **327**/355 | 184 → 121 → **249**/336 | 11/7/1 → 13/8/9 → **23/21/14** | 9 → 0 → **0** |
+> | 9999 | 143 → 266 → **413**/495 | 146 → 83 → **246**/538 | 14/8/1 → 18/11/14 → **27/24/21** | 17 → 0 → **0** |
+> | 42 | 144 → 203 → **261**/283 | 138 → 97 → **177**/230 | 11/7/1 → 11/7/8 → **20/21/13** | 10 → 0 → **0** |
+>
+> Door briefs on the sample: 106 → 56-form pool → **160** distinct of 252 (12 × 12 = 144 briefs, plus inscriptions). Cell-name adjectives seen per
+> culture: 11–12 of 12. Per-planet object ceiling: 256 (audit) → ≈ 1,100 (step 2) → 16 × 16 × 4 + 32 = 1,056 per pair, **≈ 4,200 per planet** (step 3).
+> Lighting and structure fallbacks stay at 0. Root causes 1–6 of §3 are all addressed; what remains is taste, and a list can now be grown by
+> editing a file (the coverage pins hold the floors).
 
 ### Gates and blast radius
 - **Every step changes generated worlds.** `ProcgenSnapshotTest`, `ProcgenDeepSnapshotTest` (seed 0x1234 literals) and any golden

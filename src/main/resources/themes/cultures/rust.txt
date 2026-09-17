@@ -6,3 +6,11 @@ scrap heap
 welded pipe
 cracked concrete block
 industrial valve
+bent rebar
+drum of solvent
+chain hoist
+broken gauge
+oxidized bolt
+tin canteen
+burnt workbench
+iron manhole cover

@@ -6,3 +6,7 @@ Conservatory
 Manor
 Ballroom
 Ledger
+Study
+Lounge
+Vault
+Pavilion

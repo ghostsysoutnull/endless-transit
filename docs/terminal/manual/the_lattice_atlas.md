@@ -112,12 +112,12 @@ Every Building bears a name from one of three tiers:
 
 *   **Landmarks (1 in 25; 1 in 12 beneath a Null Reach):** one of fifteen fixed titles — *The Eye of the Web, Old Unimatrix Root, The Last Stable Surface, The Crystal Sanctum, The Silent Node, The Phantom Spire, The First Pillar, The Heart of the Strata, Apex of Lost Frequencies, The Great Neural Anchor, Pillar of Eternal Static, Unit Zero, The Bleeding Sky-Structure, Memory of the First Pulse, The Void-Watcher.* Rendered in bold cyan on the street list and announced on first entry. Their strata are ordinary; the title is the discovery.
 *   **Uncommon (15%):** either a registry designation — `Unit 0x<HEX>` followed by a size word (*Annex, Cell, Unit, Pod, Hut, Point* for small; *Block, Plaza, Heights, Center, Complex* for medium; *Arcology, Mega-Structure, Spire, Sky-Anchor, Bastion, Citadel* for large) — or a dedication, *The <Noun> of Static / Frequencies / Resonance / Stability / Time / Light / The Web*.
-*   **Common (the rest):** an adjective and a noun from the Culture's lexicon (*Impenetrable Unit*), or a noun fused with *Gate, Fall, Reach, Spire, Well* or *Root* (*ObeliskWell*).
+*   **Common (the rest):** an adjective and a noun from the Culture's lexicon (*Eternal Shaft*), or a noun fused with *Gate, Fall, Reach, Spire, Well* or *Root* (*FoundationWell*).
 
 The Building's status line reports `STRUCTURAL_STABLE`, then `INFUSION_ACTIVE: n` once you begin synthesizing inside it, then `BEDROCK_BREACHED`.
 
 ## [CELLS_AND_DOORS]
-**The Door.** Every apartment on a corridor presents one door. Its **material** is one of eight (*Heavy Bulkhead, Synth-Glass Slab, Pitted Concrete, Reinforced Polymer, Oxidized Metal Hatch, Pristine Ceramic, Brutalist Slab, Industrial Barrier*) and its **state** one of seven (*Vibrating, Cold, Rusted, Stable, Pitted, Polished, Static*). Both are cosmetic. One door in five bears an **inscription** — stamped, scrawled, etched or burned — and two inscriptions are guarantees: `[DATA_VAULT]` opens on a Laboratory or Bio-Server, `!! DANGER !!` on a Security Station or Armory. Every door carries a sensory **trace** that reports the type of the first cell behind it, and the trace never lies (see [LATTICE_HUNTING]({{ "/terminal/codex/lattice_hunting.html" | relative_url }})).
+**The Door.** Every apartment on a corridor presents one door. Its **material** is one of twelve (*Heavy Bulkhead, Synth-Glass Slab, Pitted Concrete, Reinforced Polymer, Oxidized Metal Hatch, Pristine Ceramic, Brutalist Slab, Industrial Barrier, Riveted Iron Hatch, Frosted Crystal Pane, Lacquered Timber Gate, Bone-Lattice Aperture*) and its **state** one of twelve (*Vibrating, Cold, Rusted, Stable, Pitted, Polished, Static, Scorched, Weeping, Humming, Frozen, Warped*). Both are cosmetic. One door in five bears an **inscription** — stamped, scrawled, etched or burned — and two inscriptions are guarantees: `[DATA_VAULT]` opens on a Laboratory or Bio-Server, `!! DANGER !!` on a Security Station or Armory. Every door carries a sensory **trace** that reports the type of the first cell behind it, and the trace never lies (see [LATTICE_HUNTING]({{ "/terminal/codex/lattice_hunting.html" | relative_url }})).
 
 **The Cell.** Choosing a door delivers you into the apartment's first cell; `f` and `b` walk the rest. Each cell has:
 
@@ -144,7 +144,7 @@ Every name in the web is drawn from a fixed lexicon by the node's own seed. Lear
 | **Country** | Prefix Core Polity | *The United, Great, New, Old, Western, Eastern, Northern, Southern, Imperial, Democratic, Holy, Free* + *Arid, Frost, Verdant, Iron, Storm, Shadow, Light, Dust, Glacier, Jungle, Desert, Ocean* + *Republic, Kingdom, Empire, Federation, Sovereignty, Union, Territories, Lands, Domain* | *Free Dust Kingdom*, *Holy Glacier Sovereignty* |
 | **City** | Material + settlement | *Silver, Gold, Black, White, Iron, Steel, Neon, Cyber, Steam, Clock, Void, Star, Cloud, Rain* fused with *town, city, burg, ville, port, gate, haven, peak, spire, bridge, fall, cross, well, ford* | *Starford*, *Clockhaven*, *Voidspire* |
 | **Street** | Adjective Way | *High, Low, Main, Grand, Broad, Dark, Bright, Old, New, Quiet, Busy, Long, Short, Hidden* + *Way, Road, Street, Avenue, Lane, Drive, Path, Walk, Boulevard, Terrace, Row, Circle, Loop, Alley* | *Busy Terrace*, *Hidden Loop* |
-| **Building** | three tiers | see [BUILDINGS_AND_LANDMARKS] | *Impenetrable Unit*, *Unit 0x3F Spire*, *The Void-Watcher* |
+| **Building** | three tiers | see [BUILDINGS_AND_LANDMARKS] | *Eternal Shaft*, *Unit 0x3F Spire*, *The Void-Watcher* |
 | **Floor** | zone by height | see [FLOOR_ZONES] | *TRANSIT_LOBBY*, *NEURAL_UPLINK* |
 | **Cell** | Adjective Type | a lexicon adjective + the Trait's room type | *Silent Fuel Depot*, *Pulsing Neural Link Array* |
 
@@ -152,16 +152,16 @@ Names above the Building are Culture-blind: a Sector is *Core Matrix 17* whether
 
 | Culture | Adjectives | Nouns |
 | :--- | :--- | :--- |
-| **Rust** | Corroded, Oxidized, Patchwork, Scrapyard, Weathered, Fading, Dusty, Assembled | Shell, Stack, Monolith, Heap, Vault, Husk, Anchor, Frame |
-| **Neon** | Vibrant, Fluorescent, Flickering, Synthetic, Digital, Glitchy, Pulsing, Lucid | Hub, Nexus, Array, Node, Core, Circuit, Relay, Grid |
-| **Baroque** | Ornate, Golden, Cathedral, Sacred, Opulent, Marble, Grand, Sanctum | Gallery, Archive, Palace, Temple, Sanctum, Hall, Cathedral, Altar |
-| **Monolith** | Brutalist, Concrete, Silent, Impenetrable, Grey, Eternal, Static, Cold | Slab, Tower, Obelisk, Block, Unit, Monolith, Foundation, Pillar |
-| **Gilded** | Gilded, Velvet, Brass, Crystal, Ornate, Mahogany, Opulent, Clockwork | Salon, Gallery, Atrium, Parlour, Conservatory, Manor, Ballroom, Ledger |
-| **Shogun** | Lacquered, Silent, Folded, Cedar, Ashen, Vermilion, Paper, Moonlit | Pavilion, Shrine, Garden, Dojo, Keep, Teahouse, Lantern, Bridge |
-| **Zenith** | Marble, Ivory, Laurel, Olympian, Sunlit, Alabaster, Columned, Serene | Forum, Temple, Colonnade, Basilica, Agora, Pantheon, Rotunda, Acropolis |
-| **Abyssal** | Recursive, Unhandled, Orphaned, Severed, Inverted, Writhing, Eyeless, Null | Vertex, Thread, Partition, Cyst, Membrane, Sigil, Altar, Exception |
-| **Void** | Hollow, Empty, Silent, Ghostly, Drifting, Dark, Abyssal, Stellar | Void, Shadow, Echo, Aperture, Gravity, Well, Horizon, Reach |
-| **Organic** | Living, Grown, Pulsing, Verdant, Breathing, Soft, Neural, Fungal | Pod, Spore, Nest, Shell, Chamber, Limb, Leaf, Root |
+| **Rust** | Corroded, Oxidized, Patchwork, Scrapyard, Weathered, Fading, Dusty, Assembled, Flaking, Riveted, Sooty, Buckled | Shell, Stack, Monolith, Heap, Vault, Husk, Anchor, Frame, Yard, Silo, Pit, Girder |
+| **Neon** | Vibrant, Fluorescent, Flickering, Synthetic, Digital, Glitchy, Pulsing, Lucid, Buzzing, Chrome, Holographic, Wet | Hub, Nexus, Array, Node, Core, Circuit, Relay, Grid, Arcade, Booth, Terminal, Strip |
+| **Baroque** | Ornate, Golden, Cathedral, Sacred, Opulent, Marble, Grand, Sanctum, Gilt, Vaulted, Solemn, Baroque | Gallery, Archive, Palace, Temple, Sanctum, Hall, Cathedral, Altar, Chapel, Vestry, Cloister, Spire |
+| **Monolith** | Brutalist, Concrete, Silent, Impenetrable, Grey, Eternal, Static, Cold, Featureless, Basalt, Sealed, Unbroken | Slab, Tower, Obelisk, Block, Unit, Monolith, Foundation, Pillar, Vault, Cube, Plinth, Shaft |
+| **Gilded** | Gilded, Velvet, Brass, Crystal, Ornate, Mahogany, Opulent, Clockwork, Burnished, Lacquered, Polished, Velvet-Lined | Salon, Gallery, Atrium, Parlour, Conservatory, Manor, Ballroom, Ledger, Study, Lounge, Vault, Pavilion |
+| **Shogun** | Lacquered, Silent, Folded, Cedar, Ashen, Vermilion, Paper, Moonlit, Quiet, Tiled, Ink-Black, Ceremonial | Pavilion, Shrine, Garden, Dojo, Keep, Teahouse, Lantern, Bridge, Hall, Gatehouse, Courtyard, Tower |
+| **Zenith** | Marble, Ivory, Laurel, Olympian, Sunlit, Alabaster, Columned, Serene, Gilded, Radiant, Fluted, Olympic | Forum, Temple, Colonnade, Basilica, Agora, Pantheon, Rotunda, Acropolis, Portico, Atrium, Shrine, Terrace |
+| **Abyssal** | Recursive, Unhandled, Orphaned, Severed, Inverted, Writhing, Eyeless, Null, Corrupted, Dangling, Leaking, Unbound | Vertex, Thread, Partition, Cyst, Membrane, Sigil, Altar, Exception, Stack, Socket, Fault, Kernel |
+| **Void** | Hollow, Empty, Silent, Ghostly, Drifting, Dark, Abyssal, Stellar, Blank, Pale, Weightless, Unmarked | Void, Shadow, Echo, Aperture, Gravity, Well, Horizon, Reach, Cell, Plane, Hush, Field |
+| **Organic** | Living, Grown, Pulsing, Verdant, Breathing, Soft, Neural, Fungal, Damp, Ribbed, Veined, Sporing | Pod, Spore, Nest, Shell, Chamber, Limb, Leaf, Root, Sac, Cyst, Bloom, Hollow |
 
 Relics are named differently. An **object** is a **Culture word** and an **Era word** joined by *with*, *infused with*, *fused to* or *grafted onto* — *floppy disk with hexagonal pillar*, *shoji screen infused with quantum core*, *obsidian cube fused to floppy disk*, *pager grafted onto tatami mat* — or, now and then, either word alone. A **furnishing** is a Culture word in a condition — *cracked neural interface*. The Gematria Engine reads only the consonants, so the longest names ring loudest.
 

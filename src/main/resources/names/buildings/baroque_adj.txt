@@ -6,3 +6,7 @@ Opulent
 Marble
 Grand
 Sanctum
+Gilt
+Vaulted
+Solemn
+Baroque
