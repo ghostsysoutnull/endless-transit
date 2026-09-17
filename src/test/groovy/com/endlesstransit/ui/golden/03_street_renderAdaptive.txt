@@ -1,4 +1,4 @@
-[37m║ [0mStreet: Low Way | [2m[TECH_ERA:[0m [33mANALOG[0m[2m][0m [2m[RESONANCE:[0m [37mORGANIC[0m[2m][0m[90G[37m║ [0m [96m[NEURAL_MAP: STREET][0m[130G[37m║[0m
+[37m║ [0mStreet: Low Way | [2m[TECH_ERA:[0m [33mDIGITAL[0m[2m][0m [2m[RESONANCE:[0m [37mORGANIC[0m[2m][0m[90G[37m║ [0m [96m[NEURAL_MAP: STREET][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m                                  [0m[130G[37m║[0m
 [37m║ [0m[2mBuildings on this street:[0m[90G[37m║ [0m  [2m[37m[0m⌂[0m                               [0m[130G[37m║[0m
 [37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m                                  [0m[130G[37m║[0m

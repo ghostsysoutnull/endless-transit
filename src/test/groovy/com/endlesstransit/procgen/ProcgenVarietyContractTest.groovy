@@ -64,6 +64,29 @@ class ProcgenVarietyContractTest {
         assertTrue(rooms > 300, "sample had only ${rooms} rooms")
     }
 
+    // --- 2d: a second era per planet, picked per apartment with the culture's stability roll ---------
+
+    @Test
+    void secondaryTimeline_drawnPerPlanet_andPickedByAMinorityOfApartments() {
+        (0..<200).each { int i ->
+            Street s = (Street) WorldGenesis.createInitialWorld(factory, new LocusSeed(i as long)).startLocation
+            VibeCapsule v = ((Planet) s.findAncestor(Planet)).localVibe
+            assertNotNull(v.secondaryTimeline, "planet at seed ${i} has no secondary era")
+            assertNotEquals(v.timeline, v.secondaryTimeline, "planet at seed ${i} drew the same era twice")
+            assertTrue(factory.themeService.timelines.containsKey(v.secondaryTimeline), "secondary era is an indexed timeline")
+        }
+        int onSecondary = 0, total = 0
+        sampleApartments().each { Apartment a ->
+            VibeCapsule v = a.getVibe()
+            if (a.isAnomaly) return
+            total++
+            assertTrue(a.timeline == v.timeline || a.timeline == v.secondaryTimeline, "apartment era is one of the capsule's two")
+            if (a.timeline == v.secondaryTimeline) onSecondary++
+        }
+        double share = onSecondary / (double) total
+        assertTrue(share > 0.05 && share < 0.25, "secondary-era share ${onSecondary}/${total} outside the 5-25% band the stability roll implies")
+    }
+
     // --- 2a/2b: shuffled-deck dealing --------------------------------------------------------------
 
     @Test

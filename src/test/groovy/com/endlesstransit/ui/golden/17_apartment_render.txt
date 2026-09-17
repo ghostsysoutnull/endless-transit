@@ -11,7 +11,7 @@
 [37m║ [0mTRACE_BUFFER: 0/16 FRAGMENTS[130G[37m║[0m
 [37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
  [37m»» SCANNING_LOCAL_TOPOLOGY...[0m
-[37m║ [0mApartment: Pitted Concrete [VIBRATING]. [TEMPORAL_MARKER: [33mANALOG[0m][90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
+[37m║ [0mApartment: Pitted Concrete [VIBRATING]. [TEMPORAL_MARKER: [33mDIGITAL[0m][90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
 [37m║ [0m[96m [APARTMENT_UNIT_ACCESS] [0m[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[2mLocal unit entry-point. Internal cells detected: 9[0m[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m

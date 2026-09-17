@@ -25,7 +25,7 @@ final class ApartmentFactory implements LocationFactory<Apartment> {
         
         VibeCapsule vibe = a.getVibe()
         if (vibe != null && locus.nextDouble() > 0.01) { // 99% chance to match vibe
-            a.timeline = vibe.timeline
+            a.timeline = vibe.pickTimeline(locus.branch("TIMELINE_SELECTOR"))   // HK-016 step 2: era drifts like culture
             a.culture = vibe.pickCulture(locus.branch("CULTURE_SELECTOR"))
         } else if (vibe != null) {
             a.isAnomaly = true

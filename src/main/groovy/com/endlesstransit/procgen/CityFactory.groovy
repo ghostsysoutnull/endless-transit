@@ -33,7 +33,8 @@ final class CityFactory implements LocationFactory<City> {
                 // 10% chance to be a "rebel" district and flip resonances
                 if (c.locus.checkProbability(0.1)) {
                     c.isRebelDistrict = true
-                    c.localVibe = new VibeCapsule(parentVibe.timeline, parentVibe.secondaryCulture, parentVibe.primaryCulture)
+                    // Rebel district: both cultures and (HK-016 step 2) both eras swap.
+                    c.localVibe = new VibeCapsule(parentVibe.secondaryTimeline, parentVibe.secondaryCulture, parentVibe.primaryCulture, parentVibe.timeline)
                     c.localVibe.latticeMutation = parentVibe.latticeMutation
                     c.localVibe.stabilityFactor = parentVibe.stabilityFactor
                     c.localVibe.atmosphericColor = parentVibe.atmosphericColor
