@@ -112,7 +112,19 @@ class NameGenerator {
         return lexicon
     }
 
-    static Map<String, Object> generateRoomName(String culture, String trait, LocusSeed locus) {
+    /** The adjectives a culture names its buildings and cells with (HK-016 step 2: dealt per apartment). */
+    static List<String> adjectivesFor(String culture) {
+        return (List<String>) lexiconFor(culture).adj
+    }
+
+    /**
+     * A cell's category (from the Country trait) and its designation. HK-016 step 2: the designation is
+     * "<adjective> <category display name>" — the category is the room's identity, the adjective its
+     * culture; the hex serial that used to carry uniqueness is gone. The category is still the first
+     * draw, so door traces (CorridorFactory) are unchanged. An apartment passes a dealt adjective so no
+     * two of its cells share a name; a null adjective draws one from the lexicon.
+     */
+    static Map<String, Object> generateRoomName(String culture, String trait, LocusSeed locus, String adjective = null) {
         Random r = locus.nextRandom()
         Map lexicon = lexiconFor(culture)
 
@@ -129,12 +141,9 @@ class NameGenerator {
         RoomCategory category = (RoomCategory) traitTypes[r.nextInt(traitTypes.size())]
 
         List<String> adjs = (List<String>) lexicon.adj
-        List<String> nouns = (List<String>) lexicon.noun
-        String adj = (String) adjs[r.nextInt(adjs.size())]
-        String noun = (String) nouns[r.nextInt(nouns.size())]
-        String hex = Integer.toHexString(r.nextInt(0xFF)).toUpperCase()
+        String adj = adjective ?: (String) adjs[r.nextInt(adjs.size())]
 
-        String name = "$adj $noun [0x$hex]"
+        String name = "$adj ${category.displayName}"
         return [name: name, category: category]
     }
 

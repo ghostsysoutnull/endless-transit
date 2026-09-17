@@ -13,6 +13,8 @@ class Floor extends Container {
     String culture
     String timeline
     FloorState currentState = ElevatorState.INSTANCE
+    /** HK-016 step 2: the sentence the factory dealt this floor (themes/descriptions/floor.txt, {culture} filled); null = the built-in one. */
+    String descriptionVariant
 
     /** Persisted mode id → state; a new mode is one more entry here. */
     private static final Map<String, FloorState> STATES_BY_ID = [
@@ -88,7 +90,9 @@ class Floor extends Container {
         if (number < 0) {
             return "${getName()}. The air is thick with oily static and the hum of abyssal substrate."
         }
-        return "Floor ${number}. The air hums with the resonance of ${fmt.colorize(culture.toUpperCase(), "CYAN")} geometry."
+        String cultureTag = fmt.colorize(culture.toUpperCase(), "CYAN")
+        String sentence = descriptionVariant != null ? descriptionVariant.replace("{culture}", cultureTag) : "The air hums with the resonance of ${cultureTag} geometry."
+        return "Floor ${number}. ${sentence}"
     }
 
     @Override

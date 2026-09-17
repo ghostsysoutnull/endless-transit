@@ -34,7 +34,15 @@ final class PlanetFactory implements LocationFactory<Planet> {
             attempts++
         }
         
-        p.localVibe = new VibeCapsule(timeline, primary, secondary)
+        // HK-016 step 2: a second era per planet, drawn like the second culture.
+        String secondaryTimeline = registry.themeService.getRandomTimeline(locus.branch("TIMELINE_S"))
+        attempts = 0
+        while (secondaryTimeline == timeline && attempts < 10) {
+            secondaryTimeline = registry.themeService.getRandomTimeline(locus.branch("TIMELINE_S_ALT" + attempts))
+            attempts++
+        }
+
+        p.localVibe = new VibeCapsule(timeline, primary, secondary, secondaryTimeline)
         
         // 2. Map color
         Map<String, String> colorMap = [

@@ -25,7 +25,7 @@ final class ApartmentFactory implements LocationFactory<Apartment> {
         
         VibeCapsule vibe = a.getVibe()
         if (vibe != null && locus.nextDouble() > 0.01) { // 99% chance to match vibe
-            a.timeline = vibe.timeline
+            a.timeline = vibe.pickTimeline(locus.branch("TIMELINE_SELECTOR"))   // HK-016 step 2: era drifts like culture
             a.culture = vibe.pickCulture(locus.branch("CULTURE_SELECTOR"))
         } else if (vibe != null) {
             a.isAnomaly = true
@@ -37,15 +37,26 @@ final class ApartmentFactory implements LocationFactory<Apartment> {
     void populate(Apartment a) {
         int numRooms = a.locus.nextInt(1, 10)
         
-        List<String> objectPool = []
         int totalObjects = a.locus.nextInt(5, 19)
         Random objRandom = a.locus.branch("OBJECT_POOL").nextRandom()
-        for (int i = 0; i < totalObjects; i++) {
-            objectPool << registry.themeService.generateHybridObject(a.culture, a.timeline, objRandom)
-        }
+        // HK-016 step 2: deal from a shuffled deck — no object repeats inside an apartment.
+        List<String> deck = new ArrayList<String>(registry.themeService.objectDeck(a.culture, a.timeline))
+        Collections.shuffle(deck, objRandom)
+        List<String> objectPool = new ArrayList<String>(deck.subList(0, Math.min(totalObjects, deck.size())))
 
+        // HK-016 step 2: deal each room a distinct adjective, so no two rooms in the apartment share a name.
+        List<String> adjectives = new ArrayList<String>(NameGenerator.adjectivesFor(a.culture))
+        Collections.shuffle(adjectives, a.locus.branch("ROOM_ADJ").nextRandom())
+        Set<String> usedNames = new HashSet<String>()
         for (int i = 0; i < numRooms; i++) {
-            Room room = registry.createRoom(a, a.culture, a.timeline, a.locus.branch(i))
+            Room room = registry.createRoom(a, a.culture, a.timeline, a.locus.branch(i), (String) adjectives[i % adjectives.size()])
+            if (!usedNames.add(room.roomName)) {
+                // The deck wrapped onto a category already named with this adjective: take the next free one.
+                for (String alt in adjectives) {
+                    String candidate = "${alt} ${room.roomType}".toString()
+                    if (usedNames.add(candidate)) { room.roomName = candidate; break }
+                }
+            }
             a.addLocation(room)
         }
 

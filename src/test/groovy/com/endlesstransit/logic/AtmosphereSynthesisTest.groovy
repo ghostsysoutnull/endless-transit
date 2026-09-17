@@ -66,18 +66,19 @@ class AtmosphereSynthesisTest {
     void "test hybrid object synthesis"() {
         LocusSeed seed = new LocusSeed(777L)
         Random r = seed.nextRandom()
-        
+
         String hybrid = themeService.generateHybridObject("neon", "industrial", r)
-        
-        // Verify it contains elements from both
+
+        // HK-016 step 2: an object is one entry of the (culture, era) deck — a culture item and an era item in one
+        // of four two-word forms, or either item alone — so it always contains at least one of the two assets.
         List<String> neonAssets = new File("src/main/resources/themes/cultures/neon.txt").readLines().collect { it.trim() }.findAll { !it.isEmpty() }
         List<String> industrialAssets = new File("src/main/resources/themes/timelines/industrial.txt").readLines().collect { it.trim() }.findAll { !it.isEmpty() }
-        
+
+        assertTrue(themeService.objectDeck("neon", "industrial").contains(hybrid), "Object must be a deck entry: $hybrid")
         boolean foundNeon = neonAssets.any { hybrid.contains(it) }
         boolean foundIndustrial = industrialAssets.any { hybrid.contains(it) }
-        
-        assertTrue(foundNeon, "Hybrid object should contain a Neon asset: $hybrid")
-        assertTrue(foundIndustrial, "Hybrid object should contain an Industrial asset: $hybrid")
-        assertTrue(hybrid.contains("with") || hybrid.contains("infused with"), "Should be a synthesized string")
+        assertTrue(foundNeon || foundIndustrial, "Object should contain a Neon or an Industrial asset: $hybrid")
+        assertTrue(hybrid ==~ /.+ (with|infused with|fused to|grafted onto) .+/ || neonAssets.contains(hybrid) || industrialAssets.contains(hybrid),
+            "Should be one of the deck's forms: $hybrid")
     }
 }

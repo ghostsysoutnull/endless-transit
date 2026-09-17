@@ -34,6 +34,14 @@ scope before starting.
   `a spatial cell` regardless); `ThemeResourceCoverageTest` (RED on the old tree). Probe: lighting/structure fallbacks 0 on all six seeds;
   walls distinct 12/17/19/13/18/11 (was 10/17/10/11/14/11), structure distinct 8/13/12/9/14/8 (was 6/9/1/1/1/1). One literal + goldens 16/30
   moved, as planned. Found and fixed first: **HK-017** (pane wrap width). **Steps 2 and 3 OPEN.**
+- **Step 2 CLOSED (2026-09-16, branch `content/hk-016-step2`, `3357030`…`be5afbb`, plan `tasks/completed/HK_016_STEP2_PLAN.md`):** objects dealt from a
+  shuffled deck of four two-word forms + singles (272 per culture/era pair) — no repeat inside an apartment on any of six seeds (was 25–40 % of
+  apartments); furniture is `<condition> <culture item>` from `themes/conditions.txt`, disjoint from objects; a second era per planet picked per
+  apartment with the culture's stability roll (25/168 on the sample), swapped in rebel districts with the cultures; cells named
+  `<culture adjective> <category>` with adjectives dealt per apartment, hex gone; corridor and floor sentences from `themes/descriptions/*.txt`.
+  `ProcgenVarietyContractTest` (7 pins, each shown red against the previous commit). Probe: objects distinct 143–198 → 203–369 per seed; the
+  per-planet ceiling moved from 256 to ≈ 1,100 (4 decks × 272) — the primary pair's single deck of 272 still caps a 700-object sample, which is
+  exactly what **step 3 (grow lists) is for**. 12 goldens moved across the branch, every diff simulated before regeneration. **Step 3 OPEN.**
 
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide

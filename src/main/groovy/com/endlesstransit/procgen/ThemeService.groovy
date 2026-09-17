@@ -7,6 +7,10 @@ import groovy.transform.CompileStatic
 class ThemeService {
     Map<String, List<String>> cultures = new TreeMap<String, List<String>>()
     Map<String, List<String>> timelines = new TreeMap<String, List<String>>()
+    /** HK-016 step 2: the condition words furniture is described in (themes/conditions.txt). */
+    List<String> conditions = []
+    /** HK-016 step 2: description variants per location kind (themes/descriptions/<kind>.txt, indexed). */
+    Map<String, List<String>> descriptions = new TreeMap<String, List<String>>()
     Map<String, Map<String, List<String>>> atmosphere = [
         "walls": new TreeMap<String, List<String>>(),
         "lighting": new TreeMap<String, List<String>>(),
@@ -29,6 +33,10 @@ class ThemeService {
         }
         for (String key in loadResourceLines("/themes/timelines/index.txt")) {
             timelines[key] = loadResourceLines("/themes/timelines/${key}.txt")
+        }
+        conditions = loadResourceLines("/themes/conditions.txt")
+        for (String key in loadResourceLines("/themes/descriptions/index.txt")) {
+            descriptions[key] = loadResourceLines("/themes/descriptions/${key}.txt")
         }
         for (String category in ["walls", "lighting", "structures"]) {
             Map<String, List<String>> catMap = (Map<String, List<String>>) atmosphere[category]
@@ -112,17 +120,73 @@ class ThemeService {
         return pool
     }
 
-    String generateHybridObject(String culture, String timeline, Random r) {
-        List<String> cAssets = getCultureAssets(culture)
-        List<String> tAssets = getTimelineAssets(timeline)
+    private final Map<String, List<String>> objectDecks = new HashMap<String, List<String>>()
 
-        if (cAssets && tAssets) {
-            String cItem = (String) cAssets[r.nextInt(cAssets.size())]
-            String tItem = (String) tAssets[r.nextInt(tAssets.size())]
-            
-            // Randomly decide which one comes first for variety
-            return r.nextBoolean() ? "${tItem} with ${cItem}" : "${cItem} infused with ${tItem}"
+    /**
+     * HK-016 step 2: every object an apartment of this culture and era can hold, in a fixed order —
+     * each culture item x each era item in four two-word forms, then every item alone. Built once per
+     * (culture, era) and shared; callers copy before shuffling. ["Strange Object"] when a list is empty.
+     */
+    List<String> objectDeck(String culture, String timeline) {
+        String key = culture + "|" + timeline
+        List<String> deck = objectDecks[key]
+        if (deck == null) {
+            deck = buildObjectDeck(getCultureAssets(culture), getTimelineAssets(timeline))
+            objectDecks[key] = deck
         }
-        return "Strange Object"
+        return deck
+    }
+
+    private static List<String> buildObjectDeck(List<String> cAssets, List<String> tAssets) {
+        if (!cAssets || !tAssets) return Collections.unmodifiableList(["Strange Object"])
+        List<String> deck = []
+        for (String c in cAssets) {
+            for (String t in tAssets) {
+                deck << "${t} with ${c}".toString()
+                deck << "${c} infused with ${t}".toString()
+                deck << "${c} fused to ${t}".toString()
+                deck << "${t} grafted onto ${c}".toString()
+            }
+        }
+        deck.addAll(cAssets)
+        deck.addAll(tAssets)
+        return Collections.unmodifiableList(deck)
+    }
+
+    /**
+     * HK-016 step 2: furniture is a culture item in a condition ("overturned tatami mat"), never a
+     * hybrid — the FURNITURE line stops reading as a second objects line. Items are dealt without
+     * replacement (a shuffled copy of the culture list), each with a condition drawn by r.
+     */
+    List<String> generateFurniture(String culture, int count, Random r) {
+        List<String> items = new ArrayList<String>(getCultureAssets(culture))
+        if (!items) return (List<String>) (1..count).collect { "Strange Fixture" }
+        Collections.shuffle(items, r)
+        List<String> out = []
+        for (int i = 0; i < Math.min(count, items.size()); i++) {
+            String condition = conditions ? (String) conditions[r.nextInt(conditions.size())] : null
+            out << (condition ? "${condition} ${items[i]}".toString() : (String) items[i])
+        }
+        return out
+    }
+
+    /**
+     * HK-016 step 2: one of the kind's description variants, chosen by the location's own seed at
+     * creation (the factory stores it on the model). Null, with a warning, when the file is missing —
+     * the model then keeps its built-in sentence.
+     */
+    String descriptionVariant(String kind, LocusSeed locus) {
+        List<String> pool = descriptions[kind]
+        if (!pool) {
+            Terminal.println "[THEME_WARN] no descriptions file for '${kind}' — using the built-in sentence"
+            return null
+        }
+        return (String) pool[locus.branch("DESC").nextInt(pool.size())]
+    }
+
+    /** One object drawn with replacement from the deck (HK-016 step 2: one nextInt per call). */
+    String generateHybridObject(String culture, String timeline, Random r) {
+        List<String> deck = objectDeck(culture, timeline)
+        return deck[r.nextInt(deck.size())]
     }
 }

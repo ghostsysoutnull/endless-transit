@@ -16,7 +16,7 @@ final class RoomFactory {
         this.registry = registry
     }
 
-    Room create(Container parent, String culture, String timeline, LocusSeed locus) {
+    Room create(Container parent, String culture, String timeline, LocusSeed locus, String adjective = null) {
         Room r = new Room()
         r.culture = culture
         r.timeline = timeline
@@ -35,7 +35,7 @@ final class RoomFactory {
         // 3. Functional Naming
         Country country = (Country) r.findAncestor(Country.class)
         String trait = country != null ? country.functionalTrait : "Standard"
-        Map<String, Object> nameData = NameGenerator.generateRoomName(culture, trait, locus)
+        Map<String, Object> nameData = NameGenerator.generateRoomName(culture, trait, locus, adjective)
         r.roomName = (String) nameData["name"]
         RoomCategory category = (RoomCategory) nameData["category"]
         r.roomType = category.displayName
@@ -56,9 +56,8 @@ final class RoomFactory {
         // 6. Furniture
         int numFurniture = locus.nextInt(1, 3)
         Random furnRandom = locus.branch("FURNITURE").nextRandom()
-        for (int i = 0; i < numFurniture; i++) {
-            r.furniture << registry.themeService.generateHybridObject(culture, timeline, furnRandom)
-        }
+        // HK-016 step 2: furniture is a conditioned culture item, disjoint from the object deck.
+        r.furniture.addAll(registry.themeService.generateFurniture(culture, numFurniture, furnRandom))
         r.fmt = registry.fmt
         return r
     }

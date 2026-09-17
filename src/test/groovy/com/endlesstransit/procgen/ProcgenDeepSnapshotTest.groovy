@@ -168,7 +168,8 @@ class ProcgenDeepSnapshotTest {
     @Test
     void room_attributes_pinnedForSeed0x1234() {
         Room r = room()
-        assertEquals("Grey Unit [0x55]", r.roomName)
+        // HK-016 step 2 (c5): "<dealt adjective> <category>"; the hex serial is gone.
+        assertEquals("Silent Fuel Depot", r.roomName)
         assertEquals("Fuel Depot", r.roomType, "RoomCategory.displayName")
         assertEquals("green", r.color)
         assertFalse(r.isAnomaly, "copied from the apartment")
@@ -185,26 +186,28 @@ class ProcgenDeepSnapshotTest {
         assertEquals("[CLEAR]", r.atmoTraits["SIGNAL"])
         assertEquals(3, r.atmoTraits.size())
 
-        assertEquals(["floppy disk with hexagonal pillar"], r.furniture, "furniture from the FURNITURE branch Random")
+        // HK-016 step 2 (c3): furniture is a conditioned culture item from the FURNITURE branch Random, never a hybrid.
+        assertEquals(["cracked neural interface"], r.furniture, "furniture from the FURNITURE branch Random")
 
+        // HK-016 step 2 (c2): the first 15 of the monolith/analog deck (272 entries) shuffled by the OBJECT_POOL Random — no repeats.
         List<String> expectedObjects = [
-            "cassette tape with neural interface",
-            "floppy disk with geometric slab",
-            "green power conduit infused with rotary phone",
-            "green power conduit infused with beige keyboard",
+            "rotary phone grafted onto green power conduit",
+            "data probe fused to cassette tape",
+            "beige keyboard with green power conduit",
+            "rotary phone with black glass panel",
             "geometric slab infused with magnetic strip",
-            "floppy disk with black glass panel",
-            "black glass panel infused with floppy disk",
-            "hexagonal pillar infused with cassette tape",
-            "cassette tape with geometric slab",
-            "geometric slab infused with crt monitor",
-            "beige keyboard with data probe",
+            "obsidian cube fused to magnetic strip",
+            "magnetic strip with data probe",
+            "obsidian cube infused with magnetic strip",
+            "green power conduit infused with vhs player",
+            "rotary phone grafted onto neural interface",
+            "obsidian cube fused to floppy disk",
             "dot matrix printer with black glass panel",
-            "black glass panel infused with floppy disk",
-            "magnetic strip with neural interface",
-            "dot matrix printer with green power conduit",
+            "obsidian cube fused to rotary phone",
+            "bioluminescent vein infused with dot matrix printer",
+            "geometric slab infused with vhs player",
         ]
-        assertEquals(expectedObjects, r.objects, "object pool order from the OBJECT_POOL branch Random")
+        assertEquals(expectedObjects, r.objects, "shuffled-deck order from the OBJECT_POOL branch Random")
     }
 
     // --- FloorFactory: countSubLocations shadow count agrees with actual population ---

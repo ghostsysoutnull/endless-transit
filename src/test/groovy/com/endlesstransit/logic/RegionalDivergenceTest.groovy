@@ -48,6 +48,9 @@ class RegionalDivergenceTest {
                 assertNotNull(cityVibe, "City should have a vibe")
                 assertEquals(parentVibe.primaryCulture, cityVibe.secondaryCulture, "Rebel city should flip primary to secondary")
                 assertEquals(parentVibe.secondaryCulture, cityVibe.primaryCulture, "Rebel city should flip secondary to primary")
+                // HK-016 step 2 (Q4a): the two eras swap with the two cultures.
+                assertEquals(parentVibe.secondaryTimeline, cityVibe.timeline, "Rebel city should flip the secondary era to primary")
+                assertEquals(parentVibe.timeline, cityVibe.secondaryTimeline, "Rebel city should flip the primary era to secondary")
             }
         }
         
