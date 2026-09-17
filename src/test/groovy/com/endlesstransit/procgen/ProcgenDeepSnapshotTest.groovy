@@ -176,7 +176,7 @@ class ProcgenDeepSnapshotTest {
         assertEquals("monolith", r.culture)
         assertEquals("analog", r.timeline)
 
-        assertEquals("seamless dark alloy", r.walls)
+        assertEquals("hexagonal ceramic tiles, unbroken", r.walls)
         assertEquals("the warm cathode glow of a CRT monitor", r.lightingDesc)
         // HK-016 step 1: Industrial has its own structures file; before it, this was the silent fallback "a spatial cell".
         assertEquals("gantry-braced architecture that vibrates with every pulse", r.structureDesc)
