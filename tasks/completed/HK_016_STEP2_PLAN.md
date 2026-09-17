@@ -2,7 +2,16 @@
 **Created:** 2026-09-16 | **Decisions:** all ★ (user) | **Grill:** AMEND (check 2: 2f reached the factory at render time — hand-built floors/corridors would NPE, and the `Floor N.` / `[THEME:` guards were unlisted; 2d's lighting edge undeclared; check 4: c6 was 7 files) → applied → **CLEARED** | **Branch:** `content/hk-016-step2` (from `master` after the step-1 merge)
 **Backlog:** `tasks/backlog/HOUSEKEEPING.md` (HK-016, step 2 of 3) | **Audit:** `docs/analysis/VARIETY_AUDIT.md` §3.1, §3.3–3.6, §4 step 2 | **Step 1 record:** `tasks/completed/HK_016_STEP1_PLAN.md`
 **Baseline (master `e0604c0` + atlas fix):** 220 / 220 / 0 / 0; `LINT=PASS FILES=208`; `--scan` seed 0 → 9; probe (Appendix A): objects 143–198 distinct of 283–719 per seed, 25–40 % of apartments repeat an object, furniture reads as a second objects line
-**Status:** DRAFT — no source change authorized by this document
+**Status:** COMPLETE (2026-09-16) | **Commits:** 3357030 (c1), f387d87 (c2 deck), de29ecf (c3 furniture), 1b07043 (c4 eras), ff71996 (c5 names), 51331f8 (c6a corridor), be5afbb (c6b floor), c7 = the docs commit carrying this line | **Suite at close:** 227 / 227 / 0 / 0; `LINT=PASS FILES=209`; `--scan` seed 0 → 9 before and after; probe: 0 apartments with a repeated object on all six seeds
+
+> **Execution notes.** (1) Every commit's simulated frame set was the regenerated set: c2 = 16/30, c3 = 16/30, c4 = 8 frames (see the amended row: the
+> golden city is a rebel district), c5 = 9, c6a = 15, c6b = none (the golden floor rolled the original sentence). (2) c5 shipped with a delegator
+> whose signature changed but whose body still dropped the adjective — caught by the simulation (the name came from the lexicon draw, not the dealt
+> deck), fixed before commit. (3) The dealt adjectives wrap after eight, so c5 gained a rename pass (next free adjective for that category) and the
+> pin states the exact contract: unique unless a category is dealt more rooms than the culture has adjectives. (4) The c5 red demo failed to compile
+> against the old generator (missing accessor) — inconclusive rather than red for the right reason; the other six pins were red for theirs.
+> (5) The phase target "objects distinct ≥ 90 % of total per seed" was wrong arithmetic — see the audit's step 2 block; the deck ceiling is what
+> moved, and step 3 is what lifts the sample.
 
 > **Content phase, second step.** Step 1 filled the drawers; step 2 changes how the drawers are used, so that a planet's object
 > space stops being capped at 256 strings by the template. Every sub-step moves object or name strings on both pinned worlds

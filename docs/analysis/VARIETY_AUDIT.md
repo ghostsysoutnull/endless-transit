@@ -107,6 +107,25 @@ Add a log line in `generateAtmosphere` when a fallback fires (the missing-file g
 - Two to four **template variants** for corridor, floor and apartment descriptions (2.9).
 *Effect:* the planet ceiling goes from 256 to several thousand objects before any list grows.
 
+> **Step 2 DONE (2026-09-16)** — plan and execution record: `tasks/completed/HK_016_STEP2_PLAN.md`. All six items landed (deck of 4 forms + singles,
+> shuffled per apartment; furniture = condition + culture item; second era per planet; category names with dealt adjectives; corridor/floor
+> variants; rebel districts swap eras too). Probe re-run, same six seeds, same walk:
+>
+> | seed | objects distinct/total (before → after) | apts with a repeated object | furniture distinct/total | lighting distinct |
+> | :-- | :-- | :-- | :-- | :-- |
+> | 0 | 184/406 → **311**/406 | 11 → **0** | 185/447 → 117/447 | 7 → 12 |
+> | 12345 | 193/599 → **369**/599 | 17 → **0** | 192/560 → 123/560 | 16 → 21 |
+> | 0x1234 | 160/719 → **290**/719 | 25 → **0** | 161/589 → 90/589 | 14 → 16 |
+> | 500 | 198/355 → **299**/355 | 9 → **0** | 184/336 → 121/336 | 8 → 11 |
+> | 9999 | 143/495 → **266**/495 | 17 → **0** | 146/538 → 83/538 | 11 → 15 |
+> | 42 | 144/283 → **203**/283 | 10 → **0** | 138/230 → 97/230 | 7 → 12 |
+>
+> **Correction to the effect stated above:** "several thousand" is the ceiling *after step 3*. After step 2 alone a planet has four decks of 272
+> (2 cultures × 2 eras), and ≈ 72 % of its apartments sit on the primary pair's single deck (stability 0.85²), so a 700-object sample still
+> tops out near 272 + spill — the 40 % at 0x1234. Furniture distinct *fell* by design: 8 items × 8 conditions per culture is a 64-string pool
+> until step 3 grows both lists. Room names now have 8 adjectives × 4 categories per culture-country = 32 real names (was 64 + a serial that
+> did not count); step 3's ~12 adjectives give 48. Every number here says the same thing: the template no longer caps the words — the lists do.
+
 **Step 3 — grow the lists (content), sized to the draw volume.**
 Culture and timeline items 8 → ~16; atmosphere pools 5 → ~10; room lexicons 8×8 → ~12×12; door materials/states 8/7 → ~12/12.
 With step 2 in place a planet's object space becomes roughly 16 × 16 × 4 phrasings × 2 cultures × 2 timelines ≈ 4,000.

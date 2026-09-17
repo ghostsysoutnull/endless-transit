@@ -162,12 +162,14 @@ took come back, ritual progress is gone, a breached building is sealed again. <!
 
 ## Finding things worth taking
 
-**Objects live in apartments, not rooms.** Each apartment gets between 5 and 19 objects, scattered at random
+**Objects live in apartments, not rooms.** Each apartment gets between 5 and 19 objects, dealt from a shuffled deck
+of every culture-and-era combination, so no apartment holds the same object twice; they are scattered at random
 across its 1 to 10 rooms. Some rooms get nothing, some get a pile. Once you take an object it is gone for good;
-apartments do not restock. <!-- ApartmentFactory.groovy:38-57, Room.groovy:176 -->
+apartments do not restock. <!-- ApartmentFactory.groovy, ThemeService.objectDeck, Room.groovy:176 -->
 
-**Furniture is not loot.** Each room describes one to three pieces of furniture. You cannot take them. Only things
-listed under the `t` menu are objects. <!-- RoomFactory.groovy:57-61 -->
+**Furniture is not loot.** Each room describes one to three pieces of the culture's furniture in some condition
+(*overturned tatami mat*). You cannot take them. Only things listed under the `t` menu are objects.
+<!-- RoomFactory.groovy, ThemeService.generateFurniture -->
 
 **One-room apartments are the best.** All 5 to 19 objects are in the one room you land in. The corridor's scan
 does not tell you room counts, but the door's room type applies to the first room, and the fewer rooms, the more
@@ -286,7 +288,13 @@ the prize. <!-- NameGenerator.groovy:82-98, 126-137 -->
 no era that costs less. <!-- Street.groovy:87, TurnProcessor.groovy:47 -->
 
 **Rebel districts.** One city in ten is flagged `[UNAUTHORIZED_ZONE]` in red. It swaps the planet's main and
-secondary culture, so the 10% frequency bonus lands on the *other* culture there. <!-- CityFactory.groovy:34-40 -->
+secondary culture, so the 10% frequency bonus lands on the *other* culture there, and it swaps the planet's two
+eras the same way, so the street era (and the Entropic drain) can differ from the rest of the planet.
+<!-- CityFactory.groovy:34-41 -->
+
+**Apartments drift in time.** About one apartment in six carries the planet's *second* era: its header says
+`[TEMPORAL_MARKER: X]`, its objects and lighting are of that era. The drain cost still follows the street header.
+<!-- VibeCapsule.pickTimeline, ApartmentFactory.groovy:29 -->
 
 **Every culture, era and trait has its own words.** Each of the ten cultures has its own wall descriptions and
 its own building and room names, each of the eight eras its own lighting, and each of the six country traits its own

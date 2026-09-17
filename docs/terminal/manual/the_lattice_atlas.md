@@ -50,9 +50,9 @@ Four are **Minor Cultures**: their objects are their own, but their walls and bu
 Full histories: [CULTURAL_ORIGINS]({{ "/terminal/codex/cultural_origins.html" | relative_url }}).
 
 ## [THE TEMPORAL ERAS]
-Each planet is also fixed to one of eight **Temporal Eras**, shown on every street header as `[TECH_ERA: …]`. Where the Culture decides *who* built a place, the Era decides *when*: every relic in the web is a hybrid of a Culture word and an Era word, and the Era chooses the light you read it by.
+Each planet is also fixed to one of eight **Temporal Eras**, shown on every street header as `[TECH_ERA: …]`, and carries a second Era the way it carries a second Culture: roughly one apartment in six drifts to it, and says so on its own header as `[TEMPORAL_MARKER: …]`. Where the Culture decides *who* built a place, the Era decides *when*: every object in the web is a Culture word and an Era word — the apartment's Era — and the Era chooses the light you read it by.
 
-Only one Era touches the link itself: in an **ENTROPIC** Era every pulse costs double Coherence. No Era costs less than the base rate.
+Only one Era touches the link itself: in an **ENTROPIC** Era every pulse costs double Coherence. It is the Era on the *street* header that counts — the planet's, or in a rebel district the swapped one — never an apartment's drifted marker. No Era costs less than the base rate.
 
 Every Era carries its own light.
 
@@ -125,8 +125,8 @@ The Building's status line reports `STRUCTURAL_STABLE`, then `INFUSION_ACTIVE: n
 *   A **colour** — white, blue, pink, gray, purple, orange, green or red.
 *   An **atmosphere** in three parts: walls by Culture, lighting by Era, structure by Trait.
 *   **Atmo-traits** on the status line: `OXYGEN` 12–21%, `TEMP` 5–25 °C, `SIGNAL` `[SHIELDED]` or `[CLEAR]`. Telemetry only.
-*   One to three **furnishings**, hybrids of a Culture word and an Era word. They cannot be taken.
-*   Zero or more **objects**, the same hybrid vocabulary. The apartment is dealt 5–19 objects in total, scattered unevenly across its cells; a one-cell apartment holds them all. They can be taken, and once taken they do not return. Dropping one from the `t` menu leaves it in the cell for later.
+*   One to three **furnishings**: a piece of the Culture's furniture in some condition — *overturned tatami mat*, *dust-covered brass clock* — never two alike in one cell. They cannot be taken.
+*   Zero or more **objects**, each a Culture word and an Era word (the apartment's Era). The apartment shuffles every combination into a deck and deals from the top, so it never holds the same object twice; 5–19 objects in total, scattered unevenly across its cells; a one-cell apartment holds them all. They can be taken, and once taken they do not return. Dropping one from the `t` menu leaves it in the cell for later.
 
 **Anomalies.** One apartment in a hundred is a **Temporal Anomaly**: the header reads `[!] TEMPORAL_ANOMALY_DETECTED [!]`, its atmosphere reads `[UNSTABLE]`, and every cell's description is glitched. Separately, one cell in twenty has a glitched atmosphere of its own, each of walls, lighting and structure re-themed on a coin flip.
 
@@ -163,7 +163,7 @@ Names above the Building are Culture-blind: a Sector is *Core Matrix 17* whether
 | **Void** | Hollow, Empty, Silent, Ghostly, Drifting, Dark, Abyssal, Stellar | Void, Shadow, Echo, Aperture, Gravity, Well, Horizon, Reach |
 | **Organic** | Living, Grown, Pulsing, Verdant, Breathing, Soft, Neural, Fungal | Pod, Spore, Nest, Shell, Chamber, Limb, Leaf, Root |
 
-Relics are named differently: every furnishing and object is a **Culture word** and an **Era word** joined by *with* or *infused with* — *floppy disk with hexagonal pillar*, *shoji screen infused with quantum core*. The Gematria Engine reads only the consonants, so the longest names ring loudest.
+Relics are named differently. An **object** is a **Culture word** and an **Era word** joined by *with*, *infused with*, *fused to* or *grafted onto* — *floppy disk with hexagonal pillar*, *shoji screen infused with quantum core*, *obsidian cube fused to floppy disk*, *pager grafted onto tatami mat* — or, now and then, either word alone. A **furnishing** is a Culture word in a condition — *cracked neural interface*. The Gematria Engine reads only the consonants, so the longest names ring loudest.
 
 ## [THE BEDROCK SUBSTRATE]
 Beneath every building lies the **Bedrock**. Through the ritual of **Harmonic Inversion**, an Observer can "Breach" this bedrock to enter the **Abyssal Substrate**. Here, the terminology of the world changes:
