@@ -121,7 +121,7 @@ The Building's status line reports `STRUCTURAL_STABLE`, then `INFUSION_ACTIVE: n
 
 **The Cell.** Choosing a door delivers you into the apartment's first cell; `f` and `b` walk the rest. Each cell has:
 
-*   A **designation** of the form *Adjective Noun [0xHH]* from the Culture's lexicon, and a **type** from the Country's Trait.
+*   A **designation**: the cell's **type**, chosen from the Country's Trait, with an adjective from the Culture's lexicon in front (*Corroded Fuel Depot*, *Lacquered Prayer Hall*). No two cells of one apartment share a designation.
 *   A **colour** — white, blue, pink, gray, purple, orange, green or red.
 *   An **atmosphere** in three parts: walls by Culture, lighting by Era, structure by Trait.
 *   **Atmo-traits** on the status line: `OXYGEN` 12–21%, `TEMP` 5–25 °C, `SIGNAL` `[SHIELDED]` or `[CLEAR]`. Telemetry only.
@@ -146,7 +146,7 @@ Every name in the web is drawn from a fixed lexicon by the node's own seed. Lear
 | **Street** | Adjective Way | *High, Low, Main, Grand, Broad, Dark, Bright, Old, New, Quiet, Busy, Long, Short, Hidden* + *Way, Road, Street, Avenue, Lane, Drive, Path, Walk, Boulevard, Terrace, Row, Circle, Loop, Alley* | *Busy Terrace*, *Hidden Loop* |
 | **Building** | three tiers | see [BUILDINGS_AND_LANDMARKS] | *Impenetrable Unit*, *Unit 0x3F Spire*, *The Void-Watcher* |
 | **Floor** | zone by height | see [FLOOR_ZONES] | *TRANSIT_LOBBY*, *NEURAL_UPLINK* |
-| **Cell** | Adjective Noun [0xHH] | the Culture's building lexicon + a two-digit hexadecimal | *Grey Unit [0x55]*, *Pulsing Nexus [0xA2]* |
+| **Cell** | Adjective Type | a lexicon adjective + the Trait's room type | *Silent Fuel Depot*, *Pulsing Neural Link Array* |
 
 Names above the Building are Culture-blind: a Sector is *Core Matrix 17* whether it holds Rust or Baroque. From the Building down, the words belong to the Culture. Every Culture owns a lexicon of its own.
 

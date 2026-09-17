@@ -87,6 +87,28 @@ class ProcgenVarietyContractTest {
         assertTrue(share > 0.05 && share < 0.25, "secondary-era share ${onSecondary}/${total} outside the 5-25% band the stability roll implies")
     }
 
+    // --- 2e: a cell is named for what it is, with its culture's adjective; unique inside the apartment -
+
+    @Test
+    void roomName_isCultureAdjectivePlusCategory_uniqueInsideApartment() {
+        int rooms = 0
+        sampleApartments().each { Apartment a ->
+            List<String> adjectives = NameGenerator.adjectivesFor(a.culture)
+            List<String> names = a.rooms*.roomName
+            // Unique unless a category was dealt more rooms than the culture has adjectives (8 today; step 3 grows them).
+            boolean canBeUnique = a.rooms.countBy { Room r -> r.roomType }.values().every { int n -> n <= adjectives.size() }
+            if (canBeUnique) assertEquals(names.size(), (names as Set).size(), "two cells share a name in ${a.getLIP()}: ${names}")
+            a.rooms.each { Room r ->
+                rooms++
+                assertFalse(r.roomName.contains("[0x"), "hex serial still present: ${r.roomName}")
+                assertTrue(r.roomName.endsWith(" " + r.roomType), "'${r.roomName}' does not end with its type '${r.roomType}'")
+                String adj = r.roomName.substring(0, r.roomName.length() - r.roomType.length() - 1)
+                assertTrue(adjectives.contains(adj), "'${adj}' is not a ${a.culture} adjective")
+            }
+        }
+        assertTrue(rooms > 300, "sample had only ${rooms} rooms")
+    }
+
     // --- 2a/2b: shuffled-deck dealing --------------------------------------------------------------
 
     @Test

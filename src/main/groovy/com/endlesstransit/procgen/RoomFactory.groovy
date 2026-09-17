@@ -16,7 +16,7 @@ final class RoomFactory {
         this.registry = registry
     }
 
-    Room create(Container parent, String culture, String timeline, LocusSeed locus) {
+    Room create(Container parent, String culture, String timeline, LocusSeed locus, String adjective = null) {
         Room r = new Room()
         r.culture = culture
         r.timeline = timeline
@@ -35,7 +35,7 @@ final class RoomFactory {
         // 3. Functional Naming
         Country country = (Country) r.findAncestor(Country.class)
         String trait = country != null ? country.functionalTrait : "Standard"
-        Map<String, Object> nameData = NameGenerator.generateRoomName(culture, trait, locus)
+        Map<String, Object> nameData = NameGenerator.generateRoomName(culture, trait, locus, adjective)
         r.roomName = (String) nameData["name"]
         RoomCategory category = (RoomCategory) nameData["category"]
         r.roomType = category.displayName

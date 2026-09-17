@@ -464,7 +464,7 @@ core-dump`, `sigil of the unmaker`, `pact of the root-user`, `shackled deity-pro
 Set `masterLocus` to `4660` in `session.trace` and restore. Take the first option at every level and you will walk
 through filament **Mu-993-Sync**, planet **Hydraia** (monolith and shogun, analog era), the **Free Dust Kingdom**
 (Industrial), city **Starford**, street **Busy Terrace** with 14 buildings, and the **Impenetrable Unit**, a
-3-floor building whose first door opens on `Grey Unit [0x55]`, a Fuel Depot holding all 15 of its apartment's
+3-floor building whose first door opens on `Silent Fuel Depot`, holding all 15 of its apartment's
 objects. A three-floor building with a fifteen-object room is a good place to learn the ritual.
 
 </details>

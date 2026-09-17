@@ -1,8 +1,8 @@
 [37m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
 [37m║ [0m                         LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [2m⌂[0m [2m▤[0m [2m▅[0m [2m🚪[0m [37m[□][0m | PULSE_TRAVERSAL: 0 | COHERENCE: 100%[130G[37m║[0m
-[37m║ [0mLOCUS_TRACE: ...city > Low Way > The Void-Watcher > Floor 0 > Corridor > Pitted Concrete [VIBRATING] > Breathing Nest [0x8C][130G[37m║[0m
+[37m║ [0mLOCUS_TRACE: ...ity > Low Way > The Void-Watcher > Floor 0 > Corridor > Pitted Concrete [VIBRATING] > Fungal Processing Core[130G[37m║[0m
 [37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
-[37m║ [0mLATTICE_IDENT: Processing Core >> Breathing Nest [0x8C][90G[37m║ [0mATMOS: 14% | TEMP: 5°C[130G[37m║[0m
+[37m║ [0mLATTICE_IDENT: Processing Core >> Fungal Processing Core[90G[37m║ [0mATMOS: 14% | TEMP: 5°C[130G[37m║[0m
 [37m║ [0mLOCUS_HASH: 19.414 / 47.053 | HOP_DENSITY: 12[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m
 [37m║ [0mCELL: 1 / 9 | [37m[X][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m[90G[37m║ [0mEVENT_TICKER: [SYNC_STABLE][130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m[2mSYN: Keystone Z (0444Hz)[0m[130G[37m║[0m

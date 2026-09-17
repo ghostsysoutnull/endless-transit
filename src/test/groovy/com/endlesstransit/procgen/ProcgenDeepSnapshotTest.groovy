@@ -168,7 +168,8 @@ class ProcgenDeepSnapshotTest {
     @Test
     void room_attributes_pinnedForSeed0x1234() {
         Room r = room()
-        assertEquals("Grey Unit [0x55]", r.roomName)
+        // HK-016 step 2 (c5): "<dealt adjective> <category>"; the hex serial is gone.
+        assertEquals("Silent Fuel Depot", r.roomName)
         assertEquals("Fuel Depot", r.roomType, "RoomCategory.displayName")
         assertEquals("green", r.color)
         assertFalse(r.isAnomaly, "copied from the apartment")

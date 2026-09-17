@@ -138,8 +138,8 @@ class ProceduralFactory {
         return wire(apartmentFactory.create(parent, doorDesc, culture, timeline, locus))
     }
 
-    Room createRoom(Container parent, String culture, String timeline, LocusSeed locus) {
-        return roomFactory.create(parent, culture, timeline, locus)
+    Room createRoom(Container parent, String culture, String timeline, LocusSeed locus, String adjective = null) {
+        return roomFactory.create(parent, culture, timeline, locus, adjective)
     }
 
     // --- Population ---
