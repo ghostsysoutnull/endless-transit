@@ -1,7 +1,7 @@
 # Housekeeping Plan: HK-019 — A floor forgets the corridor when the player walks out of it
 **Created:** 2026-09-16 | **Grill:** AMEND (2 items: E7, E8 + walk-out pin) → applied → CLEARED | **Branch (proposed):** `housekeeping/hk-019-corridor-reset` (from `master` @ c8ae695)
 **Backlog:** HK-019 (new; the "Left open" line of HK-018, `tasks/backlog/HOUSEKEEPING.md:60`) | **Baseline (run during the grill):** 250 / 250 / 0 / 0, LINT PASS 211 files, scan seed 0 → 9
-**Status:** PLAN ONLY — nothing is authorized by this file. **User decisions (2026-09-16):** D1 = a, D2 = out of scope (→ HK-015), D3 = no migration.
+**Status:** EXECUTED 2026-09-16 (Directive: "yes, execute the plan") — `25fbd6c` c0, `75567f2` c1 (253/253), `3d99343` c2 (256/256, 36 goldens unchanged, LINT PASS 212, scan 0 → 9; P4/P4b/P5 RED at `CorridorLeaveContractTest:85` before the change), c3 close-out. No deviation from the plan. **User decisions (2026-09-16):** D1 = a, D2 = out of scope (→ HK-015), D3 = no migration.
 
 > **Behavior change, needs a user decision.** Leaving a floor with `l` from corridor mode puts that floor back in elevator
 > mode. The next visit starts at the elevator (`u`, `d`, `c` visible). Nothing else moves: same menus, same labels, same
