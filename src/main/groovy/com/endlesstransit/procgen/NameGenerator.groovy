@@ -64,7 +64,8 @@ class NameGenerator {
 
     private static Map loadBuildingLexicon() {
         Map lexicon = new LinkedHashMap()
-        for (String culture in ["rust", "neon", "baroque", "monolith", "void", "organic"]) {
+        // HK-016: cultures enumerated by names/buildings/index.txt (Phase 2a shape), not a literal list.
+        for (String culture in loadLexiconFile("/names/buildings/index.txt")) {
             lexicon[culture] = [
                 "adj" : loadLexiconFile("/names/buildings/${culture}_adj.txt"),
                 "noun": loadLexiconFile("/names/buildings/${culture}_noun.txt")
