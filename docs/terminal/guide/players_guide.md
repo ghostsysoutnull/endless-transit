@@ -110,7 +110,7 @@ Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87
 | Universe down to street | Numbered children, and `l` to go back up one level. |
 | Building lobby | Numbered floors, top floor first, and `l` to leave. |
 | Floor, elevator | `u` up, `d` down, `c` into the corridor, `l` leave the building. On the top floor, `j` appears once you can breach. |
-| Floor, corridor | `b` back to the elevator, numbered doors. There is no `l` here. |
+| Floor, corridor | `b` back to the elevator, numbered doors, `l` leave to the building (it skips the elevator). On the top floor, `j` appears here too once you can breach. |
 | Room | `t` interact, `f` next room, `b` previous room, `l` from the first room back to the corridor. |
 | Null Reach | `S` (capital) to scan for an echo, `c` to capture it once the signal is strong enough. |
 
@@ -256,8 +256,8 @@ This is the game's one real quest, and the manual describes it wrong. Here is th
 4. **Merge an eighth time.** The seventh merge is counted *after* the game checks whether you are primed, so the
    eighth is the first that can produce the Keystone. You need at least nine items in total to get there.
    <!-- Player.groovy:79-81 --> You will see `>>> CRITICAL_WAVEFORM_COLLAPSE: KEYSTONE_STABILIZED <<<`.
-5. **Ride to the top floor.** A new option, `j. Breach the Bedrock`, appears in the elevator. It consumes the
-   Keystone. <!-- ElevatorState.groovy:30-38 -->
+5. **Ride to the top floor.** A new option, `j. Breach the Bedrock`, appears anywhere on that floor, in the elevator
+   and in the corridor. It consumes the Keystone. <!-- Floor.groovy:59-72 -->
 6. **Go to floor 0.** `d` now says `Descend into the Substrate`. Press it.
 
 **What is down there.** Floors count down from -1 and never stop; the building will manufacture layer -100 if you

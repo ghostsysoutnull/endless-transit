@@ -1,7 +1,6 @@
 package com.endlesstransit.model
 
 import com.endlesstransit.core.Game
-import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Player
 import groovy.transform.CompileStatic
 
@@ -27,15 +26,8 @@ class ElevatorState implements FloorState {
             Building bldg = (Building) floor.parent
             if (floor.number < bldg.maxFloors - 1) {
                 options["u. Go Up"] = { game.enterLocation(bldg.getFloor(floor.number + 1)) }
-            } else if (!bldg.isBreached && bldg.isPrimed()) {
-                InventoryItem keystone = game.player.inventory.find { it.isKeystone && it.name.contains(bldg.name) }
-                if (keystone != null) {
-                    options["j. Breach the Bedrock"] = {
-                        game.player.inventory.remove(keystone)
-                        bldg.breach()
-                        game.instantRender = true
-                    }
-                }
+            } else {
+                floor.addBreachOption(options, game)
             }
             if (floor.number != 0) {
                 options["d. Go Down"] = { game.enterLocation(bldg.getFloor(floor.number - 1)) }

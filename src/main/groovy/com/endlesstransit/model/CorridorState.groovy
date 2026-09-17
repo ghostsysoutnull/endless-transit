@@ -28,6 +28,9 @@ class CorridorState implements FloorState {
             game.instantRender = true
         }
 
+        // HK-018: the Peak offers the breach in either mode
+        floor.addBreachOption(options, game)
+
         // Door options from sub-corridor
         options.putAll(floor.getCorridor().getOptions(game))
 

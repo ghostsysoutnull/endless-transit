@@ -24,7 +24,7 @@ Once the building is sampled and infused, the **next synthesis performed inside 
 *   **Persistence:** The Keystone is stored in the **Quantum Trace Buffer** and survives synchronization. So does the building's priming — but a Coherence reboot regenerates the web and erases it.
 
 ## [STAGE 4: THE_BEDROCK_BREACH]
-With the Keystone in the buffer, the `j. Breach the Bedrock` directive appears in the elevator of the **Peak** floor.
+With the Keystone in the buffer, the `j. Breach the Bedrock` directive appears on the **Peak** floor, in the elevator and in the corridor alike.
 *   **Execution:** Initiating the breach consumes the Keystone and inverts the building's vertical polarity.
 *   **Transition:** Return to Floor 0, where `d` now reads *Descend into the Substrate*. The Observer descends into the **Abyssal Layers** — and there is no lowest layer.
 *   **System Shift:** Standard terminology (Room, Floor, Corridor, Apartment) is replaced by substrate terminology (Shard, Layer, Artery, Crypt). Every map glyph becomes `☠`, every pulse costs double, and terminating the link from below yields a different farewell.

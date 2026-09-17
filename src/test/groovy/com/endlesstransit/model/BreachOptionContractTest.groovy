@@ -68,6 +68,25 @@ class BreachOptionContractTest {
     }
 
     @Test
+    void peakCorridorOffersBreachRightAfterBackToElevator() {
+        Game game = new Game(SEED)
+        Building bldg = buildings(game)[0]
+        prime(bldg)
+        Floor peak = peakOf(game, bldg)
+        InventoryItem keystone = forgeKeystone(game, peak)
+
+        peak.enterCorridor()
+        List<String> expected = ["b. Back to Elevator", BREACH] + new ArrayList<String>(peak.getCorridor().getOptions(game).keySet())
+        assertEquals(expected, new ArrayList<String>(peak.getOptions(game).keySet()),
+            "Corridor mode on the Peak: 'b', the breach, then the Corridor's own options")
+
+        peak.getOptions(game)[BREACH].call()
+        assertTrue(bldg.isBreached, "The breach must work from corridor mode")
+        assertFalse(game.player.inventory.contains(keystone), "The breach must consume the Keystone from corridor mode")
+        assertSame(CorridorState.INSTANCE, peak.currentState, "The breach must not change the floor's mode")
+    }
+
+    @Test
     void breachIsNotOfferedWithoutKeystoneUnprimedOrBelowThePeak() {
         Game game = new Game(SEED)
         Building bldg = buildings(game)[0]

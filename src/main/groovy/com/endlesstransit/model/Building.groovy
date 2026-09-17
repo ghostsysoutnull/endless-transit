@@ -1,6 +1,7 @@
 package com.endlesstransit.model
 import com.endlesstransit.procgen.LocusSeed
 import com.endlesstransit.core.Game
+import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.Logger
 import groovy.transform.CompileStatic
@@ -31,6 +32,11 @@ class Building extends Container {
 
     boolean isPrimed() {
         return sampledFloors.size() >= maxFloors && infusionCount >= 7
+    }
+
+    /** The item in this buffer that opens this building's Bedrock, or null (HK-018: the one Keystone rule). */
+    InventoryItem keystoneIn(List<InventoryItem> inventory) {
+        return inventory.find { InventoryItem it -> it.isKeystone && it.name.contains(name) }
     }
 
     void breach() {

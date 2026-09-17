@@ -1,5 +1,6 @@
 package com.endlesstransit.model
 import com.endlesstransit.core.Game
+import com.endlesstransit.core.InventoryItem
 import com.endlesstransit.core.Player
 import com.endlesstransit.core.Logger
 import com.endlesstransit.procgen.LocusSeed
@@ -49,6 +50,24 @@ class Floor extends Container {
     /** Spatial pivot, corridor → elevator. The only way back to {@link ElevatorState}. */
     void returnToElevator() {
         this.currentState = ElevatorState.INSTANCE
+    }
+
+    /**
+     * HK-018: the Bedrock breach is a fact about the floor, not about the mode the player happens to be in.
+     * Both states call this; it adds the option on the Peak of a primed, unbreached building whose Keystone is held.
+     */
+    void addBreachOption(Map<String, Closure> options, Game game) {
+        if (!(parent instanceof Building)) return
+        Building bldg = (Building) parent
+        if (number < bldg.maxFloors - 1 || bldg.isBreached || !bldg.isPrimed()) return
+        InventoryItem keystone = bldg.keystoneIn(game.player.inventory)
+        if (keystone != null) {
+            options["j. Breach the Bedrock"] = {
+                game.player.inventory.remove(keystone)
+                bldg.breach()
+                game.instantRender = true
+            }
+        }
     }
 
     /** What a lattice scan on this floor inspects; decided by the current mode, not by the caller. */
