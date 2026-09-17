@@ -278,8 +278,13 @@ abstract class Container implements Location {
     Map<String, Closure> getBaseOptions(Game game) {
         Map<String, Closure> options = [:]
         if (parent != null) {
-            options["l. Leave ${this.getClass().simpleName}"] = { game.exitLocation() }
+            options[leaveLabel()] = { game.exitLocation() }
         }
         return options
+    }
+
+    /** The menu key of this container's own way out (HK-019: a state that re-routes it asks for the key, never copies it). */
+    String leaveLabel() {
+        return "l. Leave ${this.getClass().simpleName}"
     }
 }

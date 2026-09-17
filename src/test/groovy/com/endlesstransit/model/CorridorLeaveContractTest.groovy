@@ -79,4 +79,55 @@ class CorridorLeaveContractTest {
         assertSame(floor, game.currentLocation, "The Corridor's 'l' must land on the Floor")
         assertSame(CorridorState.INSTANCE, floor.currentState, "Returning from the Corridor must keep corridor mode")
     }
+
+    private static void assertBackAtTheElevator(Floor floor, Game game) {
+        assertSame(floor.parent, game.currentLocation, "The walk must end on the Building")
+        assertSame(ElevatorState.INSTANCE, floor.currentState, "A floor left from the corridor must return to elevator mode")
+        assertEquals(ElevatorState.ID, floor.getMutationState().state, "The saved mode must be the elevator")
+
+        game.enterLocation(floor)
+        assertTrue(floor.getOptions(game).containsKey(ENTER_CORRIDOR), "The next visit must open on the elevator menu")
+    }
+
+    // P4 — HK-019: the corridor's `l` hands the floor back to the elevator
+    @Test
+    void corridorModeLeaveReturnsTheFloorToTheElevator() {
+        Game game = new Game(SEED)
+        Floor floor = floorOf(game, 1)
+        floor.getOptions(game)[ENTER_CORRIDOR].call()
+
+        pressLeave(game)
+        assertBackAtTheElevator(floor, game)
+        assertTrue(floor.getOptions(game).containsKey("u. Go Up"), "The elevator menu must offer 'u' again")
+    }
+
+    // P4b — the full walk-out (also what Enter-repeat drives): Room -> Corridor -> Floor -> Building
+    @Test
+    void walkingOutOfAnApartmentToTheBuildingReturnsTheFloorToTheElevator() {
+        Game game = new Game(SEED)
+        Floor floor = floorOf(game, 1)
+        floor.getOptions(game)[ENTER_CORRIDOR].call()
+        floor.getOptions(game).find { it.key.startsWith("01. ") }.value.call()
+
+        pressLeave(game)
+        pressLeave(game)
+        pressLeave(game)
+        assertBackAtTheElevator(floor, game)
+    }
+
+    // P5 — the bedrock floor honours the same rule
+    @Test
+    void bedrockFloorReturnsToTheElevatorToo() {
+        Game game = new Game(SEED)
+        Floor first = floorOf(game, 1)
+        Building building = (Building) first.parent
+        building.isBreached = true
+        Floor bedrock = building.getFloor(-1)
+        assertNotNull(bedrock, "Breached building must expose Floor -1")
+        game.enterLocation(bedrock)
+        bedrock.getOptions(game)[ENTER_CORRIDOR].call()
+
+        pressLeave(game)
+        assertBackAtTheElevator(bedrock, game)
+    }
 }

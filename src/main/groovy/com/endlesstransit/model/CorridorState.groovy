@@ -34,6 +34,12 @@ class CorridorState implements FloorState {
         // Door options from sub-corridor
         options.putAll(floor.getCorridor().getOptions(game))
 
+        // HK-019: the corridor's way out leaves the floor, so the floor goes back to the elevator (same key, same slot)
+        String leaveLabel = floor.getCorridor().leaveLabel()
+        if (options.containsKey(leaveLabel)) {
+            options[leaveLabel] = { floor.leave(game) }
+        }
+
         return options
     }
 

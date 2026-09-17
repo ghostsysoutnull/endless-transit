@@ -53,6 +53,15 @@ class Floor extends Container {
     }
 
     /**
+     * HK-019: corridor mode means "standing in the corridor". Walking out of the floor from there hands it back to the
+     * elevator, so the next visit opens on the elevator menu.
+     */
+    void leave(Game game) {
+        returnToElevator()
+        game.exitLocation()
+    }
+
+    /**
      * HK-018: the Bedrock breach is a fact about the floor, not about the mode the player happens to be in.
      * Both states call this; it adds the option on the Peak of a primed, unbreached building whose Keystone is held.
      */
