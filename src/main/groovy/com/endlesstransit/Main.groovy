@@ -2,12 +2,20 @@ package com.endlesstransit
 import com.endlesstransit.ui.Terminal
 import com.endlesstransit.model.*
 import com.endlesstransit.core.Game
+import com.endlesstransit.core.LaunchArgs
 import com.endlesstransit.core.Logger
 
 
 try {
     Terminal.initialize()
-    def game = new Game()
+    Long seed = null
+    try {
+        seed = LaunchArgs.seedFrom(args)
+    } catch (IllegalArgumentException badOption) {
+        Terminal.println Terminal.colorize("!!! LAUNCH_REFUSED: ${badOption.message}", Terminal.RED)
+        System.exit(1)
+    }
+    def game = seed != null ? new Game(seed) : new Game()
     game.start()
 } catch (Throwable t) {
     // If the game object was created, we can get the seed

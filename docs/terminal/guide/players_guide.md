@@ -360,10 +360,10 @@ to `journal.txt` and prints an ending. <!-- QuitCommand.groovy:16-27 -->
 **Finding your seed.** There is no seed on screen. Press `p`; the screenshot file's header has a `SEED:` line.
 <!-- ScreenBuffer.groovy:35 -->
 
-**Playing a specific seed.** `./run.sh --seed` is listed in the launcher's help but is ignored by the game; every
-new game uses the current time. <!-- Game.groovy:31, Main.groovy:10 --> The only way to replay a seed is to restore a save,
-or to open `session.trace` in a text editor and change the `masterLocus` number before answering `y` to the restore
-prompt.
+**Playing a specific seed.** `./run.sh --seed <n>` starts a new game on master seed `n` (a whole number, negative
+allowed); without it a new game uses the current time. A value that is not a whole number is refused before the
+game starts. <!-- LaunchArgs.groovy, Main.groovy, Game.groovy:31 --> You can also restore a save, or open `session.trace`
+in a text editor and change the `masterLocus` number before answering `y` to the restore prompt.
 
 **The seed scanner.** `./vinc.sh --scan <start> <count> building <floors>` or `... culture <name>` searches
 seeds for a building with at least that many floors, or that culture, and prints the first seed that matches.
@@ -389,7 +389,6 @@ These are things the game says that are not true, or things that work differentl
 fixed in a future version.
 
 * The help line lists `q: Terminate`. Pressing `q` does nothing. Use `quit`. <!-- RenderingCoordinator.groovy:40 -->
-* `./run.sh --seed <n>` is accepted and ignored. <!-- run.sh:25, Main.groovy:10 -->
 * `TRACE_BUFFER: n/16` suggests a cap of 16. There is no cap.
 * In a Null Reach, the menu offers `s. Scan for spectral echoes`, but lowercase `s` runs the global scan instead.
   Type capital `S`.
