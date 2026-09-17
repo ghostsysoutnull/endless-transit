@@ -115,3 +115,22 @@ model (`Floor`/`Building`) and let every state ask it. And: a generated name is 
 
 ## Gates
 `./vinc.sh --test --agent` (goldens 36 byte-identical) · `./vinc.sh --lint --agent` (baseline unchanged) · `./vinc.sh --scan` seed 0 → 9 · `git status --short` clean after each run · the player's `session.trace*` files never read by a test, never written by anything.
+
+---
+
+## Execution record (2026-09-16)
+
+| # | Commit | Result |
+| :-- | :--- | :--- |
+| c0 | `8b1d492` | plan |
+| c1 | `d02416d` | 5 pins green on master · 241/241 · LINT PASS |
+| c2 | `935a9e1` | corridor pin RED on an assertion (`:80`, menu lacked `j`) → GREEN · 242/242 · 4 production files · `instanceof <State>` grep 0 · goldens 0 moved |
+| c3 | `28dc724` | plumbing first with the name rule still in `keystoneIn`: 3 pins RED on assertions (`:149`, `:160`, `:178`) → rule switched → GREEN · 245/245 · 5 production files · goldens 0 moved · scan seed 0 → 9 |
+| c4 | this commit | backlog closed, E5 → HK-015, two lessons, plan moved to `tasks/completed/` |
+
+**Notes.** (1) The step-0 pins forge the Keystone by a real merge instead of hand-building a name Keystone, so c3 needed **no re-pin** (better than the plan's declared re-pin).
+(2) Suite count is 245, not the plan's 246: the `boundLip` round trip is an added assertion inside `keystoneSurvivesSyncAndRestore`, not a tenth method; it was green as soon as
+the plumbing existed, so its RED was not demonstrated separately — the restore assertion in the same test (`j` after restore) would have failed under the LIP rule without it.
+(3) **Lint ratchet fired:** the new restore argument made `SyncManager.restore` 65 lines against its baselined 64. The two trailing constructor arguments share a line so the method
+stays at its recorded length; the baseline was not touched. HK-013 still owns that method.
+(4) Found while editing the guide: its corridor row said "There is no `l` here" — corridor mode does offer `l. Leave Corridor` (it is half of the trap). Corrected in c2.
