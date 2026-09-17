@@ -270,8 +270,10 @@ down there come from a special word list of 28 entries that you never see above 
 
 <div class="warn" markdown="1">
 **Dying resets the ritual.** A reboot rebuilds the building, so sampled floors, merge count and the breach are all
-lost. Your Keystone survives in the buffer, but it will not fit the rebuilt building's `j` check unless the name
-matches, which it will, since the world is rebuilt from the same seed. Sync before you attempt the breach anyway.
+lost. Your Keystone survives in the buffer, but it only fits the `j` check if its name still matches the building's,
+and a game update that changes the name lists can rename a building between sessions (known quirk, may be fixed
+later: the Keystone should remember the building's address, not its name). If that happens, the building is still
+primed, so merging two more items inside it forges a fresh Keystone. Sync before you attempt the breach anyway.
 </div>
 
 ## Where to go

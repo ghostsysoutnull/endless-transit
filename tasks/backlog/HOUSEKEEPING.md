@@ -10,6 +10,26 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-018 — A Keystone is bound to its building by *name*, so a content update strands it
+**Found:** 2026-09-16, user report while playing after the HK-016 step-3 merge: "my current game has a keystone but I cannot see the option to
+breach the floor when I am on the peak floor". Diagnosed from the player's own save (read-only): seed `1789169224071`, position
+`0.2.0.0.1.0.0.1.1`, building primed (5/5 floors sampled, 40 infusions), top floor, inventory holds `PodReach Keystone` (forged 20:54).
+Resolving that LIP with the pre-step-3 resources names the building **PodReach**; with today's lists it is **HollowReach** (the organic
+noun lexicon grew 8 → 12 in `a19dd62`, re-indexing the compound-name pick). `ElevatorState.groovy:31` finds the keystone with
+`it.isKeystone && it.name.contains(bldg.name)`, and `SynthesisService.groovy:16-21` names it `"${bldg.name} Keystone"` — the building's
+name is the only link, and a name is a generated string, not an identity. The guide (`players_guide.md:272-274`) promised the name would
+always match because the world is rebuilt from the same seed; that was true until content could change between sessions.
+**Fix design:** bind the keystone to the building's **LIP** — `InventoryItem` gains an optional `boundLip` (set by `SynthesisService` from
+`bldg.getLIP()`, saved/restored by `SyncManager`, defaulting to null for old saves); `ElevatorState` matches `boundLip == bldg.getLIP()`
+**or**, when `boundLip` is null (a keystone from before the fix), the old name check. Keep the display name as it is. Pins: a keystone
+forged in a building still breaches it after the building is renamed (rename via a lexicon overlay or by setting `bldg.name`); an old-style
+keystone with no LIP still breaches by name. Guide `:272-274` rewritten in the same commit. Also consider (separate item): `SpawnKeystoneCommand`
+(debug) and `RitualTracker`/`Building.notifySampled` already key on the building object, not its name — only the breach check and the
+keystone's own name are name-bound.
+**Workaround for the reported game (the player's file, never edited by a tool or test):** in `session.trace` change the item name
+`PodReach Keystone` to `HollowReach Keystone` and restore; `j` appears on floor 4. Or forge a new keystone: the building is still primed, so
+the next merge inside it yields `HollowReach Keystone`.
+
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
 documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the

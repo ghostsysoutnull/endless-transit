@@ -52,7 +52,11 @@
   root causes, the ordered three-step plan and both probe scripts: `docs/analysis/VARIETY_AUDIT.md`. Logged as **HK-016** — a
   **content phase** (every step moves `ProcgenSnapshotTest`/`ProcgenDeepSnapshotTest` literals and goldens; own branch; step-0 pins listed
   in the audit §4). No source change.
-- **Next:** user decision — no active phase. **HK-015** (player-facing bugs; items 1–2 — the repeating room roll and the unconditional +15 — are
+- **HK-018 (2026-09-16, logged, not fixed):** user report after the step-3 merge — a primed building, top floor, keystone in the buffer, no `j`.
+  Cause (diagnosed from the player's save, read-only): the keystone is matched by *building name* (`ElevatorState.groovy:31`) and the step-3
+  lexicon growth renamed the building (PodReach → HollowReach). Fix design + pins + a workaround are in the backlog entry. The guide's
+  "the name will match" sentence is corrected.
+- **Next:** user decision — no active phase. **HK-018** (small: bind the keystone to the building's LIP, name fallback for old saves), **HK-015** (player-facing bugs; items 1–2 — the repeating room roll and the unconditional +15 — are
   gameplay changes and need an explicit Directive; every fix edits `docs/terminal/guide/players_guide.md` in the same commit), **HK-013** (nine long
   methods in the lint baseline), **O1** (HeadlessRunner DSL), or a new audit. None has a plan yet. To grow any procgen list now: append lines to its
   file, run the suite (size and no-duplicate floors are pinned), simulate the goldens, re-pin from the run.
@@ -78,7 +82,7 @@ Initialize session for the Endless Transit substrate.
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
    (top: the HK-016 step-3 chronicle merge). Read `tasks/todo.md`, the latest journal in `journals/` (`0x0408475`, this session),
-   `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
+   `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-018, HK-015, HK-013), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
    planned (the simulate → expected-set → allow-list re-pin chain).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=220 SUCCEEDED=220 FAILED=0 SKIPPED=0`;
    `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=209 P1=0 P2=0 P3=0`; `./vinc.sh --scan` → seed 0, 9 nodes.
@@ -109,7 +113,7 @@ Initialize session for the Endless Transit substrate.
 | Factory wiring pins | `src/test/groovy/com/endlesstransit/procgen/FactoryWiringContractTest.groovy` (HK-008) |
 | Per-type factories | `src/main/groovy/com/endlesstransit/procgen/{LocationFactory,*Factory}.groovy` |
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
-| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-015 player-facing bugs, HK-013 nine long methods; HK-016 (three steps), HK-017, HK-014 closed) |
+| Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-018 keystone bound by name, HK-015 player-facing bugs, HK-013 nine long methods; HK-016 (three steps), HK-017, HK-014 closed) |
 | Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (clean) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md` |
