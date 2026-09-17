@@ -16,26 +16,33 @@ class Door {
     Boolean visited = false
     LocusSeed locus
 
-    Door(LocusSeed locus = new LocusSeed(0)) {
+    /** Built-in lists (used when no pools are given, e.g. a hand-built door); the factory passes ThemeService's (HK-016 step 3). */
+    static final List<String> DEFAULT_MATERIALS = [
+        "Heavy Bulkhead", "Synth-Glass Slab", "Pitted Concrete",
+        "Reinforced Polymer", "Oxidized Metal Hatch", "Pristine Ceramic",
+        "Brutalist Slab", "Industrial Barrier"
+    ].asImmutable()
+    static final List<String> DEFAULT_STATES = ["Vibrating", "Cold", "Rusted", "Stable", "Pitted", "Polished", "Static"].asImmutable()
+
+    Door(LocusSeed locus = new LocusSeed(0), Map<String, String> materialPool = null, Map<String, String> statePool = null) {
         this.locus = locus
-        this.appearance = generateAppearance(locus)
+        this.appearance = generateAppearance(locus, materialPool, statePool)
         
         if (locus.branch("INSCRIPTION_ROLL").checkProbability(0.2)) {
             this.inscription = generateInscription(locus.branch("INSCRIPTION"))
         }
     }
 
-    private DoorAppearance generateAppearance(LocusSeed l) {
-        List<String> materials = [
-            "Heavy Bulkhead", "Synth-Glass Slab", "Pitted Concrete", 
-            "Reinforced Polymer", "Oxidized Metal Hatch", "Pristine Ceramic",
-            "Brutalist Slab", "Industrial Barrier"
-        ]
-        List<String> states = ["Vibrating", "Cold", "Rusted", "Stable", "Pitted", "Polished", "Static"]
-        
+    private DoorAppearance generateAppearance(LocusSeed l, Map<String, String> materialPool, Map<String, String> statePool) {
+        List<String> materials = materialPool ? new ArrayList<String>(materialPool.keySet()) : DEFAULT_MATERIALS
+        List<String> states = statePool ? new ArrayList<String>(statePool.keySet()) : DEFAULT_STATES
+        String material = (String) l.branch("MAT").pickFrom(materials)
+        String state = (String) l.branch("STATE").pickFrom(states)
         return new DoorAppearance(
-            material: (String) l.branch("MAT").pickFrom(materials),
-            physicalState: (String) l.branch("STATE").pickFrom(states)
+            material: material,
+            physicalState: state,
+            materialNarrative: materialPool ? materialPool[material] : null,
+            stateNarrative: statePool ? statePool[state] : null
         )
     }
 

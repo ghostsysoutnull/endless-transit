@@ -161,4 +161,11 @@ class ThemeResourceCoverageTest {
             assertFloor("lexicon ${culture} noun", (List<String>) lexicon.noun, 12)
         }
     }
+
+    @Test
+    void doorLists_loadedFromFiles_everyMaterialAndStateHasANarrative() {
+        assertTrue(service.doorMaterials.size() >= 8 && service.doorStates.size() >= 7 && service.doorWords.size() >= 6, "door lists loaded")
+        service.doorMaterials.each { String m, String n -> assertTrue(n as boolean, "material '${m}' has no narrative") }
+        service.doorStates.each { String s, String n -> assertTrue(n as boolean, "state '${s}' has no narrative") }
+    }
 }

@@ -44,7 +44,7 @@ final class CorridorFactory implements LocationFactory<Corridor> {
             LocusSeed firstRoomLocus = aptLocus.branch(0)
             RoomCategory roomCategory = (RoomCategory) NameGenerator.generateRoomName(c.culture, trait, firstRoomLocus)["category"]
 
-            Door door = new Door(doorLocus)
+            Door door = new Door(doorLocus, registry.themeService.doorMaterials, registry.themeService.doorStates)   // HK-016 step 3: lists + narratives from files
             door.trace = roomCategory.trace
 
             // 2. Contextual Inscription logic (overrides Door's random one if room is significant)
@@ -80,7 +80,7 @@ final class CorridorFactory implements LocationFactory<Corridor> {
             style = InscriptionStyle.SCRAWLED
         } else {
             // Default random pool for standard rooms
-            List<String> words = ["VOID_SINK", "LATTICE", "HELP_IS_STATIC", "QUARANTINE", "RESONANCE", "NO_ENTRY"]
+            List<String> words = registry.themeService.doorWords ?: ["VOID_SINK", "LATTICE", "HELP_IS_STATIC", "QUARANTINE", "RESONANCE", "NO_ENTRY"]
             word = (String) l.branch("WORD").pickFrom(words)
             style = (InscriptionStyle) l.branch("STYLE").pickFrom(InscriptionStyle.values().toList())
         }

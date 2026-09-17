@@ -12,6 +12,9 @@ import groovy.transform.Immutable
 class DoorAppearance {
     String material    // e.g., "Heavy Bulkhead", "Synth-Glass Slab", "Pitted Concrete"
     String physicalState // e.g., "Vibrating", "Cold", "Rusted", "Stable"
+    /** HK-016 step 3: narratives supplied with the lists (themes/doors/*.txt); null falls back to the built-in text below. */
+    String materialNarrative
+    String stateNarrative
     
     /**
      * Returns the basic description for HUD lists.
@@ -27,13 +30,14 @@ class DoorAppearance {
      * Returns an evocative sentence describing the physical sensation of the door.
      */
     String getNarrative() {
-        String base = "A ${material.toLowerCase()}."
+        if (materialNarrative && stateNarrative) return "${materialNarrative} ${stateNarrative}"
+        String base = materialNarrative ?: "A ${material.toLowerCase()}."
         if (material.contains("Bulkhead")) base = "A heavily reinforced poly-slab bulkhead."
         if (material.contains("Synth-Glass")) base = "A pristine synth-glass barrier, reflecting the corridor's dim light."
         if (material.contains("Concrete") || material.contains("Brutalist")) base = "A massive brutalist slab of pitted concrete."
         
-        String stateDesc = ""
-        switch (physicalState?.toLowerCase()) {
+        String stateDesc = stateNarrative ?: ""
+        if (!stateDesc) switch (physicalState?.toLowerCase()) {
             case "vibrating": stateDesc = "The surface is vibrating with a low-frequency thrum."; break
             case "cold":      stateDesc = "The frame is ice-cold to the touch, pulling heat from your palm."; break
             case "rusted":    stateDesc = "The metal hinges are fused by deep, flakey oxidation."; break
