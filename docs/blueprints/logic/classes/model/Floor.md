@@ -12,6 +12,7 @@ The `Floor` class acts as a **Spatial Pivot Point**. It separates vertical trave
     - `ElevatorState.INSTANCE` (Default): Player is at the Elevator. Options include `u/d` (vertical move) and `c` (enter corridor).
     - `CorridorState.INSTANCE`: Player is walking the hallway. Options include `b` (back to elevator) and room exploration via the child `Corridor`.
 - **`enterCorridor()` / `returnToElevator()`**: the only transitions. Nothing outside `Floor` assigns the state.
+- **`leave(game)`** (HK-019): `returnToElevator()` then `game.exitLocation()`. Corridor mode means "standing in the corridor"; walking out of the floor from there hands it back to the elevator, so the next visit opens on the elevator menu. The reset is on *leave*, never on enter (restore goes through `enterLocation` — Phase 1a).
 - **`getScanTarget()`**: what a lattice scan (`s`) inspects — the parent `Building` in elevator mode, the child `Corridor` in corridor mode. Clients ask the Floor; they never inspect the state class.
 
 ### 📍 Navigation
@@ -22,7 +23,9 @@ The `Floor` class acts as a **Spatial Pivot Point**. It separates vertical trave
         - `c`: calls `floor.enterCorridor()`.
     - `CorridorState`:
         - `b`: calls `floor.returnToElevator()`.
-        - Delegates other options to the `Corridor` child (including its `l. Leave Corridor`).
+        - `j`: the same breach rule as the elevator (`floor.addBreachOption`, HK-018).
+        - Delegates other options to the `Corridor` child. Its `l. Leave Corridor` entry keeps its key and slot, but its action is re-routed to `floor.leave(game)` (HK-019; the key comes from `Container.leaveLabel()`, never a copied string).
+        - Standing on the `Corridor` *location* (after leaving an apartment) the menu is the Corridor's own: that `l` returns to the Floor, still in corridor mode.
 
 ### 📍 UI Rendering
 - **`getExtraContent(player, width)`**: populates children, then delegates to `currentState.getExtraContent(this, player, width)`.
@@ -37,6 +40,8 @@ The `Floor` class acts as a **Spatial Pivot Point**. It separates vertical trave
 
 ## 🔄 State Transitions
 - **`enterCorridor` / `returnToElevator`**: Triggered by the `c` and `b` actions. Each triggers an `instantRender` for the UI to reflect the mode switch without a turn cycle penalty.
+- **`leave`**: Triggered by `l` in corridor mode. Corridor → Elevator, then the player lands on the Building. Entering an apartment, coming back from one, and sync/restore while in the corridor do **not** change the mode.
+- **Not covered (declared, HK-019 E2/E7):** a direct `game.exitLocation()` or the debug `BREACH` teleport leaves the mode as it was.
 - **Abyssal Transformation**: If `number < 0`, the floor's culture is forced to `abyssal`, and symbols/labels change (e.g., `FLOOR` -> `LAYER`).
 
 ---
@@ -51,6 +56,8 @@ The `Floor` class acts as a **Spatial Pivot Point**. It separates vertical trave
 ---
 
 ## 🧪 Contract
+- `CorridorLeaveContractTest` (HK-019) pins where `l` lands in either mode, the apartment return keeping corridor mode, and the floor returning to the elevator after a corridor leave (direct, full walk-out, bedrock).
+- `BreachOptionContractTest` (HK-018) pins the `j` rule in both modes.
 - `FloorStateContractTest` pins menu order, content delegation, bedrock behavior, mutation round trip and scan routing, driving every transition through the option closures.
 
 ---
