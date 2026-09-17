@@ -179,7 +179,7 @@ class ProcgenDeepSnapshotTest {
         assertEquals("hexagonal ceramic tiles, unbroken", r.walls)
         assertEquals("the warm cathode glow of a CRT monitor", r.lightingDesc)
         // HK-016 step 1: Industrial has its own structures file; before it, this was the silent fallback "a spatial cell".
-        assertEquals("gantry-braced architecture that vibrates with every pulse", r.structureDesc)
+        assertEquals("a compressor hall lined with gauges", r.structureDesc)
 
         assertEquals("15%", r.atmoTraits["OXYGEN"])
         assertEquals("17°C", r.atmoTraits["TEMP"])

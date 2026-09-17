@@ -1,8 +1,8 @@
 [37m║ [0m[3\m #NEURAL_LINK_I%T%RPRETATIO░]:[0m[90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
-[37m║ [0mYou are in a maintena**e pit ri░ged by chain hoists and d▒ip trays. The walls are[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
-[37m║ [0m[37mgreen[0m soft fungal shelve% ▓n tiers.[90G[37m║ [0m[130G[37m║[0m
-[37m║ [0mThe space is il█umin▓ted by [33mthe $ya█ glow o! a loadi#g b█/[0m*[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
-[37m║ [0m[2mFU%NITURE:[0m cr█cked chitin shell[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0mYou are in a control g**lery ov░r a silent line. The wall▒ are [37mgreen[0m soft fungal[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
+[37m║ [0mshelves in tiers.[90G[37m║ [0m[130G[37m║[0m
+[37m║ [0mThe spac% ▓s illuminated by [33m█he cy▓n glow of a loadi$g b█r[0m![90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
+[37m║ [0m[2mFU#NI█/RE:*0m crac%ed chitin shell[90G[37m║ [0m [36m█[0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
 [37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m██[0m[130G[37m║[0m
 [37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [36m████████[0m[130G[37m║[0m

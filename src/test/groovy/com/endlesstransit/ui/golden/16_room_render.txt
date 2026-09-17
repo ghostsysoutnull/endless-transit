@@ -12,8 +12,8 @@
 [37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m
  [37m»» SCANNING_LOCAL_TOPOLOGY...[0m
 [37m║ [0m[37m [NEURAL_LINK_INTERPRETATION]:[0m[90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
-[37m║ [0mYou are in a maintenance pit ringed by chain hoists and drip trays. The walls are[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
-[37m║ [0m[37mgreen[0m soft fungal shelves in tiers.[90G[37m║ [0m[130G[37m║[0m
+[37m║ [0mYou are in a control gallery over a silent line. The walls are [37mgreen[0m soft fungal[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
+[37m║ [0mshelves in tiers.[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0mThe space is illuminated by [33mthe cyan glow of a loading bar[0m.[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
 [37m║ [0m[2mFURNITURE:[0m cracked chitin shell[90G[37m║ [0m [36m█[0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
