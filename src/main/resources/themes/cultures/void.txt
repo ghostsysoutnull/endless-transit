@@ -6,3 +6,11 @@ perfectly white tile
 hidden speaker
 white light strip
 shadowless corner
+blank white cube
+silent bell
+empty frame
+hovering disc
+matte pillar
+unmarked door
+white noise emitter
+absent chair

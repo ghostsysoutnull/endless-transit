@@ -118,4 +118,9 @@ class ThemeResourceCoverageTest {
     void everyEraHasAtLeast16Items() {
         service.timelines.each { String k, List<String> v -> assertFloor("timelines/${k}", v, 16) }
     }
+
+    @Test
+    void everyCultureHasAtLeast16Items() {
+        service.cultures.each { String k, List<String> v -> assertFloor("cultures/${k}", v, 16) }
+    }
 }
