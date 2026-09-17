@@ -58,7 +58,7 @@
   `Building.keystoneIn` (`isKeystone && boundLip == getLIP()`) + `Floor.addBreachOption`, asked by both floor states; `InventoryItem.boundLip` set at forging, saved/restored;
   **no name fallback** — pre-fix Keystones open nothing (the player starts a new game). `BreachOptionContractTest` 9 pins. 36 goldens unchanged. Record: `tasks/completed/HK_018_PLAN.md`.
   The player's `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
-- **HK-019 (2026-09-16, fix commit `3d99343`, no chronicle yet):** the corridor's `l` returns the floor to the elevator as it leaves (`Floor.leave`, `Container.leaveLabel`, `CorridorState`); `CorridorLeaveContractTest` 6 pins; record `tasks/completed/HK_019_PLAN.md`.
+- **HK-019 (2026-09-16, chronicle `0x0033981`, merge `0033981`):** the corridor's `l` returns the floor to the elevator as it leaves (`Floor.leave`, `Container.leaveLabel`, `CorridorState`); `CorridorLeaveContractTest` 6 pins; record `tasks/completed/HK_019_PLAN.md`.
 - **HK-013 slice 1 (2026-09-16, chronicle `0xe66fca4`):** `SyncManager.restore` split into `restorePlayer`/`applyMutations`/`remarkFootprints` (by script; `RestoreContractTest` 5 pins first); lint baseline 9 → 8.
   Rule: when the ratchet fires on a baselined method, extract or re-baseline with a stated reason — never reformat to the recorded length. **WF-006 (Low)**: evaluate a complexity metric beside `MethodSize` at the next cadence review.
 - **Next:** user decision — no active phase. **HK-015** (player-facing bugs; items 1–2 — the repeating room roll and the unconditional +15 — are
