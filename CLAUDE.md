@@ -12,8 +12,7 @@ Mandatory safety mandates and workflow orchestration:
 ---
 
 ## 📡 Session Context (Chronicle Feed)
-Latest journal state for session continuity:
-- **@journals/CHRONICLE_INDEX.md**
+Not included — read on demand. Current state: `tasks/RECOVERY_PROMPT.md`. History: the top rows of `journals/CHRONICLE_INDEX.md`, then the log a row points to.
 
 ---
 
@@ -28,7 +27,7 @@ Latest journal state for session continuity:
 ## 🚀 Active Architecture & Roadmap
 - **Active Task:** none — see `tasks/todo.md`. The OOA refactor plan (all phases complete) is `docs/analysis/OOA_REFACTOR_PLAN.md` — read on demand, not included.
 
-- **📜 Chronicles & Lore:** `journals/` (index included above)
+- **📜 Chronicles & Lore:** `journals/CHRONICLE_INDEX.md` → `journals/LOG_*` (read on demand)
 - **Backlog:** @tasks/backlog/
 
 ---
