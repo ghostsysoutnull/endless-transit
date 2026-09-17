@@ -6,3 +6,7 @@ Ornate
 Mahogany
 Opulent
 Clockwork
+Burnished
+Lacquered
+Polished
+Velvet-Lined

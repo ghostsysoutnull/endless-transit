@@ -6,3 +6,7 @@ Unit
 Monolith
 Foundation
 Pillar
+Vault
+Cube
+Plinth
+Shaft

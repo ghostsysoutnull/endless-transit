@@ -114,7 +114,7 @@ class ProcgenDeepSnapshotTest {
     @Test
     void building_scale_pinnedForSeed0x1234() {
         Building b = building()
-        assertEquals("Impenetrable Unit", b.name, "precondition: building name")
+        assertEquals("Eternal Shaft", b.name, "precondition: building name")
         assertEquals(3, b.maxFloors, "createBuilding maxFloors (small category)")
         assertEquals(5, b.apartmentsPerFloor, "createBuilding apartmentsPerFloor (small category)")
         assertFalse(b.isLandmark, "createBuilding landmark flag")
@@ -169,7 +169,7 @@ class ProcgenDeepSnapshotTest {
     void room_attributes_pinnedForSeed0x1234() {
         Room r = room()
         // HK-016 step 2 (c5): "<dealt adjective> <category>"; the hex serial is gone.
-        assertEquals("Silent Fuel Depot", r.roomName)
+        assertEquals("Unbroken Fuel Depot", r.roomName)
         assertEquals("Fuel Depot", r.roomType, "RoomCategory.displayName")
         assertEquals("green", r.color)
         assertFalse(r.isAnomaly, "copied from the apartment")

@@ -81,11 +81,11 @@ class ProcgenSnapshotTest {
         assertTrue(buildings.size() >= 3,
             "Street must have at least 3 buildings for snapshot assertion, found: ${buildings.size()}")
 
-        assertEquals("Impenetrable Unit", buildings[0].name,
+        assertEquals("Eternal Shaft", buildings[0].name,
             "Building[0] name must match pinned value for seed 0x1234")
-        assertEquals("ObeliskWell", buildings[1].name,
+        assertEquals("FoundationWell", buildings[1].name,
             "Building[1] name must match pinned value for seed 0x1234")
-        assertEquals("ObeliskWell", buildings[2].name,
+        assertEquals("PillarWell", buildings[2].name,
             "Building[2] name must match pinned value for seed 0x1234")
     }
 
