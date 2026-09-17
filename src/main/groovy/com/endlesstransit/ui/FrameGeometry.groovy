@@ -18,8 +18,12 @@ final class FrameGeometry {
     /** Column (1-indexed, for CHA) where the right pane of a split row begins. */
     static final int SPLIT_POINT = 90
 
-    /** Content width of the left (narrative) pane of the adaptive bridge. */
-    static final int LEFT_PANE_WIDTH = SPLIT_POINT - 2
+    /**
+     * Content width of the left (narrative) pane of the adaptive bridge — the width the narrative
+     * wraps to. Must equal what Terminal.splitBoxedLine keeps on the left (splitPoint - 4); at
+     * SPLIT_POINT - 2 a wrapped line of 87-88 columns lost its last word to "..." (HK-017).
+     */
+    static final int LEFT_PANE_WIDTH = SPLIT_POINT - 4
 
     /** Content width of the right (telemetry) pane of the adaptive bridge. */
     static final int RIGHT_PANE_WIDTH = (FRAME_WIDTH - SPLIT_POINT) - 2
