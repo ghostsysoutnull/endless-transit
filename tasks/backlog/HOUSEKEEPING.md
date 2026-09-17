@@ -33,7 +33,10 @@ Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is
 a Keystone dropped in a room is stored as its name only and comes back as a plain item (`Room.groovy:168`, `InventoryItem` rebuilt without `isKeystone`/`boundLip`), so the guide's "You can stash a Keystone in a room" is false (HK-018, E5);
 `Door.groovy:23-26` rolls its own inscription with the same seed `CorridorFactory:51` rolls, so the constructor's pool is dead code (HK-016 step 3, F1).
 
-### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
+### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline) — **8 remain**
+**Slice 1 done (2026-09-16, branch `housekeeping/hk-013-restore`, plan `tasks/completed/HK_013_RESTORE_PLAN.md`):** `SyncManager.restore` split into `restorePlayer` / `applyMutations` / `remarkFootprints`
+(by script, zero drift; `RestoreContractTest` 5 pins first — counters, footprint sets, merge count and both failure paths had no assertion). Baseline 9 → 8, removal only.
+Rule for the rest: when the ratchet fires, extract or re-baseline with a stated reason — never reformat to the recorded length (lesson in `infrastructure.md`).
 **Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
 `renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
 `SessionRecap.show` (56), `LatticeMapComponent.render` (52), `LatticeTraceComponent.renderTrace` (63), `HUDHeaderComponent.render` (90).

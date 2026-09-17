@@ -11,11 +11,6 @@
       <Message><![CDATA[Method "renderApartmentScan" is 52 lines]]></Message>
     </Violation>
   </File>
-  <File path="main/groovy/com/endlesstransit/core/SyncManager.groovy">
-    <Violation ruleName="MethodSize">
-      <Message><![CDATA[Method "restore" is 64 lines]]></Message>
-    </Violation>
-  </File>
   <File path="main/groovy/com/endlesstransit/model/Building.groovy">
     <Violation ruleName="MethodSize">
       <Message><![CDATA[Method "getExtraContent" is 84 lines]]></Message>

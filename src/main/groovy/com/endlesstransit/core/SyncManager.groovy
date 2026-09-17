@@ -70,42 +70,14 @@ class SyncManager {
             Universe universe = factory.createUniverse(locus)
             
             // 1. Reconstitute Player
-            Player player = new Player(events)
             Map playerState = (Map) snapshot["player"]
-            player.coherence = (int) playerState["coherence"]
-            player.stepCount = (int) playerState["stepCount"]
-            player.visitedLIPs.addAll((List<String>) playerState["footprints"])
-            player.visitedPaths.addAll((List<String>) playerState["visitedPaths"])
-            
-            List inventory = (List) playerState["inventory"]
-            inventory.each { Object itemObj ->
-                Map item = (Map) itemObj
-                player.inventory.add(new InventoryItem(
-                    (String) item["name"], 
-                    (int) item["frequency"], 
-                    (int) item["sessionMergeCount"], 
-                    (boolean) item["isKeystone"], (String) item["boundLip"]
-                ))
-            }
+            Player player = restorePlayer(playerState, events)
 
             // 2. Apply World Mutations
-            Map mutations = (Map) snapshot["mutations"]
-            mutations.each { Object lipObj, Object stateObj ->
-                String lip = (String) lipObj
-                Map<String, Object> state = (Map<String, Object>) stateObj
-                Location loc = universe.resolveLIP(lip)
-                if (loc != null) {
-                    loc.applyMutationState(state)
-                }
-            }
+            applyMutations((Map) snapshot["mutations"], universe)
 
             // 3. Re-mark footprints and visited status
-            player.visitedLIPs.each { String lip ->
-                Location loc = universe.resolveLIP(lip)
-                if (loc != null) {
-                    loc.markVisited()
-                }
-            }
+            remarkFootprints(player, universe)
 
             // 4. Resolve Current Location
             String currentLIP = (String) playerState["currentLIP"]
@@ -116,6 +88,47 @@ class SyncManager {
         } catch (Exception e) {
             Logger.error("RESTORE_FAILED: Trace corruption detected.", e)
             return null
+        }
+    }
+
+    private static Player restorePlayer(Map playerState, EventBus events) {
+        Player player = new Player(events)
+        player.coherence = (int) playerState["coherence"]
+        player.stepCount = (int) playerState["stepCount"]
+        player.visitedLIPs.addAll((List<String>) playerState["footprints"])
+        player.visitedPaths.addAll((List<String>) playerState["visitedPaths"])
+        
+        List inventory = (List) playerState["inventory"]
+        inventory.each { Object itemObj ->
+            Map item = (Map) itemObj
+            player.inventory.add(new InventoryItem(
+                (String) item["name"], 
+                (int) item["frequency"], 
+                (int) item["sessionMergeCount"], 
+                (boolean) item["isKeystone"],
+                (String) item["boundLip"]
+            ))
+        }
+        return player
+    }
+
+    private static void applyMutations(Map mutations, Universe universe) {
+        mutations.each { Object lipObj, Object stateObj ->
+            String lip = (String) lipObj
+            Map<String, Object> state = (Map<String, Object>) stateObj
+            Location loc = universe.resolveLIP(lip)
+            if (loc != null) {
+                loc.applyMutationState(state)
+            }
+        }
+    }
+
+    private static void remarkFootprints(Player player, Universe universe) {
+        player.visitedLIPs.each { String lip ->
+            Location loc = universe.resolveLIP(lip)
+            if (loc != null) {
+                loc.markVisited()
+            }
         }
     }
 
