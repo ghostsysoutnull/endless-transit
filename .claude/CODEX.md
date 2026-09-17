@@ -71,7 +71,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
     * **Compilation Check**: Every change MUST pass `./vinc.sh --compile` (or `--test`).
     * **Full Verification**: Run `./vinc.sh --test` before marking any major task complete.
     * **Lint Check (O2)**: `./vinc.sh --lint` must be green before any merge; `config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
-    * **Docs Check (WF-007)**: `./vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, and every class blueprint stamped with its class's current hash. A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
+    * **Docs Check (WF-007)**: `./vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, every class blueprint stamped with its class's current hash, and the recovery prompt under its 1,000-word cap (current state only; history lives in the chronicle). A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
 * **The Gates** (mandatory after every phase; the full history is in `docs/analysis/OOA_REFACTOR_PLAN.md`, read on demand):
 
 | Gate | Command | Checks |
