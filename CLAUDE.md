@@ -26,9 +26,9 @@ Latest journal state for session continuity:
 ---
 
 ## 🚀 Active Architecture & Roadmap
-- **Active Task:** @docs/analysis/OOA_REFACTOR_PLAN.md
+- **Active Task:** none — see `tasks/todo.md`. The OOA refactor plan (all phases complete) is `docs/analysis/OOA_REFACTOR_PLAN.md` — read on demand, not included.
 
-- **📜 Chronicles & Lore:** @journals/CHRONICLE_INDEX.md
+- **📜 Chronicles & Lore:** `journals/` (index included above)
 - **Backlog:** @tasks/backlog/
 
 ---
@@ -43,7 +43,7 @@ Latest journal state for session continuity:
 | **Run Tests (Debug)** | `./vinc.sh --test -q` (20-line output with failure location) |
 | **Verification (Static)** | `./vinc.sh --compile` |
 | **Lint (House rules)** | `./vinc.sh --lint --agent 2>/dev/null` — CodeNarc + Vinculum invariants (`config/lint/`); mandatory before merge, recommended after every commit. `./vinc.sh --lint --baseline` only to accept or pay down known debt — review the diff, commit it with the change |
-| **Docs audit (close-out gate)** | `./vinc.sh --docs --agent 2>/dev/null` — suite count, latest chronicle, blueprint stamps; run by `/close-wave`, mandatory before a wave is called closed |
+| **Docs audit (close-out gate)** | `./vinc.sh --docs --agent 2>/dev/null` — suite count, latest chronicle, blueprint stamps, handover size; run by `/close-wave`, mandatory before a wave is called closed |
 | **Run Game (Player)** | `./run.sh` (Immersive Portal) |
 | **Seed Scan (model gate)** | `./vinc.sh --scan` |
 | **Regenerate UI goldens** | `./vinc.sh --goldens` — only after an INTENDED visual change; review the diff, commit goldens with the change |

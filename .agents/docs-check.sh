@@ -4,6 +4,7 @@
 #   D2  latest chronicle top LOG_ID of journals/CHRONICLE_INDEX.md == recovery prompt "Latest chronicle" == newest journals/LOG_* file
 #   D3  blueprint stamps each docs/blueprints/logic/classes/<pkg>/<Class>.md ends in a stamp carrying the first 10 chars of
 #                        `git hash-object` of its class file ("Verified against:" or "Baselined (not audited) against:")
+#   D4  handover size    tasks/RECOVERY_PROMPT.md <= 1000 words — it holds current state only; history lives in the chronicle (WF-008)
 # Env (for negative checks against a scratch copy; the tree is never touched):
 #   DOCS_ROOT        root to read from (default: .)
 #   VINC_DISCOVERED  discovered-test count to trust instead of running the suite
@@ -54,9 +55,14 @@ for BP in "$ROOT"/docs/blueprints/logic/classes/*/*.md; do
 done
 [ $BP_COUNT -gt 0 ] || { D3=FAIL; fail "D3 no blueprints found under docs/blueprints/logic/classes"; }
 
+# --- D4: handover size ----------------------------------------------------------------------------------------------
+RP_WORDS=$(wc -w < "$ROOT/tasks/RECOVERY_PROMPT.md" | tr -d ' ')
+D4=ok
+[ "${RP_WORDS:-0}" -le 1000 ] || { D4=FAIL; fail "D4 tasks/RECOVERY_PROMPT.md is $RP_WORDS words (cap 1000) — it holds current state only; move history to the chronicle, do not raise the cap"; }
+
 # --- report ----------------------------------------------------------------------------------------------------------
 if [ ${#FAILS[@]} -eq 0 ]; then STATUS=PASS; EXIT=0; else STATUS=FAIL; EXIT=1; fi
-LINE="DOCS=$STATUS D1=$D1(${ACTUAL:-?}) D2=$D2(${IDX_ID:-?}) D3=$D3($BP_COUNT)"
+LINE="DOCS=$STATUS D1=$D1(${ACTUAL:-?}) D2=$D2(${IDX_ID:-?}) D3=$D3($BP_COUNT) D4=$D4(${RP_WORDS:-?})"
 if [ $AGENT -eq 1 ]; then
     for F in "${FAILS[@]}"; do echo "$F" >&2; done
     echo "$LINE"

@@ -49,7 +49,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * Each refactoring phase runs on its own git branch: `refactor/phase-N-short-name`.
 * Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --lint`, `./vinc.sh --scan` where applicable).
 * Every new class created during refactoring MUST include `@CompileStatic`.
-* Close every wave (phase, HK item, WF item, docs session) with `/close-wave` — it audits the docs, invokes `/chronicle`, writes the retro and makes the recovery prompt true, then runs `./vinc.sh --docs`. **The words "closed" or "merged" appear in chat only as the output of `/close-wave`, under its ten-row table** (WF-007).
+* Close every wave (phase, HK item, WF item, docs session, one-line fix) with `/close-wave`, **at the tier the command selects from the diff** (Trivial / Light / Full, WF-008) — it finds what the wave made false, makes the recovery prompt true and runs `./vinc.sh --docs`; chronicle and retro belong to the Full tier or to a named add-on reason. **The words "closed" or "merged" appear in chat only as the output of `/close-wave`, under its table** (WF-007).
 * Write a phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, retro second). Promote any evergreen lessons to `tasks/lessons/<domain>.md`.
 * The active task pointer in `CLAUDE.md` should reflect the current refactoring phase document, not a stale task.
 
@@ -71,7 +71,18 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
     * **Compilation Check**: Every change MUST pass `./vinc.sh --compile` (or `--test`).
     * **Full Verification**: Run `./vinc.sh --test` before marking any major task complete.
     * **Lint Check (O2)**: `./vinc.sh --lint` must be green before any merge; `config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
-    * **Docs Check (WF-007)**: `./vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, and every class blueprint stamped with its class's current hash. A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
+    * **Docs Check (WF-007)**: `./vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, every class blueprint stamped with its class's current hash, and the recovery prompt under its 1,000-word cap (current state only; history lives in the chronicle). A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
+* **The Gates** (mandatory after every phase; the full history is in `docs/analysis/OOA_REFACTOR_PLAN.md`, read on demand):
+
+| Gate | Command | Checks |
+| :--- | :--- | :--- |
+| Logic | `./vinc.sh --test` | full suite |
+| Visual | golden frames inside `--test` | 36 HUD frames byte-identical |
+| Model | `./vinc.sh --scan` | seed 0 → 9-node match |
+| Lint | `./vinc.sh --lint` | house rules + invariants; baseline may only shrink |
+| Determinism | `DeterministicUniverseTest` | same seed → same world (procgen/model changes) |
+| Docs | `./vinc.sh --docs` | handover facts + blueprint stamps (at close-out) |
+
 * **Coverage Claim Protocol**: Any plan statement of the form "test X guards behavior Y" MUST cite
   the assertion lines that prove it, read from the test file in the current session. A file name or
   a remembered purpose is not evidence. If no assertion exists, the plan marks the behavior
