@@ -85,7 +85,7 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: the HK-018 chronicle merge). Read `tasks/todo.md`, the latest journal in `journals/` (`0x7ca28f8`, this session),
+   (top: the hand-off fix after the HK-013 slice 1 chronicle merge). Read `tasks/todo.md`, the latest journal in `journals/` (`0xe66fca4` HK-013 slice 1, this session; `0x7ca28f8` HK-018 before it),
    `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
    planned (the simulate → expected-set → allow-list re-pin chain).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=250 SUCCEEDED=250 FAILED=0 SKIPPED=0`;
@@ -118,7 +118,7 @@ Initialize session for the Endless Transit substrate.
 | Per-type factories | `src/main/groovy/com/endlesstransit/procgen/{LocationFactory,*Factory}.groovy` |
 | Golden frames + harness | `src/test/groovy/com/endlesstransit/ui/{golden/,HudFrameHarness,BridgeViewGoldenFrameTest,ViewComponentGoldenTest,GoldenFrameGenerator}.groovy` |
 | Housekeeping backlog | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-015 player-facing bugs, HK-013 nine long methods; HK-016 (three steps), HK-017, HK-014 closed) |
-| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (clean) |
+| Workflow backlog | `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-006 Low — complexity metric beside `MethodSize`) |
 | Plan interrogation | `.claude/commands/grill.md` |
 | Lessons | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md` |
 | Safety mandates | `tasks/lessons/POST_MORTEM_2026_03_11.md`, `tasks/lessons/POST_MORTEM_2026_03_06.md` |
