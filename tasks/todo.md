@@ -74,6 +74,7 @@
 - [x] Verify 41/41 baseline JUnit 5 tests
 - [x] Chronicle 0xDECE
 - [x] Housekeeping HK-018 (2026-09-16, user report): `j` hidden in corridor mode + Keystone bound by name → the breach rule lives on the model (`Building.keystoneIn`, `Floor.addBreachOption`), Keystone bound by LIP (`InventoryItem.boundLip`), no name fallback (user decision). `BreachOptionContractTest` 9 pins. 5 commits, merged `7ca28f8`.
+- [x] Housekeeping HK-013 slice 1 (2026-09-16): `SyncManager.restore` under 50 lines (three helpers, by script); `RestoreContractTest` 5 pins; lint baseline 9 → 8; lesson "no formatting dodges"; WF-006 logged. Merged `e66fca4`.
 
 ---
 
