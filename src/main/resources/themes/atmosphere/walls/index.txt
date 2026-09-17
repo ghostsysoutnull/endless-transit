@@ -6,3 +6,5 @@ neon
 organic
 rust
 shogun
+void
+zenith
