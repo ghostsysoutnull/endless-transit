@@ -35,3 +35,4 @@ The `Street` class represents a horizontal urban lane within a `City`. It is the
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: Street.groovy @ 2d73e0dcc6*

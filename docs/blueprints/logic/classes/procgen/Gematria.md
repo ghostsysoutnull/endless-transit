@@ -29,3 +29,4 @@ The `Gematria` class is the **Spectral Calculation Engine**. It translates textu
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: Gematria.groovy @ d7bc54a689*

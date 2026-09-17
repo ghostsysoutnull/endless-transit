@@ -35,3 +35,4 @@ The `NameGenerator` provides strictly deterministic string synthesis for all ent
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: NameGenerator.groovy @ 4ca2f9df37*

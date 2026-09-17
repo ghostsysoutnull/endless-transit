@@ -62,3 +62,4 @@ The `Floor` class acts as a **Spatial Pivot Point**. It separates vertical trave
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: Floor.groovy @ 2196f64c3c*

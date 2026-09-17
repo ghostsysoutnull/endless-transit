@@ -97,6 +97,12 @@ case "$1" in
         fi
         exit $LINT_EXIT
         ;;
+    "--docs")
+        # WF-007: mechanical half of /close-wave — suite count, latest chronicle, blueprint stamps. Read-only.
+        #   --agent     single DOCS=PASS|FAIL line on stdout; stale facts go to stderr
+        .agents/docs-check.sh "${@:2}"
+        exit $?
+        ;;
     "--help")
         echo -e "${GREEN}Vinculum Clinical Interface (VINC)${RESET}"
         echo -e "Usage: ./vinc.sh [MODE] [ARGS]\n"
@@ -111,7 +117,9 @@ case "$1" in
         echo -e "  --lint        CodeNarc static analysis over src/ (house rules + Vinculum invariants; config/lint/)."
         echo -e "    --agent     Single LINT=PASS/FAIL line."
         echo -e "    --baseline  Regenerate config/lint/baseline.xml (only to accept or pay down known debt; review the diff)."
-        echo -e "  [DEFAULT]     Launch game instantly (with auto-compile)."
+        echo -e "  --docs        Close-out doc audit: suite count, latest chronicle, blueprint stamps (/close-wave gate)."
+        echo -e "    --agent     Single DOCS=PASS/FAIL line."
+        echo -e "  [DEFAULT]    Launch game instantly (with auto-compile)."
         ;;
     *)
         vinculum_compile

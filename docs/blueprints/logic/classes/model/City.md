@@ -32,3 +32,4 @@ The `City` class represents an urban regional node within a `Country`. It manage
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: City.groovy @ 9b5f05a59c*

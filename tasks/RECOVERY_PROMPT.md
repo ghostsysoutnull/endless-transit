@@ -3,6 +3,7 @@
 
 ## 🎯 Current Status
 - **Test Suite:** 256 discovered / 256 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
+- **Latest chronicle:** `0x0033981` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=212 P1=0 P2=0 P3=0` (baseline: 8 entries)
 - **Branch:** `master`, pushed at the end of the HK-019 session on the user's word (code merge `0033981`, chronicle, handover audit; the push republishes the Player's Guide page — its corridor row changed). If `git status -sb` shows ahead/behind, something happened after this file was written — ask. Working tree clean except the player's untracked `session.trace.bak-hk018`. Verify with `git status -sb`.
 - **Active Work:** none — but **WF-007 (High) is open and, per CODEX, blocks the next phase until assessed** (see Next). **All ten OOA phases and O2 are complete**, merged and pushed. **O2 (`./vinc.sh --lint`)**: CodeNarc 4.0.0 on `lib/lint/`, Groovy-DSL ruleset

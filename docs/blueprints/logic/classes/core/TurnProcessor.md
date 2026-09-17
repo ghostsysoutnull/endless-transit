@@ -32,3 +32,4 @@ The `TurnProcessor` is the "heartbeat" of the simulation. It manages the sequent
 
 ---
 *Neural Map Stabilized.*
+*Baselined (not audited) against: TurnProcessor.groovy @ 1a0e2026c9*
