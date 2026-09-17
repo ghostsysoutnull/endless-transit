@@ -10,6 +10,53 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
+**Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
+documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
+guide in the same commit so it stays true. Items 1 and 2 change gameplay — **user decision required** before touching them.
+1. **Passive room roll repeats.** `Room.processAction` (`model/Room.groovy:70`) seeds from `locus.branch("ACTION").branch(player.stepCount)`,
+   and `stepCount` only advances on navigation (`core/NavigationCommand.groovy:35`). A 30% hit therefore repeats, with the same value,
+   on every prompt spent standing still — unlimited identical "Hidden Frequency" items for 1 coherence each, and each one marks the
+   floor sampled for the ritual. Fix needs a per-prompt component in the seed (or a once-per-visit flag); pin with a test that stands
+   still N prompts and asserts at most one capture.
+2. **`m 1 1` is free coherence.** `QuantumBufferController.groovy:44` grants `adjustCoherence(15)` after `Player.mergeItems`, whose
+   guards (`core/Player.groovy:70-71`, same index / out of range) return silently. Make `mergeItems` report success (boolean or the
+   hybrid) and grant only on success; pin: `m 1 1` leaves coherence unchanged.
+3. **`run.sh --seed` is inert.** `run.sh:25` advertises it; `Main.groovy:10` is `new Game()` and never reads `args`. Parse `--seed <long>`
+   in `Main` and pass it to `Game(long)`. Pin: headless launch with a seed produces the pinned seed-4660 street.
+4. **`q` is unbound.** `RenderingCoordinator.groovy:40` prints `q: Terminate`; `TurnProcessor.groovy:30-43` has no `q`. Either alias `q` →
+   `quit` in `InputHandler.normalize` or drop it from the help line.
+5. **Null Reach echo scan needs capital `S`.** `NullSector.groovy:90` offers `s. Scan for spectral echoes`, but lowercase `s` is taken by
+   the global scan first (`TurnProcessor.groovy:80`). Rename the option key (e.g. `e.`) — do not change the global table.
+Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
+(real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine);
+a Keystone dropped in a room is stored as its name only and comes back as a plain item (`Room.groovy:168`, `InventoryItem` rebuilt without `isKeystone`/`boundLip`), so the guide's "You can stash a Keystone in a room" is false (HK-018, E5);
+`Door.groovy:23-26` rolls its own inscription with the same seed `CorridorFactory:51` rolls, so the constructor's pool is dead code (HK-016 step 3, F1).
+
+### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
+**Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
+`renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
+`SessionRecap.show` (56), `LatticeMapComponent.render` (52), `LatticeTraceComponent.renderTrace` (63), `HUDHeaderComponent.render` (90).
+They are the only entries in `config/lint/baseline.xml`; each entry carries the method's current length, so the first edit to any
+of them resurfaces the violation — pay it down then, or in a bounded housekeeping commit (extract by script, reverse-substitution
+check, goldens as the gate for the four `ui` methods). Regenerate the baseline with `./vinc.sh --lint --baseline` and commit the
+shrunken file with the change.
+
+## 🟢 CLOSED
+
+### HK-018 — A Keystone was bound to its building by *name*, and `j` was hidden in corridor mode
+**CLOSED 2026-09-16** — branch `housekeeping/hk-018-breach-rule`, commits `8b1d492` (plan), `d02416d` (step-0 pins), `935a9e1` (visibility), `28dc724` (binding).
+Plan + record: `tasks/completed/HK_018_PLAN.md`.
+**Corrected diagnosis:** two independent traps. (1) The name trap as logged below. (2) **The corridor trap:** `j` lived only in `ElevatorState`;
+a floor stays in corridor mode across re-entry and restore (Phase 1a), and `l` in the corridor leaves to the building, so a player who never
+presses `b` never sees the elevator again. The 21:58 rename workaround *had* worked — a probe restoring copies of both saves showed `j` after
+`returnToElevator()` with the renamed Keystone and not with the original. The reported "floor count mismatch" was a different, new game (22:02, no restore).
+**Fix (behavior change, user decisions 1a/2a, no backward compatibility):** the rule lives on the model — `Building.keystoneIn` (`isKeystone && boundLip == getLIP()`)
+and `Floor.addBreachOption`, asked by both floor states; `InventoryItem.boundLip` set at forging, saved/restored. A Keystone forged before the fix opens nothing and
+does not block forging. `BreachOptionContractTest` 9 pins (5 green on master first; 1 + 3 shown RED on an assertion before their change). 36 goldens unchanged.
+**Left open (noted, not fixed):** corridor mode is still sticky and `l` still skips the elevator — it no longer hides anything ritual-critical, but `u`/`d` remain elevator-only.
+<details><summary>Original entry</summary>
+
 ### HK-018 — A Keystone is bound to its building by *name*, so a content update strands it
 **Found:** 2026-09-16, user report while playing after the HK-016 step-3 merge: "my current game has a keystone but I cannot see the option to
 breach the floor when I am on the peak floor". Diagnosed from the player's own save (read-only): seed `1789169224071`, position
@@ -41,38 +88,7 @@ exact file), or the floor the player stands on is not `maxFloors - 1` as the gam
 the top floor). **Next session, step 0:** reproduce with a test that restores a copy of this save into a headless game and asserts the
 top-floor options — before touching the design fix. The player's original save is the `.bak-hk018` file; the edited one is in place.
 
-### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
-**Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
-documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
-guide in the same commit so it stays true. Items 1 and 2 change gameplay — **user decision required** before touching them.
-1. **Passive room roll repeats.** `Room.processAction` (`model/Room.groovy:70`) seeds from `locus.branch("ACTION").branch(player.stepCount)`,
-   and `stepCount` only advances on navigation (`core/NavigationCommand.groovy:35`). A 30% hit therefore repeats, with the same value,
-   on every prompt spent standing still — unlimited identical "Hidden Frequency" items for 1 coherence each, and each one marks the
-   floor sampled for the ritual. Fix needs a per-prompt component in the seed (or a once-per-visit flag); pin with a test that stands
-   still N prompts and asserts at most one capture.
-2. **`m 1 1` is free coherence.** `QuantumBufferController.groovy:44` grants `adjustCoherence(15)` after `Player.mergeItems`, whose
-   guards (`core/Player.groovy:70-71`, same index / out of range) return silently. Make `mergeItems` report success (boolean or the
-   hybrid) and grant only on success; pin: `m 1 1` leaves coherence unchanged.
-3. **`run.sh --seed` is inert.** `run.sh:25` advertises it; `Main.groovy:10` is `new Game()` and never reads `args`. Parse `--seed <long>`
-   in `Main` and pass it to `Game(long)`. Pin: headless launch with a seed produces the pinned seed-4660 street.
-4. **`q` is unbound.** `RenderingCoordinator.groovy:40` prints `q: Terminate`; `TurnProcessor.groovy:30-43` has no `q`. Either alias `q` →
-   `quit` in `InputHandler.normalize` or drop it from the help line.
-5. **Null Reach echo scan needs capital `S`.** `NullSector.groovy:90` offers `s. Scan for spectral echoes`, but lowercase `s` is taken by
-   the global scan first (`TurnProcessor.groovy:80`). Rename the option key (e.g. `e.`) — do not change the global table.
-Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
-(real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine);
-`Door.groovy:23-26` rolls its own inscription with the same seed `CorridorFactory:51` rolls, so the constructor's pool is dead code (HK-016 step 3, F1).
-
-### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline)
-**Found:** O2 (`./vinc.sh --lint`), 2026-09-16. `MethodSize` (max 50) flags: `ScanCommand.renderCorridorScan` (75) /
-`renderApartmentScan` (52), `SyncManager.restore` (64), `Room.getOptions` (103), `Building.getExtraContent` (84),
-`SessionRecap.show` (56), `LatticeMapComponent.render` (52), `LatticeTraceComponent.renderTrace` (63), `HUDHeaderComponent.render` (90).
-They are the only entries in `config/lint/baseline.xml`; each entry carries the method's current length, so the first edit to any
-of them resurfaces the violation — pay it down then, or in a bounded housekeeping commit (extract by script, reverse-substitution
-check, goldens as the gate for the four `ui` methods). Regenerate the baseline with `./vinc.sh --lint --baseline` and commit the
-shrunken file with the change.
-
-## 🟢 CLOSED
+</details>
 
 ### HK-016 — Procedural variety: objects, furniture and atmosphere repeat; three room lines collapse to one string
 **Found:** 2026-09-16, user report while playing ("lack of variation in the objects on the rooms"), confirmed and widened by

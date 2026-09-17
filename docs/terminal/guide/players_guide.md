@@ -110,7 +110,7 @@ Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87
 | Universe down to street | Numbered children, and `l` to go back up one level. |
 | Building lobby | Numbered floors, top floor first, and `l` to leave. |
 | Floor, elevator | `u` up, `d` down, `c` into the corridor, `l` leave the building. On the top floor, `j` appears once you can breach. |
-| Floor, corridor | `b` back to the elevator, numbered doors. There is no `l` here. |
+| Floor, corridor | `b` back to the elevator, numbered doors, `l` leave to the building (it skips the elevator). On the top floor, `j` appears here too once you can breach. |
 | Room | `t` interact, `f` next room, `b` previous room, `l` from the first room back to the corridor. |
 | Null Reach | `S` (capital) to scan for an echo, `c` to capture it once the signal is strong enough. |
 
@@ -239,7 +239,8 @@ Coherence" is not in the game. All merges give 15.
 
 **Keystones.** When a building is primed (next section) and you merge two items while inside it, you get that
 building's Keystone instead of a hybrid. It is worth 0 Hz, and it is the key to the basement. You only ever hold
-one per building. <!-- SynthesisService.groovy:16-19 -->
+one per building, and it opens only that building, even if another one has the same name.
+<!-- SynthesisService.groovy:16, Building.groovy:37-39 -->
 
 ## The ritual and the bedrock
 
@@ -256,8 +257,8 @@ This is the game's one real quest, and the manual describes it wrong. Here is th
 4. **Merge an eighth time.** The seventh merge is counted *after* the game checks whether you are primed, so the
    eighth is the first that can produce the Keystone. You need at least nine items in total to get there.
    <!-- Player.groovy:79-81 --> You will see `>>> CRITICAL_WAVEFORM_COLLAPSE: KEYSTONE_STABILIZED <<<`.
-5. **Ride to the top floor.** A new option, `j. Breach the Bedrock`, appears in the elevator. It consumes the
-   Keystone. <!-- ElevatorState.groovy:30-38 -->
+5. **Ride to the top floor.** A new option, `j. Breach the Bedrock`, appears anywhere on that floor, in the elevator
+   and in the corridor. It consumes the Keystone. <!-- Floor.groovy:59-72 -->
 6. **Go to floor 0.** `d` now says `Descend into the Substrate`. Press it.
 
 **What is down there.** Floors count down from -1 and never stop; the building will manufacture layer -100 if you
@@ -270,10 +271,10 @@ down there come from a special word list of 28 entries that you never see above 
 
 <div class="warn" markdown="1">
 **Dying resets the ritual.** A reboot rebuilds the building, so sampled floors, merge count and the breach are all
-lost. Your Keystone survives in the buffer, but it only fits the `j` check if its name still matches the building's,
-and a game update that changes the name lists can rename a building between sessions (known quirk, may be fixed
-later: the Keystone should remember the building's address, not its name). If that happens, the building is still
-primed, so merging two more items inside it forges a fresh Keystone. Sync before you attempt the breach anyway.
+lost. Your Keystone survives in the buffer and still fits: it remembers the building's address in the world, not its
+name, so it keeps working even if a game update renames the building. <!-- Building.groovy:37-39 --> A Keystone forged
+before that fix remembers nothing and opens nothing; the building is still primed, so merging two more items inside it
+forges a working one. Sync before you attempt the breach anyway.
 </div>
 
 ## Where to go
