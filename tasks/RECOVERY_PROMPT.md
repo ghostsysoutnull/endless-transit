@@ -85,7 +85,7 @@ Initialize session for the Endless Transit substrate.
 
 1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol.
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb` (check ahead/behind origin); `git log --oneline -5`
-   (top: the hand-off fix after the HK-013 slice 1 chronicle merge). Read `tasks/todo.md`, the latest journal in `journals/` (`0xe66fca4` HK-013 slice 1, this session; `0x7ca28f8` HK-018 before it),
+   (top: a docs-only merge from the 2026-09-16 close-out — `Merge docs/loose-ends` or later; the last *code* merge is `e66fca4`, HK-013 slice 1). Read `tasks/todo.md`, the latest journal in `journals/` (`0xe66fca4` HK-013 slice 1, this session; `0x7ca28f8` HK-018 before it),
    `tasks/backlog/HOUSEKEEPING.md` OPEN items (HK-015, HK-013), and `tasks/completed/HK_016_STEP3_PLAN.md` execution notes if a content change is
    planned (the simulate → expected-set → allow-list re-pin chain).
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=250 SUCCEEDED=250 FAILED=0 SKIPPED=0`;
