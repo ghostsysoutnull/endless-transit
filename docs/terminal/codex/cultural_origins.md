@@ -41,7 +41,7 @@ Every planet carries a primary and a secondary Culture. Most apartments follow t
 *   **Archetypes:** Neural Roots, Spore Chambers, Breathing Pods.
 
 ## [THE FOUR MINOR CULTURES]
-The Minor Cultures left their possessions but not their walls. A Gilded, Shogun, Zenith or Abyssal planet renders its cells in Monolith concrete and names its buildings from the Monolith lexicon; only the relics inside betray who lived there.
+The Minor Cultures are minor in number, not in presence. A Gilded, Shogun, Zenith or Abyssal planet raises its own walls and names its own buildings and cells — velvet over mahogany, paper over cedar, laurel-carved limestone, writhing membrane — and the relics inside confirm who lived there.
 
 ### [GILDED: THE VELVET LEDGER]
 *   **Vibe:** Mahogany, Brass, Crystal.
