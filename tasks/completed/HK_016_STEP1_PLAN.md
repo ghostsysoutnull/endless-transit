@@ -2,7 +2,14 @@
 **Created:** 2026-09-16 | **Grill:** AMEND (check 2 ×2: undeclared wrap shift in the golden diff → F4; F2 rate mis-stated) → applied → CLEARED; F4 resolved first as **HK-017** (`54f3f19`, merged) by user decision (all ★) | **Branch:** `content/hk-016-step1` (from `master` after the HK-017 merge)
 **Backlog:** `tasks/backlog/HOUSEKEEPING.md` (HK-016, step 1 of 3) | **Audit:** `docs/analysis/VARIETY_AUDIT.md` §2.3–2.5, §2.7, §3.2, §4 step 1
 **Baseline (verified this session on `master`):** 213 / 213 / 0 / 0 (3845 ms); `LINT=PASS FILES=206 P1=0 P2=0 P3=0`; tree clean, in sync with origin
-**Status:** DRAFT — no source change authorized by this document
+**Status:** COMPLETE (2026-09-16) | **Commits:** a467a5e (c1 plan), 6ffc7dc (c2 lighting), c9228cc (c3 structures + re-pin + goldens 16/30), 1d9dbd4 / f242c5e (c4–c5 walls), 31d679f (c6 index loader), 822435c / 834e748 (c7–c8 lexicons), 4464ddf (c9 warnings + glitch key + pin + docs), c10 = the tracking-docs commit carrying this line | **Suite at close:** 220 / 220 / 0 / 0; `LINT=PASS FILES=208`; `--scan` seed 0 → 9 before and after; audit probe: lighting and structure fallbacks **0** on all six seeds
+
+> **Execution notes.** (1) Every commit moved exactly what the simulation predicted: c3 moved one literal and frames 16/30 (after HK-017 the
+> wrapped sentence is clean: `…The walls are` / `green calcified shell-fragments.`); c2, c4–c8 moved nothing. (2) The pin had a bug of its
+> own on first run — "walls from its own file and not monolith's" is impossible for monolith; fixed before commit, no production change.
+> (3) The pin is RED against the pre-step-1 resource tree in 4 of 5 methods (run from a `git archive` of `926e731`); the warning fires by
+> name for a nonexistent culture (manual negative check). (4) After the glitch key fix, structure variety on the probe seeds rose again
+> (8/13/12/9/14/8 distinct vs 7/14/9/8/10/7 with the key unfixed) — the residual `a spatial cell` rooms were all glitch rooms.
 
 > **This is a content phase, not a refactor.** Generated worlds change on purpose: rooms on 52 % of planets stop
 > saying `a dim, flickering glow`, rooms in ⅓ of countries stop saying `a spatial cell`, five cultures get their own
