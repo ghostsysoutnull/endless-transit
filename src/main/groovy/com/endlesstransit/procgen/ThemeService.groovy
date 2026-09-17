@@ -112,17 +112,42 @@ class ThemeService {
         return pool
     }
 
-    String generateHybridObject(String culture, String timeline, Random r) {
-        List<String> cAssets = getCultureAssets(culture)
-        List<String> tAssets = getTimelineAssets(timeline)
+    private final Map<String, List<String>> objectDecks = new HashMap<String, List<String>>()
 
-        if (cAssets && tAssets) {
-            String cItem = (String) cAssets[r.nextInt(cAssets.size())]
-            String tItem = (String) tAssets[r.nextInt(tAssets.size())]
-            
-            // Randomly decide which one comes first for variety
-            return r.nextBoolean() ? "${tItem} with ${cItem}" : "${cItem} infused with ${tItem}"
+    /**
+     * HK-016 step 2: every object an apartment of this culture and era can hold, in a fixed order —
+     * each culture item x each era item in four two-word forms, then every item alone. Built once per
+     * (culture, era) and shared; callers copy before shuffling. ["Strange Object"] when a list is empty.
+     */
+    List<String> objectDeck(String culture, String timeline) {
+        String key = culture + "|" + timeline
+        List<String> deck = objectDecks[key]
+        if (deck == null) {
+            deck = buildObjectDeck(getCultureAssets(culture), getTimelineAssets(timeline))
+            objectDecks[key] = deck
         }
-        return "Strange Object"
+        return deck
+    }
+
+    private static List<String> buildObjectDeck(List<String> cAssets, List<String> tAssets) {
+        if (!cAssets || !tAssets) return Collections.unmodifiableList(["Strange Object"])
+        List<String> deck = []
+        for (String c in cAssets) {
+            for (String t in tAssets) {
+                deck << "${t} with ${c}".toString()
+                deck << "${c} infused with ${t}".toString()
+                deck << "${c} fused to ${t}".toString()
+                deck << "${t} grafted onto ${c}".toString()
+            }
+        }
+        deck.addAll(cAssets)
+        deck.addAll(tAssets)
+        return Collections.unmodifiableList(deck)
+    }
+
+    /** One object drawn with replacement from the deck (HK-016 step 2: one nextInt per call). */
+    String generateHybridObject(String culture, String timeline, Random r) {
+        List<String> deck = objectDeck(culture, timeline)
+        return deck[r.nextInt(deck.size())]
     }
 }

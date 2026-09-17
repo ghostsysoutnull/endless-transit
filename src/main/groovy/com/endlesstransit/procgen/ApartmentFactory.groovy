@@ -37,12 +37,12 @@ final class ApartmentFactory implements LocationFactory<Apartment> {
     void populate(Apartment a) {
         int numRooms = a.locus.nextInt(1, 10)
         
-        List<String> objectPool = []
         int totalObjects = a.locus.nextInt(5, 19)
         Random objRandom = a.locus.branch("OBJECT_POOL").nextRandom()
-        for (int i = 0; i < totalObjects; i++) {
-            objectPool << registry.themeService.generateHybridObject(a.culture, a.timeline, objRandom)
-        }
+        // HK-016 step 2: deal from a shuffled deck — no object repeats inside an apartment.
+        List<String> deck = new ArrayList<String>(registry.themeService.objectDeck(a.culture, a.timeline))
+        Collections.shuffle(deck, objRandom)
+        List<String> objectPool = new ArrayList<String>(deck.subList(0, Math.min(totalObjects, deck.size())))
 
         for (int i = 0; i < numRooms; i++) {
             Room room = registry.createRoom(a, a.culture, a.timeline, a.locus.branch(i))
