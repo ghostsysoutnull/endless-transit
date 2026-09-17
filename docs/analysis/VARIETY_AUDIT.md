@@ -77,6 +77,24 @@ Lighting for `atomic`, `digital`, `entropic`, `future`; structures for `Industri
 Add a log line in `generateAtmosphere` when a fallback fires (the missing-file guard), so the gap can never reopen unseen.
 *Effect:* turns "one identical sentence for every room on half the planets" into a real 5-line pool.
 
+> **Step 1 DONE (2026-09-16)** — plan and execution record: `tasks/completed/HK_016_STEP1_PLAN.md`. Two corrections to the step as written above:
+> the lexicon list was hard-coded in `NameGenerator` (now `names/buildings/index.txt`), and the glitch branch's `"Abyssal"` key matched no
+> file (fixed to `"abyssal"`; `structures/Singularity.txt` added) — with every file in place that key alone still put `a spatial cell` on
+> 2–5 rooms per probe seed. Side finding fixed first: HK-017 (the narrative pane wrapped to 88 columns, the split box held 86).
+> Probe re-run after step 1, same six seeds, same walk:
+>
+> | seed | walls distinct | lighting distinct (glow fallback) | structure distinct (cell fallback) |
+> | :-- | :-- | :-- | :-- |
+> | 0 | 10 → 12 | 6 (2) → 7 (0) | 6 (5) → 8 (0) |
+> | 12345 | 17 → 17 | 15 (2) → 16 (0) | 9 (249) → 13 (0) |
+> | 0x1234 | 10 → 19 | 10 (6) → 14 (0) | 1 (299) → 12 (0) |
+> | 500 | 11 → 13 | 7 (2) → 8 (0) | 1 (170) → 9 (0) |
+> | 9999 | 14 → 18 | 8 (4) → 11 (0) | 1 (262) → 14 (0) |
+> | 42 | 11 → 11 | 7 (1) → 7 (0) | 1 (120) → 8 (0) |
+>
+> Objects, furniture, door and count columns are identical to the table in Appendix A — step 2's job. Room names on shogun, gilded,
+> zenith and abyssal apartments now use their own lexicons (seed 0 first apartment: shogun words, not *Brutalist Block*).
+
 **Step 2 — structural fixes (code, small).**
 - Deal the apartment's objects from a **shuffled deck** of the pool (no repeats until the pool is exhausted), and never deal
   a string already in the target room.

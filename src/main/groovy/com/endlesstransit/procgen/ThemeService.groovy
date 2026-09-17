@@ -1,5 +1,6 @@
 package com.endlesstransit.procgen
 
+import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -78,22 +79,37 @@ class ThemeService {
         if (isAnomaly || r.nextDouble() < 0.05) {
             if (r.nextBoolean()) wallTheme = getRandomCulture(locus.branch("WALL_GLITCH"))
             if (r.nextBoolean()) lightTheme = getRandomTimeline(locus.branch("LIGHT_GLITCH"))
-            if (r.nextBoolean()) structTheme = r.nextBoolean() ? "Abyssal" : "Singularity"
+            // HK-016: "abyssal" is the file's key (was "Abyssal", which no file matched and fell back silently).
+            if (r.nextBoolean()) structTheme = r.nextBoolean() ? "abyssal" : "Singularity"
         }
 
         // Walls pull from Culture (or glitched culture)
-        List<String> wallPool = atmosphere["walls"][wallTheme] ?: atmosphere["walls"]["monolith"] ?: ["bare surfaces"]
+        List<String> wallPool = poolOrWarn("walls", wallTheme, atmosphere["walls"]["monolith"] ?: ["bare surfaces"])
         String walls = (String) wallPool[r.nextInt(wallPool.size())]
         
         // Lighting pulls from Timeline (or glitched timeline)
-        List<String> lightPool = atmosphere["lighting"][lightTheme] ?: atmosphere["lighting"]["monolith"] ?: ["a dim, flickering glow"]
+        List<String> lightPool = poolOrWarn("lighting", lightTheme, atmosphere["lighting"]["monolith"] ?: ["a dim, flickering glow"])
         String lighting = (String) lightPool[r.nextInt(lightPool.size())]
         
         // Structure pulls from trait (or glitched mutation)
-        List<String> structPool = atmosphere["structures"][structTheme] ?: atmosphere["structures"]["monolith"] ?: atmosphere["structures"]["Standard"] ?: ["a spatial cell"]
+        List<String> structPool = poolOrWarn("structures", structTheme, atmosphere["structures"]["monolith"] ?: atmosphere["structures"]["Standard"] ?: ["a spatial cell"])
         String structure = (String) structPool[r.nextInt(structPool.size())]
         
         return [walls: walls, lighting: lighting, structure: structure]
+    }
+
+    /**
+     * HK-016: the pool for a key, or the given fallback with a visible warning. Every key in an
+     * index has a file (ThemeResourceCoverageTest), so this never fires in production; if it does,
+     * a resource file is missing and the world has gone quiet somewhere.
+     */
+    private List<String> poolOrWarn(String category, String key, List<String> fallback) {
+        List<String> pool = atmosphere[category][key]
+        if (!pool) {
+            Terminal.println "[THEME_WARN] no ${category} file for '${key}' — falling back to ${fallback.size()} generic line(s)"
+            return fallback
+        }
+        return pool
     }
 
     String generateHybridObject(String culture, String timeline, Random r) {

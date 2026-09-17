@@ -1,0 +1,8 @@
+Vertex
+Thread
+Partition
+Cyst
+Membrane
+Sigil
+Altar
+Exception

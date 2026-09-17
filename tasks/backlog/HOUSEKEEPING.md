@@ -28,6 +28,12 @@ scope before starting.
   furniture ≠ objects, timeline drift like culture drift, more phrasings, category-based room names, description variants;
   (3) grow lists (8 → ~16 items, 5 → ~10 atmosphere, lexicons ~12×12, doors ~12/12). Step-0 pins listed in the audit.
   Gates: `DeterministicUniverseTest`, `--scan` seed 0 → 9, reviewed golden/snapshot regeneration, guide/manual edited in the same commit.
+- **Step 1 CLOSED (2026-09-16, branch `content/hk-016-step1`, `a467a5e`…`4464ddf`, plan `tasks/completed/HK_016_STEP1_PLAN.md`):** 4 lighting, 3 structures
+  (incl. the glitch key `Singularity`), 5 walls, 4 lexicons (8+8) filled; `names/buildings/index.txt` enumerates the lexicon (the list was
+  hard-coded); `[THEME_WARN]` on any fallback; glitch key `"Abyssal"` → `"abyssal"` (it matched no file — 1 glitched room in 80 said
+  `a spatial cell` regardless); `ThemeResourceCoverageTest` (RED on the old tree). Probe: lighting/structure fallbacks 0 on all six seeds;
+  walls distinct 12/17/19/13/18/11 (was 10/17/10/11/14/11), structure distinct 8/13/12/9/14/8 (was 6/9/1/1/1/1). One literal + goldens 16/30
+  moved, as planned. Found and fixed first: **HK-017** (pane wrap width). **Steps 2 and 3 OPEN.**
 
 ### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
 **Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide

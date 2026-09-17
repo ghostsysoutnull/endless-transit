@@ -1,14 +1,14 @@
 [37m║ [0m[3\m #NEURAL_LINK_I%T%RPRETATIO░]:[0m[90G[37m║ [0m [96m[SYSTEM_TELEMETRY][0m[130G[37m║[0m
-[37m║ [0mYou are in a spatial c**l. The w░lls are [37mgreen[0m ▒alcified shell-fragments.[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
-[37m║ [0mThe space is illuminated by [%▓mthe warm cathode glow █f a CR▓ monitor[0m.[90G[37m║ [0m[130G[37m║[0m
-[37m║ [0m$2m█URNIT!RE:[0# ke█/tin s*ine inf%sed with vhs pla█er[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
-[37m║ [0m[90G[37m║ [0m [36m█[0m[130G[37m║[0m
-[37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
-[37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [36m██[0m[130G[37m║[0m
-[37m║ [0mIDENT: [1mBreathing Nest [0x8C][0m                ║ ATMO_TRAITS: [OXY: 14%] | [TEMP: 5°C][90G[37m║ [0m [36m████████[0m[130G[37m║[0m
-[37m║ [0mTYPE:  [33mProcessing Core[0m                      ║ SIGNAL: [SHIELDED] | RESONANCE: [32m[STABLE][0m[90G[37m║ [0m [36m███████[0m[130G[37m║[0m
-[37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m[130G[37m║[0m
-[37m║ [0m[90G[37m║ [0m [2m[DECODE_LOGS][0m[130G[37m║[0m
+[37m║ [0mYou are in a maintena**e pit ri░ged by chain hoists and d▒ip trays. The walls are[90G[37m║ [0m [2mLATTICE_SYNC: [NOMINAL][0m[130G[37m║[0m
+[37m║ [0m[37mgreen[0m calcified shell-f%▓gments.[90G[37m║ [0m[130G[37m║[0m
+[37m║ [0mThe space is il█umin▓ted by [33mthe $ar█ catho!e glow o# a C█/ moni*or[0m%[90G[37m║ [0m [2m[QUANTUM_SPECTROGRAM][0m[130G[37m║[0m
+[37m║ [0m[2mFURNITURE█[0m keratin spine infus▒d with *hs player[90G[37m║ [0m [36m█[0m[130G[37m║[0m
+[37m║ [0m[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
+[37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m██[0m[130G[37m║[0m
+[37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [36m████████[0m[130G[37m║[0m
+[37m║ [0mIDENT: [1mBreathing Nest [0x8C][0m                ║ ATMO_TRAITS: [OXY: 14%] | [TEMP: 5°C][90G[37m║ [0m [36m███████[0m[130G[37m║[0m
+[37m║ [0mTYPE:  [33mProcessing Core[0m                      ║ SIGNAL: [SHIELDED] | RESONANCE: [32m[STABLE][0m[90G[37m║ [0m[130G[37m║[0m
+[37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [2m[DECODE_LOGS][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m > Stable: 0 items[130G[37m║[0m
 [37m╚════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝[0m

@@ -1,6 +1,7 @@
 package com.endlesstransit.procgen
 
 import com.endlesstransit.model.RoomCategory
+import com.endlesstransit.ui.Terminal
 import groovy.transform.CompileStatic
 
 /**
@@ -64,7 +65,8 @@ class NameGenerator {
 
     private static Map loadBuildingLexicon() {
         Map lexicon = new LinkedHashMap()
-        for (String culture in ["rust", "neon", "baroque", "monolith", "void", "organic"]) {
+        // HK-016: cultures enumerated by names/buildings/index.txt (Phase 2a shape), not a literal list.
+        for (String culture in loadLexiconFile("/names/buildings/index.txt")) {
             lexicon[culture] = [
                 "adj" : loadLexiconFile("/names/buildings/${culture}_adj.txt"),
                 "noun": loadLexiconFile("/names/buildings/${culture}_noun.txt")
@@ -97,9 +99,22 @@ class NameGenerator {
         "The Void-Watcher"
     ]
 
+    /**
+     * HK-016: a culture's lexicon, or monolith's with a visible warning. Every culture in
+     * cultures/index.txt has a lexicon (ThemeResourceCoverageTest), so this never fires in production.
+     */
+    private static Map lexiconFor(String culture) {
+        Map lexicon = (Map) buildingLexicon[culture]
+        if (lexicon == null) {
+            Terminal.println "[THEME_WARN] no building lexicon for culture '${culture}' — using monolith's"
+            return (Map) buildingLexicon["monolith"]
+        }
+        return lexicon
+    }
+
     static Map<String, Object> generateRoomName(String culture, String trait, LocusSeed locus) {
         Random r = locus.nextRandom()
-        Map lexicon = (Map) (buildingLexicon[culture] ?: buildingLexicon["monolith"])
+        Map lexicon = lexiconFor(culture)
 
         Map<String, List<RoomCategory>> types = [
             "Military"    : [RoomCategory.SECURITY_STATION, RoomCategory.BARRACKS, RoomCategory.ARMORY, RoomCategory.TACTICAL_HUB],
@@ -146,7 +161,7 @@ class NameGenerator {
         ]
         String sizeCat = floors < 10 ? "small" : (floors < 20 ? "medium" : "large")
         
-        Map lexicon = (Map) (buildingLexicon[culture] ?: buildingLexicon["monolith"])
+        Map lexicon = lexiconFor(culture)
         List<String> adjs = (List<String>) lexicon.adj
         List<String> nouns = (List<String>) lexicon.noun
 

@@ -101,7 +101,8 @@ class ProcgenSnapshotTest {
     @ValueSource(strings = ["Military", "Research", "Industrial", "Ceremonial", "Commercial", "Agricultural", "Standard"])
     void generateRoomName_returnsCategoryKey_notTypeKey(String trait) {
         LocusSeed locus = new LocusSeed(SNAPSHOT_SEED)
-        ["rust", "neon", "baroque", "monolith", "void", "organic"].each { String culture ->
+        // HK-016: every culture with a lexicon (ten since step 1), read from the index, not a literal list.
+        NameGenerator.buildingLexicon.keySet().each { String culture ->
             Map<String, Object> result = NameGenerator.generateRoomName(culture, trait, locus.branch("${trait}_${culture}"))
 
             assertNull(result["type"],

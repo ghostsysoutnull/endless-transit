@@ -288,13 +288,11 @@ no era that costs less. <!-- Street.groovy:87, TurnProcessor.groovy:47 -->
 **Rebel districts.** One city in ten is flagged `[UNAUTHORIZED_ZONE]` in red. It swaps the planet's main and
 secondary culture, so the 10% frequency bonus lands on the *other* culture there. <!-- CityFactory.groovy:34-40 -->
 
-**Not all cultures are equal.** The world has ten cultures and eight eras, but only some of them have full
-descriptive text. Baroque, monolith, neon and organic places have their own wall descriptions and building names.
-Rust and void have names but borrow monolith walls. Gilded, shogun, zenith and abyssal borrow both. Similarly only
-analog, ancient, industrial and singularity eras have their own lighting text. Countries with the Industrial or
-Commercial trait describe every room as "a spatial cell". <!-- ThemeService.groovy:85-93 --> If you want the game at its
-most atmospheric, look for a baroque, neon, organic or monolith planet in an analog, ancient, industrial or
-singularity era, and a Ceremonial, Military, Research or Agricultural country.
+**Every culture, era and trait has its own words.** Each of the ten cultures has its own wall descriptions and
+its own building and room names, each of the eight eras its own lighting, and each of the six country traits its own
+room structures. <!-- ThemeService.groovy, NameGenerator.groovy; themes/atmosphere/*/index.txt, names/buildings/index.txt -->
+If a room ever falls back to a generic line, the game prints a `[THEME_WARN]` message naming the missing file. That is a
+bug, not a feature.
 
 **Building size odds.** Small 41% (3 to 10 floors), medium 30% (10 to 25), large 20% (30 to 50), massive 9%
 (50 to 100). <!-- BuildingFactory.groovy:29-52 -->
@@ -447,8 +445,6 @@ Come back after a reload and it is still there. You can stash a Keystone in a ro
 * A scrawled `_it_hums_` inscription for abandoned rooms. There are no abandoned rooms.
 * Lootable containers with names like `Quantum Vault` and `Sealed Terminal`. The generator exists, nothing calls it.
 * A vault of named seeds (`STRESS_TEST_CITY = 12345`, `ABYSSAL_SUBSTRATE_FOUND = 777`). Nothing reads it.
-* A "glitched atmosphere" branch that, thanks to a capitalisation mismatch, always produces the words
-  "a spatial cell". <!-- ThemeService.groovy:81-93 -->
 
 ### The 15 landmark names
 
@@ -487,10 +483,6 @@ The launcher advertises it, but the game never reads its arguments. Edit `sessio
 
 **Why does my resonance count reset when I load?**
 It is not part of the save file. It is cosmetic anyway.
-
-**Why does every room in this country say "a spatial cell"?**
-Industrial and Commercial countries have no structure text of their own, so they fall back to that phrase. Try a
-Ceremonial, Military, Research or Agricultural country.
 
 **Is there a bottom to the basement?**
 No. Floors are created on demand for as long as you keep pressing `d`. The pressure readout stops at 100% from
