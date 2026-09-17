@@ -6,3 +6,7 @@ Chamber
 Limb
 Leaf
 Root
+Sac
+Cyst
+Bloom
+Hollow

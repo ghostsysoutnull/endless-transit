@@ -1,8 +1,8 @@
 [37m╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗[0m
 [37m║ [0m                         LATTICE: [2m∞[0m [2m»[0m [2m○[0m [2m☼[0m [2m⊕[0m [2m⬚[0m [2m🏙[0m [2m═[0m [2m⌂[0m [2m▤[0m [2m▅[0m [2m🚪[0m [37m[□][0m | PULSE_TRAVERSAL: 0 | COHERENCE: 100%[130G[37m║[0m
-[37m║ [0mLOCUS_TRACE: ...ity > Low Way > The Void-Watcher > Floor 0 > Corridor > Pitted Concrete [VIBRATING] > Fungal Processing Core[130G[37m║[0m
+[37m║ [0mLOCUS_TRACE: ...ity > Low Way > The Void-Watcher > Floor 0 > Corridor > Pitted Concrete [VIBRATING] > Veined Processing Core[130G[37m║[0m
 [37m╟────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╢[0m
-[37m║ [0mLATTICE_IDENT: Processing Core >> Fungal Processing Core[90G[37m║ [0mATMOS: 14% | TEMP: 5°C[130G[37m║[0m
+[37m║ [0mLATTICE_IDENT: Processing Core >> Veined Processing Core[90G[37m║ [0mATMOS: 14% | TEMP: 5°C[130G[37m║[0m
 [37m║ [0mLOCUS_HASH: 19.414 / 47.053 | HOP_DENSITY: 12[90G[37m║ [0mCOHERENCE: [32m██████████[0m[130G[37m║[0m
 [37m║ [0mCELL: 1 / 9 | [37m[X][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m [2m[ ][0m[90G[37m║ [0mEVENT_TICKER: [SYNC_STABLE][130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m[2mLOC: The Void-Watcher[0m[130G[37m║[0m
@@ -19,7 +19,7 @@
 [37m║ [0m[90G[37m║ [0m [36m█████████[0m[130G[37m║[0m
 [37m║ [0m[96m LOCAL_CELL_DIAGNOSTIC: 0.0.0.0.0.0.0.0.0.0.0.0.0 [0m[90G[37m║ [0m [36m██[0m[130G[37m║[0m
 [37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [36m████████[0m[130G[37m║[0m
-[37m║ [0mIDENT: [1mFungal Processing Core[0m               ║ ATMO_TRAITS: [OXY: 14%] | [TEMP: 5°C][90G[37m║ [0m [36m███████[0m[130G[37m║[0m
+[37m║ [0mIDENT: [1mVeined Processing Core[0m               ║ ATMO_TRAITS: [OXY: 14%] | [TEMP: 5°C][90G[37m║ [0m [36m███████[0m[130G[37m║[0m
 [37m║ [0mTYPE:  [33mProcessing Core[0m                      ║ SIGNAL: [SHIELDED] | RESONANCE: [32m[STABLE][0m[90G[37m║ [0m[130G[37m║[0m
 [37m║ [0m[2m--------------------------------------------------------------------------------------[0m[90G[37m║ [0m [2m[DECODE_LOGS][0m[130G[37m║[0m
 [37m║ [0m[90G[37m║ [0m > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0[130G[37m║[0m

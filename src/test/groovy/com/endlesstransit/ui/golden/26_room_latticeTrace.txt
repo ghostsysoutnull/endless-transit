@@ -13,5 +13,5 @@
     [2m[09] [0m                              └─ ▤ FLOOR : Floor 0
     [2m[10] [0m                                  └─ ▅ CORRIDOR : Corridor
     [2m[11] [0m                                      └─ 🚪 APARTMENT : Pitted Concrete [VIBRATING]
-[1m >> [96m[12]                                           └─ □ ROOM : Fungal Processing Core[0m[0m
+[1m >> [96m[12]                                           └─ □ ROOM : Veined Processing Core[0m[0m
 

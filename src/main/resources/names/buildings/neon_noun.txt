@@ -6,3 +6,7 @@ Core
 Circuit
 Relay
 Grid
+Arcade
+Booth
+Terminal
+Strip

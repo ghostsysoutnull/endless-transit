@@ -31,14 +31,14 @@
                           [37m║[0m
                          [·] [2m[0m
 [2mEXECUTE_DIRECTIVE:[0m
-01. Enter Room: Fungal Processing Core
-02. Enter Room: Pulsing Power Plant
-03. Enter Room: Living Maintenance Bay
-04. Enter Room: Soft Processing Core
-05. Enter Room: Grown Maintenance Bay
-06. Enter Room: Breathing Power Plant
-07. Enter Room: Neural Processing Core
-08. Enter Room: Verdant Maintenance Bay
-09. Enter Room: Fungal Maintenance Bay
+01. Enter Room: Veined Processing Core
+02. Enter Room: Verdant Power Plant
+03. Enter Room: Grown Maintenance Bay
+04. Enter Room: Living Processing Core
+05. Enter Room: Ribbed Maintenance Bay
+06. Enter Room: Fungal Power Plant
+07. Enter Room: Sporing Processing Core
+08. Enter Room: Pulsing Maintenance Bay
+09. Enter Room: Damp Maintenance Bay
 [[33ml[0m] Leave Apartment
 [[33mi[0m] Buffer | [[36msync[0m] Save | [[96ms[0m] Scan | [[37mm[0m] Map | [[37mll[0m] Tree | [[32mp[0m] Snap | [[31mquit[0m] Quit
