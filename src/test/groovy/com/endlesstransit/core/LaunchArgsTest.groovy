@@ -8,21 +8,21 @@ class LaunchArgsTest {
 
     @Test
     void seedFlag_yieldsTheSeed() {
-        assertEquals(4660L, LaunchArgs.seedFrom(["--seed", "4660"] as String[]))
-        assertEquals(-7L, LaunchArgs.seedFrom(["--compile", "--seed", "-7"] as String[]), "Other options may come first")
+        assertEquals(4660L, new LaunchArgs(["--seed", "4660"] as String[]).seed)
+        assertEquals(-7L, new LaunchArgs(["--compile", "--seed", "-7"] as String[]).seed, "Other options may come first")
     }
 
     @Test
     void noFlag_yieldsNull() {
-        assertNull(LaunchArgs.seedFrom([] as String[]))
-        assertNull(LaunchArgs.seedFrom(["--compile"] as String[]))
-        assertNull(LaunchArgs.seedFrom(null))
+        assertNull(new LaunchArgs([] as String[]).seed)
+        assertNull(new LaunchArgs(["--compile"] as String[]).seed)
+        assertNull(new LaunchArgs(null).seed)
     }
 
     @Test
     void flagWithoutAWholeNumber_isRefused() {
-        assertThrows(IllegalArgumentException) { LaunchArgs.seedFrom(["--seed"] as String[]) }
-        assertThrows(IllegalArgumentException) { LaunchArgs.seedFrom(["--seed", "x"] as String[]) }
-        assertThrows(IllegalArgumentException) { LaunchArgs.seedFrom(["--seed", "1.5"] as String[]) }
+        assertThrows(IllegalArgumentException) { new LaunchArgs(["--seed"] as String[]) }
+        assertThrows(IllegalArgumentException) { new LaunchArgs(["--seed", "x"] as String[]) }
+        assertThrows(IllegalArgumentException) { new LaunchArgs(["--seed", "1.5"] as String[]) }
     }
 }
