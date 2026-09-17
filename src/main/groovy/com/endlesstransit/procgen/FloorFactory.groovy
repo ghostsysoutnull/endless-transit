@@ -23,6 +23,7 @@ final class FloorFactory implements LocationFactory<Floor> {
         Floor f = new Floor(number, apartmentsPerFloor, culture, timeline, locus)
         f.setParent(parent)
         f.fmt = registry.fmt
+        f.descriptionVariant = registry.themeService.descriptionVariant("floor", locus)   // HK-016 step 2
         return f
     }
 

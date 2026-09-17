@@ -132,6 +132,27 @@ class ProcgenVarietyContractTest {
         assertTrue(seen.size() > 1, "every corridor on the sample read the same sentence: ${seen}")
     }
 
+    @Test
+    void floorDescriptions_areFileVariants_andVary() {
+        List<String> variants = factory.themeService.descriptions["floor"]
+        assertTrue(variants.size() >= 4, "themes/descriptions/floor.txt must hold at least 4 lines")
+        Set<String> seen = [] as Set
+        SEEDS.each { long seed ->
+            Street street = (Street) WorldGenesis.createInitialWorld(factory, new LocusSeed(seed)).startLocation
+            street.buildings.take(3).each { Building b ->
+                (0..<Math.min(3, b.maxFloors)).each { int n ->
+                    Floor f = b.getFloor(n)
+                    String desc = f.getDescription().replaceAll("\u001b\\[[0-9;]*[A-Za-z]", "")
+                    assertTrue(desc.startsWith("Floor ${n}. ".toString()), "floor prefix lost: ${desc}")
+                    String sentence = desc.substring("Floor ${n}. ".length())
+                    assertTrue(variants.any { String v -> v.replace("{culture}", f.culture.toUpperCase()) == sentence }, "'${sentence}' is not a floor.txt line")
+                    seen << sentence.replace(f.culture.toUpperCase(), "{culture}")
+                }
+            }
+        }
+        assertTrue(seen.size() > 1, "every floor on the sample read the same sentence: ${seen}")
+    }
+
     // --- 2a/2b: shuffled-deck dealing --------------------------------------------------------------
 
     @Test
