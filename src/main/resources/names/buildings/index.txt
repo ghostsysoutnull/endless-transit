@@ -1,3 +1,4 @@
+abyssal
 baroque
 gilded
 monolith
@@ -6,3 +7,4 @@ organic
 rust
 shogun
 void
+zenith
