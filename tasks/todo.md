@@ -45,8 +45,9 @@
 - [x] **HK-016 step 1** (2026-09-16): the silent resource files filled (lighting ×4, structures ×3, walls ×5, lexicons ×4), lexicon enumerated by `names/buildings/index.txt`, `[THEME_WARN]` on any fallback, glitch key `"Abyssal"` → `"abyssal"`, `ThemeResourceCoverageTest` (RED on the old tree); probe fallbacks 0 on all six seeds; one literal + goldens 16/30 moved as planned. Plan + record: `tasks/completed/HK_016_STEP1_PLAN.md`. 10 commits on `content/hk-016-step1`, merged.
 - [x] **HK-016 step 2** (2026-09-16): shuffled-deck objects (4 forms + singles, no repeat per apartment on six seeds), furniture = condition + culture item, second era per planet picked per apartment (rebel districts swap eras), `<adjective> <category>` cell names (hex gone), corridor/floor sentence variants; `ProcgenVarietyContractTest` 7 pins; 12 goldens moved, each simulated first; objects distinct 143–198 → 203–369 per seed. Plan + record: `tasks/completed/HK_016_STEP2_PLAN.md`. 8 commits on `content/hk-016-step2`, merged.
 - [x] **HK-016 step 3** (2026-09-16): every list grown (relics 16, atmosphere 10, conditions 16, lexicons 12+12, doors 12/12/12), doors' lists and narratives externalised first (zero diff), size pins per family; objects distinct 261–545 per seed (audit: 143–198), furniture 177–285, door briefs 160/252. 18 commits on `content/hk-016-step3`, each re-pinned from a run. **HK-016 CLOSED.** Plan + record: `tasks/completed/HK_016_STEP3_PLAN.md`.
-- [ ] **HK-018** (2026-09-16, user report after step 3): a Keystone is matched to its building by *name*; the step-3 lexicon growth renamed the player's building (PodReach → HollowReach) and stranded `PodReach Keystone`. Fix: bind by LIP with a name fallback for old saves. Logged with the diagnosis and a workaround in `tasks/backlog/HOUSEKEEPING.md`.
-- [ ] Next: user decision — **HK-018** (small, has a design), **HK-015** (player-facing bugs; items 1–2 are gameplay changes), O1 (HeadlessRunner DSL), HK-013 (nine long methods). Other open items: **HK-015** (player-facing bugs; items 1–2 are gameplay changes), O1 (HeadlessRunner DSL), HK-013 (nine long methods)
+- [x] Housekeeping HK-018 (2026-09-16, user report): `j` hidden in corridor mode + Keystone bound by name → the breach rule lives on the model (`Building.keystoneIn`, `Floor.addBreachOption`), Keystone bound by LIP (`InventoryItem.boundLip`), no name fallback (user decision). `BreachOptionContractTest` 9 pins. 5 commits, merged `7ca28f8`.
+- [x] Housekeeping HK-013 slice 1 (2026-09-16): `SyncManager.restore` under 50 lines (three helpers, by script); `RestoreContractTest` 5 pins; lint baseline 9 → 8; lesson "no formatting dodges"; WF-006 logged. Merged `e66fca4`.
+- [ ] Next: user decision — **HK-015** (player-facing bugs; items 1–2 are gameplay changes; + a dropped Keystone loses its flag), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
 
 ---
 
@@ -73,8 +74,6 @@
 - [x] Map Logic-Test Alignment Matrix (70% coverage)
 - [x] Verify 41/41 baseline JUnit 5 tests
 - [x] Chronicle 0xDECE
-- [x] Housekeeping HK-018 (2026-09-16, user report): `j` hidden in corridor mode + Keystone bound by name → the breach rule lives on the model (`Building.keystoneIn`, `Floor.addBreachOption`), Keystone bound by LIP (`InventoryItem.boundLip`), no name fallback (user decision). `BreachOptionContractTest` 9 pins. 5 commits, merged `7ca28f8`.
-- [x] Housekeeping HK-013 slice 1 (2026-09-16): `SyncManager.restore` under 50 lines (three helpers, by script); `RestoreContractTest` 5 pins; lint baseline 9 → 8; lesson "no formatting dodges"; WF-006 logged. Merged `e66fca4`.
 
 ---
 
