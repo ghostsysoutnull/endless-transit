@@ -18,28 +18,10 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 `TurnProcessor`), and `normalize` asks it instead of carrying a list. Pin first: which keys are deliberately case-sensitive today
 (`s`, `ll`, `p`/`P`, `quitnow` — guide `:102-103`), `InputHandlerNormalizeTest` for the rest. No player-visible change intended.
 
-### HK-015 — Player-facing bugs surfaced by the Player's Guide (five items, one commit each)
-**In progress 2026-09-17** — branch `housekeeping/hk-015-player-bugs`, plan `tasks/active/HK_015_PLAN.md` (user decisions: item 1 once per step + saved, `q` aliased, echo roll seeded, all five items).
-**Found:** 2026-09-16, chronicle `0x9c4e17d`, while reading the source to write `docs/terminal/guide/players_guide.md`. The guide
-documents all five publicly ("Known quirks" and "Spoilers and exploits"), each labelled "may be fixed later"; after any fix, edit the
-guide in the same commit so it stays true. Items 1 and 2 change gameplay — **user decision required** before touching them.
-1. **Passive room roll repeats.** `Room.processAction` (`model/Room.groovy:70`) seeds from `locus.branch("ACTION").branch(player.stepCount)`,
-   and `stepCount` only advances on navigation (`core/NavigationCommand.groovy:35`). A 30% hit therefore repeats, with the same value,
-   on every prompt spent standing still — unlimited identical "Hidden Frequency" items for 1 coherence each, and each one marks the
-   floor sampled for the ritual. Fix needs a per-prompt component in the seed (or a once-per-visit flag); pin with a test that stands
-   still N prompts and asserts at most one capture.
-2. **`m 1 1` is free coherence.** `QuantumBufferController.groovy:44` grants `adjustCoherence(15)` after `Player.mergeItems`, whose
-   guards (`core/Player.groovy:70-71`, same index / out of range) return silently. Make `mergeItems` report success (boolean or the
-   hybrid) and grant only on success; pin: `m 1 1` leaves coherence unchanged.
-3. **`run.sh --seed` is inert.** `run.sh:25` advertises it; `Main.groovy:10` is `new Game()` and never reads `args`. Parse `--seed <long>`
-   in `Main` and pass it to `Game(long)`. Pin: headless launch with a seed produces the pinned seed-4660 street.
-4. **`q` is unbound.** `RenderingCoordinator.groovy:40` prints `q: Terminate`; `TurnProcessor.groovy:30-43` has no `q`. Either alias `q` →
-   `quit` in `InputHandler.normalize` or drop it from the help line.
-5. **Null Reach echo scan needs capital `S`.** `NullSector.groovy:90` offers `s. Scan for spectral echoes`, but lowercase `s` is taken by
-   the global scan first (`TurnProcessor.groovy:80`). Rename the option key (e.g. `e.`) — do not change the global table.
-Also noted, lower value: `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
-(real dir is relative); `NullSector.groovy:91` uses an unseeded `new Random()` (the only non-deterministic roll in the engine);
-a Keystone dropped in a room is stored as its name only and comes back as a plain item (`Room.groovy:168`, `InventoryItem` rebuilt without `isKeystone`/`boundLip`), so the guide's "You can stash a Keystone in a room" is false (HK-018, E5);
+### HK-021 — Residue of HK-015: five low-value player-facing oddities
+**Found:** 2026-09-16 with HK-015 (its "also noted" list); split off 2026-09-17 when HK-015's five numbered items closed. None has a plan.
+`Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
+(real dir is relative); a Keystone dropped in a room is stored as its name only and comes back as a plain item (`Room.groovy:168`, `InventoryItem` rebuilt without `isKeystone`/`boundLip`), so the guide's "You can stash a Keystone in a room" is false (HK-018, E5);
 after leaving an apartment the player stands on the Corridor *location* (menu without `b`), and `l` leads to the Floor's corridor-mode screen (same doors, with `b`) — two near-identical screens, `l` twice to reach the building (HK-019, D2);
 `Door.groovy:23-26` rolls its own inscription with the same seed `CorridorFactory:51` rolls, so the constructor's pool is dead code (HK-016 step 3, F1).
 
@@ -56,6 +38,10 @@ check, goldens as the gate for the four `ui` methods). Regenerate the baseline w
 shrunken file with the change.
 
 ## 🟢 CLOSED
+
+### HK-015 — Five player-facing bugs surfaced by the Player's Guide
+**CLOSED 2026-09-17** — branch `housekeeping/hk-015-player-bugs`, merge `a47cdb6`. Record: chronicle `0xa47cdb6`; plan `tasks/completed/HK_015_PLAN.md`.
+Passive room roll once per step and saved; `m 1 1` pays nothing; `--seed <n>` works (`LaunchArgs` value object); `q` = `quit`; echo scan is `e` and seeded; lint `NoUnseededRandomInWorld`. Residue → **HK-021**; alias ownership → **HK-020**.
 
 ### HK-019 — Corridor mode was sticky: a floor left with `l` from the corridor never showed `u`/`d` again until `b`
 **CLOSED 2026-09-16** — branch `housekeeping/hk-019-corridor-reset`, commits `25fbd6c` (plan), `75567f2` (step-0 pins), `3d99343` (the change).

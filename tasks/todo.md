@@ -14,7 +14,7 @@
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
-**Suite baseline:** 256 discovered / 256 pass / 0 skipped / 0 failed
+**Suite baseline:** 271 discovered / 271 pass / 0 skipped / 0 failed
 
 - [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
 - [x] Phase 0.5 — Test Coverage Gaps (safety-net tests 0.5a–0.5h, all complete)
@@ -51,7 +51,8 @@
 - [x] Workflow WF-007 (2026-09-17, user proposal): the close-out is a gate — `/close-wave` (ten rows, ends in a table; "closed" is its output only) + `./vinc.sh --docs` (suite count, latest chronicle, blueprint stamps; 15 blueprints baselined). No source change. 6 commits on `workflow/wf-007-close-wave`.
 - [x] Workflow WF-008 (2026-09-17, user review): `/close-wave` tiers, recovery prompt capped (D4), OOA plan no longer auto-loaded — chronicle `0x4f767c3`.
 - [x] Context diet 2 (2026-09-17): chronicle index no longer included in every session; new lessons = rule + pointer — chronicle `0x6aaede9`.
-- [ ] Next: user decision — **HK-015** (player-facing bugs; items 1–2 are gameplay changes; + a dropped Keystone loses its flag), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
+- [x] Housekeeping HK-015 (2026-09-17): five player-facing bugs fixed, one commit each, 15 new pins — chronicle `0xa47cdb6`.
+- [ ] Next: user decision — **HK-020** (command aliases have two owners), **HK-021** (HK-015 residue; a dropped Keystone loses its flag), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
 
 ---
 

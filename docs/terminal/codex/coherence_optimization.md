@@ -23,7 +23,7 @@ No Era drains more slowly than 1. A scan, a map, a buffer check and a mistyped d
 ## [RESTORATION_CYCLES]
 You do not possess a passive recharge. Coherence must be actively reclaimed through **Synthesis**.
 
-*   **Synthesis Boost:** Every merge command in the buffer restores **+15 Coherence**, capped at 100.
+*   **Synthesis Boost:** Every completed synthesis in the buffer restores **+15 Coherence** (a refused merge restores nothing), capped at 100.
 *   **The "Leapfrog" Tactic:** High-level operators often travel into high-drain zones only when they have multiple fragments ready to merge, effectively using synthesis to "fund" their exploration steps.
 
 ## [ABYSSAL_PRESSURE]
