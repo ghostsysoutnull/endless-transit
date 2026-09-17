@@ -73,6 +73,7 @@
 - [x] Map Logic-Test Alignment Matrix (70% coverage)
 - [x] Verify 41/41 baseline JUnit 5 tests
 - [x] Chronicle 0xDECE
+- [x] Housekeeping HK-018 (2026-09-16, user report): `j` hidden in corridor mode + Keystone bound by name → the breach rule lives on the model (`Building.keystoneIn`, `Floor.addBreachOption`), Keystone bound by LIP (`InventoryItem.boundLip`), no name fallback (user decision). `BreachOptionContractTest` 9 pins. 5 commits, merged `7ca28f8`.
 
 ---
 
