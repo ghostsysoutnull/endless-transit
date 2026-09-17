@@ -48,6 +48,7 @@
 - [x] Housekeeping HK-018 (2026-09-16, user report): `j` hidden in corridor mode + Keystone bound by name → the breach rule lives on the model (`Building.keystoneIn`, `Floor.addBreachOption`), Keystone bound by LIP (`InventoryItem.boundLip`), no name fallback (user decision). `BreachOptionContractTest` 9 pins. 5 commits, merged `7ca28f8`.
 - [x] Housekeeping HK-013 slice 1 (2026-09-16): `SyncManager.restore` under 50 lines (three helpers, by script); `RestoreContractTest` 5 pins; lint baseline 9 → 8; lesson "no formatting dodges"; WF-006 logged. Merged `e66fca4`.
 - [x] Housekeeping HK-019 (2026-09-16, behavior change by user decision): the corridor's `l` hands the floor back to the elevator (`Floor.leave`), so a floor left from the corridor opens on `u`/`d`/`c` next visit; `CorridorLeaveContractTest` 6 pins; 36 goldens unchanged. 4 commits on `housekeeping/hk-019-corridor-reset`.
+- [ ] **WF-007 (High, blocks the next phase):** make the close-out doc audit a gate (`docs/analysis/WORKFLOW_BACKLOG.md`).
 - [ ] Next: user decision — **HK-015** (player-facing bugs; items 1–2 are gameplay changes; + a dropped Keystone loses its flag), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
 
 ---

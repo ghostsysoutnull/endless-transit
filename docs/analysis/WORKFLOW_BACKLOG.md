@@ -12,6 +12,15 @@ improvement session is planned before the next phase begins.
 
 ## 🔴 OPEN
 
+### WF-007 — The close-out doc audit is not mechanical; the user has to ask "are all docs updated?" every session
+**Priority:** High | **Found:** 2026-09-16 (HK-019 close; user correction: "every time I need to ask you if all docs are updated and they never are")
+The HK-019 close-out updated the files its plan listed and missed the `Floor` blueprint, the recovery prompt's header / latest-journal pointer /
+closed list, a lesson's tense, the retro and the lesson. The same happened at the HK-013 hand-off (three docs commits to repair). A nine-point list
+now lives in `tasks/lessons/infrastructure.md`, but a lesson is prose the agent must remember. **Proposal for the workflow session:** make it a
+gate — (a) add the list to `.claude/commands/chronicle.md` as a mandatory step whose output is the filled table, and/or (b) a `./vinc.sh --docs`
+check that fails when the recovery prompt's suite count / latest journal id disagree with `./vinc.sh --test` and `journals/CHRONICLE_INDEX.md`'s top
+row, and when a production class changed since the last chronicle has an older blueprint. **High: per CODEX this blocks the next phase until assessed.**
+
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.
 
