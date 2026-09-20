@@ -14,7 +14,7 @@
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
 **Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
-**Suite baseline:** 290 discovered / 290 pass / 0 skipped / 0 failed
+**Suite baseline:** 296 discovered / 296 pass / 0 skipped / 0 failed
 
 - [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
 - [x] Phase 0.5 — Test Coverage Gaps (safety-net tests 0.5a–0.5h, all complete)
@@ -58,7 +58,8 @@
 - [x] Docs — context diet (2026-09-20): broken `@` imports fixed (post-mortems now load), domain guidance lazy, Gemini files removed — chronicle `0xb629529`. Follow-up: Gemini skill package `tasks/skills/` deleted, HK-023 citation fixed; `/chronicle` no longer names the finished OOA plan as the active task, nor does CODEX session init.
 - [x] Docs — cheat sheet (2026-09-20): `docs/terminal/guide/cheat_sheet.md`, one screen, every fact copied from the verified guide; linked from the index and the guide. No chronicle; this line is the record.
 - [x] Housekeeping HK-022 (2026-09-20): `NameGenerator` is an instance owned by `ProceduralFactory`; no static generators; lint allow-list 16 → 15 — chronicle `0x9549527`.
-- [ ] Next: user decision — **HK-021** (HK-015 residue; a dropped Keystone loses its flag), **HK-023** (game-side oddities from the GitHub Pages audit; a save below the Bedrock does not restore — probe only, no test yet), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
+- [x] Housekeeping HK-023 slice 1 (2026-09-20): a save made below the Bedrock restores; an unresolvable save is refused whole; codex + cheat sheet corrected — chronicle `0x55f9460`.
+- [ ] Next: user decision — **HK-021** (HK-015 residue; a dropped Keystone loses its flag), **HK-023** (game-side oddities from the GitHub Pages audit; the restore bullet is done, the rest is open), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
 
 ---
 

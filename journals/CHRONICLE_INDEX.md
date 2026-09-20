@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x55f9460** | 2026-09-20 | **[HK_023_S1_ABYSSAL_RESTORE]** | A save made below the Bedrock restores: `Container.childAt` owns the index rule, a breached `Building` regrows Layers in order, an unresolvable save is refused whole. Codex and cheat sheet corrected. 6 pins. HK-023 stays OPEN. Suite: 296/296/0/0. |
 | **0x9549527** | 2026-09-20 | **[HK_022_NAME_GENERATOR]** | `NameGenerator` is an instance owned by `ProceduralFactory`; eleven factories ask `registry.nameGenerator`; off the `NoNewStaticLogic` allow-list (16 → 15). No name moved; 8 new pins. **HK-022 CLOSED.** Suite: 290/290/0/0. |
 | **0xb629529** | 2026-09-20 | **[CONTEXT_DIET]** | `/doctor` found the Safety Mandates post-mortems and the UI/procgen lessons never loaded (imports resolve relative to the importing file) — fixed; domain guidance now lazy; `GEMINI.md` ×5 and `.gemini/` removed. Suite: 282/282/0/0. |
 | **0x8cf9a5a** | 2026-09-20 | **[GH_PAGES_AUDIT]** | 17 player pages checked against the source and corrected; grill and a fresh-agent pass caught 21 errors in the corrections themselves; internal records unpublished; site shell fixed. HK-023 and WF-010 logged. |

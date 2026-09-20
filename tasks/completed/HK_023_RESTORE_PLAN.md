@@ -1,7 +1,7 @@
 # HK-023 slice 1 — A save made below the Bedrock restores
 
 **Created:** 2026-09-20 | **Grill:** AMEND (4 items) → applied → CLEARED | **Branch (proposed):** `housekeeping/hk-023-abyssal-restore` (from `master` @ dc66503)
-**Status:** AUTHORIZED 2026-09-20 (Directive: "b + push" — execute c0–c3, merge `--no-ff`, `/close-wave`, push). Execution notes at the end.
+**Status:** AUTHORIZED 2026-09-20 (Directive: "b + push" — execute c0–c3, merge `--no-ff`, `/close-wave`, push). Execution notes at the end. **EXECUTED 2026-09-20**, no deviation from the plan.
 
 ## Context
 A player who breaches a building, goes down to Layer −1 (or deeper) and saves cannot load that save.
@@ -92,3 +92,15 @@ file (never `session.trace`) — breach, descend to −2, sync, restore into `Ga
 | 6 | Reversion unit | PASS after A4 — "every commit reverts alone" stated |
 
 Blast radius: `resolveLIP` in tests = `DeterministicUniverseTest:52-53` only (in-range LIPs, unaffected); every test `getFloor(-n)` call asks for −1.
+
+## Execution record (2026-09-20)
+| Commit | What | Gate |
+| :-- | :-- | :-- |
+| `42b43d4` | c0 plan | — |
+| `c7c1cc8` | c1 step-0 pins P1, P2 | 292/292, LINT PASS |
+| `c58dc69` | c2 the model fix + R1–R3 | RED on c1 first: R1, R2 NPE at `PersistenceService.groovy:59`; R3 `expected: <5> but was: <3>` (`AbyssalRestoreContractTest:159`). Then 295/295, LINT PASS FILES=222, scan 0 → 9, goldens unchanged |
+| `080c58b` | c3 the restore guard + R5 | RED on c2 first: `Unexpected exception thrown: NullPointerException` (`:175`). Then 296/296, LINT PASS, scan 0 → 9 |
+| `55f9460` | merge `--no-ff` to `master` | 296/296 |
+
+End-to-end probe (scratch save file, seed 4660, 3-floor building): saved `0.0.0.0.0.0.0.0.0.4`, restored `0.0.0.0.0.0.0.0.0.4`, floor −2,
+menu `[l. Leave Floor, u. Go Up, d. Go Down, c. Enter Corridor]`. Close-out: chronicle `0x55f9460`, retro `docs/retro/RETRO_HK_023_S1.md`.
