@@ -1,15 +1,14 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-17 (HK-015). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-20 (HK-020). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
-- **Test Suite:** 271 discovered / 271 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Latest chronicle:** `0xa47cdb6` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
-- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=218 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013)
-- **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room` is `Verified`, 14 still `Baselined (not audited)`)
-- **Branch:** `master`. The last *code* merge is `a47cdb6` (HK-015). If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
+- **Test Suite:** 282 discovered / 282 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
+- **Latest chronicle:** `0x0e7b6db` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
+- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=220 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013)
+- **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room` and `TurnProcessor` are `Verified`, 13 still `Baselined (not audited)`)
+- **Branch:** `master`. The last *code* merge is `0e7b6db` (HK-020). If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
 - **Active Work:** none; nothing blocks the next phase. All ten OOA phases and O2 are complete. Every wave closes through `/close-wave`, which picks its own tier from the diff (WF-007, WF-008).
 - **Next — user decision, none has a plan yet:**
-  - **HK-020** global command aliases have two owners (`InputHandler.normalize` list + `TurnProcessor` table); needs its own plan + grill; pin the deliberately case-sensitive keys first.
   - **HK-021** residue of HK-015, low value: dead `Door.visited`, `/screenshots/` message, a dropped Keystone loses its flag, double `l` after an apartment, dead inscription pool. Any player-visible fix edits `docs/terminal/guide/players_guide.md` in the same commit.
   - **HK-013** eight long methods left in the lint baseline (extract or re-baseline with a reason — never reformat to the recorded length).
   - **O1** HeadlessRunner DSL (optional, not started). **WF-006** (Low) complexity metric beside `MethodSize`, at the next cadence review.
@@ -29,7 +28,7 @@ Initialize session for the Endless Transit substrate.
    `journals/CHRONICLE_INDEX.md` (open a log only when its wave matters to the task), the OPEN items of `tasks/backlog/HOUSEKEEPING.md` and
    `docs/analysis/WORKFLOW_BACKLOG.md`. For a content change, read the execution notes of `tasks/completed/HK_016_STEP3_PLAN.md` first
    (simulate → expected set → allow-list re-pin). The OOA plan is no longer loaded automatically — read `docs/analysis/OOA_REFACTOR_PLAN.md` on demand.
-3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=271 …`; `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
+3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=282 …`; `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
    `./vinc.sh --scan` → seed 0, 9 nodes; `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
 4. **Ask before choosing:** there is no active phase. Present the options under **Next** and wait for a Directive. The user likes decisions as
    numbered questions with lettered options and a marked preference, answered in one word — and short plain-language summaries in chat.
