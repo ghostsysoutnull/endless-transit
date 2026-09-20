@@ -19,7 +19,7 @@ Long ago, the Lattice was a stable construct of data and light. But the "Entropy
 ## [YOUR OBJECTIVE]
 As an Observer, your primary protocols are:
 1.  **Harvest Spectral Fragments:** Scanned objects contain unique frequencies (Hz). Collect them to stabilize your waveform.
-2.  **Maintain Coherence:** Every step through the lattice drains your neural link. If your coherence hits 0%, the link is severed and your trace is lost to the void.
+2.  **Maintain Coherence:** Every step through the lattice drains your neural link. If your coherence hits 0%, the link **reboots**: the web is regenerated from the same seed and you wake on the starting street, your buffer intact, the world's memory of you erased.
 3.  **Synthesis:** Use the **Quantum Trace Buffer** to merge fragments into powerful **Keystones**. These keys allow you to anchor yourself in the deeper strata of the web.
 4.  **Explore the Bedrock:** Only by breaching the "Bedrock" of a building can you witness the raw system-code of the universe—the Abyssal Substrate.
 

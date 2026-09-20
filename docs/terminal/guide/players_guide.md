@@ -11,8 +11,8 @@ map_type: strategy
 This page is written in plain language. The rest of this site is written in the voice of the game. If you want to
 know how the game *actually* works, what the numbers are, and where the good stuff is, you are in the right place.
 
-Every number here was read from the game's source code on 2026-09-16. Where this page disagrees with the manual
-or the codex, this page is right.
+Every number here was read from the game's source code, first on 2026-09-16 and re-checked on 2026-09-20. If this
+page and the manual or the codex ever disagree, tell us: one of them has a bug.
 
 <div class="toc" markdown="1">
 **Contents**
@@ -36,9 +36,9 @@ or the codex, this page is right.
 
 ## What this game is
 
-Endless Transit is a text adventure set in an infinite world that is generated from a single number. You start at
-the top, at the whole universe, and walk downward: galaxy, planet, country, city, street, building, floor, corridor,
-apartment, room. Every level is built the moment you look at it, and the same number always builds the same world.
+Endless Transit is a text adventure set in an infinite world that is generated from a single number. The world is a
+tree: universe, filament, sector, solar system, planet, country, city, street, building, floor, corridor, apartment, room.
+You start on a **street**. Every level is built the moment you look at it, and the same number always builds the same world.
 
 You have one resource, called **Coherence**. It starts at 100 and goes down every time you press Enter. The only
 way to get it back is to merge two things you picked up. When it reaches zero, the world resets.
@@ -49,11 +49,11 @@ want one.
 
 ## Your first five minutes
 
-**Launching.** `./run.sh` plays a ten-second scripted intro first. `./vinc.sh` skips it and drops you straight into
-the game. <!-- run.sh:58-112, vinc.sh:116-120 --> Both need Java and Groovy on your path.
+**Launching.** `./run.sh` (from the repository folder) plays a short scripted intro first. `./vinc.sh` skips it, compiles, and
+starts. <!-- run.sh:48-112, vinc.sh:122-127 --> Both need Groovy 5 and a JDK: see [installation]({{ "/terminal/manual/installation_guide.html" | relative_url }}).
 
 **The restore prompt.** If a save file exists you are asked `Restore previous session? [y/N]`. The default is No.
-Type exactly `y` to continue your last game. <!-- Game.groovy:86-90 -->
+Type `y` (or `Y`) to continue your last game. <!-- Game.groovy:86-90 -->
 
 **The prompt.** The game waits for you on a line that ends `[Last: <something>] Enter choice:`. The thing in
 brackets is your last move. Pressing Enter on its own repeats it.
@@ -64,11 +64,11 @@ spectrogram once you are inside a building. At the bottom is the menu of things 
 
 **Your first walk.** Every menu item has a key in front of it. Type the key and press Enter.
 
-1. At the universe level, pick any line that says `MATTER_CLUSTER`. Avoid `VOID_REACH` on your first trip; there is
-   nothing to walk into there yet.
-2. Keep picking numbered options until you are standing on a **street**. The street header tells you the era and
-   culture of this part of the world in yellow and colour.
-3. Pick a building. You arrive in its lobby with a list of floors. Pick one.
+1. You begin on a **street**, already a point or two of Coherence down: the drain runs before the first screen is drawn. The street
+   header tells you the era and culture of this part of the world in yellow and colour.
+2. The rest of the universe is above you. `l` climbs one level at a time, numbered options descend. Leave that for later;
+   everything worth taking is below you, inside the buildings.
+3. Pick a building. You arrive in its lobby with a list of floors. Type a floor's number (`0` is the ground floor).
 4. You are in the **elevator** for that floor. Press `c` to step into the corridor.
 5. The corridor lists doors. Pick one. You are dropped straight into the first room behind it.
 6. If the room has objects, press `t` to take one. If there is exactly one object and your buffer is empty, it is
@@ -108,16 +108,18 @@ Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:62-80
 | Where you are | Keys |
 | :-- | :-- |
 | Universe down to street | Numbered children, and `l` to go back up one level. |
-| Building lobby | Numbered floors, top floor first, and `l` to leave. |
+| Building lobby | Floors listed top floor first; the key is the **floor number**, so `0` is the ground floor and `1` is floor 1, wherever they sit in the list. `l` to leave. |
 | Floor, elevator | `u` up, `d` down, `c` into the corridor, `l` leave the building. On the top floor, `j` appears once you can breach. |
 | Floor, corridor | `b` back to the elevator, numbered doors, `l` leave to the building (it skips the elevator; the floor is back at the elevator on your next visit). On the top floor, `j` appears here too once you can breach. |
+| Corridor, on your way out of an apartment | Leaving an apartment puts you on a second, plainer corridor screen: numbered doors and `l`, no `b`. `l` there takes you to the floor's corridor screen above. It looks like a repeat; it is not a bug in your typing. <!-- Room.groovy:251, Corridor.groovy:81-92 --> |
 | Room | `t` interact, `f` next room, `b` previous room, `l` from the first room back to the corridor. |
 | Null Reach | `e` to scan for an echo, `c` to capture it once the signal is strong enough. |
 
 ### The `t` menu inside a room
 
 `1` to `N` takes that object. `d1` to `dN` drops the Nth item in your buffer *onto the floor of this room*, where it
-stays and can be picked up again later. `c` or Enter cancels. <!-- Room.groovy:162-239 -->
+stays and can be picked up again later, **but only its name survives the drop**: see the warning under
+[Spoilers and exploits](#spoilers-and-exploits) before you drop anything valuable. `c` or Enter cancels. <!-- Room.groovy:162-239 -->
 
 ### The buffer screen (`i`)
 
@@ -130,11 +132,11 @@ Coherence is the whole survival game, so here is exactly how it works.
 
 **Every prompt costs Coherence, not every step.** Each time you press Enter, before anything else happens, you
 lose 1. Scanning costs 1. Opening the buffer costs 1. A typo costs 1. Standing still and pressing Enter costs 1.
-<!-- TurnProcessor.groovy:46-48 -->
+<!-- TurnProcessor.groovy:51-53 -->
 
-**Some places cost more.** The 1 becomes 2 in a place whose era is `entropic`, 2 anywhere below a building's
-bedrock, and 4 for both at once. Nothing costs less than 1. The manual's talk of a half-cost era is not in the game.
-<!-- TurnProcessor.groovy:47 -->
+**Some places cost more.** The 1 becomes 2 in a place whose era is `entropic`, and 2 anywhere below a building's
+bedrock. Both at once is 4, but that only happens on a Layer's own screens, its elevator and its corridor view: the
+apartments and rooms below bedrock are never entropic, so they cost 2. Nothing costs less than 1. <!-- TurnProcessor.groovy:52, Corridor.groovy:112-122 -->
 
 **Only merging gives it back.** Every merge command in the buffer screen adds 15. It is capped at 100. Nothing else
 restores Coherence: not resonance, not visiting new places, not time. <!-- QuantumBufferController.groovy:44, Player.groovy:48-50 -->
@@ -142,7 +144,7 @@ restores Coherence: not resonance, not visiting new places, not time. <!-- Quant
 **What zero actually does.** You see `!!! CRITICAL_COHERENCE_FAILURE !!! REBOOTING...`, press Enter, and the
 world is rebuilt from the same seed. You are back on the starting street with 100 Coherence. You keep your buffer,
 your step count and your list of visited places. You lose everything that lived inside the world: objects you
-took come back, ritual progress is gone, a breached building is sealed again. <!-- TurnProcessor.groovy:89-95 -->
+took come back, ritual progress is gone, a breached building is sealed again. <!-- TurnProcessor.groovy:94-100 -->
 
 **The warning signs.**
 
@@ -178,7 +180,9 @@ crowded they are.
 **Every object has a frequency.** It is a number in hertz, and it is computed from the object's *name*: add up
 the alphabet positions of the consonants (B is 2, Z is 26, vowels count nothing), then multiply by 12, because every
 room in the game sits at depth 12. Long names with lots of consonants are worth more. If the room's culture matches
-the planet's main culture, which is true most of the time, you get another 10%. <!-- Gematria.groovy:11-33, Room.groovy:166 -->
+the culture shown as `RESONANCE` on the street header, which is true most of the time, you get another 10%, and the
+resonance counter goes up by one. (A consonant sum of exactly 11, 22 or 33 would be doubled first, but no object
+name in the current word lists adds up to one of those.) <!-- Gematria.groovy:11-33, Room.groovy:167-173 -->
 
 **The free lottery.** Every time you *move* inside an apartment (step into a room, go `b` or `f`, or use `t`), there
 is a 30% chance the room hands you a **Hidden Frequency** worth between one million and ten million hertz, about a thousand times any normal
@@ -192,10 +196,15 @@ fixed by the reach and your step count, so the same walk gives the same readings
 
 ## Reading doors before you open them
 
-Every door in a corridor carries a **trace**, a line of sensory text. The trace is decided by the type of the
-first room behind the door, and it never lies. <!-- CorridorFactory.groovy:43-47 -->
+The door list in a corridor shows three things per door: an inscription if it has one, what the door is made of, and
+its state, like `01. Bone-Lattice Aperture [PITTED]`. Of those, only the **inscription** tells you anything, and
+reading it is free. <!-- Door.groovy:62-70 -->
 
-| You read | Room behind it is one of |
+Every door also carries a **trace**, a line of sensory text, but you only see it when you scan: press `s` in the
+corridor. The trace is decided by the type of the first room behind the door, and it never lies.
+<!-- CorridorFactory.groovy:43-47, ScanCommand.groovy:117-121 -->
+
+| The scan reads | Room behind it is one of |
 | :-- | :-- |
 | frost forming on the hinges | Memory Well. Only this. Only in Ceremonial countries. |
 | a sharp smell of ozone | Laboratory, Neural Link Array, Bio-Server, Power Plant, Processing Core |
@@ -217,8 +226,9 @@ just means "not one of those four". <!-- CorridorFactory.groovy:50, 63-88 -->
 **Material and state mean nothing.** Whether the door is a rusted hatch or polished ceramic is decoration.
 <!-- Door.groovy:28-40 -->
 
-**Or just scan.** Press `s` in a corridor and the table has a `ROOM_TYPE` column that spells it out. It costs
-one Coherence. Reading the trace from the door list is free. <!-- ScanCommand.groovy:95-97 -->
+**The scan spells it out anyway.** The same `s` table has a `ROOM_TYPE` column next to the trace, so the trace table
+above is for curiosity; the column is the answer. A scan costs one Coherence, like everything else you type.
+<!-- ScanCommand.groovy:90-121 -->
 
 Room type is mostly flavour, by the way. It changes the name and the description. It does not change what objects
 you find, which come from the planet's culture and era.
@@ -233,8 +243,9 @@ first word of each parent joined with a dash, plus "Hybrid", so "Rusted Chain" a
 `Rusted-Paper Hybrid`. Every merge gives you 15 Coherence. <!-- SynthesisService.groovy:19-22 -->
 
 **"Resonance" is a badge, not a bonus.** If the new frequency divides evenly by 11 you see a green
-`!!! RESONANCE DETECTED` and a counter goes up. That counter appears in the telemetry pane and in the ending. It
-does nothing else. <!-- Player.groovy:93-96, SpectralFrequency.groovy:16 --> The codex's "stabilized merges give more
+`!!! RESONANCE DETECTED` and a counter goes up. The same counter also goes up for every object you take in a room
+whose culture matches the street's `RESONANCE`, and once for every Keystone you forge (0 divides by 11). It appears in
+the telemetry pane and in the ending. It does nothing else. <!-- Player.groovy:106-108, Room.groovy:173, SpectralFrequency.groovy:16 --> The codex's "stabilized merges give more
 Coherence" is not in the game. All merges give 15.
 
 **Keystones.** When a building is primed (next section) and you merge two items while inside it, you get that
@@ -248,10 +259,12 @@ This is the game's one real quest, and the manual describes it wrong. Here is th
 <!-- Building.groovy:32-34, RitualTracker.groovy:22-39 -->
 
 1. **Pick a small building.** You will need to pick up at least one object on *every* floor. Buildings have 3
-   to 100 floors, and 41% of them are small, with 3 to 10. <!-- BuildingFactory.groovy:29-52 --> The lobby table shows
-   the floor count; so does `ll`.
+   to 100 floors, and 41% of them are small, with 3 to 10. <!-- BuildingFactory.groovy:29-52 --> The street list does
+   not show floor counts. Walk in: the lobby lists every floor, and `ll` shows `[FLOORS: n]` once you are inside.
 2. **Take something on every floor.** Any capture counts, including a Hidden Frequency that lands in your lap.
-   The building's status line reads `INFUSION_ACTIVE` once you start merging, and the lobby marks floors `[CLEARED]`.
+   The building's status line reads `INFUSION_ACTIVE` once you start merging. **Nothing on screen shows which floors
+   you have sampled**, so keep count yourself. The lobby's `[CLEARED]` means something else: you have visited every
+   corridor, apartment and room on that floor. <!-- Building.groovy:128-133, 224-225 -->
 3. **Merge seven times inside the building.** Merges done on the street or elsewhere do not count. This is seven
    merges, not seven "resonant" items. <!-- RitualTracker.groovy:32-38 -->
 4. **Merge an eighth time.** The seventh merge is counted *after* the game checks whether you are primed, so the
@@ -263,7 +276,8 @@ This is the game's one real quest, and the manual describes it wrong. Here is th
 
 **What is down there.** Floors count down from -1 and never stop; the building will manufacture layer -100 if you
 keep pressing `d`. <!-- Building.groovy:247-251 --> Floors are called Layers, corridors Arteries, apartments Crypts, rooms
-Shards. Every map symbol becomes `☠`. Coherence is relabelled Integrity and drains twice as fast. The ticker starts
+Shards. On the map every node becomes `☠`. Coherence is relabelled Integrity and drains twice as fast. Everything
+you take down there gets the 10% culture bonus, because the whole basement is one culture. The ticker starts
 adding lines like `[VOID] We see you.` about a third of the time. <!-- HUDHeaderComponent.groovy:85-88 --> The objects
 down there come from a special word list of 28 entries that you never see above ground.
 
@@ -295,8 +309,8 @@ secondary culture, so the 10% frequency bonus lands on the *other* culture there
 eras the same way, so the street era (and the Entropic drain) can differ from the rest of the planet.
 <!-- CityFactory.groovy:34-41 -->
 
-**Apartments drift in time.** About one apartment in six carries the planet's *second* era: its header says
-`[TEMPORAL_MARKER: X]`, its objects and lighting are of that era. The drain cost still follows the street header.
+**Apartments drift in time.** About one apartment in six carries the planet's *second* era: its objects and lighting
+are of that era, and nothing on screen announces it. The drain cost still follows the street header.
 <!-- VibeCapsule.pickTimeline, ApartmentFactory.groovy:29 -->
 
 **Every culture, era and trait has its own words.** Each of the ten cultures has its own wall descriptions and
@@ -314,9 +328,11 @@ bug, not a feature.
 brackets: <!-- Container.groovy:258-276 -->
 
 `∞` universe, `»` filament, `○` sector or null reach, `☼` solar system, `⊕` planet, `⬚` country, `🏙` city,
-`═` street, `⌂` building, `▤` floor, `▅` corridor, `🚪` apartment, `□` room. Anything below bedrock is `☠`.
+`═` street, `⌂` building, `▤` floor, `▅` corridor, `🚪` apartment, `□` room. Below bedrock the tail reads `▤-1 ▅ 🚪 ☠`:
+the layer shows its number and only the room turns into `☠`. <!-- Floor.groovy:88-91, Room.groovy:65 -->
 
-**PULSE_TRAVERSAL** is how many successful moves you have made. **HOP_DENSITY** is how deep you are, with the
+**PULSE_TRAVERSAL** is how many menu choices you have made that the game accepted, moves and `t` alike; it carries
+over when you restore a save. Global commands (`s`, `i`, `m`, `p`, `sync`) cost Coherence but do not count here. **HOP_DENSITY** is how deep you are, with the
 universe at 0 and rooms at 12. **LOCUS_HASH** looks like coordinates but is decorative; it is a stable random
 number per place. <!-- Container.groovy:202-211 -->
 
@@ -339,8 +355,9 @@ culture, between 75% and 90%. <!-- VibeCapsule.groovy:12-27, CountryFactory.groo
 
 **Floor zone names** in the building lobby are picked by height, not by what is on the floor. Floor 0 is always
 `TRANSIT_LOBBY` and the top floor is always `PEAK_OBSERVATORY`. Floors 1 to 4 draw from four basement-style names,
-the four floors under the top draw from four executive names, and everything between draws from four living names.
-The rooms behind the doors are chosen by the country's trait, not by the zone. <!-- Building.groovy:72-84 -->
+up to three floors under the top draw from four executive names (a building needs nine floors to have all three), and
+everything between draws from four living names.
+The rooms behind the doors are chosen by the country's trait, not by the zone. <!-- Building.groovy:72-90 -->
 
 ## Saving, quitting and seeds
 
@@ -362,24 +379,25 @@ to `journal.txt` and prints an ending. <!-- QuitCommand.groovy:16-27 -->
 
 **Playing a specific seed.** `./run.sh --seed <n>` starts a new game on master seed `n` (a whole number, negative
 allowed); without it a new game uses the current time. A value that is not a whole number is refused before the
-game starts. <!-- LaunchArgs.groovy, Main.groovy, Game.groovy:31 --> You can also restore a save, or open `session.trace`
-in a text editor and change the `masterLocus` number before answering `y` to the restore prompt.
+game starts. `./vinc.sh --seed <n>` does the same without the intro. <!-- LaunchArgs.groovy, Main.groovy, Game.groovy:31 -->
 
 **The seed scanner.** `./vinc.sh --scan <start> <count> building <floors>` or `... culture <name>` searches
 seeds for a building with at least that many floors, or that culture, and prints the first seed that matches.
-<!-- SeedScanner.groovy:28-58 --> Pair it with the `session.trace` trick above.
+<!-- SeedScanner.groovy:28-58 --> It prints the seed only, not where in that world the match is. Feed the seed to `--seed`.
 
 ## Ten tips, ranked
 
 1. **Keep two items in the buffer, always.** They are 15 Coherence you have not spent yet.
 2. **Merge inside the building you are working on.** Merges elsewhere are worth 15 Coherence and nothing more.
-3. **Read the door list before scanning.** The trace column costs nothing; `s` costs one Coherence.
-4. **Stand in a room for a few prompts before leaving.** A 30% shot at a seven-figure item is worth a Coherence.
+3. **Read the inscriptions before scanning.** `[DATA_VAULT]` and `!! DANGER !!` on the door list are free; the trace and
+   the room type cost one `s`.
+4. **Walk through every room of an apartment.** Each move is a fresh 30% shot at a seven-figure item. Standing still
+   and pressing `i` or `s` rolls nothing.
 5. **Do the ritual in a small building.** Ten floors is a chore; a hundred is a lifestyle.
 6. **Avoid entropic eras** unless you are hunting something specific there. Double cost, no upside.
 7. **Take the Null Reach detour** at least once. The echo is free, and landmarks are twice as common.
-8. **Drop into a room, not the buffer.** `d1` in the `t` menu stores an item on the floor; `d 1` in the buffer
-   screen destroys it.
+8. **Never drop anything you care about.** `d 1` in the buffer screen destroys an item; `d1` in a room's `t` menu
+   keeps only its name. Ordinary objects survive that. Keystones, hybrids and Hidden Frequencies do not.
 9. **Sync before the breach and before quitting.** Reboots and crashes both eat unsaved progress.
 10. **Use `./vinc.sh`** after you have seen the intro once.
 
@@ -425,10 +443,17 @@ Type `glitch` at any prompt. You get a numbered menu; `c` cancels. <!-- Renderin
 This is a developer tool that shipped in the game. It is not a secret ending. It is a way to see the basement
 without doing the work.
 
-### Rooms are lockers
+### Rooms are lockers, for plain objects only
 
 Dropping an item with `d1` in the `t` menu adds it to the room's object list, and room object lists are saved.
-Come back after a reload and it is still there. You can stash a Keystone in a room.
+Come back after a reload and it is still there.
+
+<div class="warn" markdown="1">
+**The room remembers the name and nothing else.** When you pick the item up again, its frequency is worked out from
+its name, as if you had found it there. An ordinary object taken back from the same room comes back the same. A **Keystone** comes back as a plain
+item that opens nothing. A **hybrid** or a **Hidden Frequency** comes back worth whatever its name spells, a thousand
+or two hertz, instead of the sum or the millions it held. Do not stash any of those. <!-- Room.groovy:207-208, 221-223 -->
+</div>
 
 ### Things that were built and never wired up
 
@@ -448,15 +473,16 @@ Pillar of Eternal Static · Unit Zero · The Bleeding Sky-Structure · Memory of
 Below bedrock, objects are drawn from a 28-entry list that reads like a haunted stack trace: `unhandled exception`,
 `null reference`, `dead thread`, `orphan process`, `impossible cube`, `eyeless observer-node`, `altar of the
 core-dump`, `sigil of the unmaker`, `pact of the root-user`, `shackled deity-process`, `void-gate of the deep`,
-`hunger of the zero-vector`. Every other culture has eight.
+`hunger of the zero-vector`. Every other culture has sixteen relics of its own.
 
 ### A known world: seed 4660
 
-Set `masterLocus` to `4660` in `session.trace` and restore. Take the first option at every level and you will walk
-through filament **Mu-993-Sync**, planet **Hydraia** (monolith and shogun, analog era), the **Free Dust Kingdom**
-(Industrial), city **Starford**, street **Busy Terrace** with 14 buildings, and the **Eternal Shaft**, a
-3-floor building whose first door opens on `Unbroken Fuel Depot`, holding all 15 of its apartment's
-objects. A three-floor building with a fifteen-object room is a good place to learn the ritual.
+Launch with `./run.sh --seed 4660`. You start on street **Busy Terrace** with 14 buildings, in city **Starford**, the
+**Free Dust Kingdom** (Industrial), planet **Hydraia** (monolith, analog era), filament **Mu-993-Sync**; `ll` shows the
+whole path. Building `1` is the **Eternal Shaft**, three floors. Type `0` for the ground floor, `c` for the corridor,
+`1` for the first door: it opens on `Unbroken Fuel Depot`, holding all 15 of its apartment's objects. A three-floor
+building with a fifteen-object room is a good place to learn the ritual. (Walked on 2026-09-20; a content update can
+rename things, the shape stays.)
 
 </details>
 
@@ -469,8 +495,8 @@ inside it, like taking objects, are undone.
 **Why does scanning cost Coherence?**
 Everything you type costs one, because the drain happens once per prompt before your command runs.
 
-**Why can I not pick a seed?**
-The launcher advertises it, but the game never reads its arguments. Edit `session.trace` instead.
+**Can I pick a seed?**
+Yes: `./run.sh --seed <n>` or `./vinc.sh --seed <n>`, any whole number. See "Saving, quitting and seeds".
 
 **Why does my resonance count reset when I load?**
 It is not part of the save file. It is cosmetic anyway.

@@ -29,22 +29,22 @@ The final frequency of an object is derived using the following formula:
 1.  **Base Sum:** Sum the values of all consonants in the object's name.
 2.  **Master Number:** If the base sum is exactly **11, 22 or 33**, the engine announces `RESONANCE DETECTED` and doubles it.
 3.  **Depth Scaling:** The sum is multiplied by the depth of the cell. Every room in the web sits at **Depth 12**, so in practice every capture is base sum × 12.
-4.  **Resonance Multiplier:** **1.1x** if the room's Culture matches the planet's primary Culture (the fraction is truncated). Otherwise 1.0x.
+4.  **Resonance Multiplier:** **1.1x** if the cell's Culture matches the local **RESONANCE** — the Culture named on the street header (the fraction is truncated). Otherwise 1.0x. Below the Bedrock the local Culture is Abyssal and so is every Shard: every capture in the Substrate is amplified.
 
 ## [STABILIZATION_WAVEFORMS]
 A frequency is considered **Stable** if it is divisible by **11**. 
-*   Stable fragments and stable syntheses are counted in your `RESONANT_TRACES` tally. They provide no additional Coherence.
-*   Stabilized cells appear with the `≈≈≈` waveform in the Apartment Aperture Scan; anomalous cells show `###`.
+*   Stability provides no additional Coherence. A **synthesis** whose result is Stable adds one to your `RESONANT_TRACES` tally; a **capture** adds one when it was amplified by the Resonance Multiplier, Stable or not. The law of the tally is set out in [OPERATIONAL_PROTOCOLS]({{ "/terminal/manual/operational_protocols.html" | relative_url }}).
+*   The Apartment Aperture Scan applies the same test to each cell's **name**: a cell whose name resolves to a frequency divisible by 11 shows the `≈≈≈` waveform; anomalous cells show `###`. It is a reading of the cell, not of the fragments inside it, and it feeds no tally.
 
 ## [DATA_EXAMPLE]
-**Item:** "Rust Piston"
-1.  **Consonants:** R (18), S (19), T (20), P (16), S (19), T (20), N (14)
-2.  **Base Sum:** 126 — not a Master Number, so no doubling
-3.  **Depth (12):** 1512 Hz
-4.  **Resonance:** If the planet's primary Culture is "Rust", ×1.1 → **1663 Hz**
-5.  **Stabilization:** 1663 / 11 = 151.18… (not divisible → unstabilized; without the Culture match, 1512 / 11 = 137.45… likewise)
+**Item:** "oscilloscope" (an Analog-era relic, as found on seed 4660)
+1.  **Consonants:** S (19), C (3), L (12), L (12), S (19), C (3), P (16)
+2.  **Base Sum:** 84 — not a Master Number, so no doubling
+3.  **Depth (12):** 1008 Hz
+4.  **Resonance:** Captured in a cell of the local RESONANCE Culture, ×1.1 = 1108.8 → **1108 Hz** (the fraction is cut, not rounded)
+5.  **Stabilization:** 1108 / 11 = 100.72… (not divisible → unstabilized; without the Culture match, 1008 / 11 = 91.63… likewise)
 
-A Master Number example: any name whose consonants sum to exactly 22 doubles to 44, then × 12 = **528 Hz**, which is divisible by 11 — Master Numbers always yield Stabilized fragments.
+**On Master Numbers.** A name whose consonants sum to exactly 22 doubles to 44, then × 12 = **528 Hz**, divisible by 11: an unamplified Master Number is always Stabilized. Amplify it and the cut fraction breaks the harmony — 528 becomes 580 — so an amplified Master Number never is. The point is a theoretical one: in the current lexicon no fragment's name sums to 11, 22 or 33. The lightest known is "oil can", at 29.
 
 ---
 *Next Node: [\[THE_INVERSION_RITUAL\]]({{ "/terminal/codex/the_inversion_ritual.html" | relative_url }})*

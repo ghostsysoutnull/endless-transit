@@ -40,12 +40,12 @@ There are ten Cultures. Six are fully formed:
 *   **VOID (The Hollow Echo):** Dark, silent, and drifting. These sectors are mostly empty, containing only ghostly memories.
 *   **ORGANIC (The Living Neural):** Breathing, soft, and fungal. Architecture is grown rather than built.
 
-Four are **Minor Cultures**: their objects are their own, but their walls and building names default to Monolith geometry.
+Four are **Minor Cultures** — minor in the record, not in substance: their walls, their building names and their objects are all their own.
 
 *   **GILDED (The Velvet Ledger):** Mahogany, brass, and crystal. Clockwork opulence without the Baroque's sanctity.
 *   **SHOGUN (The Lacquered Order):** Shoji screens, tatami, and katana racks. Discipline rendered as furniture.
 *   **ZENITH (The Marble Ascendant):** Pillars, altars, and laurel. A classical ideal that never finished rendering.
-*   **ABYSSAL (The Unmade):** Dead threads, orphan processes, and altars of the core-dump. Native to the substrate beneath every Bedrock; rarely, it surfaces as a planet's dominant Culture.
+*   **ABYSSAL (The Unmade):** Dead threads, orphan processes, and altars of the core-dump. Native to the substrate beneath every Bedrock; it also surfaces as a planet's dominant Culture, as often as any other of the ten.
 
 Full histories: [CULTURAL_ORIGINS]({{ "/terminal/codex/cultural_origins.html" | relative_url }}).
 
@@ -83,7 +83,7 @@ The same Trait travels down the hierarchy under two other names: the Country lis
 A building's floors are designated by height, not by function. Floor 0 is always the **TRANSIT_LOBBY** and the top floor is always the **PEAK_OBSERVATORY**. Between them:
 
 *   **Lower strata (floors 1–4):** MECHANICAL_SUMP, STORAGE_CELL, POWER_RELAY, FILTRATION_INTAKE.
-*   **Upper strata (the four below the Peak):** EXECUTIVE_SUITE, NEURAL_UPLINK, DATA_VAULT, VIP_QUARTERS.
+*   **Upper strata (up to three below the Peak; a building needs nine floors to hold all three):** EXECUTIVE_SUITE, NEURAL_UPLINK, DATA_VAULT, VIP_QUARTERS.
 *   **Everything between:** LIVING_UNIT, RESEARCH_LAB, HYDROPONIC_BAY, BIO_SERVER.
 
 Below the Bedrock every layer is the **ABYSSAL_SUBSTRATE**. Zone names are labels only; the rooms behind a floor's doors are chosen by the Country's Trait.
@@ -94,7 +94,7 @@ Where a Filament's conduit fails to terminate in matter, it terminates in a **Nu
 *   **Hollow:** A Reach holds one or two Solar Systems where a Sector holds up to seven. Its coordinates read `UNKNOWN` and its path reads `[VOID]`; the web does not know where it is.
 *   **The Echo:** Each Reach holds exactly one **Spectral Echo**, a fragment of 1,000–9,999 Hz with no cultural signature. Issue the `e` directive to scan; each scan raises the signal by 10–39 until it locks at 100, then `c` captures. The Echo is harvested once and never returns.
 *   **The Anchor Effect:** Buildings beneath a Reach are twice as likely to be Landmarks — one in twelve rather than one in twenty-five.
-*   **The Caveat:** The Echo scan is the one roll in the web that the seed does not govern. Two Observers on the same seed may need a different number of scans.
+*   **The Caveat:** The Echo scan is governed by the seed like everything else — by the Reach and by your `PULSE_TRAVERSAL` count when you issue it. Two Observers on the same seed who arrive on the same count read the same signal; arrive on a different count and the number of scans may differ.
 
 ## [BUILDINGS_AND_LANDMARKS]
 A Building's scale is rolled once and never changes.
@@ -138,7 +138,7 @@ Every name in the web is drawn from a fixed lexicon by the node's own seed. Lear
 | **Universe** | fixed | — | *The Endless Universe* |
 | **Filament** | Greek–number–Type | 12 Greek letters (*Alpha … Mu*), a number under 999, one of *Strand, Thread, Web, Link, Sync, Stream, Flow, Pulse* | *Mu-993-Sync*, *Theta-41-Thread* |
 | **Sector** | Descriptor Noun Number | *Outer, Inner, Core, Rim, Void, Prime, Secondary, Tertiary, Quaternary* + *Sector, Quadrant, Grid, Matrix, Zone, Region, Reach, Expanse* + a number under 99 | *Core Matrix 17*, *Rim Expanse 4* |
-| **Null Reach** | Null Reach HEX | a three-digit hexadecimal | *Null Reach 886* |
+| **Null Reach** | Null Reach HEX | a hexadecimal of one to three digits | *Null Reach 886* |
 | **Solar System** | Star Suffix | 16 star-prefixes (*Alpha, Proxima, Sirius, Vega, Rigel, Antares, Betelgeuse, Altair, Deneb, Polaris, Zeta, Epsilon, Omicron, Sigma, Tau, Lambda*) + 11 suffixes (*Prime, Minor, Major, Borealis, Australis, Centauri, Ceti, Eridani, Groombridge, Kapteyn, Luyten*) | *Vega Borealis*, *Omicron Luyten* |
 | **Planet** | Stem + ending | 16 stems (*Ter, Neo, Xen, Kry, Vex, Zion, Aura, Nova, Eden, Gaia, Hydra, Nyx, Orion, Phoe, Rhea, Styx*) + 14 endings (*ra, on, os, is, us, ia, ea, ax, ox, un, ar, el, im, um*) | *Hydraia*, *Kryox*, *Nyxel* |
 | **Country** | Prefix Core Polity | *The United, Great, New, Old, Western, Eastern, Northern, Southern, Imperial, Democratic, Holy, Free* + *Arid, Frost, Verdant, Iron, Storm, Shadow, Light, Dust, Glacier, Jungle, Desert, Ocean* + *Republic, Kingdom, Empire, Federation, Sovereignty, Union, Territories, Lands, Domain* | *Free Dust Kingdom*, *Holy Glacier Sovereignty* |
@@ -172,7 +172,7 @@ Beneath every building lies the **Bedrock**. Through the ritual of **Harmonic In
 *   Apartments become **Crypts**.
 *   Rooms become **Shards**.
 
-In the Substrate, the light is red, the walls are raw concrete, and the **Abyssal Pressure** threatens your Integrity at every turn.
+In the Substrate, the light is red, the walls are raw concrete, and every node on the map is marked `☠`. The **Abyssal Pressure** doubles the drain on your Integrity: 2 per pulse inside the Crypts and Shards — which know no Era — and 4 on the Layer itself, elevator or artery, if the world above was Entropic.
 
 ---
 *Proceed to the [OPERATIONAL_PROTOCOLS]({{ "/terminal/manual/operational_protocols.html" | relative_url }}) to master the mechanics of the link.*
