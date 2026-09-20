@@ -1,7 +1,7 @@
 # BEHAVIORAL SPEC: ProceduralFactory (ProcGen)
 
 ## 🌌 Responsibility
-The `ProceduralFactory` is the central "architect" of the simulation. It manages the recursive instantiation and "population" of all locations in the universe.
+The `ProceduralFactory` is the central "architect" of the simulation: a registry facade over one `<Type>Factory` per location type (Phase 9). Every `create*` below delegates to that type's factory and stamps the result with this registry; it also owns the shared services the factories read through `registry` — `themeService`, `nameGenerator` (HK-022) and `fmt`.
 
 ---
 
@@ -9,7 +9,7 @@ The `ProceduralFactory` is the central "architect" of the simulation. It manages
 
 ### 📍 Creation & Initialization
 - **`createPlanet(parent, locus)`**: 
-    - Deterministically initializes the **Planetary Vibe** (Timeline, Primary Culture, Secondary Culture).
+    - Deterministically initializes the **Planetary Vibe** (Timeline, Primary Culture, Secondary Culture, Secondary Timeline — HK-016 step 2).
     - Maps the primary culture to a specific **Atmospheric Color** (e.g., `rust` -> `RED`).
 - **`createBuilding(parent, ...)`**: 
     - Deterministically rolls for **Scale** (Small, Medium, Large, Massive).
@@ -31,16 +31,16 @@ The `ProceduralFactory` is the central "architect" of the simulation. It manages
 
 ## 🔄 Logic Invariants
 - **Vibe Drift Guard**: 99% of apartments match the planetary vibe; 1% are anomalies with mismatched cultures or timelines.
-- **Rebel Districts**: In `populateCity`, there is a 10% chance to flip the primary and secondary cultures, creating an "unauthorized resonance" zone.
+- **Rebel Districts**: In `CityFactory.populate`, there is a 10% chance to flip the primary and secondary cultures (and both eras), creating an "unauthorized resonance" zone.
 
 ---
 
 ## 🔗 Dependencies
-- **`NameGenerator`**: Used for all entity naming.
+- **`NameGenerator`**: Used for all entity naming. One instance per facade (`nameGenerator`, final, built here); factories call `registry.nameGenerator`.
 - **`ThemeService`**: Used for generating atmospheric descriptions and hybrid objects.
 - **`LocusSeed`**: The foundational entropy source for all creation.
 - **`AnomalousTrace`**: Used for back-propagating signals from rooms to doors.
 
 ---
 *Neural Map Stabilized.*
-*Baselined (not audited) against: ProceduralFactory.groovy @ a7ed203098*
+*Verified against: ProceduralFactory.groovy @ 47f3cd68dc*
