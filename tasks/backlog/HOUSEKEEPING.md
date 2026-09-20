@@ -10,11 +10,9 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-### HK-022 — `NameGenerator` is eleven static generators
+### HK-022 — `NameGenerator` was eleven static generators
+**CLOSED 2026-09-20** — merge `9549527`, chronicle `0x9549527`, plan + record `tasks/completed/HK_022_PLAN.md`. One `NameGenerator` per `ProceduralFactory` (`nameGenerator`, final); the eleven factories ask `registry.nameGenerator`; no static methods; off the `NoNewStaticLogic` allow-list (16 → 15). No name moved. `NameGeneratorContractTest` 7 pins + wiring pin C3.
 **Found:** 2026-09-20, WF-009 allow-list review — the one entry on `NoNewStaticLogic`'s list that is a real smell, not tooling or formatting.
-Every `generate*Name(… LocusSeed …)` is a non-private static reached from the factories; the building lexicon is a `static final Map` loaded at class init (`:64`).
-**Fix design (needs a plan + Shape table):** one `NameGenerator` per `ProceduralFactory`, reached through `registry` (the HK-008 move);
-remove the file from the allow-list in the same commit. Pins already there: `ProcgenSnapshotTest`, `ProcgenVarietyContractTest`, `ThemeResourceCoverageTest` reference the generators (read their assertions before claiming coverage).
 
 ### HK-020 — Global command aliases live in two places
 **CLOSED 2026-09-20** — branch `housekeeping/hk-020-global-commands`, commits `46fee07` (plan), `216545c` (step-0 pins), `3119693` (the change).
@@ -38,7 +36,7 @@ after leaving an apartment the player stands on the Corridor *location* (menu wi
 so a dropped Hybrid or "Hidden Frequency" also comes back at its name-derived Hz. The guide, the manual and the codex now *warn* about this instead of recommending the stash (`tasks/completed/GH_PAGES_AUDIT_PLAN.md`); a fix here must turn those warnings back.
 
 ### HK-023 — Game-side oddities found by the GitHub Pages audit
-**Found:** 2026-09-20, fact-check of the published player pages against the source (session scope was the pages only; nothing here was fixed). None has a plan. Order below HK-022 by user decision.
+**Found:** 2026-09-20, fact-check of the published player pages against the source (session scope was the pages only; nothing here was fixed). None has a plan.
 - **A save made below the Bedrock does not restore — reproduced by a read-only probe, not yet by a test:** abyssal floors are created on demand by `Building.getFloor` (`:253-256`) and appended, so the saved LIP carries a floor index ≥ `maxFloors`;
   on restore `Universe.resolveLIP` (`:61-66`) returns null for an index past `children.size()`, and `SyncManager.restore:85-86` assigns the result unchecked. The plan's grill ran a scratchpad probe (seed 4660, 3-floor building): Layer −1 has LIP `….3`, and both `Universe.resolveLIP` and `WorldGenesis.resolveLIP` return null for it on a fresh world. A second probe applied `isBreached: true` to a fresh universe and the Layer LIP still resolved to null — Layers exist only after `Building.getFloor(<0)` runs — and the restore then dereferences the null location (`PersistenceService.groovy:59`). **Step 0 of any plan is still a reproduction test in the suite** (AI-TDD); no abyssal restore test exists today.
 - `run.sh:118` (`--test`) runs `src/test/groovy/com/endlesstransit/AllTests.groovy`, which does not exist (the runner is `TestRunner.groovy`, via `vinc.sh`); `run.sh --help` advertises `--headless`, which no code reads. One document still sends the reader to the dead command: `tasks/backlog/AI_STRATEGY_IMPLEMENTATION_PLAN.md:24` — fix it with the script. (The second, the Gemini `tasks/skills/skill-chronicle/` package, was deleted after the context diet `0xb629529`.)
@@ -52,6 +50,7 @@ so a dropped Hybrid or "Hidden Frequency" also comes back at its name-derived Hz
 - **The model calls the UI:** `Building.groovy:49, 51, 150` call `com.endlesstransit.ui.Terminal.clock.sleep(1000)` by fully qualified name (in `breach()` and `enter()`). The model invariant ("MUST NOT import from `com.endlesstransit.ui`") is broken in spirit, and the lint rule `ModelNeverImportsUi` (`vinc-ruleset.groovy:52`) does not see it — no import line. Found by the GitHub Pages verification pass.
 - Re-capturing a dropped relic bumps `resonantTracesCount` again (`Room.groovy:227`) — drop and re-take in a matching cell farms the tally.
 - `SessionRecap.groovy:46` labels the tally "stabilized", but it also counts every capture in a cell of the local primary Culture (`Room.groovy:173, 227`) — the label and the rule disagree.
+- The guide's `NameGenerator.groovy` line citations have drifted (found by HK-022, which moved no line): `players_guide.md:220` cites `:104-114` for the trait → room-type table (now `:131-138`); `:302` cites `:82-98, 126-137` for the landmark list and odds (now `:84-100`, `:150-162`). HTML comments, invisible to the player.
 - `GlobalCommandsContractTest.groovy:9` cites `players_guide.md:102-103` by line number. The GitHub Pages wave kept lines 1–103 of the guide stable on purpose, so the pointer still holds — but any edit above it breaks it silently; cite the heading ("Case matters…") instead.
 
 ### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline) — **8 remain**

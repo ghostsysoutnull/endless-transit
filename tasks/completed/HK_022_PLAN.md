@@ -2,6 +2,7 @@
 
 **Backlog:** HK-022 (`tasks/backlog/HOUSEKEEPING.md:13-17`) | **Branch (proposed):** `housekeeping/hk-022-name-generator` from `master` @ `3f16133`
 **Baseline (run 2026-09-20, before the branch):** 282 / 282 / 0 / 0 in 4960 ms, `LINT=PASS FILES=220`, scan seed 0 → 9, `DOCS=PASS`.
+**Status:** EXECUTED 2026-09-20 (Directive: plan approval; merge Directive "1a") — `bb35045` plan, `d44a5aa` c0 (289/289), `b58ec1f` c1a, `5d4c1ea` c1b, `9dac3ef` c1c, `d27ad3e` c1d (290/290, `LINT=FAIL P3=11` RED demo then `LINT=PASS FILES=221`, scan 0 → 9, 36 goldens unchanged, c0 pins unedited), `edcc9e6` c2; merge `9549527`. Chronicle `0x9549527`. **Deviations:** 10 public signatures lost `static` (the 11th, `generateContainerName`, was deleted per D1); the `[THEME_WARN]` line itself is not pinned — no capture seam — only the monolith fallback is.
 **Grill:** AMEND (3 items: one citation, two undeclared edges, helpers clarified) → applied → CLEARED. **D1 = a** (plan approved with the marked preference).
 
 > **No player-visible change.** Every name is the same pure function of its `LocusSeed`. Prediction: **0 goldens moved**,

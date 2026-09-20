@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x9549527** | 2026-09-20 | **[HK_022_NAME_GENERATOR]** | `NameGenerator` is an instance owned by `ProceduralFactory`; eleven factories ask `registry.nameGenerator`; off the `NoNewStaticLogic` allow-list (16 → 15). No name moved; 8 new pins. **HK-022 CLOSED.** Suite: 290/290/0/0. |
 | **0xb629529** | 2026-09-20 | **[CONTEXT_DIET]** | `/doctor` found the Safety Mandates post-mortems and the UI/procgen lessons never loaded (imports resolve relative to the importing file) — fixed; domain guidance now lazy; `GEMINI.md` ×5 and `.gemini/` removed. Suite: 282/282/0/0. |
 | **0x8cf9a5a** | 2026-09-20 | **[GH_PAGES_AUDIT]** | 17 player pages checked against the source and corrected; grill and a fresh-agent pass caught 21 errors in the corrections themselves; internal records unpublished; site shell fixed. HK-023 and WF-010 logged. |
 | **0x3547535** | 2026-09-20 | **[WF_009_SHAPE_GATE]** | User question after HK-020 ("how do we prevent unsound OO?"). CODEX gets the eight OO principles in one place, six with a check; `/grill` check 5 asks them; lint `NoNewStaticLogic` (allow-list of 16 files, reasons stated). Paper test fails three old plans. **WF-009 CLOSED.** |
