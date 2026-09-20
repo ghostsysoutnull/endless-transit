@@ -35,7 +35,7 @@ Plan + record: `tasks/completed/HK_020_PLAN.md`. `GlobalCommands` (keys + aliase
 after leaving an apartment the player stands on the Corridor *location* (menu without `b`), and `l` leads to the Floor's corridor-mode screen (same doors, with `b`) — two near-identical screens, `l` twice to reach the building (HK-019, D2);
 `Door.groovy:23-26` rolls its own inscription with the same seed `CorridorFactory:51` rolls, so the constructor's pool is dead code (HK-016 step 3, F1).
 **Extended 2026-09-20 (GitHub Pages audit):** the drop bug is not Keystone-only — `Room.groovy:208` stores the bare name and `:222-223` recomputes the frequency by Gematria on re-capture,
-so a dropped Hybrid or "Hidden Frequency" also comes back at its name-derived Hz.
+so a dropped Hybrid or "Hidden Frequency" also comes back at its name-derived Hz. The guide, the manual and the codex now *warn* about this instead of recommending the stash (`tasks/completed/GH_PAGES_AUDIT_PLAN.md`); a fix here must turn those warnings back.
 
 ### HK-023 — Game-side oddities found by the GitHub Pages audit
 **Found:** 2026-09-20, fact-check of the published player pages against the source (session scope was the pages only; nothing here was fixed). None has a plan. Order below HK-022 by user decision.
