@@ -16,7 +16,7 @@ class TurnProcessor {
     final InputHandler inputHandler
     final ActionMapper mapper = new ActionMapper()
     
-    private Map<String, GameCommand> globalCommands = [:]
+    final GlobalCommands globalCommands = new GlobalCommands()
     private NavigationCommand navCommand = new NavigationCommand()
 
     TurnProcessor(GameState state, RenderingCoordinator renderer, NavigationOrchestrator navOrchestrator, InputHandler inputHandler) {
@@ -27,19 +27,24 @@ class TurnProcessor {
         initializeGlobalCommands()
     }
 
+    /** Keys, aliases and case rule in one place (HK-020); the player's guide cites this table. */
     private void initializeGlobalCommands() {
-        globalCommands["i"] = new InventoryCommand()
-        globalCommands["p"] = new CaptureCommand(false)
-        globalCommands["P"] = new CaptureCommand(true)
-        globalCommands["s"] = new ScanCommand()
-        globalCommands["sync"] = new SyncCommand()
-        globalCommands["map"] = new MapCommand()
-        globalCommands["lattice"] = new LatticeTraceCommand()
-        globalCommands["ll"] = globalCommands["lattice"]
-        globalCommands["help"] = new HelpCommand()
-        globalCommands["glitch"] = new GlitchMenuCommand()
-        globalCommands["quit"] = new QuitCommand()
-        globalCommands["quitnow"] = new QuitNowCommand()
+        globalCommands.register("i", new InventoryCommand())
+        globalCommands.register("sync", new SyncCommand())
+        globalCommands.register("map", new MapCommand())
+        globalCommands.register("lattice", new LatticeTraceCommand())
+        globalCommands.register("help", new HelpCommand())
+        globalCommands.register("glitch", new GlitchMenuCommand())
+        globalCommands.register("quit", new QuitCommand())
+        // Exact keys: case is the command for p/P; s, ll and quitnow have always been typed exactly.
+        globalCommands.register("p", new CaptureCommand(false), false)
+        globalCommands.register("P", new CaptureCommand(true), false)
+        globalCommands.register("s", new ScanCommand(), false)
+        globalCommands.register("quitnow", new QuitNowCommand(), false)
+        globalCommands.alias("m", "map")
+        globalCommands.alias("q", "quit")
+        globalCommands.alias("?", "help")
+        globalCommands.register("ll", globalCommands.resolve("lattice"), false)
     }
 
     boolean processTurn() {
@@ -77,7 +82,7 @@ class TurnProcessor {
      */
     boolean dispatch(Game game, String choice) {
         // 1. Check Global Commands
-        GameCommand cmd = globalCommands[choice]
+        GameCommand cmd = globalCommands.resolve(choice)
         if (cmd) {
             return cmd.execute(game, choice)
         }

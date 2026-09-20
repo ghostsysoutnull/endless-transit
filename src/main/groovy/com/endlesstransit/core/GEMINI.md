@@ -10,6 +10,7 @@
 ## ⚙️ Game Loop & State
 - **Primary Loop**: Managed via `TurnProcessor`.
 - **Orchestration**: Logic partitioned across `NavigationOrchestrator`, `ActionMapper`, and `RenderingCoordinator`.
+- **Global commands (HK-020)**: `TurnProcessor.globalCommands` (one `GlobalCommands`) owns the keys, aliases and per-key case rule; `dispatch` asks `resolve`. A new global command is one `register` call there — `InputHandler.normalize` carries no word list.
 - **Persistence**: Exclusive management by `PersistenceService` via `GameMemento`.
 
 ## 🏗️ Technical Invariants
