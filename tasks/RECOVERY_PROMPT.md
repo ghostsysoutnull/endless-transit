@@ -33,7 +33,7 @@ Initialize session for the Endless Transit substrate.
    `./vinc.sh --scan` → seed 0, 9 nodes; `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
 4. **Ask before choosing:** there is no active phase. Present the options under **Next** and wait for a Directive. The user likes decisions as
    numbered questions with lettered options and a marked preference, answered in one word — and short plain-language summaries in chat.
-5. **Every task:** plan file → `/grill` → authorization → branch → ≤ 5 production files per commit → full suite + `--lint` after every commit →
+5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → ≤ 5 production files per commit → full suite + `--lint` after every commit →
    merge `--no-ff` → **`/close-wave`** (it prints its tier and table) **before saying "closed"**. Push only on the user's word.
 
 **END_PROMPT**
