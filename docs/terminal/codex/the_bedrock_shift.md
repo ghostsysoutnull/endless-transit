@@ -6,6 +6,8 @@ map_type: abyssal
 
 # LATTICE_ENCYCLOPEDIA: The Bedrock Shift
 
+> **[CLEARANCE_WARNING]** This node discloses the endgame of the Transit — the Keystone, the Breach, and what waits below the Bedrock. Observers who mean to find the Substrate unaided should close it now.
+
 This data-node details the history and nature of the **Abyssal Substrate**—the decaying foundation of the Neural Web.
 
 ## [THE ENTROPY_SHIFT]

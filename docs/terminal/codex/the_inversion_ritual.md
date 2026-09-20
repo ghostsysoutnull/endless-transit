@@ -6,12 +6,14 @@ map_type: telemetry
 
 # TECHNICAL_SUBSTRATE: The Inversion Ritual
 
-The **Harmonic Inversion Ritual** is the only method for accessing the **Abyssal Substrate** beneath a stable building. It is a four-stage process of strata sampling and frequency synthesis. Choose the building with care: every floor must be sampled, and a Peak may stand a hundred floors up.
+> **[CLEARANCE_WARNING]** This node discloses the endgame of the Transit — the Keystone, the Breach, and what waits below the Bedrock. Observers who mean to find the Substrate unaided should close it now.
+
+The **Harmonic Inversion Ritual** is the only method for accessing the **Abyssal Substrate** beneath a stable building. It is a four-stage process of strata sampling and frequency synthesis. Choose the building with care: every floor must be sampled, and a Peak may stand a hundred floors up. Nothing on the street reveals a building's height — enter, and the lobby's strata table lists every floor (`ll` then reads `[FLOORS: n]`). Four buildings in ten are small, three to ten floors.
 
 ## [STAGE 1: STRATA_SAMPLING]
 The building's anchor point must be "mapped" through harvest.
 *   **The Requirement:** The Observer must capture at least one fragment on **every floor** of the building, from the Transit Lobby to the Peak Observatory. Visiting is not enough; a capture on the floor is the trace.
-*   **Data Harvest:** The building's status line reads `INFUSION_ACTIVE: n` once Stage 2 begins, and the strata table marks each cleared floor. Layers below the Bedrock never count.
+*   **Data Harvest:** The building's status line reads `INFUSION_ACTIVE: n` once Stage 2 begins, but **no readout shows which floors you have sampled** — keep your own count. The strata table's `[CLEARED]` means something else: every corridor, apartment and cell of that floor has been visited. Layers below the Bedrock never count.
 
 ## [STAGE 2: FRAGMENT_INFUSION]
 The building's "Frequency Well" must be primed with synthesis.
