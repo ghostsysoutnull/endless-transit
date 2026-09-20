@@ -11,8 +11,8 @@ Before you can beam your consciousness into the Neural Web, your local gateway m
 ## [01_HARDWARE_REQUIREMENTS]
 The Endless Transit engine runs on the Java Virtual Machine (JVM).
 
-1.  **Java Runtime (JRE/JDK):** Version 8 or higher is required. (Version 17+ recommended for peak stability).
-2.  **Groovy Engine:** Version 4.x is required to parse the procedural logic.
+1.  **Groovy Engine:** Version **5.x** is required to parse the procedural logic. The substrate is built and verified against Groovy 5.0.
+2.  **Java Runtime (JDK):** Version **17 or higher** is recommended. Groovy 5 itself declares JDK 11 as its floor; nothing older will hold the link.
 3.  **Terminal Emulator:** Must support **ANSI Escape Sequences** (Color/Styles). 
     *   *Recommended:* iTerm2 (macOS), Windows Terminal (Windows), or Alacritty/Kitty (Linux).
 
@@ -28,35 +28,48 @@ cd endless-transit
 The link is initialized through the provided shell script.
 
 ### **Standard Initialization**
-Ensure the script has execution permissions, then launch:
+Ensure the script has execution permissions, then launch **from the root of the repository** — `run.sh` resolves every path from the directory you stand in:
 ```bash
 chmod +x run.sh vinc.sh
 ./run.sh
 ```
+
+To open the link on a chosen Master Seed, pass it at launch. Any whole number is accepted, negative included; anything else is refused before the link opens:
+```bash
+./run.sh --seed 4660
+```
+Without `--seed`, a new transit is seeded from the clock.
 
 ### **Clinical Interface (Developers & Agents)**
 For high-velocity operations, use the **Vinculum Clinical Interface (VINC)** to bypass the immersive portal and enforce mandatory substrate verification:
 ```bash
 ./vinc.sh --test            # Rapid test execution (auto-compile)
 ./vinc.sh --compile         # Static verification check
-./vinc.sh                   # Instant game launch
+./vinc.sh                   # Auto-compile, then launch without the portal sequence
+./vinc.sh --seed 4660       # The same, on a chosen Master Seed
 ```
+`vinc.sh` anchors itself to the repository root, so it may be called from anywhere.
 
 ### **Manual Initialization**
-If you prefer to bypass the script, execute the following command:
+If you prefer to bypass the scripts, execute the following from the repository root. All three classpath entries are load-bearing: without `src/main/resources` the lexicons and themes are not found, and the link fails on its first frame.
 ```bash
-groovy -cp src/main/groovy src/main/groovy/com/endlesstransit/Main.groovy
+groovy -cp "src/main/groovy:src/main/resources:lib/*" src/main/groovy/com/endlesstransit/Main.groovy
 ```
 
 ## [04_FIELD_VERIFICATION]
 Run the automated diagnostic suite to ensure your environment is synchronized:
 ```bash
-./run.sh --test
+./vinc.sh --test
 ```
-If you see `ALL TESTS COMPLETED SUCCESSFULLY`, your link is stable.
+If the run ends with `[VINCULUM_TEST_SUITE_SYNCHRONIZED_SUCCESSFULLY]`, your link is stable.
 
 ## [05_PERSISTENCE_SYNC]
-The system will attempt to create a `session.trace` file in the root directory to store your visitedLIPs. Ensure your user has **Write Permissions** in the project folder.
+The link writes to the root of the project folder. Ensure your user has **Write Permissions** there.
+
+*   **`session.trace`** — your neural trace. It is written only when you issue `sync`, or when you accept the synchronization offered as you `quit`; decline that offer and nothing is saved. It holds the Master Seed, your position, Coherence, pulse count, footprints, your buffer, and every change you made to the world.
+*   **`journal.txt`**, **`journal-last-entry.txt`** — the record of each completed session, written at termination. `.journal_session_tmp` is its scratch file.
+*   **`transit.log`** — the diagnostic log, rotated as `transit.log.1` … `.5`.
+*   **`screenshots/`** — bridge captures taken with `p` or `P`.
 
 ---
 **STATUS**: READY_FOR_TRANSIT

@@ -50,7 +50,7 @@ so a dropped Hybrid or "Hidden Frequency" also comes back at its name-derived Hz
 - `[TEMPORAL_MARKER]` exists only in `Apartment.getDescription` (`Apartment.groovy:44`); apartments auto-enter room 1 (`NavigationOrchestrator.groovy:32-42`), so that screen is never rendered.
 - Map colours print as words: `Container.groovy:43` and `Room.groovy:150` return the literal strings `"RED"` / `"WHITE"`, and `MapBuffer.render` (`Terminal.groovy:462-476`) appends the colour string raw — the probe saw `RED☠` on the map, uncoloured. Every other path passes an ANSI constant.
 - `SessionRecap.groovy:46` labels the tally "stabilized", but it also counts every capture in a cell of the local primary Culture (`Room.groovy:173, 227`) — the label and the rule disagree.
-- `GlobalCommandsContractTest.groovy:9` cites `players_guide.md:102-103` by line number; the guide's lines moved in the GitHub Pages wave (docs only, `src/` untouched), so the pointer is stale — cite the heading ("Case matters…") instead.
+- `GlobalCommandsContractTest.groovy:9` cites `players_guide.md:102-103` by line number. The GitHub Pages wave kept lines 1–103 of the guide stable on purpose, so the pointer still holds — but any edit above it breaks it silently; cite the heading ("Case matters…") instead.
 
 ### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline) — **8 remain**
 **Slice 1 done (2026-09-16, branch `housekeeping/hk-013-restore`, plan `tasks/completed/HK_013_RESTORE_PLAN.md`):** `SyncManager.restore` split into `restorePlayer` / `applyMutations` / `remarkFootprints`

@@ -205,7 +205,14 @@ served: there is one push, at the end.
 
 ## Deviations found during execution
 
-*(filled in as the work proceeds: row → what the code said → what was written instead)*
+*(row → what the code or a run said → what was written instead)*
+
+- **Guide, stale test pointer (declared deviation above) — avoided.** Every edit above line 103 of the guide was made line-count-neutral (asserted by the edit script), so `GlobalCommandsContractTest.groovy:9` → `players_guide.md:102-103` still points at the case rule. The new Install pointer became one sentence inside the existing *Launching* paragraph instead of a new section. HK-023's bullet reworded accordingly.
+- **Guide `:52` "ten-second scripted intro"** → "a short scripted intro": the sleeps sit inside loops, no honest number without timing it.
+- **Guide, seed 4660 walkthrough — run, not read** (headless from a scratch directory, player files untouched): the game starts on Busy Terrace at 99%; building `1` = Eternal Shaft, 3 floors; lobby keys are floor numbers; `0` → `c` → `1` opens `Unbroken Fuel Depot` with 15 objects (the page's claim holds, its route did not). "monolith and shogun" → "monolith" (only the primary was observed).
+- **Guide, dropped hybrid / Hidden Frequency** → "a thousand or two hertz" ("Hidden Frequency" = 113 × 12 = 1356 by the grill's sums), not "a few hundred".
+- **Guide `:14-15` "Where this page disagrees with the manual or the codex, this page is right"** → re-dated and softened: after this wave the three should agree, and the guide was itself wrong in four places.
+- **Gematria example (3.9)** will use `oscilloscope`: a name the run produced, 84 × 12 = 1008, ×1.1 → **1108 Hz** as printed by the game.
 
 ## Verification
 
