@@ -2,7 +2,7 @@
 
 ## Patterns
 - **Vertical vs. Horizontal Entropy**: Use `locus.branch(index)` for child location seeds (vertical, hierarchy-stable) and `locus.nextRandom()` for sequential attributes within a single location (horizontal, within-node variance). Mixing these causes seed drift.
-- **Hierarchical Seed Scrambling**: Initialize a single `Random` (scrambler) from the parent seed and call `nextLong()` for each child's seed. Avoids the repetition pattern from linear seeding (`seed + index`).
+- **Hierarchical Seed Branching**: a child's seed is `locus.branch(index)` — the parent's value and the child's index through the bit-mixer (`LocusSeed.groovy:31-33`), never `seed + index` and never a shared `Random` scrambler. (Corrected by the GitHub Pages audit.)
 - **Service Determinism**: All component engines (`NameGenerator`, `ThemeService`) must accept an explicit `LocusSeed`. Never use `new Random()` or `ThreadLocalRandom` inside utility methods — this introduces seed drift during parallel tests.
 - **SeedScanner + WorldProbe Pattern**: Use the Specification Pattern (`WorldProbe.shouldEnter(Location)`) to prune subtrees during seed scans. Drastically reduces scan time versus full-universe traversal.
 - **Scenario Discovery**: `SeedScanner` + `SeedVault` for horizontal exploration; `WorldGenesis.resolveLIP` for vertical restoration from a saved LIP string.
