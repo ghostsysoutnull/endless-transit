@@ -212,6 +212,8 @@ served: there is one push, at the end.
 - **Guide, seed 4660 walkthrough — run, not read** (headless from a scratch directory, player files untouched): the game starts on Busy Terrace at 99%; building `1` = Eternal Shaft, 3 floors; lobby keys are floor numbers; `0` → `c` → `1` opens `Unbroken Fuel Depot` with 15 objects (the page's claim holds, its route did not). "monolith and shogun" → "monolith" (only the primary was observed).
 - **Guide, dropped hybrid / Hidden Frequency** → "a thousand or two hertz" ("Hidden Frequency" = 113 × 12 = 1356 by the grill's sums), not "a few hundred".
 - **Guide `:14-15` "Where this page disagrees with the manual or the codex, this page is right"** → re-dated and softened: after this wave the three should agree, and the guide was itself wrong in four places.
+- **`system_specifications` (D2 said "same length, ~400 words")** → 700 words. The March text knew nothing of lazy population, mutations in the save, the compositor, seeded HUD noise, the floor state machine, the factory registry or domain events; each got one bullet, each checked against the code (14 factories, 8 components, `FrameGeometry` 130/90/86/38, the snapshot's keys, `[PROBE: v/t]`, 36 goldens, `FrameEntropy`). Cut it back if it reads long.
+- **`operational_protocols` now owns the reboot rule and the tally rule** (D1); `system_initialization:22` and `link_navigation:39` state the short form and the latter links to the owner.
 - **Gematria example (3.9)** will use `oscilloscope`: a name the run produced, 84 × 12 = 1008, ×1.1 → **1108 Hz** as printed by the game.
 
 ## Verification
