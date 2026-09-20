@@ -128,6 +128,20 @@ memory (WF-002), so every principle either has a question with evidence or is st
   carried by a display string, lookup by name → **FAIL** (the plan's own c3 fixed it by LIP; the check would have asked at step 0).
 - Diet: `.claude/CODEX.md` +19 lines (table 11 + protocol 5 + heading 3); `grill.md` +2 lines, check count still six.
 
+**c2 (tooling) — probes, output quoted:**
+- First run of the bad probe: **silent.** `IllegalRegex` matches the whole file, so a bare `^` only matched line 1 — the regex gained
+  `(?m)`. (The plan's regex was verified by `grep -P`, which is line-based; the rule engine is not. Retro item.)
+- (i) scratch `ScratchProbe` with `static int parse(`, `protected static int parseToo(`, `private static int helper(`, `static final int LIMIT`:
+  `Rule=NoNewStaticLogic P=3 Line=6 … Src=[static int parse(]` and `Line=7 … Src=[protected static int parseToo(]` — the private helper
+  and the constant are silent.
+- (ii) the same file without the public statics: the only violation is the house rule `UnusedPrivateMethod` — the new rule is silent.
+- (iii) `master` tree: `LINT=PASS FILES=220 P1=0 P2=0 P3=0`; `config/lint/baseline.xml` untouched; `-maxPriority3Violations=0` so the
+  P3 rule is a gate like the other invariants.
+- (iv) baseline behavior, scratch config only: one static baselined, a second added → `NoNewStaticLogic … Line=8` still reported.
+  **Baseline entries match one-for-one; the masking worry in the evidence section was unfounded.** The allow-list stays the mechanism
+  because it carries a reason per file; the ruleset comment says so.
+- Suite after c2: 282 / 282 (no `src/` change; run once as the plan's gate).
+
 ## Gates
 `./vinc.sh --lint --agent` after step 2 → `LINT=PASS`, `config/lint/baseline.xml` untouched (`git diff` empty); suite
 unchanged (no `src/` change, run once at close-out); `--docs` at close-out. Per-commit reversion: step 1 and step 2 revert alone.
