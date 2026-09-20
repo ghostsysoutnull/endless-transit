@@ -35,7 +35,7 @@ final class RoomFactory {
         // 3. Functional Naming
         Country country = (Country) r.findAncestor(Country.class)
         String trait = country != null ? country.functionalTrait : "Standard"
-        Map<String, Object> nameData = NameGenerator.generateRoomName(culture, trait, locus, adjective)
+        Map<String, Object> nameData = registry.nameGenerator.generateRoomName(culture, trait, locus, adjective)
         r.roomName = (String) nameData["name"]
         RoomCategory category = (RoomCategory) nameData["category"]
         r.roomType = category.displayName

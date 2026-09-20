@@ -151,4 +151,13 @@ class FactoryWiringContractTest {
         assertSame(a.fmt, a.factory.fmt, "a's factory carries a.fmt")
         assertSame(b.fmt, b.factory.fmt, "b's factory carries b.fmt")
     }
+
+    @Test
+    void C3_eachFactoryOwnsItsNameGenerator() {
+        Game a = new Game(1L)
+        Game b = new Game(1L)
+        assertNotNull(a.factory.nameGenerator, "HK-022: the factory builds its name generator")
+        assertNotSame(a.factory.nameGenerator, b.factory.nameGenerator, "HK-022: no generator is shared between factories")
+        assertEquals(a.universe.getFilaments()[0].name, b.universe.getFilaments()[0].name, "same seed, separate generators, same names")
+    }
 }

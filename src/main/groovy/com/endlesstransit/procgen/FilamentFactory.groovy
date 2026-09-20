@@ -20,7 +20,7 @@ final class FilamentFactory implements LocationFactory<CosmicFilament> {
     Class<CosmicFilament> getType() { CosmicFilament }
 
     CosmicFilament create(Container parent, LocusSeed locus) {
-        CosmicFilament f = new CosmicFilament(NameGenerator.generateFilamentName(locus), locus)
+        CosmicFilament f = new CosmicFilament(registry.nameGenerator.generateFilamentName(locus), locus)
         f.setParent(parent)
         f.fmt = registry.fmt
         return f

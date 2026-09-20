@@ -56,12 +56,12 @@ ruleset {
     // reason; it only shrinks — remove a file in the commit that de-staticises it. Not baselined on purpose: the baseline
     // records no reason (probe 2026-09-20: baseline entries match one-for-one, so a second hit in a listed file would still fire).
     //   Main (entry point) · Terminal (box/ANSI formatting) · Logger (process-wide sink) · FrameEntropy (the one blessed Random derivation)
-    //   Gematria (pure function on a string) · NameGenerator (seed-pure generators — the one real smell here, candidate HK item)
+    //   Gematria (pure function on a string)
     //   SyncManager, WorldGenesis, ReplayService, SeedVault, SeedScanner (entry points taking the factory as a parameter, HK-008)
     //   ScreenshotRegistry, CaptureService, VisualAssertionEngine, TUIValidator, SessionRecap (diagnostic tooling)
     IllegalRegex { name = 'NoNewStaticLogic'; regex = /(?m)^\s*(public\s+|protected\s+)?static\s+(?!final\b)[\w<>\[\], ?]+\s+\w+\s*\(/
                    applyToFilesMatching = '.*/main/.*'
-                   doNotApplyToFileNames = 'Main.groovy,Terminal.groovy,Logger.groovy,FrameEntropy.groovy,Gematria.groovy,NameGenerator.groovy,' +
+                   doNotApplyToFileNames = 'Main.groovy,Terminal.groovy,Logger.groovy,FrameEntropy.groovy,Gematria.groovy,' +
                                            'SyncManager.groovy,WorldGenesis.groovy,ReplayService.groovy,SeedVault.groovy,SeedScanner.groovy,' +
                                            'ScreenshotRegistry.groovy,CaptureService.groovy,VisualAssertionEngine.groovy,TUIValidator.groovy,SessionRecap.groovy'
                    description = 'WF-009: a static method holds a rule nobody owns — build a value object or a service (allow-list in vinc-ruleset.groovy)' }

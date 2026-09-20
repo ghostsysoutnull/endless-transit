@@ -20,7 +20,7 @@ final class StreetFactory implements LocationFactory<Street> {
     Class<Street> getType() { Street }
 
     Street create(Container parent, LocusSeed locus) {
-        Street s = new Street(NameGenerator.generateStreetName(locus), locus)
+        Street s = new Street(registry.nameGenerator.generateStreetName(locus), locus)
         s.setParent(parent)
         s.fmt = registry.fmt
         return s

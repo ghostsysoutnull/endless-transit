@@ -20,7 +20,7 @@ final class CityFactory implements LocationFactory<City> {
     Class<City> getType() { City }
 
     City create(Container parent, LocusSeed locus) {
-        City c = new City(NameGenerator.generateCityName(locus), locus)
+        City c = new City(registry.nameGenerator.generateCityName(locus), locus)
         c.setParent(parent)
         c.fmt = registry.fmt
         return c

@@ -20,7 +20,7 @@ final class PlanetFactory implements LocationFactory<Planet> {
     Class<Planet> getType() { Planet }
 
     Planet create(Container parent, LocusSeed locus) {
-        Planet p = new Planet(NameGenerator.generatePlanetName(locus), locus)
+        Planet p = new Planet(registry.nameGenerator.generatePlanetName(locus), locus)
         p.setParent(parent)
         
         // 1. Initialize Planetary Vibe Deterministically

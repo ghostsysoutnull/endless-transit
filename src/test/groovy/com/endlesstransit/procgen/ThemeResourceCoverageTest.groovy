@@ -27,11 +27,13 @@ class ThemeResourceCoverageTest {
     static final List<String> FALLBACK_LITERALS = ["bare surfaces", "a dim, flickering glow", "a spatial cell"]
 
     ThemeService service
+    NameGenerator names
 
     @BeforeEach
     void setUp() {
         Terminal.initialize(true, true)
         service = new ThemeService()
+        names = new NameGenerator()
     }
 
     @Test
@@ -40,7 +42,7 @@ class ThemeResourceCoverageTest {
         service.cultures.keySet().each { String culture ->
             assertTrue(service.atmosphere["walls"][culture] as boolean,
                 "no walls file for culture '${culture}' (themes/atmosphere/walls/${culture}.txt + index.txt)")
-            Map lexicon = (Map) NameGenerator.buildingLexicon[culture]
+            Map lexicon = (Map) names.buildingLexicon[culture]
             assertNotNull(lexicon, "no building lexicon for culture '${culture}' (names/buildings/${culture}_adj.txt, _noun.txt + index.txt)")
             assertTrue(lexicon.adj as boolean, "empty adjective lexicon for '${culture}'")
             assertTrue(lexicon.noun as boolean, "empty noun lexicon for '${culture}'")
@@ -91,14 +93,14 @@ class ThemeResourceCoverageTest {
 
     @Test
     void generateRoomNameUsesEachCulturesOwnLexicon() {
-        List<String> monolithAdj = (List<String>) ((Map) NameGenerator.buildingLexicon["monolith"]).adj
+        List<String> monolithAdj = (List<String>) ((Map) names.buildingLexicon["monolith"]).adj
         service.cultures.keySet().each { String culture ->
-            Map lexicon = (Map) NameGenerator.buildingLexicon[culture]
+            Map lexicon = (Map) names.buildingLexicon[culture]
             assertNotNull(lexicon, "no lexicon for '${culture}'")
             List<String> ownAdj = (List<String>) lexicon.adj
             boolean mustDifferFromMonolith = culture != "monolith"
             boolean ownSeen = (0..<40).any { int i ->
-                String name = (String) NameGenerator.generateRoomName(culture, "Industrial", new LocusSeed(2000L + i).branch(culture))["name"]
+                String name = (String) names.generateRoomName(culture, "Industrial", new LocusSeed(2000L + i).branch(culture))["name"]
                 String adj = name.split(" ")[0]
                 ownAdj.contains(adj) && (!mustDifferFromMonolith || !monolithAdj.contains(adj))
             }
@@ -156,7 +158,7 @@ class ThemeResourceCoverageTest {
     @Test
     void everyLexiconHasAtLeast12AdjectivesAnd12Nouns() {
         service.cultures.keySet().each { String culture ->
-            Map lexicon = (Map) NameGenerator.buildingLexicon[culture]
+            Map lexicon = (Map) names.buildingLexicon[culture]
             assertFloor("lexicon ${culture} adj", (List<String>) lexicon.adj, 12)
             assertFloor("lexicon ${culture} noun", (List<String>) lexicon.noun, 12)
         }

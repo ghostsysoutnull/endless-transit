@@ -45,7 +45,7 @@ final class ApartmentFactory implements LocationFactory<Apartment> {
         List<String> objectPool = new ArrayList<String>(deck.subList(0, Math.min(totalObjects, deck.size())))
 
         // HK-016 step 2: deal each room a distinct adjective, so no two rooms in the apartment share a name.
-        List<String> adjectives = new ArrayList<String>(NameGenerator.adjectivesFor(a.culture))
+        List<String> adjectives = new ArrayList<String>(registry.nameGenerator.adjectivesFor(a.culture))
         Collections.shuffle(adjectives, a.locus.branch("ROOM_ADJ").nextRandom())
         Set<String> usedNames = new HashSet<String>()
         for (int i = 0; i < numRooms; i++) {

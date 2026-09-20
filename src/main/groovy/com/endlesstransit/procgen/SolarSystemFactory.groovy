@@ -20,7 +20,7 @@ final class SolarSystemFactory implements LocationFactory<SolarSystem> {
     Class<SolarSystem> getType() { SolarSystem }
 
     SolarSystem create(Container parent, LocusSeed locus) {
-        SolarSystem s = new SolarSystem(NameGenerator.generateSolarSystemName(locus), locus)
+        SolarSystem s = new SolarSystem(registry.nameGenerator.generateSolarSystemName(locus), locus)
         s.setParent(parent)
         s.fmt = registry.fmt
         return s

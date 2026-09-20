@@ -42,7 +42,7 @@ final class CorridorFactory implements LocationFactory<Corridor> {
             
             // 1. Back-Propagation: Peek at the first room's category to decide the trace
             LocusSeed firstRoomLocus = aptLocus.branch(0)
-            RoomCategory roomCategory = (RoomCategory) NameGenerator.generateRoomName(c.culture, trait, firstRoomLocus)["category"]
+            RoomCategory roomCategory = (RoomCategory) registry.nameGenerator.generateRoomName(c.culture, trait, firstRoomLocus)["category"]
 
             Door door = new Door(doorLocus, registry.themeService.doorMaterials, registry.themeService.doorStates)   // HK-016 step 3: lists + narratives from files
             door.trace = roomCategory.trace
