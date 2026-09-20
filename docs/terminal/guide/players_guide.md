@@ -398,7 +398,7 @@ seeds for a building with at least that many floors, or that culture, and prints
 7. **Take the Null Reach detour** at least once. The echo is free, and landmarks are twice as common.
 8. **Never drop anything you care about.** `d 1` in the buffer screen destroys an item; `d1` in a room's `t` menu
    keeps only its name. Ordinary objects survive that. Keystones, hybrids and Hidden Frequencies do not.
-9. **Sync before the breach and before quitting.** Reboots and crashes both eat unsaved progress.
+9. **Sync before the breach and before quitting.** Reboots and crashes both eat unsaved progress. A save made below the bedrock loads where you stood. <!-- Building.groovy childAt + getFloor; AbyssalRestoreContractTest R1-R2 -->
 10. **Use `./vinc.sh`** after you have seen the intro once.
 
 ## Known quirks

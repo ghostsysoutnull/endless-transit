@@ -53,6 +53,10 @@ the merged branch was left behind, a chronicle was only suggested, and three sta
 (re-run row 2 on the wave's own records, delete the merged branch, live checks for a `docs/` change) and a rule that row 2's "justify" means *logged in a backlog*, not *mentioned in chat*.
 Also decide: a change to `src/**/CLAUDE.md` alone trips the Full floor ("anything under `src/`") although the add-on table treats a `CLAUDE.md` as law, not source (retro `RETRO_GH_PAGES_AUDIT.md`; second occurrence: context diet `0xb629529`, run at Full with rows 3–4 n/a).
 
+### WF-011 — Plan-mode approval and the CODEX Directive are two gates for one decision
+**Priority:** Low | **Found:** 2026-09-20 (HK-023 slice 1, retro `RETRO_HK_023_S1.md`)
+The harness's "plan approved" is a general plan approval, which the Shield says is not a Directive — so the user approved the plan, then was asked the execute question, then asked for it again. **Decide:** either the plan file ends with the scoped execute question (so approving it *is* the Directive, scope named), or the CODEX says plainly that plan mode's approval never authorizes and the question follows at once.
+
 ### WF-006 — `MethodSize` measures lines; a line break can satisfy it
 **Priority:** Low | **Found:** 2026-09-16 (HK-018 → HK-013 slice 1; user question: "is this good computer science?")
 The 50-line rule found real multi-job methods (all nine baseline entries), but raw length is a proxy: it was dodged once with a line join

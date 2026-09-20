@@ -87,7 +87,7 @@ back as ordinary junk.
 5. Ride to the **top floor** and press `j`.
 6. Go to floor 0 and press `d`.
 
-`sync` **before** you go down. A save made below the bedrock does not restore.
+`sync` **before** the breach. A save made below the bedrock loads where you stood.
 
 </details>
 

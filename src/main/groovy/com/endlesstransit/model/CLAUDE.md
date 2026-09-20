@@ -12,7 +12,7 @@
 - **Population**: Lazy Initialization. Children are ONLY generated when accessed.
 
 ## 🏗️ Technical Invariants
-1. **LIP Integrity**: The **Locus Identity Path** (LIP) must be unique and stable.
+1. **LIP Integrity**: The **Locus Identity Path** (LIP) must be unique and stable. A LIP walker asks `Container.childAt(i)`, never `children[i]`: a breached `Building` regrows a Layer on demand, and Layer −k is always child index `maxFloors + k − 1` (HK-023).
 2. **Re-entrancy Guard**: Set `childrenPopulated = true` *before* calling `populateChildren()`.
 3. **Parent Referencing**: Correctly set `parent` upon population.
 4. **Mutation Persistence**: Use `mutationState` map keyed by LIP.

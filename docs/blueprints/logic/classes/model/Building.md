@@ -1,44 +1,57 @@
 # BEHAVIORAL SPEC: Building (Model)
 
 ## 🌌 Responsibility
-The `Building` class represents a vertical container of `Floor` units. It manages the vertical lattice structure, landmark status, and the "Bedrock Breach" ritual state.
+The `Building` class is a vertical container of `Floor` units. It owns the vertical lattice (floors `0 … maxFloors − 1`,
+and the abyssal Layers below them once breached), landmark status, and the "Bedrock Breach" ritual state.
 
 ---
 
 ## ⚙️ Public API Behavior
 
 ### 📍 Navigation & Access
-- **`getFloor(int number)`**: Retrieves a specific floor. 
-    - If `number < 0` and `isBreached` is true, it dynamically creates an "Abyssal Floor" if it doesn't exist.
-    - Triggers child population via `LazyLocusList`.
-- **`getFloorProgress(Floor, Player)`**: Computes `visited/total` sub-location counts for a floor to show progress in the TUI (e.g., `[PROBED: 4/12]`).
+- **`getFloor(int number)`**: Returns the floor with that number, or null. Reading `floors` triggers population via `LazyLocusList`.
+    - If `number < 0` and `isBreached`, every missing Layer from −1 down to `number` is created **in order**
+      (seed `locus.branch(n)` per Layer), so Layer −k always sits at child index `maxFloors + k − 1` and its LIP is
+      stable whoever asks first (HK-023). Unbreached, a negative number returns null and creates nothing.
+- **`childAt(int index)`** (overrides `Container`): the child a LIP segment names. When breached and `index >= maxFloors`
+  it first asks `getFloor(maxFloors − 1 − index)`, so a Layer's LIP resolves on a freshly regrown world (restore). Out of range → null.
+- **`getOptions(Game)`**: base options plus one `NN. Access: <zone>` entry per floor from the Peak down to 0 — down to −5 when breached.
+- **`getFloorProgress(Floor, Player)`**: `[visited: n, total: m]` — footprints under the floor's LIP against `factory.countSubLocations(floor)`.
 
 ### 📍 Ritual Mechanics
-- **`notifySampled(int floorNumber)`**: Records that a floor has been entered/scanned.
-- **`isPrimed()`**: Returns `true` only if **all** floors have been sampled AND `infusionCount >= 7`.
-- **`breach()`**: Transitions the building into a "Breached" state, enabling access to negative floor indices.
+- **`notifySampled(int floorNumber)`**: For `0 <= floorNumber < maxFloors` only: adds the floor to `sampledFloors` and sets `lastVisitedFloor`. Layers never count.
+- **`isPrimed()`**: `true` only if `sampledFloors.size() >= maxFloors` AND `infusionCount >= 7`.
+- **`keystoneIn(List<InventoryItem>)`**: the item that opens this building's Bedrock — `isKeystone` and `boundLip == getLIP()` — or null (HK-018: bound by LIP, the name is display only).
+- **`breach()`**: sets `isBreached`, logs, and prints the inversion sequence through `fmt` with two one-second pauses
+  (`com.endlesstransit.ui.Terminal.clock`, by fully qualified name — a known model→UI leak, HK-023).
+
+### 📍 Persistence
+- **`getMutationState()` / `applyMutationState(Map)`**: `isBreached`, `isLandmark`, `infusionCount`, `sampledFloors`, `lastVisitedFloor`. Each key is applied only if present.
+  Layers are not saved: they are regrown on demand, which is why the breach flag must be applied before a Layer LIP is resolved (it is — mutations are saved in footprint order).
 
 ### 📍 UI Rendering
-- **`getFloorZone(int floorNum)`**: Deterministically maps a floor number to a functional zone (e.g., `MECHANICAL_SUMP`, `RESEARCH_LAB`).
-    - Uses `locus.branch(floorNum)` for deterministic randomness.
-- **`getFloorIntegrity(int floorNum)`**: Calculates structural integrity.
-    - Drops significantly near Floor 0 if the building is `isBreached`.
-- **`getExtraContent(Player, width)`**: Generates the **Building Strata Diagnostics** table, including the "Radar" (`[>X<]`) and floor metadata.
+- **`getFloorZone(int floorNum)`**: `ABYSSAL_SUBSTRATE` below 0, `TRANSIT_LOBBY` at 0, `PEAK_OBSERVATORY` at the top; otherwise one of four zones per band
+  (below 5 / top five / middle), picked with `locus.branch(floorNum)`.
+- **`getFloorIntegrity(int floorNum)`**: Layers show pressure `P: n%` (10 per Layer, capped at 100). Floors show `100%`, minus `(10 − floor) × 8` on floors below 10 when breached.
+- **`getStatusSummary()`**: `BEDROCK_BREACHED`, else `INFUSION_ACTIVE: n`, else `STRUCTURAL_STABLE`. **`getLatticeMeta()`**: `[BREACHED]` or `[FLOORS: n]`.
+- **`getExtraContent(Player, width)`**: the **Building Strata Diagnostics** table, Peak to floor 0 (to −5 when breached): radar (`[>X<]` current,
+  `[ X ]` visited, `[ ! ]` Layer), designation, zone, integrity, a simulated resonance, and progress (`[V]`, `[n/m]`, `[CLEARED]`).
+  At the building root the radar anchors on `lastVisitedFloor`. Rendering a breached building therefore creates Layers −1 … −5.
+- **`getMapSymbol()`**: `⌂`, or `☠` when abyssal.
 
 ---
 
 ## 🔄 State Transitions
-- **Landmark Discovery**: On `enter()`, if `isLandmark` is true and not previously visited, triggers a unique UI notification.
-- **Breach State**: Once `breach()` is called, `isBreached` becomes true, affecting `getFloorIntegrity` and `getOptions`.
+- **Landmark Discovery**: On `enter()`, if `isLandmark` and not yet visited, prints a one-time notice (with a one-second pause), then marks visited.
+- **Breach State**: Once `isBreached` is true it changes `getFloor`, `childAt`, `getOptions`, `getExtraContent`, `getFloorIntegrity`, the status summary and the lattice meta.
 
 ---
 
 ## 🔗 Dependencies
-- **`ProceduralFactory`**: Used to populate the building with floors.
-- **`Floor`**: The primary child type.
-- **`LazyLocusList`**: Manages the collection of floors.
-- **`ModelOutput`**: For TUI formatting and coloring.
+- **`ProceduralFactory`** (`factory`, injected — HK-008): creates floors and Layers, counts sub-locations.
+- **`OutputFormatter`** (`fmt`, injected): all formatting and printing.
+- **`Floor`**: the primary child type. **`LazyLocusList`**: holds `floors`. **`InventoryItem`**, **`Player`**, **`Logger`**.
 
 ---
 *Neural Map Stabilized.*
-*Baselined (not audited) against: Building.groovy @ 6f3a7baa60*
+*Verified against: Building.groovy @ c23b2183d2*
