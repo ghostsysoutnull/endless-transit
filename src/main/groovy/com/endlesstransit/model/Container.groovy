@@ -125,6 +125,12 @@ abstract class Container implements Location {
         return children
     }
 
+    /** The child a LIP segment names (0-based), or null when no child answers that index (HK-023). */
+    Location childAt(int index) {
+        if (index < 0 || index >= children.size()) return null
+        return children[index]
+    }
+
     @Override
     boolean isVisited() {
         return visited

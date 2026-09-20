@@ -78,4 +78,86 @@ class AbyssalRestoreContractTest {
         assertEquals(building.maxFloors, building.children.size(), "Resolving must not create a Layer in an unbreached building")
         assertPlayersSaveUntouched()
     }
+
+    private static Game restoredFrom(File scratch) {
+        Game fresh = new Game(1L)
+        fresh.saveFile = scratch.path
+        fresh.restoreSession()
+        return fresh
+    }
+
+    // R1: the bug. A save made on Layer -1 lands on Layer -1, and the Layer's own mutation comes back with it.
+    @Test
+    void aSaveMadeOnTheFirstLayerRestoresOnThatLayerInItsSavedMode() {
+        File scratch = File.createTempFile("endless-transit-", ".trace")
+        try {
+            Game game = new Game(SEED)
+            game.saveFile = scratch.path
+            Building building = enteredBuilding(game)
+            building.isBreached = true
+            Floor layer = building.getFloor(-1)
+            game.enterLocation(layer)
+            layer.enterCorridor()
+            String layerLip = layer.getLIP()
+            SyncManager.sync(game)
+
+            Game fresh = restoredFrom(scratch)
+
+            assertEquals(SEED, fresh.masterLocus.value, "The save must be accepted")
+            assertEquals(layerLip, fresh.currentLocation.getLIP(), "The player must stand on the saved Layer")
+            Floor restored = (Floor) fresh.currentLocation
+            assertEquals(-1, restored.number, "The restored location is Layer -1")
+            assertTrue(restored.isAbyssal(), "The restored location is abyssal")
+            assertEquals(CorridorState.ID, restored.getMutationState().state, "The Layer's saved mode must be applied")
+        } finally {
+            scratch.delete()
+        }
+        assertPlayersSaveUntouched()
+    }
+
+    // R2: deeper than the Layer itself - a Room under Layer -2, with the Layers above it re-marked visited.
+    @Test
+    void aSaveMadeInARoomUnderTheSecondLayerRestoresThereWithItsFootprints() {
+        File scratch = File.createTempFile("endless-transit-", ".trace")
+        try {
+            Game game = new Game(SEED)
+            game.saveFile = scratch.path
+            Building building = enteredBuilding(game)
+            building.isBreached = true
+            game.enterLocation(building.getFloor(-1))
+            game.enterLocation(building.getFloor(-2))
+            while (!(game.currentLocation instanceof Room)) {
+                Container here = (Container) game.currentLocation
+                here.ensureChildrenPopulated()
+                game.enterLocation(here.children[0])
+            }
+            String roomLip = game.currentLocation.getLIP()
+            SyncManager.sync(game)
+
+            Game fresh = restoredFrom(scratch)
+
+            assertEquals(roomLip, fresh.currentLocation.getLIP(), "The player must stand in the saved Room")
+            Building restoredBuilding = (Building) fresh.currentLocation.findAncestor(Building.class)
+            assertTrue(restoredBuilding.getFloor(-2).isVisited(), "Layer -2 must be re-marked visited")
+            assertTrue(restoredBuilding.getFloor(-1).isVisited(), "Layer -1 must be re-marked visited")
+        } finally {
+            scratch.delete()
+        }
+        assertPlayersSaveUntouched()
+    }
+
+    // R3: the index rule does not depend on which Layer is asked for first (LIP stability).
+    @Test
+    void aLayerAskedForOutOfOrderStillTakesItsOwnIndex() {
+        Game game = new Game(SEED)
+        Building building = enteredBuilding(game)
+        building.isBreached = true
+
+        Floor third = building.getFloor(-3)
+        Floor first = building.getFloor(-1)
+
+        assertEquals((building.maxFloors + 2).toString(), lastIndexOf(third), "Layer -3 takes the third index after the last floor")
+        assertEquals(building.maxFloors.toString(), lastIndexOf(first), "Layer -1 takes the first index after the last floor")
+        assertPlayersSaveUntouched()
+    }
 }

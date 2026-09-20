@@ -249,13 +249,29 @@ class Building extends Container {
         // floors access will trigger populateChildren() via LazyLocusList
         Floor f = floors.find { it.number == number }
         
-        // Handle abyssal floors if not in the initial list (e.g. during a breach)
+        // Handle abyssal floors if not in the initial list (e.g. during a breach).
+        // Every missing Layer from -1 down is created in order, so Layer -k always sits at
+        // child index maxFloors + k - 1 and its LIP is stable whoever asks first (HK-023).
         if (f == null && number < 0 && isBreached) {
-            f = factory.createFloor(this, number, apartmentsPerFloor, culture, timeline, locus.branch(number))
-            this.addLocation(f)
+            for (int n = -1; n >= number; n--) {
+                final int layer = n
+                if (floors.find { it.number == layer } == null) {
+                    this.addLocation(factory.createFloor(this, layer, apartmentsPerFloor, culture, timeline, locus.branch(layer)))
+                }
+            }
+            f = floors.find { it.number == number }
         }
         
         return f
+    }
+
+    /** An index past the last floor names a Layer once the Bedrock is breached; the Layer is created on demand (HK-023). */
+    @Override
+    Location childAt(int index) {
+        if (isBreached && index >= maxFloors) {
+            getFloor(maxFloors - 1 - index)
+        }
+        return super.childAt(index)
     }
 
     @Override
