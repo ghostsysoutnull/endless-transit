@@ -83,6 +83,10 @@ class SyncManager {
             // 4. Resolve Current Location
             String currentLIP = (String) playerState["currentLIP"]
             Location current = universe.resolveLIP(currentLIP)
+            if (current == null) {
+                Logger.info("RESTORE_FAILED: Saved location $currentLIP does not exist in the world of $locus")
+                return null
+            }
             player.currentLocation = current
 
             return new GameSession(locus, player, current)

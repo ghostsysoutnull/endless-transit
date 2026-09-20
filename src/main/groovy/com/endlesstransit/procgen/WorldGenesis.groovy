@@ -35,12 +35,11 @@ class WorldGenesis {
             if (current instanceof Container) {
                 Container container = (Container) current
                 int index = Integer.parseInt(idxStr)
-                List<Location> children = container.getChildren()
-                if (index >= 0 && index < children.size()) {
-                    current = children.get(index)
-                } else {
+                Location child = container.childAt(index)
+                if (child == null) {
                     return null // Invalid path: index out of bounds
                 }
+                current = child
             } else {
                 return null // Path continues but current node is not a container
             }

@@ -58,14 +58,15 @@ class Universe extends Container {
             container.ensureChildrenPopulated()
             int childIndex = parts[i].toInteger()
             
-            if (childIndex < 0 || childIndex >= container.children.size()) {
+            Location child = container.childAt(childIndex)
+            if (child == null) {
                 String childrenNames = container.children.collect { it.getName() }.join(", ")
                 Logger.error("LIP_RESOLUTION_FAILED: Index out of bounds $childIndex at part $i of LIP $lip")
                 Logger.error("  >> Container: ${container.getName()} (${container.getClass().simpleName})")
                 Logger.error("  >> Available Children: [$childrenNames] (Size: ${container.children.size()})")
                 return null
             }
-            current = container.children[childIndex]
+            current = child
         }
         return current
     }
