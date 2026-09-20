@@ -52,7 +52,7 @@ final class BuildingFactory implements LocationFactory<Building> {
         }
 
         // 3. Generate Name
-        Map<String, Object> nameData = NameGenerator.generateBuildingName(culture, b.maxFloors, locus, depth, isNull, isAbyssal)
+        Map<String, Object> nameData = registry.nameGenerator.generateBuildingName(culture, b.maxFloors, locus, depth, isNull, isAbyssal)
         b.name = (String) nameData["name"]
         b.isLandmark = (boolean) nameData["isLandmark"]
         b.fmt = registry.fmt
