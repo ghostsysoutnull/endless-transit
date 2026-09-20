@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0xb629529** | 2026-09-20 | **[CONTEXT_DIET]** | `/doctor` found the Safety Mandates post-mortems and the UI/procgen lessons never loaded (imports resolve relative to the importing file) — fixed; domain guidance now lazy; `GEMINI.md` ×5 and `.gemini/` removed. Suite: 282/282/0/0. |
 | **0x8cf9a5a** | 2026-09-20 | **[GH_PAGES_AUDIT]** | 17 player pages checked against the source and corrected; grill and a fresh-agent pass caught 21 errors in the corrections themselves; internal records unpublished; site shell fixed. HK-023 and WF-010 logged. |
 | **0x3547535** | 2026-09-20 | **[WF_009_SHAPE_GATE]** | User question after HK-020 ("how do we prevent unsound OO?"). CODEX gets the eight OO principles in one place, six with a check; `/grill` check 5 asks them; lint `NoNewStaticLogic` (allow-list of 16 files, reasons stated). Paper test fails three old plans. **WF-009 CLOSED.** |
 | **0x0e7b6db** | 2026-09-20 | **[HK_020_GLOBAL_COMMANDS]** | `GlobalCommands` owns keys, aliases and per-key case rule; `TurnProcessor.dispatch` asks it, `normalize` keeps EOF/empty only. No player-visible change; `processInput` gap pinned RED first. 10 pins. **HK-020 CLOSED.** Suite: 282/282/0/0. |

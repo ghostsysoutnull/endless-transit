@@ -51,7 +51,7 @@ improvement session is planned before the next phase begins.
 The command must finish before the merge Directive ("READY TO CLOSE"), but a wave that publishes keeps producing facts afterwards: the record said the live checks were "owed" after they had passed,
 the merged branch was left behind, a chronicle was only suggested, and three stale documents found by row 2 were "justified" and handed back as leftovers. **Decide:** a post-merge step in the command
 (re-run row 2 on the wave's own records, delete the merged branch, live checks for a `docs/` change) and a rule that row 2's "justify" means *logged in a backlog*, not *mentioned in chat*.
-Also decide: a change to `src/**/CLAUDE.md` alone trips the Full floor ("anything under `src/`") although the add-on table treats a `CLAUDE.md` as law, not source (retro `RETRO_GH_PAGES_AUDIT.md`).
+Also decide: a change to `src/**/CLAUDE.md` alone trips the Full floor ("anything under `src/`") although the add-on table treats a `CLAUDE.md` as law, not source (retro `RETRO_GH_PAGES_AUDIT.md`; second occurrence: context diet `0xb629529`, run at Full with rows 3–4 n/a).
 
 ### WF-006 — `MethodSize` measures lines; a line break can satisfy it
 **Priority:** Low | **Found:** 2026-09-16 (HK-018 → HK-013 slice 1; user question: "is this good computer science?")

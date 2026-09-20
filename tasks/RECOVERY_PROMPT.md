@@ -1,12 +1,12 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-20 (GitHub Pages audit). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-20 (context diet). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
 - **Test Suite:** 282 discovered / 282 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
-- **Latest chronicle:** `0x8cf9a5a` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
+- **Latest chronicle:** `0xb629529` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=220 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013; `NoNewStaticLogic` allow-list of 16 files in the ruleset, shrink-only)
 - **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room` and `TurnProcessor` are `Verified`, 13 still `Baselined (not audited)`)
-- **Branch:** `master`. The last *code* merge is `0e7b6db` (HK-020); WF-009 (law + lint, no `src/`) merged after it. The GitHub Pages audit (docs only) merged after it; a push republishes the site. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
+- **Branch:** `master`. The last *code* merge is `0e7b6db` (HK-020); WF-009 (law + lint, no `src/`) merged after it. The GitHub Pages audit and the context diet (docs + law, no code) merged after it; a push republishes the site. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
 - **Active Work:** none; nothing blocks the next phase. All ten OOA phases and O2 are complete. Every wave closes through `/close-wave`, which picks its own tier from the diff (WF-007, WF-008).
 - **Next — user decision, none has a plan yet.** Every plan with a `src/` change now carries a **Shape table** (CODEX § 4, WF-009); `/grill` check 5 asks the six checked principles — the next wave is the dogfood.
   - **HK-022** `NameGenerator` is eleven statics (the one real smell on the `NoNewStaticLogic` allow-list): one per `ProceduralFactory`, via `registry`.
@@ -15,7 +15,7 @@
   - **HK-013** eight long methods left in the lint baseline (extract or re-baseline with a reason — never reformat to the recorded length).
   - **O1** HeadlessRunner DSL (optional, not started). **WF-010** (Medium) `/close-wave` has no post-merge step. **WF-006** (Low) complexity metric beside `MethodSize`, at the next cadence review.
   - **Undecided user question:** should the debug glitch `KEYSTONE` also prime the building? Today it gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions (diagnosed in the HK-019 session, nothing changed, not in the backlog).
-  - **Candidate lessons diet (user call, deferred):** `tasks/lessons/` (~7,000 words) is loaded every session; rewriting bullets as rule + pointer needs bullet-by-bullet user review. New lessons already follow that form (CODEX). The chronicle index is no longer included.
+  - **Candidate lessons diet (user call, deferred):** only `infrastructure.md` and the post-mortems load every session now, domain lessons with their domain (`0xb629529`); rewriting bullets as rule + pointer needs bullet-by-bullet user review. New lessons already follow that form (CODEX). The chronicle index is no longer included.
 - **Known declared edges (HK-019):** a direct `game.exitLocation()` and the debug `BREACH` teleport do not reset corridor mode; old saves heal on the first `l`. Pre-HK-018 Keystones open nothing (bound by LIP, no name fallback).
 
 ## 🚀 How to Resume
