@@ -20,7 +20,7 @@ final class CountryFactory implements LocationFactory<Country> {
     Class<Country> getType() { Country }
 
     Country create(Container parent, LocusSeed locus) {
-        Country c = new Country(NameGenerator.generateCountryName(locus), locus)
+        Country c = new Country(registry.nameGenerator.generateCountryName(locus), locus)
         c.setParent(parent)
         
         List<String> traits = ["Ceremonial", "Military", "Industrial", "Agricultural", "Research", "Commercial"]

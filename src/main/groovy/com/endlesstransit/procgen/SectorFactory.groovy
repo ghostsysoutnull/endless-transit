@@ -20,7 +20,7 @@ final class SectorFactory implements LocationFactory<GalacticSector> {
     Class<GalacticSector> getType() { GalacticSector }
 
     GalacticSector create(Container parent, LocusSeed locus) {
-        GalacticSector s = new GalacticSector(NameGenerator.generateSectorName(locus), locus)
+        GalacticSector s = new GalacticSector(registry.nameGenerator.generateSectorName(locus), locus)
         s.setParent(parent)
         s.fmt = registry.fmt
         return s
