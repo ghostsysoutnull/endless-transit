@@ -11,6 +11,10 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 ## 🔴 OPEN
 
 ### HK-020 — Global command aliases live in two places
+**CLOSED 2026-09-20** — branch `housekeeping/hk-020-global-commands`, commits `46fee07` (plan), `216545c` (step-0 pins), `3119693` (the change).
+Plan + record: `tasks/completed/HK_020_PLAN.md`. `GlobalCommands` (keys + aliases + per-key case rule) built by `TurnProcessor`, asked by `dispatch`;
+`normalize` keeps only EOF/empty. No player-visible change; `Game.processInput` now honours aliases (pin RED first). `GlobalCommandsContractTest` 10 pins.
+**Left open (declared):** `RenderingCoordinator.helpMenu:40` still spells the aliases by hand — display text, not a resolver; a generated help line is the natural next step.
 **Found:** 2026-09-17, user OO review of HK-015. `InputHandler.normalize:57-60` holds a hardcoded list of global words and two aliases
 (`m` → `map`, `q` → `quit`, the second added by HK-015); `TurnProcessor.initializeGlobalCommands` holds the command table and a third alias
 (`ll` → `lattice`). Two owners for one fact: a new global command must be added in both or it is case-sensitive by accident.

@@ -100,8 +100,8 @@ Keys are checked in this order: first the global commands, then whatever the cur
 | Enter alone | Repeats your last move. If that move is now impossible but its opposite is possible, it turns you around instead. <!-- NavigationEngine.groovy:42-55 --> |
 
 Case matters for some of these and not others. `i`, `m`, `map`, `sync`, `lattice`, `glitch`, `help`, `quit` and `q`
-work in any case. `s`, `ll`, `p`, `P` and `quitnow` must be typed exactly. <!-- InputHandler.groovy:57 -->
-Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:69-87 -->
+work in any case. `s`, `ll`, `p`, `P` and `quitnow` must be typed exactly. <!-- TurnProcessor.groovy:31-47 (GlobalCommands table) -->
+Numbered options are forgiving: `1` selects `01`. <!-- InputHandler.groovy:62-80 -->
 
 ### Place-specific keys
 

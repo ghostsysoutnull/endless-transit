@@ -1,7 +1,7 @@
 # Housekeeping Plan: HK-020 — Global command aliases have two owners
 **Created:** 2026-09-20 | **Grill:** AMEND (2 items: deviation declared, `CoherenceDrainTest:19` listed) → applied → CLEARED | **Branch (proposed):** `housekeeping/hk-020-global-commands` (from `master` @ b80b100)
 **Backlog:** HK-020 (`tasks/backlog/HOUSEKEEPING.md:13-19`, user OO review of HK-015) | **Baseline (run during the grill):** 271 / 271 / 0 / 0, LINT PASS 218 files
-**Status:** PLAN, grilled. **User decisions (2026-09-20):** D1 = a (one `GlobalCommands` object, `dispatch` asks it), D2 = keep every case quirk exactly as today.
+**Status:** EXECUTED 2026-09-20 (Directive: "yes") — `46fee07` plan, `216545c` c0 (275/275), `3119693` c1 (282/282, LINT PASS 220, scan 0 → 9, 36 goldens unchanged; gap pin RED at `GlobalCommandsContractTest.helpAliasReachesHelpCommandThroughDispatch` before the change), c2 docs. **One deviation, recorded in c1:** `ll` is registered exact against `lattice`'s instance instead of `alias()`-ed, because `alias` inherits the target's any-case rule and D2 keeps `ll` exact. **User decisions (2026-09-20):** D1 = a (one `GlobalCommands` object, `dispatch` asks it), D2 = keep every case quirk exactly as today.
 **Deviation from the backlog fix design (declared):** `HOUSEKEEPING.md:18` says *`normalize` asks it*; here `dispatch` asks it. Two reasons:
 `InputHandler` is built in `Game:41` before `TurnProcessor` exists, so it cannot hold the object without a setter or a construction reorder;
 and resolving on the dispatch side is what closes the `Game.processInput` gap (that path never calls `normalize`).
