@@ -20,6 +20,7 @@ Select a module from the Comms Array above or use the initial link below:
 *   **[OPERATIONAL_PROTOCOLS]**: Master the [SYSTEM_MECHANICS]({{ "/terminal/manual/operational_protocols.html" | relative_url }})
 *   **[FIELD_OPERATIONS]**: Reference the [LINK_NAVIGATION]({{ "/terminal/manual/link_navigation.html" | relative_url }}) guide
 *   **[ARCHITECTURAL_DATA]**: Review the [SYSTEM_SPECIFICATIONS]({{ "/terminal/manual/system_specifications.html" | relative_url }}) whitepaper
+*   **[CLASSIFIED_DATA]**: Open the [OBSERVER'S_CODEX]({{ "/terminal/codex/index.html" | relative_url }}) — advanced field strategy, lore and the inner code. Some nodes disclose the endgame; they say so.
 
 ---
 **STATUS**: LINK_IDLE

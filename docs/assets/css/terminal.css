@@ -4,6 +4,7 @@
     --dim-text: #008888;
     --accent-color: #ff00ff;
     --border-color: #00ffff;
+    --primary-color: #00ffff;
     --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
 }
 
@@ -38,6 +39,8 @@ body.terminal-body {
 
 .hud-top {
     display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
     justify-content: space-between;
     font-weight: bold;
     font-size: 1.1rem;
@@ -61,6 +64,16 @@ body.terminal-body {
     background: var(--text-color);
     color: var(--bg-color);
     border-color: var(--text-color);
+}
+
+/* The page you are on */
+.comms-array a.active {
+    border-color: currentColor;
+    background: rgba(0, 255, 255, 0.12);
+}
+
+.glitch {
+    text-shadow: 0 0 6px var(--text-color);
 }
 
 .comms-array a.nav-specs {
@@ -218,7 +231,7 @@ tbody tr:hover {
 
 .abyssal-map {
     color: #ff0000 !important;
-    animation: flicker 0.1s infinite secondary;
+    animation: flicker 2.4s infinite;
 }
 
 .abyssal-log p {
@@ -228,7 +241,11 @@ tbody tr:hover {
 @keyframes flicker {
     0% { opacity: 0.8; }
     50% { opacity: 1; }
-    100% { opacity: 0.9; }
+    100% { opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .abyssal-map { animation: none; }
 }
 
 .terminal-footer {
@@ -341,4 +358,6 @@ tbody tr:hover {
 
 @media (max-width: 700px) {
     .guide .toc ul { columns: 1; }
+    .hud-top { font-size: 0.85rem; }
+    .left-pane-content { padding: 18px; }
 }

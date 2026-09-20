@@ -4,27 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page.title }} | Endless Transit</title>
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    <meta property="og:title" content="{{ page.title }} | Endless Transit">
+    <meta property="og:description" content="{{ page.description | default: site.description }}">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050505'/%3E%3Ctext x='32' y='46' font-size='44' text-anchor='middle' fill='%2300ffff' font-family='monospace'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="{{ "/assets/css/terminal.css" | relative_url }}">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="terminal-body">
-    <div class="scanlines"></div>
+    <div class="scanlines" aria-hidden="true"></div>
     
     <header class="command-bridge-hud">
         <div class="hud-top">
             <span class="glitch" data-text="LATTICE: ∞ »» ○ ☼ ⊕ ⬚ 🏙 ═ ⌂">LATTICE: ∞ »» ○ ☼ ⊕ ⬚ 🏙 ═ ⌂</span>
             <span class="stats">OBSERVER_SYNC: NOMINAL | COHERENCE: 100%</span>
         </div>
-        <nav class="comms-array">
-            <a href="{{ "/" | relative_url }}">[INDEX]</a>
-            <a href="{{ "/terminal/guide/players_guide.html" | relative_url }}" class="nav-guide">[GUIDE]</a>
-            <a href="{{ "/terminal/manual/installation_guide.html" | relative_url }}">[LINK_SETUP]</a>
-            <a href="{{ "/terminal/manual/system_initialization.html" | relative_url }}">[00_INIT]</a>
-            <a href="{{ "/terminal/manual/the_lattice_atlas.html" | relative_url }}">[01_ATLAS]</a>
-            <a href="{{ "/terminal/manual/operational_protocols.html" | relative_url }}">[02_PROTOCOLS]</a>
-            <a href="{{ "/terminal/manual/link_navigation.html" | relative_url }}">[03_NAV]</a>
-            <a href="{{ "/terminal/manual/system_specifications.html" | relative_url }}" class="nav-specs">[04_SYS_SPECS]</a>
-            <a href="{{ "/terminal/codex/index.html" | relative_url }}" class="nav-codex">[05_CODEX]</a>
+        <nav class="comms-array" aria-label="Manual sections">
+            <a href="{{ "/" | relative_url }}"{% if page.url == "/" %} class="active"{% endif %}>[INDEX]</a>
+            <a href="{{ "/terminal/guide/players_guide.html" | relative_url }}" class="nav-guide{% if page.url == "/terminal/guide/players_guide.html" %} active{% endif %}">[GUIDE]</a>
+            <a href="{{ "/terminal/manual/installation_guide.html" | relative_url }}"{% if page.url == "/terminal/manual/installation_guide.html" %} class="active"{% endif %}>[LINK_SETUP]</a>
+            <a href="{{ "/terminal/manual/system_initialization.html" | relative_url }}"{% if page.url == "/terminal/manual/system_initialization.html" %} class="active"{% endif %}>[00_INIT]</a>
+            <a href="{{ "/terminal/manual/the_lattice_atlas.html" | relative_url }}"{% if page.url == "/terminal/manual/the_lattice_atlas.html" %} class="active"{% endif %}>[01_ATLAS]</a>
+            <a href="{{ "/terminal/manual/operational_protocols.html" | relative_url }}"{% if page.url == "/terminal/manual/operational_protocols.html" %} class="active"{% endif %}>[02_PROTOCOLS]</a>
+            <a href="{{ "/terminal/manual/link_navigation.html" | relative_url }}"{% if page.url == "/terminal/manual/link_navigation.html" %} class="active"{% endif %}>[03_NAV]</a>
+            <a href="{{ "/terminal/manual/system_specifications.html" | relative_url }}" class="nav-specs{% if page.url == "/terminal/manual/system_specifications.html" %} active{% endif %}">[04_SYS_SPECS]</a>
+            <a href="{{ "/terminal/codex/index.html" | relative_url }}" class="nav-codex{% if page.url contains "/terminal/codex/" %} active{% endif %}">[05_CODEX]</a>
         </nav>
     </header>
 
