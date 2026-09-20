@@ -53,7 +53,8 @@
 - [x] Context diet 2 (2026-09-17): chronicle index no longer included in every session; new lessons = rule + pointer — chronicle `0x6aaede9`.
 - [x] Housekeeping HK-015 (2026-09-17): five player-facing bugs fixed, one commit each, 15 new pins — chronicle `0xa47cdb6`.
 - [x] Housekeeping HK-020 (2026-09-20): `GlobalCommands` owns keys, aliases and case; `normalize` carries no word list — chronicle `0x0e7b6db`.
-- [ ] Next: user decision — **HK-021** (HK-015 residue; a dropped Keystone loses its flag), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
+- [x] Workflow WF-009 (2026-09-20, user question): OO principles in the CODEX, grill check 5 asks six of them, lint `NoNewStaticLogic` — chronicle `0x3547535`.
+- [ ] Next: user decision — **HK-022** (`NameGenerator` statics), **HK-021** (HK-015 residue; a dropped Keystone loses its flag), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
 
 ---
 

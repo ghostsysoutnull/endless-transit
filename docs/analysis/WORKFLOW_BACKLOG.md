@@ -59,6 +59,14 @@ replace. Until then: `MethodSize` stays a merge gate, with the "extract or re-ba
 
 ## 🟢 CLOSED
 
+### WF-009 — No gate asks whether new code has the right OO shape
+**Priority:** Medium | **Found:** 2026-09-20 (user question after HK-020: "how can we prevent that new code will not implement sound OO principles?")
+HK-015 shipped a static function and a two-owner fact through every green gate; only the user's post-merge review caught them.
+**Resolution (user decision: principles, not the two smells):** CODEX § 4 "OO Principles" — eight rows with the wave that taught each, six with a
+check and its evidence; Shape Claim Protocol (a Shape table per plan); `/grill` check 5 asks the six; lint `NoNewStaticLogic` (non-private static
+with a body; 16-file allow-list with reasons, shrink-only). Paper test: three old plans fail as written. Not taken: a post-implementation review pass.
+Record: `tasks/completed/WF_009_PLAN.md`. **Closed:** 2026-09-20 | chronicle `0x3547535`
+
 ### WF-008 — `/close-wave` applies ten rows to every wave and makes the handover grow
 **Priority:** Medium | **Found:** 2026-09-17 (user review of WF-007: "too token hungry … a much larger scope than it should")
 Measured: WF-007's close-out wrote as many words as its work (~2,200 each), the same facts seven times; the recovery prompt is 2,960 words, 1,100 of them
