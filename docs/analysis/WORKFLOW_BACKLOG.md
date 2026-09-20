@@ -46,6 +46,12 @@ improvement session is planned before the next phase begins.
 > Recommended order: HK-005 + HK-006 housekeeping session (HK-005 touches `Building`, which Phase 10 also
 > edits), then Phase 10. Next scheduled review: Phase 13, or the next phase after Phase 10 if the plan ends there.
 
+### WF-010 — `/close-wave` runs before the merge and the push, so what they change is nobody's row
+**Priority:** Medium | **Found:** 2026-09-20 (GitHub Pages audit; user: "why the end wave did not take care of this all?")
+The command must finish before the merge Directive ("READY TO CLOSE"), but a wave that publishes keeps producing facts afterwards: the record said the live checks were "owed" after they had passed,
+the merged branch was left behind, a chronicle was only suggested, and three stale documents found by row 2 were "justified" and handed back as leftovers. **Decide:** a post-merge step in the command
+(re-run row 2 on the wave's own records, delete the merged branch, live checks for a `docs/` change) and a rule that row 2's "justify" means *logged in a backlog*, not *mentioned in chat*.
+
 ### WF-006 — `MethodSize` measures lines; a line break can satisfy it
 **Priority:** Low | **Found:** 2026-09-16 (HK-018 → HK-013 slice 1; user question: "is this good computer science?")
 The 50-line rule found real multi-job methods (all nine baseline entries), but raw length is a proxy: it was dodged once with a line join
