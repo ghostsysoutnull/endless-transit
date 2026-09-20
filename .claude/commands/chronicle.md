@@ -22,7 +22,7 @@ In Endless Transit, the code is the Lore. This command handles **Dual-Channel Sy
 - Retrieve the current `masterSeed` and `LIP` from the last session or `GameMemento` if available.
 
 ### 2. DUAL-CHANNEL SYNTHESIS
-Use `journals/LOG_TEMPLATE.md` (at `.gemini/skills/skill-chronicle/references/LOG_TEMPLATE.md`) to structure the entry:
+Use `journals/CHRONICLE_TEMPLATE.md` to structure the entry:
 - **Vibe:** Translate technical changes into immersive descriptions (e.g., "The pivot-state refactor grounds the player in the lobby").
 - **Tech:** List specific refactors, pattern implementations, and verification results.
 

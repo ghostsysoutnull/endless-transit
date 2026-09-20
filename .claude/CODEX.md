@@ -1,7 +1,5 @@
 # THE CODEX: Operating Law
 
-> NOTE: Gemini equivalent for reference: `.gemini/GEMINI.custom.md` (no sync required during refactoring).
-
 This file defines the immutable behavioral mandates and workflow orchestration for the Vinculum Architect.
 
 ---
@@ -114,7 +112,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.
 * **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave (`(HK-012)`) — the incident lives in that wave's chronicle and retro. The lessons files are loaded every session; every sentence in them is paid for each time. Existing long bullets are left as they are until a lessons diet is decided.
-* Review lessons at session start via the `@tasks/lessons/` references in the domain CLAUDE.md files.
+* Lessons load with their domain: each domain `CLAUDE.md` imports its `tasks/lessons/<domain>.md` when that directory is touched; `infrastructure.md` loads every session.
 
 ## 🔧 Workflow Improvement Cadence
 * After every phase retro: scan "Concerns for Upcoming Phases" — log any workflow friction to `docs/analysis/WORKFLOW_BACKLOG.md`.
@@ -126,5 +124,5 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ## 🏛️ Safety Mandates (The Shield)
 Read and internalize the mandates in:
-- **@tasks/lessons/POST_MORTEM_2026_03_11.md** — Structural Collapse (skeleton class incident)
-- **@tasks/lessons/POST_MORTEM_2026_03_06.md** — Mandatory Safe-Accessors (lazy-loading law)
+- **@../tasks/lessons/POST_MORTEM_2026_03_11.md** — Structural Collapse (skeleton class incident)
+- **@../tasks/lessons/POST_MORTEM_2026_03_06.md** — Mandatory Safe-Accessors (lazy-loading law)

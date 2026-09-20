@@ -7,13 +7,13 @@ This project is developed using the **Vibe Coding** philosophy.
 - **Elegance over Hacks**: We prioritize surgical, idiomatic updates over quick fixes.
 
 ## 2. Context Architecture (Mandatory)
-We use a hierarchical context system powered by `@` imports in `GEMINI.md`. 
-- **Root**: `GEMINI.md` (Orchestration & Index)
-- **Workflow**: `GEMINI.custom.md` (Task management and subagent strategy)
-- **Domains**: Each sub-directory in `src/main/groovy/com/endlesstransit/` has its own `GEMINI.md`.
+We use a hierarchical context system powered by `@` imports in `CLAUDE.md`. 
+- **Root**: `CLAUDE.md` (Orchestration & Index)
+- **Workflow**: `.claude/CODEX.md` (Operating law, task management and subagent strategy)
+- **Domains**: Each sub-directory in `src/main/groovy/com/endlesstransit/` has its own `CLAUDE.md`.
 - **Lessons**: Categorized history in `tasks/lessons/`.
 
-**Constraint**: When working in a domain (e.g., `ui`), always read the local `GEMINI.md` first.
+**Constraint**: When working in a domain (e.g., `ui`), always read the local `CLAUDE.md` first.
 
 ## 3. Mandatory Workflow
 1.  **Plan First**: Every non-trivial task MUST be planned in `tasks/todo.md` before a single line of code is written.
@@ -41,6 +41,6 @@ We use a hierarchical context system powered by `@` imports in `GEMINI.md`.
 - **Math**: `Gematria` mystical frequency logic with cultural resonance bonuses.
 
 ## 5. Entry Points for New Agents
-- Read `GEMINI.md` to load the full context tree.
+- Read `CLAUDE.md` to load the full context tree.
 - Check `tasks/todo.md` for the current roadmap.
 - Run `.agents/vibe-check-model.sh` to see the current hierarchy stability.

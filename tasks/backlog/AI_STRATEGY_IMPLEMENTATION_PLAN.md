@@ -46,11 +46,11 @@ This plan outlines the "How" for transforming our development workflow into a ve
     - [ ] Create a `HUDLabels` constant class to ensure `LOCUS_INDEX`, `STRATA`, etc., are never misspelled or inconsistently renamed by the AI.
 
 ## Phase 5: Workflow Integration
-*Goal: Bake these rules into the Gemini-CLI context.*
+*Goal: Bake these rules into the agent context (`CLAUDE.md` + `.claude/CODEX.md`).*
 
-- [ ] **Update GEMINI.md Files**:
-    - [ ] Add the "AI Strategy Mandate" link to the root `GEMINI.md`.
-    - [ ] Update the `Project Workflow` section in the root `GEMINI.md` to explicitly mention the **AI-TDD Protocol**.
+- [ ] **Update CLAUDE.md Files**:
+    - [ ] Add the "AI Strategy Mandate" link to the root `CLAUDE.md`.
+    - [ ] Update the `Project Workflow` section in `.claude/CODEX.md` to explicitly mention the **AI-TDD Protocol**.
 - [ ] **Subagent Trigger Definition**:
     - [ ] Define specific prompts for the `codebase_investigator` to use when "Investigating a Depth Bug."
 

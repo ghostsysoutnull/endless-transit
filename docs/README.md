@@ -21,4 +21,4 @@ This directory contains the archival and architectural documentation for the End
 - [LESSONS_LEARNED.md](history/archive/LESSONS_LEARNED.md): Legacy lessons before localization.
 
 ---
-*Note: Active development lessons and "Vibes" are localized within the source tree via `GEMINI.md` and `tasks/lessons/`.*
+*Note: Active development lessons and "Vibes" are localized within the source tree via `CLAUDE.md` and `tasks/lessons/`.*

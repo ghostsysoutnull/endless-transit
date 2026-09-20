@@ -1,7 +1,5 @@
 # Domain Invariants: The Visual Interface
 
-> Gemini equivalent: `GEMINI.md` (same directory)
-
 **ARCHITECTURAL CONSTRAINTS**
 - **Cyber-Brutalist Mandate:** UI must feel high-density and data-heavy. Monospaced alignment and boxed HUDs are non-negotiable.
 - **Reactive Observation:** The UI observes the model but MUST NOT be called directly by it.
@@ -27,7 +25,7 @@
 - **Box lines:** build with `Terminal.boxTop/boxedLine/splitBoxedLine/boxSeparator/boxBottom` (strings); `draw*` only print them.
 
 ## 📡 Diagnostic Sinks
-- **Active System**: @docs/design/DIAGNOSTIC_SUITE_DESIGN.md
+- **Active System**: `docs/design/DIAGNOSTIC_SUITE_DESIGN.md`
 - **`MemorySink`**: Screen state for screenshots.
 - **`VirtualBuffer`**: Circular buffer for history.
 - **`VisualAssertionEngine`**: Tool for verifying TUI layout invariants.
@@ -38,4 +36,4 @@
 - [ ] **Alignment Check**: Verified at 100-character width.
 
 ## 🧬 Localized Lessons
-- **UI Domain Lessons**: @tasks/lessons/ui.md
+- **UI Domain Lessons**: @../../../../../../tasks/lessons/ui.md

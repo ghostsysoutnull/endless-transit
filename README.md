@@ -51,7 +51,7 @@ The engine is built on **Domain-Driven Design (DDD)** to ensure modularity and s
 *   **`ui`**: 130-char Adaptive Bridge and Wide-Telemetry scanning.
 
 ### 🤖 **AI-Agent Collaboration**
-This project is optimized for **Context Localization**. Each domain features its own `GEMINI.md`, allowing AI architects to maintain deep project alignment with minimal cognitive noise.
+This project is optimized for **Context Localization**. Each domain features its own `CLAUDE.md`, allowing AI architects to maintain deep project alignment with minimal cognitive noise.
 
 ---
 
