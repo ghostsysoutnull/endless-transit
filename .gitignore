@@ -5,6 +5,7 @@ journal-last-entry.txt
 .journal_session_tmp
 *.swp
 session.trace
+session.trace.bak*
 build/
 
 journal_test.txt
