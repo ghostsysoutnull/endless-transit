@@ -29,7 +29,7 @@ The final frequency of an object is derived using the following formula:
 1.  **Base Sum:** Sum the values of all consonants in the object's name.
 2.  **Master Number:** If the base sum is exactly **11, 22 or 33**, the engine announces `RESONANCE DETECTED` and doubles it.
 3.  **Depth Scaling:** The sum is multiplied by the depth of the cell. Every room in the web sits at **Depth 12**, so in practice every capture is base sum × 12.
-4.  **Resonance Multiplier:** **1.1x** if the cell's Culture matches the local **RESONANCE** — the Culture named on the street header (the fraction is truncated). Otherwise 1.0x.
+4.  **Resonance Multiplier:** **1.1x** if the cell's Culture matches the local **RESONANCE** — the Culture named on the street header (the fraction is truncated). Otherwise 1.0x. Below the Bedrock the local Culture is Abyssal and so is every Shard: every capture in the Substrate is amplified.
 
 ## [STABILIZATION_WAVEFORMS]
 A frequency is considered **Stable** if it is divisible by **11**. 

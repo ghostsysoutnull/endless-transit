@@ -10,7 +10,7 @@ Welcome to the **Observer's Codex**. This deep-data repository contains advanced
 
 Accessing these nodes is highly recommended for high-level link operators.
 
-> **[CLEARANCE_WARNING]** Four nodes disclose the endgame of the Transit: COHERENCE_OPTIMIZATION, SYNTHESIS_THEORY, THE_BEDROCK_SHIFT and THE_INVERSION_RITUAL. Each carries its own warning. The rest are safe for a first expedition.
+> **[CLEARANCE_WARNING]** Four nodes disclose the endgame of the Transit: COHERENCE_OPTIMIZATION, SYNTHESIS_THEORY, THE_BEDROCK_SHIFT and THE_INVERSION_RITUAL. Each carries its own warning. The other nodes name the Substrate in passing but do not walk you through it.
 
 ## [DATA_NODES]
 

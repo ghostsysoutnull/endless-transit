@@ -37,7 +37,7 @@ The link is forgiving of case for `i`, `m`, `map`, `sync`, `lattice`, `help`, `q
 ## [QUANTUM TRACE BUFFER]
 Accessing your buffer `[i]` allows you to manage harvested fragments.
 *   **Capacity:** The buffer has no ceiling. The `/16` on the HUD is a legacy calibration mark.
-*   **Dropping:** Use `d [ID]` to dissolve a fragment. To leave one in the local cell, use `d[ID]` from the room's `[t]` menu instead — but the cell retains only the fragment's **name**. Re-captured, it resonates at the frequency its name spells: a relic returns unchanged; a Hybrid, a Hidden Frequency or a **Keystone** returns as a common fragment, its sum, its millions or its binding gone.
+*   **Dropping:** Use `d [ID]` to dissolve a fragment. To leave one in the local cell, use `d[ID]` from the room's `[t]` menu instead — but the cell retains only the fragment's **name**. Re-captured, it resonates at the frequency its name spells in that cell: a relic taken back from the same cell returns unchanged; a Hybrid, a Hidden Frequency or a **Keystone** returns as a common fragment, its sum, its millions or its binding gone.
 *   **Merging:** Use `m [ID1] [ID2]` to synthesize two fragments into a new hybrid. Every synthesis restores **+15 Coherence**.
 *   **Stabilization:** If a synthesis result is divisible by 11, it is **Stabilized** and added to your `RESONANT_TRACES` tally. The full law of the tally is set out in [OPERATIONAL_PROTOCOLS]({{ "/terminal/manual/operational_protocols.html" | relative_url }}).
 

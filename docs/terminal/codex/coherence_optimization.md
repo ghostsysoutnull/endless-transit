@@ -18,7 +18,7 @@ Every "Pulse" — every directive you issue, movement or not — costs Coherence
 | **Any of the seven standard Eras** | 1 | Nominal conditions. |
 | **ENTROPIC Era** | 2 | Minimize pulses. Enter, harvest, and exit. |
 | **Abyssal Substrate** | 2 | Integrity in place of Coherence. Descend with a full buffer. |
-| **Abyssal Layer, ENTROPIC Era** | 4 | Only on the Layer's own screen. Its Arteries, Crypts and Shards know no Era and cost 2. |
+| **Abyssal Layer, ENTROPIC Era** | 4 | On the Layer — its elevator and its artery view. The Crypts and Shards behind its doors know no Era and cost 2. |
 
 No Era drains more slowly than 1. A scan, a map, a buffer check and a mistyped directive each cost a pulse.
 

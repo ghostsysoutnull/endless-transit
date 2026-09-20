@@ -8,7 +8,7 @@ map_type: telemetry
 
 > **[CLEARANCE_WARNING]** This node discloses the endgame of the Transit — the Keystone, the Breach, and what waits below the Bedrock. Observers who mean to find the Substrate unaided should close it now.
 
-The **Harmonic Inversion Ritual** is the only method for accessing the **Abyssal Substrate** beneath a stable building. It is a four-stage process of strata sampling and frequency synthesis. Choose the building with care: every floor must be sampled, and a Peak may stand a hundred floors up. Nothing on the street reveals a building's height — enter, and the lobby's strata table lists every floor (`ll` then reads `[FLOORS: n]`). Four buildings in ten are small, three to ten floors.
+The **Harmonic Inversion Ritual** is the only method for accessing the **Abyssal Substrate** beneath a stable building. It is a four-stage process of strata sampling and frequency synthesis. Choose the building with care: every floor must be sampled, and a Peak may stand a hundred floors up. The street list does not state a building's height (a rare `Unit 0x…` designation hints at it by its last word, nothing more) — enter, and the lobby's strata table lists every floor (`ll` then reads `[FLOORS: n]`). Four buildings in ten are small, three to ten floors.
 
 ## [STAGE 1: STRATA_SAMPLING]
 The building's anchor point must be "mapped" through harvest.

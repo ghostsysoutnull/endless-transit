@@ -38,12 +38,12 @@ Because the Neural Web is deterministic, a LIP always resolves to the exact same
 *   **Restoration:** When you restore a neural link, the system uses your last recorded LIP to walk the world tree and reconstitute your position.
 
 ## [ABYSSAL_ADDRESSING]
-The Substrate has no addresses of its own. Its segments are plain decimal indices like any other — a negative or hexadecimal segment is refused outright; the `-0x…` on a Layer's name is a label, not a coordinate. A Layer is grown on demand beneath a breached building and is indexed *after* the Peak: in a three-floor building, Layer -1 answers to segment 3.
+The Substrate has no addresses of its own. Its segments are plain decimal indices like any other — a negative segment resolves to nothing, and a hexadecimal one cannot be read at all; the `-0x…` on a Layer's name is a label, not a coordinate. A Layer is grown on demand beneath a breached building and is indexed *after* the Peak: in a three-floor building, Layer -1 answers to segment 3.
 
-Such an address holds only while the breach that grew it is remembered. On a freshly regrown web the Layer does not yet exist and the address resolves to nothing. **Do not record, share or rely on a LIP from below the Bedrock** — and synchronize *before* you descend, not after.
+Such an address holds only within the session that grew the Layer. On a regrown web — after a reboot, or on restoring a trace — the Layer does not yet exist and the address resolves to nothing, even though the breach itself is remembered. **Do not record, share or rely on a LIP from below the Bedrock**, and synchronize *before* you descend: a trace written in the Substrate cannot be walked back.
 
 ## [PRO-TIPS]
-1.  **Read the LIP:** Your current LIP is printed in the **LOCAL_CELL_DIAGNOSTIC** header of any room, on the `> Trace:` line of the telemetry pane from the Building inward, and as `FINAL_LOCUS` when you terminate a long expedition.
+1.  **Read the LIP:** Your current LIP is printed in the **LOCAL_CELL_DIAGNOSTIC** header of any room, on the `> Trace:` line of the telemetry pane from the Building inward, and as `FINAL_LOCUS` when you terminate a long expedition above the Bedrock.
 2.  **Breadcrumbs:** The web is a strict tree: every node has exactly one parent, and there are no loops or shortcuts. Your LIP read right to left *is* the way back — every `l` climbs toward the root, one scale or two at a time.
 
 ---

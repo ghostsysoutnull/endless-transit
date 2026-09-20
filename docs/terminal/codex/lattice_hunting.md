@@ -9,7 +9,7 @@ map_type: filament
 This node details protocols for identifying high-value targets within the procedural web. To an experienced Observer, the lattice is not just a path—it is a resource field.
 
 ## [THE 2D_MAP_READOUT]
-From the Universe down to the Street, the bridge's right pane carries a 2D map of the nodes beneath you; from the Building inward it yields to telemetry. The `m` directive projects the same view on demand, at any depth short of a cell.
+From the Universe down to the Street, the bridge's right pane carries a 2D map — a fixed schematic at the Universe and Filament scales, a projection of the nodes beneath you from the Sector down; from the Building inward it yields to telemetry. The `m` directive projects the children of the node you stand in on demand, at any depth short of a cell.
 
 *   **Node Reading:** Each child is drawn with its own glyph — `⌂` for a building, `⊕` for a planet; dim nodes are unvisited, bright nodes are visited. (The legend's `■` is a generic mark, not what is drawn.) The map is a projection of the container you stand in — it shows nothing about fragment counts.
 *   **Void Identification:** On the filament menu, a conduit labelled `VOID_REACH` leads to a **Null Reach**. Each holds exactly one **Spectral Echo** (1,000–9,999 Hz). Issue the `e` directive until the signal reaches 100, then `c` to capture. Buildings beneath a Null Reach are twice as likely to be Landmarks.

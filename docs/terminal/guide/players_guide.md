@@ -64,7 +64,7 @@ spectrogram once you are inside a building. At the bottom is the menu of things 
 
 **Your first walk.** Every menu item has a key in front of it. Type the key and press Enter.
 
-1. You begin on a **street**, already one Coherence down: the drain runs before the first screen is drawn. The street
+1. You begin on a **street**, already a point or two of Coherence down: the drain runs before the first screen is drawn. The street
    header tells you the era and culture of this part of the world in yellow and colour.
 2. The rest of the universe is above you. `l` climbs one level at a time, numbered options descend. Leave that for later;
    everything worth taking is below you, inside the buildings.
@@ -135,8 +135,8 @@ lose 1. Scanning costs 1. Opening the buffer costs 1. A typo costs 1. Standing s
 <!-- TurnProcessor.groovy:51-53 -->
 
 **Some places cost more.** The 1 becomes 2 in a place whose era is `entropic`, and 2 anywhere below a building's
-bedrock. Both at once is 4, but that only happens on a Layer's own screen: the corridors, apartments and rooms below
-bedrock are never entropic, so they cost 2. Nothing costs less than 1. <!-- TurnProcessor.groovy:52, Corridor.groovy:112-122 -->
+bedrock. Both at once is 4, but that only happens on a Layer's own screens, its elevator and its corridor view: the
+apartments and rooms below bedrock are never entropic, so they cost 2. Nothing costs less than 1. <!-- TurnProcessor.groovy:52, Corridor.groovy:112-122 -->
 
 **Only merging gives it back.** Every merge command in the buffer screen adds 15. It is capped at 100. Nothing else
 restores Coherence: not resonance, not visiting new places, not time. <!-- QuantumBufferController.groovy:44, Player.groovy:48-50 -->
@@ -259,8 +259,8 @@ This is the game's one real quest, and the manual describes it wrong. Here is th
 <!-- Building.groovy:32-34, RitualTracker.groovy:22-39 -->
 
 1. **Pick a small building.** You will need to pick up at least one object on *every* floor. Buildings have 3
-   to 100 floors, and 41% of them are small, with 3 to 10. <!-- BuildingFactory.groovy:29-52 --> Nothing on the street
-   tells you how tall a building is. Walk in: the lobby lists every floor, and `ll` shows `[FLOORS: n]` once you are inside.
+   to 100 floors, and 41% of them are small, with 3 to 10. <!-- BuildingFactory.groovy:29-52 --> The street list does
+   not show floor counts. Walk in: the lobby lists every floor, and `ll` shows `[FLOORS: n]` once you are inside.
 2. **Take something on every floor.** Any capture counts, including a Hidden Frequency that lands in your lap.
    The building's status line reads `INFUSION_ACTIVE` once you start merging. **Nothing on screen shows which floors
    you have sampled**, so keep count yourself. The lobby's `[CLEARED]` means something else: you have visited every
@@ -276,7 +276,8 @@ This is the game's one real quest, and the manual describes it wrong. Here is th
 
 **What is down there.** Floors count down from -1 and never stop; the building will manufacture layer -100 if you
 keep pressing `d`. <!-- Building.groovy:247-251 --> Floors are called Layers, corridors Arteries, apartments Crypts, rooms
-Shards. On the map every node becomes `☠`. Coherence is relabelled Integrity and drains twice as fast. The ticker starts
+Shards. On the map every node becomes `☠`. Coherence is relabelled Integrity and drains twice as fast. Everything
+you take down there gets the 10% culture bonus, because the whole basement is one culture. The ticker starts
 adding lines like `[VOID] We see you.` about a third of the time. <!-- HUDHeaderComponent.groovy:85-88 --> The objects
 down there come from a special word list of 28 entries that you never see above ground.
 
@@ -449,7 +450,7 @@ Come back after a reload and it is still there.
 
 <div class="warn" markdown="1">
 **The room remembers the name and nothing else.** When you pick the item up again, its frequency is worked out from
-its name, as if you had found it there. An ordinary object comes back the same. A **Keystone** comes back as a plain
+its name, as if you had found it there. An ordinary object taken back from the same room comes back the same. A **Keystone** comes back as a plain
 item that opens nothing. A **hybrid** or a **Hidden Frequency** comes back worth whatever its name spells, a thousand
 or two hertz, instead of the sum or the millions it held. Do not stash any of those. <!-- Room.groovy:207-208, 221-223 -->
 </div>

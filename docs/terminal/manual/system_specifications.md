@@ -34,8 +34,8 @@ The terminal UI is a **Persistent Split-Pane** frame, 130 characters wide.
 ## [DOMAIN DRIVEN DESIGN]
 The codebase is divided into four domains:
 1.  **Core:** The turn loop, input, the command table, persistence, and the event channel.
-2.  **Model:** The location hierarchy — a recursive composite from Universe to Room — with its behaviour. A Floor is a state machine (elevator / corridor); clients ask the Floor, never the state. The model knows nothing of the UI.
-3.  **UI:** Terminal utilities and the bridge components. It observes the model and is never called by it.
+2.  **Model:** The location hierarchy — a recursive composite from Universe to Room — with its behaviour. A Floor is a state machine (elevator / corridor); clients ask the Floor, never the state. The model speaks to the screen only through a formatter handed to it at creation.
+3.  **UI:** Terminal utilities and the bridge components. It observes the model; it is not driven by it.
 4.  **Procgen:** The Locus, Gematria, name generation, the lexicons and themes, and **one factory per location type** behind a single registry — a new kind of place is a new registry entry, not a new branch in old code.
 
 **Domain Events:** The Observer's actions are published, not reported. A capture, a synthesis or a discovery is an event on a single channel; the journal and the Inversion Ritual are listeners, and the HUD ticker simply shows the journal's latest lines. The model never writes to the journal.

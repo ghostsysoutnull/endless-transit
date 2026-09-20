@@ -11,7 +11,7 @@ Before you can beam your consciousness into the Neural Web, your local gateway m
 ## [01_HARDWARE_REQUIREMENTS]
 The Endless Transit engine runs on the Java Virtual Machine (JVM).
 
-1.  **Groovy Engine:** Version **5.x** is required to parse the procedural logic. The substrate is built and verified against Groovy 5.0.
+1.  **Groovy Engine:** Version **5.x**. The substrate is built and verified against Groovy 5.0; older engines are untested.
 2.  **Java Runtime (JDK):** Version **17 or higher** is recommended. Groovy 5 itself declares JDK 11 as its floor; nothing older will hold the link.
 3.  **Terminal Emulator:** Must support **ANSI Escape Sequences** (Color/Styles). 
     *   *Recommended:* iTerm2 (macOS), Windows Terminal (Windows), or Alacritty/Kitty (Linux).
@@ -51,7 +51,7 @@ For high-velocity operations, use the **Vinculum Clinical Interface (VINC)** to 
 `vinc.sh` anchors itself to the repository root, so it may be called from anywhere.
 
 ### **Manual Initialization**
-If you prefer to bypass the scripts, execute the following from the repository root. All three classpath entries are load-bearing: without `src/main/resources` the lexicons and themes are not found, and the link fails on its first frame.
+If you prefer to bypass the scripts, execute the following from the repository root. The `src/main/resources` entry is load-bearing: without it the lexicons and themes are not found, and the link fails on its first frame. (`lib/*` mirrors the launch scripts; the game itself draws nothing from it today.)
 ```bash
 groovy -cp "src/main/groovy:src/main/resources:lib/*" src/main/groovy/com/endlesstransit/Main.groovy
 ```

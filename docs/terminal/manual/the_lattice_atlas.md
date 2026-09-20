@@ -94,7 +94,7 @@ Where a Filament's conduit fails to terminate in matter, it terminates in a **Nu
 *   **Hollow:** A Reach holds one or two Solar Systems where a Sector holds up to seven. Its coordinates read `UNKNOWN` and its path reads `[VOID]`; the web does not know where it is.
 *   **The Echo:** Each Reach holds exactly one **Spectral Echo**, a fragment of 1,000–9,999 Hz with no cultural signature. Issue the `e` directive to scan; each scan raises the signal by 10–39 until it locks at 100, then `c` captures. The Echo is harvested once and never returns.
 *   **The Anchor Effect:** Buildings beneath a Reach are twice as likely to be Landmarks — one in twelve rather than one in twenty-five.
-*   **The Caveat:** The Echo scan is governed by the seed like everything else — by the Reach and by your pulse count when you issue it. Two Observers on the same seed who arrive on the same pulse read the same signal; arrive on a different pulse and the count of scans may differ.
+*   **The Caveat:** The Echo scan is governed by the seed like everything else — by the Reach and by your `PULSE_TRAVERSAL` count when you issue it. Two Observers on the same seed who arrive on the same count read the same signal; arrive on a different count and the number of scans may differ.
 
 ## [BUILDINGS_AND_LANDMARKS]
 A Building's scale is rolled once and never changes.
@@ -172,7 +172,7 @@ Beneath every building lies the **Bedrock**. Through the ritual of **Harmonic In
 *   Apartments become **Crypts**.
 *   Rooms become **Shards**.
 
-In the Substrate, the light is red, the walls are raw concrete, and every node on the map is marked `☠`. The **Abyssal Pressure** doubles the drain on your Integrity: 2 per pulse in the Arteries, Crypts and Shards — which know no Era — and 4 on the Layer itself if the world above was Entropic.
+In the Substrate, the light is red, the walls are raw concrete, and every node on the map is marked `☠`. The **Abyssal Pressure** doubles the drain on your Integrity: 2 per pulse inside the Crypts and Shards — which know no Era — and 4 on the Layer itself, elevator or artery, if the world above was Entropic.
 
 ---
 *Proceed to the [OPERATIONAL_PROTOCOLS]({{ "/terminal/manual/operational_protocols.html" | relative_url }}) to master the mechanics of the link.*

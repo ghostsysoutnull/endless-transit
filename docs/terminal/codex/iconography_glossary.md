@@ -29,7 +29,7 @@ Located in the **Lattice Sparkline** at the top of your bridge.
 ## [NEURAL_MAP_SYMBOLS]
 Two projections share these symbols. The bridge's right pane carries a map from the Universe down to the Street, and yields to telemetry from the Building inward. The `m` directive projects the children of whatever container you stand in, at any depth; inside a cell it returns `SCAN_ERROR`.
 
-*   **The nodes themselves** — Every child is drawn with its own glyph from the list above: a street's map is a field of `⌂`, a system's a scatter of `⊕`. Dim: unvisited. Bright: visited.
+*   **The nodes themselves** — At the Universe and Filament scales the pane is a fixed schematic. From the Sector down, and on every `m` projection, each child is drawn with its own glyph from the list above: a street's map is a field of `⌂`, a system's a scatter of `⊕`. Dim: unvisited. Bright: visited.
 *   `☠` : **ABYSSAL NODE** — A child below a breached Bedrock, whatever its kind.
 *   `▲` : **YOU (THE OBSERVER)** — Plotted on the Filament conduit trace only. Elsewhere it survives in the legend and nowhere on the map.
 *   `■` / `░` : **NODE / VOID** — Legend marks. The legend still names them; the projection draws the glyphs above and leaves empty space empty.
@@ -46,7 +46,7 @@ Used in the **Apartment Aperture Scan**.
 Terms that appear on headers and diagnostic suites.
 
 *   **TECH_ERA** — The planet's Temporal Era, shown on every street header. ENTROPIC doubles the drain.
-*   **RESONANCE** — The local primary Culture, shown beside the Era: the planet's primary, or its secondary inside an Unauthorized Zone. Cells of this Culture amplify captures by 10%.
+*   **RESONANCE** — The local primary Culture, shown beside the Era: the planet's primary, or its secondary inside an Unauthorized Zone. Cells of this Culture amplify captures by 10%. Below the Bedrock the header no longer governs: the Substrate is Abyssal throughout, and every capture there is amplified.
 *   **TRAIT** — The Country's Functional Trait: CEREMONIAL, MILITARY, INDUSTRIAL, AGRICULTURAL, RESEARCH or COMMERCIAL. Selects the four room types of every building in the Country.
 *   **SECTOR MUTATION / ATMOS_SHIFT** — The same Trait, reported on the Country screen and on every floor's diagnostic suite respectively. Reads `STANDARD` above the Country scale.
 *   **STABILITY** — The share of apartments that follow the planet's primary Culture rather than its secondary (75–90%).
