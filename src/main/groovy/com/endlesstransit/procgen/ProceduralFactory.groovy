@@ -14,14 +14,16 @@ import groovy.transform.CompileStatic
  * class ({@link LocationFactory#getType()}). The per-type {@code populate*} delegators were
  * removed in HK-005 and HK-009; {@code populate(Container)} is the only population entry point.
  *
- * Shared services live here: the single {@link ThemeService} and the {@code fmt} formatter,
- * given to the constructor. Factories read both through their back-reference at call time.
+ * Shared services live here: the single {@link ThemeService}, the single {@link NameGenerator}
+ * (HK-022) and the {@code fmt} formatter, given to the constructor. Factories read them through
+ * their back-reference at call time.
  * The facade stamps its identity on every {@link Container} it hands out ({@code factory}), so
  * lazy population dispatches back to the registry that created the location (HK-008).
  */
 @CompileStatic
 class ProceduralFactory {
     ThemeService themeService = new ThemeService()
+    final NameGenerator nameGenerator = new NameGenerator()
     final OutputFormatter fmt
     final RoomFactory roomFactory = new RoomFactory(this)
     final ApartmentFactory apartmentFactory = new ApartmentFactory(this)
