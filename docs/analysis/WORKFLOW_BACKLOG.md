@@ -46,17 +46,6 @@ improvement session is planned before the next phase begins.
 > Recommended order: HK-005 + HK-006 housekeeping session (HK-005 touches `Building`, which Phase 10 also
 > edits), then Phase 10. Next scheduled review: Phase 13, or the next phase after Phase 10 if the plan ends there.
 
-### WF-009 — No gate asks whether new code has the right OO shape
-**Priority:** Medium | **Found:** 2026-09-20 (user question after HK-020: "how can we prevent that new code will not implement sound OO principles?")
-HK-015 shipped `LaunchArgs` as a static function and leaned on a fact with two owners (the command aliases → HK-020); every gate was green and
-only the user's post-merge review caught both. `/grill` check 5 greps for `instanceof` and nothing else about shape; the lint invariants
-(`config/lint/vinc-ruleset.groovy`) cover singletons, `instanceof` on states/factories/events and unseeded `Random` — not static utilities or
-duplicated ownership. **Proposal (plan `tasks/WF_009_PLAN.md`):** (1) every plan with a `src/` change carries a Shape table (kind, owner, the one
-fact it owns, statics and why) — CODEX "Shape Claim Protocol" beside the Coverage Claim Protocol; (2) `/grill` check 5 interrogates it with
-evidence (static with a body, second owner of the fact, type switch, leaning on a known smell) — still six checks; (3) lint rule
-`NoNewStaticLogic` for the mechanical part, allow-list of the 15 files holding today's 76 static methods, ratchet by shrinking the list.
-Not proposed: a post-implementation design review pass (the review the user is doing today, moved onto an agent — latest and most expensive).
-
 ### WF-006 — `MethodSize` measures lines; a line break can satisfy it
 **Priority:** Low | **Found:** 2026-09-16 (HK-018 → HK-013 slice 1; user question: "is this good computer science?")
 The 50-line rule found real multi-job methods (all nine baseline entries), but raw length is a proxy: it was dodged once with a line join
@@ -69,6 +58,14 @@ replace. Until then: `MethodSize` stays a merge gate, with the "extract or re-ba
 ---
 
 ## 🟢 CLOSED
+
+### WF-009 — No gate asks whether new code has the right OO shape
+**Priority:** Medium | **Found:** 2026-09-20 (user question after HK-020: "how can we prevent that new code will not implement sound OO principles?")
+HK-015 shipped a static function and a two-owner fact through every green gate; only the user's post-merge review caught them.
+**Resolution (user decision: principles, not the two smells):** CODEX § 4 "OO Principles" — eight rows with the wave that taught each, six with a
+check and its evidence; Shape Claim Protocol (a Shape table per plan); `/grill` check 5 asks the six; lint `NoNewStaticLogic` (non-private static
+with a body; 16-file allow-list with reasons, shrink-only). Paper test: three old plans fail as written. Not taken: a post-implementation review pass.
+Record: `tasks/completed/WF_009_PLAN.md`. **Closed:** 2026-09-20 | chronicle `0x3547535`
 
 ### WF-008 — `/close-wave` applies ten rows to every wave and makes the handover grow
 **Priority:** Medium | **Found:** 2026-09-17 (user review of WF-007: "too token hungry … a much larger scope than it should")

@@ -10,6 +10,12 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-022 — `NameGenerator` is eleven static generators
+**Found:** 2026-09-20, WF-009 allow-list review — the one entry on `NoNewStaticLogic`'s list that is a real smell, not tooling or formatting.
+Every `generate*Name(… LocusSeed …)` is a non-private static reached from the factories; the building lexicon is a `static final Map` loaded at class init (`:64`).
+**Fix design (needs a plan + Shape table):** one `NameGenerator` per `ProceduralFactory`, reached through `registry` (the HK-008 move);
+remove the file from the allow-list in the same commit. Pins already there: `ProcgenSnapshotTest`, `ProcgenVarietyContractTest`, `ThemeResourceCoverageTest` reference the generators (read their assertions before claiming coverage).
+
 ### HK-020 — Global command aliases live in two places
 **CLOSED 2026-09-20** — branch `housekeeping/hk-020-global-commands`, commits `46fee07` (plan), `216545c` (step-0 pins), `3119693` (the change).
 Plan + record: `tasks/completed/HK_020_PLAN.md`. `GlobalCommands` (keys + aliases + per-key case rule) built by `TurnProcessor`, asked by `dispatch`;
