@@ -2,6 +2,7 @@
 
 | LOG_ID | DATE | SUMMARY |
 | :--- | :--- | :--- |
+| **0x0e7b6db** | 2026-09-20 | **[HK_020_GLOBAL_COMMANDS]** | `GlobalCommands` owns keys, aliases and per-key case rule; `TurnProcessor.dispatch` asks it, `normalize` keeps EOF/empty only. No player-visible change; `processInput` gap pinned RED first. 10 pins. **HK-020 CLOSED.** Suite: 282/282/0/0. |
 | **0xa47cdb6** | 2026-09-17 | **[HK_015_PLAYER_BUGS]** | Five guide-confessed bugs fixed, one commit each, 15 pins: room roll once per step (saved), `m 1 1` pays nothing, `--seed` works, `q` quits, echo scan is `e` and seeded; lint forbids unseeded `Random` in the world. HK-020, HK-021 logged. |
 | **0x6aaede9** | 2026-09-17 | **[INDEX_DIET]** | This index is no longer loaded into every session (~3,100 words); `CLAUDE.md` points to it. CODEX: a new lesson is the rule plus a wave pointer. Lessons diet deferred. |
 | **0x4f767c3** | 2026-09-17 | **[WF_008_CLOSE_WAVE_TIERS]** | User review: the close-out cost as much as the work. `/close-wave` now picks Trivial / Light / Full from the diff, may only add rows, one record per wave; recovery prompt 2,960 → 755 words, capped by `--docs` D4; finished OOA plan no longer loaded every session. **WF-008 CLOSED.** |
