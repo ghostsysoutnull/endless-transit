@@ -160,4 +160,26 @@ class AbyssalRestoreContractTest {
         assertEquals(building.maxFloors.toString(), lastIndexOf(first), "Layer -1 takes the first index after the last floor")
         assertPlayersSaveUntouched()
     }
+
+    // R5: a readable save whose location cannot be found is refused whole, like a corrupt one.
+    @Test
+    void aSaveWhoseLocationCannotBeFoundIsRefusedWithoutAnExceptionAndLeavesTheGameUnchanged() {
+        File scratch = File.createTempFile("endless-transit-", ".trace")
+        try {
+            scratch.text = '{ "masterLocus": 5, "timestamp": 0, "player": { "coherence": 50, "stepCount": 1, "currentLIP": "0.99.99", "footprints": [], "visitedPaths": [], "inventory": [] }, "mutations": {} }'
+            Game game = new Game(SEED)
+            game.saveFile = scratch.path
+            Player before = game.player
+            Location where = game.currentLocation
+
+            assertDoesNotThrow({ game.restoreSession() } as org.junit.jupiter.api.function.Executable)
+
+            assertEquals(SEED, game.masterLocus.value, "An unresolvable save must not change the seed")
+            assertSame(before, game.player, "An unresolvable save must not replace the player")
+            assertSame(where, game.currentLocation, "An unresolvable save must not move the player")
+        } finally {
+            scratch.delete()
+        }
+        assertPlayersSaveUntouched()
+    }
 }
