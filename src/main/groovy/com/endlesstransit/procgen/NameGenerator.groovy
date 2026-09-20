@@ -6,26 +6,26 @@ import groovy.transform.CompileStatic
 
 /**
  * NameGenerator: Strictly deterministic name synthesis for the Vinculum engine.
- * Every method requires an explicit LocusSeed to ensure cross-session stability.
+ * Every method requires an explicit LocusSeed; one instance per ProceduralFactory, its owner (HK-022).
  */
 @CompileStatic
 class NameGenerator {
 
-    static String generateSolarSystemName(LocusSeed locus) {
+    String generateSolarSystemName(LocusSeed locus) {
         Random r = locus.nextRandom()
         def prefixes = ["Alpha", "Proxima", "Sirius", "Vega", "Rigel", "Antares", "Betelgeuse", "Altair", "Deneb", "Polaris", "Zeta", "Epsilon", "Omicron", "Sigma", "Tau", "Lambda"]
         def suffixes = ["Prime", "Minor", "Major", "Borealis", "Australis", "Centauri", "Ceti", "Eridani", "Groombridge", "Kapteyn", "Luyten"]
         return "${prefixes[r.nextInt(prefixes.size())]} ${suffixes[r.nextInt(suffixes.size())]}"
     }
 
-    static String generatePlanetName(LocusSeed locus) {
+    String generatePlanetName(LocusSeed locus) {
         Random r = locus.nextRandom()
         def parts1 = ["Ter", "Neo", "Xen", "Kry", "Vex", "Zion", "Aura", "Nova", "Eden", "Gaia", "Hydra", "Nyx", "Orion", "Phoe", "Rhea", "Styx"]
         def parts2 = ["ra", "on", "os", "is", "us", "ia", "ea", "ax", "ox", "un", "ar", "el", "im", "um"]
         return "${parts1[r.nextInt(parts1.size())]}${parts2[r.nextInt(parts2.size())]}"
     }
 
-    static String generateCountryName(LocusSeed locus) {
+    String generateCountryName(LocusSeed locus) {
         Random r = locus.nextRandom()
         def prefixes = ["The United", "Great", "New", "Old", "Western", "Eastern", "Northern", "Southern", "Imperial", "Democratic", "Holy", "Free"]
         def cores = ["Arid", "Frost", "Verdant", "Iron", "Storm", "Shadow", "Light", "Dust", "Glacier", "Jungle", "Desert", "Ocean"]
@@ -33,37 +33,37 @@ class NameGenerator {
         return "${prefixes[r.nextInt(prefixes.size())]} ${cores[r.nextInt(cores.size())]} ${suffixes[r.nextInt(suffixes.size())]}"
     }
 
-    static String generateCityName(LocusSeed locus) {
+    String generateCityName(LocusSeed locus) {
         Random r = locus.nextRandom()
         def parts1 = ["Silver", "Gold", "Black", "White", "Iron", "Steel", "Neon", "Cyber", "Steam", "Clock", "Void", "Star", "Cloud", "Rain"]
         def parts2 = ["town", "city", "burg", "ville", "port", "gate", "haven", "peak", "spire", "bridge", "fall", "cross", "well", "ford"]
         return "${parts1[r.nextInt(parts1.size())]}${parts2[r.nextInt(parts2.size())]}"
     }
 
-    static String generateStreetName(LocusSeed locus) {
+    String generateStreetName(LocusSeed locus) {
         Random r = locus.nextRandom()
         def adjectives = ["High", "Low", "Main", "Grand", "Broad", "Dark", "Bright", "Old", "New", "Quiet", "Busy", "Long", "Short", "Hidden"]
         def nouns = ["Way", "Road", "Street", "Avenue", "Lane", "Drive", "Path", "Walk", "Boulevard", "Terrace", "Row", "Circle", "Loop", "Alley"]
         return "${adjectives[r.nextInt(adjectives.size())]} ${nouns[r.nextInt(nouns.size())]}"
     }
 
-    static String generateFilamentName(LocusSeed locus) {
+    String generateFilamentName(LocusSeed locus) {
         Random r = locus.nextRandom()
         def Greek = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda", "Mu"]
         def types = ["Strand", "Thread", "Web", "Link", "Sync", "Stream", "Flow", "Pulse"]
         return "${Greek[r.nextInt(Greek.size())]}-${r.nextInt(999)}-${types[r.nextInt(types.size())]}"
     }
 
-    static String generateSectorName(LocusSeed locus) {
+    String generateSectorName(LocusSeed locus) {
         Random r = locus.nextRandom()
         def descriptors = ["Outer", "Inner", "Core", "Rim", "Void", "Prime", "Secondary", "Tertiary", "Quaternary"]
         def nouns = ["Sector", "Quadrant", "Grid", "Matrix", "Zone", "Region", "Reach", "Expanse"]
         return "${descriptors[r.nextInt(descriptors.size())]} ${nouns[r.nextInt(nouns.size())]} ${r.nextInt(99)}"
     }
 
-    static final Map buildingLexicon = loadBuildingLexicon()
+    final Map buildingLexicon = loadBuildingLexicon()
 
-    private static Map loadBuildingLexicon() {
+    private Map loadBuildingLexicon() {
         Map lexicon = new LinkedHashMap()
         // HK-016: cultures enumerated by names/buildings/index.txt (Phase 2a shape), not a literal list.
         for (String culture in loadLexiconFile("/names/buildings/index.txt")) {
@@ -75,7 +75,7 @@ class NameGenerator {
         return lexicon
     }
 
-    private static List<String> loadLexiconFile(String resourcePath) {
+    private List<String> loadLexiconFile(String resourcePath) {
         InputStream stream = NameGenerator.class.getResourceAsStream(resourcePath)
         if (!stream) return []
         return stream.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
@@ -103,7 +103,7 @@ class NameGenerator {
      * HK-016: a culture's lexicon, or monolith's with a visible warning. Every culture in
      * cultures/index.txt has a lexicon (ThemeResourceCoverageTest), so this never fires in production.
      */
-    private static Map lexiconFor(String culture) {
+    private Map lexiconFor(String culture) {
         Map lexicon = (Map) buildingLexicon[culture]
         if (lexicon == null) {
             Terminal.println "[THEME_WARN] no building lexicon for culture '${culture}' — using monolith's"
@@ -113,7 +113,7 @@ class NameGenerator {
     }
 
     /** The adjectives a culture names its buildings and cells with (HK-016 step 2: dealt per apartment). */
-    static List<String> adjectivesFor(String culture) {
+    List<String> adjectivesFor(String culture) {
         return (List<String>) lexiconFor(culture).adj
     }
 
@@ -124,7 +124,7 @@ class NameGenerator {
      * draw, so door traces (CorridorFactory) are unchanged. An apartment passes a dealt adjective so no
      * two of its cells share a name; a null adjective draws one from the lexicon.
      */
-    static Map<String, Object> generateRoomName(String culture, String trait, LocusSeed locus, String adjective = null) {
+    Map<String, Object> generateRoomName(String culture, String trait, LocusSeed locus, String adjective = null) {
         Random r = locus.nextRandom()
         Map lexicon = lexiconFor(culture)
 
@@ -147,7 +147,7 @@ class NameGenerator {
         return [name: name, category: category]
     }
 
-    static Map<String, Object> generateBuildingName(String culture, int floors, LocusSeed locus, int depth, boolean isNullZone, boolean isAbyssal) {
+    Map<String, Object> generateBuildingName(String culture, int floors, LocusSeed locus, int depth, boolean isNullZone, boolean isAbyssal) {
         Random r = locus.nextRandom()
         double landmarkProb = 0.03
         if (depth > 5) landmarkProb += (depth - 5) * 0.005
@@ -196,12 +196,5 @@ class NameGenerator {
         }
 
         return [name: name, isLandmark: false]
-    }
-
-    static String generateContainerName(LocusSeed locus) {
-        Random r = locus.nextRandom()
-        def prefixes = ["Steel", "Quantum", "Hidden", "Old", "Digital", "Mechanical", "Void", "Sealed"]
-        def types = ["Crate", "Locker", "Chest", "Box", "Safe", "Pod", "Vault", "Terminal"]
-        return "${prefixes[r.nextInt(prefixes.size())]} ${types[r.nextInt(types.size())]}"
     }
 }

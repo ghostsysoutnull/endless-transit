@@ -93,7 +93,7 @@ class ProcgenVarietyContractTest {
     void roomName_isCultureAdjectivePlusCategory_uniqueInsideApartment() {
         int rooms = 0
         sampleApartments().each { Apartment a ->
-            List<String> adjectives = NameGenerator.adjectivesFor(a.culture)
+            List<String> adjectives = factory.nameGenerator.adjectivesFor(a.culture)
             List<String> names = a.rooms*.roomName
             // Unique unless a category was dealt more rooms than the culture has adjectives (8 today; step 3 grows them).
             boolean canBeUnique = a.rooms.countBy { Room r -> r.roomType }.values().every { int n -> n <= adjectives.size() }
