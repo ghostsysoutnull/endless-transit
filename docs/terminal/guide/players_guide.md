@@ -75,7 +75,7 @@ spectrogram once you are inside a building. At the bottom is the menu of things 
    taken automatically. <!-- Room.groovy:163-179 -->
 7. Press `f` to walk to the next room, `b` to go back, `l` from the first room to return to the corridor.
 
-Congratulations, you have played the game. Everything below is how to play it well.
+Congratulations, you have played the game. Everything below is how to play it well. Short of time? The [cheat sheet]({{ "/terminal/guide/cheat_sheet.html" | relative_url }}) is one screen.
 
 ## Every key
 

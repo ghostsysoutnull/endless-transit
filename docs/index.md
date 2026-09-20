@@ -14,6 +14,7 @@ You are standing at the gateway to an infinite procedural lattice. This interfac
 Select a module from the Comms Array above or use the initial link below:
 
 *   **[NEW_OPERATOR]**: New to the game? Start with the plain-language [PLAYER'S_GUIDE]({{ "/terminal/guide/players_guide.html" | relative_url }})
+*   **[QUICK_REFERENCE]**: Everything on one screen: the [CHEAT_SHEET]({{ "/terminal/guide/cheat_sheet.html" | relative_url }})
 *   **[LINK_SETUP]**: Initialize your gateway with the [INSTALLATION_GUIDE]({{ "/terminal/manual/installation_guide.html" | relative_url }})
 *   **[LINK_INITIATION]**: Begin with [SYSTEM_INITIALIZATION]({{ "/terminal/manual/system_initialization.html" | relative_url }})
 *   **[LATTICE_GEOGRAPHY]**: Explore the [LATTICE_ATLAS]({{ "/terminal/manual/the_lattice_atlas.html" | relative_url }})
@@ -27,4 +28,4 @@ Select a module from the Comms Array above or use the initial link below:
 **LATENCY**: 0.04ms
 **SYNC**: READY
 
-*Last updated at 2026-09-20 20:14 UTC*
+*Last updated at 2026-09-20 20:45 UTC*
