@@ -115,6 +115,19 @@ memory (WF-002), so every principle either has a question with evidence or is st
 `/close-wave`: **Light** floor (no `src/`) + **Chronicle** add-on (law and tooling changed). Backlog WF-009 → CLOSED, plan
 → `tasks/completed/`, recovery prompt (lint files count unchanged; rule count 6 → 7 if the prompt states it — check).
 
+## Execution record
+
+**c1 (law) — paper test of the new check 5, run against the old plans as written:**
+- `HK_015_PLAN.md:63` — *"`static Long seedFrom(String[] args)` is a pure function — no state, not a singleton"*. Principle 2: a
+  non-private static whose body encodes what `--seed` means is a static holding a rule; "pure function" is not a listed reason →
+  **FAIL** (the old lint, `:125`, cleared it; the user's review, c5b, was the only catch).
+- `HK_015_PLAN.md:32` — the fix adds `q` to `normalize`'s list of `i, sync, map, m, lattice, glitch, help, quit`. Principle 1: grep the
+  literal `"quit"` across `src/main` → `TurnProcessor.initializeGlobalCommands` holds the same keys → second owner not removed in the
+  wave → **FAIL** (became HK-020).
+- `HK_018_PLAN.md:35,37` — *`it.name.contains(bldg.name)`*, Keystone named `"${bldg.name} Keystone"`. Principle 6: a domain identity
+  carried by a display string, lookup by name → **FAIL** (the plan's own c3 fixed it by LIP; the check would have asked at step 0).
+- Diet: `.claude/CODEX.md` +19 lines (table 11 + protocol 5 + heading 3); `grill.md` +2 lines, check count still six.
+
 ## Gates
 `./vinc.sh --lint --agent` after step 2 → `LINT=PASS`, `config/lint/baseline.xml` untouched (`git diff` empty); suite
 unchanged (no `src/` change, run once at close-out); `--docs` at close-out. Per-commit reversion: step 1 and step 2 revert alone.
