@@ -46,20 +46,12 @@ class InputHandler {
     }
 
     /**
-     * Normalizes input into standard game commands or keys.
+     * The two rules that are not commands: end of input quits, an empty line repeats the last choice.
+     * Everything else passes through as typed; global words, aliases and case are GlobalCommands' (HK-020).
      */
     String normalize(String input, String lastChoice) {
         if (input == null) return "quit"
         if (input.isEmpty()) return lastChoice ?: "-2"
-
-        // Global Commands
-        String lower = input.toLowerCase()
-        if (lower in ["i", "sync", "map", "m", "lattice", "glitch", "help", "quit", "q"]) {
-            if (lower == "q") return "quit"
-            return lower == "m" ? "map" : lower
-        }
-        if (lower == "?") return "help"
-
         return input
     }
 
