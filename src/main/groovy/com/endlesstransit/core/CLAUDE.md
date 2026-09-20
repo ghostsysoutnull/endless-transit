@@ -1,7 +1,5 @@
 # Domain Invariants: Engine & Core
 
-> Gemini equivalent: `GEMINI.md` (same directory)
-
 **ARCHITECTURAL CONSTRAINTS**
 - **Decomposed Facade:** `Game.groovy` is a thin facade. It MUST delegate all orchestration to specialized services.
 - **Incremental Extraction**: Decomposing the facade must be done one service at a time (max 5 files/methods per refactor).
@@ -29,4 +27,4 @@
 - [ ] **Survival Mechanics**: Coherence drain is verified.
 
 ## 🏺 Localized Lessons
-- **Core Domain Lessons**: @tasks/lessons/core.md
+- **Core Domain Lessons**: @../../../../../../tasks/lessons/core.md

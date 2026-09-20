@@ -1,7 +1,5 @@
 # THE CODEX: Operating Law
 
-> NOTE: Gemini equivalent for reference: `.gemini/GEMINI.custom.md` (no sync required during refactoring).
-
 This file defines the immutable behavioral mandates and workflow orchestration for the Vinculum Architect.
 
 ---
@@ -126,5 +124,5 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ## 🏛️ Safety Mandates (The Shield)
 Read and internalize the mandates in:
-- **@tasks/lessons/POST_MORTEM_2026_03_11.md** — Structural Collapse (skeleton class incident)
-- **@tasks/lessons/POST_MORTEM_2026_03_06.md** — Mandatory Safe-Accessors (lazy-loading law)
+- **@../tasks/lessons/POST_MORTEM_2026_03_11.md** — Structural Collapse (skeleton class incident)
+- **@../tasks/lessons/POST_MORTEM_2026_03_06.md** — Mandatory Safe-Accessors (lazy-loading law)

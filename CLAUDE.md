@@ -1,8 +1,5 @@
 # Endless Transit: The Vinculum Neural Interface (Nexus)
 
-> NOTE: This file coexists with `GEMINI.md`. Both agents share the same `tasks/`, `journals/`, and source domains.
-> Gemini equivalent → `GEMINI.md` + `.gemini/GEMINI.custom.md`
-
 This is the central router for the Endless Transit substrate. All behavioral laws are defined in the Codex.
 
 ## ⚖️ THE CODEX: Operating Law
@@ -17,10 +14,10 @@ Not included — read on demand. Current state: `tasks/RECOVERY_PROMPT.md`. Hist
 ---
 
 ## 🧩 System Domains (The Invariants)
-- **Engine/Core**: @src/main/groovy/com/endlesstransit/core/CLAUDE.md
-- **World/Model**: @src/main/groovy/com/endlesstransit/model/CLAUDE.md
-- **Interface/UI**: @src/main/groovy/com/endlesstransit/ui/CLAUDE.md
-- **Entropy/ProcGen**: @src/main/groovy/com/endlesstransit/procgen/CLAUDE.md
+- **Engine/Core**: `src/main/groovy/com/endlesstransit/core/CLAUDE.md`
+- **World/Model**: `src/main/groovy/com/endlesstransit/model/CLAUDE.md`
+- **Interface/UI**: `src/main/groovy/com/endlesstransit/ui/CLAUDE.md`
+- **Entropy/ProcGen**: `src/main/groovy/com/endlesstransit/procgen/CLAUDE.md`
 
 ---
 
@@ -28,7 +25,7 @@ Not included — read on demand. Current state: `tasks/RECOVERY_PROMPT.md`. Hist
 - **Active Task:** none — see `tasks/todo.md`. The OOA refactor plan (all phases complete) is `docs/analysis/OOA_REFACTOR_PLAN.md` — read on demand, not included.
 
 - **📜 Chronicles & Lore:** `journals/CHRONICLE_INDEX.md` → `journals/LOG_*` (read on demand)
-- **Backlog:** @tasks/backlog/
+- **Backlog:** `tasks/backlog/`
 
 ---
 
@@ -53,14 +50,5 @@ Not included — read on demand. Current state: `tasks/RECOVERY_PROMPT.md`. Hist
 
 ## 🏛️ Development Conventions
 - **Infrastructure Lessons**: @tasks/lessons/infrastructure.md
-- **Core Domain Lessons**: @tasks/lessons/core.md
-- **Model Domain Lessons**: @tasks/lessons/model.md
-- **Expert OO Standards**: Immutability, Design Patterns, and `@CompileStatic` logic.
-
----
-
-## 📍 Critical Entry Points
-- **Entry**: `src/main/groovy/com/endlesstransit/Main.groovy`
-- **Facade Loop**: `src/main/groovy/com/endlesstransit/core/Game.groovy`
-- **Entropy Source**: `src/main/groovy/com/endlesstransit/procgen/LocusSeed.groovy`
-- **Output Bridge**: `src/main/groovy/com/endlesstransit/ui/TerminalAdapter.groovy`
+- **Core Domain Lessons**: `tasks/lessons/core.md` (loaded by the core domain file)
+- **Model Domain Lessons**: `tasks/lessons/model.md` (loaded by the model domain file)

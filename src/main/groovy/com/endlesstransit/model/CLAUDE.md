@@ -1,7 +1,5 @@
 # Domain Invariants: Structural Hierarchy
 
-> Gemini equivalent: `GEMINI.md` (same directory)
-
 **ARCHITECTURAL CONSTRAINTS**
 - **No Anemic Models:** Classes MUST encapsulate both data and behavior.
 - **Behavioral Integrity**: Never strip narrative methods or unique UI logic during refactoring.
@@ -28,4 +26,4 @@
 - [ ] **Property Consistency**: Name, path, and vibes are stable.
 
 ## 🧬 Localized Lessons
-- **Model Domain Lessons**: @tasks/lessons/model.md
+- **Model Domain Lessons**: @../../../../../../tasks/lessons/model.md

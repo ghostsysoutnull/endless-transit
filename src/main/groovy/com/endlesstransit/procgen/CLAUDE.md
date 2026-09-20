@@ -1,7 +1,5 @@
 # Domain Invariants: Entropy & Synthesis
 
-> Gemini equivalent: `GEMINI.md` (same directory)
-
 **ARCHITECTURAL CONSTRAINTS**
 - **Strict Determinism:** Every generator MUST be stateless. No static `Random` or `ThreadLocalRandom`.
 - **Branch Integrity:** Child seeds MUST be derived using `locus.branch(index)`.
@@ -25,4 +23,4 @@
 - [ ] **Name Uniqueness**: Names are sufficiently varied.
 
 ## 🏺 Localized Lessons
-- **Entropy Domain Lessons**: @tasks/lessons/procgen.md
+- **Entropy Domain Lessons**: @../../../../../../tasks/lessons/procgen.md
