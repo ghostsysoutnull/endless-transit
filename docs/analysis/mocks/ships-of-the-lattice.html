@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<!-- Concept mock, version 1, 2026-09-20. Not game code. Explained in docs/analysis/SHIPS_CONCEPT.md.
+     Open this file in a browser; it needs no server. The font loads from Google Fonts when online and falls back offline. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Ships of the Lattice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#080c0d; --panel:#0e1516; --panel2:#121c1d; --rule:#1f3435; --rule-hi:#2f5052;
+  --text:#c8d6d2; --dim:#6c8581; --faint:#3f5653;
+  --cy:#55d6d6; --yl:#e6c35c; --rd:#e4665c; --gn:#71d083; --mg:#c987dd; --rs:#d0693f; --hv:#9fb0a8;
+  --frame:var(--cy);
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;
+  padding-inline:16px;padding-block:20px 40px}
+.wrap{max-width:1240px;margin-inline:auto;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.top h1{font-family:var(--mono);font-size:17px;font-weight:700;letter-spacing:.04em;margin:0;color:var(--cy);text-wrap:balance}
+.top p{margin:0;color:var(--dim);max-width:70ch}
+.cols{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.term{flex:1 1 560px;min-width:0;font-family:var(--mono);font-size:13px;line-height:1.45;
+  background:var(--panel);border:1px solid var(--frame);padding:12px;display:flex;flex-direction:column;gap:10px}
+.term[data-frame="rust"]{--frame:var(--rs)}
+.term[data-frame="rustdark"]{--frame:#6b3a26}
+.term[data-frame="hive"]{--frame:var(--hv)}
+.term[data-frame="dead"]{--frame:var(--rd)}
+aside{flex:1 1 300px;max-width:100%;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (min-width:980px){aside{max-width:340px}}
+
+.hud{border:1px solid var(--frame);padding:8px 10px;display:flex;flex-direction:column;gap:3px}
+.hud .spark{color:var(--dim);overflow-wrap:anywhere}
+.hud .spark b{color:var(--frame);font-weight:700}
+.hud .stats{display:flex;flex-wrap:wrap;gap:2px 18px;font-variant-numeric:tabular-nums}
+.k{color:var(--dim)}
+.panes{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:10px}
+@media (max-width:640px){.panes{grid-template-columns:minmax(0,1fr)}}
+.pane{border:1px solid var(--rule);padding:8px 10px;min-width:0}
+.pane h2{font-size:13px;font-weight:700;margin:0 0 4px;color:var(--frame);overflow-wrap:anywhere}
+.tags{display:flex;flex-wrap:wrap;gap:2px 10px;margin-bottom:6px}
+.desc p{margin:0 0 6px;max-width:68ch}
+.rows{margin-top:6px;display:flex;flex-direction:column;gap:1px}
+.map{overflow-x:auto}
+.map pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.35;color:var(--dim)}
+.map .cap{color:var(--dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.compass{color:var(--faint);letter-spacing:.3em}
+.compass b{color:var(--text)}
+.msgs{border-left:2px solid var(--rule-hi);padding-left:10px;display:flex;flex-direction:column;gap:2px}
+.msgs:empty{display:none}
+.menu{display:flex;flex-direction:column;gap:2px;border-top:1px dashed var(--rule);padding-top:8px}
+.menu .cap{color:var(--dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.opt{all:unset;font:inherit;cursor:pointer;display:block;padding:1px 4px;color:var(--text);overflow-wrap:anywhere}
+.opt:hover{background:var(--panel2)}
+.opt:focus-visible,.cmd:focus-visible,select:focus-visible,button:focus-visible,input:focus-visible{outline:1px solid var(--yl);outline-offset:1px}
+.opt .key{color:var(--yl);font-weight:700}
+.line{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;border-top:1px solid var(--rule);padding-top:8px}
+.line label{color:var(--dim)}
+.cmd{flex:1 1 120px;min-width:0;background:var(--ground);border:1px solid var(--rule-hi);color:var(--text);
+  font:inherit;padding:5px 8px;caret-color:var(--yl)}
+.go{font:inherit;background:var(--panel2);color:var(--yl);border:1px solid var(--rule-hi);padding:5px 10px;cursor:pointer}
+.hint{color:var(--faint);font-size:11.5px}
+
+.cy{color:var(--cy)} .yl{color:var(--yl)} .rd{color:var(--rd)} .gn{color:var(--gn)} .mg{color:var(--mg)}
+.rs{color:var(--rs)} .hv{color:var(--hv)} .dim{color:var(--dim)} .faint{color:var(--faint)} .b{font-weight:700}
+
+.box{background:var(--panel);border:1px solid var(--rule);padding:12px;display:flex;flex-direction:column;gap:10px}
+.box h3{margin:0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.ctl{display:flex;flex-direction:column;gap:3px}
+.ctl label{font-size:12.5px;color:var(--text)}
+.ctl small{color:var(--dim);font-size:11.5px}
+select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);border:1px solid var(--rule-hi);padding:4px 6px;max-width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btns button{font-family:var(--mono);font-size:12px;background:var(--panel2);color:var(--text);border:1px solid var(--rule-hi);padding:5px 10px;cursor:pointer}
+.ladder{font-family:var(--mono);font-size:12px;display:flex;flex-direction:column;gap:1px}
+.ladder .r{display:grid;grid-template-columns:2.2em 1.4em minmax(0,1fr) auto;gap:6px;color:var(--dim)}
+.ladder .r.you{color:var(--text)}
+.ladder .r span:nth-child(3){overflow-wrap:anywhere}
+.note{font-size:13px;color:var(--text)}
+.note p{margin:0 0 6px;max-width:60ch}
+.note .q{color:var(--yl);font-family:var(--mono);font-size:11.5px;letter-spacing:.06em}
+.metrics{font-family:var(--mono);font-size:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;font-variant-numeric:tabular-nums}
+.metrics dt{color:var(--dim)} .metrics dd{margin:0;text-align:right}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <h1>SHIPS OF THE LATTICE</h1>
+    <p>A concept mock for Endless Transit. Nothing here is game code. Type a key and press Enter; every prompt costs Coherence, as in the game.</p>
+  </div>
+  <div class="cols">
+    <section class="term" id="term" data-frame="world" aria-label="Terminal">
+      <div id="screen" aria-live="polite"></div>
+      <form class="line" id="form" autocomplete="off">
+        <label for="cmd" id="plabel">[Last: -] Enter choice:</label>
+        <input class="cmd" id="cmd" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="hint">
+        <button class="go" type="submit">Enter</button>
+      </form>
+      <div class="hint" id="hint">Enter alone repeats your last move. Menu lines are clickable. Anywhere: i buffer · s scan · ll lattice · help</div>
+    </section>
+
+    <aside>
+      <div class="box">
+        <h3>Where ships show</h3>
+        <div class="ladder" id="ladder"></div>
+        <div class="ctl">
+          <label for="oHauler">The hauler sits at</label>
+          <select id="oHauler">
+            <option value="nullreach">Level 02 · adrift in Null Reach 886</option>
+            <option value="system" selected>Level 03 · in orbit, Vega Borealis</option>
+            <option value="planet">Level 04 · low orbit over Hydraia</option>
+            <option value="street">Level 07 · grounded on Busy Terrace</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <label for="oHive">The hive</label>
+          <select id="oHive">
+            <option value="off">does not exist</option>
+            <option value="system" selected>Level 03 · arrives at Vega Borealis</option>
+            <option value="filament">Level 01 · in transit on the filament</option>
+          </select>
+          <small>It is not there at the start. It arrives after 30 prompts, or when you wake the hauler.</small>
+        </div>
+        <div class="ctl">
+          <label for="oStart">You start at</label>
+          <select id="oStart">
+            <option value="street" selected>Level 07 · the street, as in the game</option>
+            <option value="universe">Level 00 · the universe root</option>
+          </select>
+        </div>
+        <small class="dim">Changing any of these three restarts the scenario.</small>
+      </div>
+
+      <div class="box">
+        <h3>Open questions, as switches</h3>
+        <div class="ctl">
+          <label for="oExit">Leaving the ship</label>
+          <select id="oExit">
+            <option value="airlock" selected>only through the airlock</option>
+            <option value="anywhere">from any deck, like a building</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <label for="oDark">Explored twice</label>
+          <select id="oDark">
+            <option value="on" selected>dark first, lit after the reactor wakes</option>
+            <option value="off">one state, lit from the start (restarts)</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <label for="oDrain">Coherence per prompt</label>
+          <select id="oDrain">
+            <option value="0">0 · no pressure</option>
+            <option value="1" selected>1 · as in the game</option>
+            <option value="2">2 · as in an entropic era</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <label for="oSignal">Hidden Frequency as a beacon</label>
+          <select id="oSignal">
+            <option value="on" selected>on · the HUD gives a bearing</option>
+            <option value="off">off · find it by scanning</option>
+          </select>
+        </div>
+        <div class="btns">
+          <button type="button" id="bRestart">Restart scenario</button>
+          <button type="button" id="bRefill">Refill Coherence</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>What this screen tests</h3>
+        <div class="note" id="note"></div>
+      </div>
+
+      <div class="box">
+        <h3>Cost so far</h3>
+        <dl class="metrics" id="metrics"></dl>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const c = (cls, s) => '<span class="'+cls+'">'+esc(s)+'</span>';
+const pad2 = n => (n < 10 ? '0' : '') + n;
+
+/* ---------- the scripted world: levels 00 to 07 ---------- */
+const KIND = {
+  universe:{icon:'∞', level:0, verb:'Synchronize with'},
+  filament:{icon:'»', level:1, verb:'Pulse to'},
+  sector:{icon:'○', level:2, verb:'Transition to'},
+  nullreach:{icon:'○', level:2, verb:'Detect faint signal:'},
+  system:{icon:'☼', level:3, verb:'Land on'},
+  planet:{icon:'⊕', level:4, verb:'Visit'},
+  country:{icon:'⬚', level:5, verb:'Travel to'},
+  city:{icon:'▦', level:6, verb:'Go to'},
+  street:{icon:'═', level:7, verb:'Enter'},
+  building:{icon:'⌂', level:8, verb:''}
+};
+const W = {};
+function node(id, kind, name, parent, x){
+  W[id] = Object.assign({id:id, kind:kind, name:name, parent:parent, children:[]}, x || {});
+  if (parent) W[parent].children.push(id);
+}
+node('U','universe','The Endless Universe',null,{desc:'The Unimatrix. The origin of all seeds. Everything else is below you.'});
+node('f1','filament','Mu-993-Sync','U',{desc:'A high-bandwidth conduit from the Core to the Rim. Four nodes hang from it; one of them is hollow.'});
+node('f2','filament','Theta-41-Thread','U',{stub:1});
+node('f3','filament','Kappa-207-Web','U',{stub:1});
+node('sec1','sector','Core Matrix 17','f1',{desc:'A dense cluster of matter and data adrift in the void. Three gravitational wells.'});
+node('nr','nullreach','Null Reach 886','f1',{label:'VOID_REACH 886',desc:'The hollow that replaced a sector. Thin, cold, one star left. The map here is mostly your own noise.'});
+node('sec2','sector','Rim Expanse 4','f1',{stub:1});
+node('sec3','sector','Outer Grid 52','f1',{stub:1});
+node('sys1','system','Vega Borealis','sec1',{desc:'A white star anchoring three planetary nodes. Beyond the last planet’s track there is room for things that are not planets.'});
+node('sys2','system','Omicron Luyten','sec1',{desc:'A dim red well with two worlds. Nothing here knows your name yet.'});
+node('sys3','system','Rigel Ceti','sec1',{stub:1});
+node('sys4','system','Tau Kapteyn','nr',{desc:'The reach’s only star. One planet, barely held.'});
+node('p1','planet','Hydraia','sys1',{tags:['[CULTURE: MONOLITH / rust]','[ERA: ANALOG]'],desc:'A monolith world in its analog era: slab cities, dial-faced instruments, long shadows.'});
+node('p2','planet','Kryox','sys1',{stub:1});
+node('p3','planet','Nyxel','sys1',{stub:1});
+node('p4','planet','Styxum','sys2',{stub:1});
+node('p5','planet','Auraea','sys2',{stub:1});
+node('p6','planet','Nyxun','sys4',{stub:1});
+node('c1','country','Free Dust Kingdom','p1',{tags:['[TRAIT: INDUSTRIAL]'],desc:'An administrative region governed by one trait: it builds, stores and burns.'});
+node('c2','country','Holy Glacier Sovereignty','p1',{stub:1});
+node('city1','city','Starford','c1',{desc:'A concentrated urban grid of synthetic matter, authorised and dull.'});
+node('city2','city','Clockhaven','c1',{stub:1});
+node('st1','street','Busy Terrace','city1',{tags:['[TECH_ERA: ANALOG]','[RESONANCE: MONOLITH]'],desc:'A linear transit artery between building-nodes. Fourteen slab fronts; three are modelled here.'});
+node('st2','street','Hidden Loop','city1',{stub:1});
+node('b1','building','Eternal Shaft','st1',{stub:1});
+node('b2','building','Unit 0x3F Spire','st1',{stub:1});
+node('b3','building','Weathered Silo','st1',{stub:1});
+
+const PLACE = {nullreach:'nr', system:'sys1', planet:'p1', street:'st1'};
+const HPLACE = {system:'sys1', filament:'f1'};
+const START = {street:'st1', universe:'U'};
+const LADDER = [['U'],['f1'],['sec1','nr'],['sys1'],['p1'],['c1'],['city1'],['st1']];
+
+/* ---------- the hauler: rust / industrial era / Industrial trait ---------- */
+const REG = 1809246;
+const DECKS = [
+ {zone:'ENGINEERING', sections:[
+   {mat:'Riveted Blast Hatch', state:'SCORCHED', insc:'!! DANGER !!', trace:'a heavy low thrum', type:'Reactor Well', rooms:[
+     {name:'Reactor Well', heart:'reactor', objs:['scorched control rod','dosimeter badge'],
+      d:'A pit with a rail around it. Something large and cold sits at the bottom; your link draws it as a single thick outline. A feed hopper stands open at the rail, the width of two hands.',
+      l:'The core turns over below the rail with a sound like a slow train. The feed hopper has closed itself. Every gauge on the wall has crept off its pin.'}]},
+   {mat:'Buckled Grate', state:'FLAKING', insc:'', trace:'rhythmic clicking from the lock', type:'Maintenance Bay', rooms:[
+     {name:'Flaking Coolant Gallery', objs:['brass valve wheel','coil of copper wire'],
+      d:'Pipes overhead, close enough to touch. Outlines of valves, one after another, all shut.',
+      l:'Sodium-yellow work lamps show forty metres of pipe sweating rust. Someone chalked a tally on the wall and stopped at 231.'},
+     {name:'Sooty Pump Room', objs:['pressure gauge'],
+      d:'A low room. Three squat shapes bolted to the deck. Nothing moves.',
+      l:'Three pumps, two running. The third has a tag wired to it: DO NOT START — IT LISTENS.'}]}
+ ]},
+ {zone:'CARGO', sections:[
+   {mat:'Patchwork Cargo Door', state:'DENTED', insc:'', trace:'rhythmic clicking from the lock', type:'Supply Node', rooms:[
+     {name:'Main Hold', objs:['rusted chain','riveted plate','ore sample crate','cargo strap ratchet','grease-black wrench','welding mask','drum of bearing grease','stencil kit','tow cable shackle','manifest clipboard','crate of rivets','hazard lamp'],
+      d:'One enormous room. Your link gives up on the far wall and draws a dotted line instead. Outlines of crates in rows, a lot of them.',
+      l:'The hold, under lamps at last: ore crates in rows to the far bulkhead, strapped down by people who expected to come back for them.'}]},
+   {mat:'Oxidized Pod Hatch', state:'STIFF', insc:'[EVAC]', trace:'unnatural stillness', type:'Pod Bay', rooms:[
+     {name:'Pod Bay', heart:'pod', objs:['sealed ration tin'],
+      d:'Five cradles. Four are empty rails. The fifth still holds a pod, its hatch open, a hand-crank primer beside the seat.',
+      l:'Five cradles, four launched long ago by the look of the scorch marks. The fifth pod waits with its hatch open. It needs no power; it never did.'}]},
+   {mat:'Weathered Bulk Hatch', state:'WELDED', insc:'[NOT ON MANIFEST]', sealed:1, trace:'frost forming on the hinges', type:'Hold 3', rooms:[
+     {name:'Hold 3', heart:'hold3', objs:['unlisted container'],
+      d:'', l:'A small hold, empty but for one container the size of a coffin, unmarked. The deck plates around it are polished where someone sat, for a long time. It hums. You know the number before you read it.'}]}
+ ]},
+ {zone:'PROCESS', sections:[
+   {mat:'Sooty Pressure Door', state:'PITTED', insc:'', trace:'a sharp smell of ozone', type:'Processing Core', rooms:[
+     {name:'Dusty Processing Core', objs:['slag sample','punch-card stack'],
+      d:'Tall cabinets in a ring. Outlines of reels, stopped mid-turn.',
+      l:'Tape reels jerk forward a frame at a time, resuming a calculation that was paused two centuries ago.'}]},
+   {mat:'Assembled Hatch', state:'GREASED', insc:'', trace:'rhythmic clicking from the lock', type:'Maintenance Bay', rooms:[
+     {name:'Riveted Maintenance Bay', log:2, objs:['torque driver','spool of solder'],
+      d:'Benches. Tools in outline, hung on a board in the order of their size.',
+      l:'Benches under hooded lamps. Every tool is on its hook except one, and its painted shadow is still there.'},
+     {name:'Parts Cage', objs:['bearing race'],
+      d:'A wire cage inside the bay. The gate is open.',
+      l:'A wire cage of spares, inventoried on a card in neat pencil. The last line is not a part number. It is the same seven digits, written eleven times.'}]},
+   {mat:'Fading Storeroom Door', state:'AJAR', insc:'', trace:'rhythmic clicking from the lock', type:'Supply Node', rooms:[
+     {name:'Corroded Supply Node', objs:['filter cartridge','water ration bladder','box of fuses'],
+      d:'Shelving. Most of it empty outlines.',
+      l:'Shelving, most of it bare. They were rationing before they slept.'}]}
+ ]},
+ {zone:'HABITAT', sections:[
+   {mat:'Scrapyard Bulkhead Door', state:'SCUFFED', insc:'', trace:'a heavy low thrum', type:'Barracks', rooms:[
+     {name:'Bunk A', objs:['tag stamped OKAFOR','deck of worn cards'],
+      d:'Two bunks in outline. One is made.',
+      l:'Two bunks. One made with hospital corners, one stripped to the frame.'},
+     {name:'Bunk B', log:3, objs:['tag stamped LINDQVIST','folded star chart'],
+      d:'Two bunks. Neither has been slept in; your link finds no impression in either.',
+      l:'Two bunks, never slept in again after a certain day. A pillow is missing.'},
+     {name:'The Mess', log:1, objs:['enamel mug','tin of coffee substitute'],
+      d:'A table bolted to the deck, five chairs. Four are pushed in.',
+      l:'A table, five chairs, four pushed in. Five mugs on hooks, each with a name in enamel paint.'}]},
+   {mat:'Patchwork Medical Hatch', state:'CLEAN', insc:'', trace:'a sharp smell of ozone', type:'Medbay', rooms:[
+     {name:'Medbay', log:4, objs:['sedative ampoule','cracked helmet lamp'],
+      d:'A couch, a cabinet. The cabinet door hangs open.',
+      l:'A couch and a cabinet, the sedative drawer emptied in an orderly way: five ampoules signed out, one returned.'}]},
+   {mat:'Frosted Vault Door', state:'COLD', insc:'[DO NOT WAKE]', sealed:1, trace:'frost forming on the hinges', type:'Cryo Vault', rooms:[
+     {name:'Cryo Vault', heart:'cryo', objs:['tag stamped REYES'],
+      d:'', l:'Five pods against the wall. Four are occupied; frost on the inside of the glass, a slow pulse on each panel. The fifth stands open and empty, its harness cut, not unbuckled. The crew is not dead. The crew is hiding.'}]}
+ ]},
+ {zone:'BRIDGE', sections:[
+   {mat:'Riveted Command Hatch', state:'LOCKED', insc:'[COMMAND]', sealed:1, trace:'a sharp smell of ozone', type:'Bridge', rooms:[
+     {name:'The Bridge', heart:'bridge', objs:['flight recorder spool'],
+      d:'', l:'Six seats, dials not screens, a plotting table with brass rules. The helm has a key in it. Through the forward ports, whatever is outside looks back at a ship with its lights on.'}]},
+   {mat:'Weathered Cabin Door', state:'LOCKED', insc:'', sealed:1, trace:'unnatural stillness', type:'Captain’s Cabin', rooms:[
+     {name:'Captain’s Cabin', log:5, objs:['captain’s key lanyard','tag stamped MARROW'],
+      d:'', l:'A narrow cabin. The bunk is folded away; the desk is not. A logbook lies open under a lamp that has just come back on.'}]}
+ ]}
+];
+const AIRLOCK_DECK = 1;
+const LOGS = {
+  1:'Day 212. Tow steady. Reyes says the unlisted can in Hold 3 is warm. The manifest has no Hold 3.',
+  2:'Day 219. Gauges on deck 1 read a vibration at 1809246 cycles. Not ours. Not the reactor.',
+  3:'Day 224. Lindqvist sleeps in the hold now. Says it is quieter next to it. It is not quiet.',
+  4:'Day 230. Four to cryo by their own hand. Captain’s order: reactor cold, transponder faint. Let it think we are dead.',
+  5:'Day 231. I am sealing Hold 3 and the bridge. If you read this under lights, you woke us. It will have heard that too.'
+};
+const DESTS = [
+  {id:'sys1',label:'Vega Borealis — high orbit'},
+  {id:'p1',label:'Hydraia — low orbit'},
+  {id:'sys2',label:'Omicron Luyten — high orbit'},
+  {id:'nr',label:'Null Reach 886 — adrift'},
+  {id:'st1',label:'Busy Terrace — set down on the street'}
+];
+const WE = ['[WE] Your pattern is noted.','[WE] You are one. This is an error we correct.','[WE] You carry our number. Return it.',
+  '[WE] We remember this interface.','[WE] There is no outside. There is only later.','[WE] Stay. It costs you less each time.'];
+
+/* ---------- options and state ---------- */
+let O = {haulerAt:'system', hiveAt:'system', startAt:'street', exitRule:'airlock', darkLit:true, drain:1, signal:true};
+let S = null;
+
+function hz(name){
+  let sum = 0;
+  for (const ch of name.toLowerCase()) if (ch >= 'a' && ch <= 'z' && 'aeiou'.indexOf(ch) < 0) sum += ch.charCodeAt(0) - 96;
+  return sum * 12;
+}
+function fresh(keep){
+  const s = {loc:START[O.startAt], coh:100, steps:0, last:'', mode:'main', msg:[], ticker:[], visited:{}, buffer:[],
+    ship:{at:PLACE[O.haulerAt], lit:!O.darkLit, woke:false, owned:false, seen:false, podUsed:false, logs:{}, rooms:{}, doors:{}},
+    hive:{present:false, at:HPLACE[O.hiveAt] || null, seen:false, dormant:false, aperture:0, aboard:0, alcoves:{}},
+    m:{prompts:0, spent:0, aboardPrompts:0, aboardSpent:0, lastWalkOut:null, lastRoomAt:0, reboots:0}};
+  DECKS.forEach((d, n) => d.sections.forEach((sec, si) => sec.rooms.forEach((r, ri) => { s.ship.rooms[n+':'+si+':'+ri] = r.objs.slice(); })));
+  for (let k = 0; k < 8; k++) s.hive.alcoves[k] = true;
+  if (keep){ s.buffer = keep.buffer; s.steps = keep.steps; s.visited = keep.visited; s.m = keep.m; s.m.reboots++; s.ticker = keep.ticker; }
+  else s.buffer = [{name:'Hidden Frequency', hz:REG, beacon:true}, {name:'paper lantern', hz:hz('paper lantern')}, {name:'dial-faced meter', hz:hz('dial-faced meter')}];
+  s.visited[s.loc] = 1;
+  return s;
+}
+const isH = l => l === 'ap' || l === 'al' || /^(dk|ps|rm):/.test(l);
+const aboardH = l => isH(l) && l !== 'ap';
+const isV = l => l === 'hap' || l === 'hv' || /^hj:/.test(l);
+const aboardV = l => isV(l) && l !== 'hap';
+const parts = l => l.split(':').slice(1).map(Number);
+function worldPos(){ return W[S.loc] ? S.loc : (isH(S.loc) ? S.ship.at : S.hive.at); }
+function ancestors(id){ const a = []; while (id){ a.push(id); id = W[id].parent; } return a; }
+function say(html){ S.msg.push(html); }
+function tick(html){ S.ticker.push(html); if (S.ticker.length > 3) S.ticker.shift(); }
+function sealed(sec){ return !!sec.sealed && !S.ship.lit; }
+function ringDist(a, b){ const d = ((a - b) % 8 + 8) % 8; return Math.min(d, 8 - d); }
+
+function go(loc){
+  S.loc = loc;
+  S.visited[loc] = 1;
+  if (/^rm:/.test(loc)){
+    const p = parts(loc), r = DECKS[p[0]].sections[p[1]].rooms[p[2]];
+    S.ship.doors[p[0]+':'+p[1]] = 1;
+    if (r.log && !S.ship.logs[r.log]){
+      S.ship.logs[r.log] = 1;
+      say(c('yl','>>> LOG FRAGMENT '+r.log+'/5 — punched tape, pinned to the wall'));
+      say(c('dim','    “'+LOGS[r.log]+'”'));
+      tick(c('yl','LOG: fragment '+r.log+'/5'));
+    }
+  }
+}
+function leftHauler(){ S.m.lastWalkOut = S.m.aboardPrompts - S.m.lastRoomAt; }
+
+/* ---------- signal (the Hidden Frequency as a beacon) ---------- */
+function signal(){
+  if (!O.signal) return null;
+  if (!S.buffer.some(b => b.beacon)) return c('dim','NO CARRIER — the beacon left your buffer');
+  if (aboardV(S.loc)) return c('rd','CARRIER DROWNED — everything here hums at '+REG);
+  if (S.ship.owned) return c('gn','REGISTRY '+REG+' · LOCKED — your ship');
+  if (S.loc === 'ap') return c('yl','REGISTRY '+REG+' · SOURCE: THIS HULL');
+  if (aboardH(S.loc)){
+    const dk = S.loc === 'al' ? AIRLOCK_DECK : parts(S.loc)[0];
+    const rel = dk === AIRLOCK_DECK ? 'THIS DECK · HOLD 3' : (dk > AIRLOCK_DECK ? 'BELOW YOU · DECK 1' : 'ABOVE YOU · DECK 1');
+    return c('yl','REGISTRY '+REG+' · SOURCE '+rel);
+  }
+  const here = worldPos(), target = S.ship.at;
+  if (here === target) return c('yl','REGISTRY '+REG+' · HERE — the ◈ entry below');
+  const up = ancestors(here), tu = ancestors(target);
+  if (up.indexOf(target) >= 0) return c('yl','REGISTRY '+REG+' · BEARING: UP '+up.indexOf(target)+' · '+KIND[W[target].kind].icon+' '+W[target].name);
+  if (tu.indexOf(here) >= 0) return c('yl','REGISTRY '+REG+' · BEARING: DOWN · via '+W[tu[tu.indexOf(here)-1]].name);
+  const common = up.find(x => tu.indexOf(x) >= 0);
+  return c('yl','REGISTRY '+REG+' · BEARING: UP '+up.indexOf(common)+' to '+W[common].name+', then down');
+}
+
+/* ---------- views ---------- */
+function haulerEntry(){
+  const s = S.ship;
+  if (!s.seen) return (s.at === 'st1' ? '◈ GROUNDED_HULK' : '◈ UNREGISTERED_MASS') + ' — faint transponder';
+  return '◈ Buckled Girder ' + (s.owned ? '[YOURS]' : s.lit ? '[AWAKE]' : '[DORMANT]');
+}
+function viewWorld(n){
+  const k = KIND[n.kind], v = {frame:'world', note:n.kind, title:k.icon+' '+n.name, tags:[c('dim','[SCALE '+pad2(k.level)+']')], desc:[n.desc || ''], rows:[], opts:[]};
+  (n.tags || []).forEach(t => v.tags.push(c('yl', t)));
+  let i = 0;
+  n.children.forEach(id => {
+    const ch = W[id]; i++;
+    const num = i, seen = S.visited[id];
+    v.opts.push({k:String(num), html:c('key', pad2(num)+'.')+' '+esc(k.verb)+' '+(seen ? c('b', KIND[ch.kind].icon+' '+(ch.label || ch.name)) : esc(KIND[ch.kind].icon+' '+(ch.label || ch.name)))+(ch.kind === 'nullreach' ? ' '+c('mg','[NULL REACH]') : ''),
+      run:() => { if (ch.stub){ say(c('dim','[MOCK] '+ch.name+' is scenery. Nothing about ships to test there.')); return false; } go(id); return true; }});
+  });
+  if (S.ship.at === n.id){
+    i++; const num = i;
+    v.opts.push({k:String(num), html:c('key', pad2(num)+'.')+' Approach '+c(S.ship.owned ? 'gn' : 'rs', haulerEntry()), run:() => { S.ship.seen = true; go('ap'); return true; }});
+  }
+  if (S.hive.present && S.hive.at === n.id){
+    i++; const num = i;
+    v.opts.push({k:String(num), html:c('key', pad2(num)+'.')+' Approach '+c('rd b', '◆ MASS — NOT ON PREVIOUS SCAN')+(S.hive.dormant ? ' '+c('dim','[SILENT]') : ''), run:() => { S.hive.seen = true; go('hap'); return true; }});
+  }
+  if (n.parent) v.opts.push({k:'l', html:c('key','l.')+' Go back up to '+esc(KIND[W[n.parent].kind].icon+' '+W[n.parent].name), run:() => { go(n.parent); return true; }});
+  // map: the children, as glyphs
+  let m = '';
+  n.children.forEach(id => { const ch = W[id]; m += (S.visited[id] ? c('cy b', KIND[ch.kind].icon) : c('faint', KIND[ch.kind].icon))+' '+c(S.visited[id] ? 'dim' : 'faint', ch.name)+'\n'; });
+  if (S.ship.at === n.id) m += c('rs b','◈')+' '+c('rs', S.ship.seen ? 'Buckled Girder' : 'unregistered mass')+'\n';
+  if (S.hive.present && S.hive.at === n.id) m += c('rd b','◆')+' '+c('rd','mass, unlisted')+'\n';
+  v.map = m; v.mapcap = 'Lattice map';
+  return v;
+}
+function shipSpark(extra){ return ancestors(S.ship.at).reverse().map(id => KIND[W[id].kind].icon).concat(['◈']).concat(extra || []); }
+function deckMap(cur){
+  let m = '';
+  for (let n = DECKS.length - 1; n >= 0; n--){
+    const g = n === 4 ? '▲' : n === 0 ? '☢' : '▤';
+    const lock = n === AIRLOCK_DECK ? c('dim','◈══') : '   ';
+    const here = n === cur;
+    m += lock+(here ? c('yl b','['+g+']') : ' '+c(S.ship.lit ? 'rs' : 'faint', g)+' ')+' '+c(here ? 'yl' : 'dim','D'+n+' '+DECKS[n].zone)+'\n';
+  }
+  m += '\n'+c('faint','◈ airlock  ▲ bridge  ☢ reactor')+'\n'+c(S.ship.lit ? 'gn' : 'rd', 'POWER: '+(S.ship.lit ? 'NOMINAL' : 'COLD'));
+  return m;
+}
+function leaveOpt(v){
+  if (O.exitRule === 'anywhere') v.opts.push({k:'l', html:c('key','l.')+' Leave the ship '+c('dim','(switch: exit from anywhere)'), run:() => { leftHauler(); go(S.ship.at); return true; }});
+}
+function viewApproach(){
+  const s = S.ship, where = {
+    sys1:'It holds a high orbit beyond the last planet’s track, where nothing should be.',
+    sys2:'It holds a high orbit over a red star that never asked for it.',
+    nr:'It is adrift in the reach, turning slowly, lit only by your link.',
+    p1:'It rides a low orbit over Hydraia, close enough that the slab cities slide past beneath its keel.',
+    st1:'It is grounded at the end of the street where a building should be. Its landing struts have cracked the pavement; the neighbours built around it.'}[s.at];
+  const v = {frame:s.lit ? 'rust' : 'rustdark', note:'approach', title:'◈ Buckled Girder — approach', spark:shipSpark(),
+    tags:[c('rs','[HAULER]'), c('dim','[REGISTRY '+REG+']')],
+    desc:['A long-haul tug: rust-red hull plates, riveted not welded, a tow frame longer than the street you started on. The registry is stencilled on the flank.', where,
+      s.owned ? 'Running lights steady. The airlock ring is already turning for you.' : s.lit ? 'Every port is lit. It looks like a ship that wants to be found, which was never the plan.' : 'No running lights. No heat bloom. The transponder whispers once a minute, as quietly as it can.'],
+    rows:[], opts:[], map:deckMap(-1), mapcap:'Hull section'};
+  v.opts.push({k:'1', html:c('key','01.')+' Dock at the airlock '+c('dim','(deck 1, the only way in)'), run:() => { S.m.aboardPrompts = 0; S.m.aboardSpent = 0; S.m.lastRoomAt = 0; go('al'); return true; }});
+  v.opts.push({k:'l', html:c('key','l.')+' Pull away to '+esc(W[s.at].name), run:() => { go(s.at); return true; }});
+  return v;
+}
+function viewAirlock(){
+  const v = {frame:S.ship.lit ? 'rust' : 'rustdark', note:'airlock', title:'◈ Airlock — Deck 1', spark:shipSpark(['[◈]']), tags:[c('dim','[THE ONLY DOOR]')],
+    desc:[S.ship.lit ? 'The inner door cycles with a clean hydraulic sigh. A stencil reads: COUNT YOURSELVES IN. COUNT YOURSELVES OUT.' : 'The outer door closed behind you by hand-crank. Inside, the air is thin and still. Your link paints the chamber in outlines.',
+      'Whatever you do aboard, you leave from here.'], rows:[], opts:[], map:deckMap(AIRLOCK_DECK), mapcap:'Hull section'};
+  v.opts.push({k:'1', html:c('key','01.')+' Cycle inward to the spine', run:() => { go('dk:'+AIRLOCK_DECK); return true; }});
+  v.opts.push({k:'l', html:c('key','l.')+' Undock — back to '+esc(W[S.ship.at].name), run:() => { leftHauler(); go(S.ship.at); return true; }});
+  return v;
+}
+function viewDeck(n){
+  const d = DECKS[n], lit = S.ship.lit;
+  const v = {frame:lit ? 'rust' : 'rustdark', note:'deck', title:'▤ Deck '+n+' · '+d.zone, spark:shipSpark(['[▤'+n+']']), tags:[c('dim','[LIFT SPINE]')],
+    desc:[lit ? 'The lift cage rattles in its guides, sodium-yellow lamps passing the mesh one deck at a time.' : 'The lift is dead. A service ladder runs the spine; your link outlines each rung a moment before your hand finds it.'],
+    rows:[c('k','POWER: ')+c(lit ? 'gn' : 'rd', lit ? 'NOMINAL' : 'COLD')+'   '+c('k','ATMOS: ')+esc(lit ? 'STABLE' : 'THIN')+'   '+c('k','SECTIONS: ')+d.sections.length],
+    opts:[], map:deckMap(n), mapcap:'Hull section'};
+  if (n < DECKS.length - 1) v.opts.push({k:'u', html:c('key','u.')+' Up to deck '+(n+1)+' · '+DECKS[n+1].zone, run:() => { go('dk:'+(n+1)); return true; }});
+  if (n > 0) v.opts.push({k:'d', html:c('key','d.')+' Down to deck '+(n-1)+' · '+DECKS[n-1].zone, run:() => { go('dk:'+(n-1)); return true; }});
+  v.opts.push({k:'c', html:c('key','c.')+' Step into the passage', run:() => { go('ps:'+n); return true; }});
+  if (n === AIRLOCK_DECK) v.opts.push({k:'a', html:c('key','a.')+' Back to the airlock', run:() => { go('al'); return true; }});
+  leaveOpt(v);
+  return v;
+}
+function viewPassage(n){
+  const d = DECKS[n], lit = S.ship.lit;
+  const v = {frame:lit ? 'rust' : 'rustdark', note:'passage', title:'▅ Deck '+n+' passage · '+d.zone, spark:shipSpark(['▤'+n,'[▅]']), tags:[],
+    desc:[lit ? 'A riveted passage under caged lamps. Pipes run the ceiling; the hatches are stencilled by function.' : 'A passage in outline. Hatches along one side. Some of them have no power to answer you with.'],
+    rows:[], opts:[], map:deckMap(n), mapcap:'Hull section'};
+  d.sections.forEach((sec, si) => {
+    const shut = sealed(sec), vis = S.ship.doors[n+':'+si];
+    v.opts.push({k:String(si+1), html:c('key', pad2(si+1)+'.')+' '+(sec.insc ? c(sec.insc.indexOf('!!') === 0 ? 'rd' : 'yl', sec.insc)+' ' : '')+esc(sec.mat)+' '+c('dim','['+sec.state+']')+(shut ? ' '+c('rd','[SEALED — NO POWER]') : '')+(vis ? ' '+c('gn','[V]') : ''),
+      run:() => { if (shut){ say(c('rd','The hatch does not answer. No power reaches it.')); return false; } go('rm:'+n+':'+si+':0'); return true; }});
+  });
+  v.opts.push({k:'b', html:c('key','b.')+' Back to the spine', run:() => { go('dk:'+n); return true; }});
+  leaveOpt(v);
+  return v;
+}
+function viewRoom(n, si, ri){
+  const sec = DECKS[n].sections[si], r = sec.rooms[ri], lit = S.ship.lit, objs = S.ship.rooms[n+':'+si+':'+ri];
+  const v = {frame:lit ? 'rust' : 'rustdark', note:r.heart || 'room', title:'□ '+r.name, spark:shipSpark(['▤'+n,'▅','[□]']),
+    tags:[c('dim','['+sec.type.toUpperCase()+']'), c('dim','[ROOM '+(ri+1)+'/'+sec.rooms.length+']')],
+    desc:[lit ? r.l : 'Dark. '+r.d], rows:[c('k', lit ? 'OBJECTS: ' : 'OUTLINES: ')+objs.length], opts:[], map:deckMap(n), mapcap:'Hull section'};
+  if (r.heart === 'reactor' && !lit) v.opts.push({k:'w', html:c('key','w.')+' Feed the core '+c('dim','(takes two items from your buffer)'), run:wake});
+  if (r.heart === 'pod' && !S.ship.podUsed) v.opts.push({k:'e', html:c('key','e.')+' Launch the pod '+c('dim','(one use, no way back aboard)'), run:pod});
+  if (r.heart === 'bridge'){
+    v.opts.push({k:'log', html:c('key','log.')+' Read the ship’s log '+c('dim','('+Object.keys(S.ship.logs).length+'/5 fragments)'), run:() => { readLog(); return false; }});
+    v.opts.push({k:'n', html:c('key','n.')+' Plot a course and launch', run:() => { S.mode = 'launch'; return false; }});
+  }
+  if (objs.length || S.buffer.length) v.opts.push({k:'t', html:c('key','t.')+' Interact with objects', run:() => { S.mode = 'take'; return true; }});
+  if (ri < sec.rooms.length - 1) v.opts.push({k:'f', html:c('key','f.')+' Forward to '+esc(sec.rooms[ri+1].name), run:() => { go('rm:'+n+':'+si+':'+(ri+1)); return true; }});
+  if (ri > 0) v.opts.push({k:'b', html:c('key','b.')+' Back to '+esc(sec.rooms[ri-1].name), run:() => { go('rm:'+n+':'+si+':'+(ri-1)); return true; }});
+  if (ri === 0) v.opts.push({k:'l', html:c('key','l.')+' Leave to the passage', run:() => { go('ps:'+n); return true; }});
+  return v;
+}
+function hiveMap(pos){
+  const at = k => k === pos ? c('yl b','@') : (k === S.hive.aperture ? c(S.hive.dormant ? 'dim' : 'rd b','◈') : c('hv', String(k)));
+  const vq = pos === 'v' ? c('yl b','@') : c(S.hive.dormant ? 'dim' : 'gn','V');
+  return '  '+at(0)+' ─ '+at(1)+' ─ '+at(2)+'\n  │       │\n  '+at(7)+'   '+vq+'   '+at(3)+'\n  │   │   │\n  '+at(6)+' ─ '+at(5)+' ─ '+at(4)+'\n\n'+
+    c('faint','@ you  ◈ aperture  V node')+'\n'+c(S.hive.dormant ? 'dim' : 'rd','DRAIN: '+drainNow()+' / prompt');
+}
+function viewHiveApproach(){
+  const v = {frame:'hive', note:'hiveap', title:'◆ Mass — approach', spark:ancestors(S.hive.at).reverse().map(id => KIND[W[id].kind].icon).concat(['[◆]']), tags:[c('rd','[NO REGISTRY]')],
+    desc:['A mass with no silhouette: every face is the same face. No lights, no seam, no name. Your scan pulse comes back twice.',
+      S.hive.dormant ? 'It is silent now. The aperture stands open and does not move.' : 'An aperture has opened in the face nearest you. You did not ask.'], rows:[], opts:[], map:hiveMap(-1), mapcap:'Interior, as it lets you see it'};
+  v.opts.push({k:'1', html:c('key','01.')+' Enter the aperture', run:() => { S.hive.aperture = 0; S.hive.aboard = 0; go('hj:0'); tick(c('hv', WE[0])); return true; }});
+  v.opts.push({k:'l', html:c('key','l.')+' Pull away to '+esc(W[S.hive.at].name), run:() => { go(S.hive.at); return true; }});
+  return v;
+}
+function viewJunction(k){
+  const v = {frame:'hive', note:'hive', title:'▣ Subjunction '+pad2(k)+' of 08', spark:['◆','[▣'+k+']'], tags:[c('hv','[NO NAME]')],
+    desc:['The same walls, the same sourceless light, the same alcove. Nothing here was named; everything was numbered. You could not say whether you have stood here before.'],
+    rows:[c('k','ALCOVE: ')+(S.hive.alcoves[k] ? 'component '+pad2(k)+'/08' : c('dim','empty'))], opts:[], map:hiveMap(k), mapcap:'Interior, as it lets you see it'};
+  v.opts.push({k:'f', html:c('key','f.')+' Forward to subjunction '+pad2((k+1)%8), run:() => { go('hj:'+((k+1)%8)); return true; }});
+  v.opts.push({k:'b', html:c('key','b.')+' Back to subjunction '+pad2((k+7)%8), run:() => { go('hj:'+((k+7)%8)); return true; }});
+  if (S.hive.alcoves[k]) v.opts.push({k:'t', html:c('key','t.')+' Take the component from the alcove', run:() => { S.hive.alcoves[k] = false; const nm = 'component '+pad2(k)+' of 08'; S.buffer.push({name:nm, hz:hz(nm)}); say(c('hv','>>> CAPTURED: '+nm)); tick(c('hv','OBJ: '+nm)); return true; }});
+  if (k === 4) v.opts.push({k:'c', html:c('key','c.')+' Inward, to the central node', run:() => { go('hv'); return true; }});
+  if (k === S.hive.aperture) v.opts.push({k:'l', html:c('key','l.')+' Leave through the aperture', run:() => { go(S.hive.at); return true; }});
+  return v;
+}
+function viewVinculum(){
+  const v = {frame:'hive', note:'vinculum', title:'◉ The central node', spark:['◆','▣','[◉]'], tags:[c('gn','[VINCULUM]')],
+    desc:['A column of slow light at the centre of everything. Your interface recognises it before you do: the handshake completes without your asking.',
+      'VINCULUM_NEURAL_INTERFACE :: PARENT NODE FOUND :: WELCOME BACK, UNIT.', S.hive.dormant ? 'The column is dark. The silence has your shape in it.' : 'It is not hostile. It is patient. It is holding a place for you.'],
+    rows:[], opts:[], map:hiveMap('v'), mapcap:'Interior, as it lets you see it'};
+  if (!S.hive.dormant) v.opts.push({k:'x', html:c('key','x.')+' Sever the node', run:() => { S.hive.dormant = true; S.buffer.push({name:'Vinculum shard', hz:hz('Vinculum shard')}); say(c('gn','>>> NODE SEVERED. The light goes out from the centre outward.')); say(c('dim','The voice stops in the middle of a word. The aperture stops moving. Something in your own interface goes quiet too.')); tick(c('gn','OBJ: Vinculum shard')); return true; }});
+  v.opts.push({k:'b', html:c('key','b.')+' Back to subjunction 04', run:() => { go('hj:4'); return true; }});
+  return v;
+}
+function view(){
+  const l = S.loc;
+  if (W[l]) return viewWorld(W[l]);
+  if (l === 'ap') return viewApproach();
+  if (l === 'al') return viewAirlock();
+  if (l === 'hap') return viewHiveApproach();
+  if (l === 'hv') return viewVinculum();
+  const p = parts(l);
+  if (/^dk:/.test(l)) return viewDeck(p[0]);
+  if (/^ps:/.test(l)) return viewPassage(p[0]);
+  if (/^rm:/.test(l)) return viewRoom(p[0], p[1], p[2]);
+  return viewJunction(p[0]);
+}
+
+/* ---------- actions ---------- */
+function wake(){
+  if (S.buffer.length < 2){ say(c('rd','The hopper wants two items. Your buffer holds '+S.buffer.length+'.')); return false; }
+  const order = S.buffer.map((b, i) => ({b:b, i:i})).sort((x, y) => (x.b.beacon ? 1 : 0) - (y.b.beacon ? 1 : 0) || x.b.hz - y.b.hz).slice(0, 2);
+  const names = order.map(o => o.b.name);
+  order.map(o => o.i).sort((a, b) => b - a).forEach(i => S.buffer.splice(i, 1));
+  S.coh = Math.min(100, S.coh + 15);
+  S.ship.lit = true; S.ship.woke = true;
+  say(c('yl','>>> CORE FED: '+names.join(' + ')+'  (+15 Coherence)'));
+  say(c('gn','>>> REACTOR: COLD → NOMINAL'));
+  say(c('dim','Deck by deck, sodium-yellow work lamps stutter on above you. Somewhere up the spine, sealed hatches unlock one after another.'));
+  tick(c('gn','SHIP: Buckled Girder is awake'));
+  return true;
+}
+function pod(){
+  if (S.ship.at === 'st1'){ say(c('dim','The pod rails point at the pavement. There is nowhere to fall to.')); return false; }
+  S.ship.podUsed = true; leftHauler();
+  say(c('yl','>>> POD AWAY. Eleven seconds of burn, then a long fall toward the nearest world.'));
+  say(c('dim','You wake on a street. The ship is where you left it, and the pod is not coming back.'));
+  go('st1'); return true;
+}
+function readLog(){
+  say(c('yl','SHIP’S LOG — MV BUCKLED GIRDER'));
+  for (let i = 1; i <= 5; i++) say(S.ship.logs[i] ? c('dim', LOGS[i]) : c('faint','— fragment '+i+' not found —'));
+}
+function lattice(){
+  const path = ancestors(worldPos()).reverse().map(id => KIND[W[id].kind].icon+' '+W[id].name);
+  if (isH(S.loc)) path.push('◈ Buckled Girder');
+  if (isV(S.loc)) path.push('◆ (no name)');
+  say(c('cy','LATTICE TRACE')); path.forEach((p, i) => say(c('dim', ' '.repeat(i)+'└ '+p)));
+}
+function scan(){
+  const l = S.loc;
+  if (aboardH(l) && !S.ship.lit){ S.coh -= 1; S.m.spent++; S.m.aboardSpent++; say(c('rd','Scanning in the dark costs one more.')); }
+  if (W[l]){
+    const n = W[l], here = [];
+    if (S.ship.at === l) here.push(c('rs','1 UNREGISTERED MASS · hull trace: '+(S.ship.lit ? 'a steady thrum, lights on' : 'a heavy low thrum, very faint')));
+    if (S.hive.present && S.hive.at === l) here.push(c('rd','1 MASS, NOT ON PREVIOUS SCAN · trace: rhythmic clicking'));
+    say(c('cy','SCAN · '+n.name+' · '+n.children.length+' listed nodes'));
+    if (here.length) here.forEach(h => say(h)); else say(c('dim','Nothing here that is not on the list.'));
+  } else if (l === 'ap'){
+    say(c('cy','HULL SCAN'));
+    say(c('k','CLASS: ')+'HAULER (Industrial)   '+c('k','DECKS: ')+'5   '+c('k','AIRLOCK: ')+'deck 1');
+    say(c('k','CULTURE: ')+'rust   '+c('k','ERA: ')+'industrial   '+c('k','FATE: ')+(S.ship.lit ? 'awake' : 'dormant, not dead'));
+    say(c('k','HULL TRACE: ')+(S.ship.lit ? 'a steady thrum' : 'a heavy low thrum, very faint — a reactor banked, not lost'));
+  } else if (l === 'hap'){
+    say(c('cy','HULL SCAN')); say(c('k','CLASS: ')+'—   '+c('k','DECKS: ')+'—   '+c('k','TRACE: ')+c('rd','rhythmic clicking, in step with your own pulse'));
+  } else if (l === 'al' || /^dk:/.test(l)){
+    say(c('cy','DECK SCAN'));
+    for (let n = DECKS.length - 1; n >= 0; n--) say(c('dim','D'+n+' '+DECKS[n].zone+' · '+DECKS[n].sections.map(s => s.type + (sealed(s) ? ' [sealed]' : '')).join(', ')));
+  } else if (/^ps:/.test(l)){
+    const n = parts(l)[0]; say(c('cy','DOOR SCAN'));
+    DECKS[n].sections.forEach((s, i) => say(c('dim', pad2(i+1)+' · TRACE: '+s.trace+' · ROOM_TYPE: '+s.type+' · ROOMS: '+s.rooms.length+(sealed(s) ? ' · SEALED' : ''))));
+  } else if (/^rm:/.test(l)){
+    const p = parts(l); say(c('cy','SECTION SCAN'));
+    DECKS[p[0]].sections[p[1]].rooms.forEach((r, i) => say(c('dim', pad2(i+1)+' · '+r.name+' · objects: '+S.ship.rooms[p[0]+':'+p[1]+':'+i].length)));
+  } else { say(c('hv','The scan returns your own pulse, delayed, from eight directions.')); }
+}
+function drainNow(){
+  let d = O.drain;
+  if (aboardV(S.loc) && !S.hive.dormant) d += Math.floor(S.hive.aboard / 5);
+  return d;
+}
+function die(){
+  S.mode = 'dead'; S.msg = [c('rd b','!!! CRITICAL_COHERENCE_FAILURE !!! REBOOTING...'), c('dim','Press Enter. The world is rebuilt from the same seed: the ship is dark again, where it first was, and no longer yours. You keep your buffer.')];
+}
+function afterPrompt(wasAboardH, cost){
+  S.m.prompts++; S.m.spent += cost;
+  if (wasAboardH){ S.m.aboardPrompts++; S.m.aboardSpent += cost; }
+  if (/^rm:/.test(S.loc)) S.m.lastRoomAt = S.m.aboardPrompts;
+  if (aboardV(S.loc)){
+    S.hive.aboard++;
+    if (!S.hive.dormant){
+      if (S.hive.aboard % 3 === 0) tick(c('hv', WE[(S.hive.aboard / 3) % WE.length]));
+      if (S.hive.aboard % 4 === 0){
+        const me = S.loc === 'hv' ? 4 : parts(S.loc)[0], a = S.hive.aperture, cur = ringDist(a, me);
+        const cand = [(a+1)%8, (a+7)%8].sort((x, y) => ringDist(y, me) - ringDist(x, me))[0];
+        if (ringDist(cand, me) > cur){ S.hive.aperture = cand; say(c('rd','>>> The aperture has been relocated. It is now at subjunction '+pad2(cand)+'.')); }
+      }
+    }
+  }
+  if (O.hiveAt !== 'off' && !S.hive.present && (S.ship.woke || S.m.prompts >= 30 || S.buffer.some(b => b.name === 'Unlisted Container'))){
+    S.hive.present = true; tick(c('rd','[PROXIMITY] Mass not on previous scan · '+W[S.hive.at].name));
+  }
+  if (S.coh <= 0) die();
+}
+function submit(raw){
+  raw = raw.trim();
+  if (S.mode === 'dead'){ S = fresh(S); S.msg = [c('gn','SUBSTRATE REBUILT. Coherence 100.')]; return; }
+  if (S.mode !== 'main'){ sub(raw); return; }
+  if (raw === '') raw = S.last;
+  S.msg = [];
+  const wasH = aboardH(S.loc), cost = drainNow();
+  S.coh -= cost;
+  const low = raw.toLowerCase(), v = view();
+  if (raw === ''){ say(c('dim','Nothing to repeat yet.')); }
+  else if (low === 'i'){ S.mode = 'buffer'; }
+  else if (raw === 's'){ scan(); }
+  else if (raw === 'll' || low === 'lattice'){ lattice(); }
+  else if (low === 'm' || low === 'map'){ say(c('dim','The map is already on the right-hand pane.')); }
+  else if (low === 'help' || raw === '?'){ say(c('dim','i buffer · s scan · ll lattice · numbers and letters as listed · Enter repeats')); }
+  else if (low === 'sync'){ say(c('dim','[MOCK] Nothing is saved here.')); }
+  else {
+    const isNum = /^\d+$/.test(raw);
+    const o = v.opts.find(x => isNum ? (/^\d+$/.test(x.k) && parseInt(x.k, 10) === parseInt(raw, 10)) : x.k === low);
+    if (o){ if (o.run()){ S.steps++; S.last = raw; } }
+    else say(c('rd','Invalid choice: '+raw));
+  }
+  afterPrompt(wasH, cost);
+}
+function sub(raw){
+  const low = raw.toLowerCase();
+  S.msg = [];
+  if (S.mode === 'buffer'){
+    let m;
+    if (low === '' || low === 'b'){ S.mode = 'main'; }
+    else if ((m = low.match(/^m\s+(\d+)\s+(\d+)$/))){
+      const a = +m[1] - 1, b = +m[2] - 1;
+      if (a === b || !S.buffer[a] || !S.buffer[b]){ say(c('rd','Two different items, by number.')); return; }
+      const A = S.buffer[a], B = S.buffer[b], cap = w => w.charAt(0).toUpperCase() + w.slice(1);
+      const H = {name:cap(A.name.split(' ')[0])+'-'+cap(B.name.split(' ')[0])+' Hybrid', hz:A.hz + B.hz};
+      [a, b].sort((x, y) => y - x).forEach(i => S.buffer.splice(i, 1));
+      S.buffer.push(H); S.coh = Math.min(100, S.coh + 15);
+      say(c('gn','>>> SYNTHESIS: '+H.name+' · '+H.hz+' Hz  (+15 Coherence)'));
+      if (H.hz % 11 === 0) say(c('gn b','!!! RESONANCE DETECTED'));
+      if (A.beacon || B.beacon) say(c('rd','The beacon dissolved into the hybrid. The signal line will read NO CARRIER.'));
+      tick(c('gn','SYN: '+H.name));
+    }
+    else if ((m = low.match(/^d\s+(\d+)$/))){
+      const i = +m[1] - 1; if (!S.buffer[i]){ say(c('rd','No such item.')); return; }
+      say(c('dim','Destroyed: '+S.buffer[i].name)); S.buffer.splice(i, 1);
+    }
+    else say(c('rd','m 1 2 merges · d 1 destroys · b goes back'));
+    return;
+  }
+  if (S.mode === 'take'){
+    const p = parts(S.loc), key = p.join(':'), objs = S.ship.rooms[key];
+    let m;
+    if (low === '' || low === 'c'){ S.mode = 'main'; }
+    else if ((m = low.match(/^(\d+)$/)) && objs[+m[1] - 1]){
+      const nm = objs.splice(+m[1] - 1, 1)[0];
+      const it = nm === 'unlisted container' ? {name:'Unlisted Container', hz:REG, beacon:true} : {name:nm, hz:Math.round(hz(nm) * 1.1)};
+      S.buffer.push(it);
+      say(c('yl','>>> CAPTURED: '+it.name+' · '+it.hz+' Hz'));
+      if (it.beacon) say(c('rd','It is warm. The number on your HUD and the number in your hands are the same number.'));
+      tick(c('yl','OBJ: '+it.name));
+    }
+    else if ((m = low.match(/^d(\d+)$/)) && S.buffer[+m[1] - 1]){
+      const it = S.buffer.splice(+m[1] - 1, 1)[0]; objs.push(it.name.toLowerCase());
+      say(c('dim','Dropped '+it.name+'. The room will remember only its name.'));
+    }
+    else say(c('rd','A number takes · dN drops · c cancels'));
+    return;
+  }
+  if (S.mode === 'launch'){
+    const list = DESTS.filter(d => d.id !== S.ship.at);
+    if (low === '' || low === 'c'){ S.mode = 'main'; return; }
+    const d = /^\d+$/.test(low) ? list[parseInt(low, 10) - 1] : null;
+    if (!d){ say(c('rd','Pick a destination by number, or c to cancel.')); return; }
+    S.ship.at = d.id; S.ship.owned = true; S.ship.seen = true; S.mode = 'main'; S.steps++;
+    say(c('gn b','>>> LAUNCH. Course laid in: '+d.label));
+    say(c('dim','The tow frame groans. The stars do not streak; they are simply different when you look again.'));
+    say(c('dim','You are still on the bridge. The airlock is four decks below you, and beyond it is somewhere new.'));
+    tick(c('gn','SHIP: arrived · '+W[d.id].name));
+  }
+}
+
+/* ---------- rendering ---------- */
+const NOTES = {
+  universe:['LEVEL 00','No placement puts a ship here. The question at this height is whether the signal still reads. It does: the HUD gives a bearing at every level, so a beacon can pull you across the whole tree.'],
+  filament:['LEVEL 01','Only the hive can show here, with its switch set to “in transit”. A ship this high is an event, not a place. Does meeting it on the filament feel bigger, or just farther from anything you care about?'],
+  sector:['LEVEL 02','Sectors hold no ships in any placement. They are the corridor you cross on the way.'],
+  nullreach:['LEVEL 02 · NULL REACH','A derelict adrift here gives the reach a second reason to exist besides the echo. It is also the loneliest placement: nothing else on the menu but one star.'],
+  system:['LEVEL 03 · MY PICK','In orbit, listed after the planets, so planet numbers never move. Try s here: the orbit scan is the “you looked” way of finding a ship without any beacon.'],
+  planet:['LEVEL 04','Low orbit: the ship is listed after the countries. It is one level closer to the street, but does a ship read oddly next to a list of countries?'],
+  country:['LEVEL 05','No placement puts a ship here. Does that feel like a gap, or like ground that belongs to the planet?'],
+  city:['LEVEL 06','No placement puts a ship here either. A spaceport would live at this level if there were one.'],
+  street:['LEVEL 07','Where the game starts. With the grounded placement the hulk sits among the buildings: the cheapest ship to reach, and the least like a ship. Compare the climb from here to level 03 with the beacon on and off.'],
+  approach:['Q3 · READING THE HULL','A lobby for the ship: silhouette, fate readable from outside, s for the hull scan. Does looking before boarding feel like a decision, or like one more Enter?'],
+  airlock:['Q1 · THE ONLY DOOR','Everything aboard is measured from here. Watch “last walk-out” in the cost panel after you leave, then flip the exit switch and compare.'],
+  deck:['Q1 · THE SPINE','Same u / d / c as a building’s elevator. Five decks placed by function: bridge on top, reactor at the bottom, the trait decides the middle. With the exit switch on “anywhere”, l appears here.'],
+  passage:['DOORS STILL TELL THE TRUTH','Inscriptions are free; s gives trace and room type. Sealed hatches are the promise that the ship has a second state.'],
+  room:['ROOMS','Same t / f / b / l as the game. Log fragments pin themselves to your ticker the first time you enter.'],
+  reactor:['Q2 · THE FIRST HEART','The mirror of the ritual, cut down to one gesture: feed the core two items. It costs you a merge’s worth of buffer and changes every screen aboard. Is the second walk a reward?'],
+  pod:['THE PANIC BUTTON','One use. It breaks the airlock rule once, and drops you on a street instead of where you docked.'],
+  hold3:['WHERE THE NUMBER COMES FROM','The Hidden Frequency you carried was this container’s hum. Taking it is what the hive hears.'],
+  cryo:['FATE','The ship is not a tomb. Dormant, crewed by sleepers, one missing. Fate is the fourth axis after culture, era and trait.'],
+  bridge:['THE SECOND HEART','log assembles the fragments. n launches: the ship moves, you stay on the bridge, and the walk down to the airlock ends somewhere new. After that it is yours.'],
+  hiveap:['Q4 · IT FOUND YOU','You did not discover this entry; it appeared. Compare this screen with the hauler’s approach: no class, no decks, no name, and the door opened first.'],
+  hive:['Q4 · SAME WORDS, DIFFERENT PLACE','Every subjunction has the same text on purpose. The drain rises the longer you stay, and the aperture moves away from you every four prompts. Is that dread, or just arithmetic?'],
+  vinculum:['THE LORE HOOK','The hive’s heart has the same name as your interface. Severing it silences the voice, stops the aperture, and returns the drain to normal.']
+};
+function cohBar(){
+  const n = Math.max(0, Math.round(S.coh / 5)), cls = S.coh >= 70 ? 'gn' : S.coh >= 30 ? 'yl' : 'rd';
+  return c(cls, '█'.repeat(n))+c('faint','░'.repeat(20 - n))+' '+c(cls, String(Math.max(0, S.coh)));
+}
+function depth(){
+  const base = KIND[W[worldPos()].kind].level, l = S.loc;
+  if (W[l]) return base;
+  if (l === 'ap' || l === 'al' || l === 'hap') return base + 1;
+  if (/^dk:/.test(l) || /^hj:/.test(l)) return base + 2;
+  if (/^ps:/.test(l) || l === 'hv') return base + 3;
+  return base + 5;
+}
+function render(){
+  const v = view(), out = [];
+  $('term').setAttribute('data-frame', S.mode === 'dead' ? 'dead' : v.frame);
+  const spark = v.spark ? v.spark.map(g => g.charAt(0) === '[' ? '<b>'+esc(g)+'</b>' : esc(g)).join(' ')
+    : ancestors(S.loc).reverse().map((id, i, a) => i === a.length - 1 ? '<b>['+esc(KIND[W[id].kind].icon)+']</b>' : esc(KIND[W[id].kind].icon)).join(' ');
+  const sig = signal();
+  out.push('<div class="hud"><div class="spark">'+spark+'</div>'+
+    '<div class="stats"><span>'+c('k','PULSE_TRAVERSAL ')+S.steps+'</span><span>'+c('k','HOP_DENSITY ')+depth()+'</span><span>'+c('k','TRACE_BUFFER ')+S.buffer.length+'/16</span><span>'+c('k','DRAIN ')+drainNow()+'</span></div>'+
+    '<div>'+c('k','COHERENCE ')+cohBar()+'</div>'+
+    (sig ? '<div>'+c('k','SIGNAL ')+sig+'</div>' : '')+
+    '<div>'+c('k','TICKER ')+(S.ticker.length ? S.ticker.join(c('faint','  ·  ')) : c('faint','—'))+'</div></div>');
+
+  if (S.mode === 'buffer' || S.mode === 'take' || S.mode === 'launch'){
+    let h = '<div class="pane">';
+    if (S.mode === 'buffer'){
+      h += '<h2>QUANTUM BUFFER</h2><div class="rows">'+(S.buffer.length ? S.buffer.map((b, i) => '<div>'+c('key yl', pad2(i+1)+'.')+' '+esc(b.name)+' '+c('dim', b.hz+' Hz')+(b.beacon ? ' '+c('yl','[BEACON]') : '')+'</div>').join('') : c('dim','empty'))+'</div>';
+      h += '<div class="rows">'+c('dim','m 1 2 merges (+15 Coherence) · d 1 destroys · b or Enter goes back')+'</div>';
+    } else if (S.mode === 'take'){
+      const objs = S.ship.rooms[parts(S.loc).join(':')];
+      h += '<h2>OBJECTS HERE</h2><div class="rows">'+(objs.length ? objs.map((o, i) => '<div>'+c('key yl', pad2(i+1)+'.')+' '+esc(o)+'</div>').join('') : c('dim','nothing left'))+'</div>';
+      h += '<div class="rows">'+c('dim','a number takes it · dN drops buffer item N here · c or Enter cancels')+'</div>';
+    } else {
+      h += '<h2>PLOTTING TABLE</h2><div class="rows">'+DESTS.filter(d => d.id !== S.ship.at).map((d, i) => '<div>'+c('key yl', pad2(i+1)+'.')+' '+esc(d.label)+'</div>').join('')+'</div>';
+      h += '<div class="rows">'+c('dim','a number launches · c or Enter cancels')+'</div>';
+    }
+    out.push(h+'</div>');
+  } else {
+    out.push('<div class="panes"><div class="pane"><h2>'+esc(v.title)+'</h2><div class="tags">'+v.tags.join('')+'</div><div class="desc">'+v.desc.filter(Boolean).map(d => '<p>'+esc(d)+'</p>').join('')+'</div><div class="rows">'+v.rows.map(r => '<div>'+r+'</div>').join('')+'</div></div>'+
+      '<div class="pane map"><div class="cap">'+esc(v.mapcap || 'Map')+'</div><pre>'+v.map+'</pre></div></div>');
+    const keys = v.opts.map(o => o.k);
+    out.push('<div class="compass">'+['u','d','f','b','l'].map(k => keys.indexOf(k) >= 0 ? '<b>'+k.toUpperCase()+'</b>' : 'x').join(' ')+'</div>');
+  }
+  out.push('<div class="msgs">'+S.msg.map(m => '<div>'+m+'</div>').join('')+'</div>');
+  if (S.mode === 'main') out.push('<div class="menu"><div class="cap">Directives</div>'+v.opts.map(o => '<button type="button" class="opt" data-k="'+esc(o.k)+'">'+o.html+'</button>').join('')+'</div>');
+  $('screen').innerHTML = out.join('');
+  $('plabel').textContent = S.mode === 'dead' ? 'Press Enter:' : S.mode === 'buffer' ? 'Buffer >' : S.mode === 'take' ? 'Objects >' : S.mode === 'launch' ? 'Course >' : '[Last: '+(S.last || '-')+'] Enter choice:';
+
+  // side panel
+  const wp = worldPos(), wl = KIND[W[wp].kind].level;
+  $('ladder').innerHTML = LADDER.map((ids, lv) => {
+    const marks = [];
+    if (ids.indexOf(S.ship.at) >= 0) marks.push(c('rs b','◈ hauler'));
+    if (S.hive.at && ids.indexOf(S.hive.at) >= 0) marks.push(c(S.hive.present ? 'rd b' : 'faint','◆ hive'+(S.hive.present ? '' : ' (not yet)')));
+    const you = lv === Math.min(wl, 7);
+    if (you) marks.push(c('yl b','@ you'+(W[S.loc] ? '' : ' (aboard)')));
+    return '<div class="r'+(you ? ' you' : '')+'"><span>'+pad2(lv)+'</span><span>'+esc(KIND[W[ids[0]].kind].icon)+'</span><span>'+esc(ids.map(id => W[id].name).join(' · '))+'</span><span>'+marks.join(' ')+'</span></div>';
+  }).join('') + (LADDER.some(ids => ids.indexOf(S.ship.at) >= 0) ? '' : '<div class="r"><span>03</span><span>☼</span><span>'+esc(W[S.ship.at].name)+'</span><span>'+c('rs b','◈ hauler')+'</span></div>');
+  const nt = NOTES[v.note] || NOTES.room;
+  $('note').innerHTML = '<div class="q">'+esc(nt[0])+'</div><p>'+esc(nt[1])+'</p>';
+  const m = S.m;
+  $('metrics').innerHTML = [
+    ['Prompts', m.prompts], ['Coherence spent', m.spent], ['Prompts aboard, this boarding', m.aboardPrompts], ['Coherence spent aboard', m.aboardSpent],
+    ['Last walk-out (last room → off the ship)', m.lastWalkOut === null ? '—' : m.lastWalkOut+' prompts'],
+    ['Log fragments', Object.keys(S.ship.logs).length+'/5'], ['Hauler', S.ship.owned ? 'yours' : S.ship.lit ? 'awake' : 'dormant'],
+    ['Hive', O.hiveAt === 'off' ? 'off' : !S.hive.present ? 'not arrived' : S.hive.dormant ? 'silent' : 'present'], ['Reboots', m.reboots]
+  ].map(r => '<dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd>').join('');
+}
+
+/* ---------- wiring ---------- */
+function restart(){ S = fresh(); S.msg = [c('dim','Scenario restarted. A Hidden Frequency sits in your buffer, and it is pointing somewhere.')]; tick(c('yl','[SIGNAL] Registry '+REG+' · carrier faint')); render(); }
+function syncControls(){
+  $('oHauler').value = O.haulerAt; $('oHive').value = O.hiveAt; $('oStart').value = O.startAt; $('oExit').value = O.exitRule;
+  $('oDark').value = O.darkLit ? 'on' : 'off'; $('oDrain').value = String(O.drain); $('oSignal').value = O.signal ? 'on' : 'off';
+}
+$('form').addEventListener('submit', e => { e.preventDefault(); const el = $('cmd'); submit(el.value); el.value = ''; render(); el.focus(); });
+$('screen').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; submit(b.getAttribute('data-k')); render(); });
+$('oHauler').addEventListener('change', e => { O.haulerAt = e.target.value; restart(); });
+$('oHive').addEventListener('change', e => { O.hiveAt = e.target.value; restart(); });
+$('oStart').addEventListener('change', e => { O.startAt = e.target.value; restart(); });
+$('oDark').addEventListener('change', e => { O.darkLit = e.target.value === 'on'; restart(); });
+$('oExit').addEventListener('change', e => { O.exitRule = e.target.value; render(); });
+$('oDrain').addEventListener('change', e => { O.drain = parseInt(e.target.value, 10); render(); });
+$('oSignal').addEventListener('change', e => { O.signal = e.target.value === 'on'; render(); });
+$('bRestart').addEventListener('click', restart);
+$('bRefill').addEventListener('click', () => { if (S.mode === 'dead') return; S.coh = 100; render(); });
+
+function start(data){
+  if (data && data.O && data.S){ O = data.O; S = data.S; syncControls(); render(); }
+  else { syncControls(); restart(); }
+}
+try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => ({O:O, S:S})); } catch (err) {}
+if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(start);
+else start((window.claude && window.claude.hot && window.claude.hot.data) || {});
+})();
+</script>
+</body>
+</html>
