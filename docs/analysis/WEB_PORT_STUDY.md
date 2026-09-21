@@ -316,3 +316,44 @@ Registry: `npm view <pkg> version` run 2026-09-21. Docs: [TypeScript 7 announcem
 Repos read: [OpenFrontIO](https://github.com/openfrontio/OpenFrontIO) · [pokerogue](https://github.com/pagefaultgames/pokerogue) ·
 [Pokémon Showdown architecture](https://github.com/smogon/pokemon-showdown/blob/master/ARCHITECTURE.md) ·
 [chessground](https://github.com/lichess-org/chessground) · [VS Code source organization](https://github.com/microsoft/vscode/wiki/Source-Code-Organization).
+
+---
+
+## 12. How the work is run — sessions, agents, tests (research, 2026-09-21)
+**Question (user):** one long session, several agents, or ultracode — and what about automated tests?
+**Evidence:** this study (§2, §7, §9), the Claude Code workflow reference read in-session, and one documentation pass
+over the official Claude Code docs (URLs below; read by a subagent, not opened in the main session). It is a
+recommendation, not law — nothing here changes the CODEX until stage 1 says so.
+
+| Topic | Recommendation | Why |
+| :-- | :-- | :-- |
+| **Session shape** | **Many short sessions — one per wave** (plan → `/grill` → Directive → commits → `/close-wave` → end). Never one long session. | A full context is summarized and details are lost; the handover file already carries state between sessions. The fixed load is ≈9,600 words before any work (§8), which is why stage 1 (context diet) comes early. |
+| **Who writes code** | **One writer: the main session.** No parallel agents writing engine code. | The layers depend on each other (rng → procgen → model → rules → ui) and the design needs one voice (Shape table, OO law). The docs say the same: parallel agents pay on independent work, cost more than they return on coupled work. Parallel writers from templates is the 2026-03-11 post-mortem. |
+| **What agents are for** | **Reading and checking**: sweep the Groovy rule classes (§2.3), review a finished diff with fresh eyes, absorb noisy output (test logs). | Each agent has its own context; only its conclusion comes back, so the main session stays clean. CODEX § 2 already requires verifying what a subagent proposes against the original files. |
+| **Ultracode** | **Off as a standing mode.** Ask for a workflow *by name* for three jobs only. | With ultracode on, every substantive task becomes a multi-agent run and token cost is not a constraint; the docs put agent teams at about 7× the tokens of a single session. |
+
+**The three jobs worth a multi-agent workflow (each is independent work, which is where fan-out pays):**
+1. **Rule extraction, before stages 3–4.** Readers over `Room.getOptions`, `Building.getExtraContent`, `ScanCommand`,
+   `TurnProcessor`, `SyncManager`, `Gematria`, `SpectralFrequency`, the breach rule and the 14 factories → one rule
+   sheet, every row with `file:line`; then skeptic agents check each row against the Player's Guide. A disagreement
+   between code and Guide is a finding for the user (D5), not something an agent resolves.
+2. **Porting the ≈185 game-fact tests (§7)** — only once the engine API they call exists; one test file per agent.
+3. **Adversarial review of each stage's diff before merge** — finders, then verifiers told to refute.
+
+**Automated tests — the order matters more than the tools (§7 has the tools):**
+1. **The gate before the game.** Stage 2 ships `npm run check` (typecheck + lint + tests, one `STATUS=` line) before any
+   game code exists; every later commit runs it.
+2. **Tests come from the Player's Guide numbers, not from the Groovy code** — otherwise the known defects (§2.4) are
+   copied. Each test is written before the code it checks and shown RED, then GREEN (existing lesson).
+3. **Generator (stage 3):** property tests for the Guide's ranges, a same-seed-same-world test, snapshot pins captured
+   only after the user has reviewed them — from then on a diff is a finding.
+4. **Rules (stage 4):** play-session fixtures `{ seed, history }` discovered by glob — a new file is a new test.
+5. **UI (stage 5):** Playwright flows and screenshots; a UI change is unverified until it has been seen.
+6. **Optional, decide at stage 2:** a Claude Code hook that runs the typecheck after every edit; a GitHub Actions job
+   that runs `check` on every push (the repository has no workflow today — D9 adds the first at stage 6).
+
+**Discarded from the documentation pass:** its cost estimate ("$0.50–$2 per phase") — not credible, not used.
+**Sources (Claude Code docs):** [workflows](https://code.claude.com/docs/en/workflows.md) ·
+[subagents](https://code.claude.com/docs/en/sub-agents.md) · [worktrees](https://code.claude.com/docs/en/worktrees.md) ·
+[agent teams — token cost](https://code.claude.com/docs/en/agent-teams.md) · [costs — context management](https://code.claude.com/docs/en/costs.md) ·
+[large codebases](https://code.claude.com/docs/en/large-codebases.md) · [best practices](https://code.claude.com/docs/en/best-practices.md).
