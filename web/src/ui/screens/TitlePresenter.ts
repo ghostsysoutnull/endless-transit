@@ -6,6 +6,13 @@ import type { TitleVM } from './TitleVM.ts';
  * snapshot in, view-model out. No DOM. The view draws what this carries and adds no word of its own.
  */
 export class TitlePresenter {
+  readonly #buildId: string;
+
+  /** `buildId` names the build this page was made from (the composition root reads it; `dev` when unset). */
+  constructor(buildId: string) {
+    this.#buildId = buildId;
+  }
+
   toViewModel(snapshot: GameSnapshot): TitleVM {
     return {
       title: 'ENDLESS TRANSIT',
@@ -27,6 +34,7 @@ export class TitlePresenter {
         label: option.label.toUpperCase(),
       })),
       status: snapshot.message,
+      build: `build ${this.#buildId}`,
       regions: { stage: 'Uplink', world: 'World', actions: 'Actions' },
     };
   }

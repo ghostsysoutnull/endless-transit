@@ -10,6 +10,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: process.env.CI !== undefined,
   retries: 0,
+  // A page takes seconds to come up on a small machine with every worker busy: fewer workers and a longer
+  // leash, rather than retries that would hide a real flake.
+  workers: 3,
+  timeout: 60_000,
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
   use: {
     baseURL: `http://localhost:${String(PORT)}${BASE_PATH}`,

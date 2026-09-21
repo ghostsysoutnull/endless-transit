@@ -64,6 +64,7 @@ export class TitleView implements View<TitleVM> {
             (option) => this.#button(option),
           )}
         </nav>
+        <footer class="build" data-testid="build">${vm.build}</footer>
       </div>
     `;
   }

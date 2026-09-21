@@ -18,6 +18,8 @@ export interface TitleVM extends Screen {
   readonly options: readonly OptionVM[];
   /** The live-region text: what just happened. */
   readonly status: string;
+  /** Which build the page is — small print for the tester. */
+  readonly build: string;
   /** Names of the screen's regions, read by screen readers only. */
   readonly regions: { readonly stage: string; readonly world: string; readonly actions: string };
 }

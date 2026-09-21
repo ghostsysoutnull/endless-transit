@@ -21,6 +21,6 @@ const engine = new GameEngine({
   entropy: new CryptoEntropySource(window.crypto),
   saves: new LocalStorageSaveStore(() => window.localStorage),
 });
-const presenter = new TitlePresenter();
+const presenter = new TitlePresenter(__ET_BUILD__);
 
 new Shell(engine, (snapshot) => presenter.toViewModel(snapshot), new TitleView()).start(container);

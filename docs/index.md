@@ -10,6 +10,9 @@ Welcome to the **Endless Transit** neural link manual.
 
 You are standing at the gateway to an infinite procedural lattice. This interface provides the tactical data and operational protocols required to maintain your coherence during the Transit.
 
+## [DIRECT_UPLINK]
+**[▶ PLAY IN THE BROWSER]({{ "/play/" | relative_url }})** — the web build of the Transit, phone or desktop, nothing to install. It is being ported in stages; the corner of its title screen names the build.
+
 ## [MANUAL_MODULES]
 Select a module from the Comms Array above or use the initial link below:
 
@@ -28,4 +31,4 @@ Select a module from the Comms Array above or use the initial link below:
 **LATENCY**: 0.04ms
 **SYNC**: READY
 
-*Last updated at 2026-09-20 20:45 UTC*
+*Last updated at 2026-09-21 22:44 UTC*

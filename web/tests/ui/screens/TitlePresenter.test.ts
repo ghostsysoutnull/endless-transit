@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 
-const presenter = new TitlePresenter();
+const presenter = new TitlePresenter('a1b2c3d');
 
 describe('TitlePresenter.toViewModel', () => {
   test('no world yet: the screen invites, and carries the option as data', () => {
@@ -38,6 +38,13 @@ describe('TitlePresenter.toViewModel', () => {
     const vm = presenter.toViewModel({ world: null, options: [], message: '' });
     expect(vm.title).toBe('ENDLESS TRANSIT');
     expect(vm.regions).toEqual({ stage: 'Uplink', world: 'World', actions: 'Actions' });
+  });
+
+  test('the build stamp names the build the page was made from — handed in, the engine never sees it', () => {
+    expect(presenter.toViewModel({ world: null, options: [], message: '' }).build).toBe('build a1b2c3d');
+    expect(new TitlePresenter('dev').toViewModel({ world: null, options: [], message: '' }).build).toBe(
+      'build dev',
+    );
   });
 
   test('the view-model is plain data', () => {

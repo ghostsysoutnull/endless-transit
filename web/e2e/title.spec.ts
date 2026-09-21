@@ -125,3 +125,9 @@ test('the keyboard is an extra: N draws a world, R re-rolls', async ({ page, has
   await page.keyboard.press('r');
   await expect(seed).not.toHaveText(first);
 });
+
+test('a build stamp is visible, so a tester can tell which build a phone is showing', async ({ page }) => {
+  await page.goto('./');
+  await expect(page.getByTestId('build')).toBeVisible();
+  await expect(page.getByTestId('build')).toHaveText(/^build \S+$/);
+});

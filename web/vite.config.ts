@@ -7,6 +7,8 @@ export default defineConfig(({ command, isPreview }) => {
   const production = command === 'build' || isPreview === true;
   return {
     base: process.env.ET_BASE ?? (production ? PRODUCTION_BASE : '/'),
+    // The build stamp of the title screen. Only `main.ts` reads it; the engine never sees it.
+    define: { __ET_BUILD__: JSON.stringify(process.env.ET_BUILD ?? 'dev') },
     build: { target: 'es2023', outDir: 'dist', emptyOutDir: true },
     preview: { port: 4173, strictPort: true },
     test: {
