@@ -42,21 +42,35 @@ button:focus-visible,select:focus-visible,canvas:focus-visible{outline:1px solid
 .deck{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);gap:10px;align-items:start}
 @media (max-width:900px){.deck{grid-template-columns:minmax(0,1fr)}}
 .main,.console{display:flex;flex-direction:column;gap:6px;min-width:0}
-/* the ladder of levels: one thin line above the picture */
-.gauge{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border-bottom:1px solid var(--rule)}
-.gauge li{display:flex;min-width:0}
-.rung{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 5px;font-size:11px;color:var(--faint);border-bottom:2px solid transparent;position:relative;min-width:0;white-space:nowrap}
-.rung .nm{display:none;overflow:hidden;text-overflow:ellipsis;max-width:22ch}
-.rung .lv{font-variant-numeric:tabular-nums;font-size:9.5px}
-.rung.past{color:var(--dim)} .rung.past[data-climb]{cursor:pointer} .rung.past[data-climb]:hover{color:var(--text);background:var(--panel2)} .rung.past[data-climb]:hover .nm{display:inline}
-.rung.you{color:var(--frame);font-weight:700;border-bottom-color:var(--frame);background:var(--panel)} .rung.you .nm,.rung.in .nm{display:inline}
-.rung.in{color:var(--text)}
-.rung.bear{color:var(--yl);animation:bear 1.4s infinite}
-.rung:focus-visible{outline:1px solid var(--yl)}
-.rung .mk{font-weight:700}
-.gauge .cost{display:none}
-@keyframes bear{0%,100%{box-shadow:inset 0 -2px 0 rgba(230,195,92,.2)}50%{box-shadow:inset 0 -2px 0 rgba(230,195,92,1)}}
-@media (prefers-reduced-motion:reduce){.rung.bear{animation:none;box-shadow:inset 0 -2px 0 var(--yl)}}
+/* the depth rail: an altimeter beside the picture. Positions ride on --p so a phone can lay it on its side */
+.view{display:grid;grid-template-columns:46px minmax(0,1fr);gap:6px;align-items:stretch;min-width:0}
+.rail{display:flex;flex-direction:column;gap:6px;min-width:0}
+.rtrack{position:relative;flex:1 1 auto;border:1px solid var(--rule);background:var(--panel);min-height:240px}
+.rtrack::before{content:"";position:absolute;left:50%;top:4%;bottom:3%;width:2px;margin-left:-1px;background:repeating-linear-gradient(to bottom,var(--rule-hi) 0 3px,transparent 3px 7px)}
+.rfill{position:absolute;left:50%;top:4%;height:var(--f);width:2px;margin-left:-1px;background:var(--cy);box-shadow:0 0 8px var(--cy);transition:height .55s cubic-bezier(.3,.8,.3,1)}
+.rn{all:unset;box-sizing:border-box;position:absolute;left:50%;top:var(--p);width:24px;height:20px;margin:-10px 0 0 -12px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--faint);background:var(--panel);cursor:default;z-index:1}
+.rn.in{font-size:10px;width:18px;height:15px;margin:-7.5px 0 0 -9px}
+.rn.past{color:var(--cy)} .rn.you{color:var(--yl);font-weight:700} .rn[data-climb]{cursor:pointer} .rn[data-climb]:hover,.rn:focus-visible{color:var(--yl)}
+.rn.ship::after{content:"◈";position:absolute;right:-10px;top:-5px;font-size:10px;color:var(--rs);text-shadow:0 0 6px var(--rs)} .rn.ship.off::after{content:"◈";top:9px;opacity:.75}
+.rn.hive::before{content:"◆";position:absolute;left:-9px;top:-5px;font-size:10px;color:var(--rd);animation:rblink 1s steps(2) infinite}
+.ryou{position:absolute;left:4px;right:4px;top:var(--p);height:26px;margin-top:-13px;border:1px solid var(--yl);box-shadow:0 0 12px rgba(230,195,92,.45),inset 0 0 8px rgba(230,195,92,.15);pointer-events:none;transition:top .55s cubic-bezier(.3,.8,.3,1);z-index:2}
+.rspan{position:absolute;left:50%;top:var(--a);height:var(--b);width:8px;margin-left:-4px;background:rgba(230,195,92,.4);pointer-events:none}
+.rchev{position:absolute;right:3px;top:var(--a);height:var(--b);width:4px;pointer-events:none;background:repeating-linear-gradient(to bottom,var(--yl) 0 4px,transparent 4px 12px);background-size:4px 12px}
+.rchev.up{animation:rup .5s linear infinite} .rchev.down{animation:rdown .5s linear infinite}
+@keyframes rup{to{background-position:0 -12px}} @keyframes rdown{to{background-position:0 12px}} @keyframes rblink{50%{opacity:.2}}
+.rtip{position:absolute;left:calc(100% + 8px);top:var(--p);transform:translateY(-50%);z-index:6;white-space:nowrap;background:#0a1112;border:1px solid var(--yl);color:var(--text);padding:3px 9px;font-size:11.5px;pointer-events:none;box-shadow:0 0 14px rgba(0,0,0,.8)}
+.rdepth{all:unset;box-sizing:border-box;text-align:center;border:1px solid var(--rule-hi);background:var(--panel);cursor:pointer;padding:5px 0 4px;display:flex;flex-direction:column;align-items:center}
+.rdepth b{font-size:20px;line-height:1;color:var(--yl);font-variant-numeric:tabular-nums} .rdepth span{font-size:8px;letter-spacing:.14em;color:var(--dim)}
+.rdepth:hover,.rdepth:focus-visible{border-color:var(--yl);outline:none} .rdepth.tick b{animation:rtick .35s ease-out}
+@keyframes rtick{from{transform:translateY(-7px);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:820px){
+  .view{grid-template-columns:minmax(0,1fr)} .rail{flex-direction:row}
+  .rtrack{min-height:0;height:36px} .rtrack::before{left:4%;right:3%;top:50%;bottom:auto;width:auto;height:2px;margin:-1px 0 0;background:repeating-linear-gradient(to right,var(--rule-hi) 0 3px,transparent 3px 7px)}
+  .rfill{left:4%;top:50%;height:2px;width:var(--f);margin:-1px 0 0;transition:width .55s}
+  .rn,.rn.in{top:50%;left:var(--p)} .ryou{top:4px;bottom:4px;left:var(--p);right:auto;width:26px;height:auto;margin:0 0 0 -13px;transition:left .55s}
+  .rspan,.rchev{display:none} .rtip{left:var(--p);top:calc(100% + 6px);transform:translateX(-40%)} .rdepth{flex-direction:row;gap:6px;padding:0 10px}
+}
+@media (prefers-reduced-motion:reduce){.rfill,.ryou{transition:none} .rchev.up,.rchev.down,.rn.hive::before,.rdepth.tick b{animation:none}}
 /* Coherence: a full-width meter fixed to the picture */
 .inst{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:12px;font-variant-numeric:tabular-nums}
 .inst .meter{flex:1 1 260px;display:flex;align-items:center;gap:8px;min-width:0}
@@ -183,8 +197,13 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
 
   <div class="deck">
     <div class="main">
-      <ol class="gauge" id="gauge" aria-label="Depth: where you are in the lattice"></ol>
-      <div class="stage"><canvas id="cv" tabindex="0" aria-label="The world. Use arrow keys and Enter, or click."></canvas><div class="tools" id="tools"></div></div>
+      <div class="view">
+        <div class="rail" id="gauge" role="group" aria-label="Depth rail: where you are in the lattice">
+          <div class="rtrack" id="rtrack"><i class="rfill"></i><i class="rspan" id="rspan" hidden></i><i class="rchev" id="rchev" hidden></i><i class="ryou"></i><div id="rnotches"></div><div class="rtip" id="rtip" hidden></div></div>
+          <button type="button" class="rdepth" id="rdepth" data-openlat title="Open the lattice trace (Shift+L)" aria-label="Depth. Opens the lattice trace"></button>
+        </div>
+        <div class="stage"><canvas id="cv" tabindex="0" aria-label="The world. Use arrow keys and Enter, or click."></canvas><div class="tools" id="tools"></div></div>
+      </div>
       <div class="inst" id="inst"></div>
       <div class="sig" id="sig"></div>
       <div class="log" id="log"></div>
@@ -1533,19 +1552,26 @@ function paint(){
   // the room's objects and your buffer, as tiles
   $('floor').innerHTML = !dead && l.t === 's' && l.at === 'rm' ? objsAt(l).map((o, i) => '<button type="button" class="tile fl" data-take="' + i + '"><span>' + esc(o) + '</span><em>take</em></button>').join('') : '';
   $('log').innerHTML = S.ticker.slice().reverse().map(m => '<div>' + m + '</div>').join('');
-  // the depth gauge
-  const path = ancestors(worldPos()).reverse(), tu = ancestors(S.ship.at), beacon = b && b.cls === 'yl' && !S.ship.owned, common = beacon ? path.slice().reverse().find(id => tu.indexOf(id) >= 0) : null;
-  let g = '', kind = 'universe';
-  for (let lv = 0; lv < 8; lv++){
-    const id = path[lv], n = id ? N(id) : null; if (n) kind = n.kind;
-    const mk = (id && S.ship.at === id ? c(S.ship.owned ? 'gn mk' : 'rs mk', '◈') : '') + (id && S.hive.present && S.hive.at === id ? c('rd mk', '◆') : '');
-    const you = l.t === 'w' && lv === path.length - 1, bear = id && id === common && !(you && S.ship.at === id);
-    if (n) g += '<li><button type="button" class="rung ' + (you ? 'you' : 'past') + (bear ? ' bear' : '') + '"' + (!you && l.t === 'w' ? ' data-climb="' + id + '"' : '') + ' title="' + esc(KLABEL[n.kind] + ' — ' + n.name) + '"><span class="lv">' + pad2(lv) + '</span><span>' + esc(KIND[n.kind].icon) + '</span><span class="nm">' + esc(n.name) + '</span><span>' + mk + '</span></button></li>';
-    else g += '<li><span class="rung"><span class="lv">' + pad2(lv) + '</span><span>' + esc(KIND[kind].icon) + '</span><span class="nm">' + esc(KLABEL[kind].toLowerCase()) + '</span><span></span></span></li>';
+  // the depth rail: an altimeter beside the picture
+  const lvls = latLevels(), nLat = ancestors(worldPos()).length, yAt = s => s < 8 ? 4 + s * (58 / 7) : 70 + (s - 8) * 6.6, youSlot = lvls.length - 1 < nLat ? lvls.length - 1 : 8 + (lvls.length - 1 - nLat);
+  const mk = s => (LT.ship && LT.ship.ci === s ? ' ship' + (LT.ship.on ? '' : ' off') : '') + (LT.hive && LT.hive.ci === s ? ' hive' : '');
+  let rn = '', kind = 'universe';
+  for (let s = 0; s < 8; s++){
+    const lv = lvls[s];
+    if (s < nLat){
+      kind = lv.kind; const you = s === lvls.length - 1, climb = l.t === 'w' && s < nLat - 1, k = nLat - 1 - s;
+      rn += '<button type="button" class="rn ' + (you ? 'you' : 'past') + mk(s) + '" style="--p:' + yAt(s).toFixed(1) + '%"' + (climb ? ' data-climb="' + lv.id + '"' : '') + ' data-tip="' + esc(lv.type + ' — ' + lv.name + (climb ? ' · climb ' + k + (k === 1 ? ' level · ' : ' levels · ') + k + (k === 1 ? ' move' : ' moves') : you ? ' · you are here' : '')) + '" aria-label="' + esc(lv.type + ' ' + lv.name) + '">' + esc(KIND[lv.kind].icon) + '</button>';
+    } else rn += '<button type="button" class="rn future" style="--p:' + yAt(s).toFixed(1) + '%" data-tip="' + esc(KLABEL[kind] + ' · not reached on this thread') + '" tabindex="-1">' + esc(KIND[kind].icon) + '</button>';
     kind = KIND[kind].child || kind;
   }
-  if (l.t !== 'w') whereSegs().forEach((s, i, all) => { g += '<li><span class="rung in' + (i === all.length - 1 ? ' you' : '') + '"><span class="lv">' + (i === 0 ? '08' : '') + '</span><span>' + (i === 0 ? (inB(l) ? '⌂' : inH(l) ? '◈' : '◆') : '·') + '</span><span class="nm">' + esc(s[1] && i === 0 ? s[1] : s[0].toLowerCase() + (s[1] ? ' ' + s[1] : '')) + '</span><span></span></span></li>'; });
-  $('gauge').innerHTML = g + '<li class="cost">' + (l.t === 'w' && path.length > 1 ? 'Click a level above to climb to it: one move per level.' : l.t === 'w' ? 'The root. Everything is below you.' : 'Inside. The way back up starts at the door.') + '</li>';
+  const INI = {building:'⌂', ship:'◈', hive:'◆', floor:'▤', corridor:'▅', apartment:'▥', room:'□', node:'◉'};
+  lvls.slice(nLat).forEach((lv, j) => { const you = nLat + j === lvls.length - 1; rn += '<button type="button" class="rn in ' + (you ? 'you' : 'past') + '" style="--p:' + yAt(8 + j).toFixed(1) + '%" data-tip="' + esc(lv.type + ' — ' + lv.name + (lv.pos ? ' · ' + lv.pos.i + ' of ' + lv.pos.n : '') + (you ? ' · you are here' : '')) + '">' + (INI[lv.kind] || '·') + '</button>'; });
+  $('rnotches').innerHTML = rn;
+  const tr = $('rtrack'), live = b && b.cls === 'yl' && !S.ship.owned && LT.ship && b.dir !== 'ship' && b.dir !== 'hull' && b.dir !== 'hold3', ch = $('rchev');
+  tr.style.setProperty('--p', yAt(youSlot).toFixed(1) + '%'); tr.style.setProperty('--f', (yAt(youSlot) - 4).toFixed(1) + '%'); tr.classList.toggle('inside', l.t !== 'w');
+  ch.hidden = !live;
+  if (live){ const up = LT.ship.ci < youSlot && !(LT.ship.ci === nLat - 1 && l.t === 'w'); ch.className = 'rchev ' + (up ? 'up' : 'down'); ch.style.setProperty('--a', (up ? yAt(LT.ship.ci) : yAt(youSlot)).toFixed(1) + '%'); ch.style.setProperty('--b', (up ? yAt(youSlot) - yAt(LT.ship.ci) : 7).toFixed(1) + '%'); }
+  const dn = pad2(depthNow()), rd = $('rdepth'); if (rd.getAttribute('data-n') !== dn){ rd.setAttribute('data-n', dn); rd.innerHTML = '<b>' + dn + '</b><span>DEPTH</span>'; rd.classList.remove('tick'); void rd.offsetWidth; rd.classList.add('tick'); }
   // test bench
   const wp = worldPos(), wl = KIND[N(wp).kind].level;
   $('ladder').innerHTML = LADDER.map((ids, lv) => {
@@ -1811,7 +1837,11 @@ $('targets').addEventListener('mouseover', e => {   // pointing at a name points
   const o = FX.view.opts[+b.getAttribute('data-o')], l = L(), i = (FX.selList || []).indexOf(o.hit);
   if (l.t === 'w' && i >= 0) S.sel = i; else if (l.t === 's' && l.at === 'ps') S.door = +b.getAttribute('data-o');
 });
-$('gauge').addEventListener('click', e => { const b = e.target.closest('[data-climb]'); if (b) climbTo(b.getAttribute('data-climb')); });
+const tipOn = e => { const n = e.target.closest && e.target.closest('.rn'); if (!n) return; const tip = $('rtip'), p = n.style.getPropertyValue('--p'); tip.textContent = n.getAttribute('data-tip'); tip.style.setProperty('--p', p); tip.hidden = false;
+  const sp = $('rspan'); if (n.hasAttribute('data-climb')){ sp.style.setProperty('--a', p); sp.style.setProperty('--b', 'calc(' + $('rtrack').style.getPropertyValue('--p') + ' - ' + p + ')'); sp.hidden = false; } else sp.hidden = true; };
+const tipOff = () => { $('rtip').hidden = true; $('rspan').hidden = true; };
+['mouseover', 'focusin'].forEach(ev => $('rnotches').addEventListener(ev, tipOn)); ['mouseleave', 'focusout'].forEach(ev => $('rnotches').addEventListener(ev, tipOff));
+$('gauge').addEventListener('click', e => { tipOff(); const b = e.target.closest('[data-climb]'); if (b) climbTo(b.getAttribute('data-climb')); });
 document.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
   if (tag === 'select' || tag === 'input' || e.metaKey || e.ctrlKey || e.altKey) return;
