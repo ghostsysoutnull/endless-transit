@@ -13,6 +13,7 @@ describe('TitlePresenter.toViewModel', () => {
     expect(vm.world).toBeNull();
     expect(vm.options).toEqual([{ id: 'new-world', key: 'N', label: 'NEW WORLD' }]);
     expect(vm.prompt).toMatch(/no world/i);
+    expect(vm.stageLine).toBe('AWAITING SEED');
     expect(vm.status).toBe('');
   });
 
@@ -22,9 +23,21 @@ describe('TitlePresenter.toViewModel', () => {
       options: [{ id: 'reroll', key: 'r', label: 'Re-roll' }],
       message: 'World 1111-1111-2222-2222 drawn.',
     });
-    expect(vm.world).toEqual({ seed: '1111-1111-2222-2222', name: 'HOLLOW REACH' });
+    expect(vm.world).toEqual({
+      nameLabel: 'UNIVERSE',
+      name: 'HOLLOW REACH',
+      seedLabel: 'SEED',
+      seed: '1111-1111-2222-2222',
+    });
+    expect(vm.stageLine).toBe('WORLD LOCKED');
     expect(vm.options).toEqual([{ id: 'reroll', key: 'R', label: 'RE-ROLL' }]);
     expect(vm.status).toBe('World 1111-1111-2222-2222 drawn.');
+  });
+
+  test('every word on the screen is carried by the view-model, region names for screen readers included', () => {
+    const vm = presenter.toViewModel({ world: null, options: [], message: '' });
+    expect(vm.title).toBe('ENDLESS TRANSIT');
+    expect(vm.regions).toEqual({ stage: 'Uplink', world: 'World', actions: 'Actions' });
   });
 
   test('the view-model is plain data', () => {

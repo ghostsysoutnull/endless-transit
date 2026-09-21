@@ -7,6 +7,7 @@ import type { TitleVM } from './TitleVM.ts';
 /**
  * Draws the title screen with lit-html. Buttons carry `data-option` and no handlers of their own — the
  * input router listens once for the whole screen. The live region is always in the tree; only its text moves.
+ * Every word comes from the view-model (`TitlePresenter` owns them); this file owns markup only.
  */
 export class TitleView implements View<TitleVM> {
   #container: HTMLElement | undefined;
@@ -32,18 +33,18 @@ export class TitleView implements View<TitleVM> {
           <h1>${vm.title}</h1>
           <p class="sub">${vm.tagline}</p>
         </header>
-        <section class="stage" aria-label="Uplink">
+        <section class="stage" aria-label=${vm.regions.stage}>
           <div class="sigil" aria-hidden="true">◈</div>
-          <p class="stage-line">${vm.world === null ? 'AWAITING SEED' : 'WORLD LOCKED'}</p>
+          <p class="stage-line">${vm.stageLine}</p>
         </section>
-        <section class="cap" aria-label="World">
+        <section class="cap" aria-label=${vm.regions.world}>
           ${
             vm.world === null
               ? html`<p class="prompt" data-testid="prompt">${vm.prompt}</p>`
               : html`
-                  <p class="eyebrow">UNIVERSE</p>
+                  <p class="eyebrow">${vm.world.nameLabel}</p>
                   <h2 data-testid="world-name">${vm.world.name}</h2>
-                  <p class="eyebrow">SEED</p>
+                  <p class="eyebrow">${vm.world.seedLabel}</p>
                   <p class="seed" data-testid="world-seed">${vm.world.seed}</p>
                 `
           }
@@ -56,7 +57,7 @@ export class TitleView implements View<TitleVM> {
             ${vm.status}
           </p>
         </section>
-        <nav class="pad" aria-label="Actions">
+        <nav class="pad" aria-label=${vm.regions.actions}>
           ${repeat(
             vm.options,
             (option) => option.id,
