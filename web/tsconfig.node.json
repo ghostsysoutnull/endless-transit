@@ -10,6 +10,9 @@
   "include": ["vite.config.ts", "playwright.config.ts", "scripts", "tests", "e2e"],
   "references": [
     {
+      "path": "./tsconfig.engine.json"
+    },
+    {
       "path": "./tsconfig.app.json"
     }
   ]
