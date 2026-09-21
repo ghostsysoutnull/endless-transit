@@ -42,12 +42,12 @@ Initialize session for the Endless Transit substrate.
 | Resource | Path |
 | :--- | :--- |
 | History | `journals/CHRONICLE_INDEX.md` → `journals/LOG_*`; retros `terminal/docs/retro/`; finished plans and execution records `terminal/tasks/completed/` (Groovy), `tasks/completed/` (workflow, site) |
-| Law + commands | `.claude/CODEX.md`; `.claude/commands/{grill,chronicle,close-wave}.md`; `./terminal/vinc.sh --help` |
+| Law + commands | root `CLAUDE.md` (slim) + `terminal/CLAUDE.md` (Groovy domains, tooling); `.claude/CODEX.md`; `.claude/commands/{grill,chronicle,close-wave}.md`; `./terminal/vinc.sh --help` |
 | Gate internals | lint: `terminal/config/lint/vinc-ruleset.groovy`, `terminal/config/lint/baseline.xml` (one writer: `--lint --baseline`), `terminal/lib/lint/`; docs: `terminal/.agents/docs-check.sh`; goldens: `terminal/src/test/groovy/com/endlesstransit/ui/golden/` (one writer: `--goldens`) |
 | Backlogs | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-021, HK-023, HK-013, HK-024); `tasks/backlog/CONCEPTS.md` (OPEN: CONCEPT-001, CONCEPT-002); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-010 Medium, WF-011, WF-006, WF-012 Low) |
 | Completed refactor plan | `terminal/docs/analysis/OOA_REFACTOR_PLAN.md` (per-phase execution records) |
 | Domain invariants | `terminal/src/main/groovy/com/endlesstransit/{core,model,ui,procgen}/CLAUDE.md`; class blueprints `terminal/docs/blueprints/logic/classes/` (stamped; see `/close-wave` row 3) |
-| Lessons + safety mandates | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md`; `tasks/lessons/POST_MORTEM_2026_03_{06,11}.md` |
+| Lessons + safety mandates | `tasks/lessons/infrastructure.md` (process); `terminal/tasks/lessons/{groovy-tooling,core,model,procgen,ui}.md` (Groovy, loaded from `terminal/CLAUDE.md` and the domain files); `tasks/lessons/POST_MORTEM_2026_03_{06,11}.md` |
 | Content (procgen lists) | `terminal/src/main/resources/{themes,names}/` — every list has a size floor in `ThemeResourceCoverageTest`; audit `docs/analysis/VARIETY_AUDIT.md` |
 | Contract pins by area | events `core/{JournalEventContractTest,EventBusTest}`; factory wiring `procgen/FactoryWiringContractTest`; floor `model/{FloorStateContractTest,BreachOptionContractTest,CorridorLeaveContractTest}`; restore `core/{RestoreContractTest,AbyssalRestoreContractTest}`; variety `procgen/ProcgenVarietyContractTest`; names `procgen/NameGeneratorContractTest` (all under `terminal/src/test/groovy/com/endlesstransit/`) |
 | Player docs + site | `docs/terminal/` (guide: `docs/terminal/guide/players_guide.md`, every number cited from source; `cheat_sheet.md` beside it is a copy the guide owns; lines 1–103 keep their numbering — a test comment cites `:102-103`); live at `https://ghostsysoutnull.github.io/endless-transit/` — GitHub Pages from `master:/docs`, so **a push republishes the site**; branches are never published |

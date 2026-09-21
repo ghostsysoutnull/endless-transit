@@ -142,7 +142,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.
 * **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave (`(HK-012)`) — the incident lives in that wave's chronicle and retro. The lessons files are loaded every session; every sentence in them is paid for each time. Existing long bullets are left as they are until a lessons diet is decided.
-* Lessons load with their domain: each Groovy domain `CLAUDE.md` imports its `terminal/tasks/lessons/<domain>.md` when that directory is touched; `infrastructure.md` loads every session.
+* Lessons load with their domain: each Groovy domain `CLAUDE.md` imports its `terminal/tasks/lessons/<domain>.md` when that directory is touched; `terminal/CLAUDE.md` imports `terminal/tasks/lessons/groovy-tooling.md`; `infrastructure.md` (process lessons) loads every session.
 
 ## 🔧 Workflow Improvement Cadence
 * After every phase retro: scan "Concerns for Upcoming Phases" — log any workflow friction to `docs/analysis/WORKFLOW_BACKLOG.md`.
