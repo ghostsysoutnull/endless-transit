@@ -1,13 +1,13 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-21 (web port study and decisions recorded; next is the stage-0 plan). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-21 (the port runs under the Standing Order; next is iteration I01). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
 - **Test Suite:** 296 discovered / 296 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
 - **Latest chronicle:** `0x55f9460` (top row of `journals/CHRONICLE_INDEX.md`; checked by `./vinc.sh --docs`, D2)
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=222 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013; `NoNewStaticLogic` allow-list of 15 files in the ruleset, shrink-only — none of them a rule-holding class since HK-022)
 - **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room`, `TurnProcessor`, `NameGenerator`, `ProceduralFactory` and `Building` are `Verified`, 10 still `Baselined (not audited)`)
-- **Branch:** `master`. The last *code* merge is `55f9460` (HK-023 slice 1); only docs merged after it. A push republishes the site. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
-- **Active Work:** the **web port effort** (CONCEPT-002), decided 2026-09-21: Groovy is frozen and moves to `terminal/`, the new TypeScript game in `web/` is where development happens. Decisions, stack, `web/` tree, stages and how the work is run (§12: one session per wave, one writer, ultracode off): `docs/analysis/WEB_PORT_STUDY.md`. **Next step: draft the stage-0 plan (study §9 — the `git mv` into `terminal/`), then `/grill`, then a Directive.** No plan exists yet; nothing has moved.
+- **Branch:** `master`. The last *code* merge is `55f9460` (HK-023 slice 1); only docs merged after it. A push republishes the site. If `git status -sb` shows ahead/behind origin, ask before pushing. The user's old untracked save and journal files stay where they are; never `git add -A`.
+- **Active Work:** the **web port effort** (CONCEPT-002), decided 2026-09-21: Groovy is frozen and moves to `terminal/`, the new TypeScript game in `web/` is where development happens. Decisions, stack, `web/` tree, stages and how the work is run (§12: one session per wave, one writer, ultracode off): `docs/analysis/WEB_PORT_STUDY.md`. **How it runs: "hi" = work `tasks/PORT_QUEUE.md` to the end under `.claude/CODEX.md` "The Standing Order" — sub-agents write, the main session gates and merges, no questions (the user's decisions are in the queue), a live build after every iteration, touch-first. Where the queue and the study disagree, the queue wins.**
 - **Other open threads — none has a plan.** Every plan with a `src/` change carries a **Shape table** (CODEX § 4, WF-009). One line each; the detail lives at the pointer.
   - **CONCEPT-001** ships: concept `docs/analysis/SHIPS_CONCEPT.md`, every rule the mocks run on `docs/analysis/SHIPS_RULES.md`, two mocks (text v1, visual v13). **Open: the concept's §7 verdict column — eleven decisions, none judged.** No plan until then.
   - Ships will exist only in the web game; the visual mock stays their lab (study D5). A UI change is unverified until seen: `node docs/analysis/mocks/look.js`.
@@ -29,10 +29,9 @@ Initialize session for the Endless Transit substrate.
    (simulate → expected set → allow-list re-pin). The OOA plan is no longer loaded automatically — read `docs/analysis/OOA_REFACTOR_PLAN.md` on demand.
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=296 …`; `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
    `./vinc.sh --scan` → seed 0, 9 nodes; `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
-4. **Ask before choosing:** the effort is the web port (Active Work); wait for a Directive before writing anything. The user likes decisions as
-   lettered options with a marked preference, answered in one word — **in the web-port effort, one question per message** — and short
-   plain-language summaries in chat.
-5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → ≤ 5 production files per commit → full suite + `--lint` after every commit →
+4. **Web port = go:** work the queue under the Standing Order, no questions. Any other effort: wait for a Directive; one question per
+   message, plain words (no symbols, no section numbers), lettered options, a marked pick. Chat summaries short and plain.
+5. **Every task outside the port queue:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → ≤ 5 production files per commit → full suite + `--lint` after every commit →
    merge `--no-ff` → **`/close-wave`** (it prints its tier and table) **before saying "closed"**. Push only on the user's word.
 
 **END_PROMPT**
