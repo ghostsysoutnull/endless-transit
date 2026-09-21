@@ -129,6 +129,37 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
 .tile:hover{border-color:var(--frame)} .tile:focus-visible{outline:1px solid var(--yl)} .tile[aria-pressed="true"]{border-color:var(--yl);background:var(--panel2);color:var(--yl)}
 .tile.beacon{border-color:var(--yl);color:var(--yl)} .tile.fl{border-style:dashed;border-color:var(--frame)}
 
+/* the spectral bench */
+.dlg{width:min(940px,calc(100vw - 24px));max-height:calc(100vh - 24px);background:var(--ground);color:var(--text);border:1px solid var(--yl);padding:14px 16px;font-family:var(--mono);font-size:13px;box-shadow:0 0 60px rgba(230,195,92,.12)}
+.dlg[open]{display:flex;flex-direction:column;gap:10px;animation:dlgin .22s ease-out}
+.dlg::backdrop{background:rgba(3,6,7,.82) repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.35) 2px 3px)}
+@keyframes dlgin{from{transform:scaleY(.04);opacity:.2}to{transform:none;opacity:1}}
+.dh{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px} .dh h2{margin:0;font-size:14px;letter-spacing:.14em;color:var(--yl)} .dh #dcount{color:var(--dim);flex:1 1 auto}
+#bcv{width:100%;height:clamp(150px,26vh,230px);display:block;background:#060a0b;border:1px solid var(--rule)}
+.gem{min-height:74px;display:flex;flex-direction:column;gap:6px;justify-content:center}
+.gword{display:flex;flex-wrap:wrap;gap:3px 2px;align-items:flex-end}
+.gl{display:inline-flex;flex-direction:column;align-items:center;min-width:17px;animation:gpop .32s both;animation-delay:calc(var(--i) * 45ms)}
+.gl b{font-size:19px;font-weight:500;line-height:1.1} .gl i{font-style:normal;font-size:10.5px;font-variant-numeric:tabular-nums}
+.gl.v{color:var(--faint)} .gl.c b{color:var(--text)} .gl.c i{color:var(--yl)} .gsp{width:10px}
+.gline{font-family:var(--sans);font-size:13px;color:var(--text);animation:gpop .4s both;animation-delay:calc(var(--i,0) * 45ms)} .gline b{font-family:var(--mono)}
+@keyframes gpop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;overflow-y:auto}
+.card{all:unset;box-sizing:border-box;font:inherit;font-size:12px;border:1px solid var(--rule-hi);background:var(--panel);padding:7px 9px;cursor:pointer;display:flex;flex-direction:column;gap:5px;position:relative;min-width:0;min-height:62px}
+.card .cn{overflow-wrap:anywhere;line-height:1.2} .card .ch{color:var(--dim);font-size:10.5px;font-variant-numeric:tabular-nums}
+.cbar{height:3px;background:var(--rule)} .cbar i{display:block;height:100%;background:var(--cy)}
+.card:hover,.card:focus-visible{border-color:var(--text);background:var(--panel2);outline:none} .card[disabled]{cursor:default;opacity:.6}
+.card.beacon{border-color:var(--yl)} .card.beacon .cn{color:var(--yl)} .card.beacon .cbar i{background:var(--yl)}
+.card em{position:absolute;top:-1px;right:-1px;font-style:normal;font-weight:700;font-size:11px;padding:1px 6px;color:#060a0b}
+.card.selA{border-color:var(--cy);box-shadow:0 0 12px rgba(85,214,214,.35)} .card.selA em{background:var(--cy)}
+.card.selB{border-color:var(--mg);box-shadow:0 0 12px rgba(201,135,221,.35)} .card.selB em{background:var(--mg)} .card.selB .cbar i{background:var(--mg)}
+.card.born{animation:born .9s ease-out;border-color:var(--yl)} .card.born .cbar i{background:var(--yl)}
+@keyframes born{0%{transform:scale(.6);opacity:0;box-shadow:0 0 0 rgba(230,195,92,0)}50%{transform:scale(1.06);opacity:1;box-shadow:0 0 34px rgba(230,195,92,.8)}100%{transform:none;box-shadow:0 0 0 rgba(230,195,92,0)}}
+.card.ghost{border-style:dashed;border-color:var(--rule);color:var(--faint);cursor:default;align-items:center;justify-content:center;background:transparent}
+.dact{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;min-height:34px;font-family:var(--sans);font-size:12.5px}
+.dbtn{font:inherit;font-family:var(--mono);font-size:12px;background:var(--panel2);color:var(--text);border:1px solid var(--rule-hi);padding:6px 10px;cursor:pointer;text-align:left}
+.dbtn kbd{font:inherit;color:var(--yl);font-weight:700;margin-right:6px} .dbtn.go{border-color:var(--yl)} .dbtn.go b{color:var(--yl)} .dbtn:hover{border-color:var(--text)} .dbtn[disabled]{opacity:.5;cursor:default}
+@media (prefers-reduced-motion:reduce){.dlg[open],.gl,.gline,.card.born{animation:none}}
+.bufbtn{margin-left:auto}
 .cy{color:var(--cy)} .yl{color:var(--yl)} .rd{color:var(--rd)} .gn{color:var(--gn)} .mg{color:var(--mg)}
 .rs{color:var(--rs)} .hv{color:var(--hv)} .dim{color:var(--dim)} .faint{color:var(--faint)} .b{font-weight:700}
 </style>
@@ -155,9 +186,17 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
       <div class="chips" id="chips"></div>
       <div class="targets" id="targets"></div>
       <div class="floor" id="floor"></div>
-      <div class="buf" id="buf" aria-label="Quantum buffer"></div>
     </div>
   </div>
+
+  <dialog class="dlg" id="dlg" aria-label="Quantum buffer">
+    <div class="dh"><h2>QUANTUM BUFFER</h2><span id="dcount"></span><button class="tbtn" id="dclose" type="button">esc · back</button></div>
+    <canvas id="bcv" aria-hidden="true"></canvas>
+    <div class="gem" id="gem" aria-live="polite"></div>
+    <div class="cards" id="cards"></div>
+    <div class="dact" id="dact"></div>
+    <div class="hint">Arrows pick · <b>Enter</b> puts an item on the bench (A, then B) · <b>m</b> synthesizes · <b>x</b> destroys · <b>Esc</b> goes back. Nothing here costs a move.</div>
+  </dialog>
 
   <aside class="bench" id="bench" hidden>
     <div class="box">
@@ -377,6 +416,7 @@ function tagsOf(n){
 function hz(name, depth){
   let sum = 0;
   for (const ch of name.toLowerCase()) if (ch >= 'a' && ch <= 'z' && 'aeiou'.indexOf(ch) < 0) sum += ch.charCodeAt(0) - 96;
+  if (sum === 11 || sum === 22 || sum === 33) sum *= 2;   // master number resonance, as Gematria.groovy
   return sum * (depth || 12);
 }
 /* a building floor, generated when first drawn. Counts follow the game: 1-10 rooms behind a door, 5-19 objects spread over them */
@@ -926,6 +966,7 @@ function frame(t){
   }
   ctx.globalAlpha = 1; dash(); noglow();
   postFx();
+  if (dlg.open) drawBench();
 }
 /* Coherence as a decay of the whole screen: colour drains (CSS), then noise, tearing and drop-outs (here) */
 function decay(){ return O.fx ? clamp((70 - S.coh) / 70, 0, 1) : 0; }
@@ -1446,7 +1487,7 @@ function paint(){
   // instruments: Coherence as a dial
   const cls = S.coh >= 70 ? 'gn' : S.coh >= 30 ? 'yl' : 'rd', b = bearing();
   $('inst').innerHTML = '<div class="meter ' + cls + '">' + c('k','COHERENCE') + '<span class="cohbar"><i style="width:' + clamp(S.coh, 0, 100) + '%"></i></span><b>' + Math.max(0, S.coh) + '</b></div>' +
-    '<span class="n">' + c('k','MOVES ') + '<b>' + S.steps + '</b></span><span class="n">' + c('k','DEPTH ') + '<b>' + depthNow() + '</b></span><span class="n">' + c('k','DRAIN ') + '<b class="' + (drainNow() > O.drain ? 'rd' : '') + '">' + drainNow() + '</b></span>';
+    '<span class="n">' + c('k','MOVES ') + '<b>' + S.steps + '</b></span><span class="n">' + c('k','DEPTH ') + '<b>' + depthNow() + '</b></span><span class="n">' + c('k','DRAIN ') + '<b class="' + (drainNow() > O.drain ? 'rd' : '') + '">' + drainNow() + '</b></span><button type="button" class="tbtn bufbtn" data-openbuf><b class="yl">i</b> BUFFER ' + S.buffer.length + '/16</button>';
   $('sig').className = 'sig ' + (b ? b.cls : '') + (b && b.cls === 'dim' ? ' flat' : '');
   $('sig').innerHTML = b ? '<span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>' + esc(b.text) + '</span>' : '';
   // caption
@@ -1470,9 +1511,6 @@ function paint(){
   $('chips').innerHTML = chips; $('targets').innerHTML = tg;
   // the room's objects and your buffer, as tiles
   $('floor').innerHTML = !dead && l.t === 's' && l.at === 'rm' ? objsAt(l).map((o, i) => '<button type="button" class="tile fl" data-take="' + i + '"><span>' + esc(o) + '</span><em>take</em></button>').join('') : '';
-  let tiles = '';
-  for (let i = 0; i < 16; i++){ const it = S.buffer[i]; tiles += it ? '<button type="button" class="tile' + (it.beacon ? ' beacon' : '') + '" data-buf="' + i + '" aria-pressed="' + (S.pick === i) + '"><span>' + esc(it.name) + '</span><em>' + it.hz + ' Hz' + (it.beacon ? ' · beacon' : '') + '</em></button>' : ''; }
-  $('buf').innerHTML = tiles; $('buf').setAttribute('data-head', 'QUANTUM BUFFER ' + S.buffer.length + '/16 · ' + (S.pick >= 0 ? 'NOW CLICK ANOTHER TO MERGE (+15)' : 'CLICK TWO TO MERGE'));
   $('log').innerHTML = S.ticker.slice().reverse().map(m => '<div>' + m + '</div>').join('');
   // the depth gauge
   const path = ancestors(worldPos()).reverse(), tu = ancestors(S.ship.at), beacon = b && b.cls === 'yl' && !S.ship.owned, common = beacon ? path.slice().reverse().find(id => tu.indexOf(id) >= 0) : null;
@@ -1506,8 +1544,105 @@ function paint(){
     ['Log fragments', Object.keys(S.ship.logs).length + '/5'], ['Hauler', S.ship.owned ? 'yours' : S.ship.lit ? 'awake' : 'dormant'],
     ['Hive', O.hiveAt === 'off' ? 'off' : !S.hive.present ? 'not arrived' : S.hive.dormant ? 'silent' : 'present'], ['Reboots', m.reboots]
   ].map(r => '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>').join('');
+  paintDlg();
   $('seedLine').textContent = 'Seed ' + O.seed + ' · the scripted path never changes; every sibling around it is grown from this number, the same way each time.';
 }
+/* ---------- the spectral bench: the buffer as its own screen ----------
+   Every item is a wave. Looking at one spells out its gematria; two on the bench are drawn superimposed before you commit. */
+const dlg = $('dlg'), bcv = $('bcv'), bctx = bcv.getContext('2d');
+const BN = {a:-1, b:-1, look:0, anim:0, born:-1};
+const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+function gemSum(name){ let s = 0; for (const ch of name.toLowerCase()) if (ch >= 'a' && ch <= 'z' && 'aeiou'.indexOf(ch) < 0) s += ch.charCodeAt(0) - 96; return s; }
+function gemHtml(it){
+  if (!it) return '<div class="gline dim">An empty buffer hums at nothing.</div>';
+  if (it.beacon && !it.parts) return '<div class="gword">' + String(it.hz).split('').map((d, i) => '<span class="gl c" style="--i:' + i + '"><b>' + d + '</b><i>·</i></span>').join('') + '</div><div class="gline">' + c('yl','Not a name. A registry.') + ' It has no letters to weigh; it was a number before anyone read it. Merging it away costs you the bearing.</div>';
+  if (it.parts) return '<div class="gline"><span class="cy">' + fmt(it.parts[0]) + ' Hz</span> + <span class="mg">' + fmt(it.parts[1]) + ' Hz</span> = ' + c('yl b', fmt(it.hz) + ' Hz') + '</div><div class="gline dim">A hybrid keeps no letters, only the sum. Merged ' + it.merges + (it.merges === 1 ? ' time' : ' times') + (it.hz % 11 === 0 ? ' · ' + '<span class="gn">divisible by 11: resonant</span>' : '') + '.</div>';
+  let i = 0; const raw = gemSum(it.name), master = raw === 11 || raw === 22 || raw === 33, base = master ? raw * 2 : raw;
+  const word = [...it.name].map(ch => { const lo = ch.toLowerCase(), isL = lo >= 'a' && lo <= 'z', v = isL && 'aeiou'.indexOf(lo) < 0 ? lo.charCodeAt(0) - 96 : 0; if (ch === ' ') return '<span class="gsp"></span>'; return '<span class="gl ' + (v ? 'c' : 'v') + '" style="--i:' + (i++) + '"><b>' + esc(ch) + '</b><i>' + (v || (isL ? '–' : '')) + '</i></span>'; }).join('');
+  const tail = base * 12 === it.hz ? ' × depth 12' : Math.round(base * 12 * 1.1) === it.hz ? ' × depth 12 × 1.1 aboard a ship' : ' × depth';
+  return '<div class="gword">' + word + '</div><div class="gline" style="--i:' + i + '">vowels are silent · consonants weigh their place in the alphabet · Σ = <b>' + raw + '</b>' + (master ? ' ' + c('gn b','master number, doubled → ' + base) : '') + tail + ' = ' + c('yl b', fmt(it.hz) + ' Hz') + '</div>';
+}
+function preview(){
+  const A = S.buffer[BN.a], B = S.buffer[BN.b]; if (!A || !B) return null;
+  return {name:cap1(A.name.split(' ')[0]) + '-' + cap1(B.name.split(' ')[0]) + ' Hybrid', hz:A.hz + B.hz, beacon:!!(A.beacon || B.beacon), res:(A.hz + B.hz) % 11 === 0};
+}
+function paintDlg(){
+  if (!dlg.open) return;
+  const n = S.buffer.length, total = S.buffer.reduce((s, it) => s + it.hz, 0), inRoom = L().t === 's' && L().at === 'rm', busy = !!BN.anim;
+  BN.a = BN.a < n ? BN.a : -1; BN.b = BN.b < n ? BN.b : -1; BN.look = clamp(BN.look, 0, Math.max(0, n - 1));
+  $('dcount').textContent = n + ' of 16 slots · ' + fmt(total) + ' Hz carried';
+  $('cards').innerHTML = S.buffer.map((it, i) => {
+    const w = clamp(Math.log10(Math.max(10, it.hz)) / 6.5 * 100, 6, 100), sel = i === BN.a ? 'A' : i === BN.b ? 'B' : '';
+    return '<button type="button" class="card' + (it.beacon ? ' beacon' : '') + (sel ? ' sel' + sel : '') + (i === BN.born ? ' born' : '') + '" data-card="' + i + '"' + (busy ? ' disabled' : '') + '><span class="cn">' + esc(it.name) + '</span><span class="cbar"><i style="width:' + w.toFixed(0) + '%"></i></span><span class="ch">' + fmt(it.hz) + ' Hz' + (it.merges ? ' · ' + '◆'.repeat(Math.min(it.merges, 7)) : '') + '</span>' + (sel ? '<em>' + sel + '</em>' : '') + '</button>';
+  }).join('') + (n < 16 ? '<span class="card ghost">' + (16 - n) + ' free</span>' : '');
+  const p = preview(), A = S.buffer[BN.a];
+  $('dact').innerHTML = (p ? '<button type="button" class="dbtn go" data-d="merge"' + (busy ? ' disabled' : '') + '><kbd>m</kbd>Synthesize → <b>' + esc(p.name) + '</b> · ' + fmt(p.hz) + ' Hz · +15 Coherence</button>' + (p.res ? c('gn','◎ the sum divides by 11: it will resonate') : '') + (p.beacon ? c('rd','⚠ the beacon dissolves into the hybrid: NO CARRIER') : '')
+      : '<span class="dim">Pick two items. Their waves are laid over each other before you commit.</span>') +
+    (A && !p ? '<button type="button" class="dbtn" data-d="destroy"' + (busy ? ' disabled' : '') + '><kbd>x</kbd>Destroy ' + esc(A.name) + '</button>' + (inRoom ? '<button type="button" class="dbtn" data-d="drop">Drop it in this room</button>' : '') : '') +
+    (BN.a >= 0 ? '<button type="button" class="dbtn" data-d="clear">Clear the bench</button>' : '');
+  paintGem();
+}
+function paintGem(){ $('gem').innerHTML = gemHtml(S.buffer[BN.look]); }
+function openBuf(){ if (S.mode !== 'main' || dlg.open) return; BN.a = BN.b = -1; BN.anim = 0; BN.born = -1; BN.look = 0; dlg.showModal(); paintDlg(); const f = dlg.querySelector('.card'); if (f && f.focus) f.focus(); }
+function pickCard(i){
+  if (BN.anim) return;
+  if (BN.a === i) { BN.a = BN.b; BN.b = -1; } else if (BN.b === i) BN.b = -1; else if (BN.a < 0) BN.a = i; else BN.b = i;
+  BN.look = i; BN.born = -1; paintDlg(); const f = dlg.querySelector('[data-card="' + i + '"]'); if (f && f.focus) f.focus();
+}
+function finishMerge(){
+  const a = BN.a, b = BN.b, A = S.buffer[a], B = S.buffer[b], p = preview(); BN.anim = 0; if (!p) return;
+  const H = {name:p.name, hz:p.hz, parts:[A.hz, B.hz], merges:(A.merges || 0) + (B.merges || 0) + 1};
+  [a, b].sort((x, y) => y - x).forEach(j => S.buffer.splice(j, 1));
+  S.buffer.push(H); S.coh = Math.min(100, S.coh + 15); S.msg = [];
+  say(c('gn','>>> SYNTHESIS: ' + H.name + ' · ' + fmt(H.hz) + ' Hz  (+15 Coherence)'));
+  if (p.res) say(c('gn b','!!! RESONANCE DETECTED'));
+  if (p.beacon) say(c('rd','The beacon dissolved into the hybrid. The signal line will read NO CARRIER.'));
+  tick(c('gn','SYN: ' + H.name)); BN.a = BN.b = -1; BN.born = BN.look = S.buffer.length - 1; paint();
+}
+function dlgDo(d){
+  if (d === 'merge' && preview() && !BN.anim){ BN.anim = RM ? FX.t - 1500 : FX.t; paintDlg(); }
+  else if (d === 'destroy' && S.buffer[BN.a] && BN.b < 0){ S.msg = [c('dim','Destroyed: ' + S.buffer[BN.a].name)]; S.buffer.splice(BN.a, 1); BN.a = -1; paint(); }
+  else if (d === 'drop' && S.buffer[BN.a]){ const i = BN.a; BN.a = -1; dropObj(i); }
+  else if (d === 'clear'){ BN.a = BN.b = -1; paintDlg(); }
+}
+function drawBench(){
+  const r = bcv.getBoundingClientRect(); if (!r.width) return;
+  const w = r.width, h = r.height; if (bcv.width !== Math.round(w * DPR)){ bcv.width = Math.round(w * DPR); bcv.height = Math.round(h * DPR); }
+  const g = bctx; g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, w, h);
+  const A = S.buffer[BN.a], B = S.buffer[BN.b], look = S.buffer[BN.look], t = RM ? 0 : FX.t / 1000;
+  const lam = hzv => clamp(2600 / Math.sqrt(hzv), 7, 150), f = (it, x, dir) => Math.sin(x / lam(it.hz) * 6.283 + t * 2.2 * dir);
+  const wave = (fn, y, amp, col, al, lw) => { g.beginPath(); for (let x = 0; x <= w; x += 2){ const yy = y + fn(x) * amp; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); } g.strokeStyle = col; g.globalAlpha = al; g.lineWidth = lw || 1.5; g.shadowColor = col; g.shadowBlur = 8; g.stroke(); g.shadowBlur = 0; };
+  const label = (s, y, col) => { g.globalAlpha = 1; g.font = '500 11px "IBM Plex Mono",ui-monospace,monospace'; g.fillStyle = '#060a0b'; const tw = g.measureText(s).width; g.fillRect(6, y - 8, tw + 8, 15); g.fillStyle = col; g.textBaseline = 'middle'; g.fillText(s, 10, y); };
+  g.globalAlpha = 1; g.strokeStyle = COL.rule; g.lineWidth = 1; for (let x = 0; x < w; x += 40){ g.beginPath(); g.moveTo(x + .5, 0); g.lineTo(x + .5, h); g.stroke(); }
+  if (!A){ if (look){ wave(x => f(look, x, 1), h / 2, h * .3, look.beacon ? COL.yl : COL.cy, .9, 2); label(look.name + ' · ' + fmt(look.hz) + ' Hz', 14, look.beacon ? COL.yl : COL.cy); } return; }
+  const p = BN.anim ? clamp((FX.t - BN.anim) / 1500, 0, 1) : 0, e = ease(p), yS = B ? h * .78 : h * .5, yA = h * .2 + (yS - h * .2) * e, yB = h * .48 + (yS - h * .48) * e, amp = h * .13;
+  wave(x => f(A, x, 1), B ? yA : h / 2, B ? amp : h * .3, COL.cy, 1 - e * .9, 1.5);
+  if (!p) label('A · ' + A.name + ' · ' + fmt(A.hz) + ' Hz', B ? yA - amp - 9 : 14, COL.cy);
+  if (!B) return;
+  wave(x => f(B, x, -1), yB, amp, COL.mg, 1 - e * .9, 1.5);
+  const collapse = p > .82 ? 1 - (p - .82) / .18 : 1;
+  wave(x => (f(A, x, 1) + f(B, x, -1)) * .5, yS, amp * (1.25 + e * 1.4) * collapse, COL.yl, .95, 2 + e * 1.5);
+  if (!p){ label('B · ' + B.name + ' · ' + fmt(B.hz) + ' Hz', yB - amp - 9, COL.mg); label('A + B · ' + fmt(A.hz + B.hz) + ' Hz', yS - amp * 1.25 - 9, COL.yl); }
+  if (p > .82){ g.globalAlpha = (p - .82) / .18 * .5; g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
+  if (BN.anim && p >= 1) finishMerge();
+}
+function dlgKey(e){
+  const key = e.key, low = key.toLowerCase(), cards = [...dlg.querySelectorAll('button.card')], i = cards.indexOf(document.activeElement);
+  if (key.indexOf('Arrow') === 0 && cards.length){
+    e.preventDefault(); const cols = Math.max(1, Math.round($('cards').clientWidth / (cards[0].offsetWidth + 6)));
+    const j = clamp((i < 0 ? 0 : i) + (key === 'ArrowRight' ? 1 : key === 'ArrowLeft' ? -1 : key === 'ArrowDown' ? cols : -cols), 0, cards.length - 1); cards[j].focus();
+  } else if (low === 'm') dlgDo('merge'); else if (low === 'x') dlgDo('destroy'); else if (low === 'i'){ e.preventDefault(); dlg.close(); }
+}
+dlg.addEventListener('click', e => {
+  if (e.target === dlg){ dlg.close(); return; }
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  if (b.id === 'dclose') dlg.close(); else if (b.hasAttribute('data-card')) pickCard(+b.getAttribute('data-card')); else if (b.hasAttribute('data-d')) dlgDo(b.getAttribute('data-d'));
+});
+const lookAt = e => { const b = e.target.closest && e.target.closest('[data-card]'); if (b && !BN.anim){ const i = +b.getAttribute('data-card'); if (i !== BN.look){ BN.look = i; paintGem(); } } };
+$('cards').addEventListener('mouseover', lookAt); $('cards').addEventListener('focusin', lookAt);
+dlg.addEventListener('close', () => { BN.anim = 0; paint(); });
+document.querySelector('.main').addEventListener('click', e => { if (e.target.closest('[data-openbuf]')) openBuf(); });
+
 /* ---------- wiring: click, tap, arrows ---------- */
 function doOpt(o){
   if (!o) return;
@@ -1547,6 +1682,7 @@ $('gauge').addEventListener('click', e => { const b = e.target.closest('[data-cl
 document.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
   if (tag === 'select' || tag === 'input' || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (dlg.open){ dlgKey(e); return; }
   const key = e.key, low = key.toLowerCase();
   if (S.mode === 'dead'){ if (key === 'Enter' || key === ' '){ e.preventDefault(); act(); } return; }
   if (key === 'Escape'){ e.preventDefault(); if (S.mode !== 'main') closeSub(); else if (S.pick >= 0){ S.pick = -1; paint(); } else runDir('esc'); return; }
@@ -1554,6 +1690,7 @@ document.addEventListener('keydown', e => {
   if (tag === 'button' && (key === 'Enter' || key === ' ')) return;
   if (key.indexOf('Arrow') === 0 || key === 'Enter'){ e.preventDefault(); runDir(key === 'Enter' ? 'enter' : key.slice(5).toLowerCase()); return; }
   if (low === 's'){ act('scan'); return; }
+  if (low === 'i'){ e.preventDefault(); openBuf(); return; }
   if (low === 'x' && S.pick >= 0){ bufferDestroy(); return; }
   const o = optBy(p => p.k === low); if (o) doOpt(o);
 });
