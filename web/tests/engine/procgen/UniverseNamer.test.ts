@@ -6,7 +6,7 @@ import { MemoryContentSource } from '#tests/support/MemoryContentSource.ts';
 
 const library = new ContentLibrary(
   new MemoryContentSource({
-    'names/buildings/adj/index.txt': 'void\nrust\n',
+    'themes/cultures/index.txt': 'void\nrust\n',
     'names/buildings/adj/void.txt': 'Hollow\nSilent\n',
     'names/buildings/adj/rust.txt': 'Corroded\nScrap\n',
     'names/buildings/noun/void.txt': 'Horizon\nReach\n',
@@ -29,6 +29,38 @@ describe('UniverseNamer', () => {
         name,
       ).toBe(true);
     }
+  });
+
+  test('which cultures exist has ONE owner — themes/cultures/index — and no list directory carries a copy', () => {
+    const owner = new MemoryContentSource({
+      'themes/cultures/index.txt': 'rust\n',
+      'names/buildings/adj/index.txt': 'void\n',
+      'names/buildings/noun/index.txt': 'void\n',
+      'names/buildings/adj/void.txt': 'Hollow\n',
+      'names/buildings/noun/void.txt': 'Reach\n',
+      'names/buildings/adj/rust.txt': 'Scrap\n',
+      'names/buildings/noun/rust.txt': 'Yard\n',
+    });
+    expect(new UniverseNamer(new ContentLibrary(owner)).nameOf(new Seed(3, 4))).toBe('Scrap Yard');
+  });
+
+  test('a culture of the index without its word lists is an error, never a silent default', () => {
+    const broken = new MemoryContentSource({
+      'themes/cultures/index.txt': 'void\n',
+      'names/buildings/adj/void.txt': 'Hollow\n',
+    });
+    expect(() => new UniverseNamer(new ContentLibrary(broken)).nameOf(new Seed(3, 4))).toThrow(
+      /names\/buildings\/noun\/void\.txt/,
+    );
+  });
+
+  test('nameOf is nameIn(cultureOf): the culture is drawn once, then both words come from it', () => {
+    for (let i = 0; i < 50; i++) {
+      const seed = new Seed(i, 5);
+      expect(namer.nameOf(seed)).toBe(namer.nameIn(namer.cultureOf(seed), seed));
+    }
+    expect(namer.nameIn('rust', new Seed(1, 1))).toMatch(/^(Corroded|Scrap) (Foundry|Yard)$/);
+    expect(namer.nameIn('void', new Seed(1, 1))).toMatch(/^(Hollow|Silent) (Horizon|Reach)$/);
   });
 
   test('different seeds reach every combination', () => {

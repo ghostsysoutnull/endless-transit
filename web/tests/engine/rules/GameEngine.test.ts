@@ -13,7 +13,7 @@ const SECOND = new Seed(0x33333333, 0x44444444);
 const namer = new UniverseNamer(
   new ContentLibrary(
     new MemoryContentSource({
-      'names/buildings/adj/index.txt': 'void\n',
+      'themes/cultures/index.txt': 'void\n',
       'names/buildings/adj/void.txt': 'Hollow\nSilent\nDrifting\n',
       'names/buildings/noun/void.txt': 'Horizon\nReach\nAperture\n',
     }),
