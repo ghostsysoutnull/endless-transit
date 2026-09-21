@@ -5,7 +5,7 @@ import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 const presenter = new TitlePresenter('a1b2c3d');
 
 function option(id: string, key: string, label: string): GameOption {
-  return { id, key, label, role: 'system', sealed: false, landmark: false };
+  return { id, key, label, place: '', role: 'system', sealed: false, landmark: false };
 }
 
 describe('TitlePresenter.toViewModel', () => {

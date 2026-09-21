@@ -15,7 +15,7 @@ function engineOn(saves: MemorySaveStore): GameEngine {
 }
 
 function system(id: string, key: string, label: string): GameOption {
-  return { id, key, label, role: 'system', sealed: false, landmark: false };
+  return { id, key, label, place: '', role: 'system', sealed: false, landmark: false };
 }
 
 function ids(snapshot: GameSnapshot): string[] {
@@ -91,6 +91,7 @@ describe('GameEngine — walking the big world', () => {
       id: 'enter:0',
       key: '1',
       label: 'Synchronize with Zeta-915-Link',
+      place: 'Zeta-915-Link',
       role: 'travel',
       sealed: false,
       landmark: false,
@@ -114,6 +115,7 @@ describe('GameEngine — walking the big world', () => {
       id: 'leave',
       key: 'l',
       label: 'Leave Cosmic filament',
+      place: '',
       role: 'return',
       sealed: false,
       landmark: false,
@@ -155,6 +157,7 @@ describe('GameEngine — walking the big world', () => {
     expect(buildings).toHaveLength(4);
     expect(buildings.every((option) => option.sealed && option.key === '')).toBe(true);
     expect(buildings[0]?.label).toBe('Enter Building: Ornate Sanctum');
+    expect(buildings[0]?.place).toBe('Ornate Sanctum');
     const after = engine.step('enter:0');
     expect(after.place?.kind).toBe('Street');
     expect(after.message).toBe(street.message);

@@ -111,7 +111,7 @@ export class GameEngine {
   }
 
   #system(id: string, key: string, label: string): GameOption {
-    return { id, key, label, role: 'system', sealed: false, landmark: false };
+    return { id, key, label, place: '', role: 'system', sealed: false, landmark: false };
   }
 
   #moved(happened: boolean, message: string): string {
@@ -133,6 +133,7 @@ export class GameEngine {
       id: `${TRAVEL}${String(index)}`,
       key: child.sealed() ? '' : (CHILD_KEYS[open++] ?? ''),
       label: `${here.approachVerb()} ${child.callSign()}`,
+      place: child.name(),
       role: 'travel',
       sealed: child.sealed(),
       landmark: child.landmark(),
