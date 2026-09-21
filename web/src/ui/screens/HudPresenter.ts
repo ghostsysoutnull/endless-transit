@@ -1,0 +1,106 @@
+import type { GameOption } from '#engine/rules/GameOption.ts';
+import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import type { OptionVM } from '#ui/OptionVM.ts';
+import type { Presenter } from '#ui/Presenter.ts';
+import type { HudVM } from './HudVM.ts';
+import type { TravelRowVM } from './TravelRowVM.ts';
+
+const DEFAULT_FRAME = 'default';
+const RETURN_MARK = '▲ ';
+
+/**
+ * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
+ * out. No DOM. It never asks what kind of place this is — the snapshot already says what it is called and
+ * what it shows; options are sorted by their `role`, which is data the engine put there for that purpose.
+ */
+export class HudPresenter implements Presenter<HudVM> {
+  readonly #buildId: string;
+
+  constructor(buildId: string) {
+    this.#buildId = buildId;
+  }
+
+  accepts(snapshot: GameSnapshot): boolean {
+    return snapshot.place !== null;
+  }
+
+  toViewModel(snapshot: GameSnapshot): HudVM {
+    const place = snapshot.place;
+    if (place === null) throw new Error('HudPresenter needs a snapshot with a place');
+    const rows = snapshot.options
+      .filter((option) => option.role === 'travel')
+      .map((option, index) => this.#row(option, index));
+    const dock = snapshot.options
+      .filter((option) => option.role !== 'travel')
+      .map((option) => this.#docked(option));
+    const pad = (value: number): string => String(value).padStart(2, '0');
+    return {
+      scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
+      title: 'ENDLESS TRANSIT',
+      frame: place.frame ?? DEFAULT_FRAME,
+      crumbs: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
+      stats: [
+        { label: 'HOP_DENSITY', value: pad(place.depth) },
+        ...(place.position === null
+          ? []
+          : [
+              {
+                label: place.position.label,
+                value: `${pad(place.position.index)}/${pad(place.position.total)}`,
+              },
+            ]),
+        { label: 'LOCUS', value: place.address },
+        { label: 'SEED', value: snapshot.world?.seed ?? '' },
+      ],
+      place: {
+        eyebrow: place.kind.toUpperCase(),
+        icon: place.icon,
+        name: place.name.toUpperCase(),
+        tags: place.facts.map((fact) => ({
+          key: fact.key,
+          label: fact.label,
+          value: fact.value.toUpperCase(),
+        })),
+        description: place.description,
+        diagnostic: place.status,
+      },
+      heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
+      rows,
+      sealedNote: rows.some((row) => row.sealed)
+        ? 'STRUCTURES SEALED · the lattice opens their doors in a later build'
+        : null,
+      sealedTag: 'SEALED',
+      dock,
+      options: [
+        ...rows.filter((row) => !row.sealed).map((row) => ({ id: row.id, key: row.key, label: row.label })),
+        ...dock,
+      ],
+      status: snapshot.message,
+      build: `build ${this.#buildId}`,
+      regions: {
+        hud: 'Position',
+        path: 'Path from the universe',
+        place: 'Where you are',
+        travel: 'Places to enter',
+        dock: 'Leave and game',
+      },
+    };
+  }
+
+  /** An open row says how to get in; a sealed one only says what stands there. */
+  #row(option: GameOption, index: number): TravelRowVM {
+    return {
+      id: option.id,
+      key: option.key.toUpperCase(),
+      ordinal: String(index + 1).padStart(2, '0'),
+      label: option.sealed ? option.place : option.label,
+      sealed: option.sealed,
+      landmark: option.landmark,
+    };
+  }
+
+  #docked(option: GameOption): OptionVM {
+    const mark = option.role === 'return' ? RETURN_MARK : '';
+    return { id: option.id, key: option.key.toUpperCase(), label: `${mark}${option.label.toUpperCase()}` };
+  }
+}

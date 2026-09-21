@@ -10,8 +10,11 @@ import { ThemeCatalog } from '#engine/procgen/ThemeCatalog.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
 import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
+import { HudPresenter } from '#ui/screens/HudPresenter.ts';
+import { HudView } from '#ui/screens/HudView.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 import { TitleView } from '#ui/screens/TitleView.ts';
+import { ScreenStage } from '#ui/ScreenStage.ts';
 import { Shell } from '#ui/Shell.ts';
 
 const container = document.querySelector<HTMLElement>('#app');
@@ -23,6 +26,8 @@ const engine = new GameEngine({
   entropy: new CryptoEntropySource(window.crypto),
   saves: new LocalStorageSaveStore(() => window.localStorage),
 });
-const presenter = new TitlePresenter(__ET_BUILD__);
 
-new Shell(engine, (snapshot) => presenter.toViewModel(snapshot), new TitleView()).start(container);
+new Shell(engine, [
+  new ScreenStage(new TitlePresenter(__ET_BUILD__), new TitleView()),
+  new ScreenStage(new HudPresenter(__ET_BUILD__), new HudView()),
+]).start(container);

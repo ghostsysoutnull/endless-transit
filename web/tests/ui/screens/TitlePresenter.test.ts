@@ -56,6 +56,27 @@ describe('TitlePresenter.toViewModel', () => {
     ).toBe('build dev');
   });
 
+  test('the title is the screen of a snapshot without a place — and only of that one', () => {
+    const atTitle = { world: null, place: null, options: [], message: '' };
+    expect(presenter.accepts(atTitle)).toBe(true);
+    expect(presenter.toViewModel(atTitle).scene).toBe('title');
+    const place = {
+      kind: 'Universe',
+      icon: '∞',
+      name: 'The Endless Universe',
+      address: '0',
+      depth: 0,
+      position: null,
+      trail: [],
+      status: '',
+      description: [],
+      facts: [],
+      frame: null,
+      childrenHeading: '',
+    };
+    expect(presenter.accepts({ ...atTitle, place })).toBe(false);
+  });
+
   test('the view-model is plain data', () => {
     const vm = presenter.toViewModel({ world: null, place: null, options: [], message: '' });
     expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);

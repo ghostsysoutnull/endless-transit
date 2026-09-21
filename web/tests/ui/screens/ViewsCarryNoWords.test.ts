@@ -16,4 +16,5 @@ test.each(views)('%s has no words of its own', (file) => {
 
 test('the scan looks at the real views', () => {
   expect(views).toContain('TitleView.ts');
+  expect(views).toContain('HudView.ts');
 });
