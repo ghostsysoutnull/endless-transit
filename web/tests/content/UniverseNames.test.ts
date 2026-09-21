@@ -9,8 +9,8 @@ const library = new ContentLibrary(new BundledContent());
 const namer = new UniverseNamer(library);
 
 test('snapshot pin — real content, real kernel: a diff here is a finding, not a chore', () => {
-  expect(namer.nameOf(new Seed(0x7f3a91c2, 0x0b4de6a8))).toBe('Lucid Hub');
-  expect(namer.nameOf(new Seed(0, 0))).toBe('Cold Tower');
+  expect(namer.nameOf(new Seed(0x7f3a91c2, 0x0b4de6a8))).toBe('Ashen Teahouse');
+  expect(namer.nameOf(new Seed(0, 0))).toBe('Buzzing Node');
 });
 
 test('every culture of the index can name a universe (each has an adjective and a noun list)', () => {

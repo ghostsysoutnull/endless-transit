@@ -38,8 +38,8 @@ describe('Seed — determinism', () => {
 
   test('the algorithm is pinned: these literals move only when the generator is changed on purpose', () => {
     expect(ROOT.branch('universe').toString()).toBe('495A-E1EA-D5DE-34BB');
-    expect(ROOT.branch('universe').range(1, 1000)).toBe(32);
-    expect(ROOT.branch('universe').pick(['a', 'b', 'c', 'd', 'e'])).toBe('d');
+    expect(ROOT.branch('universe').range(1, 1000)).toBe(325);
+    expect(ROOT.branch('universe').pick(['a', 'b', 'c', 'd', 'e'])).toBe('e');
   });
 });
 
@@ -77,6 +77,51 @@ describe('Seed — branch independence', () => {
     }
     expect(same).toBeGreaterThan(800);
     expect(same).toBeLessThan(1200);
+  });
+});
+
+describe('Seed — key space', () => {
+  test('a number key and the same digits as text are different keys', () => {
+    expect(ROOT.branch(1).equals(ROOT.branch('1'))).toBe(false);
+    expect(ROOT.branch(0).equals(ROOT.branch('0'))).toBe(false);
+    expect(ROOT.branch(-7).equals(ROOT.branch('-7'))).toBe(false);
+    const seen = new Set<string>();
+    for (let i = 0; i < 1_000; i++)
+      seen.add(ROOT.branch(i).toString()).add(ROOT.branch(String(i)).toString());
+    expect(seen.size).toBe(2_000);
+  });
+
+  test('a number key is a whole number: fractions, NaN and infinities are refused', () => {
+    expect(() => ROOT.branch(1.5)).toThrow(RangeError);
+    expect(() => ROOT.branch(Number.NaN)).toThrow(RangeError);
+    expect(() => ROOT.branch(Number.POSITIVE_INFINITY)).toThrow(RangeError);
+    expect(ROOT.branch(-0).equals(ROOT.branch(0))).toBe(true);
+  });
+
+  test('the helpers draw from branches no caller key can name', () => {
+    // A caller holding `seed.branch('RANGE')` could read the very bits `range` draws from (its text form).
+    const drawOf = (seed: Seed, size: number): number =>
+      Math.floor((Number(BigInt(`0x${seed.toString().replaceAll('-', '')}`) >> 11n) / 2 ** 53) * size);
+    let sameAsRange = 0;
+    let sameAsPick = 0;
+    const items = Array.from({ length: 1_000 }, (_, i) => i);
+    for (let i = 0; i < 400; i++) {
+      const seed = ROOT.branch(`cell-${String(i)}`);
+      if (seed.range(0, 999) === drawOf(seed.branch('RANGE'), 1_000)) sameAsRange++;
+      if (seed.pick(items) === drawOf(seed.branch('PICK'), 1_000)) sameAsPick++;
+    }
+    expect(sameAsRange).toBeLessThan(10);
+    expect(sameAsPick).toBeLessThan(10);
+  });
+
+  test("caller keys that start with the reserved prefix '#' are refused; '#' elsewhere is fine", () => {
+    expect(() => ROOT.branch('#range')).toThrow(RangeError);
+    expect(() => ROOT.branch('#pick')).toThrow(RangeError);
+    expect(() => ROOT.branch('#probability')).toThrow(RangeError);
+    expect(() => ROOT.branch('#n:1')).toThrow(RangeError);
+    expect(() => ROOT.branch('#')).toThrow(RangeError);
+    expect(ROOT.branch('room#4').equals(ROOT.branch('room#4'))).toBe(true);
+    expect(ROOT.branch('').equals(ROOT.branch(''))).toBe(true);
   });
 });
 

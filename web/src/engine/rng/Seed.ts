@@ -1,11 +1,17 @@
 const TEXT_FORM = /^([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})-?([0-9a-f]{4})$/i;
 const TWO_POW_53 = 2 ** 53;
+/** First character of every key Seed makes for itself; `branch` refuses text keys that start with it. */
+const RESERVED = '#';
+const RANGE_DRAW = `${RESERVED}range`;
+const PICK_DRAW = `${RESERVED}pick`;
+const PROBABILITY_DRAW = `${RESERVED}probability`;
 
 /**
  * A point in the generator's tree: 64 bits, held as two unsigned 32-bit halves.
  *
  * The one fact this class owns: **every seed is a pure function of (parent seed, branch key)**, and every
- * draw branches first (`RANGE`, `PICK`, `PROBABILITY`) and then reads the branch once. There is no stream
+ * draw branches first — onto a reserved key (`#range`, `#pick`, `#probability`) no caller can name — and
+ * then reads the branch once. There is no stream
  * and no state — asking the same seed the same question always gives the same answer, in any order, so the
  * world can be generated lazily from any position.
  *
@@ -29,8 +35,23 @@ export class Seed {
     return new Seed(Number.parseInt(hex.slice(0, 8), 16), Number.parseInt(hex.slice(8), 16));
   }
 
+  /**
+   * The child seed for a key. A text key and a number key never meet: `branch(1)` is not `branch('1')`.
+   * Text keys may not start with `#` — that prefix is this class's own (numbers and the draw helpers).
+   */
   branch(key: string | number): Seed {
-    const text = String(key);
+    if (typeof key === 'number') {
+      if (!Number.isSafeInteger(key))
+        throw new RangeError(`a number key is a whole number, got ${String(key)}`);
+      return this.#derive(`${RESERVED}n:${String(key)}`);
+    }
+    if (key.startsWith(RESERVED)) {
+      throw new RangeError(`keys starting with '${RESERVED}' are reserved for Seed itself, got '${key}'`);
+    }
+    return this.#derive(key);
+  }
+
+  #derive(text: string): Seed {
     let a = (this.#hi ^ 0x9e3779b9) >>> 0;
     let b = (this.#lo ^ 0x7f4a7c15) >>> 0;
     // Each lane also sees the other half, so (1, 0) and (0, 1) part ways before the first key unit.
@@ -55,11 +76,11 @@ export class Seed {
     if (!Number.isInteger(min) || !Number.isInteger(max) || max < min) {
       throw new RangeError(`range needs whole numbers with min <= max, got ${String(min)}..${String(max)}`);
     }
-    return min + Math.floor(this.branch('RANGE').#fraction() * (max - min + 1));
+    return min + Math.floor(this.#derive(RANGE_DRAW).#fraction() * (max - min + 1));
   }
 
   pick<T>(items: readonly T[]): T {
-    const item = items[Math.floor(this.branch('PICK').#fraction() * items.length)];
+    const item = items[Math.floor(this.#derive(PICK_DRAW).#fraction() * items.length)];
     if (item === undefined) throw new RangeError('pick needs a list with at least one item');
     return item;
   }
@@ -68,7 +89,7 @@ export class Seed {
     if (!(chance >= 0 && chance <= 1)) {
       throw new RangeError(`probability needs a chance in [0, 1], got ${String(chance)}`);
     }
-    return this.branch('PROBABILITY').#fraction() < chance;
+    return this.#derive(PROBABILITY_DRAW).#fraction() < chance;
   }
 
   equals(other: Seed): boolean {
