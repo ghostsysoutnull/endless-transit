@@ -111,7 +111,7 @@ Every open question, the options, the pick made while designing, and a verdict c
 | 10 | What a ship is, in code terms | a Building with a structure kind · a new hierarchy | a Building with a kind | |
 | 11 | Loot value at a ship's shallower depth | pin at 12 · let ships be poorer | pin at 12 | |
 
-## 8. Using the mock
+## 8. Using the text mock (v1)
 
 Type a key and press Enter, as in the game; menu lines are also clickable. Every prompt costs Coherence.
 Anywhere: `i` buffer, `s` scan, `ll` lattice.
@@ -139,18 +139,17 @@ log on the bridge; launch; walk down and out somewhere new. Then move the hauler
 * the hive's drain rises by 1 every 5 prompts aboard and the aperture moves every 4;
 * the hauler, its crew, its log and the number 1809246 are hand-written; nothing is generated.
 
-## 9. What the mock is not
+## 9. What the text mock is not
 
 It is a scripted scenario: one path through the world, one hauler, one hive, no procedural generation, no save. It keeps
 the game's input rhythm so the pacing is honest, but it draws with HTML boxes, not the terminal's character grid — it
 says nothing about how the HUD would really lay out. A mock always feels faster than the terminal.
 
-## 10. Next — a parallel visual mock
+## 10. The parallel visual mock — the brief, then the record
 
 **Decided 2026-09-20:** the user wants a second mock of the same scenario, fully visual — no text input, graphics,
 animation, effects — built in a fresh session so its whole context goes to the visuals. It sits beside mock v1; it does
-not replace it. To be recorded as `docs/analysis/mocks/ships-of-the-lattice-visual.html`, with a line here, when the
-user says it is good.
+not replace it. It is recorded as `docs/analysis/mocks/ships-of-the-lattice-visual.html`; the record closes this section.
 
 **The two mocks answer different questions.** The text mock keeps the game's type-and-Enter rhythm, so it is the
 evidence for pacing — decision 6 (airlock-only exit) is judged there. A clickable, animated mock cannot test that; it

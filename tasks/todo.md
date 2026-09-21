@@ -60,7 +60,7 @@
 - [x] Housekeeping HK-022 (2026-09-20): `NameGenerator` is an instance owned by `ProceduralFactory`; no static generators; lint allow-list 16 → 15 — chronicle `0x9549527`.
 - [x] Housekeeping HK-023 slice 1 (2026-09-20): a save made below the Bedrock restores; an unresolvable save is refused whole; codex + cheat sheet corrected — chronicle `0x55f9460`.
 - [x] Concept — ships (2026-09-20, user idea): concept record + playable mock v1 in `docs/analysis/`, `CONCEPT-001` opened in `tasks/backlog/CONCEPTS.md`; verdicts pending. No chronicle; this line is the record.
-- [x] Concept — ships, visual mock (2026-09-21): a second mock, fully visual, that by user direction tests the whole game as a single page; ship rules written down (`docs/analysis/SHIPS_RULES.md`); **CONCEPT-002** opened for a single-page port (`docs/analysis/WEB_PORT_CONCEPT.md`); HK-024 and WF-012 give two handover-only facts an owner. No source change.
+- [x] Concept — ships, visual mock (2026-09-21): the whole game as one page; rules in `docs/analysis/SHIPS_RULES.md`; CONCEPT-002 opened (`docs/analysis/WEB_PORT_CONCEPT.md`); HK-024 and WF-012 logged. No source change; no chronicle, this line is the record.
 - [ ] Next: user decision — **CONCEPT-001** (fill the §7 verdict column), **CONCEPT-002** (the single-page port: a concept, no plan), **HK-021**, **HK-023** (the restore bullet is done, the rest is open), **HK-013** (8 long methods left), **HK-024** (the `KEYSTONE` glitch decision), O1 (HeadlessRunner DSL), WF-010/011/006/012.
 
 ---
