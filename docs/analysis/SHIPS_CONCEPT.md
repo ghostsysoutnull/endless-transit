@@ -4,8 +4,10 @@
 **Status:** CONCEPT — explored with a playable mock. **This is not a plan.** It has no Shape table, no slices and no commitments, and it authorizes no source change. Backlog pointer: `tasks/backlog/CONCEPTS.md` (CONCEPT-001).
 **Mock:** `docs/analysis/mocks/ships-of-the-lattice.html` (version 1, 2026-09-20) — open it in a browser, no server needed. The same page is published privately at `https://claude.ai/artifact/8MGLTL8r98eZZvrFvd3vsb`; the file in this folder is the durable copy. When the mock changes in a way that matters, copy it here again and bump the version in this line.
 
-> **The idea in one paragraph.** Everything in Endless Transit stands still and never ends. A ship is the opposite on
-> both counts: it is the only thing that moves, and the only place with a hull around it. You catch a signal, find the
+**Visual mock:** `docs/analysis/mocks/ships-of-the-lattice-visual.html` (artifact version 13, 2026-09-21; private copy `https://claude.ai/artifact/QrcWAccxogJRow9Q7AazHN`) — recorded in §10. **Rules as mocked:** `docs/analysis/SHIPS_RULES.md` (every rule with its number and whether it is a pick, invented or the game's). **The whole game as one page:** `docs/analysis/WEB_PORT_CONCEPT.md` (CONCEPT-002).
+
+> **The idea in one paragraph.** Everything in Endless Transit stands still, in a tree too large to finish. A ship is the
+> opposite on both counts: it is the only thing that moves, and the only place small enough to finish. You catch a signal, find the
 > ship dead in orbit, walk it in the dark, wake it, and leave in it. After that it is yours. At the far end of the
 > same idea sits the hive: a ship with no name that finds *you*.
 
@@ -17,7 +19,7 @@
 | :-- | :-- | :-- |
 | 1 | **A building that left.** A culture, an era and a trait, cut loose from the planet that made them. | A rust hauler over a zenith world tells a story nobody wrote. Its home planet exists somewhere in the same seed. |
 | 2 | **The only thing that moves.** Ships live *between* the nodes of the tree. | Real transit, in a game called Endless Transit: crossing the tree without climbing it level by level. |
-| 3 | **Finite.** Streets, floors and the basement never end; a ship has a hull. | The one place you can finish: every deck walked, a heart reached. |
+| 3 | **Finishable.** A building has 3–100 floors of 2–20 doors and a street 4–20 fronts (`BuildingFactory`, `StreetFactory` — corrected 2026-09-21; this row first said they never end, the basement was not re-checked), which nobody walks to the end; a ship has a hull and a handful of decks. | The one place you can finish: every deck walked, a heart reached. |
 | 4 | **Present tense.** Every building says "someone was here". | A ship can say "something is here" — and at the hive end, "it has noticed you". |
 
 **The two poles.** Culture decides where a ship sits between them: rust, baroque and shogun lean crewed; monolith and void lean hive.
@@ -109,7 +111,7 @@ Every open question, the options, the pick made while designing, and a verdict c
 | 10 | What a ship is, in code terms | a Building with a structure kind · a new hierarchy | a Building with a kind | |
 | 11 | Loot value at a ship's shallower depth | pin at 12 · let ships be poorer | pin at 12 | |
 
-## 8. Using the mock
+## 8. Using the text mock (v1)
 
 Type a key and press Enter, as in the game; menu lines are also clickable. Every prompt costs Coherence.
 Anywhere: `i` buffer, `s` scan, `ll` lattice.
@@ -137,18 +139,17 @@ log on the bridge; launch; walk down and out somewhere new. Then move the hauler
 * the hive's drain rises by 1 every 5 prompts aboard and the aperture moves every 4;
 * the hauler, its crew, its log and the number 1809246 are hand-written; nothing is generated.
 
-## 9. What the mock is not
+## 9. What the text mock is not
 
 It is a scripted scenario: one path through the world, one hauler, one hive, no procedural generation, no save. It keeps
 the game's input rhythm so the pacing is honest, but it draws with HTML boxes, not the terminal's character grid — it
 says nothing about how the HUD would really lay out. A mock always feels faster than the terminal.
 
-## 10. Next — a parallel visual mock
+## 10. The parallel visual mock — the brief, then the record
 
 **Decided 2026-09-20:** the user wants a second mock of the same scenario, fully visual — no text input, graphics,
 animation, effects — built in a fresh session so its whole context goes to the visuals. It sits beside mock v1; it does
-not replace it. To be recorded as `docs/analysis/mocks/ships-of-the-lattice-visual.html`, with a line here, when the
-user says it is good.
+not replace it. It is recorded as `docs/analysis/mocks/ships-of-the-lattice-visual.html`; the record closes this section.
 
 **The two mocks answer different questions.** The text mock keeps the game's type-and-Enter rhythm, so it is the
 evidence for pacing — decision 6 (airlock-only exit) is judged there. A clickable, animated mock cannot test that; it
@@ -173,6 +174,16 @@ artifact. Before building, give me your take on the visual direction as numbered
 lettered options and a marked pick; build only on "Execute". When it is good, I will ask you to
 record it as mocks/ships-of-the-lattice-visual.html and add a line to the concept doc.
 ```
+
+**Recorded 2026-09-21 — the visual mock exists** (13 published versions, seven commits on `docs/ships-visual-mock`). By the
+user's direction it tests the *whole game as a single page* first and ships second, so it grew beyond the brief above:
+a generated world around the scripted path, buildings with the game's real counts, an apartment view, a depth rail, a
+drawn icon set, the buffer and the lattice trace as screens of their own, and one key grammar (arrows pick, Enter goes
+in, Esc goes out). What it settled and what a port must answer: `WEB_PORT_CONCEPT.md`. The ship rules it runs on:
+`SHIPS_RULES.md`. To use it: open the file in a browser; `TEST BENCH` holds the same switches, ladder, per-screen notes
+and cost panel as §8; `i` is the buffer, `Shift+L` the lattice trace. To look at it from a session:
+`docs/analysis/mocks/look.js`. **The §7 verdict column is still empty** — the visual mock was judged screen by screen as
+it was built ("it is better"), never against the eleven decisions.
 
 ## Appendix — code facts, parked
 

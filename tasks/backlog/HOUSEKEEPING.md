@@ -10,6 +10,9 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
+### HK-024 — Undecided: should the debug glitch `KEYSTONE` also prime the building?
+**Found:** 2026-09-16 in the HK-019 session (diagnosed, nothing changed); logged 2026-09-21 — until then it lived only in the recovery prompt. Today the glitch gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions. **A user decision, not a bug:** prime the building too (the glitch becomes a full shortcut to the descent), or leave it (the glitch tests binding only) and say so in the debug help.
+
 ### HK-022 — `NameGenerator` was eleven static generators
 **CLOSED 2026-09-20** — merge `9549527`, chronicle `0x9549527`, plan + record `tasks/completed/HK_022_PLAN.md`. One `NameGenerator` per `ProceduralFactory` (`nameGenerator`, final); the eleven factories ask `registry.nameGenerator`; no static methods; off the `NoNewStaticLogic` allow-list (16 → 15). No name moved. `NameGeneratorContractTest` 7 pins + wiring pin C3.
 **Found:** 2026-09-20, WF-009 allow-list review — the one entry on `NoNewStaticLogic`'s list that is a real smell, not tooling or formatting.
