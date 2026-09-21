@@ -14,9 +14,16 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
 `src/platform/` browser adapters. `src/ui/` screens, input, styles — depends on the engine, never the reverse.
 `src/main.ts` the composition root: the only place adapters are built.
 
-The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot →
-`Presenter.toViewModel` → `View<VM>.render` (lit-html). Options are data `{ id, key, label }`; a new action is a
-registry entry; a pending prompt is a state, never a blocking read.
+The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot → the
+`ScreenStage` whose presenter `accepts` it → `Presenter.toViewModel` → `View<VM>.render` (lit-html). Options are data
+`{ id, key, label, place, role, sealed, landmark }`; a new action is a registry entry in `GameEngine`, a new screen one
+more stage in `main.ts`; a pending prompt is a state, never a blocking read.
+
+The world: `model/Location` owns the **lazy-loading law** — children sit behind a private array and exist only after
+`children()`, generated once through the injected `ChildSource`. A kind of place is a class that answers for itself
+(name, words, vibe, `sealed()`) plus a `LocationFactory` entry in `procgen/LocationRegistry`; nobody asks "which kind are
+you?" (`instanceof`, a `switch` on `kind().key()`). Child `i` is born from `parentSeed.branch(i)` and nothing else. Where
+the traveller stands: `rules/Journey`. A presenter never cuts a name out of a label — the option carries it.
 
 ## The walls (each proven RED on a scratch file when added)
 

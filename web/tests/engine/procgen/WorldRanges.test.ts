@@ -8,15 +8,15 @@ import { descend, must, realRegistry, sampleSeed } from '#tests/support/world.ts
  * the Groovy factories (`terminal/…/procgen/*Factory.groovy`) for the rest.
  */
 const CHILDREN: Readonly<Record<string, readonly [number, number]>> = {
-  universe: [3, 7], // UniverseFactory.groovy:31
-  filament: [4, 8], // FilamentFactory.groovy:31
-  sector: [3, 7], // SectorFactory.groovy:31
-  'null-reach': [1, 2], // Guide "Null Reaches": "only one or two solar systems"
-  'solar-system': [2, 10], // SolarSystemFactory.groovy:31
+  universe: [3, 7], // UniverseFactory.groovy:30
+  filament: [4, 8], // FilamentFactory.groovy:30
+  sector: [3, 7], // SectorFactory.groovy:30
+  'null-reach': [1, 2], // Guide :297 "only one or two solar systems"; NullSectorFactory.groovy:31
+  'solar-system': [2, 10], // SolarSystemFactory.groovy:30
   planet: [2, 8], // PlanetFactory.groovy:65
   country: [2, 10], // CountryFactory.groovy:41
   city: [3, 15], // CityFactory.groovy:45
-  street: [4, 20], // StreetFactory.groovy:31 — 2 to 10 pairs
+  street: [4, 20], // StreetFactory.groovy:30 — 2 to 10 pairs
 };
 
 const registry = realRegistry();
