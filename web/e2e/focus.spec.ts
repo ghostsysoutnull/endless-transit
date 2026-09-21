@@ -17,9 +17,12 @@ test('keyboard: Tab → Enter on NEW WORLD leaves the focus on an option button,
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[new-world]');
   await page.keyboard.press('Enter');
   await expect(page.getByTestId('world-seed')).toBeVisible();
-  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[reroll]');
+  // NEW WORLD left the screen: the focus went to the first option on offer, which is now the way in.
+  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter-world]');
 
-  // A button that stays on screen keeps the focus it had: Enter again re-rolls.
+  // A button that stays on screen keeps the focus it had: Tab to RE-ROLL, Enter re-rolls, the focus stays.
+  await page.keyboard.press('Tab');
+  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[reroll]');
   const first = await page.getByTestId('world-seed').innerText();
   await page.keyboard.press('Enter');
   await expect(page.getByTestId('world-seed')).not.toHaveText(first);
@@ -34,7 +37,23 @@ test('pointer or touch: when the pressed button leaves the screen, the focus mov
   await page.getByRole('button', { name: /new world/i }).focus();
   await press(page, /new world/i, hasTouch);
   await expect(page.getByTestId('world-seed')).toBeVisible();
-  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[reroll]');
+  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter-world]');
+});
+
+test('entering a place moves the focus to the first place on its list — every level, no dead end at the body', async ({
+  page,
+  hasTouch,
+}) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: /new world/i }).focus();
+  await press(page, /new world/i, hasTouch);
+  await press(page, /enter world/i, hasTouch);
+  await expect(page.getByTestId('place-kind')).toHaveText('UNIVERSE');
+  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
+  const first = page.locator('button[data-option="enter:0"]');
+  await (hasTouch ? first.tap() : first.click());
+  await expect(page.getByTestId('place-kind')).toHaveText('COSMIC FILAMENT');
+  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
 });
 
 test('a key pressed with nothing focused does not grab the focus', async ({ page, hasTouch }) => {

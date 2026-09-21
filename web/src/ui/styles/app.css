@@ -575,11 +575,15 @@ body {
     max-width: 1080px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+    /* The list may be far taller than the panel beside it: the panel and the dock keep their own height
+       and one filler row takes the rest — otherwise the grid pushes the way out below the fold. */
+    grid-template-rows: auto auto auto auto 1fr auto;
     grid-template-areas:
       'bar bar'
       'hud hud'
       'cap travel'
       'dock travel'
+      '. travel'
       'build build';
     align-items: start;
   }
