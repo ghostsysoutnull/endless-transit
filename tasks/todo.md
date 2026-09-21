@@ -59,7 +59,8 @@
 - [x] Docs — cheat sheet (2026-09-20): `docs/terminal/guide/cheat_sheet.md`, one screen, every fact copied from the verified guide; linked from the index and the guide. No chronicle; this line is the record.
 - [x] Housekeeping HK-022 (2026-09-20): `NameGenerator` is an instance owned by `ProceduralFactory`; no static generators; lint allow-list 16 → 15 — chronicle `0x9549527`.
 - [x] Housekeeping HK-023 slice 1 (2026-09-20): a save made below the Bedrock restores; an unresolvable save is refused whole; codex + cheat sheet corrected — chronicle `0x55f9460`.
-- [ ] Next: user decision — **HK-021** (HK-015 residue; a dropped Keystone loses its flag), **HK-023** (game-side oddities from the GitHub Pages audit; the restore bullet is done, the rest is open), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
+- [x] Concept — ships (2026-09-20, user idea): concept record + playable mock v1 in `docs/analysis/`, `CONCEPT-001` opened in `tasks/backlog/CONCEPTS.md`; verdicts pending. No chronicle; this line is the record.
+- [ ] Next: user decision — **CONCEPT-001** (ships: play the mock, fill the verdict column), **HK-021** (HK-015 residue; a dropped Keystone loses its flag), **HK-023** (game-side oddities from the GitHub Pages audit; the restore bullet is done, the rest is open), **HK-013** (8 long methods left), O1 (HeadlessRunner DSL), WF-006 (Low, at the next cadence review).
 
 ---
 
