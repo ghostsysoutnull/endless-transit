@@ -1,0 +1,12 @@
+Pavilion
+Shrine
+Garden
+Dojo
+Keep
+Teahouse
+Lantern
+Bridge
+Hall
+Gatehouse
+Courtyard
+Tower

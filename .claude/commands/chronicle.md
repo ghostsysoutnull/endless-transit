@@ -28,7 +28,7 @@ Use `journals/CHRONICLE_TEMPLATE.md` to structure the entry:
 
 ### 3. SNAPSHOT INTEGRATION
 - Note the relevant seed and LIP for this session.
-- If a screenshot was captured (`screenshots/`), link its path in the journal entry.
+- If a screenshot was captured (`terminal/screenshots/`), link its path in the journal entry.
 
 ### 4. FRAGMENTATION & INDEXING
 - **Filename:** `journals/LOG_<YYYYMMDD_HHMMSS>_0x<SHORT_GIT_HASH>.md`

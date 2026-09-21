@@ -1,0 +1,7 @@
+dist/
+coverage/
+.vitest/
+test-results/
+playwright-report/
+package-lock.json
+src/content/**/*.txt

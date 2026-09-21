@@ -1,0 +1,12 @@
+Shell
+Stack
+Monolith
+Heap
+Vault
+Husk
+Anchor
+Frame
+Yard
+Silo
+Pit
+Girder

@@ -50,7 +50,7 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
 ## 🔋 Session Initialization Protocol
 Execute in order at the start of every session (**web port: step 1 of the Standing Order replaces this list**):
 1. **Orient** — Confirm the active task: read `tasks/todo.md` and `tasks/RECOVERY_PROMPT.md`.
-2. **Verify** — If beginning new implementation work, run `./vinc.sh --test` to confirm the baseline is green before touching any file.
+2. **Verify** — If beginning new implementation work, run `./terminal/vinc.sh --test` to confirm the baseline is green before touching any file.
 3. **Internalize** — Safety Mandates (above) are non-negotiable. No structural change proceeds without the lazy-loading law and structural collapse guard in mind.
 
 ---
@@ -75,10 +75,10 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ### 1.5. Refactoring Branch Strategy
 * Each refactoring phase runs on its own git branch: `refactor/phase-N-short-name`.
-* Merge to `master` only when ALL phase gates pass (`./vinc.sh --test`, `./vinc.sh --lint`, `./vinc.sh --scan` where applicable).
+* Merge to `master` only when ALL phase gates pass (`./terminal/vinc.sh --test`, `./terminal/vinc.sh --lint`, `./terminal/vinc.sh --scan` where applicable).
 * Every new class created during refactoring MUST include `@CompileStatic`.
-* Close every wave (phase, HK item, WF item, docs session, one-line fix) with `/close-wave`, **at the tier the command selects from the diff** (Trivial / Light / Full, WF-008) — it finds what the wave made false, makes the recovery prompt true and runs `./vinc.sh --docs`; chronicle and retro belong to the Full tier or to a named add-on reason. **The words "closed" or "merged" appear in chat only as the output of `/close-wave`, under its table** (WF-007).
-* Write a phase retrospective in `docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, retro second). Promote any evergreen lessons to `tasks/lessons/<domain>.md`.
+* Close every wave (phase, HK item, WF item, docs session, one-line fix) with `/close-wave`, **at the tier the command selects from the diff** (Trivial / Light / Full, WF-008) — it finds what the wave made false, makes the recovery prompt true and runs `./terminal/vinc.sh --docs`; chronicle and retro belong to the Full tier or to a named add-on reason. **The words "closed" or "merged" appear in chat only as the output of `/close-wave`, under its table** (WF-007).
+* Write a phase retrospective in `terminal/docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, retro second). Promote any evergreen lessons to `tasks/lessons/<domain>.md`.
 * The active task pointer in `CLAUDE.md` should reflect the current refactoring phase document, not a stale task.
 
 ### 2. Subagent Strategy
@@ -93,23 +93,23 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ### 4. Verification & Visual Baselines
 * Never mark a task complete without proving it works.
-* **Visual Baseline Protocol**: The UI gate is the golden-frame suite (`BridgeViewGoldenFrameTest` + `ViewComponentGoldenTest`, run by `./vinc.sh --test`) — 36 frames compared byte for byte. `./vinc.sh --scan` is a **model** gate (world generation); it never draws the HUD (WF-003). Regenerate goldens with `./vinc.sh --goldens` only after an intended visual change, review the diff, commit them with the change. Run both gates before and after any change to `model` or `ui`.
+* **Visual Baseline Protocol**: The UI gate is the golden-frame suite (`BridgeViewGoldenFrameTest` + `ViewComponentGoldenTest`, run by `./terminal/vinc.sh --test`) — 36 frames compared byte for byte. `./terminal/vinc.sh --scan` is a **model** gate (world generation); it never draws the HUD (WF-003). Regenerate goldens with `./terminal/vinc.sh --goldens` only after an intended visual change, review the diff, commit them with the change. Run both gates before and after any change to `model` or `ui`.
 * **Verification Protocol**:
     * **AI-TDD**: Create reproduction tests for all bug reports.
-    * **Compilation Check**: Every change MUST pass `./vinc.sh --compile` (or `--test`).
-    * **Full Verification**: Run `./vinc.sh --test` before marking any major task complete.
-    * **Lint Check (O2)**: `./vinc.sh --lint` must be green before any merge; `config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
-    * **Docs Check (WF-007)**: `./vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, every class blueprint stamped with its class's current hash, and the recovery prompt under its 1,000-word cap (current state only; history lives in the chronicle). A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
-* **The Gates** (mandatory after every phase; the full history is in `docs/analysis/OOA_REFACTOR_PLAN.md`, read on demand):
+    * **Compilation Check**: Every change MUST pass `./terminal/vinc.sh --compile` (or `--test`).
+    * **Full Verification**: Run `./terminal/vinc.sh --test` before marking any major task complete.
+    * **Lint Check (O2)**: `./terminal/vinc.sh --lint` must be green before any merge; `terminal/config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
+    * **Docs Check (WF-007)**: `./terminal/vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, every class blueprint stamped with its class's current hash, and the recovery prompt under its 1,000-word cap (current state only; history lives in the chronicle). A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
+* **The Gates** (mandatory after every phase; the full history is in `terminal/docs/analysis/OOA_REFACTOR_PLAN.md`, read on demand):
 
 | Gate | Command | Checks |
 | :--- | :--- | :--- |
-| Logic | `./vinc.sh --test` | full suite |
+| Logic | `./terminal/vinc.sh --test` | full suite |
 | Visual | golden frames inside `--test` | 36 HUD frames byte-identical |
-| Model | `./vinc.sh --scan` | seed 0 → 9-node match |
-| Lint | `./vinc.sh --lint` | house rules + invariants; baseline may only shrink |
+| Model | `./terminal/vinc.sh --scan` | seed 0 → 9-node match |
+| Lint | `./terminal/vinc.sh --lint` | house rules + invariants; baseline may only shrink |
 | Determinism | `DeterministicUniverseTest` | same seed → same world (procgen/model changes) |
-| Docs | `./vinc.sh --docs` | handover facts + blueprint stamps (at close-out) |
+| Docs | `./terminal/vinc.sh --docs` | handover facts + blueprint stamps (at close-out) |
 
 * **Coverage Claim Protocol**: Any plan statement of the form "test X guards behavior Y" MUST cite
   the assertion lines that prove it, read from the test file in the current session. A file name or
@@ -142,7 +142,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.
 * **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave (`(HK-012)`) — the incident lives in that wave's chronicle and retro. The lessons files are loaded every session; every sentence in them is paid for each time. Existing long bullets are left as they are until a lessons diet is decided.
-* Lessons load with their domain: each domain `CLAUDE.md` imports its `tasks/lessons/<domain>.md` when that directory is touched; `infrastructure.md` loads every session.
+* Lessons load with their domain: each Groovy domain `CLAUDE.md` imports its `terminal/tasks/lessons/<domain>.md` when that directory is touched; `terminal/CLAUDE.md` imports `terminal/tasks/lessons/groovy-tooling.md`; `infrastructure.md` (process lessons) loads every session.
 
 ## 🔧 Workflow Improvement Cadence
 * After every phase retro: scan "Concerns for Upcoming Phases" — log any workflow friction to `docs/analysis/WORKFLOW_BACKLOG.md`.

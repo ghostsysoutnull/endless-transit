@@ -21,14 +21,14 @@ Clone the project repository to your local drive:
 
 ```bash
 git clone https://github.com/ghostsysoutnull/endless-transit.git
-cd endless-transit
+cd endless-transit/terminal
 ```
 
 ## [03_LAUNCH_PROTOCOLS]
 The link is initialized through the provided shell script.
 
 ### **Standard Initialization**
-Ensure the script has execution permissions, then launch **from the root of the repository** — `run.sh` resolves every path from the directory you stand in:
+Ensure the script has execution permissions, then launch from the repository's **`terminal/` folder** (the terminal game lives there):
 ```bash
 chmod +x run.sh vinc.sh
 ./run.sh
@@ -48,10 +48,10 @@ For high-velocity operations, use the **Vinculum Clinical Interface (VINC)** to 
 ./vinc.sh                   # Auto-compile, then launch without the portal sequence
 ./vinc.sh --seed 4660       # The same, on a chosen Master Seed
 ```
-`vinc.sh` anchors itself to the repository root, so it may be called from anywhere.
+Both scripts anchor themselves to their own folder (`terminal/`), so they may be called from anywhere; the game keeps its save, journal and log files in that folder.
 
 ### **Manual Initialization**
-If you prefer to bypass the scripts, execute the following from the repository root. The `src/main/resources` entry is load-bearing: without it the lexicons and themes are not found, and the link fails on its first frame. (`lib/*` mirrors the launch scripts; the game itself draws nothing from it today.)
+If you prefer to bypass the scripts, execute the following from the repository's `terminal/` folder. The `src/main/resources` entry is load-bearing: without it the lexicons and themes are not found, and the link fails on its first frame. (`lib/*` mirrors the launch scripts; the game itself draws nothing from it today.)
 ```bash
 groovy -cp "src/main/groovy:src/main/resources:lib/*" src/main/groovy/com/endlesstransit/Main.groovy
 ```

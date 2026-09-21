@@ -1,0 +1,12 @@
+Slab
+Tower
+Obelisk
+Block
+Unit
+Monolith
+Foundation
+Pillar
+Vault
+Cube
+Plinth
+Shaft

@@ -49,7 +49,7 @@ want one.
 
 ## Your first five minutes
 
-**Launching.** `./run.sh` (from the repository folder) plays a short scripted intro first. `./vinc.sh` skips it, compiles, and
+**Launching.** `./run.sh` (from the repository's `terminal/` folder) plays a short scripted intro first. `./vinc.sh` skips it, compiles, and
 starts. <!-- run.sh:48-112, vinc.sh:122-127 --> Both need Groovy 5 and a JDK: see [installation]({{ "/terminal/manual/installation_guide.html" | relative_url }}).
 
 **The restore prompt.** If a save file exists you are asked `Restore previous session? [y/N]`. The default is No.

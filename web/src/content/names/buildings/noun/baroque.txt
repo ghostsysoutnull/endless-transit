@@ -1,0 +1,12 @@
+Gallery
+Archive
+Palace
+Temple
+Sanctum
+Hall
+Cathedral
+Altar
+Chapel
+Vestry
+Cloister
+Spire

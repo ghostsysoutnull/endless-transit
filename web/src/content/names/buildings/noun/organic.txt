@@ -1,0 +1,12 @@
+Pod
+Spore
+Nest
+Shell
+Chamber
+Limb
+Leaf
+Root
+Sac
+Cyst
+Bloom
+Hollow

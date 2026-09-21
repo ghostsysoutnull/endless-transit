@@ -44,7 +44,7 @@ function compile_check() {
     echo -e "${GREEN}[SUCCESS]${RESET}"
     rm -rf .build_check .compile_errors
 }
-
+cd "$(dirname "$0")"  # always run from this script's own folder (terminal/): every path below is relative to it
 # 1. Hardware Initialization (Skip for non-interactive modes)
 INTERACTIVE=true
 if [[ "$*" == *"--test"* || "$*" == *"--seed-scan"* || "$*" == *"--replay"* || "$*" == *"--headless"* || "$*" == *"--help"* ]]; then

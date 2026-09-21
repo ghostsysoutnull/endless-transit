@@ -14,7 +14,7 @@ these facts; if the two ever disagree, the guide wins and this page has a bug.
 
 ## Start
 
-`./run.sh` (with intro) or `./vinc.sh` (without). Add `--seed 4660` to play a known world. You start on a **street**.
+`./run.sh` (with intro, from the repository's `terminal/` folder) or `./vinc.sh` (without). Add `--seed 4660` to play a known world. You start on a **street**.
 Type a menu item's key and press Enter. Numbers work without the zero: `1` is `01`.
 
 **Try it:** with `--seed 4660`, type `1`, `0`, `c`, `1`. You are in a room with 15 objects. Press `t`.
