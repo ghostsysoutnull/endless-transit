@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<!-- Concept mock, VISUAL version, work in progress, 2026-09-20. Not game code. Explained in docs/analysis/SHIPS_CONCEPT.md section 10.
+     Open this file in a browser; it needs no server. The font loads from Google Fonts when online and falls back offline. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Endless Transit Visual Mock</title>
+<!-- Concept mock, visual version 1, 2026-09-20. Not game code. Explained in docs/analysis/SHIPS_CONCEPT.md section 10. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#080c0d; --panel:#0e1516; --panel2:#121c1d; --rule:#1f3435; --rule-hi:#2f5052;
+  --text:#c8d6d2; --dim:#6c8581; --faint:#3f5653;
+  --cy:#55d6d6; --yl:#e6c35c; --rd:#e4665c; --gn:#71d083; --mg:#c987dd; --rs:#d0693f; --hv:#9fb0a8;
+  --frame:var(--cy);
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.45;
+  padding-inline:16px;padding-block:14px 40px}
+.app{max-width:1280px;margin-inline:auto;display:flex;flex-direction:column;gap:10px;transition:filter .6s}
+.app[data-frame="rust"]{--frame:var(--rs)} .app[data-frame="rustdark"]{--frame:#8a4a30}
+.app[data-frame="hive"]{--frame:var(--hv)} .app[data-frame="dead"]{--frame:var(--rd)}
+
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.bar h1{font-size:14px;font-weight:700;letter-spacing:.14em;margin:0;color:var(--frame)}
+.bar .sub{color:var(--dim);font-family:var(--sans);font-size:12.5px;flex:1 1 240px;min-width:0}
+.tbtn{font:inherit;font-size:12px;background:var(--panel2);color:var(--text);border:1px solid var(--rule-hi);padding:5px 10px;cursor:pointer;letter-spacing:.06em}
+.tbtn[aria-expanded="true"]{border-color:var(--yl);color:var(--yl)}
+button:focus-visible,select:focus-visible,canvas:focus-visible{outline:1px solid var(--yl);outline-offset:1px}
+
+.hud{border:1px solid var(--frame);background:var(--panel);padding:7px 10px;display:flex;flex-direction:column;gap:2px}
+.hud .spark{color:var(--dim);overflow-wrap:anywhere}
+.hud .spark b{color:var(--frame)}
+.hud .stats{display:flex;flex-wrap:wrap;gap:1px 18px;font-variant-numeric:tabular-nums}
+.k{color:var(--dim)}
+.deck{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);gap:10px;align-items:start}
+@media (max-width:900px){.deck{grid-template-columns:minmax(0,1fr)}}
+.main,.console{display:flex;flex-direction:column;gap:6px;min-width:0}
+/* the ladder of levels: one thin line above the picture */
+.gauge{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border-bottom:1px solid var(--rule)}
+.gauge li{display:flex;min-width:0}
+.rung{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 5px;font-size:11px;color:var(--faint);border-bottom:2px solid transparent;position:relative;min-width:0;white-space:nowrap}
+.rung .nm{display:none;overflow:hidden;text-overflow:ellipsis;max-width:22ch}
+.rung .lv{font-variant-numeric:tabular-nums;font-size:9.5px}
+.rung.past{color:var(--dim)} .rung.past[data-climb]{cursor:pointer} .rung.past[data-climb]:hover{color:var(--text);background:var(--panel2)} .rung.past[data-climb]:hover .nm{display:inline}
+.rung.you{color:var(--frame);font-weight:700;border-bottom-color:var(--frame);background:var(--panel)} .rung.you .nm,.rung.in .nm{display:inline}
+.rung.in{color:var(--text)}
+.rung.bear{color:var(--yl);animation:bear 1.4s infinite}
+.rung:focus-visible{outline:1px solid var(--yl)}
+.rung .mk{font-weight:700}
+.gauge .cost{display:none}
+@keyframes bear{0%,100%{box-shadow:inset 0 -2px 0 rgba(230,195,92,.2)}50%{box-shadow:inset 0 -2px 0 rgba(230,195,92,1)}}
+@media (prefers-reduced-motion:reduce){.rung.bear{animation:none;box-shadow:inset 0 -2px 0 var(--yl)}}
+/* Coherence: a full-width meter fixed to the picture */
+.inst{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:12px;font-variant-numeric:tabular-nums}
+.inst .meter{flex:1 1 260px;display:flex;align-items:center;gap:8px;min-width:0}
+.cohbar{flex:1 1 auto;height:8px;border:1px solid var(--rule-hi);position:relative;display:block;min-width:60px}
+.cohbar i{position:absolute;inset:0 auto 0 0;background:currentColor;transition:width .3s}
+.inst .n b{color:var(--text);font-weight:700}
+.sig{display:flex;align-items:center;gap:8px;font-size:12px;min-width:0}
+.sig:empty{display:none} .sig .wave{display:inline-flex;gap:2px;align-items:flex-end;height:12px;flex:none}
+.sig .wave i{width:3px;background:currentColor;animation:wave 1.1s infinite ease-in-out} .sig .wave i:nth-child(2){animation-delay:.15s} .sig .wave i:nth-child(3){animation-delay:.3s} .sig .wave i:nth-child(4){animation-delay:.45s}
+.sig.flat .wave i{animation:none;height:2px}
+@keyframes wave{0%,100%{height:3px}50%{height:12px}}
+@media (prefers-reduced-motion:reduce){.sig .wave i{animation:none;height:7px}}
+.hint{color:var(--dim);font-size:11.5px;font-family:var(--sans)} .hint b{color:var(--yl);font-family:var(--mono);font-weight:500}
+.log{font-size:11.5px;color:var(--dim);display:flex;flex-wrap:wrap;gap:1px 14px} .log:empty{display:none}
+/* the picture is the game; the text is the payoff and leads the right column */
+.stage{position:relative;border:1px solid var(--frame);background:#060a0b;aspect-ratio:16/10;max-width:100%;min-height:300px;overflow:hidden}
+@media (max-width:900px){.stage{aspect-ratio:1/1}}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:manipulation}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.22) 2px 3px),
+  radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
+.cap{border:1px solid var(--frame);background:var(--panel);padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.eyebrow{font-size:10.5px;letter-spacing:.16em;color:var(--dim);margin-bottom:-5px}
+.cap h2{font-size:13.5px;margin:0;color:var(--frame);overflow-wrap:anywhere;text-wrap:balance}
+.tags{display:flex;flex-wrap:wrap;gap:2px 10px}
+.desc{font-family:var(--sans);font-size:14px;line-height:1.55}
+.desc p{margin:0 0 6px;max-width:62ch}
+.rows{display:flex;flex-direction:column;gap:1px}
+.msgs{border-left:2px solid var(--rule-hi);padding-left:10px;display:flex;flex-direction:column;gap:2px}
+.msgs:empty,.rows:empty,.tags:empty{display:none}
+.list{display:flex;flex-direction:column;gap:3px}
+.item{all:unset;font:inherit;cursor:pointer;display:flex;flex-wrap:wrap;gap:2px 8px;padding:3px 6px;border:1px solid var(--rule);overflow-wrap:anywhere}
+.item:hover{background:var(--panel2);border-color:var(--rule-hi)}
+.item:focus-visible{outline:1px solid var(--yl)}
+.bench{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:10px}
+.box{background:var(--panel);border:1px solid var(--rule);padding:12px;display:flex;flex-direction:column;gap:9px;min-width:0;font-family:var(--sans)}
+.box h3{margin:0;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:500}
+.ctl{display:flex;flex-direction:column;gap:3px}
+.ctl label{font-size:12.5px}
+.ctl small,.box small{color:var(--dim);font-size:11.5px}
+select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);border:1px solid var(--rule-hi);padding:4px 6px;max-width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.ladder{font-family:var(--mono);font-size:12px;display:flex;flex-direction:column;gap:1px}
+.ladder .r{display:grid;grid-template-columns:2.2em 1.4em minmax(0,1fr) auto;gap:6px;color:var(--dim)}
+.ladder .r.you{color:var(--text)}
+.ladder .r span:nth-child(3){overflow-wrap:anywhere}
+.note p{margin:0;max-width:60ch;font-size:13px}
+.note .q{color:var(--yl);font-family:var(--mono);font-size:11.5px;letter-spacing:.06em}
+.metrics{font-family:var(--mono);font-size:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;font-variant-numeric:tabular-nums;margin:0}
+.metrics dt{color:var(--dim)} .metrics dd{margin:0;text-align:right}
+/* directions: one compact row that says what each arrow does from here */
+.pad{display:flex;flex-wrap:wrap;gap:4px}
+.pb{all:unset;box-sizing:border-box;font:inherit;font-size:11.5px;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--rule-hi);background:var(--panel);color:var(--text);cursor:pointer;padding:4px 8px;min-width:0;max-width:100%}
+.pb b{color:var(--yl);font-size:11px} .pb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:20ch}
+.pb:hover{background:var(--panel2);border-color:var(--yl)} .pb:focus-visible{outline:1px solid var(--yl)} .pb[disabled]{display:none}
+.pb.scan b{color:var(--cy)}
+@media (pointer:coarse){.pb{padding:10px 12px}}
+.chips{display:flex;flex-wrap:wrap;gap:4px} .chips:empty{display:none}
+.chip{font:inherit;font-size:11.5px;background:var(--panel);color:var(--text);border:1px solid var(--rule-hi);padding:4px 8px;cursor:pointer;text-align:left;max-width:100%;overflow-wrap:anywhere}
+.chip:hover{border-color:var(--frame);background:var(--panel2)} .chip kbd{font:inherit;font-weight:700;color:var(--yl);margin-right:5px}
+.targets{display:flex;flex-direction:column;gap:1px;max-height:150px;overflow-y:auto} .targets:empty{display:none}
+.tg{all:unset;box-sizing:border-box;font:inherit;font-size:11.5px;cursor:pointer;display:grid;grid-template-columns:20px minmax(0,1fr);gap:4px;padding:2px 6px;border-left:2px solid var(--rule);color:var(--dim);overflow-wrap:anywhere}
+.tg kbd{font:inherit;color:var(--yl)} .tg.seen{color:var(--text)} .tg:hover,.tg.sel{border-left-color:var(--yl);color:var(--text);background:var(--panel2)} .tg:focus-visible{outline:1px solid var(--yl)}
+/* objects: only what exists is drawn */
+.floor,.buf{display:flex;flex-wrap:wrap;gap:4px;align-items:center} .floor:empty{display:none}
+.floor::before,.buf::before{flex-basis:100%;font-size:10px;letter-spacing:.1em;color:var(--dim)}
+.floor::before{content:"IN THIS ROOM · CLICK TO TAKE (ONE MOVE)"} .buf::before{content:attr(data-head)}
+.tile{all:unset;box-sizing:border-box;font:inherit;font-size:11px;line-height:1.2;padding:3px 7px;border:1px solid var(--rule-hi);background:var(--panel);color:var(--text);cursor:pointer;display:inline-flex;gap:6px;align-items:baseline;max-width:100%;overflow-wrap:anywhere}
+.tile em{font-style:normal;color:var(--dim);font-size:10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tile:hover{border-color:var(--frame)} .tile:focus-visible{outline:1px solid var(--yl)} .tile[aria-pressed="true"]{border-color:var(--yl);background:var(--panel2);color:var(--yl)}
+.tile.beacon{border-color:var(--yl);color:var(--yl)} .tile.fl{border-style:dashed;border-color:var(--frame)}
+
+.cy{color:var(--cy)} .yl{color:var(--yl)} .rd{color:var(--rd)} .gn{color:var(--gn)} .mg{color:var(--mg)}
+.rs{color:var(--rs)} .hv{color:var(--hv)} .dim{color:var(--dim)} .faint{color:var(--faint)} .b{font-weight:700}
+</style>
+
+<div class="app" id="app" data-frame="world">
+  <div class="bar">
+    <h1>ENDLESS TRANSIT</h1>
+    <span class="sub">Visual concept mock: the whole loop as a single page, ships included. Nothing here is game code. Click the picture or the buttons; every move costs Coherence.</span>
+    <button class="tbtn" id="bBench" type="button" aria-expanded="false" aria-controls="bench">TEST BENCH</button>
+  </div>
+
+  <div class="deck">
+    <div class="main">
+      <ol class="gauge" id="gauge" aria-label="Depth: where you are in the lattice"></ol>
+      <div class="stage"><canvas id="cv" tabindex="0" aria-label="The world. Use arrow keys and Enter, or click."></canvas></div>
+      <div class="inst" id="inst"></div>
+      <div class="sig" id="sig"></div>
+      <div class="log" id="log"></div>
+      <div class="hint">Everywhere: <b>arrows</b> pick · <b>Enter</b> goes in · <b>Esc</b> goes out. Picking is free; walking (floors, rooms, the hive ring) costs a move. <b>s</b> scans.</div>
+    </div>
+    <div class="console">
+      <section class="cap" id="cap" aria-live="polite"></section>
+      <div class="pad" id="pad" role="group" aria-label="Move"></div>
+      <div class="chips" id="chips"></div>
+      <div class="targets" id="targets"></div>
+      <div class="floor" id="floor"></div>
+      <div class="buf" id="buf" aria-label="Quantum buffer"></div>
+    </div>
+  </div>
+
+  <aside class="bench" id="bench" hidden>
+    <div class="box">
+      <h3>Where ships show</h3>
+      <div class="ladder" id="ladder"></div>
+      <div class="ctl"><label for="oHauler">The hauler sits at</label>
+        <select id="oHauler">
+          <option value="nullreach">Level 02 · adrift in Null Reach 886</option>
+          <option value="system">Level 03 · in orbit, Vega Borealis</option>
+          <option value="planet">Level 04 · low orbit over Hydraia</option>
+          <option value="street">Level 07 · grounded on Busy Terrace</option>
+        </select></div>
+      <div class="ctl"><label for="oHive">The hive</label>
+        <select id="oHive">
+          <option value="off">does not exist</option>
+          <option value="system">Level 03 · arrives at Vega Borealis</option>
+          <option value="filament">Level 01 · in transit on the filament</option>
+        </select>
+        <small>Not there at the start. It arrives after 30 moves, when you wake the hauler, or when you take the container.</small></div>
+      <div class="ctl"><label for="oStart">You start at</label>
+        <select id="oStart">
+          <option value="street">Level 07 · the street, as in the game</option>
+          <option value="universe">Level 00 · the universe root</option>
+        </select></div>
+      <small>Changing any of these three restarts the scenario.</small>
+    </div>
+    <div class="box">
+      <h3>Open questions, as switches</h3>
+      <div class="ctl"><label for="oExit">Leaving the ship</label>
+        <select id="oExit"><option value="airlock">only through the airlock</option><option value="anywhere">from any deck, like a building</option></select></div>
+      <div class="ctl"><label for="oDark">Explored twice</label>
+        <select id="oDark"><option value="on">dark first, lit after the reactor wakes</option><option value="off">one state, lit from the start (restarts)</option></select></div>
+      <div class="ctl"><label for="oDrain">Coherence per move</label>
+        <select id="oDrain"><option value="0">0 · no pressure</option><option value="1">1 · as in the game</option><option value="2">2 · as in an entropic era</option></select></div>
+      <div class="ctl"><label for="oSignal">Hidden Frequency as a beacon</label>
+        <select id="oSignal"><option value="on">on · a pulsing bearing</option><option value="off">off · find it by scanning</option></select></div>
+      <div class="ctl"><label for="oFx">Screen decay with Coherence</label>
+        <select id="oFx"><option value="on">on · the whole screen degrades</option><option value="off">off · meter only</option></select></div>
+      <div class="btns">
+        <button class="tbtn" type="button" id="bRestart">Restart</button>
+        <button class="tbtn" type="button" id="bRefill">Refill Coherence</button>
+        <button class="tbtn" type="button" id="bSeed">New seed</button>
+      </div>
+      <small id="seedLine"></small>
+    </div>
+    <div class="box"><h3>What this screen tests</h3><div class="note" id="note"></div></div>
+    <div class="box"><h3>Cost so far</h3><dl class="metrics" id="metrics"></dl></div>
+  </aside>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const c = (cls, s) => '<span class="'+cls+'">'+esc(s)+'</span>';
+const pad2 = n => (n < 10 ? '0' : '') + n;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* ---------- options ---------- */
+let O = {haulerAt:'system', hiveAt:'system', startAt:'street', exitRule:'airlock', darkLit:true, drain:1, signal:true, fx:true, seed:0};
+
+/* ---------- seeded helpers ---------- */
+function h32(str){ let h = 2166136261; for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619); return h >>> 0; }
+function rng(key){
+  let a = h32(O.seed + '|' + key);
+  return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+const rint = (r, a, b) => a + Math.floor(r() * (b - a + 1));
+const cap1 = w => w.charAt(0).toUpperCase() + w.slice(1);
+
+/* ---------- kinds: levels 00 to 07 ---------- */
+const KIND = {
+  universe:{icon:'∞', level:0, child:'filament', n:[3,3]},
+  filament:{icon:'»', level:1, child:'sector', n:[4,4]},
+  sector:{icon:'○', level:2, child:'system', n:[3,3]},
+  nullreach:{icon:'○', level:2, child:'system', n:[1,1]},
+  system:{icon:'☼', level:3, child:'planet', n:[2,4]},
+  planet:{icon:'⊕', level:4, child:'country', n:[2,3]},
+  country:{icon:'⬚', level:5, child:'city', n:[2,3]},
+  city:{icon:'▦', level:6, child:'street', n:[3,5]},
+  street:{icon:'═', level:7, child:'building', n:[0,0]},
+  building:{icon:'⌂', level:8}
+};
+const KLABEL = {universe:'UNIVERSE', filament:'FILAMENT', sector:'SECTOR', nullreach:'NULL REACH', system:'SOLAR SYSTEM', planet:'PLANET', country:'COUNTRY', city:'CITY', street:'STREET', building:'BUILDING'};
+/* small samples of the game's own lists (src/main/resources), enough to feel like it */
+const CULT = {
+  monolith:{col:'#8fc1bd', items:['obsidian cube','green power conduit','data probe','geometric slab','black glass panel','hexagonal pillar'], adj:['Brutalist','Concrete','Silent','Impenetrable','Grey','Eternal','Static'], noun:['Slab','Tower','Obelisk','Block','Unit','Monolith','Foundation']},
+  rust:{col:'#d0693f', items:['corrugated metal sheet','rusted chain','iron girder','oil-stained rag','welded pipe','industrial valve'], adj:['Corroded','Oxidized','Patchwork','Scrapyard','Weathered','Fading','Dusty'], noun:['Shell','Stack','Heap','Vault','Husk','Anchor']},
+  baroque:{col:'#c9a15a', items:['stone gargoyle','incense burner','stained glass shard','prayer bench','heavy beeswax candle','gothic arch fragment'], adj:['Ornate','Golden','Cathedral','Sacred','Opulent','Marble','Grand'], noun:['Gallery','Archive','Palace','Temple','Sanctum','Hall']},
+  shogun:{col:'#de6f66', items:['shoji screen','tatami mat','katana rack','bonsai tree','lacquered chest','paper lantern'], adj:['Lacquered','Silent','Folded','Cedar','Ashen','Vermilion','Paper'], noun:['Pavilion','Shrine','Garden','Dojo','Keep','Teahouse']},
+  void:{col:'#b9c9cf', items:['floating white sphere','seamless glass cube','silent fan','perfectly white tile','white light strip','shadowless corner'], adj:['Hollow','Empty','Silent','Ghostly','Drifting','Dark'], noun:['Void','Shadow','Echo','Aperture','Well','Horizon']},
+  zenith:{col:'#e8e2c4', items:['marble pillar','white stone altar','laurel wreath','ivory pedestal','lyre','amphora'], adj:['Marble','Ivory','Laurel','Olympian','Sunlit','Alabaster','Columned'], noun:['Forum','Temple','Colonnade','Basilica','Agora','Rotunda']},
+  neon:{col:'#c987dd', items:['flickering light tube','acrylic panel','data-cable bundle','vending machine keypad','neon signage','plastic bead curtain'], adj:['Vibrant','Fluorescent','Flickering','Synthetic','Digital','Pulsing'], noun:['Hub','Nexus','Array','Node','Core','Relay']},
+  organic:{col:'#71d083', items:['chitinous plate','pulsating membrane','bone-like strut','neural-fiber cluster','keratin spine','leathery sac'], adj:['Living','Grown','Pulsing','Verdant','Breathing','Neural'], noun:['Pod','Spore','Nest','Shell','Chamber','Limb']},
+  gilded:{col:'#e6c35c', items:['velvet armchair','mahogany desk','brass clock','crystal chandelier','pocket watch','candelabra'], adj:['Gilded','Velvet','Brass','Crystal','Mahogany','Opulent'], noun:['Salon','Gallery','Atrium','Parlour','Conservatory','Manor']}
+};
+const CULTS = Object.keys(CULT);
+const ERAS = ['ancient','industrial','analog','atomic','digital','future','singularity','entropic'];
+const TRACE = {CLICKING:'rhythmic clicking from the lock', HUMMING:'a heavy low thrum', OZONE:'a sharp smell of ozone', SILENCE:'unnatural stillness', FROST:'frost forming on the hinges'};
+const TRAIT = {
+  Military:[['Security Station','CLICKING'],['Barracks','HUMMING'],['Armory','CLICKING'],['Tactical Hub','HUMMING']],
+  Research:[['Laboratory','OZONE'],['Neural Link Array','OZONE'],['Observation Deck','SILENCE'],['Bio-Server','OZONE']],
+  Industrial:[['Power Plant','OZONE'],['Processing Core','OZONE'],['Maintenance Bay','CLICKING'],['Fuel Depot','HUMMING']],
+  Ceremonial:[['Prayer Hall','SILENCE'],['Ritual Chamber','SILENCE'],['Archive','SILENCE'],['Memory Well','FROST']],
+  Commercial:[['Trading Floor','SILENCE'],['Logic Market','SILENCE'],['Credit Hub','HUMMING'],['Supply Node','CLICKING']],
+  Agricultural:[['Hydroponic Bay','SILENCE'],['Spore Farm','SILENCE'],['Oxygen Sump','SILENCE'],['Growth Chamber','SILENCE']]
+};
+const TRAITS = Object.keys(TRAIT);
+const STANDARD = [['Standard Spatial Cell','SILENCE'],['Generic Living Unit','SILENCE'],['Transit Node','CLICKING'],['Lattice Sub-Cell','SILENCE']];
+const DOOR_MAT = ['Heavy Bulkhead','Synth-Glass Slab','Pitted Concrete','Reinforced Polymer','Oxidized Metal Hatch','Pristine Ceramic','Industrial Barrier','Riveted Iron Hatch','Frosted Crystal Pane'];
+const DOOR_STATE = ['VIBRATING','COLD','RUSTED','STABLE','PITTED','POLISHED','STATIC','SCORCHED','WEEPING','HUMMING'];
+const DOOR_INSC = ['VOID_SINK','LATTICE','HELP_IS_STATIC','QUARANTINE','RESONANCE','NO_ENTRY','HOLLOW','DO_NOT_ANSWER','SIGNAL_LOST','KEEP_WALKING'];
+const COND = ['overturned','dust-covered','cracked','humming','bolted-down','half-dismantled','flickering','pristine','scorched','overgrown'];
+const ZONES = ['RESIDENTIAL','SERVICE','ARCHIVE','TRANSIT','UTILITY','OBSERVATION','STORAGE','COMMONS'];
+const NAMES = {
+  filament:r => pick(r,['Mu','Theta','Kappa','Sigma','Omega','Lambda','Xi','Rho'])+'-'+rint(r,10,999)+'-'+pick(r,['Sync','Thread','Web','Strand','Braid']),
+  sector:r => pick(r,['Core Matrix','Rim Expanse','Outer Grid','Inner Shoal','Deep Array','Far Lattice'])+' '+rint(r,2,99),
+  nullreach:r => 'Null Reach '+rint(r,100,999),
+  system:r => pick(r,['Vega','Omicron','Rigel','Tau','Sigma','Altair','Deneb','Kappa','Procyon','Wolf'])+' '+pick(r,['Borealis','Luyten','Ceti','Kapteyn','Draconis','Majoris','Lacaille','Eridani','Cygni']),
+  planet:r => pick(r,['Hydr','Kry','Nyx','Styx','Aur','Vel','Thal','Zeph','Orm','Cal','Ix','Mor'])+pick(r,['aia','ox','el','um','aea','un','ara','is','eth','on']),
+  country:r => pick(r,['Free','Holy','United','Grand','Lower','Iron','Silent','Ninth'])+' '+pick(r,['Dust','Glacier','Salt','Ember','Tide','Ash','Glass','Thorn'])+' '+pick(r,['Kingdom','Sovereignty','Union','Mandate','Reach','Commune','Dominion','League']),
+  city:r => pick(r,['Star','Clock','Ash','Iron','Glass','Salt','Wind','Lamp','Stone','Rust'])+pick(r,['ford','haven','gate','mouth','wick','hollow','stead','reach']),
+  street:r => pick(r,['Busy','Hidden','Quiet','Long','Crooked','Seventh','Lantern','Low','Sunken','Copper'])+' '+pick(r,['Terrace','Loop','Row','Cut','Arcade','Stair','Causeway','Mews'])
+};
+const DESC = {
+  filament:'A high-bandwidth conduit from the Core to the Rim. Sectors hang from it like beads.',
+  sector:'A dense cluster of matter and data adrift in the void.',
+  nullreach:'The hollow that replaced a sector. Thin, cold, one star left. The map here is mostly your own noise.',
+  system:'A star anchoring a handful of planetary nodes. Beyond the last track there is room for things that are not planets.',
+  planet:'One culture, one era, laid over a whole world.',
+  country:'An administrative region governed by one trait.',
+  city:'A concentrated urban grid of synthetic matter.',
+  street:'A linear transit artery between building-nodes, fronts on both sides.'
+};
+
+/* ---------- the scripted path (same as the text mock) ---------- */
+const W = {};
+function node(id, kind, name, parent, x){
+  W[id] = Object.assign({id:id, kind:kind, name:name, parent:parent, fixed:[]}, x || {});
+  if (parent) W[parent].fixed.push(id);
+}
+node('U','universe','The Endless Universe',null,{desc:'The Unimatrix. The origin of all seeds. Everything else is below you.'});
+node('f1','filament','Mu-993-Sync','U',{desc:'A high-bandwidth conduit from the Core to the Rim. Four nodes hang from it; one of them is hollow.'});
+node('f2','filament','Theta-41-Thread','U',{gen:1}); node('f3','filament','Kappa-207-Web','U',{gen:1});
+node('sec1','sector','Core Matrix 17','f1',{desc:'A dense cluster of matter and data adrift in the void. Three gravitational wells.'});
+node('nr','nullreach','Null Reach 886','f1',{});
+node('sec2','sector','Rim Expanse 4','f1',{gen:1}); node('sec3','sector','Outer Grid 52','f1',{gen:1});
+node('sys1','system','Vega Borealis','sec1',{desc:'A white star anchoring three planetary nodes. Beyond the last planet’s track there is room for things that are not planets.'});
+node('sys2','system','Omicron Luyten','sec1',{desc:'A dim red well with two worlds. Nothing here knows your name yet.'});
+node('sys3','system','Rigel Ceti','sec1',{gen:1});
+node('sys4','system','Tau Kapteyn','nr',{desc:'The reach’s only star. One planet, barely held.'});
+node('p1','planet','Hydraia','sys1',{culture:'monolith', era:'analog', desc:'A monolith world in its analog era: slab cities, dial-faced instruments, long shadows.'});
+node('p2','planet','Kryox','sys1',{gen:1}); node('p3','planet','Nyxel','sys1',{gen:1});
+node('p4','planet','Styxum','sys2',{gen:1}); node('p5','planet','Auraea','sys2',{gen:1}); node('p6','planet','Nyxun','sys4',{gen:1});
+node('c1','country','Free Dust Kingdom','p1',{trait:'Industrial', desc:'An administrative region governed by one trait: it builds, stores and burns.'});
+node('c2','country','Holy Glacier Sovereignty','p1',{gen:1});
+node('city1','city','Starford','c1',{desc:'A concentrated urban grid of synthetic matter, authorised and dull.'});
+node('city2','city','Clockhaven','c1',{gen:1});
+node('st1','street','Busy Terrace','city1',{desc:'A linear transit artery between building-nodes. Slab fronts on both sides, small and massive side by side.'});
+node('st2','street','Hidden Loop','city1',{gen:1});
+const ST1_NAMES = ['Eternal Shaft','Unit 0x3F Spire','Weathered Silo'];
+const PLACE = {nullreach:'nr', system:'sys1', planet:'p1', street:'st1'};
+const HPLACE = {system:'sys1', filament:'f1'};
+const START = {street:'st1', universe:'U'};
+const LADDER = [['U'],['f1'],['sec1','nr'],['sys1'],['p1'],['c1'],['city1'],['st1']];
+
+/* ---------- the generator: every sibling is a real place ---------- */
+let G = {};
+function N(id){
+  if (G[id]) return G[id];
+  let n;
+  if (W[id]){ n = Object.assign({}, W[id]); }
+  else {
+    const cut = id.lastIndexOf('/'), parent = id.slice(0, cut), tail = id.slice(cut + 1), pk = N(parent).kind, r = rng('n|' + id);
+    if (pk === 'street'){
+      const i = parseInt(tail.slice(1), 10), cu = CULT[ctxOf(parent).culture];
+      n = {id:id, kind:'building', parent:parent, index:i, name:(parent === 'st1' && ST1_NAMES[i]) || (pick(r, cu.adj)+' '+pick(r, cu.noun)), size:'small'};
+      const roll = Math.floor(r() * 100), sz = roll > 90 ? ['massive', 50, 100, 10, 20] : roll > 70 ? ['large', 30, 50, 8, 16] : roll > 40 ? ['medium', 10, 25, 4, 10] : ['small', 3, 10, 2, 6];
+      n.size = sz[0]; n.floors = rint(r, sz[1], sz[2]); n.apts = rint(r, sz[3], sz[4]); n.h = .16 + .7 * Math.log(n.floors) / Math.log(100);
+    } else {
+      let kind = KIND[pk].child;
+      if (kind === 'sector' && r() < 0.2) kind = 'nullreach';
+      n = {id:id, kind:kind, parent:parent, name:NAMES[kind](r)};
+    }
+  }
+  const r2 = rng('x|' + id);
+  if (n.kind === 'planet' && !n.culture){ n.culture = pick(r2, CULTS); n.era = pick(r2, ERAS); }
+  if (n.kind === 'country' && !n.trait) n.trait = pick(r2, TRAITS);
+  if (!n.desc) n.desc = DESC[n.kind] || '';
+  G[id] = n;
+  return n;
+}
+function kids(id){
+  const n = N(id);
+  if (n.kind === 'street' || n.kind === 'building') return [];
+  if (n.kidIds) return n.kidIds;
+  if (W[id] && !W[id].gen && W[id].fixed.length) return (n.kidIds = W[id].fixed.slice());
+  const k = KIND[n.kind].n, cnt = rint(rng('k|' + id), k[0], k[1]), out = [];
+  for (let i = 0; i < cnt; i++) out.push(id + '/' + i);
+  return (n.kidIds = out);
+}
+const bldId = (street, i) => street + '/b' + i;
+const streetLen = id => rint(rng('len|' + id), 2, 10) * 2;
+function ancestors(id){ const a = []; while (id){ a.push(id); id = N(id).parent; } return a; }
+function ctxOf(id){
+  const x = {culture:'monolith', era:'analog', trait:'Commercial'};
+  ancestors(id).forEach(a => { const n = N(a); if (n.culture){ x.culture = n.culture; x.era = n.era; } if (n.trait) x.trait = n.trait; });
+  return x;
+}
+function tagsOf(n){
+  const t = [], x = ctxOf(n.id), lv = KIND[n.kind].level;
+  if (lv >= 4) t.push('[CULTURE: '+x.culture.toUpperCase()+']', '[ERA: '+x.era.toUpperCase()+']');
+  if (lv >= 5) t.push('[TRAIT: '+x.trait.toUpperCase()+']');
+  return t;
+}
+function hz(name, depth){
+  let sum = 0;
+  for (const ch of name.toLowerCase()) if (ch >= 'a' && ch <= 'z' && 'aeiou'.indexOf(ch) < 0) sum += ch.charCodeAt(0) - 96;
+  return sum * (depth || 12);
+}
+/* a building floor, generated when first drawn. Counts follow the game: 1-10 rooms behind a door, 5-19 objects spread over them */
+function bldLevel(bid, n){
+  const b = N(bid); b.levels = b.levels || {};
+  if (b.levels[n]) return b.levels[n];
+  const r = rng('f|' + bid + '|' + n), x = ctxOf(bid), cu = CULT[x.culture], types = TRAIT[x.trait].concat(STANDARD);
+  const secs = [];
+  for (let q = 0; q < b.apts; q++){
+    const rooms = rint(r, 1, 10), ty = pick(r, r() < .7 ? TRAIT[x.trait] : types), list = [];
+    for (let i = 0; i < rooms; i++){
+      const cond = pick(r, COND);
+      list.push({name:cap1(cond) + ' ' + ty[0], objs:[],
+        l:pick(r, ['A '+ty[0].toLowerCase()+', '+cond+'. ', 'The room reads as '+cond+'. ', 'Someone left this '+ty[0].toLowerCase()+' in a hurry, or never left. '])+
+          pick(r, ['The '+x.era+' fittings are all still in place.', 'A '+pick(r, cu.items)+' is the only thing that casts a shadow.', 'Your link labels everything twice and believes neither.', 'The air tastes of the '+x.era+' era.'])});
+    }
+    for (let j = rint(r, 5, 19); j > 0; j--) list[Math.floor(r() * rooms)].objs.push(pick(r, COND) + ' ' + pick(r, cu.items));
+    secs.push({mat:pick(r, DOOR_MAT), state:pick(r, DOOR_STATE), insc:r() < .3 ? '['+pick(r, DOOR_INSC)+']' : '', trace:TRACE[ty[1]], type:ty[0], rooms:list});
+  }
+  return (b.levels[n] = {zone:n === 0 ? 'LOBBY' : pick(r, ZONES), sections:secs});
+}
+/* ---------- the hauler: rust / industrial era / Industrial trait ---------- */
+const REG = 1809246;
+const DECKS = [
+ {zone:'ENGINEERING', sections:[
+   {mat:'Riveted Blast Hatch', state:'SCORCHED', insc:'!! DANGER !!', trace:'a heavy low thrum', type:'Reactor Well', rooms:[
+     {name:'Reactor Well', heart:'reactor', objs:['scorched control rod','dosimeter badge'],
+      d:'A pit with a rail around it. Something large and cold sits at the bottom; your link draws it as a single thick outline. A feed hopper stands open at the rail, the width of two hands.',
+      l:'The core turns over below the rail with a sound like a slow train. The feed hopper has closed itself. Every gauge on the wall has crept off its pin.'}]},
+   {mat:'Buckled Grate', state:'FLAKING', insc:'', trace:'rhythmic clicking from the lock', type:'Maintenance Bay', rooms:[
+     {name:'Flaking Coolant Gallery', objs:['brass valve wheel','coil of copper wire'],
+      d:'Pipes overhead, close enough to touch. Outlines of valves, one after another, all shut.',
+      l:'Sodium-yellow work lamps show forty metres of pipe sweating rust. Someone chalked a tally on the wall and stopped at 231.'},
+     {name:'Sooty Pump Room', objs:['pressure gauge'],
+      d:'A low room. Three squat shapes bolted to the deck. Nothing moves.',
+      l:'Three pumps, two running. The third has a tag wired to it: DO NOT START — IT LISTENS.'}]}
+ ]},
+ {zone:'CARGO', sections:[
+   {mat:'Patchwork Cargo Door', state:'DENTED', insc:'', trace:'rhythmic clicking from the lock', type:'Supply Node', rooms:[
+     {name:'Main Hold', objs:['rusted chain','riveted plate','ore sample crate','cargo strap ratchet','grease-black wrench','welding mask','drum of bearing grease','stencil kit','tow cable shackle','manifest clipboard','crate of rivets','hazard lamp'],
+      d:'One enormous room. Your link gives up on the far wall and draws a dotted line instead. Outlines of crates in rows, a lot of them.',
+      l:'The hold, under lamps at last: ore crates in rows to the far bulkhead, strapped down by people who expected to come back for them.'}]},
+   {mat:'Oxidized Pod Hatch', state:'STIFF', insc:'[EVAC]', trace:'unnatural stillness', type:'Pod Bay', rooms:[
+     {name:'Pod Bay', heart:'pod', objs:['sealed ration tin'],
+      d:'Five cradles. Four are empty rails. The fifth still holds a pod, its hatch open, a hand-crank primer beside the seat.',
+      l:'Five cradles, four launched long ago by the look of the scorch marks. The fifth pod waits with its hatch open. It needs no power; it never did.'}]},
+   {mat:'Weathered Bulk Hatch', state:'WELDED', insc:'[NOT ON MANIFEST]', sealed:1, trace:'frost forming on the hinges', type:'Hold 3', rooms:[
+     {name:'Hold 3', heart:'hold3', objs:['unlisted container'],
+      d:'', l:'A small hold, empty but for one container the size of a coffin, unmarked. The deck plates around it are polished where someone sat, for a long time. It hums. You know the number before you read it.'}]}
+ ]},
+ {zone:'PROCESS', sections:[
+   {mat:'Sooty Pressure Door', state:'PITTED', insc:'', trace:'a sharp smell of ozone', type:'Processing Core', rooms:[
+     {name:'Dusty Processing Core', objs:['slag sample','punch-card stack'],
+      d:'Tall cabinets in a ring. Outlines of reels, stopped mid-turn.',
+      l:'Tape reels jerk forward a frame at a time, resuming a calculation that was paused two centuries ago.'}]},
+   {mat:'Assembled Hatch', state:'GREASED', insc:'', trace:'rhythmic clicking from the lock', type:'Maintenance Bay', rooms:[
+     {name:'Riveted Maintenance Bay', log:2, objs:['torque driver','spool of solder'],
+      d:'Benches. Tools in outline, hung on a board in the order of their size.',
+      l:'Benches under hooded lamps. Every tool is on its hook except one, and its painted shadow is still there.'},
+     {name:'Parts Cage', objs:['bearing race'],
+      d:'A wire cage inside the bay. The gate is open.',
+      l:'A wire cage of spares, inventoried on a card in neat pencil. The last line is not a part number. It is the same seven digits, written eleven times.'}]},
+   {mat:'Fading Storeroom Door', state:'AJAR', insc:'', trace:'rhythmic clicking from the lock', type:'Supply Node', rooms:[
+     {name:'Corroded Supply Node', objs:['filter cartridge','water ration bladder','box of fuses'],
+      d:'Shelving. Most of it empty outlines.',
+      l:'Shelving, most of it bare. They were rationing before they slept.'}]}
+ ]},
+ {zone:'HABITAT', sections:[
+   {mat:'Scrapyard Bulkhead Door', state:'SCUFFED', insc:'', trace:'a heavy low thrum', type:'Barracks', rooms:[
+     {name:'Bunk A', objs:['tag stamped OKAFOR','deck of worn cards'],
+      d:'Two bunks in outline. One is made.',
+      l:'Two bunks. One made with hospital corners, one stripped to the frame.'},
+     {name:'Bunk B', log:3, objs:['tag stamped LINDQVIST','folded star chart'],
+      d:'Two bunks. Neither has been slept in; your link finds no impression in either.',
+      l:'Two bunks, never slept in again after a certain day. A pillow is missing.'},
+     {name:'The Mess', log:1, objs:['enamel mug','tin of coffee substitute'],
+      d:'A table bolted to the deck, five chairs. Four are pushed in.',
+      l:'A table, five chairs, four pushed in. Five mugs on hooks, each with a name in enamel paint.'}]},
+   {mat:'Patchwork Medical Hatch', state:'CLEAN', insc:'', trace:'a sharp smell of ozone', type:'Medbay', rooms:[
+     {name:'Medbay', log:4, objs:['sedative ampoule','cracked helmet lamp'],
+      d:'A couch, a cabinet. The cabinet door hangs open.',
+      l:'A couch and a cabinet, the sedative drawer emptied in an orderly way: five ampoules signed out, one returned.'}]},
+   {mat:'Frosted Vault Door', state:'COLD', insc:'[DO NOT WAKE]', sealed:1, trace:'frost forming on the hinges', type:'Cryo Vault', rooms:[
+     {name:'Cryo Vault', heart:'cryo', objs:['tag stamped REYES'],
+      d:'', l:'Five pods against the wall. Four are occupied; frost on the inside of the glass, a slow pulse on each panel. The fifth stands open and empty, its harness cut, not unbuckled. The crew is not dead. The crew is hiding.'}]}
+ ]},
+ {zone:'BRIDGE', sections:[
+   {mat:'Riveted Command Hatch', state:'LOCKED', insc:'[COMMAND]', sealed:1, trace:'a sharp smell of ozone', type:'Bridge', rooms:[
+     {name:'The Bridge', heart:'bridge', objs:['flight recorder spool'],
+      d:'', l:'Six seats, dials not screens, a plotting table with brass rules. The helm has a key in it. Through the forward ports, whatever is outside looks back at a ship with its lights on.'}]},
+   {mat:'Weathered Cabin Door', state:'LOCKED', insc:'', sealed:1, trace:'unnatural stillness', type:'Captain’s Cabin', rooms:[
+     {name:'Captain’s Cabin', log:5, objs:['captain’s key lanyard','tag stamped MARROW'],
+      d:'', l:'A narrow cabin. The bunk is folded away; the desk is not. A logbook lies open under a lamp that has just come back on.'}]}
+ ]}
+];
+const AIRLOCK_DECK = 1;
+const LOGS = {
+  1:'Day 212. Tow steady. Reyes says the unlisted can in Hold 3 is warm. The manifest has no Hold 3.',
+  2:'Day 219. Gauges on deck 1 read a vibration at 1809246 cycles. Not ours. Not the reactor.',
+  3:'Day 224. Lindqvist sleeps in the hold now. Says it is quieter next to it. It is not quiet.',
+  4:'Day 230. Four to cryo by their own hand. Captain’s order: reactor cold, transponder faint. Let it think we are dead.',
+  5:'Day 231. I am sealing Hold 3 and the bridge. If you read this under lights, you woke us. It will have heard that too.'
+};
+const DESTS = [
+  {id:'sys1',label:'Vega Borealis — high orbit'},
+  {id:'p1',label:'Hydraia — low orbit'},
+  {id:'sys2',label:'Omicron Luyten — high orbit'},
+  {id:'nr',label:'Null Reach 886 — adrift'},
+  {id:'st1',label:'Busy Terrace — set down on the street'}
+];
+const WE = ['[WE] Your pattern is noted.','[WE] You are one. This is an error we correct.','[WE] You carry our number. Return it.',
+  '[WE] We remember this interface.','[WE] There is no outside. There is only later.','[WE] Stay. It costs you less each time.'];
+/* ---------- one accessor for anything with floors: a building or the hauler ---------- */
+function struct(sid){
+  if (sid === 'H') return {ship:true, name:'Buckled Girder', min:0, max:DECKS.length - 1, entry:AIRLOCK_DECK, level:n => DECKS[n], cells:3, col:'#d0693f'};
+  const b = N(sid);
+  return {ship:false, name:b.name, min:0, max:b.floors - 1, entry:0, level:n => bldLevel(sid, n), cells:b.apts, size:b.size, col:CULT[ctxOf(sid).culture].col};
+}
+/* ---------- state ---------- */
+let S = null;
+const FX = {t:0, trans:null, wakeT0:-1, cam:0, ringRot:0, flash:0, hits:[], hover:null};   // never saved
+const RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function fresh(keep){
+  const s = {loc:{t:'w', id:START[O.startAt]}, coh:100, steps:0, mode:'main', msg:[], ticker:[], visited:{}, buffer:[], sel:0, win:0, door:0, pick:-1,
+    rooms:{}, doors:{}, been:{},
+    ship:{at:PLACE[O.haulerAt], lit:!O.darkLit, woke:false, owned:false, seen:false, podUsed:false, logs:{}},
+    hive:{present:false, at:HPLACE[O.hiveAt] || null, seen:false, dormant:false, aperture:0, aboard:0, alcoves:{}},
+    m:{prompts:0, spent:0, aboardPrompts:0, aboardSpent:0, lastWalkOut:null, lastRoomAt:0, reboots:0}};
+  for (let k = 0; k < 8; k++) s.hive.alcoves[k] = true;
+  if (keep){ s.buffer = keep.buffer; s.steps = keep.steps; s.visited = keep.visited; s.m = keep.m; s.m.reboots++; s.ticker = keep.ticker; }
+  else s.buffer = [{name:'Hidden Frequency', hz:REG, beacon:true}, {name:'paper lantern', hz:hz('paper lantern')}, {name:'dial-faced meter', hz:hz('dial-faced meter')}];
+  s.visited[s.loc.id] = 1;
+  return s;
+}
+const L = () => S.loc;
+const inH = l => l.t === 's' && l.sid === 'H';
+const aboardH = l => inH(l) && l.at !== 'ap';
+const inB = l => l.t === 's' && l.sid !== 'H';
+const isV = l => l.t === 'h';
+const aboardV = l => isV(l) && l.at !== 'hap';
+const rkey = l => l.sid+':'+l.n+':'+l.si+':'+l.ri;
+function worldPos(){ const l = L(); return l.t === 'w' ? l.id : inH(l) ? S.ship.at : inB(l) ? N(l.sid).parent : S.hive.at; }
+function roomOf(l){ return struct(l.sid).level(l.n).sections[l.si].rooms[l.ri]; }
+function objsAt(l){ const k = rkey(l); if (!S.rooms[k]) S.rooms[k] = roomOf(l).objs.slice(); return S.rooms[k]; }
+function say(html){ S.msg.push(html); }
+function tick(html){ S.ticker.push(html); if (S.ticker.length > 3) S.ticker.shift(); }
+function sealed(sec){ return !!sec.sealed && !S.ship.lit; }
+function ringDist(a, b){ const d = ((a - b) % 8 + 8) % 8; return Math.min(d, 8 - d); }
+function drainNow(){
+  let d = O.drain;
+  if (aboardV(L()) && !S.hive.dormant) d += Math.floor(S.hive.aboard / 5);
+  return d;
+}
+function go(loc){
+  const from = S.loc;
+  S.loc = loc; S.sel = 0;
+  if (loc.t === 'w'){
+    S.visited[loc.id] = 1;
+    if (from.t === 'w' && N(from.id).parent === loc.id) S.sel = Math.max(0, kids(loc.id).indexOf(from.id));   // keep your place when you come back up
+    if (N(loc.id).kind === 'street' && inB(from)){ S.sel = N(from.sid).index - S.win; }
+    else if (N(loc.id).kind === 'street') S.win = 0;
+  }
+  if (loc.t === 's' && loc.sid !== 'H') S.visited[loc.sid] = 1;
+  if (loc.t === 's' && loc.at === 'rm'){
+    const r = roomOf(loc);
+    S.doors[loc.sid+':'+loc.n+':'+loc.si] = 1; S.been[rkey(loc)] = 1;
+    if (r.log && !S.ship.logs[r.log]){
+      S.ship.logs[r.log] = 1;
+      say(c('yl','>>> LOG FRAGMENT '+r.log+'/5 — punched tape, pinned to the wall'));
+      say(c('dim','    “'+LOGS[r.log]+'”'));
+      tick(c('yl','LOG: fragment '+r.log+'/5'));
+    }
+  }
+  if (loc.t === 's' && loc.at === 'ps') S.door = from.t === 's' && from.at === 'rm' && from.n === loc.n ? from.si : 0;
+  startTrans(from, loc);
+}
+function leftHauler(){ S.m.lastWalkOut = S.m.aboardPrompts - S.m.lastRoomAt; }
+
+/* ---------- the beacon: text for the HUD, a direction for the picture ---------- */
+function bearing(){
+  if (!O.signal) return null;
+  const l = L();
+  if (!S.buffer.some(b => b.beacon)) return {cls:'dim', text:'NO CARRIER — the beacon left your buffer'};
+  if (aboardV(l)) return {cls:'rd', text:'CARRIER DROWNED — everything here hums at '+REG};
+  if (S.ship.owned) return {cls:'gn', text:'REGISTRY '+REG+' · LOCKED — your ship', dir: l.t === 'w' && l.id === S.ship.at ? 'ship' : null};
+  if (inH(l) && l.at === 'ap') return {cls:'yl', text:'REGISTRY '+REG+' · SOURCE: THIS HULL', dir:'hull'};
+  if (aboardH(l)){
+    const dk = l.at === 'al' ? AIRLOCK_DECK : l.n;
+    return {cls:'yl', text:'REGISTRY '+REG+' · SOURCE '+(dk === AIRLOCK_DECK ? 'THIS DECK · HOLD 3' : dk > AIRLOCK_DECK ? 'BELOW YOU · DECK 1' : 'ABOVE YOU · DECK 1'), dir:'hold3'};
+  }
+  const here = worldPos(), target = S.ship.at, up = ancestors(here), tu = ancestors(target), bump = inB(l) ? 1 : 0;
+  if (here === target) return {cls:'yl', text:'REGISTRY '+REG+(bump ? ' · BEARING: OUT, on this street' : ' · HERE — the ◈ in the picture'), dir:bump ? 'up' : 'ship'};
+  if (up.indexOf(target) >= 0) return {cls:'yl', text:'REGISTRY '+REG+' · BEARING: UP '+(up.indexOf(target) + bump)+' · '+KIND[N(target).kind].icon+' '+N(target).name, dir:'up'};
+  if (tu.indexOf(here) >= 0){ const via = tu[tu.indexOf(here) - 1]; return {cls:'yl', text:'REGISTRY '+REG+' · BEARING: DOWN · via '+N(via).name, dir:bump ? 'up' : 'down', via:via}; }
+  const common = up.find(x => tu.indexOf(x) >= 0);
+  return {cls:'yl', text:'REGISTRY '+REG+' · BEARING: UP '+(up.indexOf(common) + bump)+' to '+N(common).name+', then down', dir:'up'};
+}
+/* ---------- views: what each place says and offers. The picture and the buttons both read this. ---------- */
+const VERB = {filament:'Pulse to', sector:'Transition to', nullreach:'Detect faint signal:', system:'Land on', planet:'Visit', country:'Travel to', city:'Go to', street:'Enter', building:'Enter'};
+function streetWin(){ return FX.vw || 5; }
+function haulerLabel(){
+  const s = S.ship;
+  if (!s.seen) return (s.at === 'st1' ? '◈ GROUNDED_HULK' : '◈ UNREGISTERED_MASS') + ' — faint transponder';
+  return '◈ Buckled Girder ' + (s.owned ? '[YOURS]' : s.lit ? '[AWAKE]' : '[DORMANT]');
+}
+function viewWorld(n){
+  const k = KIND[n.kind], v = {frame:'world', note:n.kind, title:k.icon+' '+n.name, tags:[c('dim','[SCALE '+pad2(k.level)+']')].concat(tagsOf(n).map(t => c('yl', t))), desc:[n.desc], rows:[], opts:[]};
+  let i = 0;
+  if (n.kind === 'street'){
+    const vw = streetWin();
+    const len = streetLen(n.id);
+    v.rows.push(c('k','FRONTS IN VIEW: ')+(S.win + 1)+'–'+Math.min(len, S.win + vw)+c('dim','  of '+len));
+    for (let j = 0; j < vw && S.win + j < len; j++){
+      const bid = bldId(n.id, S.win + j), b = N(bid); i++;
+      v.opts.push({k:String(i), text:'Enter ⌂ '+b.name, seen:S.visited[bid], hit:'bld:'+j, run:() => { go({t:'s', sid:bid, at:'dk', n:0}); return true; }});
+    }
+    if (S.win > 0) v.opts.push({k:'[', text:'Walk back along the street', hit:'pan:-1', run:() => { S.win = Math.max(0, S.win - vw); return true; }});
+    if (S.win + vw < len) v.opts.push({k:']', text:'Walk further along the street', hit:'pan:1', run:() => { S.win += vw; return true; }});
+  } else kids(n.id).forEach(id => {
+    const ch = N(id); i++;
+    v.opts.push({k:String(i), text:VERB[ch.kind]+' '+KIND[ch.kind].icon+' '+(ch.kind === 'nullreach' ? 'VOID_REACH '+ch.name.split(' ').pop() : ch.name), seen:S.visited[id], hit:'child:'+id, run:() => { go({t:'w', id:id}); return true; }});
+  });
+  if (S.ship.at === n.id && !(n.kind === 'street' && S.win > 0))
+    v.opts.push({k:'h', text:'Approach '+haulerLabel(), cls:S.ship.owned ? 'gn' : 'rs', hit:'ship', run:() => { S.ship.seen = true; go({t:'s', sid:'H', at:'ap'}); return true; }});
+  if (S.hive.present && S.hive.at === n.id)
+    v.opts.push({k:'m', text:'Approach ◆ MASS — NOT ON PREVIOUS SCAN'+(S.hive.dormant ? ' [SILENT]' : ''), cls:'rd', hit:'hive', run:() => { S.hive.seen = true; go({t:'h', at:'hap'}); return true; }});
+  if (n.parent) v.opts.push({k:'l', text:'Go back up to '+KIND[N(n.parent).kind].icon+' '+N(n.parent).name, hit:'parent', run:() => { go({t:'w', id:n.parent}); return true; }});
+  return v;
+}
+function leaveOpt(v, l){
+  const st = struct(l.sid);
+  if (!st.ship) v.opts.push({k:'l', text:'Leave to the street', hit:'away', run:() => { go({t:'w', id:N(l.sid).parent}); return true; }});
+  else if (O.exitRule === 'anywhere') v.opts.push({k:'l', text:'Leave the ship (switch: exit from anywhere)', hit:'away', run:() => { leftHauler(); go({t:'w', id:S.ship.at}); return true; }});
+}
+function viewApproach(){
+  const s = S.ship, where = {
+    sys1:'It holds a high orbit beyond the last planet’s track, where nothing should be.',
+    sys2:'It holds a high orbit over a red star that never asked for it.',
+    nr:'It is adrift in the reach, turning slowly, lit only by your link.',
+    p1:'It rides a low orbit over Hydraia, close enough that the slab cities slide past beneath its keel.',
+    st1:'It is grounded at the end of the street where a building should be. Its landing struts have cracked the pavement; the neighbours built around it.'}[s.at];
+  const v = {frame:s.lit ? 'rust' : 'rustdark', note:'approach', title:'◈ Buckled Girder — approach', tags:[c('rs','[HAULER]'), c('dim','[REGISTRY '+REG+']')],
+    desc:['A long-haul tug: rust-red hull plates, riveted not welded, a tow frame longer than the street you started on. The registry is stencilled on the flank.', where,
+      s.owned ? 'Running lights steady. The airlock ring is already turning for you.' : s.lit ? 'Every port is lit. It looks like a ship that wants to be found, which was never the plan.' : 'No running lights. No heat bloom. The transponder whispers once a minute, as quietly as it can.'], rows:[], opts:[]};
+  v.opts.push({k:'1', text:'Dock at the airlock (deck 1, the only way in)', hit:'airlock', run:() => { S.m.aboardPrompts = 0; S.m.aboardSpent = 0; S.m.lastRoomAt = 0; go({t:'s', sid:'H', at:'al'}); return true; }});
+  v.opts.push({k:'l', text:'Pull away to '+N(s.at).name, hit:'away', run:() => { go({t:'w', id:s.at}); return true; }});
+  return v;
+}
+function viewAirlock(){
+  const v = {frame:S.ship.lit ? 'rust' : 'rustdark', note:'airlock', title:'◈ Airlock — Deck 1', tags:[c('dim','[THE ONLY DOOR]')],
+    desc:[S.ship.lit ? 'The inner door cycles with a clean hydraulic sigh. A stencil reads: COUNT YOURSELVES IN. COUNT YOURSELVES OUT.' : 'The outer door closed behind you by hand-crank. Inside, the air is thin and still. Your link paints the chamber in outlines.', 'Whatever you do aboard, you leave from here.'], rows:[], opts:[]};
+  v.opts.push({k:'1', text:'Cycle inward to the spine', hit:'lvl:'+AIRLOCK_DECK, run:() => { go({t:'s', sid:'H', at:'dk', n:AIRLOCK_DECK}); return true; }});
+  v.opts.push({k:'l', text:'Undock — back to '+N(S.ship.at).name, hit:'away', run:() => { leftHauler(); go({t:'w', id:S.ship.at}); return true; }});
+  return v;
+}
+function viewSpine(l){
+  const st = struct(l.sid), d = st.level(l.n), n = l.n, lit = !st.ship || S.ship.lit, v = {rows:[], opts:[]};
+  if (st.ship) Object.assign(v, {frame:lit ? 'rust' : 'rustdark', note:'deck', title:'▤ Deck '+n+' · '+d.zone, tags:[c('dim','[LIFT SPINE]')],
+    desc:[lit ? 'The lift cage rattles in its guides, sodium-yellow lamps passing the mesh one deck at a time.' : 'The lift is dead. A service ladder runs the spine; your link outlines each rung a moment before your hand finds it.']});
+  else Object.assign(v, {frame:'world', note:'bfloor', title:'⌂ '+st.name+' · floor '+n+' · '+d.zone, tags:tagsOf(N(l.sid)).map(t => c('yl', t)),
+    desc:[n === 0 ? 'The lobby. An elevator column runs up out of sight; the call panel has no top button, only a dial that keeps turning.' : 'The elevator holds at floor '+n+'. The shaft goes on above you, and the counter has never needed a fourth digit until now.']});
+  v.rows.push(c('k','POWER: ')+c(lit ? 'gn' : 'rd', lit ? 'NOMINAL' : 'COLD')+'   '+c('k', st.ship ? 'SECTIONS: ' : 'DOORS: ')+d.sections.length);
+  if (!st.ship) v.rows.push(c('k','FLOOR ')+n+c('dim',' of '+st.max+' · '+st.size+' building · the roof is ')+c(st.max - n > S.coh ? 'rd' : 'yl', (st.max - n)+' moves')+c('dim',' up, one floor per move'));
+  if (n < st.max) v.opts.push({k:'u', text:'Up to '+(st.ship ? 'deck '+(n+1)+' · '+st.level(n+1).zone : 'floor '+(n+1)), hit:'lvl:'+(n+1), run:() => { go({t:'s', sid:l.sid, at:'dk', n:n+1}); return true; }});
+  if (n > st.min) v.opts.push({k:'d', text:'Down to '+(st.ship ? 'deck '+(n-1)+' · '+st.level(n-1).zone : 'floor '+(n-1)), hit:'lvl:'+(n-1), run:() => { go({t:'s', sid:l.sid, at:'dk', n:n-1}); return true; }});
+  v.opts.push({k:'c', text:st.ship ? 'Step into the passage' : 'Step into the corridor', hit:'ps', run:() => { go({t:'s', sid:l.sid, at:'ps', n:n}); return true; }});
+  if (st.ship && n === AIRLOCK_DECK) v.opts.push({k:'a', text:'Back to the airlock', hit:'airlock', run:() => { go({t:'s', sid:'H', at:'al'}); return true; }});
+  if (!st.ship && n === 0) v.opts.push({k:'j', text:'Breach the Bedrock [SEALED]', cls:'dim', hit:'bedrock', run:() => { say(c('rd','The hatch under the lobby wants a Keystone bound to this building.')); say(c('dim','[MOCK] The ritual and the descent are the game’s ending; this mock stops at the door.')); return false; }});
+  leaveOpt(v, l);
+  return v;
+}
+function viewPassage(l){
+  const st = struct(l.sid), d = st.level(l.n), lit = !st.ship || S.ship.lit, v = {rows:[], opts:[]};
+  if (st.ship) Object.assign(v, {frame:lit ? 'rust' : 'rustdark', note:'passage', title:'▅ Deck '+l.n+' passage · '+d.zone, tags:[],
+    desc:[lit ? 'A riveted passage under caged lamps. Pipes run the ceiling; the hatches are stencilled by function.' : 'A passage in outline. Hatches along one side. Some of them have no power to answer you with.']});
+  else Object.assign(v, {frame:'world', note:'bcorridor', title:'▅ Floor '+l.n+' corridor · '+d.zone, tags:[], desc:['A corridor of doors. Each one tells you something for free; a scan tells you the rest.']});
+  d.sections.forEach((sec, si) => {
+    const shut = st.ship && sealed(sec);
+    v.opts.push({k:String(si+1), text:(sec.insc ? sec.insc+' ' : '')+sec.mat+' ['+sec.state+']'+(shut ? ' [SEALED — NO POWER]' : ''), cls:shut ? 'rd' : '', seen:S.doors[l.sid+':'+l.n+':'+si], hit:'sec:'+si,
+      run:() => { if (shut){ say(c('rd','The hatch does not answer. No power reaches it.')); FX.flash = FX.t; return false; } go({t:'s', sid:l.sid, at:'rm', n:l.n, si:si, ri:0}); return true; }});
+  });
+  const dn = clamp(S.door || 0, 0, d.sections.length - 1), ds = d.sections[dn];
+  v.rows.push(c('k','AT DOOR ')+c('yl', pad2(dn+1))+' '+esc((ds.insc ? ds.insc+' ' : '')+ds.mat)+' '+c('dim','['+ds.state+']'));
+  v.opts.push({k:'b', text:st.ship ? 'Back to the spine' : 'Back to the elevator', hit:'lvl:'+l.n, run:() => { go({t:'s', sid:l.sid, at:'dk', n:l.n}); return true; }});
+  leaveOpt(v, l);
+  return v;
+}
+function viewRoom(l){
+  const st = struct(l.sid), sec = st.level(l.n).sections[l.si], r = sec.rooms[l.ri], lit = !st.ship || S.ship.lit, objs = objsAt(l);
+  const v = {frame:!st.ship ? 'world' : lit ? 'rust' : 'rustdark', note:r.heart || (st.ship ? 'room' : 'broom'), title:'□ '+r.name,
+    tags:[c('dim','['+sec.type.toUpperCase()+']'), c('dim','[ROOM '+(l.ri+1)+'/'+sec.rooms.length+']')], desc:[lit ? r.l : 'Dark. '+r.d], rows:[c('k', lit ? 'OBJECTS: ' : 'OUTLINES: ')+objs.length], opts:[]};
+  v.rows.push(c('k','ROOMS BEHIND THIS DOOR: ')+(sec.rooms.length === 1 ? c('dim','this one only') : sec.rooms.map((q, i) => c(i === l.ri ? 'yl b' : 'dim', (i+1)+' '+q.name)).join(c('faint',' ▸ '))));
+  const at = ri => ({t:'s', sid:l.sid, at:'rm', n:l.n, si:l.si, ri:ri});
+  if (r.heart === 'reactor' && !lit) v.opts.push({k:'w', text:'Feed the core (takes two items from your buffer)', cls:'yl', hit:'heart', run:wake});
+  if (r.heart === 'pod' && !S.ship.podUsed) v.opts.push({k:'e', text:'Launch the pod (one use, no way back aboard)', cls:'yl', hit:'heart', run:pod});
+  if (r.heart === 'bridge'){
+    v.opts.push({k:'g', text:'Read the ship’s log ('+Object.keys(S.ship.logs).length+'/5 fragments)', run:() => { readLog(); return false; }});
+    v.opts.push({k:'n', text:'Plot a course and launch', cls:'yl', hit:'heart', run:() => { S.mode = 'launch'; return false; }});
+  }
+  if (l.ri < sec.rooms.length - 1) v.opts.push({k:'f', text:'Forward to '+sec.rooms[l.ri+1].name, hit:'room:'+(l.ri+1), run:() => { go(at(l.ri+1)); return true; }});
+  if (l.ri > 0) v.opts.push({k:'b', text:'Back to '+sec.rooms[l.ri-1].name, hit:'room:'+(l.ri-1), run:() => { go(at(l.ri-1)); return true; }});
+  if (l.ri === 0) v.opts.push({k:'l', text:st.ship ? 'Leave to the passage' : 'Leave to the corridor', hit:'ps', run:() => { go({t:'s', sid:l.sid, at:'ps', n:l.n}); return true; }});
+  return v;
+}
+function viewHiveApproach(){
+  const v = {frame:'hive', note:'hiveap', title:'◆ Mass — approach', tags:[c('rd','[NO REGISTRY]')],
+    desc:['A mass with no silhouette: every face is the same face. No lights, no seam, no name. Your scan pulse comes back twice.',
+      S.hive.dormant ? 'It is silent now. The aperture stands open and does not move.' : 'An aperture has opened in the face nearest you. You did not ask.'], rows:[], opts:[]};
+  v.opts.push({k:'1', text:'Enter the aperture', cls:'rd', hit:'aperture', run:() => { S.hive.aperture = 0; S.hive.aboard = 0; go({t:'h', at:'hj', k:0}); tick(c('hv', WE[0])); return true; }});
+  v.opts.push({k:'l', text:'Pull away to '+N(S.hive.at).name, hit:'away', run:() => { go({t:'w', id:S.hive.at}); return true; }});
+  return v;
+}
+function viewJunction(k){
+  const v = {frame:'hive', note:'hive', title:'▣ Subjunction '+pad2(k)+' of 08', tags:[c('hv','[NO NAME]')],
+    desc:['The same walls, the same sourceless light, the same alcove. Nothing here was named; everything was numbered. You could not say whether you have stood here before.'],
+    rows:[c('k','ALCOVE: ')+(S.hive.alcoves[k] ? 'component '+pad2(k)+'/08' : c('dim','empty')), c('k','DRAIN: ')+c(S.hive.dormant ? 'dim' : 'rd', drainNow()+' / move')], opts:[]};
+  v.opts.push({k:'f', text:'Forward to subjunction '+pad2((k+1)%8), hit:'jn:'+((k+1)%8), run:() => { go({t:'h', at:'hj', k:(k+1)%8}); return true; }});
+  v.opts.push({k:'b', text:'Back to subjunction '+pad2((k+7)%8), hit:'jn:'+((k+7)%8), run:() => { go({t:'h', at:'hj', k:(k+7)%8}); return true; }});
+  if (S.hive.alcoves[k]) v.opts.push({k:'t', text:'Take the component from the alcove', hit:'jn:'+k, run:() => { S.hive.alcoves[k] = false; const nm = 'component '+pad2(k)+' of 08'; S.buffer.push({name:nm, hz:hz(nm)}); say(c('hv','>>> CAPTURED: '+nm)); tick(c('hv','OBJ: '+nm)); return true; }});
+  if (k === 4) v.opts.push({k:'c', text:'Inward, to the central node', cls:'gn', hit:'core', run:() => { go({t:'h', at:'hv', k:4}); return true; }});
+  if (k === S.hive.aperture) v.opts.push({k:'l', text:'Leave through the aperture', cls:'rd', hit:'aperture', run:() => { go({t:'w', id:S.hive.at}); return true; }});
+  return v;
+}
+function viewVinculum(){
+  const v = {frame:'hive', note:'vinculum', title:'◉ The central node', tags:[c('gn','[VINCULUM]')],
+    desc:['A column of slow light at the centre of everything. Your interface recognises it before you do: the handshake completes without your asking.',
+      'VINCULUM_NEURAL_INTERFACE :: PARENT NODE FOUND :: WELCOME BACK, UNIT.', S.hive.dormant ? 'The column is dark. The silence has your shape in it.' : 'It is not hostile. It is patient. It is holding a place for you.'], rows:[], opts:[]};
+  if (!S.hive.dormant) v.opts.push({k:'x', text:'Sever the node', cls:'rd', hit:'core', run:() => { S.hive.dormant = true; S.buffer.push({name:'Vinculum shard', hz:hz('Vinculum shard')}); say(c('gn','>>> NODE SEVERED. The light goes out from the centre outward.')); say(c('dim','The voice stops in the middle of a word. The aperture stops moving. Something in your own interface goes quiet too.')); tick(c('gn','OBJ: Vinculum shard')); FX.flash = FX.t; return true; }});
+  v.opts.push({k:'b', text:'Back to subjunction 04', hit:'jn:4', run:() => { go({t:'h', at:'hj', k:4}); return true; }});
+  return v;
+}
+function view(){
+  const l = L();
+  if (l.t === 'w') return viewWorld(N(l.id));
+  if (l.t === 'h') return l.at === 'hap' ? viewHiveApproach() : l.at === 'hv' ? viewVinculum() : viewJunction(l.k);
+  return l.at === 'ap' ? viewApproach() : l.at === 'al' ? viewAirlock() : l.at === 'dk' ? viewSpine(l) : l.at === 'ps' ? viewPassage(l) : viewRoom(l);
+}
+/* ---------- actions ---------- */
+function wake(){
+  if (S.buffer.length < 2){ say(c('rd','The hopper wants two items. Your buffer holds '+S.buffer.length+'.')); return false; }
+  const order = S.buffer.map((b, i) => ({b:b, i:i})).sort((x, y) => (x.b.beacon ? 1 : 0) - (y.b.beacon ? 1 : 0) || x.b.hz - y.b.hz).slice(0, 2);
+  const names = order.map(o => o.b.name);
+  order.map(o => o.i).sort((a, b) => b - a).forEach(i => S.buffer.splice(i, 1));
+  S.coh = Math.min(100, S.coh + 15);
+  S.ship.lit = true; S.ship.woke = true; FX.wakeT0 = FX.t;
+  say(c('yl','>>> CORE FED: '+names.join(' + ')+'  (+15 Coherence)'));
+  say(c('gn','>>> REACTOR: COLD → NOMINAL'));
+  say(c('dim','Deck by deck, sodium-yellow work lamps stutter on above you. Somewhere up the spine, sealed hatches unlock one after another.'));
+  tick(c('gn','SHIP: Buckled Girder is awake'));
+  return true;
+}
+function pod(){
+  if (S.ship.at === 'st1'){ say(c('dim','The pod rails point at the pavement. There is nowhere to fall to.')); return false; }
+  S.ship.podUsed = true; leftHauler();
+  say(c('yl','>>> POD AWAY. Eleven seconds of burn, then a long fall toward the nearest world.'));
+  say(c('dim','You wake on a street. The ship is where you left it, and the pod is not coming back.'));
+  go({t:'w', id:'st1'}); return true;
+}
+function readLog(){
+  say(c('yl','SHIP’S LOG — MV BUCKLED GIRDER'));
+  for (let i = 1; i <= 5; i++) say(S.ship.logs[i] ? c('dim', LOGS[i]) : c('faint','— fragment '+i+' not found —'));
+}
+function scan(){
+  const l = L(); FX.scanT0 = FX.t;
+  if (aboardH(l) && !S.ship.lit){ S.coh -= 1; S.m.spent++; S.m.aboardSpent++; say(c('rd','Scanning in the dark costs one more.')); }
+  if (l.t === 'w'){
+    const n = N(l.id), here = [];
+    if (S.ship.at === l.id) here.push(c('rs','1 UNREGISTERED MASS · hull trace: '+(S.ship.lit ? 'a steady thrum, lights on' : 'a heavy low thrum, very faint')));
+    if (S.hive.present && S.hive.at === l.id) here.push(c('rd','1 MASS, NOT ON PREVIOUS SCAN · trace: rhythmic clicking'));
+    say(c('cy','SCAN · '+n.name+' · '+(n.kind === 'street' ? 'fronts without end' : kids(l.id).length+' listed nodes')));
+    if (here.length){ here.forEach(h => say(h)); FX.reveal = FX.t; } else say(c('dim','Nothing here that is not on the list.'));
+  } else if (l.t === 'h'){
+    if (l.at === 'hap') say(c('cy','HULL SCAN')+' '+c('k','CLASS: ')+'—   '+c('k','DECKS: ')+'—   '+c('k','TRACE: ')+c('rd','rhythmic clicking, in step with your own pulse'));
+    else say(c('hv','The scan returns your own pulse, delayed, from eight directions.'));
+  } else if (l.at === 'ap'){
+    say(c('cy','HULL SCAN'));
+    say(c('k','CLASS: ')+'HAULER (Industrial)   '+c('k','DECKS: ')+'5   '+c('k','AIRLOCK: ')+'deck 1');
+    say(c('k','CULTURE: ')+'rust   '+c('k','ERA: ')+'industrial   '+c('k','FATE: ')+(S.ship.lit ? 'awake' : 'dormant, not dead'));
+    say(c('k','HULL TRACE: ')+(S.ship.lit ? 'a steady thrum' : 'a heavy low thrum, very faint — a reactor banked, not lost'));
+    FX.xray = FX.t;
+  } else {
+    const st = struct(l.sid), isShip = st.ship;
+    if (l.at === 'al' || l.at === 'dk'){
+      say(c('cy', isShip ? 'DECK SCAN' : 'FLOOR SCAN'));
+      if (isShip) for (let n = DECKS.length - 1; n >= 0; n--) say(c('dim','D'+n+' '+DECKS[n].zone+' · '+DECKS[n].sections.map(s => s.type + (sealed(s) ? ' [sealed]' : '')).join(', ')));
+      else for (let n = l.n + 1; n >= Math.max(0, l.n - 1); n--) say(c('dim','F'+n+' '+st.level(n).zone+' · '+st.level(n).sections.map(s => s.type).join(', ')));
+    } else if (l.at === 'ps'){
+      say(c('cy','DOOR SCAN'));
+      st.level(l.n).sections.forEach((s, i) => say(c('dim', pad2(i+1)+' · TRACE: '+s.trace+' · ROOM_TYPE: '+s.type+' · ROOMS: '+s.rooms.length+(isShip && sealed(s) ? ' · SEALED' : ''))));
+      FX.doorscan = FX.t;
+    } else {
+      say(c('cy','SECTION SCAN'));
+      st.level(l.n).sections[l.si].rooms.forEach((r, i) => say(c('dim', pad2(i+1)+' · '+r.name+' · objects: '+objsAt({sid:l.sid, n:l.n, si:l.si, ri:i}).length)));
+    }
+  }
+}
+function die(){
+  S.mode = 'dead'; FX.deadT0 = FX.t;
+  S.msg = [c('rd b','!!! CRITICAL_COHERENCE_FAILURE !!! REBOOTING...'), c('dim','The world is rebuilt from the same seed: the ship is dark again, where it first was, and no longer yours. You keep your buffer.')];
+}
+function afterPrompt(wasAboardH, cost){
+  S.m.prompts++; S.m.spent += cost;
+  if (wasAboardH){ S.m.aboardPrompts++; S.m.aboardSpent += cost; }
+  const l = L();
+  if (inH(l) && l.at === 'rm') S.m.lastRoomAt = S.m.aboardPrompts;
+  if (aboardV(l)){
+    S.hive.aboard++;
+    if (!S.hive.dormant){
+      if (S.hive.aboard % 3 === 0) tick(c('hv', WE[(S.hive.aboard / 3) % WE.length]));
+      if (S.hive.aboard % 4 === 0){
+        const me = l.at === 'hv' ? 4 : l.k, a = S.hive.aperture, cur = ringDist(a, me);
+        const cand = [(a+1)%8, (a+7)%8].sort((x, y) => ringDist(y, me) - ringDist(x, me))[0];
+        if (ringDist(cand, me) > cur){ S.hive.aperture = cand; say(c('rd','>>> The aperture has been relocated. It is now '+ringDist(cand, me)+' subjunctions from you.')); }
+      }
+    }
+  }
+  if (O.hiveAt !== 'off' && !S.hive.present && (S.ship.woke || S.m.prompts >= 30 || S.buffer.some(b => b.name === 'Unlisted Container'))){
+    S.hive.present = true; FX.hiveT0 = FX.t; tick(c('rd','[PROXIMITY] Mass not on previous scan · '+N(S.hive.at).name));
+  }
+  if (S.coh <= 0) die();
+}
+/* one click, one prompt: every move goes through here and pays the drain */
+function act(o){
+  if (S.mode === 'dead'){ S = fresh(S); S.msg = [c('gn','SUBSTRATE REBUILT. Coherence 100.')]; FX.trans = null; paint(); return; }
+  if (S.mode !== 'main' || !o) return;
+  S.msg = [];
+  const wasH = aboardH(L()), cost = drainNow();
+  S.coh -= cost;
+  if (o === 'scan') scan();
+  else if (o === 'buffer'){ S.mode = 'buffer'; S.pick = -1; }
+  else if (o.run()) S.steps++;
+  afterPrompt(wasH, cost);
+  paint();
+}
+function closeSub(){ S.mode = 'main'; S.pick = -1; S.msg = []; paint(); }
+function bufferClick(i){
+  if (S.mode !== 'main') return;
+  if (S.pick < 0 || S.pick === i){ S.pick = S.pick === i ? -1 : i; paint(); return; }
+  const a = S.pick, A = S.buffer[a], B = S.buffer[i];
+  const H = {name:cap1(A.name.split(' ')[0])+'-'+cap1(B.name.split(' ')[0])+' Hybrid', hz:A.hz + B.hz};
+  [a, i].sort((x, y) => y - x).forEach(j => S.buffer.splice(j, 1));
+  S.buffer.push(H); S.coh = Math.min(100, S.coh + 15); S.pick = -1; S.msg = [];
+  say(c('gn','>>> SYNTHESIS: '+H.name+' · '+H.hz+' Hz  (+15 Coherence)'));
+  if (H.hz % 11 === 0) say(c('gn b','!!! RESONANCE DETECTED'));
+  if (A.beacon || B.beacon) say(c('rd','The beacon dissolved into the hybrid. The signal line will read NO CARRIER.'));
+  tick(c('gn','SYN: '+H.name)); FX.flash = FX.t; paint();
+}
+function bufferDestroy(){
+  if (S.pick < 0) return;
+  S.msg = [c('dim','Destroyed: '+S.buffer[S.pick].name)]; S.buffer.splice(S.pick, 1); S.pick = -1; paint();
+}
+function takeObj(i){
+  const at = L(); if (at.t !== 's' || at.at !== 'rm' || S.mode !== 'main') return;
+  act({run:() => {
+    const l = L(), objs = objsAt(l), nm = objs[i];
+    if (S.buffer.length >= 16){ say(c('rd','Buffer full: 16/16. Merge or destroy something first.')); return false; }
+    objs.splice(i, 1);
+    const it = nm === 'unlisted container' ? {name:'Unlisted Container', hz:REG, beacon:true} : {name:nm, hz:inH(l) ? Math.round(hz(nm) * 1.1) : hz(nm)};
+    S.buffer.push(it); FX.flash = FX.t;
+    say(c('yl','>>> CAPTURED: '+it.name+' · '+it.hz+' Hz'));
+    if (it.beacon) say(c('rd','It is warm. The number on your HUD and the number in your hands are the same number.'));
+    tick(c('yl','OBJ: '+it.name)); return false;
+  }});
+}
+function dropObj(i){
+  const at = L(); if (i < 0 || !S.buffer[i] || at.t !== 's' || at.at !== 'rm') return;
+  const it = S.buffer.splice(i, 1)[0]; objsAt(L()).push(it.name.toLowerCase()); S.pick = -1;
+  S.msg = [c('dim','Dropped '+it.name+'. The room will remember only its name.')]; paint();
+}
+function launchTo(d){
+  S.ship.at = d.id; S.ship.owned = true; S.ship.seen = true; S.mode = 'main'; S.steps++; S.msg = []; FX.launchT0 = FX.t;
+  say(c('gn b','>>> LAUNCH. Course laid in: '+d.label));
+  say(c('dim','The tow frame groans. The stars do not streak; they are simply different when you look again.'));
+  say(c('dim','You are still on the bridge. The airlock is four decks below you, and beyond it is somewhere new.'));
+  tick(c('gn','SHIP: arrived · '+N(d.id).name)); paint();
+}
+/* ---------- canvas: setup, primitives, transitions, decay ---------- */
+const cv = $('cv'), ctx = cv.getContext('2d');
+let CW = 300, CH = 300, DPR = 1;
+const COL = {cy:'#55d6d6', yl:'#e6c35c', rd:'#e4665c', gn:'#71d083', mg:'#c987dd', rs:'#d0693f', hv:'#9fb0a8', text:'#c8d6d2', dim:'#6c8581', faint:'#3f5653', rule:'#1f3435', sodium:'#f0b64a'};
+function resize(){
+  const r = cv.getBoundingClientRect(); if (!r.width) return;
+  DPR = Math.min(window.devicePixelRatio || 1, 2); CW = r.width; CH = r.height;
+  cv.width = Math.round(CW * DPR); cv.height = Math.round(CH * DPR);
+  const vw = CW < 480 ? 4 : CW < 760 ? 5 : 7;
+  if (vw !== FX.vw){ FX.vw = vw; if (S) paint(); }
+}
+function stroke(col, a, w){ ctx.strokeStyle = col; ctx.globalAlpha = a == null ? 1 : a; ctx.lineWidth = w || 1; }
+function line(x1, y1, x2, y2, col, a, w){ stroke(col, a, w); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function rect(x, y, w, h, col, a, lw){ stroke(col, a, lw); ctx.strokeRect(x + .5, y + .5, w, h); }
+function fill(x, y, w, h, col, a){ ctx.fillStyle = col; ctx.globalAlpha = a == null ? 1 : a; ctx.fillRect(x, y, w, h); }
+function circ(x, y, r, col, a, lw, fillCol){ ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2); if (fillCol){ ctx.fillStyle = fillCol; ctx.globalAlpha = a == null ? 1 : a; ctx.fill(); } else { stroke(col, a, lw); ctx.stroke(); } }
+function poly(pts, col, a, lw, fillCol, open){ ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); if (!open) ctx.closePath(); if (fillCol){ ctx.fillStyle = fillCol; ctx.globalAlpha = a == null ? 1 : a; ctx.fill(); } else { stroke(col, a, lw); ctx.stroke(); } }
+function dash(on){ ctx.setLineDash(on || []); }
+function glow(col, px){ ctx.shadowColor = col; ctx.shadowBlur = px; }
+function noglow(){ ctx.shadowBlur = 0; }
+function text(s, x, y, col, a, size, align, bold){
+  ctx.font = (bold ? '700 ' : '400 ') + (size || 11) + 'px "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace';
+  ctx.textAlign = align || 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.globalAlpha = a == null ? 1 : a;
+  if (align !== 'left' && align !== 'right'){ const w = ctx.measureText(s).width / 2; x = clamp(x, w + 4, CW - w - 4); }
+  ctx.fillText(s, x, y);
+}
+const cut = (s, n) => s.length > n ? s.slice(0, n - 1) + '…' : s;
+function hit(id, x, y, w, h){ FX.hits.push({id:id, x:x, y:y, w:w, h:h}); }
+function diamond(x, y, r, col, a, filled){ poly([[x, y - r], [x + r, y], [x, y + r], [x - r, y]], col, a, 1.5, filled ? col : null); }
+function pulse(x, y, col, base, reach){
+  for (let i = 0; i < 3; i++){ const p = RM ? (i + 1) / 3 : ((FX.t / 1500 + i / 3) % 1); circ(x, y, base + reach * p, col, (1 - p) * .8, 1.2); }
+}
+function youMark(x, y){
+  glow(COL.yl, 12); diamond(x, y, 5, COL.yl, 1, true); noglow();
+  const p = RM ? .5 : (FX.t / 900) % 1; circ(x, y, 7 + 6 * p, COL.yl, .6 * (1 - p), 1);
+}
+
+/* transitions: the old frame is kept as a picture and flown through */
+function depthOf(l){ return l.t === 'w' ? KIND[N(l.id).kind].level : l.t === 's' ? (l.at === 'ap' ? 8.5 : l.at === 'rm' ? 10 : 9) : l.at === 'hap' ? 8.5 : 9; }
+function startTrans(from, to){
+  const sameInside = (from.t === 's' && to.t === 's' && from.sid === to.sid && from.at !== 'ap' && to.at !== 'ap' && (from.at === 'rm') === (to.at === 'rm')) || (from.t === 'h' && to.t === 'h' && from.at !== 'hap' && to.at !== 'hap');
+  if (to.t === 's' && !(from.t === 's' && from.sid === to.sid)){ FX.cam = to.n || 0; FX.mx = null; }
+  if (to.t === 's' && to.at === 'rm' && from.at !== 'rm') FX.ax = null;
+  if (sameInside || RM || !cv.width) return;
+  const snap = document.createElement('canvas'); snap.width = cv.width; snap.height = cv.height;
+  try { snap.getContext('2d').drawImage(cv, 0, 0); } catch (e) { return; }
+  const f = FX.focus || {x:CW / 2, y:CH / 2};
+  FX.trans = {t0:FX.t, dur:560, kind:depthOf(to) >= depthOf(from) && !(from.t === 'w' && to.t === 'w' && N(from.id).parent === to.id) ? 'in' : 'out', fx:f.x, fy:f.y, snap:snap};
+  FX.mx = null;
+}
+const ease = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+
+function frame(t){
+  FX.t = t; requestAnimationFrame(frame);
+  if (!S || !cv.width) return;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; dash(); noglow();
+  ctx.fillStyle = '#060a0b'; ctx.fillRect(0, 0, CW, CH);
+  FX.hits = [];
+  let tr = FX.trans, e = 1;
+  if (tr){ const p = (t - tr.t0) / tr.dur; if (p >= 1){ FX.trans = tr = null; } else e = ease(p); }
+  ctx.save();
+  if (tr){ const s = tr.kind === 'in' ? .4 + .6 * e : 1.8 - .8 * e; ctx.translate(CW / 2, CH / 2); ctx.scale(s, s); ctx.translate(-CW / 2, -CH / 2); }
+  drawScene(tr ? e : 1);
+  ctx.restore();
+  if (tr){
+    ctx.save(); ctx.globalAlpha = 1 - e;
+    const s = tr.kind === 'in' ? 1 + 4 * e : 1 - .7 * e, fx = tr.kind === 'in' ? tr.fx : CW / 2, fy = tr.kind === 'in' ? tr.fy : CH / 2;
+    ctx.translate(fx, fy); ctx.scale(s, s); ctx.translate(-fx, -fy);
+    ctx.drawImage(tr.snap, 0, 0, CW, CH); ctx.restore(); FX.hits = [];
+  }
+  ctx.globalAlpha = 1; dash(); noglow();
+  postFx();
+}
+/* Coherence as a decay of the whole screen: colour drains (CSS), then noise, tearing and drop-outs (here) */
+function decay(){ return O.fx ? clamp((70 - S.coh) / 70, 0, 1) : 0; }
+function postFx(){
+  const t = FX.t;
+  if (FX.flash && t - FX.flash < 260){ fill(0, 0, CW, CH, '#ffffff', .12 * (1 - (t - FX.flash) / 260)); }
+  if (FX.scanT0 && t - FX.scanT0 < 900 && FX.you){ const p = (t - FX.scanT0) / 900; circ(FX.you.x, FX.you.y, p * Math.max(CW, CH) * .7, COL.cy, .7 * (1 - p), 2); }
+  if (aboardV(L()) && !S.hive.dormant){
+    const a = clamp(S.hive.aboard / 40, 0, .5), g = ctx.createRadialGradient(CW / 2, CH / 2, CH * .25, CW / 2, CH / 2, CH * .75);
+    g.addColorStop(0, 'rgba(228,102,92,0)'); g.addColorStop(1, 'rgba(228,102,92,' + a + ')'); ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(0, 0, CW, CH);
+  }
+  const d = decay();
+  if (S.mode === 'dead'){
+    const p = clamp((t - (FX.deadT0 || 0)) / 700, 0, 1), h = Math.max(2, CH * (1 - p));
+    fill(0, 0, CW, (CH - h) / 2, '#000', 1); fill(0, (CH + h) / 2, CW, (CH - h) / 2 + 1, '#000', 1);
+    if (p >= 1){ fill(0, 0, CW, CH, '#000', .92); glow(COL.rd, 14); line(CW * .1, CH / 2, CW * .9, CH / 2, COL.rd, 1, 2); noglow();
+      text('CRITICAL_COHERENCE_FAILURE', CW / 2, CH / 2 - 28, COL.rd, 1, 14, 'center', true); text('click to rebuild from the same seed', CW / 2, CH / 2 + 26, COL.dim, 1, 11); }
+    hit('reboot', 0, 0, CW, CH); return;
+  }
+  if (d <= 0 || RM) return;
+  const n = Math.floor(d * d * 7);
+  for (let i = 0; i < n; i++) if (Math.random() < .35){
+    const y = Math.random() * CH, h = 3 + Math.random() * 22 * d, dx = (Math.random() - .5) * 60 * d;
+    try { ctx.globalAlpha = 1; ctx.drawImage(cv, 0, y * DPR, cv.width, h * DPR, dx, y, CW, h); } catch (e) {}
+  }
+  for (let i = 0; i < 90 * d; i++) fill(Math.random() * CW, Math.random() * CH, 1 + Math.random() * 2, 1, Math.random() < .5 ? COL.text : '#000', .5 * d);
+  if (d > .45 && Math.random() < d * .25) fill(0, Math.random() * CH, CW, 6 + Math.random() * 40, '#000', .85);   // a band drops out
+  if (d > .7 && Math.random() < .06) fill(0, 0, CW, CH, '#000', .7);
+}
+function drawScene(e){
+  const l = L();
+  FX.you = null;
+  if (l.t === 'w') (N(l.id).kind === 'street' ? drawStreet : drawWorld)(N(l.id));
+  else if (l.t === 'h') (l.at === 'hap' ? drawHiveFace : drawHive)(l);
+  else if (l.at === 'ap') drawApproach();
+  else if (l.at === 'rm' && !(inH(l) && FX.wakeT0 >= 0 && FX.t - FX.wakeT0 < 3400)) drawApartment(l);   // the wake pulls back to the whole ship
+  else drawStructure(l);
+  banner();
+}
+/* where you are, in words: the kind of place first, then its name */
+function whereSegs(){
+  const l = L();
+  if (l.t === 'w'){ const n = N(l.id); return [['LEVEL ' + pad2(KIND[n.kind].level) + ' · ' + KLABEL[n.kind], n.name]]; }
+  if (l.t === 'h') return [['HIVE', 'no name'], l.at === 'hap' ? ['OUTSIDE', ''] : l.at === 'hv' ? ['CENTRAL NODE', ''] : ['SUBJUNCTION', pad2(l.k) + ' of 08']];
+  const st = struct(l.sid), segs = [[st.ship ? 'SHIP' : 'BUILDING', st.name]];
+  if (l.at === 'ap') segs.push(['OUTSIDE', st.ship ? 'power ' + (S.ship.lit ? 'nominal' : 'cold') : '']);
+  else if (l.at === 'al') segs.push(['AIRLOCK', 'deck 1']);
+  else {
+    segs.push([(st.ship ? 'DECK ' : 'FLOOR ') + l.n, st.level(l.n).zone]);
+    if (l.at === 'dk') segs.push([st.ship ? 'SPINE' : 'ELEVATOR', '']);
+    else if (l.at === 'ps') segs.push([st.ship ? 'PASSAGE' : 'CORRIDOR', '']);
+    else if (l.at === 'rm') segs.push([(st.ship ? 'SECTION ' : 'APARTMENT ') + pad2(l.si + 1), st.level(l.n).sections[l.si].mat], ['ROOM ' + (l.ri + 1) + '/' + st.level(l.n).sections[l.si].rooms.length, roomOf(l).name]);
+  }
+  return segs;
+}
+function banner(){
+  const frameCol = {world:COL.cy, rust:COL.rs, rustdark:'#b0633f', hive:COL.hv}[FX.view ? FX.view.frame : 'world'] || COL.cy;
+  let segs = whereSegs(); const size = CW < 480 ? 10 : 12, font = b => (b ? '700 ' : '400 ') + size + 'px "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace';
+  const width = ss => { let w = 0; ss.forEach((s, i) => { ctx.font = font(true); w += ctx.measureText(s[0]).width; ctx.font = font(false); w += ctx.measureText((s[1] ? ' — ' + s[1] : '') + (i < ss.length - 1 ? '  ›  ' : '')).width; }); return w; };
+  while (segs.length > 1 && width(segs) > CW - 20) segs = segs.slice(1);
+  ctx.globalAlpha = 1; dash(); noglow(); fill(0, 0, CW, 24, '#0a1112', .96); line(0, 24, CW, 24, frameCol, .7, 1);
+  let x = 10; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  segs.forEach((s, i) => {
+    ctx.font = font(true); ctx.fillStyle = frameCol; ctx.globalAlpha = 1; ctx.fillText(s[0], x, 12.5); x += ctx.measureText(s[0]).width;
+    const rest = (s[1] ? ' — ' + cut(s[1], CW < 480 ? 22 : 40) : '');
+    ctx.font = font(false); ctx.fillStyle = COL.text; ctx.fillText(rest, x, 12.5); x += ctx.measureText(rest).width;
+    if (i < segs.length - 1){ ctx.fillStyle = COL.dim; ctx.fillText('  ›  ', x, 12.5); x += ctx.measureText('  ›  ').width; }
+  });
+}
+/* arrows follow the picture: what each direction does from where you stand */
+function firstOpt(ks){ for (const k of ks){ const o = optBy(p => p.k === k); if (o) return o; } return null; }
+function moveSel(dir){
+  const l = L(), n = (FX.selList || []).length, street = N(l.id).kind === 'street';
+  if (street){
+    if (S.sel + dir >= n){ const o = firstOpt([']']); if (o){ S.sel = 0; doOpt(o); } return; }
+    if (S.sel + dir < 0){ const o = firstOpt(['[']); if (o){ S.sel = n - 1; doOpt(o); } return; }
+  }
+  S.sel = n ? (S.sel + dir + n) % n : 0; paint();
+}
+/* one grammar everywhere: arrows pick among what is at this level, Enter goes in, Esc goes out.
+   An arrow with nothing else to do doubles as Enter or Esc (alias), following the picture. */
+function dirs(){
+  const d = {}; if (!S || S.mode !== 'main' || !FX.view) return d;
+  const l = L(), P = (ks, label, alias) => { const o = firstOpt(ks); return o ? {o:o, label:label, alias:!!alias} : null; };
+  if (l.t === 'w'){
+    const list = FX.selList || [], sel = optBy(p => p.hit === list[clamp(S.sel, 0, list.length - 1)]), n = N(l.id);
+    const name = sel ? sel.text.replace(/^(Enter|Approach|Pulse to|Transition to|Detect faint signal:|Land on|Visit|Travel to|Go to)\s+/, '') : '';
+    d.esc = P(['l'], n.parent ? 'up to ' + N(n.parent).name : ''); d.up = P(['l'], 'up', true);
+    if (sel){ d.enter = {o:sel, label:'into ' + name}; d.down = {o:sel, label:'in', alias:true}; }
+    if (list.length > 1 || n.kind === 'street'){ d.left = {free:() => moveSel(-1), label:'pick previous'}; d.right = {free:() => moveSel(1), label:'pick next'}; }
+  } else if (l.t === 'h'){
+    if (l.at === 'hap'){ d.enter = P(['1'], 'into the aperture'); d.esc = P(['l'], 'pull away'); d.right = P(['1'], 'in', true); d.left = P(['l'], 'out', true); }
+    else if (l.at === 'hv'){ d.enter = P(['x'], 'sever the node'); d.esc = P(['b'], 'back to the ring'); d.down = P(['b'], 'out', true); }
+    else { d.left = P(['b'], 'around, back'); d.right = P(['f'], 'around, forward'); d.enter = P(['c'], 'inward, to the node') || P(['t'], 'take the component'); d.esc = P(['l'], 'out through the aperture'); d.up = P(['c'], 'in', true); d.down = P(['l'], 'out', true); }
+  } else if (l.at === 'ap' || l.at === 'al'){
+    d.enter = P(['1'], l.at === 'ap' ? 'dock' : 'inward, to the spine'); d.esc = P(['l'], l.at === 'ap' ? 'pull away' : 'undock'); d.right = P(['1'], 'in', true); d.left = P(['l'], 'out', true);
+  } else {
+    const st = struct(l.sid), w = st.ship ? 'deck ' : 'floor ';
+    if (l.at === 'dk'){
+      d.up = P(['u'], w + (l.n + 1)); d.down = P(['d'], w + (l.n - 1)); d.enter = P(['c'], st.ship ? 'into the passage' : 'into the corridor'); d.right = P(['c'], 'in', true);
+      d.esc = st.ship ? (P(['a'], 'out to the airlock') || P(['l'], 'leave the ship')) : P(['l'], 'out to the street'); if (st.ship) d.left = P(['a'], 'out', true);
+    } else if (l.at === 'ps'){
+      const n = st.level(l.n).sections.length;
+      d.esc = P(['b'], st.ship ? 'back to the spine' : 'back to the elevator');
+      d.left = S.door > 0 ? {free:() => { S.door--; paint(); }, label:'pick door ' + pad2(S.door)} : P(['b'], 'out', true);
+      d.right = S.door < n - 1 ? {free:() => { S.door++; paint(); }, label:'pick door ' + pad2(S.door + 2)} : null;
+      d.enter = P([String(S.door + 1)], 'through door ' + pad2(S.door + 1)); d.up = P([String(S.door + 1)], 'in', true);
+    } else {
+      d.left = P(['b'], 'room ' + l.ri); d.right = P(['f'], 'room ' + (l.ri + 2));
+      d.esc = P(['b'], 'back to room ' + l.ri) || P(['l'], st.ship ? 'out to the passage' : 'out to the corridor'); d.down = P(['l'], 'out', true);
+      d.enter = P(['w'], 'feed the core') || P(['n'], 'plot a course') || P(['e'], 'launch the pod');
+    }
+  }
+  return d;
+}
+function runDir(name){ const d = dirs()[name];
+  if (!d && name === 'esc' && S.mode === 'main' && aboardH(L())){ S.msg = [c('rd','No way out from here. The only door is the airlock, on deck 1.')]; paint(); }
+  if (!d) return; if (d.free) d.free(); else doOpt(d.o); }
+function climbTo(id){
+  let guard = 9;
+  while (guard-- && S.mode === 'main' && L().t === 'w' && L().id !== id){ const o = firstOpt(['l']); if (!o) break; doOpt(o); }
+}
+function drawHints(x, y, noSide){
+  const d = dirs(), a = RM ? .9 : .6 + .35 * Math.sin(FX.t / 380);
+  if (d.up) text('▲', x, y - 17, COL.yl, a, 11); if (d.down) text('▼', x, y + 17, COL.yl, a, 11);
+  if (!noSide && d.left) text('◀', x - 18, y, COL.yl, a, 11, 'left'); if (!noSide && d.right) text('▶', x + 18, y, COL.yl, a, 11, 'right');
+}
+/* ---------- the lattice: levels 00 to 07, ships drawn where they sit ---------- */
+function stars(key, n){
+  const r = rng('stars|' + key);
+  for (let i = 0; i < n; i++){ const x = r() * CW, y = r() * CH, tw = RM ? 1 : .6 + .4 * Math.sin(FX.t / 700 + i); fill(x, y, 1, 1, COL.text, (.12 + r() * .3) * tw); }
+}
+const GLYPH = {
+  universe:(x, y, r, col, a) => { for (let i = 1; i <= 3; i++) circ(x, y, r * i / 3, col, a * (1.1 - i * .25), 1); },
+  filament:(x, y, r, col, a) => { stroke(col, a, 1.5); ctx.beginPath(); for (let i = -10; i <= 10; i++){ const px = x + r * i / 10, py = y + Math.sin(i / 10 * Math.PI * 2 + (RM ? 0 : FX.t / 1200)) * r * .25; i === -10 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); } ctx.stroke(); },
+  sector:(x, y, r, col, a) => { dash([2, 3]); circ(x, y, r, col, a, 1.5); dash(); circ(x, y, r * .35, col, a * .6, 1); },
+  nullreach:(x, y, r, col, a) => { dash([6, 5]); circ(x, y, r, COL.mg, a, 1.5); dash(); },
+  system:(x, y, r, col, a) => { circ(x, y, r * .45, col, a, 1.5); for (let i = 0; i < 8; i++){ const an = i * Math.PI / 4; line(x + Math.cos(an) * r * .6, y + Math.sin(an) * r * .6, x + Math.cos(an) * r, y + Math.sin(an) * r, col, a * .8, 1); } },
+  planet:(x, y, r, col, a) => { circ(x, y, r, col, a, 1.5); ctx.beginPath(); ctx.ellipse(x, y, r * .45, r, 0, 0, Math.PI * 2); stroke(col, a * .5, 1); ctx.stroke(); line(x - r, y, x + r, y, col, a * .5, 1); },
+  country:(x, y, r, col, a) => { const p = []; for (let i = 0; i < 6; i++) p.push([x + Math.cos(i * Math.PI / 3) * r, y + Math.sin(i * Math.PI / 3) * r]); poly(p, col, a, 1.5); },
+  city:(x, y, r, col, a) => { rect(x - r, y - r, r * 2, r * 2, col, a, 1.5); for (let i = 1; i < 3; i++){ line(x - r + r * 2 * i / 3, y - r, x - r + r * 2 * i / 3, y + r, col, a * .5, 1); line(x - r, y - r + r * 2 * i / 3, x + r, y - r + r * 2 * i / 3, col, a * .5, 1); } },
+  street:(x, y, r, col, a) => { line(x - r, y - 3, x + r, y - 3, col, a, 1.5); line(x - r, y + 3, x + r, y + 3, col, a, 1.5); }
+};
+function brackets(x, y, r, col){
+  const k = 5; [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(q => { const px = x + q[0] * r, py = y + q[1] * r; poly([[px - q[0] * k, py], [px, py], [px, py - q[1] * k]], col, 1, 1.5, null, true); });
+}
+function drawParent(n, b){
+  if (!n.parent) return null;
+  const p = N(n.parent), x = CW / 2, y = 40;
+  text('▲ UP TO ' + KLABEL[p.kind], x, y - 6, COL.dim, 1, 9);
+  text(KIND[p.kind].icon + ' ' + cut(p.name, 26), x, y + 7, COL.text, 1, 11, 'center', true);
+  hit('parent', x - 110, 26, 220, 34);
+  if (b && b.dir === 'up'){ pulse(x, y, COL.yl, 10, 34); }
+  return {x:x, y:y};
+}
+function drawShipMarks(n, hx, hy, vx, vy, b){
+  const sel = FX.selList;
+  if (S.ship.at === n.id && !(n.kind === 'street' && S.win > 0)){
+    const col = S.ship.owned ? COL.gn : S.ship.lit ? COL.rs : '#8a4a30', reveal = FX.reveal && FX.t - FX.reveal < 1600;
+    glow(col, S.ship.lit ? 10 : 3); diamond(hx, hy, 8, col, 1, false); circ(hx, hy, 2, col, 1, 1, col); noglow();
+    line(hx + 8, hy, hx + 30, hy, col, .7, 1); for (let i = 0; i < 3; i++) line(hx + 12 + i * 6, hy - 3, hx + 16 + i * 6, hy + 3, col, .5, 1);   // the tow frame
+    text(S.ship.seen ? 'Buckled Girder' : 'unregistered mass', hx, hy + 18, col, 1, 10);
+    if (reveal) circ(hx, hy, 14 + ((FX.t - FX.reveal) / 40) % 20, COL.cy, .5, 1);
+    if (b && (b.dir === 'ship')) pulse(hx, hy, b.cls === 'gn' ? COL.gn : COL.yl, 10, 36);
+    hit('ship', hx - 34, hy - 16, 72, 44); sel.push('ship');
+  }
+  if (S.hive.present && S.hive.at === n.id){
+    const born = FX.hiveT0 ? (FX.t - FX.hiveT0) / 1400 : 9, col = S.hive.dormant ? COL.hv : COL.rd, j = (S.hive.dormant || RM) ? 0 : Math.sin(FX.t / 90) * .8;
+    if (born < 1) circ(vx, vy, 80 * born, COL.rd, 1 - born, 2);
+    glow(col, 12); rect(vx - 9 + j, vy - 9, 18, 18, col, 1, 1.5); fill(vx - 5 + j, vy - 5, 10, 10, col, S.hive.dormant ? .25 : .8); noglow();
+    text('mass, unlisted', vx, vy + 20, col, 1, 10);
+    hit('hive', vx - 40, vy - 16, 80, 46); sel.push('hive');
+  }
+}
+function drawSel(){
+  const id = FX.selList[clamp(S.sel, 0, FX.selList.length - 1)], h = FX.hits.find(q => q.id === id);
+  if (h && S.mode === 'main') brackets(h.x + h.w / 2, h.y + h.h / 2 - 6, Math.min(h.w, 44) / 2, COL.yl);
+}
+function drawWorld(n){
+  const cx = CW / 2, cy = CH / 2 + 20, R = Math.min(CW, CH - 70) * .38, b = bearing(), ids = kids(n.id), isSys = n.kind === 'system', small = CW < 480;
+  stars(n.id, 70); FX.selList = [];
+  const pp = drawParent(n, b);
+  if (pp){ dash([2, 4]); line(cx, cy - R * .3, pp.x, pp.y + 16, COL.faint, 1, 1); dash(); }
+  const col = n.kind === 'nullreach' ? COL.mg : COL.cy;
+  glow(col, 8); GLYPH[n.kind](cx, cy, R * .26, col, .9); noglow();
+  text(KLABEL[n.kind], cx, cy + R * .26 + 12, COL.dim, 1, 9);
+  text(cut(n.name, 28), cx, cy + R * .26 + 25, col, 1, 12, 'center', true);
+  ids.forEach((id, i) => {
+    const ch = N(id); let x, y;
+    if (isSys){
+      const orb = R * (.5 + .45 * i / Math.max(1, ids.length - 1 || 1)), r0 = rng('orb|' + id)() * 6.28, an = r0 + (RM ? 0 : FX.t / (9000 + i * 5000));
+      ctx.beginPath(); ctx.ellipse(cx, cy, orb * 1.25, orb * .62, 0, 0, 6.283); stroke(COL.rule, 1, 1); ctx.stroke();
+      x = cx + Math.cos(an) * orb * 1.25; y = cy + Math.sin(an) * orb * .62;
+    } else {
+      const span = ids.length > 1 ? 250 : 0, a = ((180 - span / 2) + (ids.length > 1 ? span * i / (ids.length - 1) : 0)) * Math.PI / 180;
+      x = cx + Math.sin(a) * R * (small ? 1.05 : 1.25); y = cy - Math.cos(a) * R * .95;
+      line(cx + (x - cx) * .32, cy + (y - cy) * .32, x - (x - cx) * .12, y - (y - cy) * .12, COL.rule, 1, 1);
+    }
+    const seen = S.visited[id], cc = ch.kind === 'nullreach' ? COL.mg : seen ? COL.cy : COL.dim;
+    GLYPH[ch.kind](x, y, 9, cc, seen ? 1 : .8);
+    text(pad2(i + 1), x, y - 19, COL.yl, .9, 9);
+    text(cut(ch.name, small ? 13 : 20), x, y + 20, seen ? COL.text : COL.dim, 1, 10);
+    hit('child:' + id, x - 40, y - 24, 80, 54); FX.selList.push('child:' + id);
+    if (b && b.dir === 'down' && b.via === id) pulse(x, y, COL.yl, 10, 34);
+  });
+  const so = isSys ? 1.18 : .62;
+  drawShipMarks(n, cx + R * so * (isSys ? 1.05 : 1), cy - R * (isSys ? .5 : .08), cx - R * so * (isSys ? 1.05 : 1), cy - R * (isSys ? .45 : .08), b);
+  drawSel();
+  FX.you = {x:cx, y:cy}; youMark(cx, cy);
+}
+function drawStreet(n){
+  const b = bearing(), vw = streetWin(), grounded = S.ship.at === n.id && S.win === 0, slots = vw + (grounded ? 1 : 0), m = 26, sw = (CW - m * 2) / slots, base = CH * .72;
+  const cu = ctxOf(n.id), col = CULT[cu.culture].col, pat = CULTS.indexOf(cu.culture) % 3;
+  stars(n.id, 40); FX.selList = [];
+  drawParent(n, b);
+  line(0, base, CW, base, col, .8, 1.5); line(0, base + 22, CW, base + 22, COL.rule, 1, 1);
+  dash([10, 12]); line(0, base + 11, CW, base + 11, COL.faint, 1, 1); dash();
+  const len = streetLen(n.id);
+  for (let j = 0; j < vw && S.win + j < len; j++){
+    const bid = bldId(n.id, S.win + j), bd = N(bid), x = m + sw * (j + (grounded ? 1 : 0)) + sw * .15, w = sw * .7, h = bd.h * CH * .56, seen = S.visited[bid], cc = seen ? col : COL.dim;
+    poly([[x, base], [x, base - h], [x + w, base - h], [x + w, base]], cc, seen ? 1 : .75, 1.5, null, true);
+    text(bd.floors + 'F', x + w / 2, base - h - 9, cc, .8, 9);
+    const r = rng('win|' + bid), rows = Math.min(bd.floors, Math.floor((h - 16) / 9));
+    for (let q = 0; q < rows; q++){
+      const yy = base - 14 - q * (h - 18) / rows, fa = seen ? .6 : .35;
+      if (pat === 1) line(x + 4, yy, x + w - 4, yy, cc, fa * .6, 1);
+      else for (let k = 0; k < Math.floor(w / 8); k++) if (r() < .6) fill(x + 5 + k * 8, yy - (pat === 2 ? 3 : 1), 2, pat === 2 ? 6 : 2, r() < .2 ? COL.yl : cc, fa);
+    }
+    fill(x + w / 2 - 3, base - 9, 6, 9, cc, .5);
+    text(pad2(j + 1), x + w / 2, base + 34, COL.yl, .9, 9);
+    const words = bd.name.split(' '), half = Math.ceil(words.length / 2), mc = Math.max(6, Math.floor(sw / 6.4));
+    text(cut(words.slice(0, half).join(' '), mc), x + w / 2, base + 47, seen ? COL.text : COL.dim, 1, 10);
+    if (words.length > 1) text(cut(words.slice(half).join(' '), mc), x + w / 2, base + 59, seen ? COL.text : COL.dim, 1, 10);
+    hit('bld:' + j, x - sw * .1, base - h, sw * .9, h + 66); FX.selList.push('bld:' + j);
+  }
+  if (S.win > 0){ text('◂', 12, base - 30, COL.yl, 1, 18); hit('pan:-1', 0, base - 60, 26, 60); }
+  if (S.win + vw < len){ text('▸', CW - 12, base - 30, COL.yl, 1, 18); hit('pan:1', CW - 26, base - 60, 26, 60); }
+  text('FRONTS ' + (S.win + 1) + '–' + Math.min(len, S.win + vw) + ' OF ' + len, CW / 2, CH - 12, COL.faint, 1, 10);
+  if (grounded){
+    const hx = m + sw * .5, hy = base - 16, c2 = S.ship.owned ? COL.gn : S.ship.lit ? COL.rs : '#8a4a30';
+    glow(c2, S.ship.lit ? 8 : 2); poly([[hx - sw * .42, base], [hx - sw * .36, base - 30], [hx + sw * .2, base - 38], [hx + sw * .42, base - 14], [hx + sw * .42, base]], c2, 1, 1.5); noglow();
+    line(hx - sw * .3, base, hx - sw * .38, base + 8, c2, .7, 1); line(hx + sw * .3, base, hx + sw * .38, base + 8, c2, .7, 1);
+    text('◈', hx, hy, c2, 1, 12); text(S.ship.seen ? 'Buckled' : 'grounded', hx, base + 47, c2, 1, 10); text(S.ship.seen ? 'Girder' : 'hulk', hx, base + 59, c2, 1, 10);
+    if (b && b.dir === 'ship') pulse(hx, hy, COL.yl, 12, 40);
+    hit('ship', hx - sw * .45, base - 44, sw * .9, 110); FX.selList.push('ship');
+  }
+  if (S.hive.present && S.hive.at === n.id) drawShipMarks({id:'-'}, 0, 0, CW / 2, 70, b);
+  drawSel();
+  const sh = FX.hits.find(q => q.id === FX.selList[clamp(S.sel, 0, FX.selList.length - 1)]);
+  FX.you = {x:sh ? sh.x + sh.w / 2 : CW / 2, y:base + 11}; youMark(FX.you.x, FX.you.y);
+}
+/* ---------- the cross-section: one renderer for a building and for the hauler ---------- */
+const HEART = {reactor:'☢', bridge:'▲', pod:'◖', hold3:'▣', cryo:'❄'};
+function secLayout(st){
+  const vis = st.ship ? 3 : Math.min(st.cells, CW < 480 ? 4 : CW < 800 ? 6 : 8);
+  const ship = st.ship, left = ship ? 62 : 44, spineW = CW < 480 ? 26 : 34, right = ship ? 30 : 14, top = 50, bottom = CH - (ship ? 44 : 50), nVis = ship ? 5 : (CH < 360 ? 4 : 5);
+  return {left:left, spineW:spineW, top:top, bottom:bottom, nVis:nVis, bh:(bottom - top) / nVis, vis:vis, cellW:(CW - left - spineW - right) / vis, x0:left + spineW};
+}
+function awayTag(label){
+  if (!FX.view || !FX.view.opts.some(o => o.hit === 'away')) return;
+  text('◂ ' + label, 8, CH - 14, COL.yl, 1, 11, 'left'); hit('away', 0, CH - 30, 110, 30);
+}
+function drawStructure(l){
+  const st = struct(l.sid), ship = st.ship, G0 = secLayout(st), lit = !ship || S.ship.lit, b = bearing();
+  const camT = ship ? 2 : Math.max(2, l.n);
+  if (FX.mx == null || RM) FX.cam = camT; else FX.cam += (camT - FX.cam) * .16;
+  const yb = n => G0.bottom - (n - (FX.cam - 2) + 1) * G0.bh, wp = ship && FX.wakeT0 >= 0 ? (FX.t - FX.wakeT0) / 480 : 99;
+  const deckLit = n => { if (!ship) return true; if (!lit) return false; const q = wp - n; return q > .8 || (q > 0 && Math.random() < .5); };
+  const colLit = ship ? COL.rs : st.col, colDark = '#8a4a30';
+  stars(l.sid, ship ? 50 : 0);
+  // where you stand
+  let tx, ty;
+  const cellsBefore = (lv, si) => si;
+  if (l.at === 'al'){ tx = G0.left - 22; ty = yb(AIRLOCK_DECK) + G0.bh * .5; }
+  else if (l.at === 'dk'){ tx = G0.left + G0.spineW / 2; ty = yb(l.n) + G0.bh * .5; }
+  const focusDoor = l.at === 'ps' ? clamp(S.door || 0, 0, st.cells - 1) : l.at === 'rm' ? l.si : 0, dT = ship ? 0 : clamp(focusDoor - Math.floor(G0.vis / 2), 0, st.cells - G0.vis);
+  if (FX.mx == null || RM || FX.dcam == null) FX.dcam = dT; else FX.dcam += (dT - FX.dcam) * .2;
+  const dc = ship ? 0 : FX.dcam;
+  if (l.at === 'ps'){ tx = G0.x0 + (focusDoor - dT + .5) * G0.cellW; ty = yb(l.n) + G0.bh * .86; }
+  else if (l.at === 'rm'){ tx = G0.x0 + (l.si - dT + .5) * G0.cellW; ty = yb(l.n) + G0.bh * .36; }
+  if (FX.mx == null || RM){ FX.mx = tx; FX.my = ty; } else { FX.mx += (tx - FX.mx) * .22; FX.my += (ty - FX.my) * .22; }
+  const A = (x, y, n) => deckLit(n) ? 1 : clamp(1.25 - Math.hypot(x - FX.mx, y - FX.my) / (CH * .4), .1, 1);
+
+  ctx.save(); ctx.beginPath(); ctx.rect(0, G0.top - 6, CW, G0.bottom - G0.top + 12); ctx.clip();
+  const n0 = Math.max(st.min, Math.floor(FX.cam - 3)), n1 = Math.min(st.max, Math.ceil(FX.cam + 3));
+  for (let n = n0; n <= n1; n++){
+    const lv = st.level(n), y = yb(n), bh = G0.bh, on = deckLit(n), col = on ? colLit : colDark, ry = y + bh * .68, here = n === l.n;
+    const cells = ship ? lv.sections.length : G0.vis;
+    const wEnd = G0.x0 + cells * G0.cellW;
+    if (ship && on) fill(G0.left, y, wEnd - G0.left, bh, COL.sodium, .05);
+    // spine
+    const sa = A(G0.left + G0.spineW / 2, y + bh / 2, n);
+    rect(G0.left, y, G0.spineW, bh, col, sa, 1.5);
+    for (let q = 1; q < 4; q++) line(G0.left + 8, y + bh * q / 4, G0.left + G0.spineW - 8, y + bh * q / 4, col, sa * .5, 1);
+    text((ship ? 'D' : 'F') + n, G0.left - 6, y + bh * .5, here ? COL.yl : COL.dim, here ? 1 : Math.max(.35, sa), 10, 'right', here);
+    hit('lvl:' + n, G0.left - 4, y, G0.spineW + 8, bh);
+    // passage
+    const pa = A(G0.x0 + 40, ry + bh * .16, n);
+    line(G0.x0, y + bh, wEnd, y + bh, col, pa, 1.5); line(wEnd, y, wEnd, y + bh, col, A(wEnd, y + bh / 2, n), 1.5);
+    text(lv.zone, wEnd - 6, ry + bh * .17, COL.dim, pa * .8, 9, 'right');
+    if (ship && on) for (let q = 0; q < cells * 2; q++) fill(G0.x0 + (q + .5) * G0.cellW / 2 - 1, ry + 3, 2, 2, COL.sodium, .9);
+    if (here) hit('ps', G0.x0, ry, wEnd - G0.x0, bh * .32);
+    // one cell per door; what is behind it is the apartment view
+    ctx.save(); ctx.beginPath(); ctx.rect(G0.x0, y - 2, wEnd - G0.x0 + 1, bh + 4); ctx.clip();
+    lv.sections.forEach((sec, si) => {
+      if (si < Math.floor(dc) - 1 || si > dc + G0.vis + 1) return;
+      const x = G0.x0 + (si - dc) * G0.cellW, cw = G0.cellW, cxm = x + cw / 2, cym = y + bh * .34, a = A(cxm, cym, n), shut = ship && sealed(sec), doorSeen = S.doors[l.sid + ':' + n + ':' + si];
+      const selD = here && l.at === 'ps' && si === S.door, inside = here && l.at === 'rm' && l.si === si, heart = sec.rooms.map(q => q.heart).filter(Boolean)[0];
+      if (here && x > G0.x0 - 2 && x + cw < wEnd + 2) hit('sec:' + si, x, y, cw, bh * .68);
+      if (!doorSeen && !on) dash([3, 3]);
+      stroke(col, a, 1.5); ctx.beginPath(); ctx.moveTo(x, ry); ctx.lineTo(x, y); ctx.lineTo(x + cw, y); ctx.lineTo(x + cw, ry); ctx.stroke();
+      line(x, ry, x + cw * .3, ry, col, a, 1.5); line(x + cw * .7, ry, x + cw, ry, col, a, 1.5); dash();
+      line(x + cw * .3, ry, x + cw * .7, ry, shut ? COL.rd : selD ? COL.yl : doorSeen ? COL.gn : COL.faint, shut || selD ? Math.max(a, .7) : a, shut || selD ? 3 : 1);
+      if (sec.insc && (on || a > .5)) text(sec.insc.indexOf('!!') === 0 ? '!' : '·', cxm, ry + 6, sec.insc.indexOf('!!') === 0 ? COL.rd : COL.yl, a, 10);
+      if (inside) fill(x + 2, y + 2, cw - 3, bh * .68 - 3, COL.yl, .1);
+      if (heart && (on || doorSeen || a > .6)){ glow(COL.yl, on ? 8 : 0); text(HEART[heart], cxm, cym - 2, heart === 'hold3' ? COL.rd : COL.yl, a, Math.min(18, bh * .34)); noglow(); }
+      else text(pad2(si + 1), cxm, cym - 4, selD ? COL.yl : COL.dim, a * (selD ? 1 : .7), 10);
+      if (doorSeen) sec.rooms.forEach((q, ri) => { const px = cxm - (sec.rooms.length * 7 - 3) / 2 + ri * 7; if (S.been[l.sid + ':' + n + ':' + si + ':' + ri]) fill(px, ry - 9, 4, 4, COL.text, a * .85); else rect(px, ry - 9, 4, 4, COL.dim, a * .85, 1); });
+      if (ship && b && b.dir === 'hold3' && heart === 'hold3') pulse(cxm, cym, COL.yl, 6, 26);
+    });
+    ctx.restore();
+    if (!ship && here && st.cells > G0.vis){ const lo = Math.round(dc), hi = st.cells - G0.vis - lo; if (lo > 0) text('◂ ' + lo + ' more', G0.x0 + 4, y + bh * .84, COL.yl, .9, 9, 'left'); if (hi > 0) text(hi + ' more ▸', wEnd - 70, y + bh * .84, COL.yl, .9, 9, 'right'); }
+    line(G0.left, y, wEnd, y, col, A((G0.left + wEnd) / 2, y, n) * .9, 1.5);
+    if (ship && wp < 6 && Math.abs(wp - n) < .5) { glow(COL.sodium, 20); line(G0.left, y + bh, wEnd, y + bh, COL.sodium, 1, 2); noglow(); }
+  }
+  ctx.restore();
+
+  if (ship){
+    const ya = yb(AIRLOCK_DECK), bh = G0.bh, col = lit ? colLit : colDark, a = A(G0.left - 22, ya + bh / 2, AIRLOCK_DECK);
+    rect(G0.left - 40, ya + bh * .2, 40, bh * .6, col, Math.max(a, .35), 1.5); circ(G0.left - 22, ya + bh * .5, 8, col, Math.max(a, .35), 1);
+    text('◈', G0.left - 52, ya + bh * .5, COL.dim, 1, 11); hit('airlock', G0.left - 60, ya, 58, bh);
+    const y0 = yb(0) + bh; for (let q = 0; q < 3; q++) poly([[G0.left + 14 + q * 34, y0], [G0.left + 6 + q * 34, y0 + 14], [G0.left + 34 + q * 34, y0 + 14], [G0.left + 26 + q * 34, y0]], col, .6, 1, null, true);
+    if (lit && !RM) for (let q = 0; q < 3; q++) fill(G0.left + 10 + q * 34, y0 + 15, 20, 2 + Math.random() * 5, COL.sodium, .5);
+    const tx0 = G0.x0 + 3 * G0.cellW + 1, tyy = yb(1) + bh * .5; for (let x = tx0; x < CW - 8; x += 22){ line(x, tyy - 10, x + 22, tyy + 10, col, .35, 1); line(x, tyy + 10, x + 22, tyy - 10, col, .35, 1); }
+    line(tx0, tyy - 10, CW, tyy - 10, col, .5, 1); line(tx0, tyy + 10, CW, tyy + 10, col, .5, 1);
+    awayTag(l.at === 'al' ? 'UNDOCK' : 'LEAVE SHIP');
+  } else {
+    const gy = yb(0) + G0.bh;
+    if (gy < G0.bottom + 8){
+      line(0, gy, CW, gy, st.col, .8, 1.5); for (let x = 4; x < CW; x += 14) line(x, gy + 3, x - 6, gy + 10, COL.faint, 1, 1);
+      rect(G0.left + 4, gy + 6, G0.spineW - 8, 16, COL.rd, .9, 1.5); line(G0.left + 4, gy + 6, G0.left + G0.spineW - 4, gy + 22, COL.rd, .9, 1);
+      text('BEDROCK · SEALED', G0.x0 + 6, gy + 15, COL.rd, .8, 9, 'left'); hit('bedrock', G0.left, gy + 2, 150, 24);
+    }
+    const wR = G0.x0 + G0.vis * G0.cellW, yr = yb(st.max), above = st.max - Math.round(FX.cam + 2);
+    if (yr > G0.top - 8){ glow(st.col, 6); line(G0.left - 6, yr, wR + 6, yr, st.col, 1, 2.5); noglow(); text('ROOF · ' + (st.max + 1) + ' FLOORS · ' + st.size.toUpperCase(), wR, yr - 9, st.col, .9, 9, 'right'); }
+    else { dash([2, 5]); line(G0.left, G0.top - 4, G0.left, G0.top - 16, st.col, .5, 1); line(wR, G0.top - 4, wR, G0.top - 16, st.col, .5, 1); dash(); text('▲ ' + above + ' more floors to the roof', wR, G0.top - 12, COL.dim, 1, 9, 'right'); }
+    awayTag('TO THE STREET');
+    if (b && b.dir === 'up') pulse(30, CH - 14, COL.yl, 6, 22);
+  }
+  FX.you = {x:FX.mx, y:FX.my}; youMark(FX.mx, FX.my); drawHints(FX.mx, FX.my, l.at === 'rm');
+}
+
+/* behind a door: the apartment (or ship section) as a floor plan, rooms side by side, doorways open */
+function drawApartment(l){
+  const st = struct(l.sid), ship = st.ship, lit = !ship || S.ship.lit, sec = st.level(l.n).sections[l.si], n = sec.rooms.length, b = bearing();
+  const col = ship ? (lit ? COL.rs : '#8a4a30') : st.col, m = CW < 480 ? 10 : 26, top = 64, corH = CW < 480 ? 40 : 48, bottom = CH - corH - 22;
+  const visR = Math.min(n, CW < 480 ? 2 : CW < 800 ? 3 : 4), rw = Math.min((CW - m * 2) / visR, 280), xL = (CW - rw * visR) / 2, rT = clamp(l.ri - Math.floor(visR / 2), 0, n - visR);
+  if (FX.ax == null || RM || FX.rcam == null) FX.rcam = rT; else FX.rcam += (rT - FX.rcam) * .2;
+  const x0 = xL - FX.rcam * rw, rh = bottom - top, doorY = top + rh * .56, gap = clamp(rh * .24, 24, 46), small = rw < 120;
+  const tx = xL + (l.ri - rT + .5) * rw, ty = top + rh * .74;
+  if (FX.ax == null || RM){ FX.ax = tx; FX.ay = ty; } else { FX.ax += (tx - FX.ax) * .2; FX.ay += (ty - FX.ay) * .2; }
+  const A = (x, y) => lit ? 1 : clamp(1.3 - Math.hypot(x - FX.ax, y - FX.ay) / (Math.min(CW, CH) * .6), .12, 1);
+  const pu = RM ? .95 : .6 + .4 * Math.sin(FX.t / 380);
+  text((ship ? 'SECTION ' : 'APARTMENT ') + pad2(l.si + 1) + ' · ' + sec.type.toUpperCase() + ' · ' + n + (n === 1 ? ' ROOM' : ' ROOMS'), CW / 2, 42, col, 1, 11, 'center', true);
+  // the corridor you came from
+  const cy0 = bottom + 12;
+  fill(0, cy0, CW, corH, col, .05); line(0, cy0, CW, cy0, col, .6, 1.5); line(0, cy0 + corH, CW, cy0 + corH, col, .3, 1);
+  dash([10, 12]); line(0, cy0 + corH / 2, CW, cy0 + corH / 2, COL.faint, 1, 1); dash();
+  text(ship ? 'DECK ' + l.n + ' PASSAGE' : 'FLOOR ' + l.n + ' CORRIDOR', CW - 10, cy0 + corH / 2, COL.dim, 1, 10, 'right');
+  hit('ps', 0, cy0 - 12, CW, corH + 14);
+  ctx.save(); ctx.beginPath(); ctx.rect(xL - 2, top - 4, rw * visR + 4, bottom - top + (cy0 - bottom) + 4); ctx.clip();
+  sec.rooms.forEach((r, ri) => {
+    if (ri < FX.rcam - 1.2 || ri > FX.rcam + visR + .2) return;
+    const x = x0 + ri * rw, cxm = x + rw / 2, key = l.sid + ':' + l.n + ':' + l.si + ':' + ri, been = S.been[key], mine = ri === l.ri, a = A(cxm, top + rh * .5);
+    if (ship && lit) fill(x, top, rw, rh, COL.sodium, .05);
+    if (mine) fill(x + 3, top + 3, rw - 6, rh - 6, COL.yl, .06);
+    if (!been && !lit) dash([4, 4]);
+    line(x, top, x + rw, top, col, a, 2);
+    if (ri === 0) line(x, top, x, bottom, col, a, 2); else { line(x, top, x, doorY - gap / 2, col, a, 2); line(x, doorY + gap / 2, x, bottom, col, a, 2); }
+    if (ri === n - 1) line(x + rw, top, x + rw, bottom, col, a, 2);
+    if (ri === 0){ line(x, bottom, cxm - gap / 2, bottom, col, a, 2); line(cxm + gap / 2, bottom, x + rw, bottom, col, a, 2); dash(); line(cxm - gap / 2, bottom, cxm - gap / 2, cy0, COL.gn, .5, 1); line(cxm + gap / 2, bottom, cxm + gap / 2, cy0, COL.gn, .5, 1); }
+    else line(x, bottom, x + rw, bottom, col, a, 2);
+    dash();
+    text((ri + 1) + '/' + n, x + 8, top + 13, mine ? COL.yl : COL.dim, Math.max(a, .5), 10, 'left', mine);
+    const words = r.name.split(' '), half = Math.ceil(words.length / 2), mc = Math.max(6, Math.floor(rw / 7.2));
+    ctx.save(); ctx.beginPath(); ctx.rect(x + 2, top, rw - 4, rh); ctx.clip();
+    text(cut(words.slice(0, half).join(' '), mc), cxm, top + 32, mine ? COL.text : COL.dim, Math.max(a, .45), small ? 10 : 12, 'center', mine);
+    if (words.length > 1) text(cut(words.slice(half).join(' '), mc), cxm, top + 47, mine ? COL.text : COL.dim, Math.max(a, .45), small ? 10 : 12, 'center', mine);
+    ctx.restore();
+    if (r.heart && (lit || been || a > .5)){ glow(COL.yl, lit ? 12 : 0); text(HEART[r.heart], cxm, top + rh * .45, r.heart === 'hold3' ? COL.rd : COL.yl, a, clamp(rh * .2, 20, 44)); noglow(); if (mine) hit('heart', cxm - 30, top + rh * .45 - 30, 60, 60); }
+    if (r.log) text('≡ log', cxm, top + rh * .3, S.ship.logs[r.log] ? COL.yl : COL.dim, been ? a : 0, 10);
+    if (been || lit){
+      const objs = S.rooms[key] || r.objs, rr = rng('obj|' + key);
+      for (let q = 0; q < Math.min(objs.length, 12); q++){ const ox = x + rw * (.15 + rr() * .7), oy = top + rh * (.6 + rr() * .3); if (lit) diamond(ox, oy, 3.5, COL.text, a * (mine ? .95 : .5), true); else diamond(ox, oy, 3.5, COL.dim, a, false); }
+    }
+    if (ship && b && b.dir === 'hold3' && r.heart === 'hold3') pulse(cxm, top + rh * .45, COL.yl, 12, 40);
+    if (mine) hit('objs', x, top, rw, rh); else if (Math.abs(ri - l.ri) === 1){
+      hit('room:' + ri, x, top, rw, rh);
+      const fw = ri > l.ri, wx = fw ? x : x + rw;
+      dash([2, 4]); line(wx - 26, doorY, wx + 26, doorY, COL.yl, .5, 1); dash();
+      glow(COL.yl, 8); text(fw ? '▶' : '◀', wx, doorY, COL.yl, pu, 16); noglow(); text(fw ? 'f' : 'b', wx, doorY + 16, COL.yl, .95, 10, 'center', true);
+    }
+  });
+  ctx.restore();
+  if (rT > 0) text('◂ ' + rT + ' more', xL + 4, top - 9, COL.yl, .9, 10, 'left');
+  if (n - visR - rT > 0) text((n - visR - rT) + ' more ▸', xL + rw * visR - 4, top - 9, COL.yl, .9, 10, 'right');
+  if (l.ri < n - 1 && l.ri + 1 >= rT + visR){ const ex2 = xL + rw * visR; glow(COL.yl, 8); text('▶', ex2 - 2, doorY, COL.yl, pu, 16); noglow(); text('f', ex2 - 2, doorY + 16, COL.yl, .95, 10, 'center', true); hit('room:' + (l.ri + 1), ex2 - 30, top, 44, rh); }
+  if (l.ri === 0){ const ex = x0 + rw / 2; glow(COL.yl, 8); text('▼', ex, bottom + 2, COL.yl, pu, 14); noglow(); text('l', ex + 14, bottom + 2, COL.yl, .95, 10, 'center', true); }
+  else text('the way out is through room 1', 12, cy0 + corH / 2, COL.dim, .9, 10, 'left');
+  if (n === 1) text('one room, no further doors', CW / 2, bottom - 12, COL.faint, 1, 10);
+  FX.you = {x:FX.ax, y:FX.ay}; youMark(FX.ax, FX.ay);
+  const d = dirs(); if (d.enter) text('↵ ' + d.enter.label, FX.ax, FX.ay + 18, COL.yl, .8, 9);
+}
+/* the hauler from outside: the same hull, closed */
+function drawApproach(){
+  const st = struct('H'), G0 = secLayout(st), s = S.ship, col = s.owned ? COL.gn : s.lit ? COL.rs : '#8a4a30', b = bearing(), bh = G0.bh;
+  const yb = n => G0.bottom - (n + 1) * bh, wid = DECKS.map(d => G0.x0 + d.sections.length * G0.cellW);
+  stars('ap' + s.at, 90);
+  if (s.at === 'p1'){ ctx.beginPath(); ctx.arc(CW / 2, CH + CW * .9, CW, 0, 6.283); stroke(COL.cy, .5, 1.5); ctx.stroke(); }
+  else if (s.at === 'st1') line(0, G0.bottom + 16, CW, G0.bottom + 16, COL.dim, 1, 1.5);
+  else if (s.at !== 'nr'){ glow(COL.text, 20); circ(CW - 40, 46, 5, null, .9, 1, s.at === 'sys2' ? COL.rd : COL.text); noglow(); }
+  const pts = [[G0.left, yb(0) + bh], [G0.left, yb(4)]];
+  for (let n = 4; n >= 0; n--){ pts.push([wid[n], yb(n)]); pts.push([wid[n], yb(n) + bh]); }
+  poly(pts, null, 1, 1, '#0c1213'); glow(col, s.lit ? 10 : 2); poly(pts, col, 1, 1.5); noglow();
+  for (let n = 1; n < 5; n++) line(G0.left, yb(n) + bh, wid[n], yb(n) + bh, col, .25, 1);
+  const r = rng('plates'); for (let q = 0; q < 26; q++){ const n = Math.floor(r() * 5), x = G0.left + r() * (wid[n] - G0.left); line(x, yb(n), x, yb(n) + bh, col, .15, 1); }
+  text(String(REG), G0.x0 + G0.cellW * 1.2, yb(2) + bh * .5, col, .8, Math.min(16, bh * .3), 'center', true);
+  if (b && b.dir === 'hull') pulse(G0.x0 + G0.cellW * 1.2, yb(2) + bh * .5, COL.yl, 10, 50);
+  const tx0 = wid[1], tyy = yb(1) + bh * .5; for (let x = tx0; x < CW - 8; x += 22){ line(x, tyy - 10, x + 22, tyy + 10, col, .4, 1); line(x, tyy + 10, x + 22, tyy - 10, col, .4, 1); }
+  line(tx0, tyy - 10, CW, tyy - 10, col, .6, 1); line(tx0, tyy + 10, CW, tyy + 10, col, .6, 1);
+  for (let q = 0; q < 3; q++) poly([[G0.left + 14 + q * 34, yb(0) + bh], [G0.left + 6 + q * 34, yb(0) + bh + 14], [G0.left + 34 + q * 34, yb(0) + bh + 14], [G0.left + 26 + q * 34, yb(0) + bh]], col, .7, 1, null, true);
+  if (s.lit) for (let n = 0; n < 5; n++) for (let x = G0.x0 + 10; x < wid[n] - 8; x += 18) fill(x, yb(n) + bh * .3, 6, 4, COL.sodium, (RM ? .8 : .6 + .3 * Math.sin(FX.t / 300 + x)));
+  else if (!RM && (FX.t % 60000) < 500) fill(wid[4] - 6, yb(4) + 6, 3, 3, COL.yl, .9);   // the transponder, once a minute
+  if (FX.xray && FX.t - FX.xray < 2600){ const a = 1 - (FX.t - FX.xray) / 2600; for (let n = 0; n < 5; n++){ DECKS[n].sections.forEach((sec, k) => { rect(G0.x0 + k * G0.cellW, yb(n) + 3, G0.cellW, bh * .62, COL.cy, a * .7, 1); }); rect(G0.left, yb(n), G0.spineW, bh, COL.cy, a * .7, 1); } }
+  const ya = yb(AIRLOCK_DECK);
+  glow(COL.yl, 8); rect(G0.left - 40, ya + bh * .2, 40, bh * .6, COL.yl, 1, 1.5); noglow(); circ(G0.left - 22, ya + bh * .5, 8, COL.yl, .9, 1);
+  text('DOCK', G0.left - 20, ya + bh + 4, COL.yl, 1, 10); hit('airlock', G0.left - 62, ya - 4, 66, bh + 18);
+  awayTag('PULL AWAY');
+  FX.you = {x:24, y:ya + bh * .5}; youMark(24, ya + bh * .5); drawHints(24, ya + bh * .5);
+}
+
+/* the hive: one face from outside, one ring inside, and nothing to tell two places apart */
+function drawHiveFace(){
+  const side = Math.min(CW, CH) * .62, x0 = (CW - side) / 2, y0 = (CH - side) / 2 + 6, n = 6, cs = side / n, col = S.hive.dormant ? COL.faint : COL.hv;
+  stars('hap', 60);
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++){ rect(x0 + i * cs + 2, y0 + j * cs + 2, cs - 4, cs - 4, col, .55, 1); rect(x0 + i * cs + cs * .3, y0 + j * cs + cs * .3, cs * .4, cs * .4, col, .3, 1); }
+  rect(x0, y0, side, side, col, 1, 1.5);
+  const open = RM ? 1 : clamp((FX.t - (FX.trans ? FX.trans.t0 : 0)) / 1800, .15, 1), w = cs * .9 * open, c2 = S.hive.dormant ? COL.dim : COL.rd;
+  fill(CW / 2 - w / 2, y0 + side / 2 - cs, w, cs * 2, '#000', 1); glow(c2, 14); rect(CW / 2 - w / 2, y0 + side / 2 - cs, w, cs * 2, c2, 1, 1.5); noglow();
+  hit('aperture', CW / 2 - cs, y0 + side / 2 - cs * 1.2, cs * 2, cs * 2.4);
+  text('NO REGISTRY · NO NAME', CW / 2, 40, c2, 1, 11, 'center', true);
+  awayTag('PULL AWAY'); FX.you = {x:CW / 2, y:CH - 22}; youMark(CW / 2, CH - 22);
+}
+function drawHive(l){
+  const cx = CW / 2, cy = CH / 2 + 8, R = Math.min(CW, CH) * .32, k = l.k, dorm = S.hive.dormant, col = dorm ? COL.faint : COL.hv;
+  const target = 90 - k * 45; let d = ((target - FX.ringRot + 540) % 360) - 180; if (RM || Math.abs(d) < .05) FX.ringRot = target; else FX.ringRot += d * .12;
+  const pos = i => { const a = (FX.ringRot + i * 45) * Math.PI / 180; return [cx + Math.cos(a) * R, cy + Math.sin(a) * R]; };
+  const oct = []; for (let i = 0; i < 8; i++){ const a = (FX.ringRot + 22.5 + i * 45) * Math.PI / 180; oct.push([cx + Math.cos(a) * R * 1.42, cy + Math.sin(a) * R * 1.42]); }
+  poly(oct, col, .9, 1.5); const oct2 = oct.map(p => [cx + (p[0] - cx) * .94, cy + (p[1] - cy) * .94]); poly(oct2, col, .3, 1);
+  for (let i = 0; i < 8; i++){ const p = pos(i), q = pos((i + 1) % 8); line(p[0], p[1], q[0], q[1], col, .6, 1); }
+  const p4 = pos(4); dash([3, 4]); line(p4[0], p4[1], cx, cy, dorm ? COL.faint : COL.gn, .7, 1); dash();
+  const pu = (dorm || RM) ? 0 : Math.sin(FX.t / 600) * 3;
+  glow(dorm ? COL.faint : COL.gn, dorm ? 0 : 18); circ(cx, cy, 13 + pu, dorm ? COL.faint : COL.gn, 1, 1.5); circ(cx, cy, 5, null, dorm ? .3 : .9, 1, dorm ? COL.faint : COL.gn); noglow();
+  hit('core', cx - 24, cy - 24, 48, 48);
+  for (let i = 0; i < 8; i++){
+    const p = pos(i), s = 13; fill(p[0] - s, p[1] - s, s * 2, s * 2, '#060a0b', 1); rect(p[0] - s, p[1] - s, s * 2, s * 2, col, 1, 1.5);
+    rect(p[0] - 4, p[1] - 4, 8, 8, col, .5, 1); if (S.hive.alcoves[i]) fill(p[0] - 2, p[1] - 2, 4, 4, COL.text, .8);
+    hit('jn:' + i, p[0] - 22, p[1] - 22, 44, 44);
+  }
+  const ap = pos(S.hive.aperture), ax = cx + (ap[0] - cx) * 1.5, ay = cy + (ap[1] - cy) * 1.5, c2 = dorm ? COL.dim : COL.rd;
+  line(ap[0], ap[1], ax, ay, c2, .8, 1.5); glow(c2, 12); diamond(ax, ay, 7, c2, 1, true); noglow(); if (!dorm) pulse(ax, ay, COL.rd, 8, 22);
+  hit('aperture', ax - 22, ay - 22, 44, 44);
+  if (!dorm) text(WE[Math.floor(S.hive.aboard / 3) % WE.length], cx, 40, COL.hv, .85, 11); else text('[SILENT]', cx, 40, COL.dim, 1, 11);
+  const me = l.at === 'hv' ? [cx, cy] : pos(k); FX.you = {x:me[0], y:me[1]}; youMark(me[0], me[1]);
+}
+/* ---------- the HUD frame, the caption and the buttons ---------- */
+const NOTES = {
+  universe:['LEVEL 00','No placement puts a ship here. The question at this height is whether the signal still reads. It does: the HUD gives a bearing at every level, so a beacon can pull you across the whole tree.'],
+  filament:['LEVEL 01','Only the hive can show here, with its switch set to “in transit”. A ship this high is an event, not a place. Does meeting it on the filament feel bigger, or just farther from anything you care about?'],
+  sector:['LEVEL 02','Sectors hold no ships in any placement. They are the corridor you cross on the way.'],
+  nullreach:['LEVEL 02 · NULL REACH','A derelict adrift here gives the reach a second reason to exist besides the echo. It is also the loneliest placement: nothing else on the menu but one star.'],
+  system:['LEVEL 03 · MY PICK','In orbit, listed after the planets, so planet numbers never move. Try s here: the orbit scan is the “you looked” way of finding a ship without any beacon.'],
+  planet:['LEVEL 04','Low orbit: the ship is listed after the countries. It is one level closer to the street, but does a ship read oddly next to a list of countries?'],
+  country:['LEVEL 05','No placement puts a ship here. Does that feel like a gap, or like ground that belongs to the planet?'],
+  city:['LEVEL 06','No placement puts a ship here either. A spaceport would live at this level if there were one.'],
+  street:['LEVEL 07','Where the game starts. With the grounded placement the hulk sits among the buildings: the cheapest ship to reach, and the least like a ship. Compare the climb from here to level 03 with the beacon on and off.'],
+  approach:['Q3 · READING THE HULL','A lobby for the ship: silhouette, fate readable from outside, s for the hull scan. Does looking before boarding feel like a decision, or like one more Enter?'],
+  airlock:['Q1 · THE ONLY DOOR','Everything aboard is measured from here. Watch “last walk-out” in the cost panel after you leave, then flip the exit switch and compare.'],
+  deck:['Q1 · THE SPINE','Same u / d / c as a building’s elevator. Five decks placed by function: bridge on top, reactor at the bottom, the trait decides the middle. With the exit switch on “anywhere”, l appears here.'],
+  passage:['DOORS STILL TELL THE TRUTH','Inscriptions are free; s gives trace and room type. Sealed hatches are the promise that the ship has a second state.'],
+  room:['ROOMS','Same t / f / b / l as the game. Log fragments pin themselves to your ticker the first time you enter.'],
+  reactor:['Q2 · THE FIRST HEART','The mirror of the ritual, cut down to one gesture: feed the core two items. It costs you a merge’s worth of buffer and changes every screen aboard. Is the second walk a reward?'],
+  pod:['THE PANIC BUTTON','One use. It breaks the airlock rule once, and drops you on a street instead of where you docked.'],
+  hold3:['WHERE THE NUMBER COMES FROM','The Hidden Frequency you carried was this container’s hum. Taking it is what the hive hears.'],
+  cryo:['FATE','The ship is not a tomb. Dormant, crewed by sleepers, one missing. Fate is the fourth axis after culture, era and trait.'],
+  bridge:['THE SECOND HEART','log assembles the fragments. n launches: the ship moves, you stay on the bridge, and the walk down to the airlock ends somewhere new. After that it is yours.'],
+  hiveap:['Q4 · IT FOUND YOU','You did not discover this entry; it appeared. Compare this screen with the hauler’s approach: no class, no decks, no name, and the door opened first.'],
+  hive:['Q4 · SAME WORDS, DIFFERENT PLACE','Every subjunction has the same text on purpose. The drain rises the longer you stay, and the aperture moves away from you every four prompts. Is that dread, or just arithmetic?'],
+  vinculum:['THE LORE HOOK','The hive’s heart has the same name as your interface. Severing it silences the voice, stops the aperture, and returns the drain to normal.']
+};
+NOTES.bfloor = ['THE BASE GAME · ELEVATOR','The same picture as the ship, on purpose: a spine, levels, doors. The difference is what is missing: no hull, no top floor, and you may leave from anywhere. Is one renderer for both honest, or does a ship need its own look?'];
+NOTES.bcorridor = ['THE BASE GAME · DOORS','Material, state and inscription are on the door for free; s gives trace and room type. In the terminal this is a list you read; here it is a row you see. Which one makes you choose more carefully?'];
+NOTES.broom = ['THE BASE GAME · INSIDE AN APARTMENT','Going through a door changes the picture: the building steps back and the apartment becomes a floor plan, its rooms side by side with open doorways. The floor only ever shows doors. Does the apartment feel like a place of its own now, or like one screen too many?'];
+NOTES.street = ['LEVEL 07 · THE STREET','Where the game starts. Fronts are drawn to their real height, three floors to a hundred, and the row pans to the street’s last front. With the grounded placement the hulk sits at the head of the row: the cheapest ship to reach, and the least like a ship.'];
+
+function depthNow(){
+  const l = L(), base = KIND[N(worldPos()).kind].level;
+  if (l.t === 'w') return base;
+  if (inB(l)) return 8 + (l.at === 'dk' ? 1 : l.at === 'ps' ? 2 : 4);
+  if (l.at === 'ap' || l.at === 'al' || l.at === 'hap') return base + 1;
+  if (l.at === 'dk' || l.at === 'hj') return base + 2;
+  return l.at === 'ps' || l.at === 'hv' ? base + 3 : base + 5;
+}
+function paint(){
+  const v = FX.view = view(), l = L(), dead = S.mode === 'dead', d = decay();
+  $('app').setAttribute('data-frame', dead ? 'dead' : v.frame);
+  $('app').style.filter = d > 0 ? 'saturate(' + (1 - d * .9).toFixed(2) + ') contrast(' + (1 + d * .2).toFixed(2) + ')' : '';
+  // instruments: Coherence as a dial
+  const cls = S.coh >= 70 ? 'gn' : S.coh >= 30 ? 'yl' : 'rd', b = bearing();
+  $('inst').innerHTML = '<div class="meter ' + cls + '">' + c('k','COHERENCE') + '<span class="cohbar"><i style="width:' + clamp(S.coh, 0, 100) + '%"></i></span><b>' + Math.max(0, S.coh) + '</b></div>' +
+    '<span class="n">' + c('k','MOVES ') + '<b>' + S.steps + '</b></span><span class="n">' + c('k','DEPTH ') + '<b>' + depthNow() + '</b></span><span class="n">' + c('k','DRAIN ') + '<b class="' + (drainNow() > O.drain ? 'rd' : '') + '">' + drainNow() + '</b></span>';
+  $('sig').className = 'sig ' + (b ? b.cls : '') + (b && b.cls === 'dim' ? ' flat' : '');
+  $('sig').innerHTML = b ? '<span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>' + esc(b.text) + '</span>' : '';
+  // caption
+  let h = '';
+  if (S.mode === 'launch') h += '<h2>PLOTTING TABLE</h2><div class="list">' + DESTS.filter(q => q.id !== S.ship.at).map(q => '<button type="button" class="item" data-dest="' + q.id + '">' + c('yl','▸') + '<span>' + esc(q.label) + '</span></button>').join('') + '<button type="button" class="item" data-g="close">' + c('dim','esc') + '<span>Cancel</span></button></div>';
+  else h += '<div class="eyebrow">' + esc(whereSegs().slice(-1)[0][0]) + '</div><h2>' + esc(v.title) + '</h2><div class="tags">' + v.tags.join('') + '</div><div class="desc">' + v.desc.filter(Boolean).map(p => '<p>' + esc(p) + '</p>').join('') + '</div><div class="rows">' + v.rows.map(r => '<div>' + r + '</div>').join('') + '</div>';
+  h += '<div class="msgs">' + S.msg.map(m => '<div>' + m + '</div>').join('') + '</div>';
+  $('cap').innerHTML = h;
+  // the pad: each direction says what it does from here
+  const dd = dead ? {} : dirs(), used = [];
+  const pb = (k, sym, cl) => { const q = dd[k]; if (q && q.o) used.push(q.o); if (q && q.alias) return ''; return '<button type="button" class="pb ' + cl + '" data-dir="' + k + '"' + (q ? '' : ' disabled') + ' aria-label="' + esc(k + (q ? ': ' + q.label : '')) + '"><b>' + sym + '</b><span>' + esc(q ? q.label : '') + '</span></button>'; };
+  $('pad').innerHTML = dead ? '<button type="button" class="pb mid" data-g="reboot"><b>↵</b><span>rebuild</span></button>' :
+    pb('esc', 'esc', 'e') + pb('left', '◀', 'l') + pb('up', '▲', 'u') + pb('down', '▼', 'd') + pb('right', '▶', 'r') + pb('enter', '↵', 'mid') + '<button type="button" class="pb scan" data-g="scan"' + (S.mode === 'main' ? '' : ' disabled') + '><b>s</b><span>scan</span></button>';
+  // what the pad does not cover: named actions as chips, numbered places as a short list
+  let chips = '', tg = '';
+  if (!dead && S.mode === 'main') v.opts.forEach((o, i) => {
+    if (/^\d+$/.test(o.k)){ const on = l.t === 'w' ? o.hit === (FX.selList || [])[S.sel] : l.t === 's' && l.at === 'ps' && i === S.door; tg += '<button type="button" class="tg' + (o.seen ? ' seen' : '') + (on ? ' sel' : '') + '" data-o="' + i + '"><kbd>' + pad2(+o.k) + '</kbd><span>' + esc(o.text) + '</span></button>'; }
+    else if (o.k !== '[' && o.k !== ']' && used.indexOf(o) < 0) chips += '<button type="button" class="chip ' + (o.cls || '') + '" data-o="' + i + '"><kbd>' + esc(o.k) + '</kbd>' + esc(o.text) + '</button>';
+  });
+  if (!dead && S.pick >= 0 && S.buffer[S.pick]){ chips += '<button type="button" class="chip rd" data-g="destroy"><kbd>x</kbd>Destroy ' + esc(S.buffer[S.pick].name) + '</button>'; if (l.t === 's' && l.at === 'rm') chips += '<button type="button" class="chip" data-g="drop">Drop it in this room</button>'; }
+  $('chips').innerHTML = chips; $('targets').innerHTML = tg;
+  // the room's objects and your buffer, as tiles
+  $('floor').innerHTML = !dead && l.t === 's' && l.at === 'rm' ? objsAt(l).map((o, i) => '<button type="button" class="tile fl" data-take="' + i + '"><span>' + esc(o) + '</span><em>take</em></button>').join('') : '';
+  let tiles = '';
+  for (let i = 0; i < 16; i++){ const it = S.buffer[i]; tiles += it ? '<button type="button" class="tile' + (it.beacon ? ' beacon' : '') + '" data-buf="' + i + '" aria-pressed="' + (S.pick === i) + '"><span>' + esc(it.name) + '</span><em>' + it.hz + ' Hz' + (it.beacon ? ' · beacon' : '') + '</em></button>' : ''; }
+  $('buf').innerHTML = tiles; $('buf').setAttribute('data-head', 'QUANTUM BUFFER ' + S.buffer.length + '/16 · ' + (S.pick >= 0 ? 'NOW CLICK ANOTHER TO MERGE (+15)' : 'CLICK TWO TO MERGE'));
+  $('log').innerHTML = S.ticker.slice().reverse().map(m => '<div>' + m + '</div>').join('');
+  // the depth gauge
+  const path = ancestors(worldPos()).reverse(), tu = ancestors(S.ship.at), beacon = b && b.cls === 'yl' && !S.ship.owned, common = beacon ? path.slice().reverse().find(id => tu.indexOf(id) >= 0) : null;
+  let g = '', kind = 'universe';
+  for (let lv = 0; lv < 8; lv++){
+    const id = path[lv], n = id ? N(id) : null; if (n) kind = n.kind;
+    const mk = (id && S.ship.at === id ? c(S.ship.owned ? 'gn mk' : 'rs mk', '◈') : '') + (id && S.hive.present && S.hive.at === id ? c('rd mk', '◆') : '');
+    const you = l.t === 'w' && lv === path.length - 1, bear = id && id === common && !(you && S.ship.at === id);
+    if (n) g += '<li><button type="button" class="rung ' + (you ? 'you' : 'past') + (bear ? ' bear' : '') + '"' + (!you && l.t === 'w' ? ' data-climb="' + id + '"' : '') + ' title="' + esc(KLABEL[n.kind] + ' — ' + n.name) + '"><span class="lv">' + pad2(lv) + '</span><span>' + esc(KIND[n.kind].icon) + '</span><span class="nm">' + esc(n.name) + '</span><span>' + mk + '</span></button></li>';
+    else g += '<li><span class="rung"><span class="lv">' + pad2(lv) + '</span><span>' + esc(KIND[kind].icon) + '</span><span class="nm">' + esc(KLABEL[kind].toLowerCase()) + '</span><span></span></span></li>';
+    kind = KIND[kind].child || kind;
+  }
+  if (l.t !== 'w') whereSegs().forEach((s, i, all) => { g += '<li><span class="rung in' + (i === all.length - 1 ? ' you' : '') + '"><span class="lv">' + (i === 0 ? '08' : '') + '</span><span>' + (i === 0 ? (inB(l) ? '⌂' : inH(l) ? '◈' : '◆') : '·') + '</span><span class="nm">' + esc(s[1] && i === 0 ? s[1] : s[0].toLowerCase() + (s[1] ? ' ' + s[1] : '')) + '</span><span></span></span></li>'; });
+  $('gauge').innerHTML = g + '<li class="cost">' + (l.t === 'w' && path.length > 1 ? 'Click a level above to climb to it: one move per level.' : l.t === 'w' ? 'The root. Everything is below you.' : 'Inside. The way back up starts at the door.') + '</li>';
+  // test bench
+  const wp = worldPos(), wl = KIND[N(wp).kind].level;
+  $('ladder').innerHTML = LADDER.map((ids, lv) => {
+    const marks = [];
+    if (ids.indexOf(S.ship.at) >= 0) marks.push(c('rs b','◈ hauler'));
+    if (S.hive.at && ids.indexOf(S.hive.at) >= 0) marks.push(c(S.hive.present ? 'rd b' : 'faint','◆ hive' + (S.hive.present ? '' : ' (not yet)')));
+    const you = lv === Math.min(wl, 7);
+    if (you) marks.push(c('yl b','@ you' + (l.t === 'w' ? '' : ' (inside)')));
+    return '<div class="r' + (you ? ' you' : '') + '"><span>' + pad2(lv) + '</span><span>' + esc(KIND[N(ids[0]).kind].icon) + '</span><span>' + esc(ids.map(id => N(id).name).join(' · ')) + '</span><span>' + marks.join(' ') + '</span></div>';
+  }).join('') + (LADDER.some(ids => ids.indexOf(S.ship.at) >= 0) ? '' : '<div class="r"><span>03</span><span>☼</span><span>' + esc(N(S.ship.at).name) + '</span><span>' + c('rs b','◈ hauler') + '</span></div>');
+  const nt = NOTES[v.note] || NOTES.room;
+  $('note').innerHTML = '<div class="q">' + esc(nt[0]) + '</div><p>' + esc(nt[1]) + '</p>';
+  const m = S.m;
+  $('metrics').innerHTML = [
+    ['Moves', m.prompts], ['Coherence spent', m.spent], ['Moves aboard, this boarding', m.aboardPrompts], ['Coherence spent aboard', m.aboardSpent],
+    ['Last walk-out (last room → off the ship)', m.lastWalkOut === null ? '—' : m.lastWalkOut + ' moves'],
+    ['Log fragments', Object.keys(S.ship.logs).length + '/5'], ['Hauler', S.ship.owned ? 'yours' : S.ship.lit ? 'awake' : 'dormant'],
+    ['Hive', O.hiveAt === 'off' ? 'off' : !S.hive.present ? 'not arrived' : S.hive.dormant ? 'silent' : 'present'], ['Reboots', m.reboots]
+  ].map(r => '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>').join('');
+  $('seedLine').textContent = 'Seed ' + O.seed + ' · the scripted path never changes; every sibling around it is grown from this number, the same way each time.';
+}
+/* ---------- wiring: click, tap, arrows ---------- */
+function doOpt(o){
+  if (!o) return;
+  const h = o.hit && FX.hits.find(q => q.id === o.hit);
+  FX.focus = h ? {x:h.x + h.w / 2, y:h.y + h.h / 2} : null;
+  act(o);
+}
+const optBy = f => FX.view && S.mode === 'main' ? FX.view.opts.find(f) : null;
+function hitsAt(e){
+  const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+  return FX.hits.filter(q => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h).reverse();
+}
+cv.addEventListener('click', e => {
+  if (S.mode === 'dead'){ act(); return; }
+  for (const q of hitsAt(e)){
+    const o = optBy(p => p.hit === q.id);
+    if (o){ const i = (FX.selList || []).indexOf(q.id); if (i >= 0) S.sel = i; if (q.id.indexOf('sec:') === 0) S.door = +q.id.slice(4); doOpt(o); return; }
+  }
+});
+cv.addEventListener('mousemove', e => { cv.style.cursor = S.mode === 'dead' || hitsAt(e).some(q => optBy(p => p.hit === q.id)) ? 'pointer' : 'crosshair'; });
+document.querySelector('.console').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  const g = b.getAttribute('data-g');
+  if (g === 'reboot') act(); else if (g === 'close') closeSub(); else if (g === 'destroy') bufferDestroy(); else if (g === 'drop') dropObj(S.pick); else if (g === 'scan') act('scan');
+  else if (b.hasAttribute('data-dir')) runDir(b.getAttribute('data-dir'));
+  else if (b.hasAttribute('data-o')) doOpt(FX.view.opts[+b.getAttribute('data-o')]);
+  else if (b.hasAttribute('data-buf')) bufferClick(+b.getAttribute('data-buf'));
+  else if (b.hasAttribute('data-take')) takeObj(+b.getAttribute('data-take'));
+  else if (b.hasAttribute('data-dest')) launchTo(DESTS.find(q => q.id === b.getAttribute('data-dest')));
+});
+$('targets').addEventListener('mouseover', e => {   // pointing at a name points at it in the picture
+  const b = e.target.closest('.tg'); if (!b || S.mode !== 'main') return;
+  const o = FX.view.opts[+b.getAttribute('data-o')], l = L(), i = (FX.selList || []).indexOf(o.hit);
+  if (l.t === 'w' && i >= 0) S.sel = i; else if (l.t === 's' && l.at === 'ps') S.door = +b.getAttribute('data-o');
+});
+$('gauge').addEventListener('click', e => { const b = e.target.closest('[data-climb]'); if (b) climbTo(b.getAttribute('data-climb')); });
+document.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'select' || tag === 'input' || e.metaKey || e.ctrlKey || e.altKey) return;
+  const key = e.key, low = key.toLowerCase();
+  if (S.mode === 'dead'){ if (key === 'Enter' || key === ' '){ e.preventDefault(); act(); } return; }
+  if (key === 'Escape'){ e.preventDefault(); if (S.mode !== 'main') closeSub(); else if (S.pick >= 0){ S.pick = -1; paint(); } else runDir('esc'); return; }
+  if (S.mode !== 'main') return;
+  if (tag === 'button' && (key === 'Enter' || key === ' ')) return;
+  if (key.indexOf('Arrow') === 0 || key === 'Enter'){ e.preventDefault(); runDir(key === 'Enter' ? 'enter' : key.slice(5).toLowerCase()); return; }
+  if (low === 's'){ act('scan'); return; }
+  if (low === 'x' && S.pick >= 0){ bufferDestroy(); return; }
+  const o = optBy(p => p.k === low); if (o) doOpt(o);
+});
+
+function restart(){
+  G = {}; S = fresh(); FX.trans = null; FX.wakeT0 = -1; FX.hiveT0 = 0; FX.mx = null;
+  S.msg = [c('dim','A Hidden Frequency sits in your buffer, and it is pointing somewhere. Follow the amber pulse.')];
+  tick(c('yl','[SIGNAL] Registry ' + REG + ' · carrier faint')); paint();
+}
+function syncControls(){
+  $('oHauler').value = O.haulerAt; $('oHive').value = O.hiveAt; $('oStart').value = O.startAt; $('oExit').value = O.exitRule;
+  $('oDark').value = O.darkLit ? 'on' : 'off'; $('oDrain').value = String(O.drain); $('oSignal').value = O.signal ? 'on' : 'off'; $('oFx').value = O.fx ? 'on' : 'off';
+}
+$('oHauler').addEventListener('change', e => { O.haulerAt = e.target.value; restart(); });
+$('oHive').addEventListener('change', e => { O.hiveAt = e.target.value; restart(); });
+$('oStart').addEventListener('change', e => { O.startAt = e.target.value; restart(); });
+$('oDark').addEventListener('change', e => { O.darkLit = e.target.value === 'on'; restart(); });
+$('oExit').addEventListener('change', e => { O.exitRule = e.target.value; paint(); });
+$('oDrain').addEventListener('change', e => { O.drain = parseInt(e.target.value, 10); paint(); });
+$('oSignal').addEventListener('change', e => { O.signal = e.target.value === 'on'; paint(); });
+$('oFx').addEventListener('change', e => { O.fx = e.target.value === 'on'; paint(); });
+$('bRestart').addEventListener('click', restart);
+$('bRefill').addEventListener('click', () => { if (S.mode === 'dead') return; S.coh = 100; paint(); });
+$('bSeed').addEventListener('click', () => { O.seed = (O.seed + 1 + Math.floor(Math.random() * 9000)) % 10000; restart(); });
+$('bBench').addEventListener('click', () => { const b = $('bench'), open = b.hidden; b.hidden = !open; $('bBench').setAttribute('aria-expanded', String(open)); });
+
+function start(data){
+  resize();
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(cv); else window.addEventListener('resize', resize);
+  if (data && data.O && data.S && data.S.loc && data.S.loc.t){ O = Object.assign(O, data.O); S = data.S; FX.mx = null; syncControls(); paint(); }
+  else { syncControls(); restart(); }
+  requestAnimationFrame(frame);
+}
+try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => ({O:O, S:S})); } catch (err) {}
+if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(start);
+else start((window.claude && window.claude.hot && window.claude.hot.data) || {});
+})();
+</script>
+</body>
+</html>
