@@ -43,17 +43,18 @@ button:focus-visible,select:focus-visible,canvas:focus-visible{outline:1px solid
 @media (max-width:900px){.deck{grid-template-columns:minmax(0,1fr)}}
 .main,.console{display:flex;flex-direction:column;gap:6px;min-width:0}
 /* the depth rail: an altimeter beside the picture. Positions ride on --p so a phone can lay it on its side */
-.view{display:grid;grid-template-columns:46px minmax(0,1fr);gap:6px;align-items:stretch;min-width:0}
+.view{display:grid;grid-template-columns:54px minmax(0,1fr);gap:6px;align-items:stretch;min-width:0}
 .rail{display:flex;flex-direction:column;gap:6px;min-width:0}
 .rtrack{position:relative;flex:1 1 auto;border:1px solid var(--rule);background:var(--panel);min-height:240px}
 .rtrack::before{content:"";position:absolute;left:50%;top:4%;bottom:3%;width:2px;margin-left:-1px;background:repeating-linear-gradient(to bottom,var(--rule-hi) 0 3px,transparent 3px 7px)}
 .rfill{position:absolute;left:50%;top:4%;height:var(--f);width:2px;margin-left:-1px;background:var(--cy);box-shadow:0 0 8px var(--cy);transition:height .55s cubic-bezier(.3,.8,.3,1)}
-.rn{all:unset;box-sizing:border-box;position:absolute;left:50%;top:var(--p);width:24px;height:20px;margin:-10px 0 0 -12px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--faint);background:var(--panel);cursor:default;z-index:1}
-.rn.in{font-size:10px;width:18px;height:15px;margin:-7.5px 0 0 -9px}
+.rn{all:unset;box-sizing:border-box;position:absolute;left:50%;top:var(--p);width:28px;height:24px;margin:-12px 0 0 -14px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--faint);background:var(--panel);cursor:default;z-index:1}
+.rn.in{width:22px;height:18px;margin:-9px 0 0 -11px}
+.rn svg{display:block} .rn.future{color:#2c4446} .rn.past svg{filter:drop-shadow(0 0 3px rgba(85,214,214,.6))} .rn.you svg{filter:drop-shadow(0 0 4px rgba(230,195,92,.8))}
 .rn.past{color:var(--cy)} .rn.you{color:var(--yl);font-weight:700} .rn[data-climb]{cursor:pointer} .rn[data-climb]:hover,.rn:focus-visible{color:var(--yl)}
 .rn.ship::after{content:"◈";position:absolute;right:-10px;top:-5px;font-size:10px;color:var(--rs);text-shadow:0 0 6px var(--rs)} .rn.ship.off::after{content:"◈";top:9px;opacity:.75}
 .rn.hive::before{content:"◆";position:absolute;left:-9px;top:-5px;font-size:10px;color:var(--rd);animation:rblink 1s steps(2) infinite}
-.ryou{position:absolute;left:4px;right:4px;top:var(--p);height:26px;margin-top:-13px;border:1px solid var(--yl);box-shadow:0 0 12px rgba(230,195,92,.45),inset 0 0 8px rgba(230,195,92,.15);pointer-events:none;transition:top .55s cubic-bezier(.3,.8,.3,1);z-index:2}
+.ryou{position:absolute;left:5px;right:5px;top:var(--p);height:30px;margin-top:-15px;border:1px solid var(--yl);box-shadow:0 0 12px rgba(230,195,92,.45),inset 0 0 8px rgba(230,195,92,.15);pointer-events:none;transition:top .55s cubic-bezier(.3,.8,.3,1);z-index:2}
 .rspan{position:absolute;left:50%;top:var(--a);height:var(--b);width:8px;margin-left:-4px;background:rgba(230,195,92,.4);pointer-events:none}
 .rchev{position:absolute;right:3px;top:var(--a);height:var(--b);width:4px;pointer-events:none;background:repeating-linear-gradient(to bottom,var(--yl) 0 4px,transparent 4px 12px);background-size:4px 12px}
 .rchev.up{animation:rup .5s linear infinite} .rchev.down{animation:rdown .5s linear infinite}
@@ -94,6 +95,8 @@ button:focus-visible,select:focus-visible,canvas:focus-visible{outline:1px solid
   radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
 .cap{border:1px solid var(--frame);background:var(--panel);padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .eyebrow{font-size:10.5px;letter-spacing:.16em;color:var(--dim);margin-bottom:-5px}
+.cap h2{display:flex;align-items:center;gap:8px}
+.cap h2 svg{flex:none}
 .cap h2{font-size:13.5px;margin:0;color:var(--frame);overflow-wrap:anywhere;text-wrap:balance}
 .tags{display:flex;flex-wrap:wrap;gap:2px 10px}
 .desc{font-family:var(--sans);font-size:14px;line-height:1.55}
@@ -1137,17 +1140,48 @@ function stars(key, n){
   const r = rng('stars|' + key);
   for (let i = 0; i < n; i++){ const x = r() * CW, y = r() * CH, tw = RM ? 1 : .6 + .4 * Math.sin(FX.t / 700 + i); fill(x, y, 1, 1, COL.text, (.12 + r() * .3) * tw); }
 }
-const GLYPH = {
-  universe:(x, y, r, col, a) => { for (let i = 1; i <= 3; i++) circ(x, y, r * i / 3, col, a * (1.1 - i * .25), 1); },
-  filament:(x, y, r, col, a) => { stroke(col, a, 1.5); ctx.beginPath(); for (let i = -10; i <= 10; i++){ const px = x + r * i / 10, py = y + Math.sin(i / 10 * Math.PI * 2 + (RM ? 0 : FX.t / 1200)) * r * .25; i === -10 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); } ctx.stroke(); },
-  sector:(x, y, r, col, a) => { dash([2, 3]); circ(x, y, r, col, a, 1.5); dash(); circ(x, y, r * .35, col, a * .6, 1); },
-  nullreach:(x, y, r, col, a) => { dash([6, 5]); circ(x, y, r, COL.mg, a, 1.5); dash(); },
-  system:(x, y, r, col, a) => { circ(x, y, r * .45, col, a, 1.5); for (let i = 0; i < 8; i++){ const an = i * Math.PI / 4; line(x + Math.cos(an) * r * .6, y + Math.sin(an) * r * .6, x + Math.cos(an) * r, y + Math.sin(an) * r, col, a * .8, 1); } },
-  planet:(x, y, r, col, a) => { circ(x, y, r, col, a, 1.5); ctx.beginPath(); ctx.ellipse(x, y, r * .45, r, 0, 0, Math.PI * 2); stroke(col, a * .5, 1); ctx.stroke(); line(x - r, y, x + r, y, col, a * .5, 1); },
-  country:(x, y, r, col, a) => { const p = []; for (let i = 0; i < 6; i++) p.push([x + Math.cos(i * Math.PI / 3) * r, y + Math.sin(i * Math.PI / 3) * r]); poly(p, col, a, 1.5); },
-  city:(x, y, r, col, a) => { rect(x - r, y - r, r * 2, r * 2, col, a, 1.5); for (let i = 1; i < 3; i++){ line(x - r + r * 2 * i / 3, y - r, x - r + r * 2 * i / 3, y + r, col, a * .5, 1); line(x - r, y - r + r * 2 * i / 3, x + r, y - r + r * 2 * i / 3, col, a * .5, 1); } },
-  street:(x, y, r, col, a) => { line(x - r, y - 3, x + r, y - 3, col, a, 1.5); line(x - r, y + 3, x + r, y + 3, col, a, 1.5); }
-};
+/* ---------- one icon set, drawn: the same paths feed the rail (SVG) and the picture (canvas) ----------
+   24x24 grid. Each kind has a silhouette of its own: s = stroked paths, f = filled paths. */
+const ICON = (() => {
+  const R = v => Math.round(v * 100) / 100;
+  const pc = (x, y, r) => 'M' + R(x - r) + ',' + R(y) + 'a' + r + ',' + r + ' 0 1,0 ' + R(2 * r) + ',0a' + r + ',' + r + ' 0 1,0 ' + R(-2 * r) + ',0';
+  const pl = (pts, close) => 'M' + pts.map(q => R(q[0]) + ',' + R(q[1])).join('L') + (close ? 'Z' : '');
+  const bx = (x, y, w, h) => pl([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], true);
+  const arcs = (cx, cy, r, n, gap) => { let d = ''; for (let i = 0; i < n; i++){ const a0 = (i + gap / 2) / n * 6.2832, a1 = (i + 1 - gap / 2) / n * 6.2832; d += 'M' + R(cx + r * Math.cos(a0)) + ',' + R(cy + r * Math.sin(a0)) + 'A' + r + ',' + r + ' 0 0,1 ' + R(cx + r * Math.cos(a1)) + ',' + R(cy + r * Math.sin(a1)); } return d; };
+  const tilt = (cx, cy, rx, ry, deg) => { const t = deg * Math.PI / 180, dx = rx * Math.cos(t), dy = rx * Math.sin(t); return 'M' + R(cx - dx) + ',' + R(cy - dy) + 'a' + rx + ',' + ry + ' ' + deg + ' 1,0 ' + R(2 * dx) + ',' + R(2 * dy) + 'a' + rx + ',' + ry + ' ' + deg + ' 1,0 ' + R(-2 * dx) + ',' + R(-2 * dy); };
+  const ray = k => { const a = (k * 60 - 90) * Math.PI / 180; return [[12 + 4 * Math.cos(a), 12 + 4 * Math.sin(a)], [12 + 8 * Math.cos(a), 12 + 8 * Math.sin(a)], [12 + 9.8 * Math.cos(a), 12 + 9.8 * Math.sin(a)]]; };
+  return {
+    universe:{s:[0, 1, 2, 3, 4, 5].map(k => pl(ray(k).slice(0, 2))).join(''), f:pc(12, 12, 2.3) + [0, 1, 2, 3, 4, 5].map(k => pc(ray(k)[2][0], ray(k)[2][1], 1.5)).join('')},
+    filament:{s:'M4,16C8,16 8,8 12,8S16,16 20,16', f:pc(4, 16, 1.9) + pc(12, 8, 1.9) + pc(20, 16, 1.9)},
+    sector:{s:arcs(12, 12, 9.2, 8, .3), f:pc(9, 9.8, 2.1) + pc(15.2, 11.2, 1.6) + pc(11.4, 15.6, 1.9)},
+    nullreach:{s:arcs(12, 12, 9.2, 6, .45) + pl([[7.5, 16.5], [16.5, 7.5]]), f:''},
+    system:{s:tilt(12, 12, 10, 4.2, -25), f:pc(12, 12, 3.3) + pc(21.06, 7.77, 1.7)},
+    planet:{s:pc(12, 12, 8.6) + 'M3.8,13.2C8,16.6 16,16.6 20.2,13.2', f:'M12,3.4a8.6,8.6 0 0,1 0,17.2a12.5,12.5 0 0,0 0,-17.2Z'},
+    country:{s:pl([[4, 8], [10, 4], [17, 6], [20.5, 12], [16, 19.5], [8, 20], [3.5, 14.5]], true), f:pc(12, 12, 2)},
+    city:{s:pl([[2, 20.5], [22, 20.5]]) + pl([[4, 20.5], [4, 12], [8.5, 12], [8.5, 20.5]]) + pl([[10, 20.5], [10, 4.5], [15.5, 4.5], [15.5, 20.5]]) + pl([[17, 20.5], [17, 9], [20.5, 9], [20.5, 20.5]]), f:''},
+    street:{s:pl([[4, 21], [10, 3]]) + pl([[20, 21], [14, 3]]) + pl([[12, 20.5], [12, 16]]) + pl([[12, 13], [12, 10]]) + pl([[12, 7.5], [12, 5.5]]), f:''},
+    building:{s:bx(7, 3, 10, 18) + pl([[10.5, 21], [10.5, 17], [13.5, 17], [13.5, 21]]), f:bx(9, 5.6, 2, 2) + bx(13, 5.6, 2, 2) + bx(9, 9.6, 2, 2) + bx(13, 9.6, 2, 2) + bx(9, 13.4, 2, 2) + bx(13, 13.4, 2, 2)},
+    floor:{s:pl([[3, 6.5], [21, 6.5]]) + pl([[3, 17.5], [21, 17.5]]), f:bx(3, 10.3, 18, 3.4)},
+    corridor:{s:bx(3, 4, 18, 16) + bx(9, 9, 6, 7) + pl([[3, 4], [9, 9]]) + pl([[21, 4], [15, 9]]) + pl([[3, 20], [9, 16]]) + pl([[21, 20], [15, 16]]), f:''},
+    apartment:{s:'M7,21V8.5a5,5 0 0,1 10,0V21' + pl([[4, 21], [20, 21]]), f:pc(14.4, 13.5, 1.3)},
+    room:{s:pl([[12, 3], [20, 7.5], [12, 12], [4, 7.5]], true) + pl([[4, 7.5], [4, 16.5], [12, 21], [20, 16.5], [20, 7.5]]) + pl([[12, 12], [12, 21]]), f:''},
+    ship:{s:pl([[17, 13.5], [22.5, 13.5]]) + pl([[18, 11.5], [20, 15.5]]) + pl([[20, 11.5], [18, 15.5]]) + pl([[4, 16], [2.5, 18.5]]) + pl([[7, 16], [5.5, 18.5]]), f:pl([[2.5, 16], [5.5, 9], [13.5, 9], [17, 12], [17, 16]], true)},
+    hive:{s:bx(4, 4, 16, 16) + pl([[9.33, 4], [9.33, 20]]) + pl([[14.67, 4], [14.67, 20]]) + pl([[4, 9.33], [20, 9.33]]) + pl([[4, 14.67], [20, 14.67]]), f:bx(9.33, 9.33, 5.34, 5.34)},
+    node:{s:pc(12, 12, 8.4) + pc(12, 12, 4.6), f:pc(12, 12, 1.9)}
+  };
+})();
+function icon(kind, size, cls){
+  const q = ICON[kind] || ICON.node;
+  return '<svg class="ic' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" width="' + size + '" height="' + size + '" aria-hidden="true"><path d="' + q.s + '" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' + (q.f ? '<path d="' + q.f + '" fill="currentColor"/>' : '') + '</svg>';
+}
+const P2 = {};
+function drawIcon(kind, x, y, r, col, a){
+  const q = ICON[kind] || ICON.node; if (typeof Path2D === 'undefined') return;
+  const c2 = P2[kind] || (P2[kind] = {s:new Path2D(q.s), f:q.f ? new Path2D(q.f) : null}), k = r * 2 / 24;
+  ctx.save(); ctx.translate(x - r, y - r); ctx.scale(k, k); ctx.globalAlpha = a == null ? 1 : a; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = clamp(1.6 / k, .9, 2.2); ctx.stroke(c2.s); if (c2.f) ctx.fill(c2.f); ctx.restore();
+}
+const GLYPH = {}; Object.keys(ICON).forEach(kind => { GLYPH[kind] = (x, y, r, col, a) => drawIcon(kind, x, y, r * 1.3, col, a); });
 function brackets(x, y, r, col){
   const k = 5; [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(q => { const px = x + q[0] * r, py = y + q[1] * r; poly([[px - q[0] * k, py], [px, py], [px, py - q[1] * k]], col, 1, 1.5, null, true); });
 }
@@ -1155,7 +1189,8 @@ function drawParent(n, b){
   if (!n.parent) return null;
   const p = N(n.parent), x = CW / 2, y = 40;
   text('▲ UP TO ' + KLABEL[p.kind], x, y - 6, COL.dim, 1, 9);
-  text(KIND[p.kind].icon + ' ' + cut(p.name, 26), x, y + 7, COL.text, 1, 11, 'center', true);
+  text(cut(p.name, 26), x + 9, y + 7, COL.text, 1, 11, 'center', true);
+  drawIcon(p.kind, x + 9 - ctx.measureText(cut(p.name, 26)).width / 2 - 12, y + 7, 7, COL.text, 1);
   hit('parent', x - 110, 26, 220, 34);
   if (b && b.dir === 'up'){ pulse(x, y, COL.yl, 10, 34); }
   return {x:x, y:y};
@@ -1533,7 +1568,7 @@ function paint(){
   // caption
   let h = '';
   if (S.mode === 'launch') h += '<h2>PLOTTING TABLE</h2><div class="list">' + DESTS.filter(q => q.id !== S.ship.at).map(q => '<button type="button" class="item" data-dest="' + q.id + '">' + c('yl','▸') + '<span>' + esc(q.label) + '</span></button>').join('') + '<button type="button" class="item" data-g="close">' + c('dim','esc') + '<span>Cancel</span></button></div>';
-  else h += '<div class="eyebrow">' + esc(whereSegs().slice(-1)[0][0]) + '</div><h2>' + esc(v.title) + '</h2><div class="tags">' + v.tags.join('') + '</div><div class="desc">' + v.desc.filter(Boolean).map(p => '<p>' + esc(p) + '</p>').join('') + '</div><div class="rows">' + v.rows.map(r => '<div>' + r + '</div>').join('') + '</div>';
+  else h += '<div class="eyebrow">' + esc(whereSegs().slice(-1)[0][0]) + '</div><h2>' + icon(latLevels().slice(-1)[0].kind, 22) + '<span>' + esc(v.title.replace(/^[^A-Za-z0-9\[]+\s*/, '')) + '</span></h2><div class="tags">' + v.tags.join('') + '</div><div class="desc">' + v.desc.filter(Boolean).map(p => '<p>' + esc(p) + '</p>').join('') + '</div><div class="rows">' + v.rows.map(r => '<div>' + r + '</div>').join('') + '</div>';
   h += '<div class="msgs">' + S.msg.map(m => '<div>' + m + '</div>').join('') + '</div>';
   $('cap').innerHTML = h;
   // the pad: each direction says what it does from here
@@ -1560,12 +1595,11 @@ function paint(){
     const lv = lvls[s];
     if (s < nLat){
       kind = lv.kind; const you = s === lvls.length - 1, climb = l.t === 'w' && s < nLat - 1, k = nLat - 1 - s;
-      rn += '<button type="button" class="rn ' + (you ? 'you' : 'past') + mk(s) + '" style="--p:' + yAt(s).toFixed(1) + '%"' + (climb ? ' data-climb="' + lv.id + '"' : '') + ' data-tip="' + esc(lv.type + ' — ' + lv.name + (climb ? ' · climb ' + k + (k === 1 ? ' level · ' : ' levels · ') + k + (k === 1 ? ' move' : ' moves') : you ? ' · you are here' : '')) + '" aria-label="' + esc(lv.type + ' ' + lv.name) + '">' + esc(KIND[lv.kind].icon) + '</button>';
-    } else rn += '<button type="button" class="rn future" style="--p:' + yAt(s).toFixed(1) + '%" data-tip="' + esc(KLABEL[kind] + ' · not reached on this thread') + '" tabindex="-1">' + esc(KIND[kind].icon) + '</button>';
+      rn += '<button type="button" class="rn ' + (you ? 'you' : 'past') + mk(s) + '" style="--p:' + yAt(s).toFixed(1) + '%"' + (climb ? ' data-climb="' + lv.id + '"' : '') + ' data-tip="' + esc(lv.type + ' — ' + lv.name + (climb ? ' · climb ' + k + (k === 1 ? ' level · ' : ' levels · ') + k + (k === 1 ? ' move' : ' moves') : you ? ' · you are here' : '')) + '" aria-label="' + esc(lv.type + ' ' + lv.name) + '">' + icon(lv.kind, 20) + '</button>';
+    } else rn += '<button type="button" class="rn future" style="--p:' + yAt(s).toFixed(1) + '%" data-tip="' + esc(KLABEL[kind] + ' · not reached on this thread') + '" tabindex="-1">' + icon(kind, 20) + '</button>';
     kind = KIND[kind].child || kind;
   }
-  const INI = {building:'⌂', ship:'◈', hive:'◆', floor:'▤', corridor:'▅', apartment:'▥', room:'□', node:'◉'};
-  lvls.slice(nLat).forEach((lv, j) => { const you = nLat + j === lvls.length - 1; rn += '<button type="button" class="rn in ' + (you ? 'you' : 'past') + '" style="--p:' + yAt(8 + j).toFixed(1) + '%" data-tip="' + esc(lv.type + ' — ' + lv.name + (lv.pos ? ' · ' + lv.pos.i + ' of ' + lv.pos.n : '') + (you ? ' · you are here' : '')) + '">' + (INI[lv.kind] || '·') + '</button>'; });
+  lvls.slice(nLat).forEach((lv, j) => { const you = nLat + j === lvls.length - 1; rn += '<button type="button" class="rn in ' + (you ? 'you' : 'past') + '" style="--p:' + yAt(8 + j).toFixed(1) + '%" data-tip="' + esc(lv.type + ' — ' + lv.name + (lv.pos ? ' · ' + lv.pos.i + ' of ' + lv.pos.n : '') + (you ? ' · you are here' : '')) + '">' + icon(lv.kind, 16) + '</button>'; });
   $('rnotches').innerHTML = rn;
   const tr = $('rtrack'), live = b && b.cls === 'yl' && !S.ship.owned && LT.ship && b.dir !== 'ship' && b.dir !== 'hull' && b.dir !== 'hold3', ch = $('rchev');
   tr.style.setProperty('--p', yAt(youSlot).toFixed(1) + '%'); tr.style.setProperty('--f', (yAt(youSlot) - 4).toFixed(1) + '%'); tr.classList.toggle('inside', l.t !== 'w');
@@ -1693,16 +1727,7 @@ document.querySelector('.main').addEventListener('click', e => { if (e.target.cl
 /* ---------- the lattice trace: `ll` as a dive from the universe to you, then the levels as a stack ---------- */
 const lat = $('lat'), lcv = $('lcv'), lctx = lcv.getContext('2d');
 const LT = {phase:'stack', t0:0, focus:0, lv:[], ship:null, hive:null};
-const XG = Object.assign({}, GLYPH, {
-  building:(x, y, r, col, a) => { rect(x - r * .5, y - r, r, r * 2, col, a, 1.5); for (let i = 1; i < 5; i++) line(x - r * .5, y - r + r * 2 * i / 5, x + r * .5, y - r + r * 2 * i / 5, col, a * .5, 1); },
-  floor:(x, y, r, col, a) => { rect(x - r, y - r * .35, r * 2, r * .7, col, a, 1.5); for (let i = 1; i < 4; i++) line(x - r + r * 2 * i / 4, y - r * .35, x - r + r * 2 * i / 4, y + r * .35, col, a * .5, 1); },
-  corridor:GLYPH.street,
-  apartment:(x, y, r, col, a) => { rect(x - r, y - r * .6, r * 2, r * 1.2, col, a, 1.5); line(x, y - r * .6, x, y - r * .15, col, a, 1); line(x, y + r * .25, x, y + r * .6, col, a, 1); },
-  room:(x, y, r, col, a) => { rect(x - r * .7, y - r * .7, r * 1.4, r * 1.4, col, a, 1.5); },
-  ship:(x, y, r, col, a) => { diamond(x, y, r * .8, col, a, false); line(x + r * .8, y, x + r * 1.7, y, col, a * .7, 1); },
-  hive:(x, y, r, col, a) => { rect(x - r * .75, y - r * .75, r * 1.5, r * 1.5, col, a, 1.5); rect(x - r * .3, y - r * .3, r * .6, r * .6, col, a * .6, 1); },
-  node:(x, y, r, col, a) => { circ(x, y, r * .6, col, a, 1.5); circ(x, y, r * .2, null, a, 1, col); }
-});
+const XG = GLYPH;
 function latLevels(){
   const l = L(), out = [], path = ancestors(worldPos()).reverse();
   path.forEach(id => { const n = N(id), par = n.parent; let pos = null; if (par){ const ks = kids(par); pos = {i:ks.indexOf(id) + 1, n:ks.length}; } out.push({kind:n.kind, type:KLABEL[n.kind], name:n.name, id:id, pos:pos}); });
