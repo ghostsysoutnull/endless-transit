@@ -22,7 +22,7 @@ Not included — read on demand. Current state: `tasks/RECOVERY_PROMPT.md`. Hist
 ---
 
 ## 🚀 Active Architecture & Roadmap
-- **Active Task:** none — see `tasks/todo.md`. The OOA refactor plan (all phases complete) is `docs/analysis/OOA_REFACTOR_PLAN.md` — read on demand, not included.
+- **Active Task:** the web port — `tasks/PORT_QUEUE.md`, run under the Standing Order (`.claude/CODEX.md`). Older records: `tasks/todo.md`. The OOA refactor plan (all phases complete) is `docs/analysis/OOA_REFACTOR_PLAN.md` — read on demand, not included.
 
 - **📜 Chronicles & Lore:** `journals/CHRONICLE_INDEX.md` → `journals/LOG_*` (read on demand)
 - **Backlog:** `tasks/backlog/`

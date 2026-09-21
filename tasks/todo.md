@@ -63,7 +63,8 @@
 - [x] Concept — ships, visual mock (2026-09-21): the whole game as one page; rules in `docs/analysis/SHIPS_RULES.md`; CONCEPT-002 opened (`docs/analysis/WEB_PORT_CONCEPT.md`); HK-024 and WF-012 logged. No source change; no chronicle, this line is the record.
 - [x] Concept — web port study (2026-09-21): ten user decisions, verified stack, `web/` tree, stages — `docs/analysis/WEB_PORT_STUDY.md`. No source change; no chronicle, this line is the record.
 - [x] Concept — web port, how the work is run (2026-09-21): one session per wave, one writer, agents read and check, tests first — study §12. No chronicle; this line is the record.
-- [ ] Next: **web port stage 0** — draft the plan to move Groovy into `terminal/` (study §9), `/grill`, Directive. Other open threads: **CONCEPT-001** (fill the §7 verdict column), **HK-021**, **HK-023** (the restore bullet is done, the rest is open), **HK-013** (8 long methods left), **HK-024** (the `KEYSTONE` glitch decision), O1 (HeadlessRunner DSL), WF-010/011/006/012.
+- [x] Workflow — port standing order (2026-09-21, user Directive): "hi" works `tasks/PORT_QUEUE.md` to the end; CODEX "The Standing Order". No chronicle; this line is the record.
+- [ ] Next: **the web port queue** — `tasks/PORT_QUEUE.md`, iteration I01 (port iterations add no lines here). Other open threads: **CONCEPT-001** (the verdict column), HK-021/023/024 (the port's fix list, queue decision 7), O1, WF-010/011/006/012.
 
 ---
 

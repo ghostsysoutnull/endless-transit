@@ -6,6 +6,10 @@ table. It sizes itself: step 0 picks a tier from the diff. It never commits, mer
 
 Origin: WF-007 (the gate) and WF-008 (the tiers) in `docs/analysis/WORKFLOW_BACKLOG.md`.
 
+**Web port queue sessions do not run this command.** Their close-out is the Standing Order in `.claude/CODEX.md`:
+gates green, queue ticked, handover true, `./vinc.sh --docs` green, commit, push — no chronicle, no retro (user,
+2026-09-21).
+
 ---
 
 ## 🌌 PHILOSOPHY

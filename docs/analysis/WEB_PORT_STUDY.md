@@ -1,7 +1,7 @@
 # The Web Port — Study and Decision Record
 **Created:** 2026-09-21 · **Backlog:** CONCEPT-002 (`tasks/backlog/CONCEPTS.md`) · **Predecessor:** `WEB_PORT_CONCEPT.md`
 (the seven questions this study answers).
-**Status:** STUDY — decisions recorded, **no plan yet.** It authorizes no source change and no folder move; each stage
+**Status:** STUDY — decisions recorded. **The plan is `tasks/PORT_QUEUE.md`; where it disagrees with this study (work order by playable iterations, publishing first, touch-first, no save export/import, no journal, no per-stage `/grill`), the queue wins.** It authorizes no source change and no folder move; each stage
 in §9 becomes work only through its own plan file, `/grill` and a Directive.
 **How decisions are asked in this effort:** one question per message, lettered options, a marked pick (user
 instruction, 2026-09-21, this effort only).

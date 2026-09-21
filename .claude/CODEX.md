@@ -4,7 +4,37 @@ This file defines the immutable behavioral mandates and workflow orchestration f
 
 ---
 
+## 🚦 THE STANDING ORDER — web port sessions (user Directive, 2026-09-21)
+For every session that works `tasks/PORT_QUEUE.md`, this section **replaces**: the Vinculum Protocol below, the
+"Explicit Confirmation" and "Git Gatekeeper" mandates of the 2026-03-11 post-mortem, Plan Mode Default, `/grill` as an
+authorization step, persona mandates 4–5, the 5-file cap and `/close-wave`. The rest of this file (OO principles, Shape
+table, coverage claims, tests before fixes) still governs the code that gets written.
+
+1. **"hi" means go, and keep going.** Read `tasks/RECOVERY_PROMPT.md` and `tasks/PORT_QUEUE.md`. Run anything under
+   "Reported by the tester" first, then the first unticked iteration, then the next — until the queue is empty. If the
+   session ends mid-run, the next "hi" continues from the queue.
+2. **The main session manages; sub-agents write.** Per iteration: branch `port/<id>-<name>` → one fresh sub-agent does
+   the work (it reads the queue's Decisions, the study, the Groovy source it ports and the web code so far; writes the
+   note `tasks/port/<id>.md`, tests first, then code; one commit per module with its tests, a pure move is one commit)
+   → the main session runs the gates itself → a second fresh agent reviews the diff against the iteration, the
+   Decisions and the eight OO principles, and confirmed findings are fixed → screenshots looked at, desktop and phone
+   → merge `--no-ff` → tick the queue, make the handover true → commit → push → confirm the live build answers.
+3. **No questions.** The user answered them up front — the queue's Decisions. Anything not covered: decide in the
+   spirit of those decisions, write the choice in the note, continue.
+4. **Safety net.** Merge only when every gate of the touched tree is green (`web/**` → `npm run check`, browser tests in
+   a desktop and a phone profile; Groovy → the `vinc.sh` gates). **The only early stop:** a gate still red after honest
+   tries — that iteration stays unmerged and the run ends with a plain report.
+5. **Lean records.** No chronicle, no retro, no blueprint, no `todo.md` line, no workflow-backlog entry — the note and
+   the merge commit are the record. A user correction still becomes a one-line lesson. `--docs` stays green while it exists.
+6. **Ends clean.** The last message says what was done, what the tester can try and where. No leftovers list, no
+   closing question.
+7. **No users, no compatibility.** Saves, journals and old seeds need no protection and no migration. Still name the
+   paths in `git add` — never `-A`.
+
+---
+
 ## 🛡️ THE VINCULUM PROTOCOL: Non-Action by Default
+*(Outside the web port queue. Queue sessions run under the Standing Order above.)*
 
 1. **Authorization**: This session is **READ-ONLY** and **ANALYSIS-ONLY** by default. No file creation, modification, deletion, or git operations (commit/push) are authorized without a specific **Directive**.
 2. **Directives vs. Inquiries**:
@@ -18,7 +48,7 @@ This file defines the immutable behavioral mandates and workflow orchestration f
 ---
 
 ## 🔋 Session Initialization Protocol
-Execute in order at the start of every session:
+Execute in order at the start of every session (**web port: step 1 of the Standing Order replaces this list**):
 1. **Orient** — Confirm the active task: read `tasks/todo.md` and `tasks/RECOVERY_PROMPT.md`.
 2. **Verify** — If beginning new implementation work, run `./vinc.sh --test` to confirm the baseline is green before touching any file.
 3. **Internalize** — Safety Mandates (above) are non-negotiable. No structural change proceeds without the lazy-loading law and structural collapse guard in mind.
