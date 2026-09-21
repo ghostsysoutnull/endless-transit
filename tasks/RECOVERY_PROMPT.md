@@ -7,15 +7,15 @@
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=222 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013; `NoNewStaticLogic` allow-list of 15 files in the ruleset, shrink-only — none of them a rule-holding class since HK-022)
 - **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room`, `TurnProcessor`, `NameGenerator`, `ProceduralFactory` and `Building` are `Verified`, 10 still `Baselined (not audited)`)
 - **Branch:** `master`. The last *code* merge is `55f9460` (HK-023 slice 1); only docs merged after it. A push republishes the site. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
-- **Active Work:** none; nothing blocks the next phase. All ten OOA phases and O2 are complete. Every wave closes through `/close-wave`, which picks its own tier from the diff (WF-007, WF-008).
-- **Next — user decision, none has a plan yet.** Every plan with a `src/` change now carries a **Shape table** (CODEX § 4, WF-009); `/grill` check 5 asks the six checked principles — HK-022 was the first wave through it (3 rows were enough).
+- **Active Work:** none; nothing blocks the next phase. All ten OOA phases and O2 are complete.
+- **Next — user decision, none has a plan yet.** Every plan with a `src/` change carries a **Shape table** (CODEX § 4, WF-009).
   - **CONCEPT-001** ships (hauler + hive): concept + playable text mock v1, `docs/analysis/SHIPS_CONCEPT.md`. **The user's stated next step is a parallel visual mock — brief in its §10; ask the visual-direction questions first.** Verdicts (§7) still empty; no plan until then.
   - **HK-021** residue of HK-015, low value: dead `Door.visited`, `/screenshots/` message, a dropped Keystone loses its flag, double `l` after an apartment, dead inscription pool. Any player-visible fix edits `docs/terminal/guide/players_guide.md` in the same commit.
   - **HK-023** game-side oddities found by the GitHub Pages audit, one fixed (a save below the Bedrock restores, `0x55f9460`); left: `run.sh --test` targets a missing file, map colours print as words, the model calls `ui.Terminal.clock`, the tally is not saved, two LIP walkers, a memento carries no mutations.
   - **HK-013** eight long methods left in the lint baseline (extract or re-baseline with a reason — never reformat to the recorded length).
   - **O1** HeadlessRunner DSL (optional, not started). **WF-010** (Medium) `/close-wave` has no post-merge step. **WF-011** (Low) plan approval vs Directive asks twice. **WF-006** (Low) complexity metric beside `MethodSize`, at the next cadence review.
   - **Undecided user question:** should the debug glitch `KEYSTONE` also prime the building? Today it gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions (diagnosed in the HK-019 session, nothing changed, not in the backlog).
-  - **Candidate lessons diet (user call, deferred):** only `infrastructure.md` and the post-mortems load every session now, domain lessons with their domain (`0xb629529`); rewriting bullets as rule + pointer needs bullet-by-bullet user review. New lessons already follow that form (CODEX). The chronicle index is no longer included.
+  - **Candidate lessons diet (user call, deferred):** rewriting the old lesson bullets as rule + pointer needs bullet-by-bullet user review (`0xb629529`); new lessons already follow that form.
 - **Known declared edges (HK-019):** a direct `game.exitLocation()` and the debug `BREACH` teleport do not reset corridor mode; old saves heal on the first `l`. Pre-HK-018 Keystones open nothing (bound by LIP, no name fallback).
 
 ## 🚀 How to Resume

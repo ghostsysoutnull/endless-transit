@@ -59,6 +59,7 @@
 - **A close-out that ends in a "leftovers" list is not a close-out**: run `/close-wave` after the wave's *last* action (for a wave that publishes: after the merge, the push and the live checks), or re-run its row 2 after them; whatever is left is either done or put to the user as one question — never reported as "small, not urgent". (GitHub Pages audit, user correction; WF-010.)
 - **A constraint stated with the request is outside "what is your take"**: give the take on what is still open; never argue against an ordering or scope the user has just fixed, and grep the backlog for a finding before presenting it as new. (HK-023 logging, user correction.)
 - **A take on a game idea starts at the concept, not the code**: what it is, how the player meets it, where it fits; code facts wait until asked, or go in an appendix. (CONCEPT-001, user correction.)
+- **A leftover fact carries its verdict**: "nothing to do", what was done, or one question — and what is in scope (a merged branch, a file near its cap) is tidied inside the task, not reported. (CONCEPT-001 follow-up, user correction.)
 - **A confirm option names its scope**: "apply everything" is not a scope — the question itself lists the files and the kind of edit, and what is *not* touched. (Context diet `0xb629529`, user correction.)
 
 ## Mistakes/Corrections
