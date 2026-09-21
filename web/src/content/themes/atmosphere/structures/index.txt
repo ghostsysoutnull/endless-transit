@@ -1,0 +1,8 @@
+abyssal
+Agricultural
+Ceremonial
+Commercial
+Industrial
+Military
+Research
+Singularity

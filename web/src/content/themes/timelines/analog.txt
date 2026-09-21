@@ -1,0 +1,16 @@
+crt monitor
+floppy disk
+cassette tape
+rotary phone
+beige keyboard
+magnetic strip
+dot matrix printer
+vhs player
+reel-to-reel deck
+punch card stack
+oscilloscope
+trimline handset
+slide projector
+ticker tape spool
+answering machine
+transistor radio

@@ -1,0 +1,12 @@
+Recursive
+Unhandled
+Orphaned
+Severed
+Inverted
+Writhing
+Eyeless
+Null
+Corrupted
+Dangling
+Leaking
+Unbound
