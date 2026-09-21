@@ -143,6 +143,37 @@ It is a scripted scenario: one path through the world, one hauler, one hive, no 
 the game's input rhythm so the pacing is honest, but it draws with HTML boxes, not the terminal's character grid — it
 says nothing about how the HUD would really lay out. A mock always feels faster than the terminal.
 
+## 10. Next — a parallel visual mock
+
+**Decided 2026-09-20:** the user wants a second mock of the same scenario, fully visual — no text input, graphics,
+animation, effects — built in a fresh session so its whole context goes to the visuals. It sits beside mock v1; it does
+not replace it. To be recorded as `docs/analysis/mocks/ships-of-the-lattice-visual.html`, with a line here, when the
+user says it is good.
+
+**The two mocks answer different questions.** The text mock keeps the game's type-and-Enter rhythm, so it is the
+evidence for pacing — decision 6 (airlock-only exit) is judged there. A clickable, animated mock cannot test that; it
+tests spatial feel (the lattice with ships drawn in place, the ship as a cross-section), the dark-to-lit moment, the
+hive's sameness, and whether the fantasy lands at all.
+
+**Brief for the session that builds it:**
+
+```
+Read docs/analysis/SHIPS_CONCEPT.md and docs/analysis/mocks/ships-of-the-lattice.html (mock v1, text-driven).
+
+I want a PARALLEL visual mock of the same scenario — same world path (levels 00–07), same hauler
+(5 decks, hearts, log fragments, dark→lit), same hive (8 subjunctions, moving aperture, Vinculum),
+same switches and cost panel — but fully visual: no text input (click/tap/keyboard arrows),
+graphics, animation and effects. Ideas to consider: a zoomable lattice from universe to street with
+ships drawn in place; the beacon as a pulsing bearing; the hauler as a cross-section you move
+through; the reactor wake as a deck-by-deck lighting sequence; the hive as an identical ring with a
+drifting aperture; Coherence as a visual decay of the whole screen.
+
+Keep the Cyber-Terminal vibe. Do not change v1 or the concept doc. Publish as a NEW private
+artifact. Before building, give me your take on the visual direction as numbered questions with
+lettered options and a marked pick; build only on "Execute". When it is good, I will ask you to
+record it as mocks/ships-of-the-lattice-visual.html and add a line to the concept doc.
+```
+
 ## Appendix — code facts, parked
 
 Read from the source on 2026-09-20 while forming a first take. None is a blocker for the concept; each is a question
