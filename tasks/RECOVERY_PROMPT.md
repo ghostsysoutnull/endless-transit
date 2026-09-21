@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-20 (CONCEPT-001 recorded). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-21 (CONCEPT-001 visual mock and rules recorded; CONCEPT-002 opened). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
 - **Test Suite:** 296 discovered / 296 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
@@ -8,15 +8,12 @@
 - **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room`, `TurnProcessor`, `NameGenerator`, `ProceduralFactory` and `Building` are `Verified`, 10 still `Baselined (not audited)`)
 - **Branch:** `master`. The last *code* merge is `55f9460` (HK-023 slice 1); only docs merged after it. A push republishes the site. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
 - **Active Work:** none; nothing blocks the next phase. All ten OOA phases and O2 are complete.
-- **Next — user decision, none has a plan yet.** Every plan with a `src/` change carries a **Shape table** (CODEX § 4, WF-009).
-  - **CONCEPT-001** ships (hauler + hive): concept + playable text mock v1, `docs/analysis/SHIPS_CONCEPT.md`. **The user's stated next step is a parallel visual mock — brief in its §10; ask the visual-direction questions first.** Verdicts (§7) still empty; no plan until then.
-  - **HK-021** residue of HK-015, low value: dead `Door.visited`, `/screenshots/` message, a dropped Keystone loses its flag, double `l` after an apartment, dead inscription pool. Any player-visible fix edits `docs/terminal/guide/players_guide.md` in the same commit.
-  - **HK-023** game-side oddities found by the GitHub Pages audit, one fixed (a save below the Bedrock restores, `0x55f9460`); left: `run.sh --test` targets a missing file, map colours print as words, the model calls `ui.Terminal.clock`, the tally is not saved, two LIP walkers, a memento carries no mutations.
-  - **HK-013** eight long methods left in the lint baseline (extract or re-baseline with a reason — never reformat to the recorded length).
-  - **O1** HeadlessRunner DSL (optional, not started). **WF-010** (Medium) `/close-wave` has no post-merge step. **WF-011** (Low) plan approval vs Directive asks twice. **WF-006** (Low) complexity metric beside `MethodSize`, at the next cadence review.
-  - **Undecided user question:** should the debug glitch `KEYSTONE` also prime the building? Today it gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions (diagnosed in the HK-019 session, nothing changed, not in the backlog).
-  - **Candidate lessons diet (user call, deferred):** rewriting the old lesson bullets as rule + pointer needs bullet-by-bullet user review (`0xb629529`); new lessons already follow that form.
-- **Known declared edges (HK-019):** a direct `game.exitLocation()` and the debug `BREACH` teleport do not reset corridor mode; old saves heal on the first `l`. Pre-HK-018 Keystones open nothing (bound by LIP, no name fallback).
+- **Next — user decision, none has a plan yet.** Every plan with a `src/` change carries a **Shape table** (CODEX § 4, WF-009). One line each; the detail lives at the pointer.
+  - **CONCEPT-001** ships: concept `docs/analysis/SHIPS_CONCEPT.md`, every rule the mocks run on `docs/analysis/SHIPS_RULES.md`, two mocks (text v1, visual v13). **Open: the concept's §7 verdict column — eleven decisions, none judged.** No plan until then.
+  - **CONCEPT-002** the game as a single-page app — the user's likely next effort: `docs/analysis/WEB_PORT_CONCEPT.md` (what the visual mock settled, what is fake in it, seven questions a port must answer). A UI change is unverified until seen: `node docs/analysis/mocks/look.js`.
+  - **Housekeeping** (`tasks/backlog/HOUSEKEEPING.md`): HK-021 HK-015 residue (a player-visible fix edits `docs/terminal/guide/players_guide.md` in the same commit) · HK-023 game-side oddities, restore bullet done · HK-013 eight long methods (extract or re-baseline with a reason — never reformat) · HK-024 user decision on the `KEYSTONE` debug glitch.
+  - **Workflow** (`docs/analysis/WORKFLOW_BACKLOG.md`): WF-010 Medium · WF-011 Low · WF-006 Low (next cadence review) · WF-012 Low lessons diet. **O1** HeadlessRunner DSL: optional, not started.
+- **Known declared edges:** HK-019's (`journals/LOG_20260916_231644_0x0033981.md`, "Left open") and HK-018's (pre-HK-018 Keystones open nothing: bound by LIP, no name fallback).
 
 ## 🚀 How to Resume
 
@@ -47,7 +44,7 @@ Initialize session for the Endless Transit substrate.
 | History | `journals/CHRONICLE_INDEX.md` → `journals/LOG_*`; retros `docs/retro/`; finished plans and execution records `tasks/completed/` |
 | Law + commands | `.claude/CODEX.md`; `.claude/commands/{grill,chronicle,close-wave}.md`; `./vinc.sh --help` |
 | Gate internals | lint: `config/lint/vinc-ruleset.groovy`, `config/lint/baseline.xml` (one writer: `--lint --baseline`), `lib/lint/`; docs: `.agents/docs-check.sh`; goldens: `src/test/groovy/com/endlesstransit/ui/golden/` (one writer: `--goldens`) |
-| Backlogs | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-021, HK-023, HK-013); `tasks/backlog/CONCEPTS.md` (OPEN: CONCEPT-001); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-010 Medium, WF-011 Low, WF-006 Low) |
+| Backlogs | `tasks/backlog/HOUSEKEEPING.md` (OPEN: HK-021, HK-023, HK-013, HK-024); `tasks/backlog/CONCEPTS.md` (OPEN: CONCEPT-001, CONCEPT-002); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-010 Medium, WF-011, WF-006, WF-012 Low) |
 | Completed refactor plan | `docs/analysis/OOA_REFACTOR_PLAN.md` (per-phase execution records) |
 | Domain invariants | `src/main/groovy/com/endlesstransit/{core,model,ui,procgen}/CLAUDE.md`; class blueprints `docs/blueprints/logic/classes/` (stamped; see `/close-wave` row 3) |
 | Lessons + safety mandates | `tasks/lessons/{ui,infrastructure,core,model,procgen}.md`; `tasks/lessons/POST_MORTEM_2026_03_{06,11}.md` |

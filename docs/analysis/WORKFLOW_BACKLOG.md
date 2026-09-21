@@ -12,6 +12,10 @@ improvement session is planned before the next phase begins.
 
 ## 🔴 OPEN
 
+### WF-012 — Lessons diet: the old lesson bullets are stories, not rules
+**Priority:** Low | **Found:** 2026-09-20 (context diet `0xb629529`); logged 2026-09-21 — until then it lived only in the recovery prompt.
+New lessons are rule + pointer (CODEX, Self-Improvement Loop); the older bullets in `tasks/lessons/*.md` are paragraphs loaded every session. **Decide:** rewrite them as rule + pointer. Needs bullet-by-bullet user review, because a shortened lesson can lose the rule. User call, deferred.
+
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.
 

@@ -4,10 +4,10 @@
 **Status:** CONCEPT — explored with a playable mock. **This is not a plan.** It has no Shape table, no slices and no commitments, and it authorizes no source change. Backlog pointer: `tasks/backlog/CONCEPTS.md` (CONCEPT-001).
 **Mock:** `docs/analysis/mocks/ships-of-the-lattice.html` (version 1, 2026-09-20) — open it in a browser, no server needed. The same page is published privately at `https://claude.ai/artifact/8MGLTL8r98eZZvrFvd3vsb`; the file in this folder is the durable copy. When the mock changes in a way that matters, copy it here again and bump the version in this line.
 
-**Visual mock (work in progress):** `docs/analysis/mocks/ships-of-the-lattice-visual.html` (artifact version 13, 2026-09-21) — the whole loop as a single page: zoomable lattice, buildings and the hauler in one cross-section, apartment floor plans, the hive ring, Coherence as screen decay, the buffer as its own screen (items as waves, gematria spelled out, merges previewed as two waves superimposed), the lattice trace as its own screen (`ll` as a dive from the universe to the player, then the levels as a stack with depth, position, the ships and the beacon); arrows pick, Enter goes in, Esc goes out. Private copy: `https://claude.ai/artifact/QrcWAccxogJRow9Q7AazHN`. Not yet judged good (§10). Its real-numbers pass read the generators: buildings have 3–100 floors and streets 4–20 fronts, so §1 row 3 ("streets, floors … never end") is to be corrected when this mock is recorded as final.
+**Visual mock:** `docs/analysis/mocks/ships-of-the-lattice-visual.html` (artifact version 13, 2026-09-21; private copy `https://claude.ai/artifact/QrcWAccxogJRow9Q7AazHN`) — recorded in §10. **Rules as mocked:** `docs/analysis/SHIPS_RULES.md` (every rule with its number and whether it is a pick, invented or the game's). **The whole game as one page:** `docs/analysis/WEB_PORT_CONCEPT.md` (CONCEPT-002).
 
-> **The idea in one paragraph.** Everything in Endless Transit stands still and never ends. A ship is the opposite on
-> both counts: it is the only thing that moves, and the only place with a hull around it. You catch a signal, find the
+> **The idea in one paragraph.** Everything in Endless Transit stands still, in a tree too large to finish. A ship is the
+> opposite on both counts: it is the only thing that moves, and the only place small enough to finish. You catch a signal, find the
 > ship dead in orbit, walk it in the dark, wake it, and leave in it. After that it is yours. At the far end of the
 > same idea sits the hive: a ship with no name that finds *you*.
 
@@ -19,7 +19,7 @@
 | :-- | :-- | :-- |
 | 1 | **A building that left.** A culture, an era and a trait, cut loose from the planet that made them. | A rust hauler over a zenith world tells a story nobody wrote. Its home planet exists somewhere in the same seed. |
 | 2 | **The only thing that moves.** Ships live *between* the nodes of the tree. | Real transit, in a game called Endless Transit: crossing the tree without climbing it level by level. |
-| 3 | **Finite.** Streets, floors and the basement never end; a ship has a hull. | The one place you can finish: every deck walked, a heart reached. |
+| 3 | **Finishable.** A building has 3–100 floors of 2–20 doors and a street 4–20 fronts (`BuildingFactory`, `StreetFactory` — corrected 2026-09-21; this row first said they never end, the basement was not re-checked), which nobody walks to the end; a ship has a hull and a handful of decks. | The one place you can finish: every deck walked, a heart reached. |
 | 4 | **Present tense.** Every building says "someone was here". | A ship can say "something is here" — and at the hive end, "it has noticed you". |
 
 **The two poles.** Culture decides where a ship sits between them: rust, baroque and shogun lean crewed; monolith and void lean hive.
@@ -175,6 +175,16 @@ artifact. Before building, give me your take on the visual direction as numbered
 lettered options and a marked pick; build only on "Execute". When it is good, I will ask you to
 record it as mocks/ships-of-the-lattice-visual.html and add a line to the concept doc.
 ```
+
+**Recorded 2026-09-21 — the visual mock exists** (13 published versions, seven commits on `docs/ships-visual-mock`). By the
+user's direction it tests the *whole game as a single page* first and ships second, so it grew beyond the brief above:
+a generated world around the scripted path, buildings with the game's real counts, an apartment view, a depth rail, a
+drawn icon set, the buffer and the lattice trace as screens of their own, and one key grammar (arrows pick, Enter goes
+in, Esc goes out). What it settled and what a port must answer: `WEB_PORT_CONCEPT.md`. The ship rules it runs on:
+`SHIPS_RULES.md`. To use it: open the file in a browser; `TEST BENCH` holds the same switches, ladder, per-screen notes
+and cost panel as §8; `i` is the buffer, `Shift+L` the lattice trace. To look at it from a session:
+`docs/analysis/mocks/look.js`. **The §7 verdict column is still empty** — the visual mock was judged screen by screen as
+it was built ("it is better"), never against the eleven decisions.
 
 ## Appendix — code facts, parked
 
