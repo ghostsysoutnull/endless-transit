@@ -42,7 +42,7 @@ user's direction, a test of the whole game as one page. Ship rules: `docs/analys
 * **Costs differ from the game** in two places, on purpose: the buffer and the lattice trace are free, and taking an
   object costs one move.
 
-## 3. Questions a real port must answer (none is answered here)
+## 3. Questions a real port must answer (none is answered here — the answers are in `WEB_PORT_STUDY.md`, 2026-09-21)
 
 1. **The generator.** Port `procgen/` to JS, or run the Groovy model behind an API? "Same seed → same world"
    (`DeterministicUniverseTest`, the seed-0 scan) depends on `java.util.Random` and on `LocusSeed` branching; a JS port

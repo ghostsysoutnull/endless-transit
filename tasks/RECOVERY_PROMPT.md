@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-21 (CONCEPT-001 visual mock and rules recorded; CONCEPT-002 opened). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-21 (web port study and decisions recorded; next is the stage-0 plan). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
 - **Test Suite:** 296 discovered / 296 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`)
@@ -7,11 +7,11 @@
 - **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=222 P1=0 P2=0 P3=0` (baseline: 8 entries — the long methods of HK-013; `NoNewStaticLogic` allow-list of 15 files in the ruleset, shrink-only — none of them a rule-holding class since HK-022)
 - **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; `Room`, `TurnProcessor`, `NameGenerator`, `ProceduralFactory` and `Building` are `Verified`, 10 still `Baselined (not audited)`)
 - **Branch:** `master`. The last *code* merge is `55f9460` (HK-023 slice 1); only docs merged after it. A push republishes the site. If `git status -sb` shows ahead/behind origin, ask before pushing. The player's untracked `session.trace` and `session.trace.bak-hk018` are theirs — never edit, never commit.
-- **Active Work:** none; nothing blocks the next phase. All ten OOA phases and O2 are complete.
-- **Next — user decision, none has a plan yet.** Every plan with a `src/` change carries a **Shape table** (CODEX § 4, WF-009). One line each; the detail lives at the pointer.
+- **Active Work:** the **web port effort** (CONCEPT-002), decided 2026-09-21: Groovy is frozen and moves to `terminal/`, the new TypeScript game in `web/` is where development happens. Decisions, stack, `web/` tree and stages: `docs/analysis/WEB_PORT_STUDY.md`. **Next step: draft the stage-0 plan (study §9 — the `git mv` into `terminal/`), then `/grill`, then a Directive.** No plan exists yet; nothing has moved.
+- **Other open threads — none has a plan.** Every plan with a `src/` change carries a **Shape table** (CODEX § 4, WF-009). One line each; the detail lives at the pointer.
   - **CONCEPT-001** ships: concept `docs/analysis/SHIPS_CONCEPT.md`, every rule the mocks run on `docs/analysis/SHIPS_RULES.md`, two mocks (text v1, visual v13). **Open: the concept's §7 verdict column — eleven decisions, none judged.** No plan until then.
-  - **CONCEPT-002** the game as a single-page app — the user's likely next effort: `docs/analysis/WEB_PORT_CONCEPT.md` (what the visual mock settled, what is fake in it, seven questions a port must answer). A UI change is unverified until seen: `node docs/analysis/mocks/look.js`.
-  - **Housekeeping** (`tasks/backlog/HOUSEKEEPING.md`): HK-021 HK-015 residue (a player-visible fix edits `docs/terminal/guide/players_guide.md` in the same commit) · HK-023 game-side oddities, restore bullet done · HK-013 eight long methods (extract or re-baseline with a reason — never reformat) · HK-024 user decision on the `KEYSTONE` debug glitch.
+  - Ships will exist only in the web game; the visual mock stays their lab (study D5). A UI change is unverified until seen: `node docs/analysis/mocks/look.js`.
+  - **Housekeeping** (`tasks/backlog/HOUSEKEEPING.md`) — with Groovy frozen, the game-side items are the port's fix list and HK-013/WF-006 go moot when stage 0 lands (study §2.4); all stay OPEN until then: HK-021 HK-015 residue (a player-visible fix edits `docs/terminal/guide/players_guide.md` in the same commit) · HK-023 game-side oddities, restore bullet done · HK-013 eight long methods (extract or re-baseline with a reason — never reformat) · HK-024 user decision on the `KEYSTONE` debug glitch.
   - **Workflow** (`docs/analysis/WORKFLOW_BACKLOG.md`): WF-010 Medium · WF-011 Low · WF-006 Low (next cadence review) · WF-012 Low lessons diet. **O1** HeadlessRunner DSL: optional, not started.
 - **Known declared edges:** HK-019's (`journals/LOG_20260916_231644_0x0033981.md`, "Left open") and HK-018's (pre-HK-018 Keystones open nothing: bound by LIP, no name fallback).
 
@@ -29,8 +29,9 @@ Initialize session for the Endless Transit substrate.
    (simulate → expected set → allow-list re-pin). The OOA plan is no longer loaded automatically — read `docs/analysis/OOA_REFACTOR_PLAN.md` on demand.
 3. **Audit:** `./vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=296 …`; `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
    `./vinc.sh --scan` → seed 0, 9 nodes; `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
-4. **Ask before choosing:** there is no active phase. Present the options under **Next** and wait for a Directive. The user likes decisions as
-   numbered questions with lettered options and a marked preference, answered in one word — and short plain-language summaries in chat.
+4. **Ask before choosing:** the effort is the web port (Active Work); wait for a Directive before writing anything. The user likes decisions as
+   lettered options with a marked preference, answered in one word — **in the web-port effort, one question per message** — and short
+   plain-language summaries in chat.
 5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → ≤ 5 production files per commit → full suite + `--lint` after every commit →
    merge `--no-ff` → **`/close-wave`** (it prints its tier and table) **before saying "closed"**. Push only on the user's word.
 
