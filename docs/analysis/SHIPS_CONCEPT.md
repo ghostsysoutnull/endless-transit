@@ -188,7 +188,8 @@ it was built ("it is better"), never against the eleven decisions.
 ## Appendix — code facts, parked
 
 Read from the source on 2026-09-20 while forming a first take. None is a blocker for the concept; each is a question
-the first plan will have to answer.
+the first plan will have to answer. **Since 2026-09-21 ships will be built only in the web game** (`WEB_PORT_STUDY.md`,
+D5): the Groovy facts below are reference for the rules a ship must respect, not a landing site.
 
 1. **No planet above a ship.** Interiors find their trait through a `Country` ancestor (`RoomFactory.groovy:36`,
    `CorridorFactory.groovy:33`). A ship in orbit has none, and a missing ancestor falls back silently — the failure
