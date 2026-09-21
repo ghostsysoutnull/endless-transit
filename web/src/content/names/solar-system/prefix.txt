@@ -1,0 +1,16 @@
+Alpha
+Proxima
+Sirius
+Vega
+Rigel
+Antares
+Betelgeuse
+Altair
+Deneb
+Polaris
+Zeta
+Epsilon
+Omicron
+Sigma
+Tau
+Lambda

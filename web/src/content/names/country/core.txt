@@ -1,0 +1,12 @@
+Arid
+Frost
+Verdant
+Iron
+Storm
+Shadow
+Light
+Dust
+Glacier
+Jungle
+Desert
+Ocean

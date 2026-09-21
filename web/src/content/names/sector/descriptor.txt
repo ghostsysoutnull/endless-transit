@@ -1,0 +1,9 @@
+Outer
+Inner
+Core
+Rim
+Void
+Prime
+Secondary
+Tertiary
+Quaternary

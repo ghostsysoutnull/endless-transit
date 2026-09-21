@@ -1,0 +1,8 @@
+Sector
+Quadrant
+Grid
+Matrix
+Zone
+Region
+Reach
+Expanse
