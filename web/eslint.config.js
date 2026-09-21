@@ -60,11 +60,16 @@ const NO_UNSAFE_LIT = [
   { name: 'lit-html/directives/unsafe-svg.js', message: 'unsafeSVG is innerHTML by another name.' },
 ];
 
+/** Any `..` segment, wherever it sits: `../x`, `./../x`, `#engine/../ui/x`. */
 const NO_PARENT_IMPORTS = {
-  regex: '^\\.\\./',
+  regex: '(^|/)\\.\\.(/|$)',
   message:
-    "Cross-folder imports use the package aliases ('#engine/…', '#ui/…'); './' is for the same folder.",
+    "No '..' segment in an import. Cross-folder imports use the package aliases ('#engine/…', '#ui/…'); './' is for the same folder.",
 };
+
+const NO_CLOCK = 'The engine has no clock: time is an input.';
+const NO_AMBIENT =
+  'The engine reaches nothing ambient: what it needs is injected through an interface it owns.';
 
 export default defineConfig(
   globalIgnores(['dist/', 'coverage/', '.vitest/', 'test-results/', 'playwright-report/', 'blob-report/']),
@@ -97,22 +102,31 @@ export default defineConfig(
               message:
                 "The engine imports only the engine: './…' or '#engine/…'. No ui, platform, content, DOM or packages.",
             },
+            NO_PARENT_IMPORTS,
           ],
         },
       ],
       'no-restricted-properties': [
         'error',
         { object: 'Math', property: 'random', message: 'The engine is deterministic: draw from a Seed.' },
-        { object: 'Date', property: 'now', message: 'The engine has no clock: time is an input.' },
-        { object: 'performance', property: 'now', message: 'The engine has no clock: time is an input.' },
+        { object: 'Date', property: 'now', message: NO_CLOCK },
+        { object: 'performance', property: 'now', message: NO_CLOCK },
+      ],
+      // `globalThis.Date.now()`, `window.Math.random()`, `const D = Date` — the back doors to the two bans above.
+      'no-restricted-globals': [
+        'error',
+        { name: 'Date', message: NO_CLOCK },
+        { name: 'performance', message: NO_CLOCK },
+        { name: 'globalThis', message: NO_AMBIENT },
+        { name: 'window', message: NO_AMBIENT },
+        { name: 'self', message: NO_AMBIENT },
+        { name: 'global', message: NO_AMBIENT },
       ],
       'no-restricted-syntax': [
         'error',
         ...NO_RAW_HTML,
-        {
-          selector: "NewExpression[callee.name='Date']",
-          message: 'The engine has no clock: time is an input.',
-        },
+        { selector: "NewExpression[callee.name='Date']", message: NO_CLOCK },
+        { selector: "CallExpression[callee.name='Date']", message: NO_CLOCK },
       ],
     },
   },
