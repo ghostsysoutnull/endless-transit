@@ -22,12 +22,12 @@ that did not exist, and only user review caught it.
 ### 1. LOCATE THE PLAN
 - Input is the draft plan under review: the most recent plan in this conversation,
   or a file path / phase section the user names.
-- Read the matching section of `docs/analysis/OOA_REFACTOR_PLAN.md` (or the active
+- Read the matching section of `terminal/docs/analysis/OOA_REFACTOR_PLAN.md` (or the active
   task document from `tasks/todo.md`) so deviations can be measured against it.
 
 ### 2. RUN THE SIX CHECKS
 Each check must be backed by tool output produced in this session (Read, grep,
-`./vinc.sh`). A check answered from memory is a FAIL regardless of the answer.
+`./terminal/vinc.sh`). A check answered from memory is a FAIL regardless of the answer.
 
 | # | Check | Evidence required | Verdict |
 | :--- | :--- | :--- | :--- |

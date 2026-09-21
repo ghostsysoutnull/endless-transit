@@ -23,8 +23,9 @@ Experience the infinite scale of the Neural Web through our **Adaptive Command B
 ```
 
 ### 📡 **[LAUNCH_PROTOCOL]**
-To initialize the neural link, ensure you have **Groovy 4.x+** installed, then execute:
+The terminal game lives in the **`terminal/`** folder. To initialize the neural link, ensure you have **Groovy 4.x+** installed, then execute:
 ```bash
+cd terminal
 ./run.sh
 ```
 
@@ -57,8 +58,9 @@ This project is optimized for **Context Localization**. Each domain features its
 
 ## 🛠️ [FIELD_VALIDATION]
 
-Verify link stability using our automated diagnostic suite:
+Verify link stability using our automated diagnostic suite (from `terminal/`):
 ```bash
+cd terminal
 ./vinc.sh --test            # Clinical Logic Verification (Fast, Auto-compile)
 ./vinc.sh --compile         # Strict Substrate Verification
 .agents/vibe-check-ui.sh    # Aesthetic Alignment Check
@@ -66,7 +68,7 @@ Verify link stability using our automated diagnostic suite:
 ```
 
 ### 💉 **[CLINICAL_INTERFACE]**
-For developers and AI agents, use the **Vinculum Clinical Interface (VINC)** to bypass the immersive portal and execute instant operations:
+For developers and AI agents, use the **Vinculum Clinical Interface (VINC)** to bypass the immersive portal and execute instant operations (from `terminal/`):
 ```bash
 ./vinc.sh                   # Instant launch (with auto-compile)
 ./vinc.sh --test            # High-velocity test execution

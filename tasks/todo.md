@@ -13,7 +13,7 @@
 
 ## 🔴 ACTIVE: [OOA_STRUCTURAL_REFACTORING]
 **Objective:** Incrementally harden the OO architecture without any behavioral change.
-**Ref Document:** `docs/analysis/OOA_REFACTOR_PLAN.md`
+**Ref Document:** `terminal/docs/analysis/OOA_REFACTOR_PLAN.md`
 **Suite baseline:** 296 discovered / 296 pass / 0 skipped / 0 failed
 
 - [x] Phase 0 — Baselines (visual baseline pinned, seeds 0/500/9999)
