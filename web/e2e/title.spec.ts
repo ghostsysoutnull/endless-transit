@@ -1,32 +1,18 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { press, watchForErrors } from './support/harness.ts';
 
 const SEED_FORM = /^[0-9A-F]{4}(-[0-9A-F]{4}){3}$/;
 
-/** Collects everything the page complains about; a test ends by asserting it stayed empty. */
-function watchForErrors(page: Page): string[] {
-  const problems: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error' || message.type() === 'warning') problems.push(message.text());
-  });
-  page.on('pageerror', (error) => problems.push(error.message));
-  page.on('requestfailed', (request) => problems.push(`request failed: ${request.url()}`));
-  page.on('response', (response) => {
-    if (response.status() >= 400) problems.push(`${String(response.status())} ${response.url()}`);
-  });
-  return problems;
-}
-
-/** Tap on a touch device, click on a desktop — what a player's hand would do. */
-async function press(page: Page, name: RegExp, hasTouch: boolean): Promise<void> {
-  const button = page.getByRole('button', { name });
-  await (hasTouch ? button.tap() : button.click());
-}
-
 test('loads under the base path, with no console errors and no failed request', async ({ page, baseURL }) => {
   const problems = watchForErrors(page);
+  const requested: string[] = [];
+  page.on('request', (request) => requested.push(request.url()));
   await page.goto('./');
+  // The base comes from the config (ET_BASE moves it) — never a literal here.
+  expect(baseURL).toBeDefined();
   expect(page.url()).toBe(baseURL);
-  expect(new URL(page.url()).pathname).toBe('/endless-transit/play/');
+  expect(requested.length).toBeGreaterThan(1);
+  for (const url of requested) expect(url.startsWith(baseURL ?? '?'), url).toBe(true);
   await expect(page.getByRole('heading', { name: 'ENDLESS TRANSIT' })).toBeVisible();
   await expect(page.getByTestId('prompt')).toBeVisible();
   await expect(page.getByRole('button')).toHaveCount(1);
