@@ -6,7 +6,7 @@ const PRODUCTION_BASE = '/endless-transit/play/';
 export default defineConfig(({ command, isPreview }) => {
   const production = command === 'build' || isPreview === true;
   return {
-    base: process.env['ET_BASE'] ?? (production ? PRODUCTION_BASE : '/'),
+    base: process.env.ET_BASE ?? (production ? PRODUCTION_BASE : '/'),
     build: { target: 'es2023', outDir: 'dist', emptyOutDir: true },
     preview: { port: 4173, strictPort: true },
     test: {
