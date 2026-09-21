@@ -159,7 +159,14 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
 .dbtn{font:inherit;font-family:var(--mono);font-size:12px;background:var(--panel2);color:var(--text);border:1px solid var(--rule-hi);padding:6px 10px;cursor:pointer;text-align:left}
 .dbtn kbd{font:inherit;color:var(--yl);font-weight:700;margin-right:6px} .dbtn.go{border-color:var(--yl)} .dbtn.go b{color:var(--yl)} .dbtn:hover{border-color:var(--text)} .dbtn[disabled]{opacity:.5;cursor:default}
 @media (prefers-reduced-motion:reduce){.dlg[open],.gl,.gline,.card.born{animation:none}}
-.bufbtn{margin-left:auto}
+.tools{position:absolute;top:0;right:0;display:flex;z-index:2}
+.tool{all:unset;box-sizing:border-box;height:24px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:11px;letter-spacing:.06em;color:var(--text);cursor:pointer;border-left:1px solid var(--rule-hi);background:#0a1112}
+.tool svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;flex:none}
+.tool kbd{font:inherit;font-weight:700;color:var(--yl)} .tool .n{color:var(--dim);font-variant-numeric:tabular-nums}
+.tool:hover,.tool:focus-visible{color:var(--yl);background:var(--panel2);outline:none} .tool:focus-visible{box-shadow:inset 0 0 0 1px var(--yl)}
+.tool.carrier svg{color:var(--yl)} .tool.full .n{color:var(--rd)}
+@media (max-width:480px){.tool .lb{display:none}}
+@media (pointer:coarse){.tool{height:34px;padding:0 13px}}
 .dlg.lat{border-color:var(--cy);box-shadow:0 0 60px rgba(85,214,214,.12)} .dlg.lat .dh h2{color:var(--cy)} .dlg.lat .dh .dim{flex:1 1 auto}
 #lcv{width:100%;height:clamp(340px,64vh,620px);display:block;background:#060a0b;border:1px solid var(--rule);cursor:pointer}
 .lcap{font-family:var(--sans);font-size:13px;min-height:42px;line-height:1.5}
@@ -177,7 +184,7 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
   <div class="deck">
     <div class="main">
       <ol class="gauge" id="gauge" aria-label="Depth: where you are in the lattice"></ol>
-      <div class="stage"><canvas id="cv" tabindex="0" aria-label="The world. Use arrow keys and Enter, or click."></canvas></div>
+      <div class="stage"><canvas id="cv" tabindex="0" aria-label="The world. Use arrow keys and Enter, or click."></canvas><div class="tools" id="tools"></div></div>
       <div class="inst" id="inst"></div>
       <div class="sig" id="sig"></div>
       <div class="log" id="log"></div>
@@ -1037,7 +1044,8 @@ function banner(){
   const frameCol = {world:COL.cy, rust:COL.rs, rustdark:'#b0633f', hive:COL.hv}[FX.view ? FX.view.frame : 'world'] || COL.cy;
   let segs = whereSegs(); const size = CW < 480 ? 10 : 12, font = b => (b ? '700 ' : '400 ') + size + 'px "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace';
   const width = ss => { let w = 0; ss.forEach((s, i) => { ctx.font = font(true); w += ctx.measureText(s[0]).width; ctx.font = font(false); w += ctx.measureText((s[1] ? ' — ' + s[1] : '') + (i < ss.length - 1 ? '  ›  ' : '')).width; }); return w; };
-  while (segs.length > 1 && width(segs) > CW - 20) segs = segs.slice(1);
+  const room = CW - (CW < 480 ? 120 : 250);
+  while (segs.length > 1 && width(segs) > room) segs = segs.slice(1);
   ctx.globalAlpha = 1; dash(); noglow(); fill(0, 0, CW, 24, '#0a1112', .96); line(0, 24, CW, 24, frameCol, .7, 1);
   let x = 10; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   segs.forEach((s, i) => {
@@ -1498,7 +1506,9 @@ function paint(){
   // instruments: Coherence as a dial
   const cls = S.coh >= 70 ? 'gn' : S.coh >= 30 ? 'yl' : 'rd', b = bearing();
   $('inst').innerHTML = '<div class="meter ' + cls + '">' + c('k','COHERENCE') + '<span class="cohbar"><i style="width:' + clamp(S.coh, 0, 100) + '%"></i></span><b>' + Math.max(0, S.coh) + '</b></div>' +
-    '<span class="n">' + c('k','MOVES ') + '<b>' + S.steps + '</b></span><span class="n">' + c('k','DEPTH ') + '<b>' + depthNow() + '</b></span><span class="n">' + c('k','DRAIN ') + '<b class="' + (drainNow() > O.drain ? 'rd' : '') + '">' + drainNow() + '</b></span><button type="button" class="tbtn bufbtn" data-openlat><b class="yl">L</b> LATTICE</button><button type="button" class="tbtn" data-openbuf><b class="yl">i</b> BUFFER ' + S.buffer.length + '/16</button>';
+    '<span class="n">' + c('k','MOVES ') + '<b>' + S.steps + '</b></span><span class="n">' + c('k','DEPTH ') + '<b>' + depthNow() + '</b></span><span class="n">' + c('k','DRAIN ') + '<b class="' + (drainNow() > O.drain ? 'rd' : '') + '">' + drainNow() + '</b></span>';
+  $('tools').innerHTML = dead ? '' : '<button type="button" class="tool" data-openlat title="Lattice trace (Shift+L)" aria-label="Lattice trace"><svg viewBox="0 0 18 18" aria-hidden="true"><ellipse cx="9" cy="4" rx="6" ry="2"/><ellipse cx="9" cy="9" rx="6" ry="2"/><ellipse cx="9" cy="14" rx="6" ry="2"/><path d="M9 1v16"/></svg><span class="lb">LATTICE</span><kbd>L</kbd></button>' +
+    '<button type="button" class="tool' + (S.buffer.some(q => q.beacon) ? ' carrier' : '') + (S.buffer.length >= 16 ? ' full' : '') + '" data-openbuf title="Quantum buffer (i)" aria-label="Quantum buffer, ' + S.buffer.length + ' of 16"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="1.5" y="3" width="15" height="12"/><path d="M3 9c1.5-5 3-5 4.5 0s3 5 4.5 0 3-5 3 0"/></svg><span class="lb">BUFFER</span><span class="n">' + S.buffer.length + '/16</span><kbd>i</kbd></button>';
   $('sig').className = 'sig ' + (b ? b.cls : '') + (b && b.cls === 'dim' ? ' flat' : '');
   $('sig').innerHTML = b ? '<span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>' + esc(b.text) + '</span>' : '';
   // caption
