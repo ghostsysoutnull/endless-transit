@@ -1179,7 +1179,8 @@ function drawIcon(kind, x, y, r, col, a){
   const q = ICON[kind] || ICON.node; if (typeof Path2D === 'undefined') return;
   const c2 = P2[kind] || (P2[kind] = {s:new Path2D(q.s), f:q.f ? new Path2D(q.f) : null}), k = r * 2 / 24;
   ctx.save(); ctx.translate(x - r, y - r); ctx.scale(k, k); ctx.globalAlpha = a == null ? 1 : a; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = clamp(1.6 / k, .9, 2.2); ctx.stroke(c2.s); if (c2.f) ctx.fill(c2.f); ctx.restore();
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = clamp(1.7 / k, .3, 2.2);   // about 1.7px on screen at any size
+  ctx.stroke(c2.s); if (c2.f) ctx.fill(c2.f); ctx.restore();
 }
 const GLYPH = {}; Object.keys(ICON).forEach(kind => { GLYPH[kind] = (x, y, r, col, a) => drawIcon(kind, x, y, r * 1.3, col, a); });
 function brackets(x, y, r, col){
@@ -1225,12 +1226,13 @@ function drawWorld(n){
   if (pp){ dash([2, 4]); line(cx, cy - R * .3, pp.x, pp.y + 16, COL.faint, 1, 1); dash(); }
   const col = n.kind === 'nullreach' ? COL.mg : COL.cy;
   glow(col, 8); GLYPH[n.kind](cx, cy, R * .26, col, .9); noglow();
-  text(KLABEL[n.kind], cx, cy + R * .26 + 12, COL.dim, 1, 9);
-  text(cut(n.name, 28), cx, cy + R * .26 + 25, col, 1, 12, 'center', true);
+  const ly = isSys ? cy - R * .26 - 30 : cy + R * .26 + 12;   // in a system the orbits pass under the star, so its name sits above it
+  text(KLABEL[n.kind], cx, ly, COL.dim, 1, 9);
+  text(cut(n.name, 28), cx, ly + 13, col, 1, 12, 'center', true);
   ids.forEach((id, i) => {
     const ch = N(id); let x, y;
     if (isSys){
-      const orb = R * (.5 + .45 * i / Math.max(1, ids.length - 1 || 1)), r0 = rng('orb|' + id)() * 6.28, an = r0 + (RM ? 0 : FX.t / (9000 + i * 5000));
+      const orb = R * (.56 + .42 * i / Math.max(1, ids.length - 1 || 1)), r0 = rng('orb|' + id)() * 6.28, an = r0 + (RM ? 0 : FX.t / (9000 + i * 5000));
       ctx.beginPath(); ctx.ellipse(cx, cy, orb * 1.25, orb * .62, 0, 0, 6.283); stroke(COL.rule, 1, 1); ctx.stroke();
       x = cx + Math.cos(an) * orb * 1.25; y = cy + Math.sin(an) * orb * .62;
     } else {
@@ -1687,12 +1689,12 @@ function dlgDo(d){
   else if (d === 'clear'){ BN.a = BN.b = -1; paintDlg(); }
 }
 function drawBench(){
-  const r = bcv.getBoundingClientRect(); if (!r.width) return;
-  const w = r.width, h = r.height; if (bcv.width !== Math.round(w * DPR)){ bcv.width = Math.round(w * DPR); bcv.height = Math.round(h * DPR); }
+  const w = bcv.clientWidth, h = bcv.clientHeight; if (!w || !h) return;
+  if (bcv.width !== Math.round(w * DPR) || bcv.height !== Math.round(h * DPR)){ bcv.width = Math.round(w * DPR); bcv.height = Math.round(h * DPR); }
   const g = bctx; g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, w, h);
   const A = S.buffer[BN.a], B = S.buffer[BN.b], look = S.buffer[BN.look], t = RM ? 0 : FX.t / 1000;
-  const lam = hzv => clamp(2600 / Math.sqrt(hzv), 7, 150), f = (it, x, dir) => Math.sin(x / lam(it.hz) * 6.283 + t * 2.2 * dir);
-  const wave = (fn, y, amp, col, al, lw) => { g.beginPath(); for (let x = 0; x <= w; x += 2){ const yy = y + fn(x) * amp; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); } g.strokeStyle = col; g.globalAlpha = al; g.lineWidth = lw || 1.5; g.shadowColor = col; g.shadowBlur = 8; g.stroke(); g.shadowBlur = 0; };
+  const lam = hzv => clamp(2600 / Math.sqrt(hzv), 9, 150), f = (it, x, dir) => Math.sin(x / lam(it.hz) * 6.283 + t * 2.2 * dir);
+  const wave = (fn, y, amp, col, al, lw) => { g.beginPath(); for (let x = 0; x <= w; x += .75){ const yy = y + fn(x) * amp; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); } g.strokeStyle = col; g.globalAlpha = al; g.lineWidth = lw || 1.5; g.shadowColor = col; g.shadowBlur = 8; g.stroke(); g.shadowBlur = 0; };
   const label = (s, y, col) => { g.globalAlpha = 1; g.font = '500 11px "IBM Plex Mono",ui-monospace,monospace'; g.fillStyle = '#060a0b'; const tw = g.measureText(s).width; g.fillRect(6, y - 8, tw + 8, 15); g.fillStyle = col; g.textBaseline = 'middle'; g.fillText(s, 10, y); };
   g.globalAlpha = 1; g.strokeStyle = COL.rule; g.lineWidth = 1; for (let x = 0; x < w; x += 40){ g.beginPath(); g.moveTo(x + .5, 0); g.lineTo(x + .5, h); g.stroke(); }
   if (!A){ if (look){ wave(x => f(look, x, 1), h / 2, h * .3, look.beacon ? COL.yl : COL.cy, .9, 2); label(look.name + ' · ' + fmt(look.hz) + ' Hz', 14, look.beacon ? COL.yl : COL.cy); } return; }
@@ -1764,8 +1766,8 @@ function paintLat(){
   $('lcap').innerHTML = h;
 }
 function drawLat(){
-  const r = lcv.getBoundingClientRect(); if (!r.width) return;
-  const W = r.width, H = r.height; if (lcv.width !== Math.round(W * DPR)){ lcv.width = Math.round(W * DPR); lcv.height = Math.round(H * DPR); }
+  const W = lcv.clientWidth, H = lcv.clientHeight; if (!W || !H) return;
+  if (lcv.width !== Math.round(W * DPR) || lcv.height !== Math.round(H * DPR)){ lcv.width = Math.round(W * DPR); lcv.height = Math.round(H * DPR); }
   const keep = [ctx, CW, CH]; ctx = lctx; CW = W; CH = H;   // the drawing helpers follow whichever canvas is current
   try {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; dash(); noglow(); ctx.fillStyle = '#060a0b'; ctx.fillRect(0, 0, W, H); stars('lat', 90);
