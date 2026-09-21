@@ -160,6 +160,9 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
 .dbtn kbd{font:inherit;color:var(--yl);font-weight:700;margin-right:6px} .dbtn.go{border-color:var(--yl)} .dbtn.go b{color:var(--yl)} .dbtn:hover{border-color:var(--text)} .dbtn[disabled]{opacity:.5;cursor:default}
 @media (prefers-reduced-motion:reduce){.dlg[open],.gl,.gline,.card.born{animation:none}}
 .bufbtn{margin-left:auto}
+.dlg.lat{border-color:var(--cy);box-shadow:0 0 60px rgba(85,214,214,.12)} .dlg.lat .dh h2{color:var(--cy)} .dlg.lat .dh .dim{flex:1 1 auto}
+#lcv{width:100%;height:clamp(340px,64vh,620px);display:block;background:#060a0b;border:1px solid var(--rule);cursor:pointer}
+.lcap{font-family:var(--sans);font-size:13px;min-height:42px;line-height:1.5}
 .cy{color:var(--cy)} .yl{color:var(--yl)} .rd{color:var(--rd)} .gn{color:var(--gn)} .mg{color:var(--mg)}
 .rs{color:var(--rs)} .hv{color:var(--hv)} .dim{color:var(--dim)} .faint{color:var(--faint)} .b{font-weight:700}
 </style>
@@ -178,7 +181,7 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
       <div class="inst" id="inst"></div>
       <div class="sig" id="sig"></div>
       <div class="log" id="log"></div>
-      <div class="hint">Everywhere: <b>arrows</b> pick · <b>Enter</b> goes in · <b>Esc</b> goes out. Picking is free; walking (floors, rooms, the hive ring) costs a move. <b>s</b> scans.</div>
+      <div class="hint">Everywhere: <b>arrows</b> pick · <b>Enter</b> goes in · <b>Esc</b> goes out. Picking is free; walking (floors, rooms, the hive ring) costs a move. <b>s</b> scans · <b>i</b> buffer · <b>Shift+L</b> lattice trace.</div>
     </div>
     <div class="console">
       <section class="cap" id="cap" aria-live="polite"></section>
@@ -196,6 +199,13 @@ select{font:inherit;font-size:13px;background:var(--ground);color:var(--text);bo
     <div class="cards" id="cards"></div>
     <div class="dact" id="dact"></div>
     <div class="hint">Arrows pick · <b>Enter</b> puts an item on the bench (A, then B) · <b>m</b> synthesizes · <b>x</b> destroys · <b>Esc</b> goes back. Nothing here costs a move.</div>
+  </dialog>
+
+  <dialog class="dlg lat" id="lat" aria-label="Lattice trace">
+    <div class="dh"><h2>LATTICE TRACE</h2><span id="lsub" class="dim">from the universe to where you stand</span><button class="tbtn" id="lreplay" type="button">↵ dive again</button><button class="tbtn" id="lclose" type="button">esc · back</button></div>
+    <canvas id="lcv" aria-hidden="true"></canvas>
+    <div class="lcap" id="lcap" aria-live="polite"></div>
+    <div class="hint"><b>▲ ▼</b> step through the levels · <b>Enter</b> dives again · <b>Esc</b> goes back. Looking costs nothing and moves nothing.</div>
   </dialog>
 
   <aside class="bench" id="bench" hidden>
@@ -895,7 +905,7 @@ function launchTo(d){
   tick(c('gn','SHIP: arrived · '+N(d.id).name)); paint();
 }
 /* ---------- canvas: setup, primitives, transitions, decay ---------- */
-const cv = $('cv'), ctx = cv.getContext('2d');
+const cv = $('cv'); let ctx = cv.getContext('2d');
 let CW = 300, CH = 300, DPR = 1;
 const COL = {cy:'#55d6d6', yl:'#e6c35c', rd:'#e4665c', gn:'#71d083', mg:'#c987dd', rs:'#d0693f', hv:'#9fb0a8', text:'#c8d6d2', dim:'#6c8581', faint:'#3f5653', rule:'#1f3435', sodium:'#f0b64a'};
 function resize(){
@@ -967,6 +977,7 @@ function frame(t){
   ctx.globalAlpha = 1; dash(); noglow();
   postFx();
   if (dlg.open) drawBench();
+  if (lat.open){ FX.hits = []; drawLat(); }
 }
 /* Coherence as a decay of the whole screen: colour drains (CSS), then noise, tearing and drop-outs (here) */
 function decay(){ return O.fx ? clamp((70 - S.coh) / 70, 0, 1) : 0; }
@@ -1487,7 +1498,7 @@ function paint(){
   // instruments: Coherence as a dial
   const cls = S.coh >= 70 ? 'gn' : S.coh >= 30 ? 'yl' : 'rd', b = bearing();
   $('inst').innerHTML = '<div class="meter ' + cls + '">' + c('k','COHERENCE') + '<span class="cohbar"><i style="width:' + clamp(S.coh, 0, 100) + '%"></i></span><b>' + Math.max(0, S.coh) + '</b></div>' +
-    '<span class="n">' + c('k','MOVES ') + '<b>' + S.steps + '</b></span><span class="n">' + c('k','DEPTH ') + '<b>' + depthNow() + '</b></span><span class="n">' + c('k','DRAIN ') + '<b class="' + (drainNow() > O.drain ? 'rd' : '') + '">' + drainNow() + '</b></span><button type="button" class="tbtn bufbtn" data-openbuf><b class="yl">i</b> BUFFER ' + S.buffer.length + '/16</button>';
+    '<span class="n">' + c('k','MOVES ') + '<b>' + S.steps + '</b></span><span class="n">' + c('k','DEPTH ') + '<b>' + depthNow() + '</b></span><span class="n">' + c('k','DRAIN ') + '<b class="' + (drainNow() > O.drain ? 'rd' : '') + '">' + drainNow() + '</b></span><button type="button" class="tbtn bufbtn" data-openlat><b class="yl">L</b> LATTICE</button><button type="button" class="tbtn" data-openbuf><b class="yl">i</b> BUFFER ' + S.buffer.length + '/16</button>';
   $('sig').className = 'sig ' + (b ? b.cls : '') + (b && b.cls === 'dim' ? ' flat' : '');
   $('sig').innerHTML = b ? '<span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>' + esc(b.text) + '</span>' : '';
   // caption
@@ -1643,6 +1654,118 @@ $('cards').addEventListener('mouseover', lookAt); $('cards').addEventListener('f
 dlg.addEventListener('close', () => { BN.anim = 0; paint(); });
 document.querySelector('.main').addEventListener('click', e => { if (e.target.closest('[data-openbuf]')) openBuf(); });
 
+/* ---------- the lattice trace: `ll` as a dive from the universe to you, then the levels as a stack ---------- */
+const lat = $('lat'), lcv = $('lcv'), lctx = lcv.getContext('2d');
+const LT = {phase:'stack', t0:0, focus:0, lv:[], ship:null, hive:null};
+const XG = Object.assign({}, GLYPH, {
+  building:(x, y, r, col, a) => { rect(x - r * .5, y - r, r, r * 2, col, a, 1.5); for (let i = 1; i < 5; i++) line(x - r * .5, y - r + r * 2 * i / 5, x + r * .5, y - r + r * 2 * i / 5, col, a * .5, 1); },
+  floor:(x, y, r, col, a) => { rect(x - r, y - r * .35, r * 2, r * .7, col, a, 1.5); for (let i = 1; i < 4; i++) line(x - r + r * 2 * i / 4, y - r * .35, x - r + r * 2 * i / 4, y + r * .35, col, a * .5, 1); },
+  corridor:GLYPH.street,
+  apartment:(x, y, r, col, a) => { rect(x - r, y - r * .6, r * 2, r * 1.2, col, a, 1.5); line(x, y - r * .6, x, y - r * .15, col, a, 1); line(x, y + r * .25, x, y + r * .6, col, a, 1); },
+  room:(x, y, r, col, a) => { rect(x - r * .7, y - r * .7, r * 1.4, r * 1.4, col, a, 1.5); },
+  ship:(x, y, r, col, a) => { diamond(x, y, r * .8, col, a, false); line(x + r * .8, y, x + r * 1.7, y, col, a * .7, 1); },
+  hive:(x, y, r, col, a) => { rect(x - r * .75, y - r * .75, r * 1.5, r * 1.5, col, a, 1.5); rect(x - r * .3, y - r * .3, r * .6, r * .6, col, a * .6, 1); },
+  node:(x, y, r, col, a) => { circ(x, y, r * .6, col, a, 1.5); circ(x, y, r * .2, null, a, 1, col); }
+});
+function latLevels(){
+  const l = L(), out = [], path = ancestors(worldPos()).reverse();
+  path.forEach(id => { const n = N(id), par = n.parent; let pos = null; if (par){ const ks = kids(par); pos = {i:ks.indexOf(id) + 1, n:ks.length}; } out.push({kind:n.kind, type:KLABEL[n.kind], name:n.name, id:id, pos:pos}); });
+  if (inB(l)){
+    const b = N(l.sid), st = struct(l.sid);
+    out.push({kind:'building', type:'BUILDING', name:b.name + ' · ' + b.size, pos:{i:b.index + 1, n:streetLen(b.parent)}});
+    out.push({kind:'floor', type:'FLOOR', name:'floor ' + l.n + ' · ' + st.level(l.n).zone, pos:{i:l.n + 1, n:b.floors}});
+    if (l.at !== 'dk') out.push({kind:'corridor', type:'CORRIDOR', name:st.level(l.n).zone});
+    if (l.at === 'rm'){ const sec = st.level(l.n).sections[l.si]; out.push({kind:'apartment', type:'APARTMENT', name:'door ' + pad2(l.si + 1) + ' · ' + sec.mat, pos:{i:l.si + 1, n:b.apts}}); out.push({kind:'room', type:'ROOM', name:sec.rooms[l.ri].name, pos:{i:l.ri + 1, n:sec.rooms.length}, loot:1}); }
+  } else if (inH(l)){
+    out.push({kind:'ship', type:'SHIP', name:'Buckled Girder · ' + (S.ship.lit ? 'awake' : 'dormant')});
+    if (l.at === 'al') out.push({kind:'corridor', type:'AIRLOCK', name:'deck 1 · the only door'});
+    else if (l.at !== 'ap'){
+      out.push({kind:'floor', type:'DECK', name:'deck ' + l.n + ' · ' + DECKS[l.n].zone, pos:{i:l.n + 1, n:DECKS.length}});
+      if (l.at !== 'dk') out.push({kind:'corridor', type:'PASSAGE', name:DECKS[l.n].zone});
+      if (l.at === 'rm'){ const sec = DECKS[l.n].sections[l.si]; out.push({kind:'apartment', type:'SECTION', name:sec.mat, pos:{i:l.si + 1, n:DECKS[l.n].sections.length}}); out.push({kind:'room', type:'ROOM', name:sec.rooms[l.ri].name, pos:{i:l.ri + 1, n:sec.rooms.length}, loot:2}); }
+    }
+  } else if (isV(l)){
+    out.push({kind:'hive', type:'HIVE', name:'no name, no registry'});
+    if (l.at === 'hj') out.push({kind:'room', type:'SUBJUNCTION', name:'one of eight, all the same'}); else if (l.at === 'hv') out.push({kind:'node', type:'CENTRAL NODE', name:'Vinculum'});
+  }
+  const mark = at => { if (!at) return null; const tu = ancestors(at), ci = path.map(id => tu.indexOf(id) >= 0).lastIndexOf(true); return {ci:ci, on:path[ci] === at, down:KIND[N(at).kind].level - ci, name:N(at).name}; };
+  LT.ship = inH(l) ? null : mark(S.ship.at); LT.hive = S.hive.present && !isV(l) ? mark(S.hive.at) : null;
+  return out;
+}
+function openLat(){ if (S.mode !== 'main' || lat.open || dlg.open) return; LT.lv = latLevels(); LT.focus = LT.lv.length - 1; LT.phase = RM ? 'stack' : 'dive'; LT.t0 = FX.t; lat.showModal(); paintLat(); }
+function paintLat(){
+  const lv = LT.lv[LT.focus]; if (!lv) return;
+  let h = '<span class="yl b">DEPTH ' + pad2(LT.focus) + ' · ' + esc(lv.type) + '</span> — ' + esc(lv.name);
+  if (lv.pos) h += c('dim', ' · ' + lv.pos.i + ' of ' + lv.pos.n);
+  h += '<br>' + (lv.loot === 2 ? 'Objects here weigh their letter-sum <b class="yl">× 12</b>, pinned: a ship’s rooms sit shallower than a building’s, so the mock holds them at the building’s depth (decision 11).' : lv.loot ? 'Objects here weigh their letter-sum <b class="yl">× 12</b>: the same object is worth more the deeper it lies.' : LT.focus === LT.lv.length - 1 ? 'You are here.' : LT.focus === 0 ? 'The root. Every seed starts here.' : c('dim','Depth ' + LT.focus + ' of ' + (LT.lv.length - 1) + ' on your thread.'));
+  if (LT.ship && LT.ship.ci === LT.focus) h += ' ' + c('rs', LT.ship.on ? '◈ The hauler is here.' : '◈ The hauler hangs off this level, ' + LT.ship.down + ' down another branch (' + LT.ship.name + ').');
+  if (LT.hive && LT.hive.ci === LT.focus) h += ' ' + c('rd', '◆ The mass is ' + (LT.hive.on ? 'here.' : LT.hive.down + ' down another branch.'));
+  $('lcap').innerHTML = h;
+}
+function drawLat(){
+  const r = lcv.getBoundingClientRect(); if (!r.width) return;
+  const W = r.width, H = r.height; if (lcv.width !== Math.round(W * DPR)){ lcv.width = Math.round(W * DPR); lcv.height = Math.round(H * DPR); }
+  const keep = [ctx, CW, CH]; ctx = lctx; CW = W; CH = H;   // the drawing helpers follow whichever canvas is current
+  try {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; dash(); noglow(); ctx.fillStyle = '#060a0b'; ctx.fillRect(0, 0, W, H); stars('lat', 90);
+    const lv = LT.lv, n = lv.length, STEP = 600, t = FX.t - LT.t0;
+    if (LT.phase === 'dive'){
+      const i = Math.floor(t / STEP), p = (t % STEP) / STEP;
+      if (i >= n - 1){ LT.phase = 'settle'; LT.t0 = FX.t; }
+      else { const z = p < .4 ? 0 : ease((p - .4) / .6); latScene(i, 1 + z * z * 5, 1 - z * z, W, H); if (z > 0) latScene(i + 1, .45 + .55 * z, z * .9, W, H, true); latTitle(lv[z > .6 ? i + 1 : i], z > .6 ? i + 1 : i, W); text('any key skips', W / 2, H - 14, COL.faint, 1, 10); }
+    }
+    if (LT.phase !== 'dive') latStack(W, H, LT.phase === 'settle' ? clamp((FX.t - LT.t0) / 900, 0, 1) : 1);
+    if (LT.phase === 'settle' && FX.t - LT.t0 > 900) LT.phase = 'stack';
+  } finally { ctx = keep[0]; CW = keep[1]; CH = keep[2]; }
+}
+function latTitle(lv, i, W){ text('DEPTH ' + pad2(i) + ' · ' + lv.type, W / 2, 24, COL.dim, 1, 11); text(cut(lv.name, 40), W / 2, 44, COL.cy, 1, 17, 'center', true); }
+function latScene(i, scale, alpha, W, H, behind){
+  const lv = LT.lv[i], nx = LT.lv[i + 1], cx = W / 2, cy = H / 2 + 18, R = Math.min(W, H) * .32;
+  const cnt = nx ? Math.min(nx.pos ? nx.pos.n : 1, 24) : 0, pick = nx && nx.pos ? (nx.pos.i - 1) % 24 : 0, at = j => { const a = (-90 + 360 * j / Math.max(1, cnt)) * Math.PI / 180; return [cx + Math.cos(a) * R * 1.3, cy + Math.sin(a) * R * .8]; };
+  const f = cnt && !behind ? at(pick) : [cx, cy];
+  ctx.save(); ctx.translate(f[0], f[1]); ctx.scale(scale, scale); ctx.translate(-f[0], -f[1]);
+  glow(COL.cy, 10); XG[lv.kind](cx, cy, R * .34, lv.kind === 'nullreach' ? COL.mg : COL.cy, alpha); noglow();
+  for (let j = 0; j < cnt; j++){ const q = at(j), me = j === pick; line(cx + (q[0] - cx) * .35, cy + (q[1] - cy) * .35, q[0] - (q[0] - cx) * .1, q[1] - (q[1] - cy) * .1, me ? COL.yl : COL.rule, alpha * (me ? .9 : 1), 1); if (me) glow(COL.yl, 14); XG[nx.kind](q[0], q[1], me ? 11 : 7, me ? COL.yl : COL.dim, alpha * (me ? 1 : .7)); noglow(); }
+  if (!nx){ FX.you = null; glow(COL.yl, 16); diamond(cx, cy, 7, COL.yl, alpha, true); noglow(); }
+  ctx.restore();
+}
+function latStack(W, H, e){
+  const lv = LT.lv, n = lv.length, top = 40, gap = Math.min(48, (H - top - 34) / Math.max(1, n - 1)), y0 = top + ((H - top - 34) - gap * (n - 1)) / 2 + 6, small = W < 560, tx = small ? 58 : W * .3, ee = ease(e);
+  const py = i => { const y = y0 + gap * i; return H / 2 + (y - H / 2) * ee; }, b = bearing(), beacon = b && b.cls === 'yl' && !S.ship.owned && LT.ship;
+  glow(COL.cy, 10); line(tx, py(0), tx, py(n - 1), COL.cy, .85 * ee, 2); noglow();
+  for (let i = 0; i < n; i++){
+    const y = py(i), foc = i === LT.focus, me = i === n - 1, rx = (small ? 30 : 46) * (foc ? 1.3 : 1), ry = rx * .3, col = me ? COL.yl : lv[i].kind === 'nullreach' ? COL.mg : foc ? COL.text : COL.cy, a = (foc || me ? 1 : .6) * ee;
+    ctx.beginPath(); ctx.ellipse(tx, y, rx, ry, 0, 0, 6.283); ctx.fillStyle = '#060a0b'; ctx.globalAlpha = .9; ctx.fill(); stroke(col, a, foc ? 2 : 1.2); if (foc) glow(col, 10); ctx.stroke(); noglow();
+    XG[lv[i].kind](tx, y, foc ? 9 : 7, col, a);
+    const lx = tx + rx + 14; text('DEPTH ' + pad2(i) + ' · ' + lv[i].type, lx, y - 7, foc ? COL.yl : COL.dim, ee, 9, 'left');
+    text(cut(lv[i].name, small ? 24 : 46), lx, y + 7, me ? COL.yl : foc ? COL.text : COL.dim, ee, foc ? 12 : 11, 'left', foc || me);
+    if (lv[i].pos && lv[i].pos.n > 1 && !small){ const bx = lx + 190, bw = 90, q = (lv[i].pos.i - 1) / (lv[i].pos.n - 1); line(bx, y - 7, bx + bw, y - 7, COL.rule, ee, 3); circ(bx + bw * q, y - 7, 3, null, ee, 1, foc ? COL.yl : COL.cy); text(lv[i].pos.i + ' / ' + lv[i].pos.n, bx + bw + 8, y - 7, COL.dim, ee, 9, 'left'); }
+    if (lv[i].loot) text('× 12', tx - rx - 10, y, COL.yl, ee, 11, 'right', true);
+    hit('plate:' + i, 0, y - gap / 2, W, gap);
+  }
+  [[LT.ship, COL.rs, '◈ hauler', -1], [LT.hive, COL.rd, '◆ mass', 1]].forEach(m => {
+    const k = m[0]; if (!k || k.ci < 0) return; const y = py(k.ci), side = small ? 1 : m[3], x1 = tx + side * (small ? 34 : 50), x2 = k.on ? x1 : x1 + side * (small ? 22 : 70), y2 = k.on ? y : y + gap * .45;
+    if (!k.on){ dash([3, 4]); line(x1, y, x2, y2, m[1], .8 * ee, 1); dash(); }
+    glow(m[1], 10); diamond(x2, y2, 6, m[1], ee, m[3] === 1); noglow(); text(m[2] + (k.on ? '' : ' · ' + k.down + ' down'), x2 + side * 12, y2, m[1], ee, 10, side < 0 ? 'right' : 'left');
+    if (m[3] === -1 && beacon && e >= 1){ const ya = py(n - 1), span = Math.abs(ya - y) + Math.hypot(x2 - tx, y2 - y); for (let j = 0; j < 3; j++){ const d = ((RM ? .5 : FX.t / 1600) + j / 3) % 1 * span, up = Math.abs(ya - y); let px, pyy; if (d <= up){ px = tx; pyy = ya + (y - ya) * (up ? d / up : 1); } else { const q = (d - up) / Math.max(1, span - up); px = tx + (x2 - tx) * q; pyy = y + (y2 - y) * q; } glow(COL.yl, 12); circ(px, pyy, 3.5, null, .95, 1, COL.yl); noglow(); } }
+  });
+  const yy = py(n - 1); if (e >= 1){ const p = RM ? .5 : (FX.t / 900) % 1; circ(tx, yy, 10 + 10 * p, COL.yl, .6 * (1 - p), 1); }
+}
+function latKey(e){
+  const key = e.key;
+  if (LT.phase === 'dive'){ if (key !== 'Escape'){ e.preventDefault(); LT.phase = 'settle'; LT.t0 = FX.t; } return; }
+  if (key === 'ArrowUp' || key === 'ArrowDown'){ e.preventDefault(); LT.focus = clamp(LT.focus + (key === 'ArrowDown' ? 1 : -1), 0, LT.lv.length - 1); paintLat(); }
+  else if (key === 'Enter'){ e.preventDefault(); LT.phase = RM ? 'stack' : 'dive'; LT.t0 = FX.t; }
+  else if (key.toLowerCase() === 'l'){ e.preventDefault(); lat.close(); }
+}
+lat.addEventListener('click', e => {
+  if (e.target === lat || (e.target.closest && e.target.closest('#lclose'))){ lat.close(); return; }
+  if (LT.phase === 'dive'){ LT.phase = 'settle'; LT.t0 = FX.t; return; }
+  if (e.target === lcv){ const r = lcv.getBoundingClientRect(), y = e.clientY - r.top, h = FX.hits.filter(q => q.id.indexOf('plate:') === 0 && y >= q.y && y <= q.y + q.h)[0]; if (h){ LT.focus = +h.id.slice(6); paintLat(); } }
+  else if (e.target.closest && e.target.closest('#lreplay')){ LT.phase = RM ? 'stack' : 'dive'; LT.t0 = FX.t; }
+});
+document.querySelector('.main').addEventListener('click', e => { if (e.target.closest('[data-openlat]')) openLat(); });
+
 /* ---------- wiring: click, tap, arrows ---------- */
 function doOpt(o){
   if (!o) return;
@@ -1682,7 +1805,9 @@ $('gauge').addEventListener('click', e => { const b = e.target.closest('[data-cl
 document.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
   if (tag === 'select' || tag === 'input' || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (lat.open){ latKey(e); return; }
   if (dlg.open){ dlgKey(e); return; }
+  if (e.key === 'L'){ e.preventDefault(); openLat(); return; }
   const key = e.key, low = key.toLowerCase();
   if (S.mode === 'dead'){ if (key === 'Enter' || key === ' '){ e.preventDefault(); act(); } return; }
   if (key === 'Escape'){ e.preventDefault(); if (S.mode !== 'main') closeSub(); else if (S.pick >= 0){ S.pick = -1; paint(); } else runDir('esc'); return; }
