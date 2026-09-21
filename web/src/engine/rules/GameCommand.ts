@@ -1,9 +1,11 @@
 import type { GameOption } from './GameOption.ts';
 
-/** One registry entry of the engine: the option shown to the player, when it is on offer, what it does. */
+/**
+ * One registry entry of the engine: the options it puts on offer right now (none, one, or one per child)
+ * and what running one of them does.
+ */
 export interface GameCommand {
-  readonly option: GameOption;
-  available(): boolean;
-  /** Runs the command and returns the message for the status line. */
-  run(): string;
+  options(): readonly GameOption[];
+  /** Runs the option with this id — one of those `options()` just offered — and returns the status message. */
+  run(optionId: string): string;
 }

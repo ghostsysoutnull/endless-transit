@@ -1,64 +1,166 @@
+import type { Location } from '#engine/model/Location.ts';
 import type { SaveStore } from '#engine/persistence/SaveStore.ts';
 import { SavedGame } from '#engine/persistence/SavedGame.ts';
-import type { UniverseNamer } from '#engine/procgen/UniverseNamer.ts';
+import type { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import type { EntropySource } from '#engine/rng/EntropySource.ts';
-import type { Seed } from '#engine/rng/Seed.ts';
 import type { GameCommand } from './GameCommand.ts';
+import type { GameOption } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
+import { Journey } from './Journey.ts';
+import type { PlaceSummary } from './PlaceSummary.ts';
+
+const TRAVEL = 'enter:';
+/** Keyboard extras for the children, in order: digits, then the letters no other option uses (e l n r t). */
+const CHILD_KEYS = '123456789abcdfghijkmopqsuvwxyz';
 
 /**
  * The game, seen from outside: `step(optionId)` in, a plain-data snapshot out. Synchronous, instant, no
- * output device, nothing blocks on input. Owns the current world's seed and the registry of commands —
- * a new thing the player can do is a new registry entry, not a new branch in `step`.
+ * output device, nothing blocks on input. Owns the registry of commands — a new thing the player can do
+ * is a new registry entry, not a new branch in `step` — and saves the journey after every move.
  */
 export class GameEngine {
-  readonly #namer: UniverseNamer;
+  readonly #journey: Journey;
   readonly #entropy: EntropySource;
   readonly #saves: SaveStore;
   readonly #commands: readonly GameCommand[];
-  #world: Seed | undefined;
   #message = '';
 
-  constructor(deps: { namer: UniverseNamer; entropy: EntropySource; saves: SaveStore }) {
-    this.#namer = deps.namer;
+  constructor(deps: { world: LocationRegistry; entropy: EntropySource; saves: SaveStore }) {
+    this.#journey = new Journey(deps.world);
     this.#entropy = deps.entropy;
     this.#saves = deps.saves;
     this.#commands = [
       {
-        option: { id: 'new-world', key: 'n', label: 'New world' },
-        available: () => this.#world === undefined,
+        options: () =>
+          this.#atTitle() && !this.#hasWorld() ? [this.#system('new-world', 'n', 'New world')] : [],
         run: () => this.#drawWorld(),
       },
       {
-        option: { id: 'reroll', key: 'r', label: 'Re-roll' },
-        available: () => this.#world !== undefined,
+        options: () =>
+          this.#atTitle() && this.#hasWorld()
+            ? [this.#system('enter-world', 'e', this.#journey.resumes() ? 'Continue' : 'Enter world')]
+            : [],
+        run: () => this.#moved(this.#journey.enter(), 'Uplink established.'),
+      },
+      {
+        options: () => (this.#atTitle() && this.#hasWorld() ? [this.#system('reroll', 'r', 'Re-roll')] : []),
         run: () => this.#drawWorld(),
       },
+      {
+        options: () => this.#travelOptions(),
+        run: (optionId) => {
+          const moved = this.#journey.descend(Number(optionId.slice(TRAVEL.length)));
+          return this.#moved(moved, `Entered ${this.#journey.here()?.name() ?? ''}.`);
+        },
+      },
+      {
+        options: () => {
+          const here = this.#journey.here();
+          if (here?.parent() === undefined) return [];
+          return [{ ...this.#system('leave', 'l', `Leave ${here.kind().title()}`), role: 'return' }];
+        },
+        run: () => this.#moved(this.#journey.ascend(), `Returned to ${this.#journey.here()?.name() ?? ''}.`),
+      },
+      {
+        options: () => (this.#atTitle() ? [] : [this.#system('to-title', 't', 'Title screen')]),
+        run: () => this.#moved(this.#journey.toTitle(), ''),
+      },
     ];
-    this.#world = SavedGame.parse(this.#saves.load())?.seed();
-    if (this.#world !== undefined) this.#message = `Restored world ${this.#world.toString()}.`;
+    this.#restore();
   }
 
-  /** Runs the option if it is on offer; an id that is not (a stale tap) changes nothing. */
+  /** Runs the option if it is on offer and open; any other id (a stale tap, a sealed place) changes nothing. */
   step(optionId: string): GameSnapshot {
-    const command = this.#commands.find((entry) => entry.option.id === optionId && entry.available());
-    if (command !== undefined) this.#message = command.run();
+    const command = this.#commands.find((entry) =>
+      entry.options().some((option) => option.id === optionId && !option.sealed),
+    );
+    if (command !== undefined) {
+      this.#message = command.run(optionId);
+      const saved = this.#journey.saved();
+      if (saved !== undefined) this.#saves.save(saved.toText());
+    }
     return this.snapshot();
   }
 
   snapshot(): GameSnapshot {
-    const world = this.#world;
+    const world = this.#journey.world();
+    const here = this.#journey.here();
     return {
-      world: world === undefined ? null : { seed: world.toString(), name: this.#namer.nameOf(world) },
-      options: this.#commands.filter((entry) => entry.available()).map((entry) => entry.option),
+      world:
+        world === undefined ? null : { seed: world.toString(), name: this.#journey.universe()?.name() ?? '' },
+      place: here === undefined ? null : this.#summaryOf(here),
+      options: this.#commands.flatMap((entry) => entry.options()),
       message: this.#message,
     };
   }
 
+  #restore(): void {
+    const saved = SavedGame.parse(this.#saves.load());
+    if (saved === undefined || !this.#journey.restore(saved)) return;
+    const here = this.#journey.here();
+    const where = here === undefined ? '' : ` at ${here.name()}`;
+    this.#message = `Restored world ${saved.seed().toString()}${where}.`;
+  }
+
+  #atTitle(): boolean {
+    return this.#journey.here() === undefined;
+  }
+
+  #hasWorld(): boolean {
+    return this.#journey.world() !== undefined;
+  }
+
+  #system(id: string, key: string, label: string): GameOption {
+    return { id, key, label, role: 'system', sealed: false, landmark: false };
+  }
+
+  #moved(happened: boolean, message: string): string {
+    return happened ? message : this.#message;
+  }
+
   #drawWorld(): string {
     const seed = this.#entropy.draw();
-    this.#world = seed;
-    this.#saves.save(new SavedGame(seed).toText());
+    this.#journey.begin(seed);
     return `World ${seed.toString()} drawn.`;
+  }
+
+  /** One option per child of the place; only the open ones get a key, handed out in order. */
+  #travelOptions(): readonly GameOption[] {
+    const here = this.#journey.here();
+    if (here === undefined) return [];
+    let open = 0;
+    return here.children().map((child, index) => ({
+      id: `${TRAVEL}${String(index)}`,
+      key: child.sealed() ? '' : (CHILD_KEYS[open++] ?? ''),
+      label: `${here.approachVerb()} ${child.callSign()}`,
+      role: 'travel',
+      sealed: child.sealed(),
+      landmark: child.landmark(),
+    }));
+  }
+
+  #summaryOf(here: Location): PlaceSummary {
+    const siblings = here.parent()?.children();
+    return {
+      kind: here.kind().title(),
+      icon: here.kind().icon(),
+      name: here.name(),
+      address: here.address().toString(),
+      depth: here.depth(),
+      position:
+        siblings === undefined
+          ? null
+          : { label: here.kind().indexLabel(), index: here.index() + 1, total: siblings.length },
+      trail: here.trail().map((step) => ({
+        icon: step.kind().icon(),
+        kind: step.kind().title(),
+        name: step.name(),
+      })),
+      status: here.status(),
+      description: here.description(),
+      facts: here.facts(),
+      frame: here.vibe()?.frame() ?? null,
+      childrenHeading: here.childrenHeading(),
+    };
   }
 }
