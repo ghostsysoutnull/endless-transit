@@ -103,6 +103,6 @@
 
 ## 🏛️ LESSONS
 See `tasks/lessons/` for the canonical, domain-organized lesson set:
-- `tasks/lessons/model.md` — lazy loading, ancestor traversal, DI injection patterns
+- `terminal/tasks/lessons/model.md` — lazy loading, ancestor traversal, DI injection patterns
 - `tasks/lessons/infrastructure.md` — classpath discipline, build cache, test artifact hygiene
-- `tasks/lessons/core.md` — value object migration, import management
+- `terminal/tasks/lessons/core.md` — value object migration, import management
