@@ -62,6 +62,7 @@
 - [x] Concept — ships (2026-09-20, user idea): concept record + playable mock v1 in `docs/analysis/`, `CONCEPT-001` opened in `tasks/backlog/CONCEPTS.md`; verdicts pending. No chronicle; this line is the record.
 - [x] Concept — ships, visual mock (2026-09-21): the whole game as one page; rules in `docs/analysis/SHIPS_RULES.md`; CONCEPT-002 opened (`docs/analysis/WEB_PORT_CONCEPT.md`); HK-024 and WF-012 logged. No source change; no chronicle, this line is the record.
 - [x] Concept — web port study (2026-09-21): ten user decisions, verified stack, `web/` tree, stages — `docs/analysis/WEB_PORT_STUDY.md`. No source change; no chronicle, this line is the record.
+- [x] Concept — web port, how the work is run (2026-09-21): one session per wave, one writer, agents read and check, tests first — study §12. No chronicle; this line is the record.
 - [ ] Next: **web port stage 0** — draft the plan to move Groovy into `terminal/` (study §9), `/grill`, Directive. Other open threads: **CONCEPT-001** (fill the §7 verdict column), **HK-021**, **HK-023** (the restore bullet is done, the rest is open), **HK-013** (8 long methods left), **HK-024** (the `KEYSTONE` glitch decision), O1 (HeadlessRunner DSL), WF-010/011/006/012.
 
 ---
