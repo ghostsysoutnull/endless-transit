@@ -73,7 +73,9 @@ export class RecapPresenter implements Presenter<RecapVM> {
         label: option.label.toUpperCase(),
         opposite: option.opposite,
       })),
-      status: snapshot.message,
+      note: snapshot.message,
+      // The engine says nothing when the recap opens; the live region is told the ending's heading, once.
+      status: snapshot.message === '' ? ending.heading : snapshot.message,
       build: this.#masthead.buildLine(),
       regions: { recap: 'Session recap', actions: 'Actions' },
     };

@@ -98,6 +98,20 @@ describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRec
     expect(vm.closing).toBe('Neural link severed. Waveform stabilized.');
   });
 
+  test('the status a reader hears: the engine says nothing when the recap opens, so the live region gets the heading of the ending', () => {
+    expect(presenter.toViewModel(RECAP).status).toBe('[SESSION_RECAP_INITIALIZED]');
+    expect(presenter.toViewModel(RECAP).note).toBe('');
+    expect(
+      presenter.toViewModel({
+        ...RECAP,
+        prompt: { id: 'recap', outcome: 'severed', figures: { locus: '0.0', steps: '2', places: '9' } },
+      }).status,
+    ).toBe('[LINK_TERMINATION_PROTOCOL]');
+    expect(presenter.toViewModel({ ...RECAP, message: 'Entered Ornate Sanctum.' }).status).toBe(
+      'Entered Ornate Sanctum.',
+    );
+  });
+
   test('an ending the presenter has no words for is a failed render, not a blank screen', () => {
     expect(() =>
       presenter.toViewModel({ ...RECAP, prompt: { id: 'recap', outcome: 'void', figures: {} } }),

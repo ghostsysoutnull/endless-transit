@@ -23,13 +23,14 @@ export class RebootPresenter implements Presenter<RebootVM> {
   }
 
   toViewModel(snapshot: GameSnapshot): RebootVM {
+    const headline = '!!! CRITICAL_COHERENCE_FAILURE !!!';
     return {
       scene: REBOOT,
       title: this.#masthead.name(),
       frame: DEAD_FRAME,
       stageLine: 'NEURAL LINK LOST',
       eyebrow: `COHERENCE ${String(snapshot.player?.coherence ?? 0)}%`,
-      headline: '!!! CRITICAL_COHERENCE_FAILURE !!!',
+      headline,
       line: 'REBOOTING...',
       explanation:
         'The world is rebuilt from the same seed. You wake on the starting street with 100 Coherence; ' +
@@ -41,7 +42,9 @@ export class RebootPresenter implements Presenter<RebootVM> {
         label: option.label.toUpperCase(),
         opposite: option.opposite,
       })),
-      status: snapshot.message,
+      note: snapshot.message,
+      // The engine says nothing at death; the live region is told the headline, once (the shell repeats no text).
+      status: snapshot.message === '' ? headline : snapshot.message,
       build: this.#masthead.buildLine(),
       regions: { stage: 'Uplink', notice: 'Link failure', actions: 'Actions' },
     };

@@ -13,6 +13,9 @@ export interface RecapVM extends Screen {
   readonly steps: readonly { readonly label: string; readonly process: string; readonly done: string }[];
   readonly closing: string;
   readonly options: readonly OptionVM[];
+  /** The engine's message, for the eye; the heading is already on the page. */
+  readonly note: string;
+  /** What a reader hears: the message, or the ending's heading when the engine said nothing. */
   readonly status: string;
   readonly build: string;
   readonly regions: { readonly recap: string; readonly actions: string };

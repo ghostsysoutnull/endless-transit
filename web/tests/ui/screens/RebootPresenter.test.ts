@@ -50,9 +50,16 @@ describe('RebootPresenter — what zero coherence puts on screen (Guide:144-147)
     expect(vm.explanation).toContain('same seed');
     expect(vm.explanation).toContain('starting street');
     expect(vm.options).toEqual([{ id: 'reboot', key: '', label: 'REBUILD', opposite: '' }]);
-    expect(vm.status).toBe('');
     expect(vm.build).toBe('build a1b2c3d');
     expect(vm.regions).toEqual({ stage: 'Uplink', notice: 'Link failure', actions: 'Actions' });
     expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
+  });
+
+  test('the status a reader hears: the engine says nothing at death, so the live region gets the headline; a message when there is one', () => {
+    expect(presenter.toViewModel(DEAD).status).toBe('!!! CRITICAL_COHERENCE_FAILURE !!!');
+    expect(presenter.toViewModel(DEAD).note).toBe('');
+    expect(
+      presenter.toViewModel({ ...DEAD, message: 'Restored world 7F3A-91C2-0B4D-E6A8 at Room 1.' }).status,
+    ).toBe('Restored world 7F3A-91C2-0B4D-E6A8 at Room 1.');
   });
 });

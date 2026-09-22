@@ -13,6 +13,9 @@ export interface RebootVM extends Screen {
   /** What the reboot keeps and what it undoes, in plain words. */
   readonly explanation: string;
   readonly options: readonly OptionVM[];
+  /** The engine's message, for the eye; the headline is already on the page. */
+  readonly note: string;
+  /** What a reader hears: the message, or the headline when the engine said nothing. */
   readonly status: string;
   readonly build: string;
   readonly regions: { readonly stage: string; readonly notice: string; readonly actions: string };
