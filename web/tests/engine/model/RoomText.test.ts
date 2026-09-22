@@ -31,6 +31,35 @@ function roomsOf(n: number): Room[] {
     .flatMap((apartment) => apartment.children().map((room) => as(room, Room)));
 }
 
+/** The rooms of anomalous apartments, at least `least` of them, walking whole buildings (one in a hundred apartments). */
+function anomalyRooms(least: number): Room[] {
+  const found: Room[] = [];
+  for (let n = 0; found.length < least; n++) {
+    const street = must(toStreet(registry.universe(sampleSeed(n)), () => n).at(-1));
+    const building = as(street.children()[n % street.children().length], Building);
+    for (const floor of building.children()) {
+      for (const apartment of as(floor, Floor).corridor().children()) {
+        if (as(apartment, Apartment).anomaly())
+          found.push(...apartment.children().map((room) => as(room, Room)));
+      }
+      if (found.length >= least) break;
+    }
+  }
+  return found;
+}
+
+/** How many non-space characters of `original` `glitched` replaced, and how many there were. */
+function replaced(original: string, glitched: string): { changed: number; of: number } {
+  let changed = 0;
+  let of = 0;
+  for (let i = 0; i < original.length; i++) {
+    if (original[i] === ' ') continue;
+    of++;
+    if (glitched[i] !== original[i]) changed++;
+  }
+  return { changed, of };
+}
+
 const rooms = Array.from({ length: 120 }, (_, n) => roomsOf(n)).flat();
 const anomalies = rooms.filter((room) => as(room.parent(), Apartment).anomaly());
 const sound = rooms.filter((room) => !as(room.parent(), Apartment).anomaly());
@@ -94,6 +123,38 @@ describe('a room’s text (Room.groovy:116-134, 262-297)', () => {
         for (const char of GLITCH_CHARS) expect(line, line).not.toContain(char);
       }
     }
+  });
+
+  test('each part has its own share — the structure loses about a fifth of its characters, the walls a tenth, the lighting three in ten (Room.groovy:269-271)', () => {
+    const share = {
+      structure: { changed: 0, of: 0 },
+      walls: { changed: 0, of: 0 },
+      lighting: { changed: 0, of: 0 },
+    };
+    const many = anomalyRooms(700);
+    expect(many.length).toBeGreaterThanOrEqual(700);
+    for (const room of many) {
+      const { structure, walls, lighting } = room.atmosphere();
+      const [where = '', light = ''] = room.description();
+      const cut = (line: string, from: number, part: string): string => line.slice(from, from + part.length);
+      const parts = {
+        structure: replaced(structure, cut(where, 'You are in '.length, structure)),
+        walls: replaced(walls, cut(where, where.length - 1 - walls.length, walls)),
+        lighting: replaced(lighting, cut(light, 'The space is illuminated by '.length, lighting)),
+      };
+      for (const part of ['structure', 'walls', 'lighting'] as const) {
+        share[part].changed += parts[part].changed;
+        share[part].of += parts[part].of;
+      }
+    }
+    for (const part of ['structure', 'walls', 'lighting'] as const)
+      expect(share[part].of).toBeGreaterThan(2000);
+    expect(share.structure.changed / share.structure.of).toBeGreaterThan(0.15);
+    expect(share.structure.changed / share.structure.of).toBeLessThan(0.25);
+    expect(share.walls.changed / share.walls.of).toBeGreaterThan(0.05);
+    expect(share.walls.changed / share.walls.of).toBeLessThan(0.15);
+    expect(share.lighting.changed / share.lighting.of).toBeGreaterThan(0.25);
+    expect(share.lighting.changed / share.lighting.of).toBeLessThan(0.35);
   });
 
   test('only a building and what is under it are indoors — the telemetry pane’s rule (TelemetryComponent.groovy:48-55)', () => {
