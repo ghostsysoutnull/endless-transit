@@ -28,9 +28,13 @@ export class Progeny {
 
   /** As many children as the parent's seed draws. */
   of(parent: Location): readonly Location[] {
+    return this.exactly(parent, this.count(parent.seed()));
+  }
+
+  /** How many children a parent with this seed has — for a parent that needs to know before it is populated. */
+  count(parentSeed: Seed): number {
     if (this.#count === undefined) throw new Error('this progeny has no count range: use exactly()');
-    const count = parent.seed().branch(COUNT).range(this.#count.min, this.#count.max) * this.#count.unit;
-    return this.exactly(parent, count);
+    return parentSeed.branch(COUNT).range(this.#count.min, this.#count.max) * this.#count.unit;
   }
 
   /** Exactly `count` children — for a parent that decided its count when it was made (a building its floors). */

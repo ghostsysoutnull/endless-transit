@@ -5,6 +5,7 @@ import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
 import type { Origin } from './Origin.ts';
+import type { Relic } from './Relic.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 
 export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
@@ -70,6 +71,11 @@ export class Room extends Location {
 
   signal(): string {
     return this.#traits.signal;
+  }
+
+  /** The relics lying here — the apartment's, the ones it dealt to this room (Guide:167: objects live in apartments). */
+  objects(): readonly Relic[] {
+    return this.#apartment.relicsIn(this.index());
   }
 
   /** A room lists no places: its rooms are its siblings, walked with forward and back. */

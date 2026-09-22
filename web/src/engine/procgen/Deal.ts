@@ -7,19 +7,28 @@ import type { Seed } from '#engine/rng/Seed.ts';
  */
 export class Deal {
   nth<T>(seed: Seed, items: readonly T[], n: number): T {
-    if (items.length === 0) throw new RangeError('a deal needs at least one item');
-    const round = Math.floor(n / items.length);
-    let left = [...items];
-    let dealt: T | undefined;
-    for (let pick = 0; pick <= n % items.length; pick++) {
-      const at = seed
-        .branch(round)
-        .branch(pick)
-        .range(0, left.length - 1);
-      dealt = left[at];
-      left = left.filter((_item, index) => index !== at);
-    }
+    const dealt = this.take(seed, items, n + 1).at(-1);
     if (dealt === undefined) throw new RangeError('a deal always deals');
+    return dealt;
+  }
+
+  /** The first `count` items of the deal, in the order they are dealt: `take(n)[i]` is `nth(i)`. */
+  take<T>(seed: Seed, items: readonly T[], count: number): T[] {
+    if (items.length === 0) throw new RangeError('a deal needs at least one item');
+    const dealt: T[] = [];
+    for (let round = 0; dealt.length < count; round++) {
+      let left = [...items];
+      for (let pick = 0; pick < items.length && dealt.length < count; pick++) {
+        const at = seed
+          .branch(round)
+          .branch(pick)
+          .range(0, left.length - 1);
+        const item = left[at];
+        if (item === undefined) throw new RangeError('a deal always deals');
+        dealt.push(item);
+        left = left.filter((_item, index) => index !== at);
+      }
+    }
     return dealt;
   }
 }
