@@ -6,7 +6,8 @@ const SLOT = 'endless-transit.save';
 /** A world whose shape is known (world.spec.ts walks it): the first street of its first city; its first building, Ornate Sanctum, 16 floors, 9 doors. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
-const LOBBY = `${STREET}.0.0`;
+const BUILDING = `${STREET}.0`;
+const LOBBY = `${BUILDING}.0`;
 const save = (path: string, states: Record<string, string> = {}): string =>
   JSON.stringify({ version: 3, seed: SEED, path, states });
 
@@ -75,6 +76,11 @@ for (const [what, value] of [
   ['a state a floor cannot take', save(LOBBY, { [LOBBY]: 'lift' })],
   ['a state on a place with no states', save(STREET, { [STREET]: 'corridor' })],
   ['a state for a place that is nowhere', save(STREET, { '0.99': 'corridor' })],
+  // States that disagree with the path: not a save this game could have written.
+  ['a state for a floor that is not on the path', save(STREET, { [`${BUILDING}.3`]: 'corridor' })],
+  ['a room below a floor still at its elevator', save(`${LOBBY}.0.0.0`)],
+  ['a floor the elevator has not been called to', save(`${BUILDING}.5`)],
+  ['a mode a floor would never write', save(LOBBY, { [LOBBY]: 'elevator' })],
   ['a path that is malformed text', save('0..1')],
   ['a path that starts outside the universe', save('1.0')],
   ['a path with a negative step', save('0.-1')],
@@ -108,6 +114,8 @@ for (const [what, text, kind] of [
   ['the lobby of its first building', save(LOBBY), 'FLOOR'],
   ['the lobby in its corridor', save(LOBBY, { [LOBBY]: 'corridor' }), 'FLOOR'],
   ['the first room behind the first door', save(`${LOBBY}.0.0.0`, { [LOBBY]: 'corridor' }), 'ROOM'],
+  ['floor 5, the elevator called there', save(`${BUILDING}.5`, { [BUILDING]: '5' }), 'FLOOR'],
+  ['the building, the elevator at 5', save(BUILDING, { [BUILDING]: '5' }), 'BUILDING'],
 ] as const) {
   test(`the control: the same seed with ${what} as its path is a good save, and is restored`, async ({
     page,

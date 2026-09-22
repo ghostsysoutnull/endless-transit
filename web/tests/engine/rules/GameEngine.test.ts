@@ -458,6 +458,8 @@ describe('GameEngine — the place is remembered', () => {
       '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.999","states":{}}',
       '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0.0","states":{}}',
       '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0","states":{"0.0.0.0.0.0.0.0.0.0":"lift"}}',
+      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0.0.0.0","states":{}}',
+      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0","states":{"0.0.0.0.0.0.0.0.0.3":"corridor"}}',
     ]) {
       const snapshot = engineOn(new MemorySaveStore(text)).snapshot();
       expect(snapshot.world, text).toBeNull();

@@ -29,6 +29,10 @@ export class CorridorState implements FloorState {
     return floor.corridor().listing();
   }
 
+  admits(floor: Floor, child: Location): boolean {
+    return child === floor.corridor();
+  }
+
   moves(floor: Floor): readonly Move[] {
     return MOVES.offered(floor);
   }

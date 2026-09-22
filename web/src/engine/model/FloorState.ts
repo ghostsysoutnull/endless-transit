@@ -13,6 +13,8 @@ export interface FloorState {
   /** The id a save keeps for this mode. */
   id(): string;
   listing(floor: Floor): readonly Location[];
+  /** Whether a path may continue from the floor into this child (its corridor) in this mode. */
+  admits(floor: Floor, child: Location): boolean;
   moves(floor: Floor): readonly Move[];
   move(floor: Floor, id: string): Location | undefined;
   facts(floor: Floor): readonly Fact[];

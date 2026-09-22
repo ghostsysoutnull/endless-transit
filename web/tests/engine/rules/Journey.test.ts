@@ -229,6 +229,79 @@ describe('Journey — where the traveller stands', () => {
     }
   });
 
+  test('restore refuses a state whose owner is not on the path, and a path that continues where the states do not let it', () => {
+    const building = `${STREET}.0`;
+    const lobby = `${building}.0`;
+    const room = `${lobby}.0.0.0`;
+    const cases: readonly [string, string | undefined, ReadonlyMap<string, string>][] = [
+      ['a floor off the path in corridor mode', STREET, new Map([[`${building}.3`, 'corridor']])],
+      ['a building off the path with its elevator up', STREET, new Map([[building, '3']])],
+      ['a state while nobody has entered the world', undefined, new Map([[building, '3']])],
+      ['a room below a floor still at its elevator', room, new Map()],
+      [
+        'a room below a floor at its elevator, with the elevator there',
+        `${building}.5.0.0.0`,
+        new Map([[building, '5']]),
+      ],
+      ['a floor the elevator has not been called to', `${building}.5`, new Map()],
+      ['a floor other than the one the elevator stands at', `${building}.5`, new Map([[building, '4']])],
+      [
+        'a room whose building has the elevator elsewhere',
+        room,
+        new Map([
+          [lobby, 'corridor'],
+          [building, '4'],
+        ]),
+      ],
+      ['a mode a floor takes but would never write', lobby, new Map([[lobby, 'elevator']])],
+      ['a floor number a building takes but would never write', building, new Map([[building, '0']])],
+    ];
+    for (const [what, path, states] of cases) {
+      const trip = journey();
+      const address = path === undefined ? undefined : must(Address.parse(path));
+      expect(trip.restore(new SavedGame(SEED, address, states)), what).toBe(false);
+      expect(trip.world(), what).toBeUndefined();
+      expect(trip.here(), what).toBeUndefined();
+    }
+  });
+
+  test('restore then saved() gives back exactly the save, for every valid save — the states are the path’s own', () => {
+    const building = `${STREET}.0`;
+    const valid: readonly [string, string | undefined, ReadonlyMap<string, string>][] = [
+      ['drawn, not entered', undefined, new Map()],
+      ['the street', STREET, new Map()],
+      ['the building, elevator at the lobby', building, new Map()],
+      ['the building, elevator at 3', building, new Map([[building, '3']])],
+      ['the lobby', `${building}.0`, new Map()],
+      ['floor 5', `${building}.5`, new Map([[building, '5']])],
+      [
+        'floor 5 in its corridor',
+        `${building}.5`,
+        new Map([
+          [building, '5'],
+          [`${building}.5`, 'corridor'],
+        ]),
+      ],
+      ['the first room off the lobby', `${building}.0.0.0.0`, new Map([[`${building}.0`, 'corridor']])],
+      ['the second room off the lobby', `${building}.0.0.0.1`, new Map([[`${building}.0`, 'corridor']])],
+      [
+        'the first room off floor 5',
+        `${building}.5.0.0.0`,
+        new Map([
+          [building, '5'],
+          [`${building}.5`, 'corridor'],
+        ]),
+      ],
+    ];
+    for (const [what, path, states] of valid) {
+      const trip = journey();
+      const address = path === undefined ? undefined : must(Address.parse(path));
+      const saved = new SavedGame(SEED, address, states);
+      expect(trip.restore(saved), what).toBe(true);
+      expect(trip.saved()?.toText(), what).toBe(saved.toText());
+    }
+  });
+
   test('restore of a world that was drawn but never entered waits at the title', () => {
     const trip = journey();
     expect(trip.restore(new SavedGame(SEED))).toBe(true);

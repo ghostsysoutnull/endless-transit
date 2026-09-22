@@ -202,6 +202,20 @@ describe('Floor — the corridor', () => {
     expect(middle.remember()).toBeUndefined();
   });
 
+  test('admits: a path continues below a floor only in its corridor, and only into the corridor; a building only into the floor its elevator stands at', () => {
+    const { building: unit } = building();
+    const second = must(unit.children()[1]) as Floor;
+    expect(second.admits(second.corridor())).toBe(false);
+    second.enterCorridor();
+    expect(second.admits(second.corridor())).toBe(true);
+    expect(second.admits(second)).toBe(false);
+    expect(unit.admits(must(unit.children()[0]))).toBe(true);
+    expect(unit.admits(second)).toBe(false);
+    second.arrive();
+    expect(unit.admits(second)).toBe(true);
+    expect(unit.admits(must(unit.children()[0]))).toBe(false);
+  });
+
   test('recall: the saved mode id puts the floor back in that mode; an unknown id is refused', () => {
     const middle = floor(1);
     expect(middle.recall('corridor')).toBe(true);

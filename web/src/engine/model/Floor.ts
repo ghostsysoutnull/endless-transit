@@ -130,6 +130,10 @@ export class Floor extends Location {
     return this.#state.listing(this);
   }
 
+  override admits(child: Location): boolean {
+    return this.#state.admits(this, child);
+  }
+
   override moves(): readonly Move[] {
     return this.#state.moves(this);
   }

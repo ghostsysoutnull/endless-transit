@@ -32,6 +32,11 @@ export class ElevatorState implements FloorState {
     return [];
   }
 
+  /** Nobody is below a floor at its elevator. */
+  admits(): boolean {
+    return false;
+  }
+
   moves(floor: Floor): readonly Move[] {
     return MOVES.offered(floor);
   }

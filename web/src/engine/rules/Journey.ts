@@ -103,8 +103,11 @@ export class Journey {
   }
 
   /**
-   * Rebuilds the journey a save describes. A path that leads nowhere or to a place nobody stands in, or a
-   * state a place cannot take, is a corrupt save: nothing is restored.
+   * Rebuilds the journey a save describes — only a save this journey could have written: the path leads
+   * to a place somebody stands in; every state belongs to a place on that path, and that place takes it
+   * back and would write it again; and every step of the path is one the place above admits in the state
+   * just recalled (no room below a floor at its elevator, no floor the elevator is not at). Anything else
+   * is a corrupt save: nothing is restored, and `saved()` after a restore is the save itself.
    */
   restore(saved: SavedGame): boolean {
     const universe = this.#registry.universe(saved.seed());
@@ -114,9 +117,16 @@ export class Journey {
       if (place === undefined) return false;
       if (place.arrival() !== place) return false;
     }
+    const trail = place?.trail() ?? [];
     for (const [text, memento] of saved.states()) {
       const owner = Address.parse(text);
-      if (owner === undefined || universe.descendant(owner)?.recall(memento) !== true) return false;
+      const keeper = owner === undefined ? undefined : universe.descendant(owner);
+      if (keeper === undefined || !trail.includes(keeper)) return false;
+      if (!keeper.recall(memento) || keeper.remember() !== memento) return false;
+    }
+    for (const [step, above] of trail.entries()) {
+      const below = trail[step + 1];
+      if (below !== undefined && !above.admits(below)) return false;
     }
     this.#seed = saved.seed();
     this.#universe = universe;

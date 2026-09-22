@@ -88,6 +88,11 @@ export class Building extends Location {
     return [...this.children()].reverse();
   }
 
+  /** A floor is reached by the elevator: a path may only continue into the floor it stands at. */
+  override admits(child: Location): boolean {
+    return this.children()[this.#elevatorAt] === child;
+  }
+
   description(): readonly string[] {
     return ['Analyzing vertical lattice structure...'];
   }

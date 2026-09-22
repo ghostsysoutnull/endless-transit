@@ -62,6 +62,15 @@ export abstract class Location {
     return this.children();
   }
 
+  /**
+   * Whether a path may continue from here into this child right now — the place's own state permitting: it
+   * is listed, unless the kind has another rule (a floor lets nobody past its elevator; a building's floors
+   * are reached by its elevator). A save whose path breaks this rule is not one this world could have written.
+   */
+  admits(child: Location): boolean {
+    return this.listing().includes(child);
+  }
+
   /** Where a traveller who moves into this place actually ends up: here, unless the kind hands travellers on. Pure. */
   // eslint-disable-next-line @typescript-eslint/prefer-return-this-type -- a kind may answer with another place
   arrival(): Location {
