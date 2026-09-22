@@ -48,11 +48,11 @@ test('entering a place moves the focus to the first place on its list — every 
   await page.getByRole('button', { name: /new world/i }).focus();
   await press(page, /new world/i, hasTouch);
   await press(page, /enter world/i, hasTouch);
-  await expect(page.getByTestId('place-kind')).toHaveText('UNIVERSE');
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
   const first = page.locator('button[data-option="enter:0"]');
   await (hasTouch ? first.tap() : first.click());
-  await expect(page.getByTestId('place-kind')).toHaveText('COSMIC FILAMENT');
+  await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
 });
 
@@ -74,7 +74,7 @@ async function plantOnAPlanet(page: Page): Promise<void> {
     },
     [
       'endless-transit.save',
-      JSON.stringify({ version: 2, seed: '7F3A-91C2-0B4D-E6A8', path: '0.0.0.0.0' }),
+      JSON.stringify({ version: 3, seed: '7F3A-91C2-0B4D-E6A8', path: '0.0.0.0.0', states: {} }),
     ] as const,
   );
 }
@@ -116,4 +116,65 @@ test('keyboard: Enter on TITLE SCREEN, then Enter again, is a round trip to the 
   await expect(page.getByTestId('place-kind')).toHaveText('PLANET');
   await expect(page.getByTestId('place-name')).toHaveText(planet);
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[to-title]');
+});
+
+/** The lobby of Ornate Sanctum (16 floors), and the first room behind its first door (two rooms). */
+const LOBBY = '0.0.0.0.0.0.0.0.0.0';
+async function plantAt(page: Page, path: string, states: Record<string, string> = {}): Promise<void> {
+  await page.addInitScript(
+    ([slot, text]) => {
+      if (window.sessionStorage.getItem('planted') !== null) return;
+      window.sessionStorage.setItem('planted', 'yes');
+      window.localStorage.setItem(slot, text);
+    },
+    [
+      'endless-transit.save',
+      JSON.stringify({ version: 3, seed: '7F3A-91C2-0B4D-E6A8', path, states }),
+    ] as const,
+  );
+}
+
+test('keyboard: Enter on GO UP rides to the Peak and then rests — it never lands on GO DOWN and rides back', async ({
+  page,
+  hasTouch,
+}) => {
+  test.skip(hasTouch, 'a phone has no Enter key');
+  await plantAt(page, LOBBY);
+  await page.goto('./');
+  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await page.locator('button[data-option="move:up"]').focus();
+  for (let floor = 1; floor <= 15; floor++) {
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('place-name')).toHaveText(`FLOOR ${String(floor)}`);
+  }
+  // The Peak: GO UP is gone. The focus rests on the screen, not on the body and never on the opposite move.
+  await expect(page.locator('button[data-option="move:up"]')).toHaveCount(0);
+  for (let again = 0; again < 5; again++) {
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('place-name')).toHaveText('FLOOR 15');
+    // The resting place is the panel that says where you are.
+    expect(await page.evaluate(FOCUSED)).toBe('SECTION[]');
+  }
+});
+
+test('keyboard: Enter on GO FORWARD reaches the last room and then rests — never on GO BACK, never on the title', async ({
+  page,
+  hasTouch,
+}) => {
+  test.skip(hasTouch, 'a phone has no Enter key');
+  await plantAt(page, `${LOBBY}.0.0.0`, { [LOBBY]: 'corridor' });
+  await page.goto('./');
+  await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
+  const last = await page.getByTestId('place-name').innerText();
+  await page.locator('button[data-option="move:forward"]').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('place-name')).not.toHaveText(last);
+  const here = await page.getByTestId('place-name').innerText();
+  await expect(page.locator('button[data-option="move:forward"]')).toHaveCount(0);
+  for (let again = 0; again < 3; again++) {
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
+    await expect(page.getByTestId('place-name')).toHaveText(here);
+    expect(await page.evaluate(FOCUSED)).toBe('SECTION[]');
+  }
 });

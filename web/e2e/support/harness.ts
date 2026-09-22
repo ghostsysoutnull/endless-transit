@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 /** Collects everything the page complains about; a test ends by asserting it stayed empty. */
 export function watchForErrors(page: Page): string[] {
@@ -18,4 +18,29 @@ export function watchForErrors(page: Page): string[] {
 export async function press(page: Page, name: RegExp, hasTouch: boolean): Promise<void> {
   const button = page.getByRole('button', { name });
   await (hasTouch ? button.tap() : button.click());
+}
+
+export async function tapOption(page: Page, id: string, hasTouch: boolean): Promise<void> {
+  const button = page.locator(`button[data-option="${id}"]`);
+  await (hasTouch ? button.tap() : button.click());
+}
+
+/** No sideways scroll, and every action on screen is a real button of at least 44 × 44 CSS px. */
+export async function expectTouchable(page: Page, where: string): Promise<void> {
+  const overflow = await page.evaluate(() => ({
+    content: document.documentElement.scrollWidth,
+    viewport: document.documentElement.clientWidth,
+  }));
+  expect(overflow.content, `${where}: horizontal overflow`).toBeLessThanOrEqual(overflow.viewport);
+  const buttons = await page.getByRole('button').all();
+  expect(buttons.length, `${where}: buttons`).toBeGreaterThan(0);
+  for (const button of buttons) {
+    const box = await button.boundingBox();
+    expect(box?.width ?? 0, `${where}: button width`).toBeGreaterThanOrEqual(44);
+    expect(box?.height ?? 0, `${where}: button height`).toBeGreaterThanOrEqual(44);
+  }
+  expect(
+    await page.locator('[data-option]:not(button)').count(),
+    `${where}: options that are not buttons`,
+  ).toBe(0);
 }

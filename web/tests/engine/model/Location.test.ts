@@ -6,6 +6,7 @@ import { Street } from '#engine/model/Street.ts';
 import { Universe } from '#engine/model/Universe.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { CountingChildSource } from '#tests/support/CountingChildSource.ts';
+import { SealedUnit } from '#tests/support/SealedUnit.ts';
 import { must } from '#tests/support/world.ts';
 
 const SEED = new Seed(1, 2);
@@ -26,7 +27,7 @@ function tinyWorld(): { universe: Universe; source: CountingChildSource } {
     }
     if (parent.depth() === 1)
       return parent.index() === 1 ? [new Street(origin(0), { name: 'High Way' })] : [];
-    return [new Building(origin(0), { name: 'Unit Zero', landmark: true, floors: 3 })];
+    return [new Building(origin(0), { name: 'Unit Zero', landmark: true, floors: 3, doorsPerFloor: 2 })];
   });
   return { universe: new Universe({ parent: undefined, seed: SEED, index: 0, children: source }), source };
 }
@@ -82,13 +83,72 @@ describe('Location — where it is', () => {
     expect(universe.hash()).toBe('36.820 / 65.416');
   });
 
-  test('descendant: one strict walker — an index nobody answers, or a sealed place, is nowhere', () => {
+  test('descendant: one strict walker — an index nobody answers is nowhere (a sealed place: the last test of this file)', () => {
     const { universe } = tinyWorld();
     const root = universe.address();
     expect(universe.descendant(root)).toBe(universe);
     expect(universe.descendant(root.child(3))).toBeUndefined();
     expect(universe.descendant(root.child(0).child(0))).toBeUndefined();
-    expect(universe.descendant(root.child(1).child(0).child(0))).toBeUndefined();
-    expect(universe.children()[1]?.children()[0]?.children()[0]?.sealed()).toBe(true);
+    expect(universe.descendant(root.child(1).child(0).child(0))?.name()).toBe('Unit Zero');
+    expect(universe.descendant(root.child(1).child(0).child(9))).toBeUndefined();
+  });
+});
+
+describe('Location — the questions a journey asks (defaults every kind inherits)', () => {
+  test('listing: the places on offer are the children, in their order; arrival is the place itself, and so is the act of arriving', () => {
+    const { universe } = tinyWorld();
+    expect(universe.listing()).toBe(universe.children());
+    expect(universe.arrival()).toBe(universe);
+    expect(universe.arrive()).toBe(universe);
+    expect(universe.current()).toBe(false);
+    // A path may continue into a listed child; into anything else, never.
+    expect(universe.admits(must(universe.children()[1]))).toBe(true);
+    expect(universe.admits(universe)).toBe(false);
+    expect(universe.goesByNumber()).toBe(false);
+  });
+
+  test('exit: leaving goes to the parent, and the label says what is left; the universe has no way out', () => {
+    const { universe } = tinyWorld();
+    const street = must(universe.children()[1]?.children()[0]);
+    expect(street.exit()).toBe(universe.children()[1]);
+    expect(street.leave()).toBe(universe.children()[1]);
+    expect(street.leaveLabel()).toBe('Leave Street');
+    expect(universe.exit()).toBeUndefined();
+    expect(universe.leave()).toBeUndefined();
+  });
+
+  test('moves: none by default, and an unknown move goes nowhere', () => {
+    const { universe } = tinyWorld();
+    expect(universe.moves()).toEqual([]);
+    expect(universe.move('up')).toBeUndefined();
+  });
+
+  test('remember / recall: a place with no state of its own remembers nothing and recalls nothing', () => {
+    const { universe } = tinyWorld();
+    expect(universe.remember()).toBeUndefined();
+    expect(universe.recall('corridor')).toBe(false);
+  });
+
+  test('the start of a journey: the first child all the way down, until a place claims to be a start (Guide:41, a street)', () => {
+    const { universe } = tinyWorld();
+    expect(universe.startOfJourney().name()).toBe('Strand-0');
+    const street = must(universe.children()[1]?.children()[0]);
+    expect(must(universe.children()[1]).startOfJourney()).toBe(street);
+    expect(street.startOfJourney()).toBe(street);
+  });
+
+  test('a sealed place is nowhere for the walker, whatever kind it is', () => {
+    const source: CountingChildSource = new CountingChildSource((parent: Location) =>
+      parent.depth() === 0
+        ? [
+            new SealedUnit(
+              { parent, seed: parent.seed().branch(0), index: 0, children: source },
+              { name: 'Sealed', landmark: false, floors: 3, doorsPerFloor: 2 },
+            ),
+          ]
+        : [],
+    );
+    const universe = new Universe({ parent: undefined, seed: SEED, index: 0, children: source });
+    expect(universe.descendant(universe.address().child(0))).toBeUndefined();
   });
 });

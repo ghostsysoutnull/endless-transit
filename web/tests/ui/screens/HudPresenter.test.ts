@@ -7,7 +7,18 @@ import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 const presenter = new HudPresenter(new Masthead('a1b2c3d'));
 
 function option(facts: Partial<GameOption> & { id: string; label: string }): GameOption {
-  return { key: '', place: '', role: 'travel', sealed: false, landmark: false, ...facts };
+  return {
+    key: '',
+    place: '',
+    role: 'travel',
+    sealed: false,
+    landmark: false,
+    ordinal: '',
+    readings: [],
+    opposite: '',
+    current: false,
+    ...facts,
+  };
 }
 
 const PLANET: GameSnapshot = {
@@ -42,8 +53,15 @@ const PLANET: GameSnapshot = {
       key: '1',
       label: 'Visit Southern Glacier Kingdom',
       place: 'Southern Glacier Kingdom',
+      ordinal: '1',
     }),
-    option({ id: 'enter:1', key: '2', label: 'Visit Free Dust Union', place: 'Free Dust Union' }),
+    option({
+      id: 'enter:1',
+      key: '2',
+      label: 'Visit Free Dust Union',
+      place: 'Free Dust Union',
+      ordinal: '2',
+    }),
     option({ id: 'leave', key: 'l', label: 'Leave Planet', role: 'return' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
@@ -60,16 +78,86 @@ const STREET: GameSnapshot = {
     hash: '1.000 / 2.000',
   },
   options: [
-    option({ id: 'enter:0', label: 'Enter Building: Ornate Sanctum', place: 'Ornate Sanctum', sealed: true }),
+    option({
+      id: 'enter:0',
+      label: 'Enter Building: Ornate Sanctum',
+      place: 'Ornate Sanctum',
+      sealed: true,
+      ordinal: '1',
+    }),
     option({
       id: 'enter:1',
       label: 'Enter Building: The Void-Watcher',
       place: 'The Void-Watcher',
       sealed: true,
       landmark: true,
+      ordinal: '2',
     }),
     option({ id: 'leave', key: 'l', label: 'Leave Street', role: 'return' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
+  ],
+};
+
+/** The lobby of a building, in the corridor: doors listed, one move back, the way out to the building. */
+const FLOOR: GameSnapshot = {
+  ...PLANET,
+  place: {
+    ...(PLANET.place ?? ({} as never)),
+    kind: 'Floor',
+    icon: '▤',
+    name: 'Floor 0',
+    address: '0.0.0.0.1.0.0.0.0.0',
+    position: { label: 'Z-AXIS', index: 1, total: 16 },
+    childrenHeading: 'Local access list:',
+  },
+  options: [
+    option({
+      id: 'enter:0',
+      key: '1',
+      label: 'Access: [DATA_VAULT] Heavy Bulkhead [COLD]',
+      place: '[DATA_VAULT] Heavy Bulkhead [COLD]',
+      ordinal: '1',
+    }),
+    option({
+      id: 'move:elevator',
+      key: 'b',
+      label: 'Back to Elevator',
+      role: 'move',
+      opposite: 'move:corridor',
+    }),
+    option({ id: 'leave', key: 'l', label: 'Leave Floor', role: 'return' }),
+    option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
+  ],
+  message: 'Enter Corridor.',
+};
+
+/** A building: floors listed top first, numbered by floor, with their readings. */
+const BUILDING: GameSnapshot = {
+  ...PLANET,
+  place: { ...(PLANET.place ?? ({} as never)), kind: 'Building', name: 'Ornate Sanctum' },
+  options: [
+    option({
+      id: 'enter:0',
+      key: '',
+      label: 'Access: Peak',
+      place: 'Floor 15',
+      ordinal: '15',
+      readings: [
+        { key: 'zone', label: 'FUNCTION', value: 'PEAK_OBSERVATORY' },
+        { key: 'reading', label: 'ST', value: '100%' },
+        { key: 'reading', label: 'RES', value: '1582Hz' },
+      ],
+    }),
+    option({
+      id: 'enter:15',
+      key: '0',
+      label: 'Access: Lobby',
+      place: 'Floor 0',
+      ordinal: '0',
+      readings: [],
+      current: true,
+    }),
+    option({ id: 'leave', key: 'l', label: 'Leave Building', role: 'return' }),
   ],
 };
 
@@ -150,6 +238,8 @@ describe('HudPresenter.toViewModel — options stay data', () => {
         label: 'Visit Southern Glacier Kingdom',
         sealed: false,
         landmark: false,
+        readings: [],
+        mark: null,
       },
       {
         id: 'enter:1',
@@ -158,11 +248,14 @@ describe('HudPresenter.toViewModel — options stay data', () => {
         label: 'Visit Free Dust Union',
         sealed: false,
         landmark: false,
+        readings: [],
+        mark: null,
       },
     ]);
+    expect(vm.moves).toEqual([]);
     expect(vm.dock).toEqual([
-      { id: 'leave', key: 'L', label: '▲ LEAVE PLANET' },
-      { id: 'to-title', key: 'T', label: 'TITLE SCREEN' },
+      { id: 'leave', key: 'L', label: '▲ LEAVE PLANET', opposite: '' },
+      { id: 'to-title', key: 'T', label: 'TITLE SCREEN', opposite: '' },
     ]);
     expect(vm.sealedNote).toBeNull();
   });
@@ -188,6 +281,38 @@ describe('HudPresenter.toViewModel — options stay data', () => {
   test('a sealed row shows the place’s name, not the way in — there is no way in yet', () => {
     expect(presenter.toViewModel(STREET).rows[0]?.label).toBe('Ornate Sanctum');
   });
+
+  test('the moves a place offers become a strip of buttons between the panel and the list, in the router’s options before the dock', () => {
+    const vm = presenter.toViewModel(FLOOR);
+    // The opposite rides along as data: the shell keeps the focus off it when this button vanishes.
+    expect(vm.moves).toEqual([
+      { id: 'move:elevator', key: 'B', label: 'BACK TO ELEVATOR', opposite: 'move:corridor' },
+    ]);
+    expect(vm.dock).toEqual([
+      { id: 'leave', key: 'L', label: '▲ LEAVE FLOOR', opposite: '' },
+      { id: 'to-title', key: 'T', label: 'TITLE SCREEN', opposite: '' },
+    ]);
+    expect(vm.options.map((each) => each.id)).toEqual(['enter:0', 'move:elevator', 'leave', 'to-title']);
+    expect(vm.heading).toBe('LOCAL ACCESS LIST');
+    expect(vm.rows[0]?.label).toBe('Access: [DATA_VAULT] Heavy Bulkhead [COLD]');
+    expect(vm.regions.moves).toBe('Moves');
+  });
+
+  test('a row goes by the ordinal the option carries — a floor by its number, two digits — and shows its readings', () => {
+    const vm = presenter.toViewModel(BUILDING);
+    expect(vm.rows.map((row) => row.ordinal)).toEqual(['15', '00']);
+    // The key is the option's, untouched: none for the Peak, the floor number for the lobby.
+    expect(vm.rows.map((row) => row.key)).toEqual(['', '0']);
+    expect(vm.rows[0]?.readings).toEqual([
+      { key: 'zone', label: 'FUNCTION', value: 'PEAK_OBSERVATORY' },
+      { key: 'reading', label: 'ST', value: '100%' },
+      { key: 'reading', label: 'RES', value: '1582Hz' },
+    ]);
+    expect(vm.rows[1]?.readings).toEqual([]);
+    // The elevator column's current-floor mark rides on the row the option says is current, with words for a reader.
+    expect(vm.rows[0]?.mark).toBeNull();
+    expect(vm.rows[1]?.mark).toEqual({ text: '[>X<]', label: 'Elevator here' });
+  });
 });
 
 describe('HudPresenter.toViewModel — the rest', () => {
@@ -207,6 +332,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
       path: 'Path from the universe',
       place: 'Where you are',
       travel: 'Places to enter',
+      moves: 'Moves',
       dock: 'Leave and game',
     });
   });

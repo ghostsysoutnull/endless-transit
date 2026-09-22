@@ -9,8 +9,10 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * Draws the world screen with lit-html: the HUD (path and stats), the narrative panel, the list of places
  * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
- * `data-option`; a sealed row is a closed line — never a button that does nothing. The status line here is
- * for the eye; the shell's own live region speaks it. Rows are keyed by
+ * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
+ * beside its name. The moves a place offers are a strip of buttons under the panel. The panel is the
+ * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
+ * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again.
  */
@@ -62,7 +64,7 @@ export class HudView implements View<HudVM> {
             )}
           </dl>
         </section>
-        <section class="cap" aria-label=${vm.regions.place}>
+        <section class="cap" aria-label=${vm.regions.place} tabindex="-1" data-rest>
           <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
           <h2>
             <span class="ic" aria-hidden="true">${vm.place.icon}</span
@@ -79,6 +81,19 @@ export class HudView implements View<HudVM> {
           <p class="diag">${vm.place.diagnostic}</p>
           <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
         </section>
+        ${
+          vm.moves.length === 0
+            ? nothing
+            : html`
+                <nav class="moves" aria-label=${vm.regions.moves}>
+                  ${repeat(
+                    vm.moves,
+                    (option) => option.id,
+                    (option) => this.#docked(option),
+                  )}
+                </nav>
+              `
+        }
         <section class="travel" aria-label=${vm.regions.travel}>
           <h3 class="heading">${vm.heading}</h3>
           ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
@@ -114,9 +129,30 @@ export class HudView implements View<HudVM> {
     }
     return html`
       <li>
-        <button type="button" class="row" data-option=${row.id}>
-          <span class="ord">${row.ordinal}</span><span class=${name}>${row.label}</span
-          ><kbd aria-hidden="true">${row.key}</kbd>
+        <button type="button" class=${row.mark === null ? 'row' : 'row you'} data-option=${row.id}>
+          <span class="ord">${row.ordinal}</span
+          ><span class="mid"
+            ><span class="ln"
+              ><span class=${name}>${row.label}</span>${
+                row.mark === null
+                  ? nothing
+                  : html`<span class="mark" aria-hidden="true">${row.mark.text}</span
+                      ><span class="vh">${row.mark.label}</span>`
+              }</span
+            >${
+              row.readings.length === 0
+                ? nothing
+                : html`<span class="rds"
+                    >${row.readings.map(
+                      (reading) => html`
+                        <span class="rd" data-fact=${reading.key}
+                          ><span class="vh">${reading.label}</span>${reading.value}</span
+                        >
+                      `,
+                    )}</span
+                  >`
+            }</span
+          >${row.key === '' ? nothing : html`<kbd aria-hidden="true">${row.key}</kbd>`}
         </button>
       </li>
     `;
@@ -125,7 +161,9 @@ export class HudView implements View<HudVM> {
   #docked(option: OptionVM): TemplateResult {
     return html`
       <button type="button" class="pb" data-option=${option.id}>
-        <kbd aria-hidden="true">${option.key}</kbd><span>${option.label}</span>
+        ${option.key === '' ? nothing : html`<kbd aria-hidden="true">${option.key}</kbd>`}<span
+          >${option.label}</span
+        >
       </button>
     `;
   }

@@ -16,19 +16,33 @@ export function sampleSeed(n: number): Seed {
   return new Seed(Math.imul(n + 1, 0x9e3779b1), Math.imul(n + 7, 0x85ebca6b));
 }
 
-/** The chain from a location down to where `choose` stops finding an open child: [start, child, grandchild …]. */
+/**
+ * The chain of places a traveller stands in, from `start` down to where `until` says stop or `choose` finds
+ * nothing open on the list: [start, child, grandchild …]. Each step is what a journey does — the chosen
+ * place's `arrival()`, so a door leads into the first room and a corridor onto its floor.
+ */
 export function descend(
   start: Location,
-  choose: (children: readonly Location[], depth: number) => number,
+  choose: (listed: readonly Location[], depth: number) => number,
+  until: (here: Location) => boolean = () => false,
 ): Location[] {
   const chain = [start];
-  for (let here = start; ;) {
-    const open = here.children().filter((child) => !child.sealed());
-    const next = open[choose(open, chain.length - 1) % Math.max(open.length, 1)];
+  for (let here = start; !until(here);) {
+    const open = here.listing().filter((child) => !child.sealed());
+    const next = open[choose(open, chain.length - 1) % Math.max(open.length, 1)]?.arrival();
     if (next === undefined) return chain;
     chain.push(next);
     here = next;
   }
+  return chain;
+}
+
+/** The big world only: the chain from `start` down to a street. */
+export function toStreet(
+  start: Location,
+  choose: (listed: readonly Location[], depth: number) => number,
+): Location[] {
+  return descend(start, choose, (here) => here.kind().key() === 'street');
 }
 
 /** The value, or a failed test when it is missing — so a test never needs a cast to get past `undefined`. */

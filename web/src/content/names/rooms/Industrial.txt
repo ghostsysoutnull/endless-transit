@@ -1,0 +1,4 @@
+Power Plant|
+Processing Core|
+Maintenance Bay|
+Fuel Depot|

@@ -21,17 +21,22 @@ function listsByDirectory(): Map<string, string[]> {
 }
 
 describe('BundledContent — the one glob', () => {
-  test('the bundle is complete: 110 files (78 forked + the place-name lists of I02), keys are plain relative paths', () => {
-    expect(bundle.paths()).toHaveLength(110);
+  test('the bundle is complete: 124 files (78 forked, the place-name lists of I02, the floor zones, room kinds and colours of I03), keys are plain relative paths', () => {
+    expect(bundle.paths()).toHaveLength(124);
     expect(bundle.paths()).toContain('names/buildings/adj/void.txt');
     expect(bundle.paths().every((path) => /^[\w/-]+\.txt$/.test(path))).toBe(true);
   });
 
-  test('every directory with lists has an index.txt equal to its loader keys — or is keyed by culture', () => {
+  test('every directory with lists has an index.txt equal to its loader keys — or is keyed by culture or by trait', () => {
     const directories = listsByDirectory();
-    expect(directories.size).toBe(19);
+    expect(directories.size).toBe(22);
     const keyedByCulture: string[] = [];
     for (const [directory, stems] of directories) {
+      if (directory === 'names/rooms') {
+        // No index of its own: its members ARE the traits. One owner — `themes/traits`.
+        expect([...stems].sort(), directory).toEqual([...library.list('themes/traits')].sort());
+        continue;
+      }
       if (bundle.read(`${directory}/index.txt`) === undefined) {
         // No index of its own: its members ARE the cultures. One owner — `themes/cultures/index`.
         expect([...stems].sort(), directory).toEqual([...library.index(CULTURES)].sort());

@@ -12,3 +12,7 @@ Rule plus pointer, one or two sentences each; the story lives in the iteration's
   drop `pointer: coarse` (key hints, short rows). Judge touch layout from viewport shots, and measure on the live page. (I02)
 - **A passing browser test does not mean a button is on screen**: Playwright scrolls to what it clicks. What must be
   reachable without scrolling is asserted with `toBeInViewport`. (I02: the desktop grid pushed LEAVE below the fold.)
+- **Focus after a vanished control never lands on its opposite — the Shell decides from data**: `options[0]` after GO UP
+  vanished was GO DOWN, and Enter rode back. An option carries the id that undoes it (`opposite`, from the model's
+  `Move`); when the option just run is gone and its undo is on offer, the focus rests on the screen's `[data-rest]`, else
+  on the first option that is not that undo. A label match in the view is not a rule. (I03 review, finding 1.)

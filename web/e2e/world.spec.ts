@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { press, watchForErrors } from './support/harness.ts';
+import { expectTouchable, press, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world, so names and list lengths are known: the save format is the way in, as for any player. */
@@ -26,33 +26,8 @@ async function plant(page: Page, path: string | null): Promise<void> {
       window.sessionStorage.setItem('planted', 'yes');
       window.localStorage.setItem(slot, text);
     },
-    [SLOT, JSON.stringify({ version: 2, seed: SEED, path })] as const,
+    [SLOT, JSON.stringify({ version: 3, seed: SEED, path, states: {} })] as const,
   );
-}
-
-async function tapOption(page: Page, id: string, hasTouch: boolean): Promise<void> {
-  const button = page.locator(`button[data-option="${id}"]`);
-  await (hasTouch ? button.tap() : button.click());
-}
-
-/** No sideways scroll, and every action on screen is a real button of at least 44 × 44 CSS px. */
-async function expectTouchable(page: Page, where: string): Promise<void> {
-  const overflow = await page.evaluate(() => ({
-    content: document.documentElement.scrollWidth,
-    viewport: document.documentElement.clientWidth,
-  }));
-  expect(overflow.content, `${where}: horizontal overflow`).toBeLessThanOrEqual(overflow.viewport);
-  const buttons = await page.getByRole('button').all();
-  expect(buttons.length, `${where}: buttons`).toBeGreaterThan(0);
-  for (const button of buttons) {
-    const box = await button.boundingBox();
-    expect(box?.width ?? 0, `${where}: button width`).toBeGreaterThanOrEqual(44);
-    expect(box?.height ?? 0, `${where}: button height`).toBeGreaterThanOrEqual(44);
-  }
-  expect(
-    await page.locator('[data-option]:not(button)').count(),
-    `${where}: options that are not buttons`,
-  ).toBe(0);
 }
 
 test('walk from the title down to a street and back up to the universe, by tapping', async ({
@@ -64,6 +39,9 @@ test('walk from the title down to a street and back up to the universe, by tappi
   await page.goto('./');
   await expect(page.getByTestId('world-seed')).toHaveText(SEED);
   await press(page, /enter world/i, hasTouch);
+  // A new world starts on a street (Guide:41); the universe is seven leaves above.
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
+  for (let level = 0; level < 7; level++) await press(page, /leave/i, hasTouch);
 
   const shots: Record<string, string> = {
     UNIVERSE: '1-universe',
@@ -106,7 +84,7 @@ test('reload restores the place; the title screen is one tap away and the place 
   await plant(page, null);
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
-  for (let level = 0; level < 4; level++) await tapOption(page, 'enter:0', hasTouch);
+  for (let level = 0; level < 3; level++) await press(page, /leave/i, hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('AURAEA');
 
   await page.reload();
@@ -122,20 +100,19 @@ test('reload restores the place; the title screen is one tap away and the place 
   expect(problems).toEqual([]);
 });
 
-test('the street is the bottom for now: buildings are listed as sealed lines, never as buttons', async ({
+test('a long street: twenty buildings, every one a button, two of them landmarks; the way out on the first screen', async ({
   page,
 }, testInfo) => {
   const problems = watchForErrors(page);
   await plant(page, LONG_STREET);
   await page.goto('./');
   await expect(page.getByTestId('place-name')).toHaveText('GRAND WAY');
-  await expect(page.locator('[data-sealed]')).toHaveCount(20);
-  await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(0);
-  await expect(page.getByTestId('sealed-note')).toBeVisible();
-  // The way out is on the first screen — nobody scrolls past twenty sealed doors to find it.
+  await expect(page.locator('[data-sealed]')).toHaveCount(0);
+  await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(20);
+  await expect(page.getByTestId('sealed-note')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
-  await expect(page.locator('[data-sealed] .landmark')).toHaveCount(2);
-  await expect(page.getByRole('button')).toHaveCount(2);
+  await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
+  await expect(page.getByRole('button')).toHaveCount(22);
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);
@@ -191,6 +168,7 @@ test('still fits at 360 px wide at every level, the narrowest phone we promise',
   await plant(page, null);
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
+  for (let level = 0; level < 7; level++) await press(page, /leave/i, hasTouch);
   for (const kind of LEVELS) {
     await expect(page.getByTestId('place-kind')).toHaveText(kind);
     await expectTouchable(page, `360px ${kind}`);
@@ -213,11 +191,11 @@ test('the keyboard is an extra: digits go down, L goes up, T is the title', asyn
   await plant(page, null);
   await page.goto('./');
   await page.keyboard.press('e');
-  await expect(page.getByTestId('place-kind')).toHaveText('UNIVERSE');
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await page.keyboard.press('1');
-  await expect(page.getByTestId('place-name')).toHaveText('ZETA-915-LINK');
+  await expect(page.getByTestId('place-name')).toHaveText('ORNATE SANCTUM');
   await page.keyboard.press('l');
-  await expect(page.getByTestId('place-kind')).toHaveText('UNIVERSE');
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await page.keyboard.press('t');
   await expect(page.getByTestId('world-seed')).toHaveText(SEED);
 });

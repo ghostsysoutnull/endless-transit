@@ -46,4 +46,9 @@ export class Street extends Location {
   approachVerb(): string {
     return 'Enter Building:';
   }
+
+  /** A new journey starts on a street (Guide:41). */
+  override startOfJourney(): Location {
+    return this;
+  }
 }

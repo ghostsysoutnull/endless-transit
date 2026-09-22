@@ -16,10 +16,10 @@ test('one live region, mounted once: title → world → back changes its text, 
   await press(page, /new world/i, hasTouch);
   await expect(page.locator(LIVE)).toContainText('drawn');
   await press(page, /enter world/i, hasTouch);
-  await expect(page.getByTestId('place-kind')).toHaveText('UNIVERSE');
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   // The switch of screens is where a new node would slip in — and a new node with text is not announced.
   await expect(page.locator(LIVE)).toHaveCount(1);
-  await expect(page.locator(LIVE)).toHaveText('Uplink established.');
+  await expect(page.locator(LIVE)).toHaveText(/^Entered .+\.$/);
   await expect(page.locator(LIVE)).toHaveAttribute('data-born', 'first-paint');
   await expect(page.locator(LIVE)).toHaveAttribute('aria-live', 'polite');
   await press(page, /title screen/i, hasTouch);
@@ -35,15 +35,13 @@ test('the path says what kind of place each crumb is, to a screen reader, withou
   await page.goto('./');
   await press(page, /new world/i, hasTouch);
   await press(page, /enter world/i, hasTouch);
-  for (let level = 0; level < 2; level++) {
-    const first = page.locator('button[data-option="enter:0"]');
-    await (hasTouch ? first.tap() : first.click());
-  }
-  await expect(page.getByTestId('place-kind')).toHaveText(/GALACTIC SECTOR|NULL REACH/);
+  // A new world starts on a street: eight crumbs, the universe first.
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   const crumbs = page.getByTestId('path').getByRole('listitem');
-  await expect(crumbs).toHaveCount(3);
+  await expect(crumbs).toHaveCount(8);
   await expect(crumbs.nth(0)).toHaveText(/^\s*Universe/i);
   await expect(crumbs.nth(1)).toHaveText(/^\s*Cosmic filament/i);
   await expect(crumbs.nth(2)).toHaveText(/^\s*(Galactic sector|Null reach)/i);
+  await expect(crumbs.nth(7)).toHaveText(/^\s*Street/i);
   expect(await page.locator('[title]').count()).toBe(0);
 });

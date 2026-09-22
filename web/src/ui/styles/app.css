@@ -162,6 +162,12 @@ body {
   margin: 0;
 }
 
+/* The panel takes the focus when a ride ends (the shell's rule): a ring says where it went, for keyboards only. */
+.cap:focus-visible {
+  outline: 2px solid var(--yl);
+  outline-offset: 2px;
+}
+
 .eyebrow {
   font-size: 10.5px;
   letter-spacing: 0.16em;
@@ -556,6 +562,64 @@ body {
   padding: 1px 6px;
 }
 
+/* A row's readings ride under its name: a floor's zone, then its integrity and resonance, dim. */
+.row .mid {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.row .ln {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 10px;
+  min-width: 0;
+}
+
+/* The current row of a list — the floor the elevator stands at: the mock's "you" row, the old game's [>X<]. */
+.row.you {
+  border-color: var(--yl);
+}
+
+.row .mark {
+  color: var(--yl);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.row:active .mark {
+  color: var(--ground);
+}
+
+.rds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+
+.rd[data-fact='zone'] {
+  color: var(--text);
+}
+
+/* The moves a place offers — up, down, into the corridor, on to the next room — sit under the panel, never sticky. */
+.moves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.moves .pb {
+  flex: 1 1 140px;
+  border-color: var(--rule-hi);
+  font-size: 13px;
+}
+
 /* Leave and the game's own options stay at the bottom edge, however long the list above them is. */
 .dock {
   position: sticky;
@@ -585,11 +649,12 @@ body {
     grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
     /* The list may be far taller than the panel beside it: the panel and the dock keep their own height
        and one filler row takes the rest — otherwise the grid pushes the way out below the fold. */
-    grid-template-rows: auto auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto auto 1fr auto;
     grid-template-areas:
       'bar bar'
       'hud hud'
       'cap travel'
+      'moves travel'
       'dock travel'
       '. travel'
       'build build';
@@ -610,6 +675,10 @@ body {
 
   .world .travel {
     grid-area: travel;
+  }
+
+  .world .moves {
+    grid-area: moves;
   }
 
   .world .dock {

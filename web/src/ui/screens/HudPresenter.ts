@@ -8,6 +8,8 @@ import type { TravelRowVM } from './TravelRowVM.ts';
 
 const DEFAULT_FRAME = 'default';
 const RETURN_MARK = '▲ ';
+/** The elevator column's current-floor mark (Building.groovy:192), and what a reader hears instead. */
+const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -30,9 +32,12 @@ export class HudPresenter implements Presenter<HudVM> {
     if (place === null) throw new Error('HudPresenter needs a snapshot with a place');
     const rows = snapshot.options
       .filter((option) => option.role === 'travel')
-      .map((option, index) => this.#row(option, index));
+      .map((option) => this.#row(option));
+    const moves = snapshot.options
+      .filter((option) => option.role === 'move')
+      .map((option) => this.#docked(option));
     const dock = snapshot.options
-      .filter((option) => option.role !== 'travel')
+      .filter((option) => option.role === 'return' || option.role === 'system')
       .map((option) => this.#docked(option));
     const pad = (value: number): string => String(value).padStart(2, '0');
     return {
@@ -68,13 +73,17 @@ export class HudPresenter implements Presenter<HudVM> {
       },
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
+      moves,
       sealedNote: rows.some((row) => row.sealed)
         ? 'STRUCTURES SEALED · the lattice opens their doors in a later build'
         : null,
       sealedTag: 'SEALED',
       dock,
       options: [
-        ...rows.filter((row) => !row.sealed).map((row) => ({ id: row.id, key: row.key, label: row.label })),
+        ...rows
+          .filter((row) => !row.sealed)
+          .map((row) => ({ id: row.id, key: row.key, label: row.label, opposite: '' })),
+        ...moves,
         ...dock,
       ],
       status: snapshot.message,
@@ -84,25 +93,33 @@ export class HudPresenter implements Presenter<HudVM> {
         path: 'Path from the universe',
         place: 'Where you are',
         travel: 'Places to enter',
+        moves: 'Moves',
         dock: 'Leave and game',
       },
     };
   }
 
-  /** An open row says how to get in; a sealed one only says what stands there. */
-  #row(option: GameOption, index: number): TravelRowVM {
+  /** An open row says how to get in; a sealed one only says what stands there. The number is the option's own. */
+  #row(option: GameOption): TravelRowVM {
     return {
       id: option.id,
       key: option.key.toUpperCase(),
-      ordinal: String(index + 1).padStart(2, '0'),
+      ordinal: option.ordinal.padStart(2, '0'),
       label: option.sealed ? option.place : option.label,
       sealed: option.sealed,
       landmark: option.landmark,
+      readings: option.readings.map((fact) => ({ key: fact.key, label: fact.label, value: fact.value })),
+      mark: option.current ? CURRENT_MARK : null,
     };
   }
 
   #docked(option: GameOption): OptionVM {
     const mark = option.role === 'return' ? RETURN_MARK : '';
-    return { id: option.id, key: option.key.toUpperCase(), label: `${mark}${option.label.toUpperCase()}` };
+    return {
+      id: option.id,
+      key: option.key.toUpperCase(),
+      label: `${mark}${option.label.toUpperCase()}`,
+      opposite: option.opposite,
+    };
   }
 }

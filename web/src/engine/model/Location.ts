@@ -2,6 +2,7 @@ import type { Seed } from '#engine/rng/Seed.ts';
 import { Address } from './Address.ts';
 import type { Fact } from './Fact.ts';
 import type { LocationKind } from './LocationKind.ts';
+import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
 import type { Vibe } from './Vibe.ts';
 
@@ -14,8 +15,9 @@ const HASH_TOP = 100 * HASH_STEPS - 1;
  * and exist only after `children()` is asked — once, through the injected `ChildSource`. There is no other
  * way to reach them, so nothing can bypass the population check.
  *
- * Each kind answers for itself — what it is called, what it shows, how its children are reached — so
- * nobody ever asks "which kind are you?".
+ * Each kind answers for itself — what it is called, what it shows, how its children are reached, where a
+ * traveller who enters it ends up, what moves it offers, what it remembers — so nobody ever asks "which
+ * kind are you?".
  */
 export abstract class Location {
   readonly #origin: Origin;
@@ -41,8 +43,99 @@ export abstract class Location {
     return this.name();
   }
 
+  /** The number this place shows on its parent's list; one-based, unless the kind counts differently. */
+  ordinal(): number {
+    return this.index() + 1;
+  }
+
+  /** Whether this place goes by its own number on its parent's list (a floor, Guide:111) rather than by its position. */
+  goesByNumber(): boolean {
+    return false;
+  }
+
   facts(): readonly Fact[] {
     return [];
+  }
+
+  /** The readings shown beside this place on its parent's list; none unless the kind has some. */
+  readings(): readonly Fact[] {
+    return [];
+  }
+
+  /** The places a traveller here may go into, in the order they are listed — the children, unless the kind lists otherwise. */
+  listing(): readonly Location[] {
+    return this.children();
+  }
+
+  /**
+   * Whether a path may continue from here into this child right now — the place's own state permitting: it
+   * is listed, unless the kind has another rule (a floor lets nobody past its elevator; a building's floors
+   * are reached by its elevator). A save whose path breaks this rule is not one this world could have written.
+   */
+  admits(child: Location): boolean {
+    return this.listing().includes(child);
+  }
+
+  /** Where a traveller who moves into this place actually ends up: here, unless the kind hands travellers on. Pure. */
+  // eslint-disable-next-line @typescript-eslint/prefer-return-this-type -- a kind may answer with another place
+  arrival(): Location {
+    return this;
+  }
+
+  /**
+   * The act of arriving: whatever the kind does when a traveller lands here (a floor calls the elevator),
+   * then `arrival()` — and a place that hands travellers on lets the place they land in arrive in turn.
+   */
+  arrive(): Location {
+    const to = this.arrival();
+    return to === this ? this : to.arrive();
+  }
+
+  /** Whether the parent's list marks this place as the current one — where the carrier stands (a floor: the elevator's). */
+  current(): boolean {
+    return false;
+  }
+
+  /** Where leaving this place goes — wherever the parent receives travellers; nothing when there is no way out. Pure. */
+  exit(): Location | undefined {
+    return this.parent()?.arrival();
+  }
+
+  /** The act of leaving: whatever the kind does on the way out, then `exit()`. */
+  leave(): Location | undefined {
+    return this.exit();
+  }
+
+  leaveLabel(): string {
+    return `Leave ${this.kind().title()}`;
+  }
+
+  /** The moves on offer here besides entering a child or leaving; none unless the kind has some. */
+  moves(): readonly Move[] {
+    return [];
+  }
+
+  /** Makes the move with this id and says where the traveller stands after it; nothing when there is no such move. */
+  move(id: string): Location | undefined {
+    if (this.moves().some((move) => move.id === id)) {
+      throw new Error(`${this.kind().key()} offers the move '${id}' but does not make it`);
+    }
+    return undefined;
+  }
+
+  /** What a save must keep of this place's own state, as text; nothing when it is in its default state. */
+  remember(): string | undefined {
+    return undefined;
+  }
+
+  /** Takes back a state `remember()` wrote; false when this place cannot be in that state. */
+  recall(memento: string): boolean {
+    return memento === this.remember();
+  }
+
+  /** Where a new journey into this place starts: the first child all the way down, until a kind claims the start. */
+  startOfJourney(): Location {
+    return this.children()[0]?.startOfJourney() ?? this;
   }
 
   /** A sealed place is listed but cannot be entered — nothing stands inside it. */

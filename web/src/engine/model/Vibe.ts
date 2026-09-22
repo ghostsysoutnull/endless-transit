@@ -1,3 +1,4 @@
+import type { Seed } from '#engine/rng/Seed.ts';
 import type { Culture } from './Culture.ts';
 import type { Era } from './Era.ts';
 import type { Trait } from './Trait.ts';
@@ -62,6 +63,16 @@ export class Vibe {
 
   frame(): string {
     return this.#facts.frame;
+  }
+
+  /** The culture a place below draws: the main one with the stability's share, else the second (VibeCapsule.groovy:277-279). */
+  pickCulture(seed: Seed): Culture {
+    return seed.probability(this.#facts.stability) ? this.#facts.culture : this.#facts.secondCulture;
+  }
+
+  /** The era a place below draws, by the same rule (VibeCapsule.groovy:282-284). */
+  pickEra(seed: Seed): Era {
+    return seed.probability(this.#facts.stability) ? this.#facts.era : this.#facts.secondEra;
   }
 
   /** A country's copy: its trait recorded, stability shifted and kept inside 0.1 … 0.9. */
