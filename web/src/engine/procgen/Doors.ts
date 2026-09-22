@@ -22,10 +22,13 @@ export class Doors {
   }
 
   of(seed: Seed, behind: RoomCategory): Door {
+    const [material, materialTold] = seed.branch('material').pick(this.#library.pairs(`${LISTS}/materials`));
+    const [state, stateTold] = seed.branch('state').pick(this.#library.pairs(`${LISTS}/states`));
     return new Door({
-      material: seed.branch('material').pick(this.#names(`${LISTS}/materials`)),
-      state: seed.branch('state').pick(this.#names(`${LISTS}/states`)),
+      material,
+      state,
       inscription: seed.branch('inscribed').probability(INSCRIBED) ? this.#words(seed, behind) : undefined,
+      told: { material: materialTold, state: stateTold },
     });
   }
 
@@ -37,9 +40,5 @@ export class Doors {
         seed.branch('style').pick(INSCRIPTION_STYLES),
       )
     );
-  }
-
-  #names(path: string): readonly string[] {
-    return this.#library.pairs(path).map(([name]) => name);
   }
 }

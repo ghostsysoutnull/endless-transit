@@ -103,6 +103,11 @@ export class Apartment extends Location {
     return this.children()[0] ?? this;
   }
 
+  /** On the corridor's list a door shows its full appearance under its name. */
+  override readings(): readonly Fact[] {
+    return [{ key: 'narrative', label: 'APPEARANCE', value: this.#door.narrative() }];
+  }
+
   description(): readonly string[] {
     return [];
   }

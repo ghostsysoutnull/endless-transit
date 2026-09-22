@@ -112,6 +112,11 @@ export class Building extends Location {
     return 'STRUCTURAL_STABLE';
   }
 
+  /** From the building down, the traveller is indoors. */
+  override indoors(): boolean {
+    return true;
+  }
+
   childrenHeading(): string {
     return 'Building strata diagnostics:';
   }

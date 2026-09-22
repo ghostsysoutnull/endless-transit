@@ -148,6 +148,11 @@ export abstract class Location {
     return false;
   }
 
+  /** Whether this place is inside a building — where the HUD's map gives way to telemetry (TelemetryComponent.groovy:48-55). */
+  indoors(): boolean {
+    return this.parent()?.indoors() ?? false;
+  }
+
   /** What the planet above decided; nothing above planet level. */
   vibe(): Vibe | undefined {
     return this.parent()?.vibe();

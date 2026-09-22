@@ -1,6 +1,7 @@
 import type { Apartment } from './Apartment.ts';
 import type { Atmosphere } from './Atmosphere.ts';
 import type { Fact } from './Fact.ts';
+import { Glitch } from './Glitch.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
@@ -10,6 +11,11 @@ import type { Relic } from './Relic.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 
 export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
+
+/** Under an anomaly the interpretation is glitched: structure, walls and lighting each at its own share (Room.groovy:268-272). */
+const STATIC = new Glitch();
+const GLITCHED = { structure: 0.2, walls: 0.1, lighting: 0.3 } as const;
+const STATIC_KEY = 'static';
 
 /** Back to the previous room unless this is the first, forward to the next unless it is the last. */
 const MOVES = new MoveTable<Room>([
@@ -119,22 +125,29 @@ export class Room extends Location {
     return 'Exit Apartment';
   }
 
-  /** The neural-link interpretation (Room.groovy:274-276), one sentence per line. */
+  /** The neural-link interpretation (Room.groovy:274-276), one sentence per line; glitched under an anomaly. */
   description(): readonly string[] {
     const { structure, colour, walls, lighting } = this.#atmosphere;
+    const read = (part: keyof typeof GLITCHED, text: string): string =>
+      this.#apartment.anomaly()
+        ? STATIC.mangle(text, GLITCHED[part], this.seed().branch(STATIC_KEY).branch(part))
+        : text;
     return [
-      `You are in ${structure}. The walls are ${colour} ${walls}.`,
-      `The space is illuminated by ${lighting}.`,
+      `You are in ${read('structure', structure)}. The walls are ${colour} ${read('walls', walls)}.`,
+      `The space is illuminated by ${read('lighting', lighting)}.`,
     ];
   }
 
-  /** The local cell diagnostic (Room.groovy:124-130). */
+  /** The local cell diagnostic (Room.groovy:124-130): the resonance is degraded under an anomaly. */
   override facts(): readonly Fact[] {
     return [
       { key: 'reading', label: 'TYPE', value: this.type() },
       { key: 'reading', label: 'OXY', value: `${String(this.#traits.oxygen)}%` },
       { key: 'reading', label: 'TEMP', value: `${String(this.#traits.temperature)}°C` },
       { key: 'signal', label: 'SIGNAL', value: this.#traits.signal },
+      this.#apartment.anomaly()
+        ? { key: 'alert', label: 'RESONANCE', value: '[DEGRADED]' }
+        : { key: 'stable', label: 'RESONANCE', value: '[STABLE]' },
     ];
   }
 

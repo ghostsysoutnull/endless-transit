@@ -311,7 +311,14 @@ describe('GameEngine — walking the big world', () => {
       sealed: false,
       landmark: false,
       ordinal: '1',
-      readings: [],
+      readings: [
+        {
+          key: 'narrative',
+          label: 'APPEARANCE',
+          value:
+            "A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.",
+        },
+      ],
       opposite: '',
       current: false,
     });
@@ -335,7 +342,13 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.trail.map((step) => step.icon).join('')).toBe('∞»○☼⊕⬚🏙═⌂▤▅🚪□');
     expect(room.place?.trail[11]?.name).toBe('_void_sink_ Brutalist Slab [PITTED]');
     expect(room.place?.description).toHaveLength(2);
-    expect(room.place?.facts.map((fact) => fact.label)).toEqual(['TYPE', 'OXY', 'TEMP', 'SIGNAL']);
+    expect(room.place?.facts.map((fact) => fact.label)).toEqual([
+      'TYPE',
+      'OXY',
+      'TEMP',
+      'SIGNAL',
+      'RESONANCE',
+    ]);
     expect(room.message).toBe('Entered Grand Power Plant.');
     expect(room.options).toEqual([
       move('forward', 'f', 'Go forward', 'back'),
