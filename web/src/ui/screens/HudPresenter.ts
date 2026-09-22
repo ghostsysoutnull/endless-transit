@@ -30,9 +30,12 @@ export class HudPresenter implements Presenter<HudVM> {
     if (place === null) throw new Error('HudPresenter needs a snapshot with a place');
     const rows = snapshot.options
       .filter((option) => option.role === 'travel')
-      .map((option, index) => this.#row(option, index));
+      .map((option) => this.#row(option));
+    const moves = snapshot.options
+      .filter((option) => option.role === 'move')
+      .map((option) => this.#docked(option));
     const dock = snapshot.options
-      .filter((option) => option.role !== 'travel')
+      .filter((option) => option.role === 'return' || option.role === 'system')
       .map((option) => this.#docked(option));
     const pad = (value: number): string => String(value).padStart(2, '0');
     return {
@@ -68,6 +71,7 @@ export class HudPresenter implements Presenter<HudVM> {
       },
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
+      moves,
       sealedNote: rows.some((row) => row.sealed)
         ? 'STRUCTURES SEALED · the lattice opens their doors in a later build'
         : null,
@@ -75,6 +79,7 @@ export class HudPresenter implements Presenter<HudVM> {
       dock,
       options: [
         ...rows.filter((row) => !row.sealed).map((row) => ({ id: row.id, key: row.key, label: row.label })),
+        ...moves,
         ...dock,
       ],
       status: snapshot.message,
@@ -84,20 +89,22 @@ export class HudPresenter implements Presenter<HudVM> {
         path: 'Path from the universe',
         place: 'Where you are',
         travel: 'Places to enter',
+        moves: 'Moves',
         dock: 'Leave and game',
       },
     };
   }
 
-  /** An open row says how to get in; a sealed one only says what stands there. */
-  #row(option: GameOption, index: number): TravelRowVM {
+  /** An open row says how to get in; a sealed one only says what stands there. The number is the option's own. */
+  #row(option: GameOption): TravelRowVM {
     return {
       id: option.id,
       key: option.key.toUpperCase(),
-      ordinal: String(index + 1).padStart(2, '0'),
+      ordinal: option.ordinal.padStart(2, '0'),
       label: option.sealed ? option.place : option.label,
       sealed: option.sealed,
       landmark: option.landmark,
+      readings: option.readings.map((fact) => ({ key: fact.key, label: fact.label, value: fact.value })),
     };
   }
 

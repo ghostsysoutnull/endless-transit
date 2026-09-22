@@ -26,6 +26,8 @@ export interface HudVM extends Screen {
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
+  /** The moves the place offers (up, down, into the corridor, on to the next room): a strip of buttons above the list. */
+  readonly moves: readonly OptionVM[];
   /** Why some rows are closed; nothing when none is. */
   readonly sealedNote: string | null;
   /** The word on a closed row. */
@@ -41,6 +43,7 @@ export interface HudVM extends Screen {
     readonly path: string;
     readonly place: string;
     readonly travel: string;
+    readonly moves: string;
     readonly dock: string;
   };
 }
