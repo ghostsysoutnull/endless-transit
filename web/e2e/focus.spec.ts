@@ -48,11 +48,11 @@ test('entering a place moves the focus to the first place on its list — every 
   await page.getByRole('button', { name: /new world/i }).focus();
   await press(page, /new world/i, hasTouch);
   await press(page, /enter world/i, hasTouch);
-  await expect(page.getByTestId('place-kind')).toHaveText('UNIVERSE');
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
   const first = page.locator('button[data-option="enter:0"]');
   await (hasTouch ? first.tap() : first.click());
-  await expect(page.getByTestId('place-kind')).toHaveText('COSMIC FILAMENT');
+  await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
 });
 
@@ -74,7 +74,7 @@ async function plantOnAPlanet(page: Page): Promise<void> {
     },
     [
       'endless-transit.save',
-      JSON.stringify({ version: 2, seed: '7F3A-91C2-0B4D-E6A8', path: '0.0.0.0.0' }),
+      JSON.stringify({ version: 3, seed: '7F3A-91C2-0B4D-E6A8', path: '0.0.0.0.0', states: {} }),
     ] as const,
   );
 }
