@@ -8,6 +8,7 @@ import type { GameOption } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { Journey } from './Journey.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
+import { Telemetry } from './Telemetry.ts';
 
 const TRAVEL = 'enter:';
 const MOVE = 'move:';
@@ -35,6 +36,7 @@ export class GameEngine {
   readonly #saves: SaveStore;
   readonly #commands: readonly GameCommand[];
   readonly #childKeys: readonly string[];
+  readonly #telemetry = new Telemetry();
   #message = '';
 
   constructor(deps: { world: LocationRegistry; entropy: EntropySource; saves: SaveStore }) {
@@ -232,6 +234,9 @@ export class GameEngine {
       facts: here.facts(),
       frame: here.vibe()?.frame() ?? null,
       childrenHeading: here.childrenHeading(),
+      objects: here.objects().map((relic) => ({ key: relic.key(), name: relic.name() })),
+      furniture: here.furniture(),
+      telemetry: this.#telemetry.of(here),
     };
   }
 }

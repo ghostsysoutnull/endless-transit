@@ -1,8 +1,10 @@
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
+import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
@@ -10,6 +12,8 @@ const DEFAULT_FRAME = 'default';
 const RETURN_MARK = '▲ ';
 /** The elevator column's current-floor mark (Building.groovy:192), and what a reader hears instead. */
 const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
+/** One cell of a spectrogram bar (TelemetryComponent.groovy:136). */
+const BAR = '█';
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -69,8 +73,10 @@ export class HudPresenter implements Presenter<HudVM> {
           value: fact.value.toUpperCase(),
         })),
         description: place.description,
+        rows: this.#rows(place),
         diagnostic: place.status,
       },
+      aside: this.#aside(place),
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
       moves,
@@ -94,8 +100,44 @@ export class HudPresenter implements Presenter<HudVM> {
         place: 'Where you are',
         travel: 'Places to enter',
         moves: 'Moves',
+        aside: 'Telemetry',
         dock: 'Leave and game',
       },
+    };
+  }
+
+  /** A furnished place lists its furniture and counts its objects (Room.groovy:278-295; the mock's OBJECTS row). */
+  #rows(place: PlaceSummary): HudVM['place']['rows'] {
+    if (place.furniture.length === 0) return [];
+    return [
+      { label: 'FURNITURE', value: place.furniture.join(', ') },
+      { label: 'OBJECTS_DETECTED', value: String(place.objects.length) },
+    ];
+  }
+
+  /** The objects as tiles when the place is one that holds things; the telemetry block when it is indoors. */
+  #aside(place: PlaceSummary): AsideVM {
+    return {
+      objects:
+        place.furniture.length === 0
+          ? null
+          : {
+              heading: 'IN THIS ROOM',
+              empty: place.objects.length === 0 ? 'No objects detected.' : '',
+              tiles: place.objects.map((relic) => ({ key: relic.key, name: relic.name })),
+            },
+      telemetry:
+        place.telemetry === null
+          ? null
+          : {
+              heading: '[SYSTEM_TELEMETRY]',
+              sync: 'LATTICE_SYNC: [NOMINAL]',
+              spectrogram: {
+                heading: '[QUANTUM_SPECTROGRAM]',
+                bars: place.telemetry.spectrogram.map((height) => BAR.repeat(height)),
+              },
+              logs: { heading: '[DECODE_LOGS]', lines: [`> Trace: ${place.address}`] },
+            },
     };
   }
 

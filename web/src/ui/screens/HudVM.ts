@@ -1,4 +1,5 @@
 import type { OptionVM } from '#ui/OptionVM.ts';
+import type { AsideVM } from './AsideVM.ts';
 import type { Screen } from '#ui/Screen.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
@@ -21,8 +22,12 @@ export interface HudVM extends Screen {
     readonly name: string;
     readonly tags: readonly { readonly key: string; readonly label: string; readonly value: string }[];
     readonly description: readonly string[];
+    /** Labelled lines under the description — a room's FURNITURE, its object count (the mock's rows). */
+    readonly rows: readonly { readonly label: string; readonly value: string }[];
     readonly diagnostic: string;
   };
+  /** The right column's second pane: what the place holds, and the telemetry every place indoors shows. */
+  readonly aside: AsideVM;
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
@@ -44,6 +49,7 @@ export interface HudVM extends Screen {
     readonly place: string;
     readonly travel: string;
     readonly moves: string;
+    readonly aside: string;
     readonly dock: string;
   };
 }

@@ -89,12 +89,12 @@ export class Room extends Location {
   }
 
   /** One to three pieces of the culture's furniture in some condition; not loot (Guide:171). */
-  furniture(): readonly string[] {
+  override furniture(): readonly string[] {
     return this.#furniture;
   }
 
   /** The relics lying here — the apartment's, the ones it dealt to this room (Guide:167: objects live in apartments). */
-  objects(): readonly Relic[] {
+  override objects(): readonly Relic[] {
     return this.#apartment.relicsIn(this.index());
   }
 

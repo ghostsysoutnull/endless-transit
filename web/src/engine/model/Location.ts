@@ -4,6 +4,7 @@ import type { Fact } from './Fact.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
+import type { Relic } from './Relic.ts';
 import type { Vibe } from './Vibe.ts';
 
 /** The locus hash is two readings of 0.000 … 99.999, each drawn in thousandths. */
@@ -146,6 +147,16 @@ export abstract class Location {
   /** A place its parent's list should make stand out. */
   landmark(): boolean {
     return false;
+  }
+
+  /** The relics lying here; none unless the kind holds some (a room). */
+  objects(): readonly Relic[] {
+    return [];
+  }
+
+  /** The furniture here; none unless the kind is furnished (a room). */
+  furniture(): readonly string[] {
+    return [];
   }
 
   /** Whether this place is inside a building — where the HUD's map gives way to telemetry (TelemetryComponent.groovy:48-55). */

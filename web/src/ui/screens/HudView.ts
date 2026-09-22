@@ -78,6 +78,20 @@ export class HudView implements View<HudVM> {
             )}
           </ul>
           <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
+          ${
+            vm.place.rows.length === 0
+              ? nothing
+              : html`<dl class="prows">
+                  ${vm.place.rows.map(
+                    (row) => html`
+                      <div class="prow">
+                        <dt>${row.label}</dt>
+                        <dd>${row.value}</dd>
+                      </div>
+                    `,
+                  )}
+                </dl>`
+          }
           <p class="diag">${vm.place.diagnostic}</p>
           <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
         </section>
@@ -94,17 +108,20 @@ export class HudView implements View<HudVM> {
                 </nav>
               `
         }
-        <section class="travel" aria-label=${vm.regions.travel}>
-          <h3 class="heading">${vm.heading}</h3>
-          ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
-          <ol class="rows">
-            ${repeat(
-              vm.rows,
-              (row) => `${vm.scene}/${row.id}`,
-              (row) => this.#row(row, vm.sealedTag),
-            )}
-          </ol>
-        </section>
+        <div class="side">
+          <section class="travel" aria-label=${vm.regions.travel}>
+            <h3 class="heading">${vm.heading}</h3>
+            ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
+            <ol class="rows">
+              ${repeat(
+                vm.rows,
+                (row) => `${vm.scene}/${row.id}`,
+                (row) => this.#row(row, vm.sealedTag),
+              )}
+            </ol>
+          </section>
+          ${this.#aside(vm)}
+        </div>
         <nav class="dock" aria-label=${vm.regions.dock}>
           ${repeat(
             vm.dock,
@@ -114,6 +131,51 @@ export class HudView implements View<HudVM> {
         </nav>
         <footer class="build" data-testid="build">${vm.build}</footer>
       </div>
+    `;
+  }
+
+  /** The objects of a room as tiles (a list, not buttons: nothing is taken yet) and the telemetry block. */
+  #aside(vm: HudVM): TemplateResult | typeof nothing {
+    const { objects, telemetry } = vm.aside;
+    if (objects === null && telemetry === null) return nothing;
+    return html`
+      <aside class="aside" aria-label=${vm.regions.aside}>
+        ${
+          objects === null
+            ? nothing
+            : html`
+                <section class="objects" data-testid="objects">
+                  <h3 class="heading">${objects.heading}</h3>
+                  ${objects.empty === '' ? nothing : html`<p class="empty">${objects.empty}</p>`}
+                  ${
+                    objects.tiles.length === 0
+                      ? nothing
+                      : html`<ul class="tiles">
+                          ${objects.tiles.map(
+                            (tile) => html`<li class="tile" data-relic=${tile.key}>${tile.name}</li>`,
+                          )}
+                        </ul>`
+                  }
+                </section>
+              `
+        }
+        ${
+          telemetry === null
+            ? nothing
+            : html`
+                <section class="tele" data-testid="telemetry">
+                  <p class="th">${telemetry.heading}</p>
+                  <p class="tl">${telemetry.sync}</p>
+                  <p class="th">${telemetry.spectrogram.heading}</p>
+                  <p class="bars" aria-hidden="true">
+                    ${telemetry.spectrogram.bars.map((bar) => html`<span>${bar}</span>`)}
+                  </p>
+                  <p class="th">${telemetry.logs.heading}</p>
+                  ${telemetry.logs.lines.map((line) => html`<p class="tl">${line}</p>`)}
+                </section>
+              `
+        }
+      </aside>
     `;
   }
 

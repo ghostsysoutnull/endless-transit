@@ -1,4 +1,5 @@
 import type { Fact } from '#engine/model/Fact.ts';
+import type { TelemetrySummary } from './Telemetry.ts';
 
 /** What the screen may know about the place the traveller stands in: plain text and numbers only. */
 export interface PlaceSummary {
@@ -22,4 +23,10 @@ export interface PlaceSummary {
   /** The colour name of the planet's frame; nothing above planet level. */
   readonly frame: string | null;
   readonly childrenHeading: string;
+  /** The relics lying here, each by its stable key and its words; none for most kinds. */
+  readonly objects: readonly { readonly key: string; readonly name: string }[];
+  /** The furniture here, described; none for most kinds. */
+  readonly furniture: readonly string[];
+  /** The telemetry pane's readings; nothing outdoors. */
+  readonly telemetry: TelemetrySummary | null;
 }
