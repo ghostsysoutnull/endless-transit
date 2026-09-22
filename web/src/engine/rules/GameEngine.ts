@@ -10,6 +10,16 @@ import { Journey } from './Journey.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
 
 const TRAVEL = 'enter:';
+const MOVE = 'move:';
+/** The keyboard extra of each move a place may offer (Guide:112-115); a move with no entry here gets none. */
+const MOVE_KEYS: Readonly<Record<string, string>> = {
+  up: 'u',
+  down: 'd',
+  corridor: 'c',
+  elevator: 'b',
+  back: 'b',
+  forward: 'f',
+};
 /** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself. */
 const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
@@ -33,26 +43,26 @@ export class GameEngine {
     this.#saves = deps.saves;
     this.#commands = [
       {
-        key: 'n',
+        keys: ['n'],
         options: () =>
           this.#atTitle() && !this.#hasWorld() ? [this.#system('new-world', 'n', 'New world')] : [],
         run: () => this.#drawWorld(),
       },
       {
-        key: 'e',
+        keys: ['e'],
         options: () =>
           this.#atTitle() && this.#hasWorld()
             ? [this.#system('enter-world', 'e', this.#journey.resumes() ? 'Continue' : 'Enter world')]
             : [],
-        run: () => this.#moved(this.#journey.enter(), 'Uplink established.'),
+        run: () => this.#moved(this.#journey.enter(), `Entered ${this.#journey.here()?.name() ?? ''}.`),
       },
       {
-        key: 'r',
+        keys: ['r'],
         options: () => (this.#atTitle() && this.#hasWorld() ? [this.#system('reroll', 'r', 'Re-roll')] : []),
         run: () => this.#drawWorld(),
       },
       {
-        key: '',
+        keys: [],
         options: () => this.#travelOptions(),
         run: (optionId) => {
           const moved = this.#journey.descend(Number(optionId.slice(TRAVEL.length)));
@@ -60,21 +70,33 @@ export class GameEngine {
         },
       },
       {
-        key: 'l',
-        options: () => {
+        keys: [...new Set(Object.values(MOVE_KEYS))],
+        options: () => this.#moveOptions(),
+        run: (optionId) => {
+          const id = optionId.slice(MOVE.length);
+          const before = this.#journey.here();
+          const label = before?.moves().find((move) => move.id === id)?.label ?? '';
+          const moved = this.#journey.move(id);
           const here = this.#journey.here();
-          if (here?.parent() === undefined) return [];
-          return [{ ...this.#system('leave', 'l', `Leave ${here.kind().title()}`), role: 'return' }];
+          return this.#moved(moved, here === before ? `${label}.` : `Entered ${here?.name() ?? ''}.`);
         },
-        run: () => this.#moved(this.#journey.ascend(), `Returned to ${this.#journey.here()?.name() ?? ''}.`),
       },
       {
-        key: 't',
+        keys: ['l'],
+        options: () => {
+          const here = this.#journey.here();
+          if (here?.exit() === undefined) return [];
+          return [{ ...this.#system('leave', 'l', here.leaveLabel()), role: 'return' }];
+        },
+        run: () => this.#moved(this.#journey.leave(), `Returned to ${this.#journey.here()?.name() ?? ''}.`),
+      },
+      {
+        keys: ['t'],
         options: () => (this.#atTitle() ? [] : [this.#system('to-title', 't', 'Title screen')]),
         run: () => this.#moved(this.#journey.toTitle(), ''),
       },
     ];
-    const claimed = new Set(this.#commands.map((entry) => entry.key));
+    const claimed = new Set(this.#commands.flatMap((entry) => entry.keys));
     this.#childKeys = [...DIGITS, ...LETTERS.filter((letter) => !claimed.has(letter))];
     this.#restore();
   }
@@ -121,7 +143,17 @@ export class GameEngine {
   }
 
   #system(id: string, key: string, label: string): GameOption {
-    return { id, key, label, place: '', role: 'system', sealed: false, landmark: false };
+    return {
+      id,
+      key,
+      label,
+      place: '',
+      role: 'system',
+      sealed: false,
+      landmark: false,
+      ordinal: '',
+      readings: [],
+    };
   }
 
   #moved(happened: boolean, message: string): string {
@@ -134,12 +166,12 @@ export class GameEngine {
     return `World ${seed.toString()} drawn.`;
   }
 
-  /** One option per child of the place; only the open ones get a key, handed out in order. */
+  /** One option per place listed here, in the list's order; only the open ones get a key, handed out in order. */
   #travelOptions(): readonly GameOption[] {
     const here = this.#journey.here();
     if (here === undefined) return [];
     let open = 0;
-    return here.children().map((child, index) => ({
+    return here.listing().map((child, index) => ({
       id: `${TRAVEL}${String(index)}`,
       key: child.sealed() ? '' : (this.#childKeys[open++] ?? ''),
       label: `${here.approachVerb()} ${child.callSign()}`,
@@ -147,6 +179,18 @@ export class GameEngine {
       role: 'travel',
       sealed: child.sealed(),
       landmark: child.landmark(),
+      ordinal: String(child.ordinal()),
+      readings: child.readings(),
+    }));
+  }
+
+  /** One option per move the place offers, with the key the Guide gives it. */
+  #moveOptions(): readonly GameOption[] {
+    const here = this.#journey.here();
+    if (here === undefined) return [];
+    return here.moves().map((move) => ({
+      ...this.#system(`${MOVE}${move.id}`, MOVE_KEYS[move.id] ?? '', move.label),
+      role: 'move',
     }));
   }
 

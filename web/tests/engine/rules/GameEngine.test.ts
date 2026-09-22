@@ -15,19 +15,44 @@ function engineOn(saves: MemorySaveStore): GameEngine {
 }
 
 function system(id: string, key: string, label: string): GameOption {
-  return { id, key, label, place: '', role: 'system', sealed: false, landmark: false };
+  return {
+    id,
+    key,
+    label,
+    place: '',
+    role: 'system',
+    sealed: false,
+    landmark: false,
+    ordinal: '',
+    readings: [],
+  };
+}
+
+function move(id: string, key: string, label: string): GameOption {
+  return { ...system(`move:${id}`, key, label), role: 'move' };
 }
 
 function ids(snapshot: GameSnapshot): string[] {
   return snapshot.options.map((option) => option.id);
 }
 
-/** A world entered and walked down the first child `levels` times. */
+/** A world entered (on its street), climbed to the universe, and walked down the first child `levels` times. */
 function walkedDown(engine: GameEngine, levels: number): GameSnapshot {
   engine.step('new-world');
   let snapshot = engine.step('enter-world');
+  for (let level = 0; level < 7; level++) snapshot = engine.step('leave');
   for (let level = 0; level < levels; level++) snapshot = engine.step('enter:0');
   return snapshot;
+}
+
+/** Ornate Sanctum (16 floors, 9 doors) on Bright Boulevard: into the lobby, the corridor, and the first door. */
+function inTheFirstRoom(engine: GameEngine): GameSnapshot {
+  engine.step('new-world');
+  engine.step('enter-world');
+  engine.step('enter:0');
+  engine.step('enter:15');
+  engine.step('move:corridor');
+  return engine.step('enter:0');
 }
 
 describe('GameEngine — the title screen', () => {
@@ -67,10 +92,23 @@ describe('GameEngine — the title screen', () => {
 });
 
 describe('GameEngine — walking the big world', () => {
-  test('entering the world stands in the universe: what it is, where it is, what it shows, where it leads', () => {
+  test('entering a new world stands on a street (Guide:41); the universe is seven leaves above', () => {
     const engine = engineOn(new MemorySaveStore());
     engine.step('new-world');
-    const snapshot = engine.step('enter-world');
+    const street = engine.step('enter-world');
+    expect(street.place?.kind).toBe('Street');
+    expect(street.place?.name).toBe('Bright Boulevard');
+    expect(street.place?.address).toBe('0.0.0.0.0.0.0.0');
+    expect(street.message).toBe('Entered Bright Boulevard.');
+    expect(street.options.map((option) => option.id)).toEqual([
+      'enter:0',
+      'enter:1',
+      'enter:2',
+      'enter:3',
+      'leave',
+      'to-title',
+    ]);
+    const snapshot = walkedDown(engine, 0);
     expect(snapshot.place).toEqual({
       kind: 'Universe',
       icon: '∞',
@@ -96,6 +134,8 @@ describe('GameEngine — walking the big world', () => {
       role: 'travel',
       sealed: false,
       landmark: false,
+      ordinal: '1',
+      readings: [],
     });
     expect(ids(snapshot)).not.toContain('leave');
     expect(snapshot.options.at(-1)).toEqual(system('to-title', 't', 'Title screen'));
@@ -120,6 +160,8 @@ describe('GameEngine — walking the big world', () => {
       role: 'return',
       sealed: false,
       landmark: false,
+      ordinal: '',
+      readings: [],
     });
     expect(snapshot.message).toBe('Entered Zeta-915-Link.');
   });
@@ -151,7 +193,7 @@ describe('GameEngine — walking the big world', () => {
     expect(ids(engine.snapshot())).not.toContain('leave');
   });
 
-  test('the buildings of a street are open: tapping one enters it', () => {
+  test('the buildings of a street are open: tapping one enters it; its floors are listed top first, numbered by floor, with their readings', () => {
     const engine = engineOn(new MemorySaveStore());
     const street = walkedDown(engine, 7);
     const buildings = street.options.filter((option) => option.role === 'travel');
@@ -159,9 +201,138 @@ describe('GameEngine — walking the big world', () => {
     expect(buildings.every((option) => !option.sealed && option.key !== '')).toBe(true);
     expect(buildings[0]?.label).toBe('Enter Building: Ornate Sanctum');
     expect(buildings[0]?.place).toBe('Ornate Sanctum');
-    const after = engine.step('enter:0');
-    expect(after.place?.kind).toBe('Building');
-    expect(after.message).toBe('Entered Ornate Sanctum.');
+    const building = engine.step('enter:0');
+    expect(building.place?.kind).toBe('Building');
+    expect(building.message).toBe('Entered Ornate Sanctum.');
+    expect(building.place?.facts).toEqual([{ key: 'culture', label: 'THEME', value: 'baroque' }]);
+    const floors = building.options.filter((option) => option.role === 'travel');
+    expect(floors).toHaveLength(16);
+    expect(floors[0]).toEqual({
+      id: 'enter:0',
+      key: '1',
+      label: 'Access: Peak',
+      place: 'Floor 15',
+      role: 'travel',
+      sealed: false,
+      landmark: false,
+      ordinal: '15',
+      readings: [
+        { key: 'zone', label: 'FUNCTION', value: 'PEAK_OBSERVATORY' },
+        { key: 'reading', label: 'ST', value: '100%' },
+        { key: 'reading', label: 'RES', value: '1582Hz' },
+      ],
+    });
+    expect(floors.map((option) => option.ordinal)).toEqual(
+      Array.from({ length: 16 }, (_, n) => String(15 - n)),
+    );
+    expect(floors.at(-1)?.label).toBe('Access: Lobby');
+    expect(floors.at(-1)?.readings[0]?.value).toBe('TRANSIT_LOBBY');
+    expect(building.options.filter((option) => option.role === 'move')).toEqual([]);
+  });
+
+  test('the elevator: up, down and the corridor are moves with the Guide’s keys; the top and the ground drop one; nothing is listed', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    engine.step('enter:0');
+    const lobby = engine.step('enter:15');
+    expect(lobby.place?.kind).toBe('Floor');
+    expect(lobby.place?.name).toBe('Floor 0');
+    expect(lobby.place?.position).toEqual({ label: 'Z-AXIS', index: 1, total: 16 });
+    expect(lobby.place?.facts.map((fact) => fact.label)).toEqual([
+      'TECH_ERA',
+      'RESONANCE',
+      'STABILITY',
+      'ATMOS_SHIFT',
+    ]);
+    expect(lobby.options).toEqual([
+      move('up', 'u', 'Go Up'),
+      move('corridor', 'c', 'Enter Corridor'),
+      { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
+      system('to-title', 't', 'Title screen'),
+    ]);
+    expect(engine.step('move:down').message).toBe(lobby.message);
+    const second = engine.step('move:up');
+    expect(second.place?.name).toBe('Floor 1');
+    expect(second.message).toBe('Entered Floor 1.');
+    expect(second.options.filter((option) => option.role === 'move').map((option) => option.id)).toEqual([
+      'move:up',
+      'move:down',
+      'move:corridor',
+    ]);
+    for (let floor = 1; floor < 15; floor++) engine.step('move:up');
+    const peak = engine.snapshot();
+    expect(peak.place?.name).toBe('Floor 15');
+    expect(peak.options.filter((option) => option.role === 'move').map((option) => option.id)).toEqual([
+      'move:down',
+      'move:corridor',
+    ]);
+  });
+
+  test('the corridor: the doors are listed with their inscriptions, back to the elevator is the one move, leave still goes to the building', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    engine.step('enter:0');
+    engine.step('enter:15');
+    const corridor = engine.step('move:corridor');
+    expect(corridor.place?.kind).toBe('Floor');
+    expect(corridor.message).toBe('Enter Corridor.');
+    expect(corridor.place?.childrenHeading).toBe('Local access list:');
+    expect(corridor.place?.status).toBe('TRAFFIC: [STABLE] | THEME: [BAROQUE]');
+    const doors = corridor.options.filter((option) => option.role === 'travel');
+    expect(doors).toHaveLength(9);
+    expect(doors[0]).toEqual({
+      id: 'enter:0',
+      key: '1',
+      label: 'Access: _void_sink_ Brutalist Slab [PITTED]',
+      place: '_void_sink_ Brutalist Slab [PITTED]',
+      role: 'travel',
+      sealed: false,
+      landmark: false,
+      ordinal: '1',
+      readings: [],
+    });
+    expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
+      move('elevator', 'b', 'Back to Elevator'),
+    ]);
+    expect(corridor.options.find((option) => option.id === 'leave')?.label).toBe('Leave Floor');
+    const elevator = engine.step('move:elevator');
+    expect(elevator.message).toBe('Back to Elevator.');
+    expect(elevator.options.filter((option) => option.role === 'travel')).toEqual([]);
+  });
+
+  test('a door drops the traveller into the first room; forward and back walk the rooms; only the first room has the way out, to the corridor', () => {
+    const engine = engineOn(new MemorySaveStore());
+    const room = inTheFirstRoom(engine);
+    expect(room.place?.kind).toBe('Room');
+    expect(room.place?.name).toBe('Grand Power Plant');
+    expect(room.place?.address).toBe('0.0.0.0.0.0.0.0.0.0.0.0.0');
+    expect(room.place?.depth).toBe(12);
+    expect(room.place?.position).toEqual({ label: 'CELL', index: 1, total: 2 });
+    expect(room.place?.trail.map((step) => step.icon).join('')).toBe('∞»○☼⊕⬚🏙═⌂▤▅🚪□');
+    expect(room.place?.trail[11]?.name).toBe('_void_sink_ Brutalist Slab [PITTED]');
+    expect(room.place?.description).toHaveLength(2);
+    expect(room.place?.facts.map((fact) => fact.label)).toEqual(['TYPE', 'OXY', 'TEMP', 'SIGNAL']);
+    expect(room.message).toBe('Entered Grand Power Plant.');
+    expect(room.options).toEqual([
+      move('forward', 'f', 'Go forward'),
+      { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
+      system('to-title', 't', 'Title screen'),
+    ]);
+    const second = engine.step('move:forward');
+    expect(second.place?.position?.index).toBe(2);
+    expect(second.options.map((option) => option.id)).toEqual(['move:back', 'to-title']);
+    expect(engine.step('leave').place?.position?.index).toBe(2);
+    engine.step('move:back');
+    const floor = engine.step('leave');
+    expect(floor.place?.kind).toBe('Floor');
+    expect(floor.place?.name).toBe('Floor 0');
+    expect(floor.message).toBe('Returned to Floor 0.');
+    expect(floor.options.filter((option) => option.role === 'travel')).toHaveLength(9);
+    const building = engine.step('leave');
+    expect(building.place?.kind).toBe('Building');
+    expect(engine.step('enter:15').options.filter((option) => option.role === 'travel')).toEqual([]);
   });
 
   test('keys: the first nine children get 1–9, the next get letters that no other option uses', () => {
@@ -181,10 +352,11 @@ describe('GameEngine — walking the big world', () => {
     }
   });
 
-  test('the letters children get are the alphabet minus every key a command claims (e l n r t)', () => {
+  test('the letters children get are the alphabet minus every key a command claims (e l n r t, and the moves’ u d c b f)', () => {
     const engine = engineOn(new MemorySaveStore());
     engine.step('new-world');
     engine.step('enter-world');
+    for (let level = 0; level < 7; level++) engine.step('leave');
     // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters.
     for (const index of [0, 0, 0, 0, 2, 0]) engine.step(`enter:${String(index)}`);
     const city = engine.snapshot();
@@ -194,7 +366,7 @@ describe('GameEngine — walking the big world', () => {
         .filter((option) => option.role === 'travel')
         .map((option) => option.key)
         .join(''),
-    ).toBe('123456789abcdfg');
+    ).toBe('123456789aghijk');
   });
 
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
@@ -213,6 +385,24 @@ describe('GameEngine — the place is remembered', () => {
     expect(restored.place).toEqual(played.place);
     expect(restored.options).toEqual(played.options);
     expect(restored.message).toMatch(/restored/i);
+  });
+
+  test('a room is saved with its floor’s corridor mode: after a reload the way out still opens on the door list', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    const played = inTheFirstRoom(engine);
+    expect(saves.load()).toContain('"states":{"0.0.0.0.0.0.0.0.0.0":"corridor"}');
+    const again = engineOn(saves);
+    expect(again.snapshot().place).toEqual(played.place);
+    expect(again.snapshot().options).toEqual(played.options);
+    const floor = again.step('leave');
+    expect(floor.options).toEqual(engine.step('leave').options);
+    expect(floor.options.filter((option) => option.role === 'travel')).toHaveLength(9);
+    // …and the floor left from the corridor is at the elevator again after a reload, as it is without one.
+    again.step('leave');
+    engine.step('leave');
+    expect(saves.load()).toContain('"states":{}');
+    expect(engineOn(saves).step('enter:15').options).toEqual(engine.step('enter:15').options);
   });
 
   test('a world drawn but not entered is restored to the title, as before', () => {
@@ -238,15 +428,17 @@ describe('GameEngine — the place is remembered', () => {
 
     engine.step('to-title');
     engine.step('reroll');
-    expect(engine.step('enter-world').place?.address).toBe('0');
+    expect(engine.step('enter-world').place?.address).toBe('0.0.0.0.0.0.0.0');
   });
 
   test('a corrupt save, or a path that leads nowhere, is a fresh game — not a crash, not half a world', () => {
     for (const text of [
-      '{"version":2,"seed":',
-      '{"version":1,"seed":"7F3A-91C2-0B4D-E6A8"}',
-      '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.99"}',
-      '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.999"}',
+      '{"version":3,"seed":',
+      '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0"}',
+      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.99","states":{}}',
+      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.999","states":{}}',
+      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0.0","states":{}}',
+      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0","states":{"0.0.0.0.0.0.0.0.0.0":"lift"}}',
     ]) {
       const snapshot = engineOn(new MemorySaveStore(text)).snapshot();
       expect(snapshot.world, text).toBeNull();

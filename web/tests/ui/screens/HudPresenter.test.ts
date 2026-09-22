@@ -7,7 +7,16 @@ import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 const presenter = new HudPresenter(new Masthead('a1b2c3d'));
 
 function option(facts: Partial<GameOption> & { id: string; label: string }): GameOption {
-  return { key: '', place: '', role: 'travel', sealed: false, landmark: false, ...facts };
+  return {
+    key: '',
+    place: '',
+    role: 'travel',
+    sealed: false,
+    landmark: false,
+    ordinal: '',
+    readings: [],
+    ...facts,
+  };
 }
 
 const PLANET: GameSnapshot = {
