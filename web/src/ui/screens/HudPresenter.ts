@@ -12,6 +12,8 @@ const DEFAULT_FRAME = 'default';
 const RETURN_MARK = '▲ ';
 /** The elevator column's current-floor mark (Building.groovy:198-201), and what a reader hears instead. */
 const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
+/** The visited mark of the old lists (Corridor.groovy:72, Building.groovy:222), and what a reader hears instead. */
+const SEEN_MARK = { text: '[V]', label: 'Visited' } as const;
 /** One cell of a spectrogram bar (TelemetryComponent.groovy:136). */
 const BAR = '█';
 
@@ -27,13 +29,15 @@ export class HudPresenter implements Presenter<HudVM> {
     this.#masthead = masthead;
   }
 
+  /** The world screen: a place, and no prompt in the way. */
   accepts(snapshot: GameSnapshot): boolean {
-    return snapshot.place !== null;
+    return snapshot.place !== null && snapshot.prompt === null;
   }
 
   toViewModel(snapshot: GameSnapshot): HudVM {
     const place = snapshot.place;
-    if (place === null) throw new Error('HudPresenter needs a snapshot with a place');
+    const player = snapshot.player;
+    if (place === null || player === null) throw new Error('HudPresenter needs a snapshot with a place');
     const rows = snapshot.options
       .filter((option) => option.role === 'travel')
       .map((option) => this.#row(option));
@@ -43,13 +47,25 @@ export class HudPresenter implements Presenter<HudVM> {
     const dock = snapshot.options
       .filter((option) => option.role === 'return' || option.role === 'system')
       .map((option) => this.#docked(option));
+    const debug = snapshot.options
+      .filter((option) => option.role === 'debug')
+      .map((option) => this.#docked(option));
     const pad = (value: number): string => String(value).padStart(2, '0');
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
       frame: place.frame ?? DEFAULT_FRAME,
       crumbs: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
+      meter: {
+        label: 'COHERENCE',
+        value: player.coherence,
+        text: `${String(player.coherence)}%`,
+        band: player.band,
+        bandLabel: player.band,
+        valueText: `${String(player.coherence)} percent, ${player.band}`,
+      },
       stats: [
+        { label: 'PULSE_TRAVERSAL', value: String(player.steps) },
         { label: 'HOP_DENSITY', value: pad(place.depth) },
         ...(place.position === null
           ? []
@@ -85,12 +101,14 @@ export class HudPresenter implements Presenter<HudVM> {
         : null,
       sealedTag: 'SEALED',
       dock,
+      debug,
       options: [
         ...rows
           .filter((row) => !row.sealed)
           .map((row) => ({ id: row.id, key: row.key, label: row.label, opposite: '' })),
         ...moves,
         ...dock,
+        ...debug,
       ],
       status: snapshot.message,
       build: this.#masthead.buildLine(),
@@ -102,6 +120,7 @@ export class HudPresenter implements Presenter<HudVM> {
         moves: 'Moves',
         aside: 'Readouts',
         dock: 'Leave and game',
+        debug: 'Debug tools',
       },
     };
   }
@@ -161,6 +180,7 @@ export class HudPresenter implements Presenter<HudVM> {
       landmark: option.landmark,
       readings: option.readings.map((fact) => ({ key: fact.key, label: fact.label, value: fact.value })),
       mark: option.current ? CURRENT_MARK : null,
+      seen: option.visited ? SEEN_MARK : null,
     };
   }
 

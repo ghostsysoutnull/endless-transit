@@ -15,6 +15,15 @@ export interface HudVM extends Screen {
     readonly name: string;
     readonly current: boolean;
   }[];
+  /** The coherence bar: the value, its band (a colour a screen picks by it), and what a reader hears. */
+  readonly meter: {
+    readonly label: string;
+    readonly value: number;
+    readonly text: string;
+    readonly band: string;
+    readonly bandLabel: string;
+    readonly valueText: string;
+  };
   readonly stats: readonly { readonly label: string; readonly value: string }[];
   readonly place: {
     readonly eyebrow: string;
@@ -39,6 +48,8 @@ export interface HudVM extends Screen {
   readonly sealedTag: string;
   /** Leave and the game's own options: always within reach of a thumb. */
   readonly dock: readonly OptionVM[];
+  /** The debug tools (Decision 8): a strip of their own, empty outside debug mode. */
+  readonly debug: readonly OptionVM[];
   /** The live-region text: what just happened. */
   readonly status: string;
   readonly build: string;
@@ -51,5 +62,6 @@ export interface HudVM extends Screen {
     readonly moves: string;
     readonly aside: string;
     readonly dock: string;
+    readonly debug: string;
   };
 }

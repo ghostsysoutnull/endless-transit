@@ -1,6 +1,7 @@
 === STREET ═ BROAD ALLEY  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley *
-stats: HOP_DENSITY 07 | WAY 01/10 | LOCUS 0.0.0.0.0.0.0.0 | LOCUS_HASH 16.143 / 66.754 | SEED 0000-0000-0000-0000
+COHERENCE: 100% stable
+stats: PULSE_TRAVERSAL 0 | HOP_DENSITY 07 | WAY 01/10 | LOCUS 0.0.0.0.0.0.0.0 | LOCUS_HASH 16.143 / 66.754 | SEED 0000-0000-0000-0000
 tags: TECH_ERA FUTURE (era) | RESONANCE VOID (culture)
   Buildings stand in pairs along both sides of the way.
 diag: SYNC: [STABLE]
@@ -30,7 +31,8 @@ dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ HORIZONWELL  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
-stats: HOP_DENSITY 08 | STRATA 02/20 | LOCUS 0.0.0.0.0.0.0.0.1 | LOCUS_HASH 1.921 / 98.281 | SEED 0000-0000-0000-0000
+COHERENCE: 99% stable
+stats: PULSE_TRAVERSAL 1 | HOP_DENSITY 08 | STRATA 02/20 | LOCUS 0.0.0.0.0.0.0.0.1 | LOCUS_HASH 1.921 / 98.281 | SEED 0000-0000-0000-0000
 tags: THEME VOID (culture)
   Analyzing vertical lattice structure...
 diag: STRUCTURAL_STABLE
@@ -113,7 +115,8 @@ dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
-stats: HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
+COHERENCE: 98% stable
+stats: PULSE_TRAVERSAL 2 | HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
 tags: TECH_ERA FUTURE (era) | RESONANCE VOID (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT RESEARCH (trait)
   Floor 0. A landing of VOID design, silent except for the lift cables ticking overhead.
   Local signal is STABLE. Corridor access authorized.
@@ -125,7 +128,8 @@ dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
-stats: HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
+COHERENCE: 97% stable
+stats: PULSE_TRAVERSAL 3 | HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
 tags: THEME VOID (culture)
   A curved gallery of doors beneath a single strip of light.
 diag: TRAFFIC: [STABLE] | THEME: [VOID]
@@ -157,7 +161,8 @@ dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ HOLLOW NEURAL LINK ARRAY  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Hollow Neural Link Array *
-stats: HOP_DENSITY 12 | CELL 01/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.0 | LOCUS_HASH 26.526 / 29.341 | SEED 0000-0000-0000-0000
+COHERENCE: 96% stable
+stats: PULSE_TRAVERSAL 4 | HOP_DENSITY 12 | CELL 01/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.0 | LOCUS_HASH 26.526 / 29.341 | SEED 0000-0000-0000-0000
 tags: TYPE NEURAL LINK ARRAY (reading) | OXY 20% (reading) | TEMP 23°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
   You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
   The space is illuminated by a lattice of laser threads across the ceiling.
@@ -172,7 +177,8 @@ dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ ABYSSAL BIO-SERVER  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Abyssal Bio-Server *
-stats: HOP_DENSITY 12 | CELL 02/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.1 | LOCUS_HASH 70.929 / 62.968 | SEED 0000-0000-0000-0000
+COHERENCE: 95% stable
+stats: PULSE_TRAVERSAL 5 | HOP_DENSITY 12 | CELL 02/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.1 | LOCUS_HASH 70.929 / 62.968 | SEED 0000-0000-0000-0000
 tags: TYPE BIO-SERVER (reading) | OXY 16% (reading) | TEMP 15°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
   You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
   The space is illuminated by light bent around a gravity plate.

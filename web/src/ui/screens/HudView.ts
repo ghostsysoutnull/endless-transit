@@ -10,7 +10,8 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel. The panel is the
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel. The coherence meter is a
+ * `role="meter"` whose fill is a width the stylesheet animates (nodes survive a render). The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
@@ -53,6 +54,21 @@ export class HudView implements View<HudVM> {
               )}
             </ol>
           </nav>
+          <div class="meter" data-band=${vm.meter.band} data-testid="meter">
+            <span class="ml">${vm.meter.label}</span
+            ><span
+              class="cohbar"
+              role="meter"
+              aria-label=${vm.meter.label}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow=${vm.meter.value}
+              aria-valuetext=${vm.meter.valueText}
+              ><i style=${`width:${String(vm.meter.value)}%`}></i
+            ></span>
+            <b class="mv" data-testid="coherence">${vm.meter.text}</b>
+            <span class="mb" data-testid="band">${vm.meter.bandLabel}</span>
+          </div>
           <dl class="stats">
             ${vm.stats.map(
               (stat) => html`
@@ -135,6 +151,19 @@ export class HudView implements View<HudVM> {
             (option) => this.#docked(option),
           )}
         </nav>
+        ${
+          vm.debug.length === 0
+            ? nothing
+            : html`
+                <nav class="debug" aria-label=${vm.regions.debug} data-testid="debug">
+                  ${repeat(
+                    vm.debug,
+                    (option) => option.id,
+                    (option) => this.#docked(option),
+                  )}
+                </nav>
+              `
+        }
         <footer class="build" data-testid="build">${vm.build}</footer>
       </div>
     `;
@@ -197,7 +226,11 @@ export class HudView implements View<HudVM> {
     }
     return html`
       <li>
-        <button type="button" class=${row.mark === null ? 'row' : 'row you'} data-option=${row.id}>
+        <button
+          type="button"
+          class=${['row', row.mark === null ? '' : 'you', row.seen === null ? '' : 'seen'].join(' ').trim()}
+          data-option=${row.id}
+        >
           <span class="ord">${row.ordinal}</span
           ><span class="mid"
             ><span class="ln"
@@ -206,6 +239,11 @@ export class HudView implements View<HudVM> {
                   ? nothing
                   : html`<span class="mark" aria-hidden="true">${row.mark.text}</span
                       ><span class="vh">${row.mark.label}</span>`
+              }${
+                row.seen === null
+                  ? nothing
+                  : html`<span class="seen-mark" aria-hidden="true">${row.seen.text}</span
+                      ><span class="vh">${row.seen.label}</span>`
               }</span
             >${
               row.readings.length === 0

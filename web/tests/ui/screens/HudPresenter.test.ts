@@ -203,6 +203,10 @@ describe('HudPresenter — which snapshots it takes', () => {
   test('it presents a place; the title screen (no place) is not its business', () => {
     expect(presenter.accepts(PLANET)).toBe(true);
     expect(presenter.accepts({ ...PLANET, place: null })).toBe(false);
+    // A pending prompt is another screen's business.
+    expect(
+      presenter.accepts({ ...PLANET, prompt: { id: 'reboot', outcome: 'rebooting', figures: {} } }),
+    ).toBe(false);
     expect(() => presenter.toViewModel({ ...PLANET, place: null })).toThrow(/place/);
   });
 });
@@ -230,8 +234,9 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
     expect(vm.crumbs[3]?.kind).toBe('Solar system');
   });
 
-  test('the stats line: depth, position among siblings under the kind’s own label, the locus, its hash, the seed', () => {
+  test('the stats line: the steps, depth, position among siblings under the kind’s own label, the locus, its hash, the seed', () => {
     expect(vm.stats).toEqual([
+      { label: 'PULSE_TRAVERSAL', value: '12' },
       { label: 'HOP_DENSITY', value: '04' },
       { label: 'ORBIT', value: '02/05' },
       { label: 'LOCUS', value: '0.0.0.0.1' },
@@ -245,7 +250,13 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
       ...PLANET,
       place: { ...(PLANET.place ?? ({} as never)), position: null, depth: 0, address: '0', frame: null },
     });
-    expect(universe.stats.map((stat) => stat.label)).toEqual(['HOP_DENSITY', 'LOCUS', 'LOCUS_HASH', 'SEED']);
+    expect(universe.stats.map((stat) => stat.label)).toEqual([
+      'PULSE_TRAVERSAL',
+      'HOP_DENSITY',
+      'LOCUS',
+      'LOCUS_HASH',
+      'SEED',
+    ]);
     expect(universe.frame).toBe('default');
   });
 });
@@ -332,6 +343,7 @@ describe('HudPresenter.toViewModel — options stay data', () => {
         landmark: false,
         readings: [],
         mark: null,
+        seen: null,
       },
       {
         id: 'enter:1',
@@ -342,6 +354,7 @@ describe('HudPresenter.toViewModel — options stay data', () => {
         landmark: false,
         readings: [],
         mark: null,
+        seen: null,
       },
     ]);
     expect(vm.moves).toEqual([]);
@@ -427,7 +440,49 @@ describe('HudPresenter.toViewModel — the rest', () => {
       moves: 'Moves',
       aside: 'Readouts',
       dock: 'Leave and game',
+      debug: 'Debug tools',
     });
+  });
+
+  test('the coherence meter: the value, its band from the engine, the words a reader hears (Guide:151-156)', () => {
+    expect(presenter.toViewModel(PLANET).meter).toEqual({
+      label: 'COHERENCE',
+      value: 87,
+      text: '87%',
+      band: 'stable',
+      bandLabel: 'stable',
+      valueText: '87 percent, stable',
+    });
+    const low = presenter.toViewModel({ ...PLANET, player: { coherence: 12, band: 'critical', steps: 3 } });
+    expect(low.meter.value).toBe(12);
+    expect(low.meter.band).toBe('critical');
+    expect(low.meter.valueText).toBe('12 percent, critical');
+    expect(low.stats[0]).toEqual({ label: 'PULSE_TRAVERSAL', value: '3' });
+  });
+
+  test('a visited row carries the [V] mark with words for a reader; an unvisited one none (Corridor.groovy:71-72)', () => {
+    const vm = presenter.toViewModel({
+      ...PLANET,
+      options: [
+        option({ id: 'enter:0', label: 'Visit A', place: 'A', ordinal: '1', visited: true }),
+        option({ id: 'enter:1', label: 'Visit B', place: 'B', ordinal: '2' }),
+      ],
+    });
+    expect(vm.rows.map((row) => row.seen)).toEqual([{ text: '[V]', label: 'Visited' }, null]);
+  });
+
+  test('debug tools are a strip of their own, in the router’s options after the dock; none when there are none', () => {
+    const vm = presenter.toViewModel({
+      ...PLANET,
+      options: [
+        ...PLANET.options,
+        option({ id: 'debug:integrity:39', label: 'Integrity 39', role: 'debug' }),
+      ],
+    });
+    expect(vm.debug).toEqual([{ id: 'debug:integrity:39', key: '', label: 'INTEGRITY 39', opposite: '' }]);
+    expect(vm.options.at(-1)?.id).toBe('debug:integrity:39');
+    expect(vm.dock.map((option) => option.id)).toEqual(['leave', 'to-title']);
+    expect(presenter.toViewModel(PLANET).debug).toEqual([]);
   });
 
   test('the view-model is plain data', () => {

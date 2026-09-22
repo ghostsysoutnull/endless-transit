@@ -11,4 +11,6 @@ export interface TravelRowVM {
   readonly readings: readonly { readonly key: string; readonly label: string; readonly value: string }[];
   /** The current-position mark (the elevator column's `[>X<]`): `text` shown, `label` read out; nothing on most rows. */
   readonly mark: { readonly text: string; readonly label: string } | null;
+  /** The visited mark (`[V]`): `text` shown, `label` read out; nothing on a row not yet entered. */
+  readonly seen: { readonly text: string; readonly label: string } | null;
 }

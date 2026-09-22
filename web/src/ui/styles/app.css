@@ -351,6 +351,61 @@ body {
   color: var(--frame);
 }
 
+/* The coherence meter (the mock's instruments row): a bar filled with the band's own colour, animated between
+   values because lit-html keeps the node; reduced motion turns the transition off (the rule at the end). */
+.meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+
+.meter .ml {
+  color: var(--dim);
+  letter-spacing: 0.06em;
+}
+
+.cohbar {
+  flex: 1 1 60px;
+  height: 8px;
+  min-width: 60px;
+  border: 1px solid var(--rule-hi);
+  position: relative;
+  display: block;
+}
+
+.cohbar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: currentColor;
+  transition: width 0.3s;
+}
+
+.meter .mv {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.meter .mb {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.meter[data-band='stable'] {
+  color: var(--gn);
+}
+
+.meter[data-band='degraded'] {
+  color: var(--yl);
+}
+
+.meter[data-band='critical'] {
+  color: var(--rd);
+}
+
 .stats {
   margin: 0;
   display: flex;
@@ -610,6 +665,17 @@ body {
   min-width: 0;
 }
 
+/* A visited row: the old lists' green [V] after the name (Corridor.groovy:72). */
+.row .seen-mark {
+  color: var(--gn);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.row:active .seen-mark {
+  color: var(--ground);
+}
+
 /* The current row of a list — the floor the elevator stands at: the mock's "you" row, the old game's [>X<]. */
 .row.you {
   border-color: var(--yl);
@@ -771,6 +837,22 @@ body {
   border-color: var(--yl);
 }
 
+/* Debug tools (Decision 8): a strip of small dashed buttons under the dock, only in debug mode. */
+.debug {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.debug .pb {
+  flex: 1 1 100px;
+  border-style: dashed;
+  border-color: var(--mg);
+  color: var(--mg);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
 @media (min-width: 900px) {
   .app.world {
     max-width: 1080px;
@@ -778,13 +860,14 @@ body {
     grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
     /* The list may be far taller than the panel beside it: the panel and the dock keep their own height
        and one filler row takes the rest — otherwise the grid pushes the way out below the fold. */
-    grid-template-rows: auto auto auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto auto auto 1fr auto;
     grid-template-areas:
       'bar bar'
       'hud hud'
       'cap side'
       'moves side'
       'dock side'
+      'debug side'
       '. side'
       'build build';
     align-items: start;
@@ -814,6 +897,10 @@ body {
     grid-area: dock;
     position: static;
     background: none;
+  }
+
+  .world .debug {
+    grid-area: debug;
   }
 
   .world .build {
