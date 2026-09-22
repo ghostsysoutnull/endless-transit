@@ -100,36 +100,45 @@ export class HudPresenter implements Presenter<HudVM> {
         place: 'Where you are',
         travel: 'Places to enter',
         moves: 'Moves',
-        aside: 'Telemetry',
+        aside: 'Readouts',
         dock: 'Leave and game',
       },
     };
   }
 
-  /** A furnished place lists its furniture and counts its objects (Room.groovy:278-295; the mock's OBJECTS row). */
+  /**
+   * A place that holds things lists its furniture and counts its objects — no count line when there are none
+   * (Room.groovy:281-295 draws OBJECTS_DETECTED only for a non-empty list; the mock's OBJECTS row).
+   */
   #rows(place: PlaceSummary): HudVM['place']['rows'] {
-    if (place.furniture.length === 0) return [];
+    const contents = place.contents;
+    if (contents === null) return [];
     return [
-      { label: 'FURNITURE', value: place.furniture.join(', ') },
-      { label: 'OBJECTS_DETECTED', value: String(place.objects.length) },
+      { label: 'FURNITURE', value: contents.furniture.join(', ') },
+      ...(contents.objects.length === 0
+        ? []
+        : [{ label: 'OBJECTS_DETECTED', value: String(contents.objects.length) }]),
     ];
   }
 
   /** The objects as tiles when the place is one that holds things; the telemetry block when it is indoors. */
   #aside(place: PlaceSummary): AsideVM {
+    const contents = place.contents;
     return {
       objects:
-        place.furniture.length === 0
+        contents === null
           ? null
           : {
+              label: 'In this room',
               heading: 'IN THIS ROOM',
-              empty: place.objects.length === 0 ? 'No objects detected.' : '',
-              tiles: place.objects.map((relic) => ({ key: relic.key, name: relic.name })),
+              empty: contents.objects.length === 0 ? 'No objects detected.' : '',
+              tiles: contents.objects.map((relic) => ({ key: relic.key, name: relic.name })),
             },
       telemetry:
         place.telemetry === null
           ? null
           : {
+              label: 'System telemetry',
               heading: '[SYSTEM_TELEMETRY]',
               sync: 'LATTICE_SYNC: [NOMINAL]',
               spectrogram: {

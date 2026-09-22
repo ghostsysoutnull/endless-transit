@@ -234,9 +234,18 @@ export class GameEngine {
       facts: here.facts(),
       frame: here.vibe()?.frame() ?? null,
       childrenHeading: here.childrenHeading(),
-      objects: here.objects().map((relic) => ({ key: relic.key(), name: relic.name() })),
-      furniture: here.furniture(),
+      contents: this.#contentsOf(here),
       telemetry: this.#telemetry.of(here),
+    };
+  }
+
+  /** What the place holds, as plain data; null when it is not a kind that holds things. */
+  #contentsOf(here: Location): PlaceSummary['contents'] {
+    const contents = here.contents();
+    if (contents === null) return null;
+    return {
+      objects: contents.objects.map((relic) => ({ key: relic.key(), name: relic.name() })),
+      furniture: contents.furniture,
     };
   }
 }

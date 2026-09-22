@@ -23,10 +23,11 @@ export interface PlaceSummary {
   /** The colour name of the planet's frame; nothing above planet level. */
   readonly frame: string | null;
   readonly childrenHeading: string;
-  /** The relics lying here, each by its stable key and its words; none for most kinds. */
-  readonly objects: readonly { readonly key: string; readonly name: string }[];
-  /** The furniture here, described; none for most kinds. */
-  readonly furniture: readonly string[];
+  /** What the place holds, when it is a kind that holds things (a room): relics by stable key and words, furniture described; null for every other kind. */
+  readonly contents: {
+    readonly objects: readonly { readonly key: string; readonly name: string }[];
+    readonly furniture: readonly string[];
+  } | null;
   /** The telemetry pane's readings; nothing outdoors. */
   readonly telemetry: TelemetrySummary | null;
 }

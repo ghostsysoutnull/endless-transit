@@ -150,7 +150,7 @@ export class HudView implements View<HudVM> {
           objects === null
             ? nothing
             : html`
-                <section class="objects" data-testid="objects">
+                <section class="objects" data-testid="objects" aria-label=${objects.label}>
                   <h3 class="heading">${objects.heading}</h3>
                   ${objects.empty === '' ? nothing : html`<p class="empty">${objects.empty}</p>`}
                   ${
@@ -169,7 +169,7 @@ export class HudView implements View<HudVM> {
           telemetry === null
             ? nothing
             : html`
-                <section class="tele" data-testid="telemetry">
+                <section class="tele" data-testid="telemetry" aria-label=${telemetry.label}>
                   <p class="th">${telemetry.heading}</p>
                   <p class="tl">${telemetry.sync}</p>
                   <p class="th">${telemetry.spectrogram.heading}</p>

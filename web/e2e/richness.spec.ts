@@ -59,6 +59,9 @@ test('a room reads like the old game: its interpretation, furniture, the object 
   expect(await page.locator('button.tile, .tile button').count()).toBe(0);
   await expect(page.getByTestId('telemetry')).toContainText('[SYSTEM_TELEMETRY]');
   await expect(page.getByTestId('telemetry')).toContainText('> Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0');
+  // Each pane of the aside is a region with its own name (an aside called "Telemetry" that opens with IN THIS ROOM misleads).
+  await expect(page.getByRole('region', { name: 'In this room' })).toHaveCount(1);
+  await expect(page.getByRole('region', { name: 'System telemetry' })).toHaveCount(1);
   await expect(page.locator('.travel')).toHaveCount(0);
   await expectTouchable(page, 'room');
   await shoot(page, '5-room-rich');

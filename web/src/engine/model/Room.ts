@@ -1,5 +1,6 @@
 import type { Apartment } from './Apartment.ts';
 import type { Atmosphere } from './Atmosphere.ts';
+import type { Contents } from './Contents.ts';
 import type { Fact } from './Fact.ts';
 import { Glitch } from './Glitch.ts';
 import { Location } from './Location.ts';
@@ -89,13 +90,18 @@ export class Room extends Location {
   }
 
   /** One to three pieces of the culture's furniture in some condition; not loot (Guide:171). */
-  override furniture(): readonly string[] {
+  furniture(): readonly string[] {
     return this.#furniture;
   }
 
   /** The relics lying here — the apartment's, the ones it dealt to this room (Guide:167: objects live in apartments). */
-  override objects(): readonly Relic[] {
+  objects(): readonly Relic[] {
     return this.#apartment.relicsIn(this.index());
+  }
+
+  /** A room is the kind that holds things: its relics and its furniture. */
+  override contents(): Contents {
+    return { objects: this.objects(), furniture: this.furniture() };
   }
 
   /** A room lists no places: its rooms are its siblings, walked with forward and back. */

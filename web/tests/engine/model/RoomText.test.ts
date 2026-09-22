@@ -177,6 +177,13 @@ describe('a room’s text (Room.groovy:116-134, 262-297)', () => {
     ]);
     expect(must(trail[8]).kind().key()).toBe('building');
   });
+
+  test('what a place holds is the place’s answer: a room its objects and furniture, every kind above it nothing', () => {
+    const room = must(rooms[0]);
+    expect(room.contents()).toEqual({ objects: room.objects(), furniture: room.furniture() });
+    expect(must(room.contents()).furniture.length).toBeGreaterThan(0);
+    for (const place of room.trail().slice(0, -1)) expect(place.contents(), place.kind().key()).toBeNull();
+  });
 });
 
 describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:32-51; DoorInscription.groovy:29-37)', () => {

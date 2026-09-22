@@ -92,8 +92,7 @@ describe('TitlePresenter.toViewModel', () => {
       frame: null,
       hash: '0.000 / 0.000',
       childrenHeading: '',
-      objects: [],
-      furniture: [],
+      contents: null,
       telemetry: null,
     };
     expect(presenter.accepts({ ...atTitle, place })).toBe(false);

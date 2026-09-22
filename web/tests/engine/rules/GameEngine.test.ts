@@ -126,8 +126,7 @@ describe('GameEngine — walking the big world', () => {
       facts: [],
       frame: null,
       childrenHeading: 'Primary filaments radiating from root:',
-      objects: [],
-      furniture: [],
+      contents: null,
       telemetry: null,
     });
     const travel = snapshot.options.filter((option) => option.role === 'travel');
@@ -355,13 +354,15 @@ describe('GameEngine — walking the big world', () => {
     expect(room.message).toBe('Entered Grand Power Plant.');
     // What the room holds rides on the snapshot as plain data: relics by key and name, furniture, and the
     // telemetry every place inside a building shows (five bars of 1–9, drawn on the place's own seed).
-    expect(room.place?.objects).toEqual([
-      { key: 'with|reliquary box|plasma coil', name: 'plasma coil with reliquary box' },
-      { key: 'fused|brass censer|laser cutter', name: 'brass censer fused to laser cutter' },
-      { key: 'infused|stone gargoyle|orbital beacon', name: 'stone gargoyle infused with orbital beacon' },
-      { key: 'infused|prayer bench|plasma coil', name: 'prayer bench infused with plasma coil' },
-    ]);
-    expect(room.place?.furniture).toEqual(['half-dismantled stained glass shard', 'scorched funeral mask']);
+    expect(room.place?.contents).toEqual({
+      objects: [
+        { key: 'with|reliquary box|plasma coil', name: 'plasma coil with reliquary box' },
+        { key: 'fused|brass censer|laser cutter', name: 'brass censer fused to laser cutter' },
+        { key: 'infused|stone gargoyle|orbital beacon', name: 'stone gargoyle infused with orbital beacon' },
+        { key: 'infused|prayer bench|plasma coil', name: 'prayer bench infused with plasma coil' },
+      ],
+      furniture: ['half-dismantled stained glass shard', 'scorched funeral mask'],
+    });
     expect(room.place?.telemetry).toEqual({ spectrogram: [8, 6, 7, 8, 4] });
     expect(engine.snapshot().place?.telemetry).toEqual(room.place?.telemetry);
     expect(room.options).toEqual([

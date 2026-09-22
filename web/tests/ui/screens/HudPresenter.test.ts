@@ -46,8 +46,7 @@ const PLANET: GameSnapshot = {
     ],
     frame: 'yellow',
     childrenHeading: 'Planetary landmasses scanned:',
-    objects: [],
-    furniture: [],
+    contents: null,
     telemetry: null,
   },
   options: [
@@ -179,11 +178,13 @@ const ROOM: GameSnapshot = {
       { key: 'reading', label: 'TYPE', value: 'Power Plant' },
       { key: 'stable', label: 'RESONANCE', value: '[STABLE]' },
     ],
-    objects: [
-      { key: 'with|tatami mat|floppy disk', name: 'floppy disk with tatami mat' },
-      { key: 'culture|katana rack', name: 'katana rack' },
-    ],
-    furniture: ['overturned tatami mat', 'cracked shoji screen'],
+    contents: {
+      objects: [
+        { key: 'with|tatami mat|floppy disk', name: 'floppy disk with tatami mat' },
+        { key: 'culture|katana rack', name: 'katana rack' },
+      ],
+      furniture: ['overturned tatami mat', 'cracked shoji screen'],
+    },
     telemetry: { spectrogram: [3, 1, 9, 4, 2] },
     childrenHeading: '',
   },
@@ -270,6 +271,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     ]);
     expect(vm.place.tags[1]).toEqual({ key: 'stable', label: 'RESONANCE', value: '[STABLE]' });
     expect(vm.aside.objects).toEqual({
+      label: 'In this room',
       heading: 'IN THIS ROOM',
       empty: '',
       tiles: [
@@ -279,12 +281,22 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     });
   });
 
-  test('an empty room says so in words, and a place that holds nothing (a planet) has no objects pane at all', () => {
-    const bare = presenter.toViewModel({ ...ROOM, place: { ...(ROOM.place ?? ({} as never)), objects: [] } });
-    expect(bare.aside.objects).toEqual({ heading: 'IN THIS ROOM', empty: 'No objects detected.', tiles: [] });
+  test('an empty room says so in words and has no OBJECTS_DETECTED row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
+    const bare = presenter.toViewModel({
+      ...ROOM,
+      place: {
+        ...(ROOM.place ?? ({} as never)),
+        contents: { objects: [], furniture: ['overturned tatami mat', 'cracked shoji screen'] },
+      },
+    });
+    expect(bare.aside.objects).toEqual({
+      label: 'In this room',
+      heading: 'IN THIS ROOM',
+      empty: 'No objects detected.',
+      tiles: [],
+    });
     expect(bare.place.rows).toEqual([
       { label: 'FURNITURE', value: 'overturned tatami mat, cracked shoji screen' },
-      { label: 'OBJECTS_DETECTED', value: '0' },
     ]);
     const planet = presenter.toViewModel(PLANET);
     expect(planet.aside).toEqual({ objects: null, telemetry: null });
@@ -293,12 +305,13 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
 
   test('inside a building the aside carries the system telemetry: sync, a spectrogram of five bars, the decode log with the trace (TelemetryComponent.groovy:127-143)', () => {
     expect(vm.aside.telemetry).toEqual({
+      label: 'System telemetry',
       heading: '[SYSTEM_TELEMETRY]',
       sync: 'LATTICE_SYNC: [NOMINAL]',
       spectrogram: { heading: '[QUANTUM_SPECTROGRAM]', bars: ['███', '█', '█████████', '████', '██'] },
       logs: { heading: '[DECODE_LOGS]', lines: ['> Trace: 0.0.0.0.1.0.0.0.0.0.0.0.0'] },
     });
-    expect(vm.regions.aside).toBe('Telemetry');
+    expect(vm.regions.aside).toBe('Readouts');
   });
 });
 
@@ -409,7 +422,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
       place: 'Where you are',
       travel: 'Places to enter',
       moves: 'Moves',
-      aside: 'Telemetry',
+      aside: 'Readouts',
       dock: 'Leave and game',
     });
   });
