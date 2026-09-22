@@ -14,7 +14,7 @@ const library = new ContentLibrary(new BundledContent());
 const MATERIALS = library.pairs('themes/doors/materials').map(([name]) => name);
 const STATES = library.pairs('themes/doors/states').map(([name]) => name);
 const WORDS = library.list('themes/doors/inscriptions');
-/** `[WORD]`, `_word_`, `⟨WORD⟩`, `!! WORD !!` — the four inscription styles (DoorInscription.groovy:62-76). */
+/** `[WORD]`, `_word_`, `⟨WORD⟩`, `!! WORD !!` — the four inscription styles (DoorInscription.groovy:10-24). */
 const STYLED = (word: string): readonly string[] => [
   `[${word}]`,
   `_${word.toLowerCase()}_`,
@@ -71,13 +71,13 @@ describe('a corridor and its doors (Guide, "Reading doors before you open them")
     expect(apartments.some((apartment) => apartment.door().state() === 'Stable')).toBe(true);
   });
 
-  test('about one door in five has words on it (Guide:222; Door.groovy:170)', () => {
+  test('about one door in five has words on it (Guide:222; Door.groovy:31)', () => {
     const inscribed = apartments.filter((apartment) => apartment.door().inscription() !== undefined);
     expect(inscribed.length / apartments.length).toBeGreaterThan(0.18);
     expect(inscribed.length / apartments.length).toBeLessThan(0.22);
   });
 
-  test('[DATA_VAULT] guarantees a Laboratory or a Bio-Server; !! DANGER !! a Security Station or an Armory; any other word none of those four (Guide:223; CorridorFactory.groovy:183-208)', () => {
+  test('[DATA_VAULT] guarantees a Laboratory or a Bio-Server; !! DANGER !! a Security Station or an Armory; any other word none of those four (Guide:223; CorridorFactory.groovy:69-86)', () => {
     const firstRoomOf = (apartment: Apartment): string => as(apartment.children()[0], Room).type();
     const vaults = apartments.filter((each) => each.door().inscription()?.formatted() === '[DATA_VAULT]');
     const dangers = apartments.filter((each) => each.door().inscription()?.formatted() === '!! DANGER !!');
@@ -113,7 +113,7 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     }
   });
 
-  test('arriving at an apartment drops the traveller into its first room (Guide:73; NavigationOrchestrator.groovy:184-194)', () => {
+  test('arriving at an apartment drops the traveller into its first room (Guide:73; NavigationOrchestrator.groovy:32-42)', () => {
     for (const apartment of apartments.slice(0, 200)) {
       expect(apartment.arrival()).toBe(apartment.children()[0]);
       expect(apartment.kind().key()).toBe('apartment');
@@ -144,7 +144,7 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(anomalies.length / apartments.length).toBeLessThan(0.02);
   });
 
-  test('the atmo traits: oxygen 12–21%, temperature 5–25 °C, both ends reached; the signal shielded or clear (RoomFactory.groovy:122-124)', () => {
+  test('the atmo traits: oxygen 12–21%, temperature 5–25 °C, both ends reached; the signal shielded or clear (RoomFactory.groovy:52-54)', () => {
     const oxygen = rooms.map((room) => room.oxygen());
     const temperature = rooms.map((room) => room.temperature());
     expect(rooms.length).toBeGreaterThan(5_000);
@@ -158,7 +158,7 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(room.facts().map((fact) => fact.label)).toEqual(['TYPE', 'OXY', 'TEMP', 'SIGNAL', 'RESONANCE']);
   });
 
-  test('the room’s words are its atmosphere — structure, walls with a colour, lighting — from its own culture, era and trait in all but the glitched few (Room.groovy:274-276; ThemeService.groovy:221-258)', () => {
+  test('the room’s words are its atmosphere — structure, walls with a colour, lighting — from its own culture, era and trait in all but the glitched few (Room.groovy:274-276; ThemeService.groovy:87-124)', () => {
     const colours = library.list('themes/colours');
     let own = 0;
     const sample = rooms.slice(0, 500);

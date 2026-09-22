@@ -46,7 +46,7 @@ describe('a relic is a value with identity by key (I06 captures it by that key, 
   });
 });
 
-describe('the object deck (ThemeService.groovy:276-305; Guide, "Finding things worth taking")', () => {
+describe('the object deck (ThemeService.groovy:140-171; Guide, "Finding things worth taking")', () => {
   const deck = new ObjectDeck(
     new ContentLibrary(
       new MemoryContentSource({
@@ -131,7 +131,7 @@ describe('a deal', () => {
   });
 });
 
-describe('objects live in apartments, not rooms (Guide:167-170; ApartmentFactory.groovy:104-132)', () => {
+describe('objects live in apartments, not rooms (Guide:167-170; ApartmentFactory.groovy:40-45, 63-68)', () => {
   test('each apartment holds 5 to 19 relics, both ends reached, no relic twice, every one a card of its own deck', () => {
     expect(apartments.length).toBeGreaterThan(1_000);
     const deck = new ObjectDeck(library);

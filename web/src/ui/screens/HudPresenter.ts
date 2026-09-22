@@ -10,7 +10,7 @@ import type { TravelRowVM } from './TravelRowVM.ts';
 
 const DEFAULT_FRAME = 'default';
 const RETURN_MARK = '▲ ';
-/** The elevator column's current-floor mark (Building.groovy:192), and what a reader hears instead. */
+/** The elevator column's current-floor mark (Building.groovy:198-201), and what a reader hears instead. */
 const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
 /** One cell of a spectrogram bar (TelemetryComponent.groovy:136). */
 const BAR = '█';

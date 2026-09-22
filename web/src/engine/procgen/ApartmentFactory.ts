@@ -15,9 +15,9 @@ import type { RoomCategories } from './RoomCategories.ts';
 
 /** One apartment in a hundred is a temporal anomaly (ApartmentFactory.groovy:27-31). */
 const ANOMALY = 0.01;
-/** 1 to 10 rooms (Guide:169; ApartmentFactory.groovy:102). */
+/** 1 to 10 rooms (Guide:169; ApartmentFactory.groovy:38). */
 const ROOMS = { min: 1, max: 10 };
-/** 5 to 19 relics per apartment (Guide:167; ApartmentFactory.groovy:104). */
+/** 5 to 19 relics per apartment (Guide:167; ApartmentFactory.groovy:40). */
 const RELICS = { min: 5, max: 19 };
 const HOARD = 'relics';
 
@@ -25,7 +25,7 @@ const HOARD = 'relics';
  * An apartment: its door — inscribed for what its first room will be — and its culture and era, the
  * planet's or the drifted second ones by the country's stability, unless it is an anomaly; 1 to 10 rooms,
  * decided at creation; 5 to 19 relics dealt from the deck of its culture and era, no card twice
- * (ApartmentFactory.groovy:104-109, HK-016 step 2).
+ * (ApartmentFactory.groovy:40-45, HK-016 step 2).
  */
 export class ApartmentFactory implements LocationFactory<Apartment, Corridor> {
   readonly #doors: Doors;

@@ -1,6 +1,6 @@
 /**
  * How a word is applied to a door — stamped `[WORD]`, scrawled `_word_`, etched `⟨WORD⟩`, burned
- * `!! WORD !!` (DoorInscription.groovy:62-76). Identity is the key; the four styles that exist are the
+ * `!! WORD !!` (DoorInscription.groovy:10-24). Identity is the key; the four styles that exist are the
  * list below, a new one is one more entry.
  */
 export class InscriptionStyle {
@@ -26,7 +26,7 @@ export class InscriptionStyle {
     return `${this.#before}${this.#lowered ? word.toLowerCase() : word}${this.#after}`;
   }
 
-  /** How the word came to be on the door (DoorInscription.groovy:174-182). */
+  /** How the word came to be on the door (DoorInscription.groovy:29-37). */
   narrative(word: string): string {
     return `The word '${this.#lowered ? word.toLowerCase() : word}' is ${this.#applied}.`;
   }

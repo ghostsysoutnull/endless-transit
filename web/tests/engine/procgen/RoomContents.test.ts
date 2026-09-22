@@ -40,7 +40,7 @@ function roomsOf(n: number): Room[] {
 const rooms = Array.from({ length: 150 }, (_, n) => roomsOf(n)).flat();
 const apartmentOf = (room: Room): Apartment => as(room.parent(), Apartment);
 
-describe('furniture is not loot (Guide:171-173; ThemeService.groovy:307-328)', () => {
+describe('furniture is not loot (Guide:171-173; ThemeService.groovy:173-194)', () => {
   test('one to three pieces per room, both ends reached, each "<condition> <culture item>", no piece twice in a room', () => {
     expect(rooms.length).toBeGreaterThan(5_000);
     const counts = rooms.map((room) => room.furniture().length);
@@ -87,7 +87,7 @@ describe('furniture is not loot (Guide:171-173; ThemeService.groovy:307-328)', (
   });
 });
 
-describe('the atmosphere: walls from the culture, lighting from the era, structure from the trait — unless glitched (ThemeService.groovy:221-258)', () => {
+describe('the atmosphere: walls from the culture, lighting from the era, structure from the trait — unless glitched (ThemeService.groovy:87-124)', () => {
   const own = (room: Room): { walls: boolean; lighting: boolean; structure: boolean } => {
     const apartment = apartmentOf(room);
     const trait = must(room.vibe()?.mutation()).key();

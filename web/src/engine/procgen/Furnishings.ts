@@ -10,7 +10,7 @@ const CONDITION = 'condition';
 
 /**
  * Owns one fact: what furniture is — a culture item in a condition (`overturned tatami mat`), never a
- * hybrid, so it never reads as a second objects line (ThemeService.groovy:307-328, HK-016 step 2). The
+ * hybrid, so it never reads as a second objects line (ThemeService.groovy:173-194, HK-016 step 2). The
  * pieces are dealt without replacement; a condition that would double the item's first word is passed
  * over for the next one (`flickering flickering light tube`, HK-016 F2).
  */

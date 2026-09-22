@@ -6,13 +6,13 @@ import type { RoomCategory } from '#engine/model/RoomCategory.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 
 const LISTS = 'themes/doors';
-/** About one door in five has words on it (Guide:222; Door.groovy:170, CorridorFactory.groovy:170). */
+/** About one door in five has words on it (Guide:222; Door.groovy:31, CorridorFactory.groovy:51). */
 const INSCRIBED = 0.2;
 
 /**
  * Owns one fact: how a door comes to be — a material and a state from the door lists, each on its own
  * branch of the door's seed, and one roll in five for words: the ones the room behind guarantees, else a
- * word of the inscription list in one of the four styles (CorridorFactory.groovy:166-208).
+ * word of the inscription list in one of the four styles (CorridorFactory.groovy:47-53, 64-89).
  */
 export class Doors {
   readonly #library: ContentLibrary;

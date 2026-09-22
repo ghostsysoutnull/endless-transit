@@ -118,7 +118,7 @@ describe('a room’s text (Room.groovy:116-134, 262-297)', () => {
   });
 });
 
-describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:125-144; DoorInscription.groovy:174-182)', () => {
+describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:32-51; DoorInscription.groovy:29-37)', () => {
   const doors = new Doors(
     new ContentLibrary(
       new MemoryContentSource({

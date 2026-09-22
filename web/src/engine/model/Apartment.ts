@@ -15,7 +15,7 @@ export const APARTMENT_KIND = new LocationKind({
   indexLabel: 'UNIT',
 });
 
-/** Where the apartment's relics are dealt to: relic `i` goes to the room `branch(DEALT).branch(i)` draws (ApartmentFactory.groovy:127-132). */
+/** Where the apartment's relics are dealt to: relic `i` goes to the room `branch(DEALT).branch(i)` draws (ApartmentFactory.groovy:63-68). */
 const DEALT = 'dealt';
 
 /**
@@ -57,7 +57,7 @@ export class Apartment extends Location {
     return APARTMENT_KIND;
   }
 
-  /** An apartment goes by its door (Apartment.groovy:130-132). */
+  /** An apartment goes by its door (Apartment.groovy:22-24). */
   name(): string {
     return this.#door.description();
   }
@@ -112,7 +112,7 @@ export class Apartment extends Location {
     return [];
   }
 
-  /** The era marker, or the anomaly warning (Apartment.groovy:152). */
+  /** The era marker, or the anomaly warning (Apartment.groovy:44). */
   override facts(): readonly Fact[] {
     return this.#anomaly
       ? [{ key: 'alert', label: 'TEMPORAL_ANOMALY_DETECTED', value: '[!]' }]

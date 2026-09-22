@@ -11,18 +11,18 @@ const CULTURES = 'themes/cultures';
 const ERAS = 'themes/timelines';
 const COLOURS = 'themes/colours';
 const GLITCH = 'glitch';
-/** One room in twenty is glitched even in a sound apartment (ThemeService.groovy:238). */
+/** One room in twenty is glitched even in a sound apartment (ThemeService.groovy:104). */
 const GLITCH_CHANCE = 0.05;
-/** In a glitched room each part is swapped one time in two (ThemeService.groovy:239-242). */
+/** In a glitched room each part is swapped one time in two (ThemeService.groovy:105-108). */
 const SWAP_CHANCE = 0.5;
-/** The two structure lists a glitch may reach for (ThemeService.groovy:242). */
+/** The two structure lists a glitch may reach for (ThemeService.groovy:108). */
 const GLITCH_STRUCTURES = ['abyssal', 'Singularity'];
 
 /**
  * Owns one fact: how a room's atmosphere is drawn — its structure from the country's trait, its walls
  * (in a colour) from the apartment's culture, its lighting from the apartment's era; unless the room is
  * glitched (an anomaly always, any room one time in twenty), when each part may instead come from any
- * culture, any era, or the abyssal or Singularity structures (ThemeService.groovy:221-258). A list an
+ * culture, any era, or the abyssal or Singularity structures (ThemeService.groovy:87-138). A list an
  * index promised but the content lacks is never a silent generic line: the first key of that index stands
  * in and the warning sink hears which file is missing (`[THEME_WARN]`, Guide:319).
  */

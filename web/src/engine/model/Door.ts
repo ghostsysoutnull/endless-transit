@@ -48,7 +48,7 @@ export class Door {
     return this.#inscription === undefined ? seen : `${seen} ${this.#inscription.narrative()}`;
   }
 
-  /** The line on the door list: the inscription, if any, then the brief (Door.groovy:201-209). */
+  /** The line on the door list: the inscription, if any, then the brief (Door.groovy:62-70). */
   description(): string {
     return this.#inscription === undefined
       ? this.brief()

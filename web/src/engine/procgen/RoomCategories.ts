@@ -11,7 +11,7 @@ const LISTS = 'names/rooms';
  * Owns one fact: which kinds of room a country's trait allows, and which of them a room is — the list
  * `names/rooms/<Trait>` (four names, each with the door words it guarantees or none), one drawn on the
  * room's own seed (NameGenerator.groovy:131-141). The same draw, made on the first room's seed, is how a
- * door learns what it leads to (CorridorFactory.groovy:163-164). Built once per trait.
+ * door learns what it leads to (CorridorFactory.groovy:44-45). Built once per trait.
  */
 export class RoomCategories {
   readonly #library: ContentLibrary;

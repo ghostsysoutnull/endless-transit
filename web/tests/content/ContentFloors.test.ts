@@ -6,7 +6,7 @@ const library = new ContentLibrary(new BundledContent());
 const CULTURES = library.index('themes/cultures');
 const ERAS = library.index('themes/timelines');
 const TRAITS = library.list('themes/traits');
-/** The two structure keys the atmosphere glitch can pick besides a trait (ThemeService.groovy:242). */
+/** The two structure keys the atmosphere glitch can pick besides a trait (ThemeService.groovy:108). */
 const GLITCH_STRUCTURES = ['abyssal', 'Singularity'];
 /** The abyssal lists are the largest by design, but were grown to eight, not ten (HK-016 step 3). */
 const ABYSSAL = 'abyssal';

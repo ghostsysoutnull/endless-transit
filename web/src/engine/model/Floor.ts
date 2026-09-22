@@ -76,7 +76,7 @@ export class Floor extends Location {
     return this;
   }
 
-  /** The elevator column's `[>X<]`: the floor the building's elevator stands at (Building.groovy:189-194). */
+  /** The elevator column's `[>X<]`: the floor the building's elevator stands at (Building.groovy:187-189, 198-201). */
   override current(): boolean {
     return this.#building.elevatorAt() === this.#number;
   }

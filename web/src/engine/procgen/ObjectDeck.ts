@@ -5,7 +5,7 @@ import { Relic } from '#engine/model/Relic.ts';
 
 const CULTURE_LISTS = 'themes/cultures';
 const ERA_LISTS = 'themes/timelines';
-/** The four two-word forms a culture item `c` and an era item `t` are joined in (ThemeService.groovy:296-299). */
+/** The four two-word forms a culture item `c` and an era item `t` are joined in (ThemeService.groovy:162-165). */
 const FORMS: readonly { readonly key: string; readonly join: (c: string, t: string) => string }[] = [
   { key: 'with', join: (c, t) => `${t} with ${c}` },
   { key: 'infused', join: (c, t) => `${c} infused with ${t}` },
@@ -15,7 +15,7 @@ const FORMS: readonly { readonly key: string; readonly join: (c: string, t: stri
 
 /**
  * Owns one fact: every relic an apartment of a culture and an era can hold, in a fixed order — each
- * culture item × each era item in the four forms, then every item alone (ThemeService.groovy:276-305,
+ * culture item × each era item in the four forms, then every item alone (ThemeService.groovy:140-171,
  * HK-016 step 2). Built once per pair; an apartment deals from it and never holds a card twice.
  */
 export class ObjectDeck {
