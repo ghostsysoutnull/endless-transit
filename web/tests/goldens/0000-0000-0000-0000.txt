@@ -24,9 +24,9 @@ BUILDINGS ON THIS STREET
   16 [M] Enter Building: ShadowGate
   17 [O] Enter Building: FieldReach
   18 [P] Enter Building: Silent Void
-  19 [Q] Enter Building: Unmarked Gravity
-  20 [S] Enter Building: CellFall
-dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN
+  19 [S] Enter Building: Unmarked Gravity
+  20 [V] Enter Building: CellFall
+dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ HORIZONWELL  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
@@ -109,7 +109,7 @@ BUILDING STRATA DIAGNOSTICS
        ST: 100%
        RES: 1146Hz
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███ █ ███████ ██████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1
-dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN
+dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
@@ -121,7 +121,7 @@ diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ █ ██ ████████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
-dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
+dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
@@ -153,7 +153,7 @@ LOCAL ACCESS LIST
   10 [A] Access: Oxidized Metal Hatch [STATIC]
        APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ████████ █████████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
-dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
+dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ HOLLOW NEURAL LINK ARRAY  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Hollow Neural Link Array *
@@ -168,7 +168,7 @@ status: Entered Hollow Neural Link Array.
 moves: [F] GO FORWARD
 IN THIS ROOM: white light strip infused with smart glass <infused|white light strip|smart glass> | floating white sphere infused with plasma coil <infused|floating white sphere|plasma coil> | hovering disc fused to hologram projector <fused|hovering disc|hologram projector> | hologram projector grafted onto hidden speaker <grafted|hidden speaker|hologram projector> | empty frame infused with aerogel slab <infused|empty frame|aerogel slab> | quantum key <era|quantum key>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ██████ █████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0
-dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN
+dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ ABYSSAL BIO-SERVER  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Abyssal Bio-Server *
@@ -183,4 +183,4 @@ status: Entered Abyssal Bio-Server.
 moves: [B] GO BACK | [F] GO FORWARD
 IN THIS ROOM: neural link grafted onto silent fan <grafted|silent fan|neural link> | neural link with hidden speaker <with|hidden speaker|neural link> | neural link with floating white sphere <with|floating white sphere|neural link> | quantum key with silent fan <with|silent fan|quantum key> | white noise emitter infused with smart glass <infused|white noise emitter|smart glass>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████████ ████ ████████ █ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.1
-dock: [T] TITLE SCREEN
+dock: [T] TITLE SCREEN | [Q] END SESSION

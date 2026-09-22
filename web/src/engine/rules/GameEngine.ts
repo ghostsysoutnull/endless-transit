@@ -14,6 +14,7 @@ import type { PlaceSummary } from './PlaceSummary.ts';
 import type { Player } from './Player.ts';
 import type { Prompt } from './Prompt.ts';
 import { RebootPrompt } from './RebootPrompt.ts';
+import { RECAP, RecapPrompt } from './RecapPrompt.ts';
 import { systemOption } from './SystemOption.ts';
 import { Telemetry } from './Telemetry.ts';
 import { FREE, GLOBAL, STEP } from './Turn.ts';
@@ -123,6 +124,15 @@ export class GameEngine {
         turn: GLOBAL,
         options: () => (this.#atTitle() ? [] : [systemOption('to-title', 't', 'Title screen')]),
         run: () => this.#moved(this.#journey.toTitle(), ''),
+      },
+      {
+        keys: ['q'],
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption(RECAP, 'q', 'End session')]),
+        run: () => {
+          this.#prompt = new RecapPrompt(this.#journey);
+          return '';
+        },
       },
       {
         keys: [],

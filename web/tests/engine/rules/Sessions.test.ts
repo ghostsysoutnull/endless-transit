@@ -55,7 +55,8 @@ function replay(seed: Seed, history: readonly string[]): GameSnapshot {
     twin = undefined;
     // The title screen is not restored as such: a reload lands where the traveller stood (I02), so a
     // snapshot at the title has no twin screen; the world's save is compared again on the next tap inside.
-    if (text === undefined || snapshot.place === null) continue;
+    // The recap is a prompt the save does not hold either (a reload lands in the world); the reboot is.
+    if (text === undefined || snapshot.place === null || snapshot.prompt?.id === 'recap') continue;
     const restored = engineOn(seed, new MemorySaveStore(text)).snapshot();
     expect(shown(restored), where).toEqual(shown(snapshot));
     twin = new MemorySaveStore(text);
@@ -79,7 +80,8 @@ describe('Sessions — a save is the whole state, on every tap of a play session
     expect(fixtures.map(([file]) => file)).toContain('walk-and-title.json');
     expect(fixtures.map(([file]) => file)).toContain('death-and-reboot.json');
     expect(fixtures.map(([file]) => file)).toContain('elevator-marathon.json');
-    expect(fixtures.length).toBeGreaterThanOrEqual(3);
+    expect(fixtures.map(([file]) => file)).toContain('recap-and-end.json');
+    expect(fixtures.length).toBeGreaterThanOrEqual(4);
   });
 
   test.each(fixtures)('%s replays with a reload after every tap', (_, session) => {

@@ -141,6 +141,7 @@ describe('GameEngine — walking the big world', () => {
       'enter:3',
       'leave',
       'to-title',
+      'recap',
     ]);
     const snapshot = walkedDown(engine, 0);
     expect(snapshot.place).toEqual({
@@ -178,7 +179,10 @@ describe('GameEngine — walking the big world', () => {
       visited: true,
     });
     expect(ids(snapshot)).not.toContain('leave');
-    expect(snapshot.options.at(-1)).toEqual(system('to-title', 't', 'Title screen'));
+    expect(snapshot.options.slice(-2)).toEqual([
+      system('to-title', 't', 'Title screen'),
+      system('recap', 'q', 'End session'),
+    ]);
   });
 
   test('tapping a child goes down one level; the trail, the position and the way back follow', () => {
@@ -307,6 +311,7 @@ describe('GameEngine — walking the big world', () => {
       move('corridor', 'c', 'Enter Corridor', 'elevator'),
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
       system('to-title', 't', 'Title screen'),
+      system('recap', 'q', 'End session'),
     ]);
     expect(engine.step('move:down').message).toBe(lobby.message);
     const second = engine.step('move:up');
@@ -405,10 +410,11 @@ describe('GameEngine — walking the big world', () => {
       move('forward', 'f', 'Go forward', 'back'),
       { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
       system('to-title', 't', 'Title screen'),
+      system('recap', 'q', 'End session'),
     ]);
     const second = engine.step('move:forward');
     expect(second.place?.position?.index).toBe(2);
-    expect(second.options.map((option) => option.id)).toEqual(['move:back', 'to-title']);
+    expect(second.options.map((option) => option.id)).toEqual(['move:back', 'to-title', 'recap']);
     expect(engine.step('leave').place?.position?.index).toBe(2);
     engine.step('move:back');
     const floor = engine.step('leave');
@@ -740,5 +746,98 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
       .map((o) => o.visited);
     expect(filaments.length).toBeGreaterThanOrEqual(3);
     expect(filaments).toEqual(filaments.map((_, i) => i === 0));
+  });
+});
+
+describe('GameEngine — the recap: the endings of `quit`, by places visited (Guide:422-430, SessionRecap.groovy:14-69)', () => {
+  test('END SESSION is a global command on every world screen, keyed q: it costs one and counts no step, and opens the recap as a pending prompt with the figures', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    const street = engine.step('enter-world');
+    expect(street.options.find((option) => option.id === 'recap')).toEqual(
+      system('recap', 'q', 'End session'),
+    );
+    engine.step('enter:0');
+    const recap = engine.step('recap');
+    expect(recap.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    expect(recap.place?.kind).toBe('Building');
+    expect(recap.prompt).toEqual({
+      id: 'recap',
+      outcome: 'severed',
+      figures: { locus: '0.0.0.0.0.0.0.0.0', steps: '1', places: '9' },
+    });
+    expect(recap.options).toEqual([
+      system('resume', 'b', 'Resume'),
+      system('end-session', 'q', 'End session'),
+    ]);
+    // Nothing else is heard while it is open; resuming costs nothing and changes nothing.
+    expect(engine.step('enter:15').prompt?.id).toBe('recap');
+    const resumed = engine.step('resume');
+    expect(resumed.prompt).toBeNull();
+    expect(resumed.place).toEqual(recap.place);
+    expect(resumed.player).toEqual(recap.player);
+    expect(resumed.message).toBe('');
+  });
+
+  test('ending the session goes to the title, the place kept: Continue returns to it', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    engine.step('new-world');
+    engine.step('enter-world');
+    const building = engine.step('enter:0');
+    engine.step('recap');
+    const title = engine.step('end-session');
+    expect(title.place).toBeNull();
+    expect(title.prompt).toBeNull();
+    expect(ids(title)).toEqual(['enter-world', 'reroll']);
+    expect(title.options[0]?.label).toBe('Continue');
+    const back = engine.step('enter-world');
+    expect(back.place).toEqual(building.place);
+    expect(back.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    // The recap is not a saved state: a reload after opening it lands in the world.
+    engine.step('recap');
+    expect(engineOn(saves).snapshot().prompt).toBeNull();
+  });
+
+  test('the ending at the exact edge: nineteen places visited is "severed", twenty is "expedition" (Guide:426-430)', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    // The street's trail is eight places; each building entered is one more.
+    engine.step('enter:0');
+    engine.step('leave');
+    engine.step('enter:1');
+    engine.step('leave');
+    engine.step('enter:2');
+    engine.step('leave');
+    engine.step('enter:3');
+    engine.step('leave');
+    // 12. Up to the city, and into its other seven streets (eight in all): each street is one more.
+    engine.step('leave');
+    const streets = engine.snapshot().options.filter((option) => option.role === 'travel');
+    expect(streets).toHaveLength(8);
+    for (const index of [1, 2, 3, 4, 5, 6, 7]) {
+      engine.step(`enter:${String(index)}`);
+      engine.step('leave');
+    }
+    const nineteen = engine.step('recap');
+    expect(nineteen.prompt?.figures.places).toBe('19');
+    expect(nineteen.prompt?.outcome).toBe('severed');
+    engine.step('resume');
+    // 20. Up once more: the country was on the trail; its second city is new.
+    engine.step('leave');
+    engine.step('enter:1');
+    const twenty = engine.step('recap');
+    expect(twenty.prompt?.figures.places).toBe('20');
+    expect(twenty.prompt?.outcome).toBe('expedition');
+    expect(twenty.prompt?.figures.steps).toBe(String(twenty.player?.steps ?? -1));
+    expect(twenty.prompt?.figures.locus).toBe(twenty.place?.address);
+  });
+
+  test('when the tap that opens the recap takes the last point, the link fails instead', () => {
+    const engine = engineOn(new MemorySaveStore(), true);
+    inTheFirstRoom(engine);
+    engine.step('debug:integrity:1');
+    expect(engine.step('recap').prompt?.id).toBe('reboot');
   });
 });
