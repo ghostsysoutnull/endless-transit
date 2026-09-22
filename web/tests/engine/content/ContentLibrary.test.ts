@@ -22,6 +22,17 @@ describe('ContentLibrary', () => {
     ]);
   });
 
+  test('pairs: a "key|value" list keeps file order, trims both sides; a line without "|" is an error', () => {
+    const library = new ContentLibrary(
+      new MemoryContentSource({ 'frames.txt': 'rust | red\nvoid|grey\n', 'bad.txt': 'rust|red\nlonely\n' }),
+    );
+    expect(library.pairs('frames')).toEqual([
+      ['rust', 'red'],
+      ['void', 'grey'],
+    ]);
+    expect(() => library.pairs('bad')).toThrow(/bad\.txt.*lonely/);
+  });
+
   test('a missing or empty list is an error, never a silent empty default', () => {
     const library = new ContentLibrary(new MemoryContentSource({ 'blank.txt': '\n  \n' }));
     expect(() => library.list('themes/nowhere')).toThrow(/themes\/nowhere\.txt/);

@@ -21,15 +21,15 @@ function listsByDirectory(): Map<string, string[]> {
 }
 
 describe('BundledContent — the one glob', () => {
-  test('the fork is complete: 78 files, keys are plain relative paths', () => {
-    expect(bundle.paths()).toHaveLength(78);
+  test('the bundle is complete: 110 files (78 forked + the place-name lists of I02), keys are plain relative paths', () => {
+    expect(bundle.paths()).toHaveLength(110);
     expect(bundle.paths()).toContain('names/buildings/adj/void.txt');
     expect(bundle.paths().every((path) => /^[\w/-]+\.txt$/.test(path))).toBe(true);
   });
 
   test('every directory with lists has an index.txt equal to its loader keys — or is keyed by culture', () => {
     const directories = listsByDirectory();
-    expect(directories.size).toBe(10);
+    expect(directories.size).toBe(19);
     const keyedByCulture: string[] = [];
     for (const [directory, stems] of directories) {
       if (bundle.read(`${directory}/index.txt`) === undefined) {
@@ -75,6 +75,29 @@ describe('BundledContent — the one glob', () => {
       .filter((path) => path.startsWith('themes/atmosphere/structures/') && !path.endsWith('/index.txt'))
       .map((path) => path.slice('themes/atmosphere/structures/'.length, -'.txt'.length));
     expect(globOrder).not.toEqual(structures);
+  });
+
+  test('the place-name lists of the big world: one directory per kind, its parts in index order', () => {
+    expect(library.index('names/filament')).toEqual(['greek', 'type']);
+    expect(library.index('names/sector')).toEqual(['descriptor', 'noun']);
+    expect(library.index('names/solar-system')).toEqual(['prefix', 'suffix']);
+    expect(library.index('names/planet')).toEqual(['head', 'tail']);
+    expect(library.index('names/country')).toEqual(['prefix', 'core', 'suffix']);
+    expect(library.index('names/city')).toEqual(['head', 'tail']);
+    expect(library.index('names/street')).toEqual(['adjective', 'noun']);
+    expect(library.index('names/buildings/sizes')).toEqual(['small', 'medium', 'large']);
+    expect(library.list('names/buildings/landmarks')).toHaveLength(15);
+    expect(library.list('themes/traits')).toHaveLength(6);
+  });
+
+  test('every culture that can colour a planet is a culture of the index', () => {
+    const cultures = library.index(CULTURES);
+    const frames = library.pairs('themes/planet-frames');
+    expect(frames).toHaveLength(9);
+    for (const [culture, colour] of frames) {
+      expect(cultures, culture).toContain(culture);
+      expect(colour, culture).toMatch(/^[a-z-]+$/);
+    }
   });
 
   test('every list parses to at least one line', () => {

@@ -1,0 +1,9 @@
+Republic
+Kingdom
+Empire
+Federation
+Sovereignty
+Union
+Territories
+Lands
+Domain

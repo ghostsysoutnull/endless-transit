@@ -3,6 +3,9 @@ import { press, watchForErrors } from './support/harness.ts';
 
 const SEED_FORM = /^[0-9A-F]{4}(-[0-9A-F]{4}){3}$/;
 const SLOT = 'endless-transit.save';
+/** A world whose shape is known (world.spec.ts walks it): the first street of its first city, all buildings sealed. */
+const SEED = '7F3A-91C2-0B4D-E6A8';
+const STREET = '0.0.0.0.0.0.0.0';
 
 test('localStorage that throws on every touch: the game still plays, it only forgets', async ({
   page,
@@ -50,7 +53,18 @@ for (const [what, value] of [
   ['not JSON', '<<garbage>>'],
   ['JSON of another shape', '{"hello":"world"}'],
   ['a version from the future', '{"version":99,"seed":"7F3A-91C2-0B4D-E6A8"}'],
-  ['a seed that is not a seed', '{"version":1,"seed":"DROP TABLE"}'],
+  ['a save of the first build (version 1)', '{"version":1,"seed":"7F3A-91C2-0B4D-E6A8"}'],
+  ['a seed that is not a seed', '{"version":2,"seed":"DROP TABLE","path":null}'],
+  // A good seed with a path that leads nowhere is a corrupt save: a fresh title, never half a world.
+  ['a path past the last child', `{"version":2,"seed":"${SEED}","path":"0.99"}`],
+  ['a path into a sealed building', `{"version":2,"seed":"${SEED}","path":"${STREET}.0"}`],
+  ['a path deeper than the world goes', `{"version":2,"seed":"${SEED}","path":"${STREET}.0.0"}`],
+  ['a path that is a number', `{"version":2,"seed":"${SEED}","path":7}`],
+  ['a path that is a list', `{"version":2,"seed":"${SEED}","path":["0","1"]}`],
+  ['a path with no path in it', `{"version":2,"seed":"${SEED}"}`],
+  ['a path that is malformed text', `{"version":2,"seed":"${SEED}","path":"0..1"}`],
+  ['a path that starts outside the universe', `{"version":2,"seed":"${SEED}","path":"1.0"}`],
+  ['a path with a negative step', `{"version":2,"seed":"${SEED}","path":"0.-1"}`],
 ] as const) {
   test(`a saved value that is ${what} gives a fresh game`, async ({ page, hasTouch }) => {
     await page.addInitScript(
@@ -75,6 +89,21 @@ for (const [what, value] of [
     expect(problems).toEqual([]);
   });
 }
+
+test('the control: the same seed with the street itself as its path is a good save, and is restored', async ({
+  page,
+}) => {
+  await page.addInitScript(
+    ([slot, text]) => {
+      window.localStorage.setItem(slot, text);
+    },
+    [SLOT, `{"version":2,"seed":"${SEED}","path":"${STREET}"}`] as const,
+  );
+  const problems = watchForErrors(page);
+  await page.goto('./');
+  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
+  expect(problems).toEqual([]);
+});
 
 test('a tap on an option that is not on offer (stale or unknown id) is ignored', async ({
   page,

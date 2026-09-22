@@ -1,0 +1,14 @@
+Way
+Road
+Street
+Avenue
+Lane
+Drive
+Path
+Walk
+Boulevard
+Terrace
+Row
+Circle
+Loop
+Alley

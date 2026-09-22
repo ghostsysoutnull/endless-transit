@@ -1,0 +1,9 @@
+baroque|yellow
+gilded|white
+monolith|cyan
+neon|bright-cyan
+organic|green
+rust|red
+shogun|magenta
+void|grey
+zenith|blue

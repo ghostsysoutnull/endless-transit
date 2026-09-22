@@ -36,6 +36,26 @@ repository root are the same. The game reads and writes its save, journal and lo
 Class blueprints `docs/blueprints/`, retros `docs/retro/`, the OOA plan and report `docs/analysis/OOA_*.md`, finished
 HK and phase plans `tasks/completed/`. History — read on demand, never rewritten.
 
+## 📌 Current state of the frozen tree (moved here from the recovery prompt, I02)
+- **Lint baseline:** `config/lint/baseline.xml` holds 8 entries — the long methods of HK-013 (extract or re-baseline with a
+  reason, never reformat); the `NoNewStaticLogic` allow-list in `config/lint/vinc-ruleset.groovy` is 15 files,
+  shrink-only — none of them a rule-holding class since HK-022. One writer: `./vinc.sh --lint --baseline`. Jars: `lib/lint/`.
+- **Blueprints:** 15 under `docs/blueprints/logic/classes/` (stamped; see `/close-wave` row 3). `Room`, `TurnProcessor`,
+  `NameGenerator`, `ProceduralFactory` and `Building` are `Verified`; 10 are still `Baselined (not audited)`.
+- **Goldens:** `src/test/groovy/com/endlesstransit/ui/golden/` — one writer: `./vinc.sh --goldens`.
+- **Content (procgen lists):** `src/main/resources/{themes,names}/` — every list has a size floor in
+  `ThemeResourceCoverageTest`; audit: root `docs/analysis/VARIETY_AUDIT.md`. For a content change read the execution
+  notes of `tasks/completed/HK_016_STEP3_PLAN.md` first (simulate → expected set → allow-list re-pin).
+- **Contract pins by area** (all under `src/test/groovy/com/endlesstransit/`): events
+  `core/{JournalEventContractTest,EventBusTest}`; factory wiring `procgen/FactoryWiringContractTest`; floor
+  `model/{FloorStateContractTest,BreachOptionContractTest,CorridorLeaveContractTest}`; restore
+  `core/{RestoreContractTest,AbyssalRestoreContractTest}`; variety `procgen/ProcgenVarietyContractTest`; names
+  `procgen/NameGeneratorContractTest`.
+- **Housekeeping detail** (root `tasks/backlog/HOUSEKEEPING.md`): HK-021 is the HK-015 residue (a player-visible fix edits
+  `docs/terminal/guide/players_guide.md` in the same commit); HK-023 game-side oddities, restore bullet done; HK-024 waits
+  for the user's decision on the `KEYSTONE` debug glitch. HK-013 and WF-006 go moot with the freeze (study §2.4).
+- **The OOA plan** (`docs/analysis/OOA_REFACTOR_PLAN.md`, per-phase execution records) is not loaded automatically — read on demand.
+
 ## 🏛️ Development Conventions
 - **Groovy Tooling Lessons**: @tasks/lessons/groovy-tooling.md
 - Process lessons that apply to any code: root `tasks/lessons/infrastructure.md` (loaded every session).

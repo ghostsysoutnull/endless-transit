@@ -1,0 +1,6 @@
+Ceremonial
+Military
+Industrial
+Agricultural
+Research
+Commercial

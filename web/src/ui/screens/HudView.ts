@@ -1,0 +1,132 @@
+import { html, nothing, render, type TemplateResult } from 'lit-html';
+import { repeat } from 'lit-html/directives/repeat.js';
+import type { OptionVM } from '#ui/OptionVM.ts';
+import type { View } from '#ui/View.ts';
+import type { HudVM } from './HudVM.ts';
+import type { TravelRowVM } from './TravelRowVM.ts';
+
+/**
+ * Draws the world screen with lit-html: the HUD (path and stats), the narrative panel, the list of places
+ * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
+ * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
+ * `data-option`; a sealed row is a closed line — never a button that does nothing. The status line here is
+ * for the eye; the shell's own live region speaks it. Rows are keyed by
+ * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
+ * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again.
+ */
+export class HudView implements View<HudVM> {
+  #container: HTMLElement | undefined;
+
+  mount(container: HTMLElement): void {
+    this.#container = container;
+  }
+
+  render(vm: HudVM): void {
+    if (this.#container === undefined) throw new Error('HudView.render before mount');
+    render(this.#template(vm), this.#container);
+  }
+
+  dispose(): void {
+    if (this.#container !== undefined) render(nothing, this.#container);
+    this.#container = undefined;
+  }
+
+  #template(vm: HudVM): TemplateResult {
+    return html`
+      <div class="app world" data-frame=${vm.frame}>
+        <header class="bar"><h1>${vm.title}</h1></header>
+        <section class="hud" aria-label=${vm.regions.hud}>
+          <nav aria-label=${vm.regions.path}>
+            <ol class="spark" data-testid="path">
+              ${vm.crumbs.map(
+                (crumb) => html`
+                  <li class=${crumb.current ? 'crumb you' : 'crumb'}>
+                    <span class="vh">${crumb.kind}</span
+                    ><span class="ic" aria-hidden="true">${crumb.icon}</span
+                    ><span class="cn" aria-current=${crumb.current ? 'location' : nothing}
+                      >${crumb.name}</span
+                    >
+                  </li>
+                `,
+              )}
+            </ol>
+          </nav>
+          <dl class="stats">
+            ${vm.stats.map(
+              (stat) => html`
+                <div class="stat">
+                  <dt>${stat.label}</dt>
+                  <dd>${stat.value}</dd>
+                </div>
+              `,
+            )}
+          </dl>
+        </section>
+        <section class="cap" aria-label=${vm.regions.place}>
+          <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
+          <h2>
+            <span class="ic" aria-hidden="true">${vm.place.icon}</span
+            ><span data-testid="place-name">${vm.place.name}</span>
+          </h2>
+          <ul class="tags">
+            ${vm.place.tags.map(
+              (tag) => html`
+                <li class="tag" data-fact=${tag.key}><span class="k">${tag.label}</span> ${tag.value}</li>
+              `,
+            )}
+          </ul>
+          <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
+          <p class="diag">${vm.place.diagnostic}</p>
+          <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
+        </section>
+        <section class="travel" aria-label=${vm.regions.travel}>
+          <h3 class="heading">${vm.heading}</h3>
+          ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
+          <ol class="rows">
+            ${repeat(
+              vm.rows,
+              (row) => `${vm.scene}/${row.id}`,
+              (row) => this.#row(row, vm.sealedTag),
+            )}
+          </ol>
+        </section>
+        <nav class="dock" aria-label=${vm.regions.dock}>
+          ${repeat(
+            vm.dock,
+            (option) => option.id,
+            (option) => this.#docked(option),
+          )}
+        </nav>
+        <footer class="build" data-testid="build">${vm.build}</footer>
+      </div>
+    `;
+  }
+
+  #row(row: TravelRowVM, sealedTag: string): TemplateResult {
+    const name = row.landmark ? 'lb landmark' : 'lb';
+    if (row.sealed) {
+      return html`
+        <li class="row sealed" data-sealed>
+          <span class="ord">${row.ordinal}</span><span class=${name}>${row.label}</span
+          ><span class="seal">${sealedTag}</span>
+        </li>
+      `;
+    }
+    return html`
+      <li>
+        <button type="button" class="row" data-option=${row.id}>
+          <span class="ord">${row.ordinal}</span><span class=${name}>${row.label}</span
+          ><kbd aria-hidden="true">${row.key}</kbd>
+        </button>
+      </li>
+    `;
+  }
+
+  #docked(option: OptionVM): TemplateResult {
+    return html`
+      <button type="button" class="pb" data-option=${option.id}>
+        <kbd aria-hidden="true">${option.key}</kbd><span>${option.label}</span>
+      </button>
+    `;
+  }
+}

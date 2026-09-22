@@ -6,7 +6,8 @@ import type { TitleVM } from './TitleVM.ts';
 
 /**
  * Draws the title screen with lit-html. Buttons carry `data-option` and no handlers of their own — the
- * input router listens once for the whole screen. The live region is always in the tree; only its text moves.
+ * input router listens once for the whole screen. The status line here is for the eye; the shell's own
+ * live region speaks it.
  * Every word comes from the view-model (`TitlePresenter` owns them); this file owns markup only.
  */
 export class TitleView implements View<TitleVM> {
@@ -48,14 +49,7 @@ export class TitleView implements View<TitleVM> {
                   <p class="seed" data-testid="world-seed">${vm.world.seed}</p>
                 `
           }
-          <p
-            class=${vm.status === '' ? 'status quiet' : 'status'}
-            role="status"
-            aria-live="polite"
-            data-testid="status"
-          >
-            ${vm.status}
-          </p>
+          <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
         </section>
         <nav class="pad" aria-label=${vm.regions.actions}>
           ${repeat(

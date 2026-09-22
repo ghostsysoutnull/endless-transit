@@ -1,0 +1,14 @@
+High
+Low
+Main
+Grand
+Broad
+Dark
+Bright
+Old
+New
+Quiet
+Busy
+Long
+Short
+Hidden
