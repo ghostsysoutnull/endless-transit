@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { press, watchForErrors } from './support/harness.ts';
+import { press, saveText, trailOf, watchForErrors } from './support/harness.ts';
 
 const SEED_FORM = /^[0-9A-F]{4}(-[0-9A-F]{4}){3}$/;
 const SLOT = 'endless-transit.save';
@@ -8,8 +8,7 @@ const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
 const LOBBY = `${BUILDING}.0`;
-const save = (path: string, states: Record<string, string> = {}): string =>
-  JSON.stringify({ version: 3, seed: SEED, path, states });
+const save = (path: string, states: Record<string, string> = {}): string => saveText(SEED, path, states);
 
 test('localStorage that throws on every touch: the game still plays, it only forgets', async ({
   page,
@@ -59,7 +58,22 @@ for (const [what, value] of [
   ['a version from the future', '{"version":99,"seed":"7F3A-91C2-0B4D-E6A8"}'],
   ['a save of the first build (version 1)', '{"version":1,"seed":"7F3A-91C2-0B4D-E6A8"}'],
   ['a save of the big-world build (version 2)', `{"version":2,"seed":"${SEED}","path":"${STREET}"}`],
-  ['a seed that is not a seed', '{"version":3,"seed":"DROP TABLE","path":null,"states":{}}'],
+  [
+    'a save of the buildings build (version 3)',
+    `{"version":3,"seed":"${SEED}","path":"${STREET}","states":{}}`,
+  ],
+  ['a seed that is not a seed', saveText('DROP TABLE', null)],
+  // The traveller the save describes must be one the game could have written.
+  ['coherence past 100', saveText(SEED, STREET, {}, { coherence: 101 })],
+  ['coherence below zero', saveText(SEED, STREET, {}, { coherence: -1 })],
+  ['a step count that is not whole', saveText(SEED, STREET, {}, { steps: 1.5 })],
+  ['a visited path that does not hold the trail', saveText(SEED, STREET, {}, { visited: ['0'] })],
+  ['a visited place that is nowhere', saveText(SEED, STREET, {}, { visited: [...trailOf(STREET), '0.99'] })],
+  [
+    'a visited child before its parent',
+    saveText(SEED, STREET, {}, { visited: [...trailOf(STREET), `${BUILDING}.3`, BUILDING] }),
+  ],
+  ['a used traveller on a world never entered', saveText(SEED, null, {}, { steps: 3 })],
   // A good seed with a path that leads nowhere is a corrupt save: a fresh title, never half a world.
   ['a path past the last child', save('0.99')],
   ['a path past the last building', save(`${STREET}.99`)],
@@ -68,11 +82,12 @@ for (const [what, value] of [
   ['a path into an apartment, where nobody stands', save(`${LOBBY}.0.0`)],
   ['a path past the last room', save(`${LOBBY}.0.0.9`)],
   ['a path deeper than the world goes', save(`${LOBBY}.0.0.0.0`)],
-  ['a path that is a number', `{"version":3,"seed":"${SEED}","path":7,"states":{}}`],
-  ['a path that is a list', `{"version":3,"seed":"${SEED}","path":["0","1"],"states":{}}`],
-  ['a path with no path in it', `{"version":3,"seed":"${SEED}","states":{}}`],
-  ['a path with no states', `{"version":3,"seed":"${SEED}","path":"${STREET}"}`],
-  ['states that are a list', `{"version":3,"seed":"${SEED}","path":"${STREET}","states":[]}`],
+  ['a path that is a number', save(STREET).replace(`"${STREET}"`, '7')],
+  ['a path that is a list', save(STREET).replace(`"${STREET}"`, '["0","1"]')],
+  ['a path with no path in it', save(STREET).replace(`"path":"${STREET}",`, '')],
+  ['a path with no states', save(STREET).replace('"states":{},', '')],
+  ['states that are a list', save(STREET).replace('"states":{}', '"states":[]')],
+  ['a save with no traveller', save(STREET).replace(/,"coherence".*$/, '}')],
   ['a state a floor cannot take', save(LOBBY, { [LOBBY]: 'lift' })],
   ['a state on a place with no states', save(STREET, { [STREET]: 'corridor' })],
   ['a state for a place that is nowhere', save(STREET, { '0.99': 'corridor' })],

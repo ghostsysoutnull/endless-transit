@@ -317,8 +317,12 @@ body {
   color: var(--rd);
 }
 
+/* The old line fits on one line on a 360 px phone (34 mono characters) rather than shedding its !!! onto lines of their own. */
 .app[data-frame='dead'] .cap h2 {
   color: var(--rd);
+  font-size: clamp(11px, 3.4vw, 20px);
+  letter-spacing: 0.03em;
+  text-wrap: wrap;
 }
 
 .app[data-frame='dead'] .line {
@@ -358,7 +362,7 @@ body {
 
 .figure dt {
   color: var(--dim);
-  flex: 0 0 9em;
+  flex: 0 0 16ch;
 }
 
 .figure dd {
