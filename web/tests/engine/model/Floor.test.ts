@@ -82,6 +82,38 @@ describe('Floor — one child, the corridor; a number that is its place on the b
   });
 });
 
+describe('Building — where its elevator stands (Building.groovy:24, 189; Floor.groovy:144)', () => {
+  test('the elevator starts at the lobby; arriving at a floor calls it there; the list marks that floor as current', () => {
+    const { building: unit } = building();
+    expect(unit.children().map((each) => each.current())).toEqual([true, false, false, false]);
+    expect(unit.remember()).toBeUndefined();
+    const third = must(unit.children()[2]);
+    expect(third.arrive()).toBe(third);
+    expect(unit.children().map((each) => each.current())).toEqual([false, false, true, false]);
+    expect(unit.remember()).toBe('2');
+    // Arriving at the corridor lands on its floor and calls the elevator there too.
+    expect(must(unit.children()[1]?.children()[0]).arrive()).toBe(unit.children()[1]);
+    expect(unit.remember()).toBe('1');
+    // Leaving a floor, or walking its corridor, moves nothing: the elevator waits where it was called.
+    must(unit.children()[1]).move('corridor');
+    must(unit.children()[1]).leave();
+    expect(unit.remember()).toBe('1');
+  });
+
+  test('recall: the saved floor number puts the elevator there; past the top, below the ground or not a floor number is refused', () => {
+    const { building: unit } = building();
+    expect(unit.recall('3')).toBe(true);
+    expect(must(unit.children()[3]).current()).toBe(true);
+    expect(unit.remember()).toBe('3');
+    for (const bad of ['4', '-1', '1.5', 'x', '', '03', ' 1', '1e0']) {
+      expect(unit.recall(bad), bad).toBe(false);
+      expect(unit.remember(), bad).toBe('3');
+    }
+    expect(unit.recall('0')).toBe(true);
+    expect(unit.remember()).toBeUndefined();
+  });
+});
+
 describe('Floor — the elevator (FloorState, Phase 8: the floor asks its state, nobody asks the state its class)', () => {
   test('a fresh floor is in the elevator: up, down and the corridor on offer; nothing listed; nothing to remember', () => {
     const middle = floor(1);

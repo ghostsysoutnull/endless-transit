@@ -62,10 +62,24 @@ export abstract class Location {
     return this.children();
   }
 
-  /** Where a traveller who moves into this place actually ends up: here, unless the kind hands travellers on. */
+  /** Where a traveller who moves into this place actually ends up: here, unless the kind hands travellers on. Pure. */
   // eslint-disable-next-line @typescript-eslint/prefer-return-this-type -- a kind may answer with another place
   arrival(): Location {
     return this;
+  }
+
+  /**
+   * The act of arriving: whatever the kind does when a traveller lands here (a floor calls the elevator),
+   * then `arrival()` — and a place that hands travellers on lets the place they land in arrive in turn.
+   */
+  arrive(): Location {
+    const to = this.arrival();
+    return to === this ? this : to.arrive();
+  }
+
+  /** Whether the parent's list marks this place as the current one — where the carrier stands (a floor: the elevator's). */
+  current(): boolean {
+    return false;
   }
 
   /** Where leaving this place goes — wherever the parent receives travellers; nothing when there is no way out. Pure. */

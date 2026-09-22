@@ -154,6 +154,7 @@ export class GameEngine {
       ordinal: '',
       readings: [],
       opposite: '',
+      current: false,
     };
   }
 
@@ -183,6 +184,7 @@ export class GameEngine {
       ordinal: String(child.ordinal()),
       readings: child.readings(),
       opposite: '',
+      current: child.current(),
     }));
   }
 

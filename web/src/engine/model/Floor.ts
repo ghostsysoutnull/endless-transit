@@ -66,6 +66,17 @@ export class Floor extends Location {
     return this.#number;
   }
 
+  /** Arriving at a floor calls the building's elevator to it (Floor.groovy:144). */
+  override arrive(): Location {
+    this.#building.elevatorTo(this.#number);
+    return this;
+  }
+
+  /** The elevator column's `[>X<]`: the floor the building's elevator stands at (Building.groovy:189-194). */
+  override current(): boolean {
+    return this.#building.elevatorAt() === this.#number;
+  }
+
   zone(): string {
     return this.#zone;
   }

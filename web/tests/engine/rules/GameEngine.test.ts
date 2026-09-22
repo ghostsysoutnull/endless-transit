@@ -26,6 +26,7 @@ function system(id: string, key: string, label: string): GameOption {
     ordinal: '',
     readings: [],
     opposite: '',
+    current: false,
   };
 }
 
@@ -139,6 +140,7 @@ describe('GameEngine — walking the big world', () => {
       ordinal: '1',
       readings: [],
       opposite: '',
+      current: false,
     });
     expect(ids(snapshot)).not.toContain('leave');
     expect(snapshot.options.at(-1)).toEqual(system('to-title', 't', 'Title screen'));
@@ -166,6 +168,7 @@ describe('GameEngine — walking the big world', () => {
       ordinal: '',
       readings: [],
       opposite: '',
+      current: false,
     });
     expect(snapshot.message).toBe('Entered Zeta-915-Link.');
   });
@@ -226,6 +229,7 @@ describe('GameEngine — walking the big world', () => {
         { key: 'reading', label: 'RES', value: '1582Hz' },
       ],
       opposite: '',
+      current: false,
     });
     expect(floors.map((option) => option.ordinal)).toEqual(
       Array.from({ length: 16 }, (_, n) => String(15 - n)),
@@ -233,6 +237,14 @@ describe('GameEngine — walking the big world', () => {
     expect(floors.at(-1)?.label).toBe('Access: Lobby');
     expect(floors.at(-1)?.readings[0]?.value).toBe('TRANSIT_LOBBY');
     expect(building.options.filter((option) => option.role === 'move')).toEqual([]);
+    // The elevator column's [>X<]: the lobby to begin with, then the floor last arrived at (Building.groovy:189).
+    expect(floors.map((option) => option.current).indexOf(true)).toBe(15);
+    engine.step('enter:15');
+    engine.step('move:up');
+    engine.step('move:up');
+    const back = engine.step('leave').options.filter((option) => option.role === 'travel');
+    expect(back.map((option) => option.current).indexOf(true)).toBe(13);
+    expect(back.filter((option) => option.current)).toHaveLength(1);
   });
 
   test('the elevator: up, down and the corridor are moves with the Guide’s keys; the top and the ground drop one; nothing is listed', () => {
@@ -298,6 +310,7 @@ describe('GameEngine — walking the big world', () => {
       ordinal: '1',
       readings: [],
       opposite: '',
+      current: false,
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
       move('elevator', 'b', 'Back to Elevator', 'corridor'),

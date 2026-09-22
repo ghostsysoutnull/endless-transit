@@ -10,16 +10,21 @@ export const BUILDING_KIND = new LocationKind({
   indexLabel: 'STRATA',
 });
 
+/** Where the elevator stands before anyone rides it: the lobby (Building.groovy:24). */
+const LOBBY = 0;
+
 /**
  * A building on a street: a name (one in twenty-five a landmark title), a size — how many floors, how many
  * doors on each — and its floors as children, child `n` being floor `n`. Its list runs from the top floor
- * down to the lobby (Guide:111).
+ * down to the lobby (Guide:111). Its one state: the floor its elevator stands at — the last one arrived at —
+ * which the list marks and the save keeps while the building is on the trail.
  */
 export class Building extends Location {
   readonly #name: string;
   readonly #landmark: boolean;
   readonly #floors: number;
   readonly #doorsPerFloor: number;
+  #elevatorAt = LOBBY;
 
   constructor(
     origin: Origin,
@@ -51,6 +56,31 @@ export class Building extends Location {
   /** How many doors every corridor of this building has. */
   doorsPerFloor(): number {
     return this.#doorsPerFloor;
+  }
+
+  /** The number of the floor the elevator stands at. */
+  elevatorAt(): number {
+    return this.#elevatorAt;
+  }
+
+  /** A floor arrived at calls the elevator to itself (Floor.groovy:144). */
+  elevatorTo(number: number): void {
+    this.#elevatorAt = number;
+  }
+
+  /** The elevator's floor, as its number; nothing while it waits at the lobby. */
+  override remember(): string | undefined {
+    return this.#elevatorAt === LOBBY ? undefined : String(this.#elevatorAt);
+  }
+
+  /** A floor number in its own text form, ground to top; anything else is refused. */
+  override recall(memento: string): boolean {
+    const number = Number(memento);
+    if (!Number.isInteger(number) || number < 0 || number >= this.#floors || String(number) !== memento) {
+      return false;
+    }
+    this.#elevatorAt = number;
+    return true;
   }
 
   /** Floors are listed top floor first (Guide:111; Building.groovy:283). */

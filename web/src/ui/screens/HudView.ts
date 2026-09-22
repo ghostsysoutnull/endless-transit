@@ -129,10 +129,17 @@ export class HudView implements View<HudVM> {
     }
     return html`
       <li>
-        <button type="button" class="row" data-option=${row.id}>
+        <button type="button" class=${row.mark === null ? 'row' : 'row you'} data-option=${row.id}>
           <span class="ord">${row.ordinal}</span
           ><span class="mid"
-            ><span class=${name}>${row.label}</span>${
+            ><span class="ln"
+              ><span class=${name}>${row.label}</span>${
+                row.mark === null
+                  ? nothing
+                  : html`<span class="mark" aria-hidden="true">${row.mark.text}</span
+                      ><span class="vh">${row.mark.label}</span>`
+              }</span
+            >${
               row.readings.length === 0
                 ? nothing
                 : html`<span class="rds"

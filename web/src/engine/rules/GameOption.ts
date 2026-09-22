@@ -20,4 +20,6 @@ export interface GameOption {
   readonly readings: readonly Fact[];
   /** The id of the option that undoes this one (a move's way back); empty when it has none. */
   readonly opposite: string;
+  /** The listed place is the current one on its list — where the elevator stands, on a building's list. */
+  readonly current: boolean;
 }

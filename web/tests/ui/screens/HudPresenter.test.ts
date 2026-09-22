@@ -16,6 +16,7 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     ordinal: '',
     readings: [],
     opposite: '',
+    current: false,
     ...facts,
   };
 }
@@ -154,6 +155,7 @@ const BUILDING: GameSnapshot = {
       place: 'Floor 0',
       ordinal: '0',
       readings: [],
+      current: true,
     }),
     option({ id: 'leave', key: 'l', label: 'Leave Building', role: 'return' }),
   ],
@@ -237,6 +239,7 @@ describe('HudPresenter.toViewModel — options stay data', () => {
         sealed: false,
         landmark: false,
         readings: [],
+        mark: null,
       },
       {
         id: 'enter:1',
@@ -246,6 +249,7 @@ describe('HudPresenter.toViewModel — options stay data', () => {
         sealed: false,
         landmark: false,
         readings: [],
+        mark: null,
       },
     ]);
     expect(vm.moves).toEqual([]);
@@ -303,6 +307,9 @@ describe('HudPresenter.toViewModel — options stay data', () => {
       { key: 'reading', label: 'RES', value: '1582Hz' },
     ]);
     expect(vm.rows[1]?.readings).toEqual([]);
+    // The elevator column's current-floor mark rides on the row the option says is current, with words for a reader.
+    expect(vm.rows[0]?.mark).toBeNull();
+    expect(vm.rows[1]?.mark).toEqual({ text: '[>X<]', label: 'Elevator here' });
   });
 });
 

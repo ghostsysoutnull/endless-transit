@@ -95,10 +95,12 @@ describe('Location — where it is', () => {
 });
 
 describe('Location — the questions a journey asks (defaults every kind inherits)', () => {
-  test('listing: the places on offer are the children, in their order; arrival is the place itself', () => {
+  test('listing: the places on offer are the children, in their order; arrival is the place itself, and so is the act of arriving', () => {
     const { universe } = tinyWorld();
     expect(universe.listing()).toBe(universe.children());
     expect(universe.arrival()).toBe(universe);
+    expect(universe.arrive()).toBe(universe);
+    expect(universe.current()).toBe(false);
   });
 
   test('exit: leaving goes to the parent, and the label says what is left; the universe has no way out', () => {

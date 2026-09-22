@@ -8,8 +8,9 @@ import type { Seed } from '#engine/rng/Seed.ts';
  * Owns one fact: where the traveller stands — which world, which place in it, and the place to come back
  * to after a visit to the title screen. It changes only through moves that mean something (`begin`,
  * `enter`, `descend`, `move`, `leave`, `toTitle`); a move that cannot be made changes nothing and says so.
- * Every step lands where the chosen place receives travellers (`arrival`), so a corridor puts the traveller
- * on its floor and a door in the first room. What the places on the way remember goes into the save.
+ * Every step lands where the chosen place receives travellers (`arrive`), so a corridor puts the traveller
+ * on its floor and a door in the first room, and the place arrived at does what arriving does there (a
+ * floor calls the elevator). What the places on the trail remember goes into the save.
  */
 export class Journey {
   readonly #registry: LocationRegistry;
@@ -61,7 +62,7 @@ export class Journey {
   descend(index: number): boolean {
     const chosen = this.#here?.listing()[index];
     if (chosen === undefined || chosen.sealed()) return false;
-    this.#here = chosen.arrival();
+    this.#here = chosen.arrive();
     return true;
   }
 
@@ -69,7 +70,7 @@ export class Journey {
   move(id: string): boolean {
     const to = this.#here?.move(id);
     if (to === undefined) return false;
-    this.#here = to.arrival();
+    this.#here = to.arrive();
     return true;
   }
 

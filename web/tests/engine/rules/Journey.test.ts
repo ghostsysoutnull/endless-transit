@@ -141,6 +141,36 @@ describe('Journey — where the traveller stands', () => {
     ).toEqual(['up', 'corridor']);
   });
 
+  test('the building remembers where its elevator stands: the save carries it while the building is on the trail, and back at the building the list marks that floor', () => {
+    const trip = onTheStreet();
+    expect(trip.descend(0)).toBe(true);
+    const building = must(trip.here());
+    expect(building.listing().filter((floor) => floor.current())).toEqual([building.children()[0]]);
+    expect(trip.saved()?.states()).toEqual(new Map());
+    expect(trip.descend(13)).toBe(true);
+    expect(trip.here()?.name()).toBe('Floor 2');
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '2']]));
+    expect(trip.move('up')).toBe(true);
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '3']]));
+    expect(trip.leave()).toBe(true);
+    expect(trip.here()).toBe(building);
+    expect(building.listing().filter((floor) => floor.current())).toEqual([building.children()[3]]);
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '3']]));
+    // Off the trail, nothing is saved: on the street the building's elevator is forgotten by the save (not by the world).
+    expect(trip.leave()).toBe(true);
+    expect(trip.saved()?.states()).toEqual(new Map());
+    const again = journey();
+    const atTheBuilding = new SavedGame(SEED, Address.parse(`${STREET}.0`), new Map([[`${STREET}.0`, '3']]));
+    expect(again.restore(atTheBuilding)).toBe(true);
+    expect(
+      again
+        .here()
+        ?.listing()
+        .find((floor) => floor.current())
+        ?.name(),
+    ).toBe('Floor 3');
+  });
+
   test('going to the title keeps the place and its states: entering again resumes there', () => {
     const trip = inTheFirstRoom();
     const room = trip.here()?.address().toString();

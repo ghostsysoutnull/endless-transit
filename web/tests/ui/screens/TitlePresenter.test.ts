@@ -17,6 +17,7 @@ function option(id: string, key: string, label: string): GameOption {
     ordinal: '',
     readings: [],
     opposite: '',
+    current: false,
   };
 }
 

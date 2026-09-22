@@ -570,6 +570,30 @@ body {
   min-width: 0;
 }
 
+.row .ln {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 10px;
+  min-width: 0;
+}
+
+/* The current row of a list — the floor the elevator stands at: the mock's "you" row, the old game's [>X<]. */
+.row.you {
+  border-color: var(--yl);
+}
+
+.row .mark {
+  color: var(--yl);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.row:active .mark {
+  color: var(--ground);
+}
+
 .rds {
   display: flex;
   flex-wrap: wrap;

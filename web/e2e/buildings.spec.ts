@@ -48,6 +48,10 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await expect(floors.first()).toContainText(/\d{4}Hz/);
   await expect(floors.last().locator('.ord')).toHaveText('00');
   await expect(floors.last()).toContainText('TRANSIT_LOBBY');
+  // The elevator column's current-floor mark: the elevator waits at the lobby before anyone rides it.
+  await expect(page.locator('.row.you')).toHaveCount(1);
+  await expect(floors.last().locator('.mark')).toHaveText('[>X<]');
+  await expect(floors.first().locator('.mark')).toHaveCount(0);
   await expect(page.locator('.moves')).toHaveCount(0);
   await expectTouchable(page, 'building');
   await shoot(page, '1-building');
@@ -105,6 +109,15 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
   await press(page, /leave floor/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
+  // The elevator now stands at floor 2, and a reload remembers it (the building is on the trail).
+  await expect(page.locator('.row.you')).toHaveCount(1);
+  await expect(page.locator('button[data-option="enter:13"] .mark')).toHaveText('[>X<]');
+  await expect(page.locator('button[data-option="enter:15"] .mark')).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
+  await expect(page.locator('button[data-option="enter:13"] .mark')).toHaveText('[>X<]');
+  await expect(page.locator('.row.you')).toHaveCount(1);
+  await shoot(page, '1b-building-elevator-at-2');
   // The floor left from the corridor is back at the elevator on the next visit (Guide:113).
   await tapOption(page, 'enter:13', hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('FLOOR 2');
