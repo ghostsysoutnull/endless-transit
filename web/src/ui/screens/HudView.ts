@@ -10,7 +10,7 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name. The moves a place offers are a strip of buttons under the panel. The panel is the
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel. The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
@@ -109,17 +109,23 @@ export class HudView implements View<HudVM> {
               `
         }
         <div class="side">
-          <section class="travel" aria-label=${vm.regions.travel}>
-            <h3 class="heading">${vm.heading}</h3>
-            ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
-            <ol class="rows">
-              ${repeat(
-                vm.rows,
-                (row) => `${vm.scene}/${row.id}`,
-                (row) => this.#row(row, vm.sealedTag),
-              )}
-            </ol>
-          </section>
+          ${
+            vm.rows.length === 0
+              ? nothing
+              : html`
+                  <section class="travel" aria-label=${vm.regions.travel}>
+                    <h3 class="heading">${vm.heading}</h3>
+                    ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
+                    <ol class="rows">
+                      ${repeat(
+                        vm.rows,
+                        (row) => `${vm.scene}/${row.id}`,
+                        (row) => this.#row(row, vm.sealedTag),
+                      )}
+                    </ol>
+                  </section>
+                `
+          }
           ${this.#aside(vm)}
         </div>
         <nav class="dock" aria-label=${vm.regions.dock}>
