@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-21 (the port runs under the Standing Order; I03 is live; the user asked to test it before I04 starts — wait for their feedback). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./terminal/vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-21 (the port runs under the Standing Order; I03 is live, no tester findings; next is iteration I04). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./terminal/vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
 - **Test Suite:** 296 discovered / 296 pass / 0 skipped / 0 failed (`./terminal/vinc.sh --test --agent 2>/dev/null`)
