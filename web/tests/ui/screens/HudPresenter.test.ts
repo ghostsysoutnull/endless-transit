@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import { Masthead } from '#ui/Masthead.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 
-const presenter = new HudPresenter('a1b2c3d');
+const presenter = new HudPresenter(new Masthead('a1b2c3d'));
 
 function option(facts: Partial<GameOption> & { id: string; label: string }): GameOption {
   return { key: '', place: '', role: 'travel', sealed: false, landmark: false, ...facts };

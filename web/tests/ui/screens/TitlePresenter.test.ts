@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'vitest';
 import type { GameOption } from '#engine/rules/GameOption.ts';
+import { Masthead } from '#ui/Masthead.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 
-const presenter = new TitlePresenter('a1b2c3d');
+const presenter = new TitlePresenter(new Masthead('a1b2c3d'));
 
 function option(id: string, key: string, label: string): GameOption {
   return { id, key, label, place: '', role: 'system', sealed: false, landmark: false };
@@ -52,7 +53,12 @@ describe('TitlePresenter.toViewModel', () => {
       'build a1b2c3d',
     );
     expect(
-      new TitlePresenter('dev').toViewModel({ world: null, place: null, options: [], message: '' }).build,
+      new TitlePresenter(new Masthead('dev')).toViewModel({
+        world: null,
+        place: null,
+        options: [],
+        message: '',
+      }).build,
     ).toBe('build dev');
   });
 

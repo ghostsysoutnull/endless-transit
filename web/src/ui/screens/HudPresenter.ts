@@ -1,5 +1,6 @@
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { HudVM } from './HudVM.ts';
@@ -14,10 +15,10 @@ const RETURN_MARK = '▲ ';
  * what it shows; options are sorted by their `role`, which is data the engine put there for that purpose.
  */
 export class HudPresenter implements Presenter<HudVM> {
-  readonly #buildId: string;
+  readonly #masthead: Masthead;
 
-  constructor(buildId: string) {
-    this.#buildId = buildId;
+  constructor(masthead: Masthead) {
+    this.#masthead = masthead;
   }
 
   accepts(snapshot: GameSnapshot): boolean {
@@ -36,7 +37,7 @@ export class HudPresenter implements Presenter<HudVM> {
     const pad = (value: number): string => String(value).padStart(2, '0');
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
-      title: 'ENDLESS TRANSIT',
+      title: this.#masthead.name(),
       frame: place.frame ?? DEFAULT_FRAME,
       crumbs: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
       stats: [
@@ -76,7 +77,7 @@ export class HudPresenter implements Presenter<HudVM> {
         ...dock,
       ],
       status: snapshot.message,
-      build: `build ${this.#buildId}`,
+      build: this.#masthead.buildLine(),
       regions: {
         hud: 'Position',
         path: 'Path from the universe',

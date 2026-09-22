@@ -10,6 +10,7 @@ import { ThemeCatalog } from '#engine/procgen/ThemeCatalog.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
 import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
+import { Masthead } from '#ui/Masthead.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { HudView } from '#ui/screens/HudView.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
@@ -27,7 +28,8 @@ const engine = new GameEngine({
   saves: new LocalStorageSaveStore(() => window.localStorage),
 });
 
+const masthead = new Masthead(__ET_BUILD__);
 new Shell(engine, [
-  new ScreenStage(new TitlePresenter(__ET_BUILD__), new TitleView()),
-  new ScreenStage(new HudPresenter(__ET_BUILD__), new HudView()),
+  new ScreenStage(new TitlePresenter(masthead), new TitleView()),
+  new ScreenStage(new HudPresenter(masthead), new HudView()),
 ]).start(container);

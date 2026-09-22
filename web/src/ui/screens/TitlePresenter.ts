@@ -1,4 +1,5 @@
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import type { Masthead } from '#ui/Masthead.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { TitleVM } from './TitleVM.ts';
 
@@ -7,11 +8,10 @@ import type { TitleVM } from './TitleVM.ts';
  * snapshot in, view-model out. No DOM. The view draws what this carries and adds no word of its own.
  */
 export class TitlePresenter implements Presenter<TitleVM> {
-  readonly #buildId: string;
+  readonly #masthead: Masthead;
 
-  /** `buildId` names the build this page was made from (the composition root reads it; `dev` when unset). */
-  constructor(buildId: string) {
-    this.#buildId = buildId;
+  constructor(masthead: Masthead) {
+    this.#masthead = masthead;
   }
 
   /** The title is the screen of a game that stands nowhere yet. */
@@ -22,7 +22,7 @@ export class TitlePresenter implements Presenter<TitleVM> {
   toViewModel(snapshot: GameSnapshot): TitleVM {
     return {
       scene: 'title',
-      title: 'ENDLESS TRANSIT',
+      title: this.#masthead.name(),
       tagline: 'Vinculum neural interface · lattice uplink',
       stageLine: snapshot.world === null ? 'AWAITING SEED' : 'WORLD LOCKED',
       world:
@@ -41,7 +41,7 @@ export class TitlePresenter implements Presenter<TitleVM> {
         label: option.label.toUpperCase(),
       })),
       status: snapshot.message,
-      build: `build ${this.#buildId}`,
+      build: this.#masthead.buildLine(),
       regions: { stage: 'Uplink', world: 'World', actions: 'Actions' },
     };
   }

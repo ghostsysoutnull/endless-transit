@@ -180,6 +180,22 @@ describe('GameEngine — walking the big world', () => {
     }
   });
 
+  test('the letters children get are the alphabet minus every key a command claims (e l n r t)', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters.
+    for (const index of [0, 0, 0, 0, 2, 0]) engine.step(`enter:${String(index)}`);
+    const city = engine.snapshot();
+    expect(city.place?.name).toBe('Steamspire');
+    expect(
+      city.options
+        .filter((option) => option.role === 'travel')
+        .map((option) => option.key)
+        .join(''),
+    ).toBe('123456789abcdfg');
+  });
+
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
     const engine = engineOn(new MemorySaveStore());
     const snapshot = walkedDown(engine, 5);
