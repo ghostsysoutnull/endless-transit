@@ -10,20 +10,25 @@ Lessons: @../tasks/lessons/web.md
 `src/engine/` pure, synchronous, deterministic; imports **only** `./…` and `#engine/…` — no DOM, no packages, no clock,
 no `Math.random`. It receives what it needs through interfaces it owns (`ContentSource`, `SaveStore`, `EntropySource`).
 `src/content/` the `.txt` lists + the ONE `import.meta.glob` (`BundledContent`). **Order = the `index.txt` order.**
-Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture carry no index of their own.
+Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture carry no index of their own;
+`names/rooms` is keyed by trait (`themes/traits.txt`) the same way.
 `src/platform/` browser adapters. `src/ui/` screens, input, styles — depends on the engine, never the reverse.
 `src/main.ts` the composition root: the only place adapters are built.
 
 The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot → the
 `ScreenStage` whose presenter `accepts` it → `Presenter.toViewModel` → `View<VM>.render` (lit-html). Options are data
-`{ id, key, label, place, role, sealed, landmark }`; a new action is a registry entry in `GameEngine`, a new screen one
-more stage in `main.ts`; a pending prompt is a state, never a blocking read.
+`{ id, key, label, place, role, sealed, landmark, ordinal, readings }` with `role` travel / move / return / system; a
+new action is a registry entry in `GameEngine`, a new screen one more stage in `main.ts`; a pending prompt is a state,
+never a blocking read.
 
 The world: `model/Location` owns the **lazy-loading law** — children sit behind a private array and exist only after
 `children()`, generated once through the injected `ChildSource`. A kind of place is a class that answers for itself
-(name, words, vibe, `sealed()`) plus a `LocationFactory` entry in `procgen/LocationRegistry`; nobody asks "which kind are
-you?" (`instanceof`, a `switch` on `kind().key()`). Child `i` is born from `parentSeed.branch(i)` and nothing else. Where
-the traveller stands: `rules/Journey`. A presenter never cuts a name out of a label — the option carries it.
+(name, words, vibe, `sealed()`, and the journey's questions: `listing()`, `arrival()`, `exit()`/`leave()`, `moves()`/
+`move(id)`, `remember()`/`recall()`, `startOfJourney()`) plus a `LocationFactory<T, Parent>` entry in
+`procgen/LocationRegistry`; nobody asks "which kind are you?" (`instanceof`, a `switch` on `kind().key()`). A mode a
+place can be in is a state object it asks (`Floor` → `FloorState`), never a flag the caller reads. Child `i` is born from
+`parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save is seed + path + what the
+trail remembers. A presenter never cuts a name out of a label — the option carries it.
 
 ## The walls (each proven RED on a scratch file when added)
 

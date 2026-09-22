@@ -45,7 +45,7 @@ export class SavedGame {
     return address === undefined ? undefined : new SavedGame(parsedSeed, address, parsedStates);
   }
 
-  /** A plain object of address → memento text; anything else is no save. */
+  /** Part of the `parse` factory (static for the same reason): a plain object of address → memento text; anything else is no save. */
   static #statesOf(states: unknown): ReadonlyMap<string, string> | undefined {
     if (typeof states !== 'object' || states === null || Array.isArray(states)) return undefined;
     const entries = Object.entries(states as Record<string, unknown>);
