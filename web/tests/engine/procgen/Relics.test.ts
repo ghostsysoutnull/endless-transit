@@ -187,11 +187,11 @@ describe('objects live in apartments, not rooms (Guide:167-170; ApartmentFactory
     expect(twice[0]?.flat().length).toBeGreaterThan(5);
   });
 
-  test('variety: the relics of a corridor sample are mostly distinct (HK-016 step 3 measured 381/406 … 545/719 per six-floor probe)', () => {
+  test('variety: the relics of a corridor sample are mostly distinct — measured 1371 / 1420 = 0.965 over 31 culture-era pairs (HK-016 step 3 measured 381/406 … 545/719 per six-floor probe); a one-form deck reads 0.870', () => {
     const names = apartments
       .slice(0, 120)
       .flatMap((apartment) => apartment.relics().map((relic) => relic.name()));
     expect(names.length).toBeGreaterThan(1_000);
-    expect(new Set(names).size / names.length).toBeGreaterThan(0.45);
+    expect(new Set(names).size / names.length).toBeGreaterThan(0.9);
   });
 });
