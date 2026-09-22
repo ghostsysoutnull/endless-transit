@@ -10,7 +10,8 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing. Rows are keyed by
- * scene, so a new place gets new nodes and the shell's focus rule applies.
+ * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
+ * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again.
  */
 export class HudView implements View<HudVM> {
   #container: HTMLElement | undefined;
@@ -97,7 +98,7 @@ export class HudView implements View<HudVM> {
         <nav class="dock" aria-label=${vm.regions.dock}>
           ${repeat(
             vm.dock,
-            (option) => `${vm.scene}/${option.id}`,
+            (option) => option.id,
             (option) => this.#docked(option),
           )}
         </nav>

@@ -17,6 +17,8 @@ export class Shell {
   #container: HTMLElement | undefined;
   #onStage: ScreenStage<Screen> | undefined;
   #scene: string | undefined;
+  /** The scene the player just left and the option that held the focus there — the way back gets it again. */
+  #left: { readonly scene: string; readonly optionId: string } | undefined;
 
   /** The first stage that accepts a snapshot shows it — a new screen is one more entry in this list. */
   constructor(engine: GameEngine, stages: readonly ScreenStage<Screen>[]) {
@@ -52,8 +54,13 @@ export class Shell {
     }
     const screen = stage.show(snapshot);
     this.#router.offer(screen.options);
-    if (held?.isConnected === false) this.#focusFirstOption();
-    if (screen.scene !== this.#scene) this.#startFromTheTop();
+    if (held?.isConnected === false) this.#focusAnOption(screen.scene);
+    if (screen.scene !== this.#scene) {
+      this.#startFromTheTop();
+      const optionId = held instanceof HTMLElement ? held.dataset.option : undefined;
+      this.#left =
+        this.#scene === undefined || optionId === undefined ? undefined : { scene: this.#scene, optionId };
+    }
     this.#scene = screen.scene;
   }
 
@@ -64,13 +71,18 @@ export class Shell {
   }
 
   /**
-   * The focus rule of every screen: when a render removes the element that held the focus, the focus
-   * goes to the first option on offer — never silently back to `<body>`, where a keyboard or a screen
-   * reader would have to start over. Focus that was not inside the screen is never taken. The page is not
-   * scrolled to it: where the page stands is the next rule's business.
+   * The focus rule of every screen: an element that is still there keeps the focus it had. When a render
+   * removes it, the focus goes to an option on offer — never silently back to `<body>`, where a keyboard or
+   * a screen reader would have to start over: back in the scene just left, to the option that held it there
+   * (title and back is a round trip, not a step deeper); anywhere else, to the first one. Focus that was
+   * not inside the screen is never taken. The page is not scrolled to it: that is the next rule's business.
    */
-  #focusFirstOption(): void {
-    this.#container?.querySelector<HTMLElement>('button[data-option]')?.focus({ preventScroll: true });
+  #focusAnOption(scene: string): void {
+    const options = [...(this.#container?.querySelectorAll<HTMLElement>('button[data-option]') ?? [])];
+    const left = this.#left;
+    const back =
+      left?.scene === scene ? options.find((each) => each.dataset.option === left.optionId) : undefined;
+    (back ?? options[0])?.focus({ preventScroll: true });
   }
 
   /**
