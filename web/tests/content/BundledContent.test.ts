@@ -21,15 +21,15 @@ function listsByDirectory(): Map<string, string[]> {
 }
 
 describe('BundledContent — the one glob', () => {
-  test('the bundle is complete: 110 files (78 forked + the place-name lists of I02), keys are plain relative paths', () => {
-    expect(bundle.paths()).toHaveLength(110);
+  test('the bundle is complete: 117 files (78 forked, the place-name lists of I02, the floor zones of I03), keys are plain relative paths', () => {
+    expect(bundle.paths()).toHaveLength(117);
     expect(bundle.paths()).toContain('names/buildings/adj/void.txt');
     expect(bundle.paths().every((path) => /^[\w/-]+\.txt$/.test(path))).toBe(true);
   });
 
   test('every directory with lists has an index.txt equal to its loader keys — or is keyed by culture', () => {
     const directories = listsByDirectory();
-    expect(directories.size).toBe(19);
+    expect(directories.size).toBe(21);
     const keyedByCulture: string[] = [];
     for (const [directory, stems] of directories) {
       if (bundle.read(`${directory}/index.txt`) === undefined) {

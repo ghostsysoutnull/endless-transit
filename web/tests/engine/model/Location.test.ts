@@ -83,14 +83,14 @@ describe('Location — where it is', () => {
     expect(universe.hash()).toBe('36.820 / 65.416');
   });
 
-  test('descendant: one strict walker — an index nobody answers, or a sealed place, is nowhere', () => {
+  test('descendant: one strict walker — an index nobody answers is nowhere (a sealed place: the last test of this file)', () => {
     const { universe } = tinyWorld();
     const root = universe.address();
     expect(universe.descendant(root)).toBe(universe);
     expect(universe.descendant(root.child(3))).toBeUndefined();
     expect(universe.descendant(root.child(0).child(0))).toBeUndefined();
-    expect(universe.descendant(root.child(1).child(0).child(0).child(0))).toBeUndefined();
-    expect(universe.children()[1]?.children()[0]?.children()[0]?.sealed()).toBe(true);
+    expect(universe.descendant(root.child(1).child(0).child(0))?.name()).toBe('Unit Zero');
+    expect(universe.descendant(root.child(1).child(0).child(9))).toBeUndefined();
   });
 });
 

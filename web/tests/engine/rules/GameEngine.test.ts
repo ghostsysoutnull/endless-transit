@@ -151,17 +151,17 @@ describe('GameEngine — walking the big world', () => {
     expect(ids(engine.snapshot())).not.toContain('leave');
   });
 
-  test('the street is the bottom for now: buildings are listed, sealed and keyless, and tapping one changes nothing', () => {
+  test('the buildings of a street are open: tapping one enters it', () => {
     const engine = engineOn(new MemorySaveStore());
     const street = walkedDown(engine, 7);
     const buildings = street.options.filter((option) => option.role === 'travel');
     expect(buildings).toHaveLength(4);
-    expect(buildings.every((option) => option.sealed && option.key === '')).toBe(true);
+    expect(buildings.every((option) => !option.sealed && option.key !== '')).toBe(true);
     expect(buildings[0]?.label).toBe('Enter Building: Ornate Sanctum');
     expect(buildings[0]?.place).toBe('Ornate Sanctum');
     const after = engine.step('enter:0');
-    expect(after.place?.kind).toBe('Street');
-    expect(after.message).toBe(street.message);
+    expect(after.place?.kind).toBe('Building');
+    expect(after.message).toBe('Entered Ornate Sanctum.');
   });
 
   test('keys: the first nine children get 1–9, the next get letters that no other option uses', () => {
@@ -246,7 +246,7 @@ describe('GameEngine — the place is remembered', () => {
       '{"version":2,"seed":',
       '{"version":1,"seed":"7F3A-91C2-0B4D-E6A8"}',
       '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.99"}',
-      '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0"}',
+      '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.999"}',
     ]) {
       const snapshot = engineOn(new MemorySaveStore(text)).snapshot();
       expect(snapshot.world, text).toBeNull();

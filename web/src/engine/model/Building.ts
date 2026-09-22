@@ -1,3 +1,4 @@
+import type { Fact } from './Fact.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
@@ -10,9 +11,9 @@ export const BUILDING_KIND = new LocationKind({
 });
 
 /**
- * A building on a street. For now it is a name, a size and — for one in twenty-five — a landmark title:
- * it is **sealed**, listed but not enterable. Its inside (floors, elevator, corridors) is iteration I03,
- * which removes `sealed()` and gives its factory something to populate.
+ * A building on a street: a name (one in twenty-five a landmark title), a size — how many floors, how many
+ * doors on each — and its floors as children, child `n` being floor `n`. Its list runs from the top floor
+ * down to the lobby (Guide:111).
  */
 export class Building extends Location {
   readonly #name: string;
@@ -43,10 +44,6 @@ export class Building extends Location {
     return this.#landmark;
   }
 
-  override sealed(): boolean {
-    return true;
-  }
-
   floors(): number {
     return this.#floors;
   }
@@ -56,19 +53,35 @@ export class Building extends Location {
     return this.#doorsPerFloor;
   }
 
+  /** Floors are listed top floor first (Guide:111; Building.groovy:283). */
+  override listing(): readonly Location[] {
+    return [...this.children()].reverse();
+  }
+
   description(): readonly string[] {
-    return [];
+    return ['Analyzing vertical lattice structure...'];
+  }
+
+  /** The building's theme, and the landmark banner when it is one (Building.groovy:141, 146-149). */
+  override facts(): readonly Fact[] {
+    const culture = this.vibe()?.culture();
+    return [
+      ...(culture === undefined ? [] : [{ key: 'culture', label: 'THEME', value: culture.key() } as const]),
+      ...(this.#landmark
+        ? [{ key: 'alert', label: 'UNIQUE_LOCUS_DETECTION', value: 'MAJOR_LANDMARK_DISCOVERED' } as const]
+        : []),
+    ];
   }
 
   status(): string {
-    return 'ACCESS: [SEALED]';
+    return 'STRUCTURAL_STABLE';
   }
 
   childrenHeading(): string {
-    return '';
+    return 'Building strata diagnostics:';
   }
 
   approachVerb(): string {
-    return '';
+    return 'Access:';
   }
 }

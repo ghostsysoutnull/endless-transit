@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import type { Location } from '#engine/model/Location.ts';
-import { descend, must, realRegistry, sampleSeed } from '#tests/support/world.ts';
+import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 /**
  * Every range the big world lives by, checked over many seeds. Sources: the Player's Guide
@@ -25,7 +25,7 @@ const SEEDS = 400;
 /** One chain per seed, the branch taken at each level varying with the seed number. */
 function chains(): Location[][] {
   return Array.from({ length: SEEDS }, (_, n) =>
-    descend(registry.universe(sampleSeed(n)), (_children, depth) => n * 7 + depth * 3 + (n >> depth)),
+    toStreet(registry.universe(sampleSeed(n)), (_children, depth) => n * 7 + depth * 3 + (n >> depth)),
   );
 }
 
@@ -81,7 +81,7 @@ describe('what the Guide promises about the big world', () => {
   const nodes = universes.flatMap((universe) =>
     universe.children().flatMap((filament) => filament.children()),
   );
-  const firstOpen = (location: Location): Location[] => descend(location, () => 0);
+  const firstOpen = (location: Location): Location[] => toStreet(location, () => 0);
 
   test('about 30% of filament nodes are Null Reaches (Guide, "Null Reaches")', () => {
     expect(nodes.length).toBeGreaterThan(5_000);

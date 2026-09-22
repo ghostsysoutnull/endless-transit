@@ -3,7 +3,7 @@ import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Building } from '#engine/model/Building.ts';
 import type { Location } from '#engine/model/Location.ts';
-import { descend, realRegistry, sampleSeed } from '#tests/support/world.ts';
+import { realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
 const library = new ContentLibrary(new BundledContent());
@@ -11,7 +11,7 @@ const LANDMARKS = library.list('names/buildings/landmarks');
 
 /** Every building of every street of the first city under `node`. */
 function buildingsUnder(node: Location): Building[] {
-  const city = descend(node, () => 0).find((location) => location.kind().key() === 'city');
+  const city = toStreet(node, () => 0).find((location) => location.kind().key() === 'city');
   const buildings = city?.children().flatMap((street) => street.children()) ?? [];
   return buildings.filter((building) => building instanceof Building);
 }
@@ -27,11 +27,11 @@ const underNullReaches = nodes
   .slice(0, 250)
   .flatMap(buildingsUnder);
 
-describe('buildings on a street (listed by name; entering them is I03)', () => {
-  test('every building is sealed, has a name and between 3 and 100 floors', () => {
+describe('buildings on a street', () => {
+  test('every building is open, has a name and between 3 and 100 floors', () => {
     expect(underSectors.length).toBeGreaterThan(10_000);
     for (const building of underSectors) {
-      expect(building.sealed()).toBe(true);
+      expect(building.sealed()).toBe(false);
       expect(building.name()).toMatch(/\S/);
       expect(building.floors()).toBeGreaterThanOrEqual(3);
       expect(building.floors()).toBeLessThanOrEqual(100);

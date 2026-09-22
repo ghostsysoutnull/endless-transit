@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
-import { descend, realRegistry } from '#tests/support/world.ts';
+import { realRegistry, toStreet } from '#tests/support/world.ts';
 
 /** The names from the universe down to a street, always taking the child at `index` (wrapped to what exists). */
 function namesAlong(seed: Seed, index: number): string[] {
-  const chain = descend(realRegistry().universe(seed), () => index);
+  const chain = toStreet(realRegistry().universe(seed), () => index);
   const street = chain.at(-1);
   const vibe = street?.vibe();
   return [

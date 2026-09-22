@@ -42,7 +42,7 @@ describe('Journey — where the traveller stands', () => {
     expect(trip.here()?.address().toString()).toBe('0.0');
   });
 
-  test('moves that cannot be made change nothing: no such child, a sealed building, above the universe, not in a world', () => {
+  test('moves that cannot be made change nothing: no such child, above the universe, not in a world', () => {
     const trip = journey();
     expect(trip.descend(0)).toBe(false);
     trip.begin(SEED);
@@ -54,8 +54,7 @@ describe('Journey — where the traveller stands', () => {
     expect(trip.here()?.address().toString()).toBe('0');
     for (let level = 0; level < 7; level++) expect(trip.descend(0)).toBe(true);
     expect(trip.here()?.kind().key()).toBe('street');
-    expect(trip.here()?.children()[0]?.sealed()).toBe(true);
-    expect(trip.descend(0)).toBe(false);
+    expect(trip.descend(99)).toBe(false);
     expect(trip.here()?.kind().key()).toBe('street');
   });
 
@@ -98,8 +97,8 @@ describe('Journey — where the traveller stands', () => {
     expect(again.here()?.address().toString()).toBe(trip.here()?.address().toString());
   });
 
-  test('restore refuses a path nobody answers or one that ends inside a sealed place — and stays fresh', () => {
-    for (const path of [[99], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]) {
+  test('restore refuses a path nobody answers — and stays fresh', () => {
+    for (const path of [[99], [0, 0, 0, 0, 0, 0, 0, 0, 999], [0, 0, 0, 0, 0, 0, 0, 0, 0, 9]]) {
       const trip = journey();
       expect(trip.restore(new SavedGame(SEED, new Address(path))), path.join('.')).toBe(false);
       expect(trip.world()).toBeUndefined();
