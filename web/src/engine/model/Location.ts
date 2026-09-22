@@ -159,6 +159,11 @@ export abstract class Location {
     return this.parent()?.indoors() ?? false;
   }
 
+  /** How much more a prompt costs here than at the surface: the parent's, 1 at the top — the bedrock (I07) answers 2 (Guide:137-139). */
+  drainFactor(): number {
+    return this.parent()?.drainFactor() ?? 1;
+  }
+
   /** What the planet above decided; nothing above planet level. */
   vibe(): Vibe | undefined {
     return this.parent()?.vibe();

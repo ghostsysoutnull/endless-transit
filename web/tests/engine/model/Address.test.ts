@@ -36,6 +36,12 @@ describe('Address — where a location is, as child indices from the universe', 
     }
   });
 
+  test('the parent is one step up; the universe has none', () => {
+    expect(new Address([2, 0, 7]).parent()?.toString()).toBe('0.2.0');
+    expect(new Address([2]).parent()?.toString()).toBe('0');
+    expect(new Address([]).parent()).toBeUndefined();
+  });
+
   test('an index is a whole number from zero up', () => {
     expect(() => new Address([1.5])).toThrow(RangeError);
     expect(() => new Address([]).child(-1)).toThrow(RangeError);
