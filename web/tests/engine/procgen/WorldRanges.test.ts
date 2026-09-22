@@ -148,8 +148,12 @@ describe('what the Guide promises about the big world', () => {
       'Research',
     ]);
     const stabilities = countries.map((country) => country.vibe()?.stability() ?? -1);
-    expect(Math.min(...stabilities)).toBeGreaterThanOrEqual(0.75);
-    expect(Math.max(...stabilities)).toBeLessThanOrEqual(0.9);
+    // Both ends are reached, exactly: 0.85 − 0.100 at the bottom; at the top every shift from +0.050 up is held at 0.9.
+    expect(Math.min(...stabilities)).toBe(0.75);
+    expect(Math.max(...stabilities)).toBe(0.9);
+    expect(stabilities.filter((stability) => stability === 0.9).length / stabilities.length).toBeGreaterThan(
+      0.2,
+    );
     expect(new Set(stabilities).size).toBeGreaterThan(50);
   });
 });
