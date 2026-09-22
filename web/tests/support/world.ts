@@ -5,10 +5,13 @@ import { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import { ThemeCatalog } from '#engine/procgen/ThemeCatalog.ts';
 import type { WarningSink } from '#engine/content/WarningSink.ts';
 import { Seed } from '#engine/rng/Seed.ts';
-import { MemoryWarningSink } from './MemoryWarningSink.ts';
+import { ThrowingWarningSink } from './ThrowingWarningSink.ts';
 
-/** The real generator on the real content — what the game itself builds in `main.ts`. */
-export function realRegistry(warnings: WarningSink = new MemoryWarningSink()): LocationRegistry {
+/**
+ * The real generator on the real content — what the game itself builds in `main.ts`. The sink throws unless
+ * a test hands in its own: a `[THEME_WARN]` is a red test, never a message nobody reads.
+ */
+export function realRegistry(warnings: WarningSink = new ThrowingWarningSink()): LocationRegistry {
   const library = new ContentLibrary(new BundledContent());
   return new LocationRegistry(library, new ThemeCatalog(library), warnings);
 }

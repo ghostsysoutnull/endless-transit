@@ -13,6 +13,7 @@ import { Furnishings } from '#engine/procgen/Furnishings.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { MemoryContentSource } from '#tests/support/MemoryContentSource.ts';
 import { MemoryWarningSink } from '#tests/support/MemoryWarningSink.ts';
+import { ThrowingWarningSink } from '#tests/support/ThrowingWarningSink.ts';
 import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const warnings = new MemoryWarningSink();
@@ -149,6 +150,12 @@ describe('the atmosphere: walls from the culture, lighting from the era, structu
 
   test('no [THEME_WARN] ever fires on the bundled content', () => {
     expect(warnings.messages()).toEqual([]);
+  });
+
+  test('the suite’s default sink throws: a warning in any other test is a failure, not a message nobody reads', () => {
+    expect(() => {
+      new ThrowingWarningSink().warn('[THEME_WARN] x');
+    }).toThrow('a warning fired where none may: [THEME_WARN] x');
   });
 
   test('a missing file is never silent: the first key of the index stands in, and the sink hears why (Guide:319)', () => {
