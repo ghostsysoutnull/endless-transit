@@ -17,18 +17,20 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
 
 The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot → the
 `ScreenStage` whose presenter `accepts` it → `Presenter.toViewModel` → `View<VM>.render` (lit-html). Options are data
-`{ id, key, label, place, role, sealed, landmark, ordinal, readings }` with `role` travel / move / return / system; a
-new action is a registry entry in `GameEngine`, a new screen one more stage in `main.ts`; a pending prompt is a state,
-never a blocking read.
+`{ id, key, label, place, role, sealed, landmark, ordinal, readings, opposite, current }` with `role` travel / move /
+return / system; a new action is a registry entry in `GameEngine`, a new screen one more stage in `main.ts`; a pending
+prompt is a state, never a blocking read. A key is the ordinal when the place goes by its own number, else from the pool.
 
 The world: `model/Location` owns the **lazy-loading law** — children sit behind a private array and exist only after
 `children()`, generated once through the injected `ChildSource`. A kind of place is a class that answers for itself
-(name, words, vibe, `sealed()`, and the journey's questions: `listing()`, `arrival()`, `exit()`/`leave()`, `moves()`/
-`move(id)`, `remember()`/`recall()`, `startOfJourney()`) plus a `LocationFactory<T, Parent>` entry in
+(name, words, vibe, `sealed()`, and the journey's questions: `listing()`/`admits()`, `arrival()`/`arrive()`,
+`exit()`/`leave()`, `moves()`/`move(id)` (one `MoveTable`: what is offered is what can be made), `remember()`/`recall()`,
+`current()`, `goesByNumber()`, `startOfJourney()`) plus a `LocationFactory<T, Parent>` entry in
 `procgen/LocationRegistry`; nobody asks "which kind are you?" (`instanceof`, a `switch` on `kind().key()`). A mode a
 place can be in is a state object it asks (`Floor` → `FloorState`), never a flag the caller reads. Child `i` is born from
 `parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save is seed + path + what the
-trail remembers. A presenter never cuts a name out of a label — the option carries it.
+trail remembers, and restore takes only a save the journey could have written (`saved()` after `restore()` is the save).
+A presenter never cuts a name out of a label — the option carries it.
 
 ## The walls (each proven RED on a scratch file when added)
 
@@ -46,7 +48,8 @@ A new invariant ships with its rule in the same iteration.
 - No static state. A `static` names its reason in a comment (factory for a text form, entry point).
 - Randomness: `seed.branch(key)` then one helper (`pick`, `range`, `probability`). Never a stream. Text keys never
   start with `#` (Seed's own); `branch(1)` ≠ `branch('1')`.
-- Words live in the presenter; a `*View.ts` has no literal text or aria-label. Focus after a render: `Shell` owns it.
+- Words live in the presenter; a `*View.ts` has no literal text or aria-label. Focus after a render: `Shell` owns it —
+  an option names the option that undoes it, and a screen marks its resting place (`data-rest`).
 
 ## Tests first
 

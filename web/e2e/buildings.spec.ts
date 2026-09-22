@@ -57,7 +57,9 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await shoot(page, '1-building');
   await page.locator('.row.you').scrollIntoViewIfNeeded();
   await shoot(page, '1a-building-elevator-at-lobby');
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
 
   await tapOption(page, 'enter:15', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
