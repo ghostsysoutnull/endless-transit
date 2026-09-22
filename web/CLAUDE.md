@@ -8,7 +8,8 @@ Lessons: @../tasks/lessons/web.md
 ## Layers — who may import whom
 
 `src/engine/` pure, synchronous, deterministic; imports **only** `./…` and `#engine/…` — no DOM, no packages, no clock,
-no `Math.random`. It receives what it needs through interfaces it owns (`ContentSource`, `SaveStore`, `EntropySource`).
+no `Math.random`. It receives what it needs through interfaces it owns (`ContentSource`, `SaveStore`, `EntropySource`,
+`WarningSink` — a `[THEME_WARN]` for a list an index promised and the content lacks; never a silent fallback).
 `src/content/` the `.txt` lists + the ONE `import.meta.glob` (`BundledContent`). **Order = the `index.txt` order.**
 Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture carry no index of their own;
 `names/rooms` is keyed by trait (`themes/traits.txt`) the same way.
@@ -30,7 +31,9 @@ The world: `model/Location` owns the **lazy-loading law** — children sit behin
 place can be in is a state object it asks (`Floor` → `FloorState`), never a flag the caller reads. Child `i` is born from
 `parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save is seed + path + what the
 trail remembers, and restore takes only a save the journey could have written (`saved()` after `restore()` is the save).
-A presenter never cuts a name out of a label — the option carries it.
+A presenter never cuts a name out of a label — the option carries it. **Objects live in apartments** (Guide:167): an
+apartment deals its relics (`Relic`, identity by key) from the `ObjectDeck` of its culture and era and knows which
+room each lies in; a room asks. Furniture is a culture item in a condition, never a hybrid.
 
 ## The walls (each proven RED on a scratch file when added)
 
@@ -56,6 +59,12 @@ A new invariant ships with its rule in the same iteration.
 Test, RED, then code. `tests/` mirrors `src/`; doubles in `tests/support/`. Pins are literals: a diff is a finding.
 Playwright owns browser behaviour and runs **twice**: `desktop` and `phone` (portrait, touch). Look at the
 screenshots in `test-results/` yourself before calling UI work done.
+
+**Goldens** (`tests/goldens/*.txt`, written by `tests/content/Goldens.test.ts`): the full text of a fixed walk,
+street to room, for three seeds. Nothing else writes them: `npx vitest run tests/content/Goldens.test.ts -u` is the
+one writer, run only after an intended content or wording change; read `git diff tests/goldens` before committing —
+a changed line is a finding, never a chore. Every list has a size floor (`tests/content/ContentFloors.test.ts`): a
+list may only grow.
 
 ## Touch first (Decisions 1–5)
 
