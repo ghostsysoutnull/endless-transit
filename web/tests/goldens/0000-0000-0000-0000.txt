@@ -108,7 +108,7 @@ BUILDING STRATA DIAGNOSTICS
        FUNCTION: TRANSIT_LOBBY
        ST: 100%
        RES: 1146Hz
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ ████ ███ ███████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███ █ ███████ ██████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1
 dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN
 
 === FLOOR ▤ FLOOR 0  [frame grey]
@@ -120,7 +120,7 @@ tags: TECH_ERA FUTURE (era) | RESONANCE VOID (culture) | STABILITY 90.00% (readi
 diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████████ ████████ ████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ █ ██ ████████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
 dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
 
 === FLOOR ▤ FLOOR 0  [frame grey]
@@ -152,7 +152,7 @@ LOCAL ACCESS LIST
        APPEARANCE: A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
   10 [A] Access: Oxidized Metal Hatch [STATIC]
        APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████████ ████████ ████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ████████ █████████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
 dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
 
 === ROOM □ HOLLOW NEURAL LINK ARRAY  [frame grey]
@@ -167,7 +167,7 @@ diag: ATMOS: 20% | TEMP: 23°C
 status: Entered Hollow Neural Link Array.
 moves: [F] GO FORWARD
 IN THIS ROOM: white light strip infused with smart glass <infused|white light strip|smart glass> | floating white sphere infused with plasma coil <infused|floating white sphere|plasma coil> | hovering disc fused to hologram projector <fused|hovering disc|hologram projector> | hologram projector grafted onto hidden speaker <grafted|hidden speaker|hologram projector> | empty frame infused with aerogel slab <infused|empty frame|aerogel slab> | quantum key <era|quantum key>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ███ ████ ███ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ██████ █████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0
 dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN
 
 === ROOM □ ABYSSAL BIO-SERVER  [frame grey]
@@ -182,5 +182,5 @@ diag: ATMOS: 16% | TEMP: 15°C
 status: Entered Abyssal Bio-Server.
 moves: [B] GO BACK | [F] GO FORWARD
 IN THIS ROOM: neural link grafted onto silent fan <grafted|silent fan|neural link> | neural link with hidden speaker <with|hidden speaker|neural link> | neural link with floating white sphere <with|floating white sphere|neural link> | quantum key with silent fan <with|silent fan|quantum key> | white noise emitter infused with smart glass <infused|white noise emitter|smart glass>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ ██ █████ █ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.1
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████████ ████ ████████ █ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.1
 dock: [T] TITLE SCREEN

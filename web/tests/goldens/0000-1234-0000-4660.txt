@@ -54,7 +54,7 @@ BUILDING STRATA DIAGNOSTICS
        FUNCTION: TRANSIT_LOBBY
        ST: 100%
        RES: 1104Hz
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ ███████ ██ ██ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ███ ████████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2
 dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN
 
 === FLOOR ▤ FLOOR 0  [frame magenta]
@@ -66,7 +66,7 @@ tags: TECH_ERA ANALOG (era) | RESONANCE SHOGUN (culture) | STABILITY 90.00% (rea
 diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █ █ ██ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ████ ██████ ███ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0
 dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
 
 === FLOOR ▤ FLOOR 0  [frame magenta]
@@ -82,7 +82,7 @@ LOCAL ACCESS LIST
        APPEARANCE: An aperture of interlocking bone-white struts. The frame is ice-cold to the touch, pulling heat from your palm. The word 'HOLLOW' is stamped into the metal in block letters.
   02 [2] Access: Lacquered Timber Gate [RUSTED]
        APPEARANCE: A timber gate under many coats of black lacquer. The metal hinges are fused by deep, flakey oxidation.
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █ █ ██ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ █████ ████████ █████████ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0
 dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
 
 === ROOM □ LACQUERED BARRACKS  [frame magenta]
@@ -97,7 +97,7 @@ diag: ATMOS: 14% | TEMP: 17°C
 status: Entered Lacquered Barracks.
 moves: [F] GO FORWARD
 IN THIS ROOM: answering machine grafted onto shoji screen <grafted|shoji screen|answering machine> | answering machine with straw sandal <with|straw sandal|answering machine>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████████ ████ ████████ ██ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.0
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ █ ███████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.0
 dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN
 
 === ROOM □ PAPER SECURITY STATION  [frame magenta]
@@ -112,5 +112,5 @@ diag: ATMOS: 16% | TEMP: 10°C
 status: Entered Paper Security Station.
 moves: [B] GO BACK | [F] GO FORWARD
 IN THIS ROOM: calligraphy scroll infused with oscilloscope <infused|calligraphy scroll|oscilloscope> | answering machine with tatami mat <with|tatami mat|answering machine> | kabuto helmet infused with rotary phone <infused|kabuto helmet|rotary phone> | hanging scroll infused with magnetic strip <infused|hanging scroll|magnetic strip>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ ████████ ██████ ██████ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.1
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ ████████ ████████ ██████ █████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.1
 dock: [T] TITLE SCREEN

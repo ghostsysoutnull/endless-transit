@@ -3,15 +3,24 @@ import type { SaveStore } from '#engine/persistence/SaveStore.ts';
 import { SavedGame } from '#engine/persistence/SavedGame.ts';
 import type { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import type { EntropySource } from '#engine/rng/EntropySource.ts';
+import { Corruption } from './Corruption.ts';
+import { Drain } from './Drain.ts';
+import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
 import type { GameOption } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { Journey } from './Journey.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
+import type { Player } from './Player.ts';
+import type { Prompt } from './Prompt.ts';
+import { RebootPrompt } from './RebootPrompt.ts';
+import { systemOption } from './SystemOption.ts';
 import { Telemetry } from './Telemetry.ts';
+import { FREE, GLOBAL, STEP } from './Turn.ts';
 
 const TRAVEL = 'enter:';
 const MOVE = 'move:';
+const DEBUG_INTEGRITY = 'debug:integrity:';
 /** The keyboard extra of each move a place may offer (Guide:112-115); a move with no entry here gets none. */
 const MOVE_KEYS: Readonly<Record<string, string>> = {
   up: 'u',
@@ -24,47 +33,62 @@ const MOVE_KEYS: Readonly<Record<string, string>> = {
 /** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself. */
 const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
+/** The debug INTEGRITY's values (Guide:441, "any number from 0 to 100"): the edges of every band, full, and one from failure. */
+const INTEGRITY_LADDER = [100, 70, 69, 40, 39, 30, 29, 1];
 
 /**
  * The game, seen from outside: `step(optionId)` in, a plain-data snapshot out. Synchronous, instant, no
  * output device, nothing blocks on input. Owns the registry of commands — a new thing the player can do
- * is a new registry entry, not a new branch in `step` — and saves the journey after every move.
+ * is a new registry entry, not a new branch in `step` — and the turn: every prompt in the world costs
+ * coherence before the command runs (Guide:133-135), a step counts, and zero coherence is a pending prompt
+ * (the reboot), never a blocking read. Saves the journey after every step. In debug mode (Decision 8) the
+ * INTEGRITY tool is on offer; nowhere else.
  */
 export class GameEngine {
   readonly #journey: Journey;
   readonly #entropy: EntropySource;
   readonly #saves: SaveStore;
+  readonly #debug: boolean;
   readonly #commands: readonly GameCommand[];
   readonly #childKeys: readonly string[];
+  readonly #drain = new Drain();
+  readonly #frames = new FrameEntropy();
   readonly #telemetry = new Telemetry();
+  readonly #corruption = new Corruption();
+  #prompt: Prompt | undefined;
   #message = '';
 
-  constructor(deps: { world: LocationRegistry; entropy: EntropySource; saves: SaveStore }) {
+  constructor(deps: { world: LocationRegistry; entropy: EntropySource; saves: SaveStore; debug?: boolean }) {
     this.#journey = new Journey(deps.world);
     this.#entropy = deps.entropy;
     this.#saves = deps.saves;
+    this.#debug = deps.debug ?? false;
     this.#commands = [
       {
         keys: ['n'],
+        turn: FREE,
         options: () =>
-          this.#atTitle() && !this.#hasWorld() ? [this.#system('new-world', 'n', 'New world')] : [],
+          this.#atTitle() && !this.#hasWorld() ? [systemOption('new-world', 'n', 'New world')] : [],
         run: () => this.#drawWorld(),
       },
       {
         keys: ['e'],
+        turn: FREE,
         options: () =>
           this.#atTitle() && this.#hasWorld()
-            ? [this.#system('enter-world', 'e', this.#journey.resumes() ? 'Continue' : 'Enter world')]
+            ? [systemOption('enter-world', 'e', this.#journey.resumes() ? 'Continue' : 'Enter world')]
             : [],
         run: () => this.#moved(this.#journey.enter(), `Entered ${this.#journey.here()?.name() ?? ''}.`),
       },
       {
         keys: ['r'],
-        options: () => (this.#atTitle() && this.#hasWorld() ? [this.#system('reroll', 'r', 'Re-roll')] : []),
+        turn: FREE,
+        options: () => (this.#atTitle() && this.#hasWorld() ? [systemOption('reroll', 'r', 'Re-roll')] : []),
         run: () => this.#drawWorld(),
       },
       {
         keys: [],
+        turn: STEP,
         options: () => this.#travelOptions(),
         run: (optionId) => {
           const moved = this.#journey.descend(Number(optionId.slice(TRAVEL.length)));
@@ -73,6 +97,7 @@ export class GameEngine {
       },
       {
         keys: [...new Set(Object.values(MOVE_KEYS))],
+        turn: STEP,
         options: () => this.#moveOptions(),
         run: (optionId) => {
           const id = optionId.slice(MOVE.length);
@@ -85,17 +110,35 @@ export class GameEngine {
       },
       {
         keys: ['l'],
+        turn: STEP,
         options: () => {
           const here = this.#journey.here();
           if (here?.exit() === undefined) return [];
-          return [{ ...this.#system('leave', 'l', here.leaveLabel()), role: 'return' }];
+          return [{ ...systemOption('leave', 'l', here.leaveLabel()), role: 'return' }];
         },
         run: () => this.#moved(this.#journey.leave(), `Returned to ${this.#journey.here()?.name() ?? ''}.`),
       },
       {
         keys: ['t'],
-        options: () => (this.#atTitle() ? [] : [this.#system('to-title', 't', 'Title screen')]),
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption('to-title', 't', 'Title screen')]),
         run: () => this.#moved(this.#journey.toTitle(), ''),
+      },
+      {
+        keys: [],
+        turn: FREE,
+        options: () =>
+          this.#debug && !this.#atTitle()
+            ? INTEGRITY_LADDER.map((value) => ({
+                ...systemOption(`${DEBUG_INTEGRITY}${String(value)}`, '', `Integrity ${String(value)}`),
+                role: 'debug',
+              }))
+            : [],
+        run: (optionId) => {
+          const value = Number(optionId.slice(DEBUG_INTEGRITY.length));
+          this.#journey.player().setCoherence(value);
+          return `Integrity set to ${String(value)}%.`;
+        },
       },
     ];
     const claimed = new Set(this.#commands.flatMap((entry) => entry.keys));
@@ -103,27 +146,58 @@ export class GameEngine {
     this.#restore();
   }
 
-  /** Runs the option if it is on offer and open; any other id (a stale tap, a sealed place) changes nothing. */
+  /**
+   * One turn. While a prompt is pending, only its answers are heard. Otherwise the option is run if it is
+   * on offer and open — any other id (a stale tap, a sealed place) changes nothing and costs nothing —
+   * and, in the world, the prompt's drain comes first: the tap that takes the last point never runs its
+   * command; the link fails and the reboot is the only thing on offer.
+   */
   step(optionId: string): GameSnapshot {
+    const prompt = this.#prompt;
+    if (prompt !== undefined) {
+      const message = prompt.answer(optionId);
+      if (message !== undefined) {
+        this.#prompt = undefined;
+        this.#message = message;
+        this.#save();
+      }
+      return this.snapshot();
+    }
     const command = this.#commands.find((entry) =>
       entry.options().some((option) => option.id === optionId && !option.sealed),
     );
-    if (command !== undefined) {
-      this.#message = command.run(optionId);
-      const saved = this.#journey.saved();
-      if (saved !== undefined) this.#saves.save(saved.toText());
+    if (command === undefined) return this.snapshot();
+    const here = this.#journey.here();
+    const player = this.#journey.player();
+    if (here !== undefined && command.turn.drains()) {
+      player.drain(this.#drain.cost(here));
+      if (player.coherence().exhausted()) {
+        this.#prompt = new RebootPrompt(this.#journey);
+        this.#message = '';
+        this.#save();
+        return this.snapshot();
+      }
     }
+    this.#message = command.run(optionId);
+    if (command.turn.counts()) player.count();
+    this.#save();
     return this.snapshot();
   }
 
   snapshot(): GameSnapshot {
     const world = this.#journey.world();
     const here = this.#journey.here();
+    const player = this.#journey.player();
     return {
       world:
         world === undefined ? null : { seed: world.toString(), name: this.#journey.universe()?.name() ?? '' },
-      place: here === undefined ? null : this.#summaryOf(here),
-      options: this.#commands.flatMap((entry) => entry.options()),
+      place: here === undefined ? null : this.#summaryOf(here, player),
+      player:
+        here === undefined
+          ? null
+          : { coherence: player.coherence().value(), band: player.coherence().band(), steps: player.steps() },
+      prompt: this.#prompt?.summary() ?? null,
+      options: this.#prompt?.options() ?? this.#commands.flatMap((entry) => entry.options()),
       message: this.#message,
     };
   }
@@ -134,6 +208,12 @@ export class GameEngine {
     const here = this.#journey.here();
     const where = here === undefined ? '' : ` at ${here.name()}`;
     this.#message = `Restored world ${saved.seed().toString()}${where}.`;
+    if (this.#journey.player().coherence().exhausted()) this.#prompt = new RebootPrompt(this.#journey);
+  }
+
+  #save(): void {
+    const saved = this.#journey.saved();
+    if (saved !== undefined) this.#saves.save(saved.toText());
   }
 
   #atTitle(): boolean {
@@ -142,22 +222,6 @@ export class GameEngine {
 
   #hasWorld(): boolean {
     return this.#journey.world() !== undefined;
-  }
-
-  #system(id: string, key: string, label: string): GameOption {
-    return {
-      id,
-      key,
-      label,
-      place: '',
-      role: 'system',
-      sealed: false,
-      landmark: false,
-      ordinal: '',
-      readings: [],
-      opposite: '',
-      current: false,
-    };
   }
 
   #moved(happened: boolean, message: string): string {
@@ -178,6 +242,7 @@ export class GameEngine {
   #travelOptions(): readonly GameOption[] {
     const here = this.#journey.here();
     if (here === undefined) return [];
+    const player = this.#journey.player();
     let open = 0;
     const keyOf = (child: Location): string => {
       if (child.sealed()) return '';
@@ -197,6 +262,7 @@ export class GameEngine {
       readings: child.readings(),
       opposite: '',
       current: child.current(),
+      visited: player.visited(child),
     }));
   }
 
@@ -205,14 +271,15 @@ export class GameEngine {
     const here = this.#journey.here();
     if (here === undefined) return [];
     return here.moves().map((move) => ({
-      ...this.#system(`${MOVE}${move.id}`, MOVE_KEYS[move.id] ?? '', move.label),
+      ...systemOption(`${MOVE}${move.id}`, MOVE_KEYS[move.id] ?? '', move.label),
       role: 'move',
       opposite: `${MOVE}${move.opposite}`,
     }));
   }
 
-  #summaryOf(here: Location): PlaceSummary {
+  #summaryOf(here: Location, player: Player): PlaceSummary {
     const siblings = here.parent()?.children();
+    const frame = this.#frames.of(here, player.steps());
     return {
       kind: here.kind().title(),
       icon: here.kind().icon(),
@@ -230,12 +297,12 @@ export class GameEngine {
         name: step.name(),
       })),
       status: here.status(),
-      description: here.description(),
+      description: this.#corruption.read(here.description(), player.coherence(), frame),
       facts: here.facts(),
       frame: here.vibe()?.frame() ?? null,
       childrenHeading: here.childrenHeading(),
       contents: this.#contentsOf(here),
-      telemetry: this.#telemetry.of(here),
+      telemetry: this.#telemetry.of(here, frame),
     };
   }
 

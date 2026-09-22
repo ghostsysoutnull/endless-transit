@@ -17,6 +17,7 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     readings: [],
     opposite: '',
     current: false,
+    visited: false,
     ...facts,
   };
 }
@@ -67,6 +68,8 @@ const PLANET: GameSnapshot = {
     option({ id: 'leave', key: 'l', label: 'Leave Planet', role: 'return' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
+  player: { coherence: 87, band: 'stable', steps: 12 },
+  prompt: null,
   message: 'Entered Auraea.',
 };
 
