@@ -36,7 +36,12 @@ export class BuildingFactory implements LocationFactory {
       depth: street.depth(),
       landmarkFactor: street.landmarkFactor(),
     });
-    return new Building(origin, { name: named.name, landmark: named.landmark, floors });
+    return new Building(origin, {
+      name: named.name,
+      landmark: named.landmark,
+      floors,
+      doorsPerFloor: this.#sizes.doorsPerFloorOf(origin.seed),
+    });
   }
 
   populate(): readonly Location[] {

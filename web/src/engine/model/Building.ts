@@ -18,12 +18,17 @@ export class Building extends Location {
   readonly #name: string;
   readonly #landmark: boolean;
   readonly #floors: number;
+  readonly #doorsPerFloor: number;
 
-  constructor(origin: Origin, facts: { name: string; landmark: boolean; floors: number }) {
+  constructor(
+    origin: Origin,
+    facts: { name: string; landmark: boolean; floors: number; doorsPerFloor: number },
+  ) {
     super(origin);
     this.#name = facts.name;
     this.#landmark = facts.landmark;
     this.#floors = facts.floors;
+    this.#doorsPerFloor = facts.doorsPerFloor;
   }
 
   kind(): LocationKind {
@@ -44,6 +49,11 @@ export class Building extends Location {
 
   floors(): number {
     return this.#floors;
+  }
+
+  /** How many doors every corridor of this building has. */
+  doorsPerFloor(): number {
+    return this.#doorsPerFloor;
   }
 
   description(): readonly string[] {
