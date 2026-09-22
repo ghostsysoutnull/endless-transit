@@ -5,6 +5,10 @@ import type { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { Vibe } from './Vibe.ts';
 
+/** The locus hash is two readings of 0.000 … 99.999, each drawn in thousandths. */
+const HASH_STEPS = 1000;
+const HASH_TOP = 100 * HASH_STEPS - 1;
+
 /**
  * A place in the world tree. Owns the **lazy-loading law**: children live behind a private backing array
  * and exist only after `children()` is asked — once, through the injected `ChildSource`. There is no other
@@ -80,6 +84,17 @@ export abstract class Location {
 
   depth(): number {
     return this.address().depth();
+  }
+
+  /**
+   * The HUD's LOCUS_HASH: looks like coordinates, is decorative — a stable random pair per place, drawn
+   * from the place's own seed (the Groovy `getCoordinates`).
+   */
+  hash(): string {
+    const coords = this.seed().branch('coords');
+    const reading = (axis: string): string =>
+      (coords.branch(axis).range(0, HASH_TOP) / HASH_STEPS).toFixed(3);
+    return `${reading('x')} / ${reading('y')}`;
   }
 
   /** From the universe down to here. */

@@ -76,6 +76,7 @@ describe('GameEngine — walking the big world', () => {
       icon: '∞',
       name: 'The Endless Universe',
       address: '0',
+      hash: '23.825 / 43.173',
       depth: 0,
       position: null,
       trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe' }],

@@ -6,6 +6,7 @@ import { Street } from '#engine/model/Street.ts';
 import { Universe } from '#engine/model/Universe.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { CountingChildSource } from '#tests/support/CountingChildSource.ts';
+import { must } from '#tests/support/world.ts';
 
 const SEED = new Seed(1, 2);
 
@@ -69,6 +70,16 @@ describe('Location — where it is', () => {
       'High Way',
     ]);
     expect(street?.parent()?.parent()).toBe(universe);
+  });
+
+  test('the locus hash: decorative coordinates, a stable random pair per place (Guide, "Reading the screen"; Container.groovy:214-217)', () => {
+    const { universe } = tinyWorld();
+    const street = must(universe.children()[1]?.children()[0]);
+    expect(universe.hash()).toMatch(/^\d{1,2}\.\d{3} \/ \d{1,2}\.\d{3}$/);
+    expect(street.hash()).toMatch(/^\d{1,2}\.\d{3} \/ \d{1,2}\.\d{3}$/);
+    expect(street.hash()).not.toBe(universe.hash());
+    expect(street.hash()).toBe(must(tinyWorld().universe.children()[1]?.children()[0]).hash());
+    expect(universe.hash()).toBe('36.820 / 65.416');
   });
 
   test('descendant: one strict walker — an index nobody answers, or a sealed place, is nowhere', () => {

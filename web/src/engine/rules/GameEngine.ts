@@ -157,6 +157,7 @@ export class GameEngine {
       icon: here.kind().icon(),
       name: here.name(),
       address: here.address().toString(),
+      hash: here.hash(),
       depth: here.depth(),
       position:
         siblings === undefined

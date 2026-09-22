@@ -17,6 +17,7 @@ const PLANET: GameSnapshot = {
     icon: '⊕',
     name: 'Auraea',
     address: '0.0.0.0.1',
+    hash: '43.210 / 07.654',
     depth: 4,
     position: { label: 'ORBIT', index: 2, total: 5 },
     trail: [
@@ -56,6 +57,7 @@ const STREET: GameSnapshot = {
     kind: 'Street',
     name: 'Bright Boulevard',
     address: '0.0.0.0.1.0.0.0',
+    hash: '1.000 / 2.000',
   },
   options: [
     option({ id: 'enter:0', label: 'Enter Building: Ornate Sanctum', place: 'Ornate Sanctum', sealed: true }),
@@ -102,11 +104,12 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
     expect(vm.crumbs[3]?.kind).toBe('Solar system');
   });
 
-  test('the stats line: depth, position among siblings under the kind’s own label, the locus, the seed', () => {
+  test('the stats line: depth, position among siblings under the kind’s own label, the locus, its hash, the seed', () => {
     expect(vm.stats).toEqual([
       { label: 'HOP_DENSITY', value: '04' },
       { label: 'ORBIT', value: '02/05' },
       { label: 'LOCUS', value: '0.0.0.0.1' },
+      { label: 'LOCUS_HASH', value: '43.210 / 07.654' },
       { label: 'SEED', value: '7F3A-91C2-0B4D-E6A8' },
     ]);
   });
@@ -116,7 +119,7 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
       ...PLANET,
       place: { ...(PLANET.place ?? ({} as never)), position: null, depth: 0, address: '0', frame: null },
     });
-    expect(universe.stats.map((stat) => stat.label)).toEqual(['HOP_DENSITY', 'LOCUS', 'SEED']);
+    expect(universe.stats.map((stat) => stat.label)).toEqual(['HOP_DENSITY', 'LOCUS', 'LOCUS_HASH', 'SEED']);
     expect(universe.frame).toBe('default');
   });
 });

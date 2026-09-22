@@ -51,6 +51,7 @@ export class HudPresenter implements Presenter<HudVM> {
               },
             ]),
         { label: 'LOCUS', value: place.address },
+        { label: 'LOCUS_HASH', value: place.hash },
         { label: 'SEED', value: snapshot.world?.seed ?? '' },
       ],
       place: {

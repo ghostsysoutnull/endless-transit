@@ -8,6 +8,8 @@ export interface PlaceSummary {
   readonly name: string;
   /** The path as text, `0.2.1`. */
   readonly address: string;
+  /** The place's decorative coordinates, `12.345 / 67.890`. */
+  readonly hash: string;
   /** Levels below the universe. */
   readonly depth: number;
   /** One-based position among the siblings; nothing for the universe. */

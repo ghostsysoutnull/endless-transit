@@ -90,6 +90,16 @@ describe('what the Guide promises about the big world', () => {
     expect(nullShare).toBeLessThan(0.33);
   });
 
+  test('a Null Reach has no coordinates: its hash reads 0x0000 / UNKNOWN (NullSector.groovy:33); every other place has a pair', () => {
+    for (const node of nodes.slice(0, 500)) {
+      expect(node.hash(), node.name()).toEqual(
+        node.kind().key() === 'null-reach'
+          ? '0x0000 / UNKNOWN'
+          : expect.stringMatching(/^\d{1,2}\.\d{3} \/ \d{1,2}\.\d{3}$/),
+      );
+    }
+  });
+
   test('one city in ten is a rebel district, and it swaps the planet’s cultures and eras (Guide, "Rebel districts")', () => {
     const planets = universes
       .map((universe) => firstOpen(universe)[4])

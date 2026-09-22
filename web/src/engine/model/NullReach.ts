@@ -56,6 +56,11 @@ export class NullReach extends Location {
     return 'Detect faint signal:';
   }
 
+  /** A void has no coordinates. */
+  override hash(): string {
+    return '0x0000 / UNKNOWN';
+  }
+
   override landmarkFactor(): number {
     return super.landmarkFactor() * LANDMARK_FACTOR;
   }
