@@ -216,7 +216,7 @@ describe('GameEngine — walking the big world', () => {
     expect(floors).toHaveLength(16);
     expect(floors[0]).toEqual({
       id: 'enter:0',
-      key: '1',
+      key: '',
       label: 'Access: Peak',
       place: 'Floor 15',
       role: 'travel',
@@ -234,6 +234,8 @@ describe('GameEngine — walking the big world', () => {
     expect(floors.map((option) => option.ordinal)).toEqual(
       Array.from({ length: 16 }, (_, n) => String(15 - n)),
     );
+    // A floor's key is its number (Guide:111) — so only floors 0–9 have one; a key never differs from the ordinal.
+    expect(floors.map((option) => option.key).join(',')).toBe(',,,,,,9,8,7,6,5,4,3,2,1,0');
     expect(floors.at(-1)?.label).toBe('Access: Lobby');
     expect(floors.at(-1)?.readings[0]?.value).toBe('TRANSIT_LOBBY');
     expect(building.options.filter((option) => option.role === 'move')).toEqual([]);
@@ -245,6 +247,7 @@ describe('GameEngine — walking the big world', () => {
     const back = engine.step('leave').options.filter((option) => option.role === 'travel');
     expect(back.map((option) => option.current).indexOf(true)).toBe(13);
     expect(back.filter((option) => option.current)).toHaveLength(1);
+    expect(engine.step('enter:6').place?.name).toBe('Floor 9');
   });
 
   test('the elevator: up, down and the corridor are moves with the Guide’s keys; the top and the ground drop one; nothing is listed', () => {
@@ -366,8 +369,8 @@ describe('GameEngine — walking the big world', () => {
       expect(open.slice(0, 9).map((option) => option.key)).toEqual(
         ['1', '2', '3', '4', '5', '6', '7', '8', '9'].slice(0, open.length),
       );
-      // Walk the widest branch on offer, then come back up when the street is reached.
-      engine.step(open.length === 0 ? 'leave' : `enter:${String(open.length - 1)}`);
+      // Walk the widest branch on offer, then come back up when the street is reached (a building's floors go by number).
+      engine.step(snapshot.place?.kind === 'Street' ? 'leave' : `enter:${String(open.length - 1)}`);
     }
   });
 

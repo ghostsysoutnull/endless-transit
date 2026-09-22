@@ -152,7 +152,7 @@ export class HudView implements View<HudVM> {
                     )}</span
                   >`
             }</span
-          ><kbd aria-hidden="true">${row.key}</kbd>
+          >${row.key === '' ? nothing : html`<kbd aria-hidden="true">${row.key}</kbd>`}
         </button>
       </li>
     `;
@@ -161,7 +161,9 @@ export class HudView implements View<HudVM> {
   #docked(option: OptionVM): TemplateResult {
     return html`
       <button type="button" class="pb" data-option=${option.id}>
-        <kbd aria-hidden="true">${option.key}</kbd><span>${option.label}</span>
+        ${option.key === '' ? nothing : html`<kbd aria-hidden="true">${option.key}</kbd>`}<span
+          >${option.label}</span
+        >
       </button>
     `;
   }

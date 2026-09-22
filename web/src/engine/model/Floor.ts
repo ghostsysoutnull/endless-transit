@@ -66,6 +66,10 @@ export class Floor extends Location {
     return this.#number;
   }
 
+  override goesByNumber(): boolean {
+    return true;
+  }
+
   /** Arriving at a floor calls the building's elevator to it (Floor.groovy:144). */
   override arrive(): Location {
     this.#building.elevatorTo(this.#number);

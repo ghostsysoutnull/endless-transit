@@ -48,6 +48,11 @@ export abstract class Location {
     return this.index() + 1;
   }
 
+  /** Whether this place goes by its own number on its parent's list (a floor, Guide:111) rather than by its position. */
+  goesByNumber(): boolean {
+    return false;
+  }
+
   facts(): readonly Fact[] {
     return [];
   }

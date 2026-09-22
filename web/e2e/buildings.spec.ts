@@ -55,6 +55,9 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await expect(page.locator('.moves')).toHaveCount(0);
   await expectTouchable(page, 'building');
   await shoot(page, '1-building');
+  await page.locator('.row.you').scrollIntoViewIfNeeded();
+  await shoot(page, '1a-building-elevator-at-lobby');
+  await page.evaluate(() => window.scrollTo(0, 0));
 
   await tapOption(page, 'enter:15', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
@@ -117,6 +120,7 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expect(page.locator('button[data-option="enter:13"] .mark')).toHaveText('[>X<]');
   await expect(page.locator('.row.you')).toHaveCount(1);
+  await page.locator('.row.you').scrollIntoViewIfNeeded();
   await shoot(page, '1b-building-elevator-at-2');
   // The floor left from the corridor is back at the elevator on the next visit (Guide:113).
   await tapOption(page, 'enter:13', hasTouch);
@@ -206,6 +210,25 @@ test('still fits at 360 px wide inside a building: building, elevator, corridor,
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expectTouchable(page, '360px building');
   expect(await page.evaluate(() => document.documentElement.clientWidth)).toBe(360);
+});
+
+test('on a desktop a floor’s key is its number (Guide:111): 0 is the lobby, 9 is floor 9, floors past 9 show no key, and no empty key box is drawn', async ({
+  page,
+  hasTouch,
+}) => {
+  test.skip(hasTouch, 'a phone shows no keys');
+  await plant(page, LOBBY.slice(0, -2));
+  await page.goto('./');
+  await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
+  await expect(page.locator('button[data-option="enter:0"] kbd')).toHaveCount(0);
+  await expect(page.locator('button[data-option="enter:15"] kbd')).toHaveText('0');
+  await expect(page.locator('button[data-option="enter:6"] kbd')).toHaveText('9');
+  await expect(page.locator('kbd:empty')).toHaveCount(0);
+  await page.keyboard.press('0');
+  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await page.keyboard.press('l');
+  await page.keyboard.press('9');
+  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 9');
 });
 
 test('the keyboard is an extra: U and D ride the elevator, C the corridor, B back, F forward', async ({

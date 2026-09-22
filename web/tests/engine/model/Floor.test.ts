@@ -56,6 +56,8 @@ describe('Floor — one child, the corridor; a number that is its place on the b
     expect(unit.listing().map((each) => each.name())).toEqual(['Floor 3', 'Floor 2', 'Floor 1', 'Floor 0']);
     expect(floor(2).number()).toBe(2);
     expect(floor(2).kind().key()).toBe('floor');
+    // …and it goes by that number, not by its position — the engine keys it by the number (Guide:111).
+    expect(floor(2).goesByNumber()).toBe(true);
   });
 
   test('the list names the ground floor Lobby and the top floor Peak; the zone, integrity and resonance ride beside (Building.groovy:208-217)', () => {

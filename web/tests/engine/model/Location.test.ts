@@ -104,6 +104,7 @@ describe('Location — the questions a journey asks (defaults every kind inherit
     // A path may continue into a listed child; into anything else, never.
     expect(universe.admits(must(universe.children()[1]))).toBe(true);
     expect(universe.admits(universe)).toBe(false);
+    expect(universe.goesByNumber()).toBe(false);
   });
 
   test('exit: leaving goes to the parent, and the label says what is left; the universe has no way out', () => {

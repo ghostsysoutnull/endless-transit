@@ -138,7 +138,7 @@ const BUILDING: GameSnapshot = {
   options: [
     option({
       id: 'enter:0',
-      key: '1',
+      key: '',
       label: 'Access: Peak',
       place: 'Floor 15',
       ordinal: '15',
@@ -150,7 +150,7 @@ const BUILDING: GameSnapshot = {
     }),
     option({
       id: 'enter:15',
-      key: '2',
+      key: '0',
       label: 'Access: Lobby',
       place: 'Floor 0',
       ordinal: '0',
@@ -301,6 +301,8 @@ describe('HudPresenter.toViewModel — options stay data', () => {
   test('a row goes by the ordinal the option carries — a floor by its number, two digits — and shows its readings', () => {
     const vm = presenter.toViewModel(BUILDING);
     expect(vm.rows.map((row) => row.ordinal)).toEqual(['15', '00']);
+    // The key is the option's, untouched: none for the Peak, the floor number for the lobby.
+    expect(vm.rows.map((row) => row.key)).toEqual(['', '0']);
     expect(vm.rows[0]?.readings).toEqual([
       { key: 'zone', label: 'FUNCTION', value: 'PEAK_OBSERVATORY' },
       { key: 'reading', label: 'ST', value: '100%' },

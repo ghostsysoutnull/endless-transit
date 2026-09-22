@@ -168,14 +168,24 @@ export class GameEngine {
     return `World ${seed.toString()} drawn.`;
   }
 
-  /** One option per place listed here, in the list's order; only the open ones get a key, handed out in order. */
+  /**
+   * One option per place listed here, in the list's order. Only the open ones get a key: a place that goes
+   * by its own number is keyed by that number when it is one character (Guide:111: `0` is the lobby) and
+   * not at all otherwise — a key never differs from the ordinal; the rest are handed out in order.
+   */
   #travelOptions(): readonly GameOption[] {
     const here = this.#journey.here();
     if (here === undefined) return [];
     let open = 0;
+    const keyOf = (child: Location): string => {
+      if (child.sealed()) return '';
+      if (!child.goesByNumber()) return this.#childKeys[open++] ?? '';
+      const number = String(child.ordinal());
+      return number.length === 1 ? number : '';
+    };
     return here.listing().map((child, index) => ({
       id: `${TRAVEL}${String(index)}`,
-      key: child.sealed() ? '' : (this.#childKeys[open++] ?? ''),
+      key: keyOf(child),
       label: `${here.approachVerb()} ${child.callSign()}`,
       place: child.name(),
       role: 'travel',
