@@ -215,6 +215,14 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(must(single.children()[0]).listing()).toEqual([]);
   });
 
+  test('every move a room offers can be made — the offer and the making have one owner', () => {
+    for (const room of rooms.slice(0, 400)) {
+      for (const move of room.moves()) {
+        expect(room.move(move.id), `${room.address().toString()}: ${move.id}`).toBeDefined();
+      }
+    }
+  });
+
   test('a room lists nothing, and the apartment is where its position is counted', () => {
     const room: Location = must(rooms[10]);
     expect(room.listing()).toEqual([]);

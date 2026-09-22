@@ -176,6 +176,19 @@ describe('Floor — the corridor', () => {
     expect(middle.moves().map((move) => move.id)).toEqual(['up', 'down', 'corridor']);
   });
 
+  test('every move a floor offers can be made, at the elevator and in the corridor — the offer and the making have one owner', () => {
+    for (let number = 0; number < FLOORS; number++) {
+      const each = floor(number);
+      for (const move of each.moves()) {
+        expect(each.move(move.id), `${each.name()} at the elevator: ${move.id}`).toBeDefined();
+      }
+      each.enterCorridor();
+      for (const move of each.moves()) {
+        expect(each.move(move.id), `${each.name()} in the corridor: ${move.id}`).toBeDefined();
+      }
+    }
+  });
+
   test('the corridor is generated only when the floor needs it', () => {
     const { building: unit, source } = building();
     const second = must(unit.children()[1]) as Floor;

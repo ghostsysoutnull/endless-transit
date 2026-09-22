@@ -3,13 +3,17 @@ import type { Fact } from './Fact.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
+import { MoveTable } from './MoveTable.ts';
 import type { Origin } from './Origin.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 
 export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
 
-const FORWARD: Move = { id: 'forward', label: 'Go forward' };
-const BACK: Move = { id: 'back', label: 'Go back' };
+/** Back to the previous room unless this is the first, forward to the next unless it is the last. */
+const MOVES = new MoveTable<Room>([
+  { move: { id: 'back', label: 'Go back' }, to: (room) => room.neighbour(-1) },
+  { move: { id: 'forward', label: 'Go forward' }, to: (room) => room.neighbour(1) },
+]);
 
 /**
  * A room of an apartment — the bottom of the world, where the traveller stands. Rooms are walked in order:
@@ -73,26 +77,17 @@ export class Room extends Location {
     return [];
   }
 
-  #neighbour(steps: number): Location | undefined {
+  /** The room `steps` further along the apartment (back when negative); nothing past either end. */
+  neighbour(steps: number): Location | undefined {
     return this.#apartment.children()[this.index() + steps];
   }
 
   override moves(): readonly Move[] {
-    return [
-      ...(this.#neighbour(-1) === undefined ? [] : [BACK]),
-      ...(this.#neighbour(1) === undefined ? [] : [FORWARD]),
-    ];
+    return MOVES.offered(this);
   }
 
   override move(id: string): Location | undefined {
-    switch (id) {
-      case FORWARD.id:
-        return this.#neighbour(1);
-      case BACK.id:
-        return this.#neighbour(-1);
-      default:
-        return undefined;
-    }
+    return MOVES.make(this, id);
   }
 
   /** Only the first room has the way out: through the apartment, to wherever it opens on (the floor). */

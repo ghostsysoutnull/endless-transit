@@ -3,10 +3,20 @@ import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
+import { MoveTable } from './MoveTable.ts';
 
-const UP: Move = { id: 'up', label: 'Go Up' };
-const DOWN: Move = { id: 'down', label: 'Go Down' };
-const CORRIDOR: Move = { id: 'corridor', label: 'Enter Corridor' };
+/** Up unless this is the top floor, down unless the ground floor, and the corridor (ElevatorState.groovy:22-45). */
+const MOVES = new MoveTable<Floor>([
+  { move: { id: 'up', label: 'Go Up' }, to: (floor) => floor.neighbour(1) },
+  { move: { id: 'down', label: 'Go Down' }, to: (floor) => floor.neighbour(-1) },
+  {
+    move: { id: 'corridor', label: 'Enter Corridor' },
+    to: (floor) => floor,
+    act: (floor) => {
+      floor.enterCorridor();
+    },
+  },
+]);
 const STABILITY_DECIMALS = 2;
 
 /**
@@ -22,27 +32,12 @@ export class ElevatorState implements FloorState {
     return [];
   }
 
-  /** Up unless this is the top floor, down unless the ground floor, and the corridor (ElevatorState.groovy:22-45). */
   moves(floor: Floor): readonly Move[] {
-    return [
-      ...(floor.neighbour(1) === undefined ? [] : [UP]),
-      ...(floor.neighbour(-1) === undefined ? [] : [DOWN]),
-      CORRIDOR,
-    ];
+    return MOVES.offered(floor);
   }
 
   move(floor: Floor, id: string): Location | undefined {
-    switch (id) {
-      case UP.id:
-        return floor.neighbour(1);
-      case DOWN.id:
-        return floor.neighbour(-1);
-      case CORRIDOR.id:
-        floor.enterCorridor();
-        return floor;
-      default:
-        return undefined;
-    }
+    return MOVES.make(floor, id);
   }
 
   /** TECH_ERA, RESONANCE, STABILITY and ATMOS_SHIFT (Guide:351-354; ElevatorState.groovy:63-75). */

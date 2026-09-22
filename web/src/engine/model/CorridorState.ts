@@ -3,8 +3,18 @@ import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
+import { MoveTable } from './MoveTable.ts';
 
-const ELEVATOR: Move = { id: 'elevator', label: 'Back to Elevator' };
+/** The one move: back to the elevator. */
+const MOVES = new MoveTable<Floor>([
+  {
+    move: { id: 'elevator', label: 'Back to Elevator' },
+    to: (floor) => floor,
+    act: (floor) => {
+      floor.returnToElevator();
+    },
+  },
+]);
 
 /**
  * In the corridor: the floor shows its corridor — the doors are listed, the words are the corridor's —
@@ -19,14 +29,12 @@ export class CorridorState implements FloorState {
     return floor.corridor().listing();
   }
 
-  moves(): readonly Move[] {
-    return [ELEVATOR];
+  moves(floor: Floor): readonly Move[] {
+    return MOVES.offered(floor);
   }
 
   move(floor: Floor, id: string): Location | undefined {
-    if (id !== ELEVATOR.id) return undefined;
-    floor.returnToElevator();
-    return floor;
+    return MOVES.make(floor, id);
   }
 
   facts(floor: Floor): readonly Fact[] {
