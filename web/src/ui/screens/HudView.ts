@@ -9,7 +9,8 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * Draws the world screen with lit-html: the HUD (path and stats), the narrative panel, the list of places
  * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
- * `data-option`; a sealed row is a closed line — never a button that does nothing. Rows are keyed by
+ * `data-option`; a sealed row is a closed line — never a button that does nothing. The status line here is
+ * for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again.
  */
@@ -39,8 +40,9 @@ export class HudView implements View<HudVM> {
             <ol class="spark" data-testid="path">
               ${vm.crumbs.map(
                 (crumb) => html`
-                  <li class=${crumb.current ? 'crumb you' : 'crumb'} title=${crumb.kind}>
-                    <span class="ic" aria-hidden="true">${crumb.icon}</span
+                  <li class=${crumb.current ? 'crumb you' : 'crumb'}>
+                    <span class="vh">${crumb.kind}</span
+                    ><span class="ic" aria-hidden="true">${crumb.icon}</span
                     ><span class="cn" aria-current=${crumb.current ? 'location' : nothing}
                       >${crumb.name}</span
                     >
@@ -75,14 +77,7 @@ export class HudView implements View<HudVM> {
           </ul>
           <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
           <p class="diag">${vm.place.diagnostic}</p>
-          <p
-            class=${vm.status === '' ? 'status quiet' : 'status'}
-            role="status"
-            aria-live="polite"
-            data-testid="status"
-          >
-            ${vm.status}
-          </p>
+          <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
         </section>
         <section class="travel" aria-label=${vm.regions.travel}>
           <h3 class="heading">${vm.heading}</h3>

@@ -7,14 +7,16 @@ import type { ScreenStage } from './ScreenStage.ts';
 /**
  * The loop of the page: input → `engine.step` → the screen that accepts the snapshot → its view. The
  * engine pushes nothing and the views pull nothing; this class is the only one that knows all three. It
- * owns two rules every screen gets without writing them: where the focus goes after a render, and that a
- * new scene starts from the top of the page.
+ * owns three things every screen gets without writing them: where the focus goes after a render, that a
+ * new scene starts from the top of the page, and the one live region that says what just happened — one
+ * node, mounted once, whose text changes; a region born with the screen would not be announced.
  */
 export class Shell {
   readonly #engine: GameEngine;
   readonly #stages: readonly ScreenStage<Screen>[];
   readonly #router: InputRouter;
   #container: HTMLElement | undefined;
+  #announcer: HTMLElement | undefined;
   #onStage: ScreenStage<Screen> | undefined;
   #scene: string | undefined;
   /** The scene the player just left and the option that held the focus there — the way back gets it again. */
@@ -31,6 +33,7 @@ export class Shell {
 
   start(container: HTMLElement): void {
     this.#container = container;
+    this.#announcer = this.#mountAnnouncer(container);
     this.#router.attach(container);
     this.#show(this.#engine.snapshot());
   }
@@ -39,6 +42,8 @@ export class Shell {
     this.#router.detach();
     this.#onStage?.dispose();
     this.#onStage = undefined;
+    this.#announcer?.remove();
+    this.#announcer = undefined;
     this.#container = undefined;
   }
 
@@ -54,6 +59,7 @@ export class Shell {
     }
     const screen = stage.show(snapshot);
     this.#router.offer(screen.options);
+    this.#announce(screen.status);
     if (held?.isConnected === false) this.#focusAnOption(screen.scene);
     if (screen.scene !== this.#scene) {
       this.#startFromTheTop();
@@ -62,6 +68,23 @@ export class Shell {
         this.#scene === undefined || optionId === undefined ? undefined : { scene: this.#scene, optionId };
     }
     this.#scene = screen.scene;
+  }
+
+  /** Before any screen, so the screens' nodes come after it and a screen's own render never touches it. */
+  #mountAnnouncer(container: HTMLElement): HTMLElement {
+    const announcer = container.ownerDocument.createElement('p');
+    announcer.className = 'vh';
+    announcer.setAttribute('role', 'status');
+    announcer.setAttribute('aria-live', 'polite');
+    container.prepend(announcer);
+    return announcer;
+  }
+
+  /** The same words twice are one event, not two: the text changes only when the message does. */
+  #announce(status: string): void {
+    if (this.#announcer !== undefined && this.#announcer.textContent !== status) {
+      this.#announcer.textContent = status;
+    }
   }
 
   /** The element of this screen that holds the focus, if any — focus elsewhere (or nowhere) is not ours. */

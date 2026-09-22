@@ -6,4 +6,6 @@ export interface Screen {
   readonly scene: string;
   /** The options a player may act on right now — what the input router listens for. */
   readonly options: readonly OptionVM[];
+  /** What just happened, in words — the shell's live region says it; the screen may also show it. */
+  readonly status: string;
 }

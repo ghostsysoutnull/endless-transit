@@ -7,7 +7,7 @@ export interface HudVM extends Screen {
   readonly title: string;
   /** The colour name of the frame (`yellow`), `default` above planet level; the stylesheet owns the hue. */
   readonly frame: string;
-  /** The path from the universe, one crumb per level; the last one is where the player stands. */
+  /** The path from the universe, one crumb per level; the last one is where the player stands. `kind` is read out, not hovered for. */
   readonly crumbs: readonly {
     readonly icon: string;
     readonly kind: string;
