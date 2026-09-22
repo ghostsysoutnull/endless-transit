@@ -158,29 +158,29 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(room.facts().map((fact) => fact.label)).toEqual(['TYPE', 'OXY', 'TEMP', 'SIGNAL']);
   });
 
-  test('the room’s words come from its own culture, era and trait: structure, walls with a colour, lighting (Room.groovy:274-276; ThemeService.groovy:99-121)', () => {
+  test('the room’s words are its atmosphere — structure, walls with a colour, lighting — from its own culture, era and trait in all but the glitched few (Room.groovy:274-276; ThemeService.groovy:221-258)', () => {
     const colours = library.list('themes/colours');
-    for (const room of rooms.slice(0, 500)) {
+    let own = 0;
+    const sample = rooms.slice(0, 500);
+    for (const room of sample) {
       const apartment = as(room.parent(), Apartment);
       const trait = must(room.vibe()?.mutation()).key();
-      const [where, light] = room.description();
-      expect(room.description()).toHaveLength(2);
-      const structures = library.list(`themes/atmosphere/structures/${trait}`);
-      const walls = library.list(`themes/atmosphere/walls/${apartment.culture().key()}`);
-      const lighting = library.list(`themes/atmosphere/lighting/${apartment.era().key()}`);
-      expect(
-        structures.some((each) => where?.startsWith(`You are in ${each}. The walls are `)),
-        where,
-      ).toBe(true);
-      expect(
-        colours.some((colour) => walls.some((wall) => where?.endsWith(` ${colour} ${wall}.`))),
-        where,
-      ).toBe(true);
-      expect(
-        lighting.some((each) => light === `The space is illuminated by ${each}.`),
-        light,
-      ).toBe(true);
+      const { structure, colour, walls, lighting } = room.atmosphere();
+      expect(room.description()).toEqual([
+        `You are in ${structure}. The walls are ${colour} ${walls}.`,
+        `The space is illuminated by ${lighting}.`,
+      ]);
+      expect(colours).toContain(colour);
+      if (
+        library.list(`themes/atmosphere/structures/${trait}`).includes(structure) &&
+        library.list(`themes/atmosphere/walls/${apartment.culture().key()}`).includes(walls) &&
+        library.list(`themes/atmosphere/lighting/${apartment.era().key()}`).includes(lighting)
+      ) {
+        own++;
+      }
     }
+    // The glitch (one room in twenty, an anomaly always) is RoomContents.test.ts's business.
+    expect(own / sample.length).toBeGreaterThan(0.93);
   });
 
   test('moves in a room: forward to the next, back to the previous; only the first room has the way out, to the floor (Guide:76, 115; Room.groovy:243-257)', () => {

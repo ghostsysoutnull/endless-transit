@@ -1,4 +1,5 @@
 import type { Apartment } from './Apartment.ts';
+import type { Atmosphere } from './Atmosphere.ts';
 import type { Fact } from './Fact.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
@@ -25,16 +26,18 @@ export class Room extends Location {
   readonly #apartment: Apartment;
   readonly #name: string;
   readonly #category: RoomCategory;
-  readonly #atmosphere: { structure: string; colour: string; walls: string; lighting: string };
+  readonly #atmosphere: Atmosphere;
   readonly #traits: { oxygen: number; temperature: number; signal: string };
+  readonly #furniture: readonly string[];
 
   constructor(
     origin: Origin<Apartment>,
     facts: {
       name: string;
       category: RoomCategory;
-      atmosphere: { structure: string; colour: string; walls: string; lighting: string };
+      atmosphere: Atmosphere;
       traits: { oxygen: number; temperature: number; signal: string };
+      furniture: readonly string[];
     },
   ) {
     super(origin);
@@ -43,6 +46,7 @@ export class Room extends Location {
     this.#category = facts.category;
     this.#atmosphere = facts.atmosphere;
     this.#traits = facts.traits;
+    this.#furniture = Object.freeze([...facts.furniture]);
   }
 
   kind(): LocationKind {
@@ -71,6 +75,16 @@ export class Room extends Location {
 
   signal(): string {
     return this.#traits.signal;
+  }
+
+  /** What the room is made of and lit by — the words its description is built from. */
+  atmosphere(): Atmosphere {
+    return this.#atmosphere;
+  }
+
+  /** One to three pieces of the culture's furniture in some condition; not loot (Guide:171). */
+  furniture(): readonly string[] {
+    return this.#furniture;
   }
 
   /** The relics lying here — the apartment's, the ones it dealt to this room (Guide:167: objects live in apartments). */

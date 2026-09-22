@@ -1,4 +1,5 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
+import type { WarningSink } from '#engine/content/WarningSink.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import { UNIVERSE_KIND } from '#engine/model/Universe.ts';
@@ -30,7 +31,7 @@ import { UniverseFactory } from './UniverseFactory.ts';
 export class LocationRegistry implements FactoryLookup {
   readonly #factories: ReadonlyMap<string, LocationFactory>;
 
-  constructor(library: ContentLibrary, themes: ThemeCatalog) {
+  constructor(library: ContentLibrary, themes: ThemeCatalog, warnings: WarningSink) {
     const categories = new RoomCategories(library);
     const entries: readonly LocationFactory[] = [
       new UniverseFactory(this),
@@ -46,7 +47,7 @@ export class LocationRegistry implements FactoryLookup {
       new FloorFactory(this, library),
       new CorridorFactory(this, library),
       new ApartmentFactory(this, library, categories),
-      new RoomFactory(library, categories),
+      new RoomFactory(library, categories, warnings),
     ];
     this.#factories = new Map(entries.map((factory) => [factory.kind().key(), factory]));
   }

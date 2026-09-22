@@ -19,6 +19,11 @@ export class ContentLibrary {
     return this.list(`${directory}/index`);
   }
 
+  /** Whether a list exists at all — for a caller that has a fallback to fall to, and a warning to raise. */
+  has(path: string): boolean {
+    return this.#parsed.has(path) || this.#source.read(`${path}.txt`) !== undefined;
+  }
+
   list(path: string): readonly string[] {
     const known = this.#parsed.get(path);
     if (known !== undefined) return known;
