@@ -1,0 +1,4 @@
+Laboratory|stamped DATA_VAULT
+Neural Link Array|
+Observation Deck|
+Bio-Server|stamped DATA_VAULT

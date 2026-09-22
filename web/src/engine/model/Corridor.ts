@@ -34,6 +34,10 @@ export class Corridor extends Location {
     return 'Corridor';
   }
 
+  floor(): Floor {
+    return this.#floor;
+  }
+
   override arrival(): Location {
     return this.#floor;
   }

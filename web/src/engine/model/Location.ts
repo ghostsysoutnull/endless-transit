@@ -68,9 +68,9 @@ export abstract class Location {
     return this;
   }
 
-  /** Where leaving this place goes; nothing when there is no way out from here. Pure: nothing changes. */
+  /** Where leaving this place goes — wherever the parent receives travellers; nothing when there is no way out. Pure. */
   exit(): Location | undefined {
-    return this.parent();
+    return this.parent()?.arrival();
   }
 
   /** The act of leaving: whatever the kind does on the way out, then `exit()`. */

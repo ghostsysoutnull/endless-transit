@@ -3,7 +3,7 @@ import { Address } from '#engine/model/Address.ts';
 import type { Location } from '#engine/model/Location.ts';
 import { LocationKind } from '#engine/model/LocationKind.ts';
 import { Seed } from '#engine/rng/Seed.ts';
-import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
+import { descend, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
 
@@ -21,7 +21,7 @@ function portrait(location: Location): unknown {
 }
 
 describe('LocationRegistry — a kind is a registry entry', () => {
-  test('twelve kinds are registered, in the order of the chain', () => {
+  test('fourteen kinds are registered, in the order of the chain', () => {
     expect(registry.kinds().map((kind) => kind.key())).toEqual([
       'universe',
       'filament',
@@ -35,7 +35,36 @@ describe('LocationRegistry — a kind is a registry entry', () => {
       'building',
       'floor',
       'corridor',
+      'apartment',
+      'room',
     ]);
+  });
+
+  test('every place from the universe down to a room is of a registered kind', () => {
+    const registered = new Set(registry.kinds().map((kind) => kind.key()));
+    for (let n = 0; n < 30; n++) {
+      const chain = descend(
+        registry.universe(sampleSeed(n)),
+        (_listed, depth) => n + depth,
+        () => false,
+      );
+      expect(chain.map((location) => location.kind().key()).slice(7)).toEqual([
+        'street',
+        'building',
+        'floor',
+      ]);
+      const floor = must(chain.at(-1));
+      floor.move('corridor');
+      const room = must(floor.listing()[n % floor.listing().length]).arrival();
+      expect(
+        room
+          .trail()
+          .map((location) => location.kind().key())
+          .slice(8),
+      ).toEqual(['building', 'floor', 'corridor', 'apartment', 'room']);
+      for (const location of room.trail()) expect(registered.has(location.kind().key())).toBe(true);
+      expect(room.depth()).toBe(12);
+    }
   });
 
   test('every location the generator makes is of a registered kind — nothing is built outside the registry', () => {
@@ -106,6 +135,22 @@ describe('determinism and position independence', () => {
 
     expect(portrait(jumped)).toEqual(portrait(walked));
     expect(portrait(afterTheCrowd)).toEqual(portrait(walked));
+  });
+
+  test('a room is the same walked to or jumped to, from two separate generators', () => {
+    for (let n = 0; n < 10; n++) {
+      const walk = (universe: Location): Location => {
+        const floor = must(descend(universe, () => n).at(-1));
+        floor.move('corridor');
+        return must(floor.listing()[n % floor.listing().length]).arrival();
+      };
+      const one = walk(realRegistry().universe(sampleSeed(n)));
+      const two = realRegistry().universe(sampleSeed(n));
+      const jumped = must(two.descendant(one.address()));
+      expect(portrait(jumped)).toEqual(portrait(one));
+      expect(one.kind().key()).toBe('room');
+      expect(portrait(walk(realRegistry().universe(sampleSeed(n))))).toEqual(portrait(one));
+    }
   });
 
   test('different seeds give different worlds', () => {

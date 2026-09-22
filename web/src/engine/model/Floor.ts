@@ -88,6 +88,10 @@ export class Floor extends Location {
     ];
   }
 
+  building(): Building {
+    return this.#building;
+  }
+
   /** The floor's one child. */
   corridor(): Location {
     const corridor = this.children()[0];

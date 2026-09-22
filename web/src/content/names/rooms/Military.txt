@@ -1,0 +1,4 @@
+Security Station|burned DANGER
+Barracks|
+Armory|burned DANGER
+Tactical Hub|

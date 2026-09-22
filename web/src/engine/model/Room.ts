@@ -1,0 +1,137 @@
+import type { Apartment } from './Apartment.ts';
+import type { Fact } from './Fact.ts';
+import { Location } from './Location.ts';
+import { LocationKind } from './LocationKind.ts';
+import type { Move } from './Move.ts';
+import type { Origin } from './Origin.ts';
+import type { RoomCategory } from './RoomCategory.ts';
+
+export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
+
+const FORWARD: Move = { id: 'forward', label: 'Go forward' };
+const BACK: Move = { id: 'back', label: 'Go back' };
+
+/**
+ * A room of an apartment — the bottom of the world, where the traveller stands. Rooms are walked in order:
+ * forward to the next, back to the previous, and only the first room has the way out, to the corridor
+ * (Guide:76, 115; Room.groovy:243-257). Its words are its culture's, its era's and its trait's.
+ */
+export class Room extends Location {
+  readonly #apartment: Apartment;
+  readonly #name: string;
+  readonly #category: RoomCategory;
+  readonly #atmosphere: { structure: string; colour: string; walls: string; lighting: string };
+  readonly #traits: { oxygen: number; temperature: number; signal: string };
+
+  constructor(
+    origin: Origin<Apartment>,
+    facts: {
+      name: string;
+      category: RoomCategory;
+      atmosphere: { structure: string; colour: string; walls: string; lighting: string };
+      traits: { oxygen: number; temperature: number; signal: string };
+    },
+  ) {
+    super(origin);
+    this.#apartment = origin.parent;
+    this.#name = facts.name;
+    this.#category = facts.category;
+    this.#atmosphere = facts.atmosphere;
+    this.#traits = facts.traits;
+  }
+
+  kind(): LocationKind {
+    return ROOM_KIND;
+  }
+
+  name(): string {
+    return this.#name;
+  }
+
+  type(): string {
+    return this.#category.name();
+  }
+
+  category(): RoomCategory {
+    return this.#category;
+  }
+
+  oxygen(): number {
+    return this.#traits.oxygen;
+  }
+
+  temperature(): number {
+    return this.#traits.temperature;
+  }
+
+  signal(): string {
+    return this.#traits.signal;
+  }
+
+  /** A room lists no places: its rooms are its siblings, walked with forward and back. */
+  override listing(): readonly Location[] {
+    return [];
+  }
+
+  #neighbour(steps: number): Location | undefined {
+    return this.#apartment.children()[this.index() + steps];
+  }
+
+  override moves(): readonly Move[] {
+    return [
+      ...(this.#neighbour(-1) === undefined ? [] : [BACK]),
+      ...(this.#neighbour(1) === undefined ? [] : [FORWARD]),
+    ];
+  }
+
+  override move(id: string): Location | undefined {
+    switch (id) {
+      case FORWARD.id:
+        return this.#neighbour(1);
+      case BACK.id:
+        return this.#neighbour(-1);
+      default:
+        return undefined;
+    }
+  }
+
+  /** Only the first room has the way out: through the apartment, to wherever it opens on (the floor). */
+  override exit(): Location | undefined {
+    return this.index() === 0 ? this.#apartment.exit() : undefined;
+  }
+
+  override leaveLabel(): string {
+    return 'Exit Apartment';
+  }
+
+  /** The neural-link interpretation (Room.groovy:274-276), one sentence per line. */
+  description(): readonly string[] {
+    const { structure, colour, walls, lighting } = this.#atmosphere;
+    return [
+      `You are in ${structure}. The walls are ${colour} ${walls}.`,
+      `The space is illuminated by ${lighting}.`,
+    ];
+  }
+
+  /** The local cell diagnostic (Room.groovy:124-130). */
+  override facts(): readonly Fact[] {
+    return [
+      { key: 'reading', label: 'TYPE', value: this.type() },
+      { key: 'reading', label: 'OXY', value: `${String(this.#traits.oxygen)}%` },
+      { key: 'reading', label: 'TEMP', value: `${String(this.#traits.temperature)}°C` },
+      { key: 'signal', label: 'SIGNAL', value: this.#traits.signal },
+    ];
+  }
+
+  status(): string {
+    return `ATMOS: ${String(this.#traits.oxygen)}% | TEMP: ${String(this.#traits.temperature)}°C`;
+  }
+
+  childrenHeading(): string {
+    return '';
+  }
+
+  approachVerb(): string {
+    return '';
+  }
+}

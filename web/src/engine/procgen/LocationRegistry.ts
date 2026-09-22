@@ -3,6 +3,7 @@ import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import { UNIVERSE_KIND } from '#engine/model/Universe.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import { ApartmentFactory } from './ApartmentFactory.ts';
 import { BuildingFactory } from './BuildingFactory.ts';
 import { CityFactory } from './CityFactory.ts';
 import { CorridorFactory } from './CorridorFactory.ts';
@@ -13,6 +14,8 @@ import { FloorFactory } from './FloorFactory.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import { NullReachFactory } from './NullReachFactory.ts';
 import { PlanetFactory } from './PlanetFactory.ts';
+import { RoomCategories } from './RoomCategories.ts';
+import { RoomFactory } from './RoomFactory.ts';
 import { SectorFactory } from './SectorFactory.ts';
 import { SolarSystemFactory } from './SolarSystemFactory.ts';
 import { StreetFactory } from './StreetFactory.ts';
@@ -28,6 +31,7 @@ export class LocationRegistry implements FactoryLookup {
   readonly #factories: ReadonlyMap<string, LocationFactory>;
 
   constructor(library: ContentLibrary, themes: ThemeCatalog) {
+    const categories = new RoomCategories(library);
     const entries: readonly LocationFactory[] = [
       new UniverseFactory(this),
       new FilamentFactory(this, library),
@@ -40,7 +44,9 @@ export class LocationRegistry implements FactoryLookup {
       new StreetFactory(this, library),
       new BuildingFactory(this, library),
       new FloorFactory(this, library),
-      new CorridorFactory(library),
+      new CorridorFactory(this, library),
+      new ApartmentFactory(this, library, categories),
+      new RoomFactory(library, categories),
     ];
     this.#factories = new Map(entries.map((factory) => [factory.kind().key(), factory]));
   }
