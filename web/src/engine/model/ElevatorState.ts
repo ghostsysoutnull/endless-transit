@@ -7,10 +7,10 @@ import { MoveTable } from './MoveTable.ts';
 
 /** Up unless this is the top floor, down unless the ground floor, and the corridor (ElevatorState.groovy:22-45). */
 const MOVES = new MoveTable<Floor>([
-  { move: { id: 'up', label: 'Go Up' }, to: (floor) => floor.neighbour(1) },
-  { move: { id: 'down', label: 'Go Down' }, to: (floor) => floor.neighbour(-1) },
+  { move: { id: 'up', label: 'Go Up', opposite: 'down' }, to: (floor) => floor.neighbour(1) },
+  { move: { id: 'down', label: 'Go Down', opposite: 'up' }, to: (floor) => floor.neighbour(-1) },
   {
-    move: { id: 'corridor', label: 'Enter Corridor' },
+    move: { id: 'corridor', label: 'Enter Corridor', opposite: 'elevator' },
     to: (floor) => floor,
     act: (floor) => {
       floor.enterCorridor();

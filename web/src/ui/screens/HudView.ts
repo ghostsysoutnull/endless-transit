@@ -10,8 +10,9 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name. The moves a place offers are a strip of buttons under the panel. The status line here is
- * for the eye; the shell's own live region speaks it. Rows are keyed by
+ * beside its name. The moves a place offers are a strip of buttons under the panel. The panel is the
+ * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
+ * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again.
  */
@@ -63,7 +64,7 @@ export class HudView implements View<HudVM> {
             )}
           </dl>
         </section>
-        <section class="cap" aria-label=${vm.regions.place}>
+        <section class="cap" aria-label=${vm.regions.place} tabindex="-1" data-rest>
           <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
           <h2>
             <span class="ic" aria-hidden="true">${vm.place.icon}</span

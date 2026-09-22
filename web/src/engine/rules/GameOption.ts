@@ -18,4 +18,6 @@ export interface GameOption {
   readonly ordinal: string;
   /** The readings a listed place shows beside its name; none for most kinds. */
   readonly readings: readonly Fact[];
+  /** The id of the option that undoes this one (a move's way back); empty when it has none. */
+  readonly opposite: string;
 }

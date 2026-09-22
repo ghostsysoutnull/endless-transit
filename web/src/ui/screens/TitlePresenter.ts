@@ -39,6 +39,7 @@ export class TitlePresenter implements Presenter<TitleVM> {
         id: option.id,
         key: option.key.toUpperCase(),
         label: option.label.toUpperCase(),
+        opposite: option.opposite,
       })),
       status: snapshot.message,
       build: this.#masthead.buildLine(),

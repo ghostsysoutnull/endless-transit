@@ -25,11 +25,13 @@ function system(id: string, key: string, label: string): GameOption {
     landmark: false,
     ordinal: '',
     readings: [],
+    opposite: '',
   };
 }
 
-function move(id: string, key: string, label: string): GameOption {
-  return { ...system(`move:${id}`, key, label), role: 'move' };
+/** A move option names the option that undoes it, so a screen can keep the focus off it. */
+function move(id: string, key: string, label: string, opposite: string): GameOption {
+  return { ...system(`move:${id}`, key, label), role: 'move', opposite: `move:${opposite}` };
 }
 
 function ids(snapshot: GameSnapshot): string[] {
@@ -136,6 +138,7 @@ describe('GameEngine — walking the big world', () => {
       landmark: false,
       ordinal: '1',
       readings: [],
+      opposite: '',
     });
     expect(ids(snapshot)).not.toContain('leave');
     expect(snapshot.options.at(-1)).toEqual(system('to-title', 't', 'Title screen'));
@@ -162,6 +165,7 @@ describe('GameEngine — walking the big world', () => {
       landmark: false,
       ordinal: '',
       readings: [],
+      opposite: '',
     });
     expect(snapshot.message).toBe('Entered Zeta-915-Link.');
   });
@@ -221,6 +225,7 @@ describe('GameEngine — walking the big world', () => {
         { key: 'reading', label: 'ST', value: '100%' },
         { key: 'reading', label: 'RES', value: '1582Hz' },
       ],
+      opposite: '',
     });
     expect(floors.map((option) => option.ordinal)).toEqual(
       Array.from({ length: 16 }, (_, n) => String(15 - n)),
@@ -246,8 +251,8 @@ describe('GameEngine — walking the big world', () => {
       'ATMOS_SHIFT',
     ]);
     expect(lobby.options).toEqual([
-      move('up', 'u', 'Go Up'),
-      move('corridor', 'c', 'Enter Corridor'),
+      move('up', 'u', 'Go Up', 'down'),
+      move('corridor', 'c', 'Enter Corridor', 'elevator'),
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
       system('to-title', 't', 'Title screen'),
     ]);
@@ -292,9 +297,10 @@ describe('GameEngine — walking the big world', () => {
       landmark: false,
       ordinal: '1',
       readings: [],
+      opposite: '',
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
-      move('elevator', 'b', 'Back to Elevator'),
+      move('elevator', 'b', 'Back to Elevator', 'corridor'),
     ]);
     expect(corridor.options.find((option) => option.id === 'leave')?.label).toBe('Leave Floor');
     const elevator = engine.step('move:elevator');
@@ -316,7 +322,7 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.facts.map((fact) => fact.label)).toEqual(['TYPE', 'OXY', 'TEMP', 'SIGNAL']);
     expect(room.message).toBe('Entered Grand Power Plant.');
     expect(room.options).toEqual([
-      move('forward', 'f', 'Go forward'),
+      move('forward', 'f', 'Go forward', 'back'),
       { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
       system('to-title', 't', 'Title screen'),
     ]);

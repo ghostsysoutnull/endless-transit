@@ -162,6 +162,12 @@ body {
   margin: 0;
 }
 
+/* The panel takes the focus when a ride ends (the shell's rule): a ring says where it went, for keyboards only. */
+.cap:focus-visible {
+  outline: 2px solid var(--yl);
+  outline-offset: 2px;
+}
+
 .eyebrow {
   font-size: 10.5px;
   letter-spacing: 0.16em;

@@ -20,10 +20,13 @@ interface Self {
 }
 
 const table = new MoveTable<Self>([
-  { move: { id: 'on', label: 'Go on' }, to: () => THERE },
-  { move: { id: 'gate', label: 'Open the gate' }, to: (self) => (self.open ? THERE : undefined) },
+  { move: { id: 'on', label: 'Go on', opposite: 'back' }, to: () => THERE },
   {
-    move: { id: 'ring', label: 'Ring' },
+    move: { id: 'gate', label: 'Open the gate', opposite: 'gate' },
+    to: (self) => (self.open ? THERE : undefined),
+  },
+  {
+    move: { id: 'ring', label: 'Ring', opposite: 'ring' },
     to: () => THERE,
     act: (self) => {
       self.acted.push('rang');

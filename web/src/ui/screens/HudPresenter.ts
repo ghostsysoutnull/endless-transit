@@ -78,7 +78,9 @@ export class HudPresenter implements Presenter<HudVM> {
       sealedTag: 'SEALED',
       dock,
       options: [
-        ...rows.filter((row) => !row.sealed).map((row) => ({ id: row.id, key: row.key, label: row.label })),
+        ...rows
+          .filter((row) => !row.sealed)
+          .map((row) => ({ id: row.id, key: row.key, label: row.label, opposite: '' })),
         ...moves,
         ...dock,
       ],
@@ -110,6 +112,11 @@ export class HudPresenter implements Presenter<HudVM> {
 
   #docked(option: GameOption): OptionVM {
     const mark = option.role === 'return' ? RETURN_MARK : '';
-    return { id: option.id, key: option.key.toUpperCase(), label: `${mark}${option.label.toUpperCase()}` };
+    return {
+      id: option.id,
+      key: option.key.toUpperCase(),
+      label: `${mark}${option.label.toUpperCase()}`,
+      opposite: option.opposite,
+    };
   }
 }

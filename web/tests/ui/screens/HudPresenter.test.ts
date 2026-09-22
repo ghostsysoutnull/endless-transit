@@ -15,6 +15,7 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     landmark: false,
     ordinal: '',
     readings: [],
+    opposite: '',
     ...facts,
   };
 }
@@ -116,7 +117,13 @@ const FLOOR: GameSnapshot = {
       place: '[DATA_VAULT] Heavy Bulkhead [COLD]',
       ordinal: '1',
     }),
-    option({ id: 'move:elevator', key: 'b', label: 'Back to Elevator', role: 'move' }),
+    option({
+      id: 'move:elevator',
+      key: 'b',
+      label: 'Back to Elevator',
+      role: 'move',
+      opposite: 'move:corridor',
+    }),
     option({ id: 'leave', key: 'l', label: 'Leave Floor', role: 'return' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
@@ -243,8 +250,8 @@ describe('HudPresenter.toViewModel — options stay data', () => {
     ]);
     expect(vm.moves).toEqual([]);
     expect(vm.dock).toEqual([
-      { id: 'leave', key: 'L', label: '▲ LEAVE PLANET' },
-      { id: 'to-title', key: 'T', label: 'TITLE SCREEN' },
+      { id: 'leave', key: 'L', label: '▲ LEAVE PLANET', opposite: '' },
+      { id: 'to-title', key: 'T', label: 'TITLE SCREEN', opposite: '' },
     ]);
     expect(vm.sealedNote).toBeNull();
   });
@@ -273,10 +280,13 @@ describe('HudPresenter.toViewModel — options stay data', () => {
 
   test('the moves a place offers become a strip of buttons between the panel and the list, in the router’s options before the dock', () => {
     const vm = presenter.toViewModel(FLOOR);
-    expect(vm.moves).toEqual([{ id: 'move:elevator', key: 'B', label: 'BACK TO ELEVATOR' }]);
+    // The opposite rides along as data: the shell keeps the focus off it when this button vanishes.
+    expect(vm.moves).toEqual([
+      { id: 'move:elevator', key: 'B', label: 'BACK TO ELEVATOR', opposite: 'move:corridor' },
+    ]);
     expect(vm.dock).toEqual([
-      { id: 'leave', key: 'L', label: '▲ LEAVE FLOOR' },
-      { id: 'to-title', key: 'T', label: 'TITLE SCREEN' },
+      { id: 'leave', key: 'L', label: '▲ LEAVE FLOOR', opposite: '' },
+      { id: 'to-title', key: 'T', label: 'TITLE SCREEN', opposite: '' },
     ]);
     expect(vm.options.map((each) => each.id)).toEqual(['enter:0', 'move:elevator', 'leave', 'to-title']);
     expect(vm.heading).toBe('LOCAL ACCESS LIST');

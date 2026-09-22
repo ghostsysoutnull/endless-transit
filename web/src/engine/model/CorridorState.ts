@@ -8,7 +8,7 @@ import { MoveTable } from './MoveTable.ts';
 /** The one move: back to the elevator. */
 const MOVES = new MoveTable<Floor>([
   {
-    move: { id: 'elevator', label: 'Back to Elevator' },
+    move: { id: 'elevator', label: 'Back to Elevator', opposite: 'corridor' },
     to: (floor) => floor,
     act: (floor) => {
       floor.returnToElevator();

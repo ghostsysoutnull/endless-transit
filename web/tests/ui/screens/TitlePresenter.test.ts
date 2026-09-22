@@ -16,6 +16,7 @@ function option(id: string, key: string, label: string): GameOption {
     landmark: false,
     ordinal: '',
     readings: [],
+    opposite: '',
   };
 }
 
@@ -28,7 +29,7 @@ describe('TitlePresenter.toViewModel', () => {
       message: '',
     });
     expect(vm.world).toBeNull();
-    expect(vm.options).toEqual([{ id: 'new-world', key: 'N', label: 'NEW WORLD' }]);
+    expect(vm.options).toEqual([{ id: 'new-world', key: 'N', label: 'NEW WORLD', opposite: '' }]);
     expect(vm.prompt).toMatch(/no world/i);
     expect(vm.stageLine).toBe('AWAITING SEED');
     expect(vm.status).toBe('');
@@ -48,7 +49,7 @@ describe('TitlePresenter.toViewModel', () => {
       seed: '1111-1111-2222-2222',
     });
     expect(vm.stageLine).toBe('WORLD LOCKED');
-    expect(vm.options).toEqual([{ id: 'reroll', key: 'R', label: 'RE-ROLL' }]);
+    expect(vm.options).toEqual([{ id: 'reroll', key: 'R', label: 'RE-ROLL', opposite: '' }]);
     expect(vm.status).toBe('World 1111-1111-2222-2222 drawn.');
   });
 

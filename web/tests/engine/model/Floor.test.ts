@@ -87,6 +87,8 @@ describe('Floor — the elevator (FloorState, Phase 8: the floor asks its state,
     const middle = floor(1);
     expect(middle.moves().map((move) => move.id)).toEqual(['up', 'down', 'corridor']);
     expect(middle.moves().map((move) => move.label)).toEqual(['Go Up', 'Go Down', 'Enter Corridor']);
+    // Each move names the one that undoes it — the screen never rests the focus on that one after it vanishes.
+    expect(middle.moves().map((move) => move.opposite)).toEqual(['down', 'up', 'elevator']);
     expect(middle.listing()).toEqual([]);
     expect(middle.remember()).toBeUndefined();
     expect(middle.childrenHeading()).toBe('');
@@ -140,7 +142,9 @@ describe('Floor — the corridor', () => {
     const middle = floor(1);
     expect(middle.move('corridor')).toBe(middle);
     expect(middle.remember()).toBe('corridor');
-    expect(middle.moves().map((move) => [move.id, move.label])).toEqual([['elevator', 'Back to Elevator']]);
+    expect(middle.moves().map((move) => [move.id, move.label, move.opposite])).toEqual([
+      ['elevator', 'Back to Elevator', 'corridor'],
+    ]);
     expect(middle.listing()).toBe(middle.corridor().children());
     expect(middle.childrenHeading()).toBe(middle.corridor().childrenHeading());
     expect(middle.approachVerb()).toBe(middle.corridor().approachVerb());

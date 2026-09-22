@@ -153,6 +153,7 @@ export class GameEngine {
       landmark: false,
       ordinal: '',
       readings: [],
+      opposite: '',
     };
   }
 
@@ -181,16 +182,18 @@ export class GameEngine {
       landmark: child.landmark(),
       ordinal: String(child.ordinal()),
       readings: child.readings(),
+      opposite: '',
     }));
   }
 
-  /** One option per move the place offers, with the key the Guide gives it. */
+  /** One option per move the place offers, with the key the Guide gives it and the option that undoes it. */
   #moveOptions(): readonly GameOption[] {
     const here = this.#journey.here();
     if (here === undefined) return [];
     return here.moves().map((move) => ({
       ...this.#system(`${MOVE}${move.id}`, MOVE_KEYS[move.id] ?? '', move.label),
       role: 'move',
+      opposite: `${MOVE}${move.opposite}`,
     }));
   }
 

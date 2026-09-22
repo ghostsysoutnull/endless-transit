@@ -1,6 +1,7 @@
 import type { GameEngine } from '#engine/rules/GameEngine.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { InputRouter } from './input/InputRouter.ts';
+import type { OptionVM } from './OptionVM.ts';
 import type { Screen } from './Screen.ts';
 import type { ScreenStage } from './ScreenStage.ts';
 
@@ -21,12 +22,16 @@ export class Shell {
   #scene: string | undefined;
   /** The scene the player just left and the option that held the focus there — the way back gets it again. */
   #left: { readonly scene: string; readonly optionId: string } | undefined;
+  /** The options of the screen on show, and the one the player just ran (nothing at the first paint). */
+  #offered: readonly OptionVM[] = [];
+  #pressed: OptionVM | undefined;
 
   /** The first stage that accepts a snapshot shows it — a new screen is one more entry in this list. */
   constructor(engine: GameEngine, stages: readonly ScreenStage<Screen>[]) {
     this.#engine = engine;
     this.#stages = stages;
     this.#router = new InputRouter((optionId) => {
+      this.#pressed = this.#offered.find((option) => option.id === optionId);
       this.#show(this.#engine.step(optionId));
     });
   }
@@ -59,8 +64,9 @@ export class Shell {
     }
     const screen = stage.show(snapshot);
     this.#router.offer(screen.options);
+    this.#offered = screen.options;
     this.#announce(screen.status);
-    if (held?.isConnected === false) this.#focusAnOption(screen.scene);
+    if (held?.isConnected === false) this.#focusAnOption(screen.scene, this.#pressed);
     if (screen.scene !== this.#scene) {
       this.#startFromTheTop();
       const optionId = held instanceof HTMLElement ? held.dataset.option : undefined;
@@ -95,17 +101,32 @@ export class Shell {
 
   /**
    * The focus rule of every screen: an element that is still there keeps the focus it had. When a render
-   * removes it, the focus goes to an option on offer — never silently back to `<body>`, where a keyboard or
-   * a screen reader would have to start over: back in the scene just left, to the option that held it there
-   * (title and back is a round trip, not a step deeper); anywhere else, to the first one. Focus that was
-   * not inside the screen is never taken. The page is not scrolled to it: that is the next rule's business.
+   * removes it, the focus goes somewhere on the screen — never silently back to `<body>`, where a keyboard
+   * or a screen reader would have to start over: back in the scene just left, to the option that held it
+   * there (title and back is a round trip, not a step deeper); when the option just run has vanished and
+   * the one that undoes it is on offer, the ride has reached its end (the Peak, the last room) and the
+   * focus rests on the screen's resting place (`[data-rest]`) — never on the way back, where the next Enter
+   * would undo the ride; anywhere else, to the first option that is not that way back. Which option undoes
+   * which is data the option carries; the shell matches no label. Focus that was not inside the screen is
+   * never taken. The page is not scrolled to it: that is the next rule's business.
    */
-  #focusAnOption(scene: string): void {
-    const options = [...(this.#container?.querySelectorAll<HTMLElement>('button[data-option]') ?? [])];
+  #focusAnOption(scene: string, pressed: OptionVM | undefined): void {
+    const container = this.#container;
+    const options = [...(container?.querySelectorAll<HTMLElement>('button[data-option]') ?? [])];
     const left = this.#left;
     const back =
       left?.scene === scene ? options.find((each) => each.dataset.option === left.optionId) : undefined;
-    (back ?? options[0])?.focus({ preventScroll: true });
+    if (back !== undefined) {
+      back.focus({ preventScroll: true });
+      return;
+    }
+    const undo = pressed?.opposite ?? '';
+    const rest = container?.querySelector<HTMLElement>('[data-rest]');
+    if (undo !== '' && this.#offered.some((option) => option.id === undo) && rest != null) {
+      rest.focus({ preventScroll: true });
+      return;
+    }
+    options.find((each) => each.dataset.option !== undo)?.focus({ preventScroll: true });
   }
 
   /**

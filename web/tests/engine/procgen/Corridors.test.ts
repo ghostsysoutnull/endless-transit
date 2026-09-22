@@ -194,8 +194,11 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(
       must(second)
         .moves()
-        .map((move) => move.id),
-    ).toEqual(['back', 'forward']);
+        .map((move) => [move.id, move.opposite]),
+    ).toEqual([
+      ['back', 'forward'],
+      ['forward', 'back'],
+    ]);
     expect(
       must(wide.children().at(-1))
         .moves()
