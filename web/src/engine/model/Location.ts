@@ -1,5 +1,6 @@
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Address } from './Address.ts';
+import type { Contents } from './Contents.ts';
 import type { Fact } from './Fact.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
@@ -146,6 +147,16 @@ export abstract class Location {
   /** A place its parent's list should make stand out. */
   landmark(): boolean {
     return false;
+  }
+
+  /** What lies here — relics and furniture — for a kind that holds things (a room); nothing for every other kind. */
+  contents(): Contents | null {
+    return null;
+  }
+
+  /** Whether this place is inside a building — where the HUD's map gives way to telemetry (TelemetryComponent.groovy:48-55). */
+  indoors(): boolean {
+    return this.parent()?.indoors() ?? false;
   }
 
   /** What the planet above decided; nothing above planet level. */

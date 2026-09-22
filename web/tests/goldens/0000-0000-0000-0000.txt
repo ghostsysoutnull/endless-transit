@@ -1,0 +1,186 @@
+=== STREET ═ BROAD ALLEY  [frame grey]
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley *
+stats: HOP_DENSITY 07 | WAY 01/10 | LOCUS 0.0.0.0.0.0.0.0 | LOCUS_HASH 16.143 / 66.754 | SEED 0000-0000-0000-0000
+tags: TECH_ERA FUTURE (era) | RESONANCE VOID (culture)
+  Buildings stand in pairs along both sides of the way.
+diag: SYNC: [STABLE]
+status: Entered Broad Alley.
+BUILDINGS ON THIS STREET
+  01 [1] Enter Building: Drifting Field
+  02 [2] Enter Building: HorizonWell
+  03 [3] Enter Building: Dark Well
+  04 [4] Enter Building: PlaneReach
+  05 [5] Enter Building: WellRoot
+  06 [6] Enter Building: WellRoot
+  07 [7] Enter Building: Blank Gravity
+  08 [8] Enter Building: ReachSpire
+  09 [9] Enter Building: HushWell
+  10 [A] Enter Building: EchoGate
+  11 [G] Enter Building: CellGate
+  12 [H] Enter Building: The Heart of the Strata LANDMARK
+  13 [I] Enter Building: Pale Aperture
+  14 [J] Enter Building: Abyssal Horizon
+  15 [K] Enter Building: HorizonFall
+  16 [M] Enter Building: ShadowGate
+  17 [O] Enter Building: FieldReach
+  18 [P] Enter Building: Silent Void
+  19 [Q] Enter Building: Unmarked Gravity
+  20 [S] Enter Building: CellFall
+dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN
+
+=== BUILDING ⌂ HORIZONWELL  [frame grey]
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
+stats: HOP_DENSITY 08 | STRATA 02/20 | LOCUS 0.0.0.0.0.0.0.0.1 | LOCUS_HASH 1.921 / 98.281 | SEED 0000-0000-0000-0000
+tags: THEME VOID (culture)
+  Analyzing vertical lattice structure...
+diag: STRUCTURAL_STABLE
+status: Entered HorizonWell.
+BUILDING STRATA DIAGNOSTICS
+  17 [] Access: Peak
+       FUNCTION: PEAK_OBSERVATORY
+       ST: 100%
+       RES: 1470Hz
+  16 [] Access: Floor 16
+       FUNCTION: VIP_QUARTERS
+       ST: 100%
+       RES: 1239Hz
+  15 [] Access: Floor 15
+       FUNCTION: EXECUTIVE_SUITE
+       ST: 100%
+       RES: 1590Hz
+  14 [] Access: Floor 14
+       FUNCTION: VIP_QUARTERS
+       ST: 100%
+       RES: 1206Hz
+  13 [] Access: Floor 13
+       FUNCTION: RESEARCH_LAB
+       ST: 100%
+       RES: 2608Hz
+  12 [] Access: Floor 12
+       FUNCTION: RESEARCH_LAB
+       ST: 100%
+       RES: 2411Hz
+  11 [] Access: Floor 11
+       FUNCTION: HYDROPONIC_BAY
+       ST: 100%
+       RES: 1468Hz
+  10 [] Access: Floor 10
+       FUNCTION: RESEARCH_LAB
+       ST: 100%
+       RES: 2339Hz
+  09 [9] Access: Floor 9
+       FUNCTION: HYDROPONIC_BAY
+       ST: 100%
+       RES: 2471Hz
+  08 [8] Access: Floor 8
+       FUNCTION: RESEARCH_LAB
+       ST: 100%
+       RES: 1578Hz
+  07 [7] Access: Floor 7
+       FUNCTION: HYDROPONIC_BAY
+       ST: 100%
+       RES: 1869Hz
+  06 [6] Access: Floor 6
+       FUNCTION: HYDROPONIC_BAY
+       ST: 100%
+       RES: 2676Hz
+  05 [5] Access: Floor 5
+       FUNCTION: RESEARCH_LAB
+       ST: 100%
+       RES: 2589Hz
+  04 [4] Access: Floor 4
+       FUNCTION: POWER_RELAY
+       ST: 100%
+       RES: 1251Hz
+  03 [3] Access: Floor 3
+       FUNCTION: FILTRATION_INTAKE
+       ST: 100%
+       RES: 1217Hz
+  02 [2] Access: Floor 2
+       FUNCTION: FILTRATION_INTAKE
+       ST: 100%
+       RES: 1865Hz
+  01 [1] Access: Floor 1
+       FUNCTION: POWER_RELAY
+       ST: 100%
+       RES: 2528Hz
+  00 [0] Access: Lobby [>X<]
+       FUNCTION: TRANSIT_LOBBY
+       ST: 100%
+       RES: 1146Hz
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ ████ ███ ███████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1
+dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN
+
+=== FLOOR ▤ FLOOR 0  [frame grey]
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
+stats: HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
+tags: TECH_ERA FUTURE (era) | RESONANCE VOID (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT RESEARCH (trait)
+  Floor 0. A landing of VOID design, silent except for the lift cables ticking overhead.
+  Local signal is STABLE. Corridor access authorized.
+diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
+status: Entered Floor 0.
+moves: [U] GO UP | [C] ENTER CORRIDOR
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████████ ████████ ████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
+dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
+
+=== FLOOR ▤ FLOOR 0  [frame grey]
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
+stats: HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
+tags: THEME VOID (culture)
+  A curved gallery of doors beneath a single strip of light.
+diag: TRAFFIC: [STABLE] | THEME: [VOID]
+status: Enter Corridor.
+moves: [B] BACK TO ELEVATOR
+LOCAL ACCESS LIST
+  01 [1] Access: Reinforced Polymer [WARPED]
+       APPEARANCE: A slab of reinforced polymer, dull and unscratched. The panel has bowed outward and no longer meets its frame.
+  02 [2] Access: _keep_walking_ Brutalist Slab [POLISHED]
+       APPEARANCE: A massive brutalist slab of pitted concrete. The surface is perfectly smooth and sterile. The word 'keep_walking' is scrawled across the surface in jagged, desperate lines.
+  03 [3] Access: Industrial Barrier [POLISHED]
+       APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The surface is perfectly smooth and sterile.
+  04 [4] Access: Oxidized Metal Hatch [VIBRATING]
+       APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The surface is vibrating with a low-frequency thrum.
+  05 [5] Access: _signal_lost_ Reinforced Polymer [WEEPING]
+       APPEARANCE: A slab of reinforced polymer, dull and unscratched. Moisture beads along the seams and runs in slow lines. The word 'signal_lost' is scrawled across the surface in jagged, desperate lines.
+  06 [6] Access: Industrial Barrier
+       APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The structure appears stable.
+  07 [7] Access: [DATA_VAULT] Riveted Iron Hatch [WEEPING]
+       APPEARANCE: A hatch of riveted iron, its seams weeping orange. Moisture beads along the seams and runs in slow lines. The word 'DATA_VAULT' is stamped into the metal in block letters.
+  08 [8] Access: Frosted Crystal Pane [WEEPING]
+       APPEARANCE: A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
+  09 [9] Access: Lacquered Timber Gate [WEEPING]
+       APPEARANCE: A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
+  10 [A] Access: Oxidized Metal Hatch [STATIC]
+       APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████████ ████████ ████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0
+dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
+
+=== ROOM □ HOLLOW NEURAL LINK ARRAY  [frame grey]
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Hollow Neural Link Array *
+stats: HOP_DENSITY 12 | CELL 01/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.0 | LOCUS_HASH 26.526 / 29.341 | SEED 0000-0000-0000-0000
+tags: TYPE NEURAL LINK ARRAY (reading) | OXY 20% (reading) | TEMP 23°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+  You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
+  The space is illuminated by a lattice of laser threads across the ceiling.
+FURNITURE: immaculate invisible support, dust-covered white light strip, sagging perfectly white tile
+OBJECTS_DETECTED: 6
+diag: ATMOS: 20% | TEMP: 23°C
+status: Entered Hollow Neural Link Array.
+moves: [F] GO FORWARD
+IN THIS ROOM: white light strip infused with smart glass <infused|white light strip|smart glass> | floating white sphere infused with plasma coil <infused|floating white sphere|plasma coil> | hovering disc fused to hologram projector <fused|hovering disc|hologram projector> | hologram projector grafted onto hidden speaker <grafted|hidden speaker|hologram projector> | empty frame infused with aerogel slab <infused|empty frame|aerogel slab> | quantum key <era|quantum key>
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ███ ████ ███ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0
+dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN
+
+=== ROOM □ ABYSSAL BIO-SERVER  [frame grey]
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Abyssal Bio-Server *
+stats: HOP_DENSITY 12 | CELL 02/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.1 | LOCUS_HASH 70.929 / 62.968 | SEED 0000-0000-0000-0000
+tags: TYPE BIO-SERVER (reading) | OXY 16% (reading) | TEMP 15°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+  You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
+  The space is illuminated by light bent around a gravity plate.
+FURNITURE: upended white light strip
+OBJECTS_DETECTED: 5
+diag: ATMOS: 16% | TEMP: 15°C
+status: Entered Abyssal Bio-Server.
+moves: [B] GO BACK | [F] GO FORWARD
+IN THIS ROOM: neural link grafted onto silent fan <grafted|silent fan|neural link> | neural link with hidden speaker <with|hidden speaker|neural link> | neural link with floating white sphere <with|floating white sphere|neural link> | quantum key with silent fan <with|silent fan|quantum key> | white noise emitter infused with smart glass <infused|white noise emitter|smart glass>
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ ██ █████ █ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.1
+dock: [T] TITLE SCREEN

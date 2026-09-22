@@ -8,6 +8,7 @@ import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import { ThemeCatalog } from '#engine/procgen/ThemeCatalog.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
+import { ConsoleWarningSink } from '#platform/ConsoleWarningSink.ts';
 import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { Masthead } from '#ui/Masthead.ts';
@@ -23,7 +24,7 @@ if (container === null) throw new Error('#app is missing from index.html');
 
 const library = new ContentLibrary(new BundledContent());
 const engine = new GameEngine({
-  world: new LocationRegistry(library, new ThemeCatalog(library)),
+  world: new LocationRegistry(library, new ThemeCatalog(library), new ConsoleWarningSink()),
   entropy: new CryptoEntropySource(window.crypto),
   saves: new LocalStorageSaveStore(() => window.localStorage),
 });

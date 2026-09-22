@@ -6,13 +6,13 @@ import type { RoomCategory } from '#engine/model/RoomCategory.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 
 const LISTS = 'themes/doors';
-/** About one door in five has words on it (Guide:222; Door.groovy:170, CorridorFactory.groovy:170). */
+/** About one door in five has words on it (Guide:222; Door.groovy:31, CorridorFactory.groovy:51). */
 const INSCRIBED = 0.2;
 
 /**
  * Owns one fact: how a door comes to be — a material and a state from the door lists, each on its own
  * branch of the door's seed, and one roll in five for words: the ones the room behind guarantees, else a
- * word of the inscription list in one of the four styles (CorridorFactory.groovy:166-208).
+ * word of the inscription list in one of the four styles (CorridorFactory.groovy:47-53, 64-89).
  */
 export class Doors {
   readonly #library: ContentLibrary;
@@ -22,10 +22,13 @@ export class Doors {
   }
 
   of(seed: Seed, behind: RoomCategory): Door {
+    const [material, materialTold] = seed.branch('material').pick(this.#library.pairs(`${LISTS}/materials`));
+    const [state, stateTold] = seed.branch('state').pick(this.#library.pairs(`${LISTS}/states`));
     return new Door({
-      material: seed.branch('material').pick(this.#names(`${LISTS}/materials`)),
-      state: seed.branch('state').pick(this.#names(`${LISTS}/states`)),
+      material,
+      state,
       inscription: seed.branch('inscribed').probability(INSCRIBED) ? this.#words(seed, behind) : undefined,
+      told: { material: materialTold, state: stateTold },
     });
   }
 
@@ -37,9 +40,5 @@ export class Doors {
         seed.branch('style').pick(INSCRIPTION_STYLES),
       )
     );
-  }
-
-  #names(path: string): readonly string[] {
-    return this.#library.pairs(path).map(([name]) => name);
   }
 }

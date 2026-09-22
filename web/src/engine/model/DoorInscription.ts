@@ -22,4 +22,9 @@ export class DoorInscription {
   formatted(): string {
     return this.#style.format(this.#word);
   }
+
+  /** How the word came to be there — the style's sentence. */
+  narrative(): string {
+    return this.#style.narrative(this.#word);
+  }
 }

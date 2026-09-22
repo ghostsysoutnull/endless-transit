@@ -65,12 +65,12 @@ export class Vibe {
     return this.#facts.frame;
   }
 
-  /** The culture a place below draws: the main one with the stability's share, else the second (VibeCapsule.groovy:277-279). */
+  /** The culture a place below draws: the main one with the stability's share, else the second (VibeCapsule.groovy:38-40). */
   pickCulture(seed: Seed): Culture {
     return seed.probability(this.#facts.stability) ? this.#facts.culture : this.#facts.secondCulture;
   }
 
-  /** The era a place below draws, by the same rule (VibeCapsule.groovy:282-284). */
+  /** The era a place below draws, by the same rule (VibeCapsule.groovy:43-45). */
   pickEra(seed: Seed): Era {
     return seed.probability(this.#facts.stability) ? this.#facts.era : this.#facts.secondEra;
   }

@@ -94,7 +94,7 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(page.getByTestId('path').getByRole('listitem')).toHaveCount(13);
   await expect(page.getByTestId('path')).toContainText('Corridor');
-  await expect(page.locator('.tag')).toHaveCount(4);
+  await expect(page.locator('.tag')).toHaveCount(5);
   await expect(page.locator('.desc p')).toHaveCount(2);
   await expect(page.getByRole('button', { name: /exit apartment/i })).toBeVisible();
   await expectTouchable(page, 'room');

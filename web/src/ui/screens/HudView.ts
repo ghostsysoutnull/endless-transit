@@ -10,7 +10,7 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name. The moves a place offers are a strip of buttons under the panel. The panel is the
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel. The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
@@ -78,6 +78,20 @@ export class HudView implements View<HudVM> {
             )}
           </ul>
           <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
+          ${
+            vm.place.rows.length === 0
+              ? nothing
+              : html`<dl class="prows">
+                  ${vm.place.rows.map(
+                    (row) => html`
+                      <div class="prow">
+                        <dt>${row.label}</dt>
+                        <dd>${row.value}</dd>
+                      </div>
+                    `,
+                  )}
+                </dl>`
+          }
           <p class="diag">${vm.place.diagnostic}</p>
           <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
         </section>
@@ -94,17 +108,26 @@ export class HudView implements View<HudVM> {
                 </nav>
               `
         }
-        <section class="travel" aria-label=${vm.regions.travel}>
-          <h3 class="heading">${vm.heading}</h3>
-          ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
-          <ol class="rows">
-            ${repeat(
-              vm.rows,
-              (row) => `${vm.scene}/${row.id}`,
-              (row) => this.#row(row, vm.sealedTag),
-            )}
-          </ol>
-        </section>
+        <div class="side">
+          ${
+            vm.rows.length === 0
+              ? nothing
+              : html`
+                  <section class="travel" aria-label=${vm.regions.travel}>
+                    <h3 class="heading">${vm.heading}</h3>
+                    ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
+                    <ol class="rows">
+                      ${repeat(
+                        vm.rows,
+                        (row) => `${vm.scene}/${row.id}`,
+                        (row) => this.#row(row, vm.sealedTag),
+                      )}
+                    </ol>
+                  </section>
+                `
+          }
+          ${this.#aside(vm)}
+        </div>
         <nav class="dock" aria-label=${vm.regions.dock}>
           ${repeat(
             vm.dock,
@@ -114,6 +137,51 @@ export class HudView implements View<HudVM> {
         </nav>
         <footer class="build" data-testid="build">${vm.build}</footer>
       </div>
+    `;
+  }
+
+  /** The objects of a room as tiles (a list, not buttons: nothing is taken yet) and the telemetry block. */
+  #aside(vm: HudVM): TemplateResult | typeof nothing {
+    const { objects, telemetry } = vm.aside;
+    if (objects === null && telemetry === null) return nothing;
+    return html`
+      <aside class="aside" aria-label=${vm.regions.aside}>
+        ${
+          objects === null
+            ? nothing
+            : html`
+                <section class="objects" data-testid="objects" aria-label=${objects.label}>
+                  <h3 class="heading">${objects.heading}</h3>
+                  ${objects.empty === '' ? nothing : html`<p class="empty">${objects.empty}</p>`}
+                  ${
+                    objects.tiles.length === 0
+                      ? nothing
+                      : html`<ul class="tiles">
+                          ${objects.tiles.map(
+                            (tile) => html`<li class="tile" data-relic=${tile.key}>${tile.name}</li>`,
+                          )}
+                        </ul>`
+                  }
+                </section>
+              `
+        }
+        ${
+          telemetry === null
+            ? nothing
+            : html`
+                <section class="tele" data-testid="telemetry" aria-label=${telemetry.label}>
+                  <p class="th">${telemetry.heading}</p>
+                  <p class="tl">${telemetry.sync}</p>
+                  <p class="th">${telemetry.spectrogram.heading}</p>
+                  <p class="bars" aria-hidden="true">
+                    ${telemetry.spectrogram.bars.map((bar) => html`<span>${bar}</span>`)}
+                  </p>
+                  <p class="th">${telemetry.logs.heading}</p>
+                  ${telemetry.logs.lines.map((line) => html`<p class="tl">${line}</p>`)}
+                </section>
+              `
+        }
+      </aside>
     `;
   }
 

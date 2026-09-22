@@ -46,6 +46,8 @@ const PLANET: GameSnapshot = {
     ],
     frame: 'yellow',
     childrenHeading: 'Planetary landmasses scanned:',
+    contents: null,
+    telemetry: null,
   },
   options: [
     option({
@@ -161,6 +163,39 @@ const BUILDING: GameSnapshot = {
   ],
 };
 
+/** A room: its objects and furniture, and the telemetry every place inside a building shows. */
+const ROOM: GameSnapshot = {
+  ...PLANET,
+  place: {
+    ...(PLANET.place ?? ({} as never)),
+    kind: 'Room',
+    icon: '□',
+    name: 'Grand Power Plant',
+    address: '0.0.0.0.1.0.0.0.0.0.0.0.0',
+    depth: 12,
+    position: { label: 'CELL', index: 1, total: 2 },
+    facts: [
+      { key: 'reading', label: 'TYPE', value: 'Power Plant' },
+      { key: 'stable', label: 'RESONANCE', value: '[STABLE]' },
+    ],
+    contents: {
+      objects: [
+        { key: 'with|tatami mat|floppy disk', name: 'floppy disk with tatami mat' },
+        { key: 'culture|katana rack', name: 'katana rack' },
+      ],
+      furniture: ['overturned tatami mat', 'cracked shoji screen'],
+    },
+    telemetry: { spectrogram: [3, 1, 9, 4, 2] },
+    childrenHeading: '',
+  },
+  options: [
+    option({ id: 'move:forward', key: 'f', label: 'Go forward', role: 'move', opposite: 'move:back' }),
+    option({ id: 'leave', key: 'l', label: 'Exit Apartment', role: 'return' }),
+    option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
+  ],
+  message: 'Entered Grand Power Plant.',
+};
+
 describe('HudPresenter — which snapshots it takes', () => {
   test('it presents a place; the title screen (no place) is not its business', () => {
     expect(presenter.accepts(PLANET)).toBe(true);
@@ -223,6 +258,60 @@ describe('HudPresenter.toViewModel — the narrative panel', () => {
     ]);
     expect(vm.place.diagnostic).toBe('RESONANCE: [BAROQUE]');
     expect(vm.status).toBe('Entered Auraea.');
+  });
+});
+
+describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; the mock’s console column)', () => {
+  const vm = presenter.toViewModel(ROOM);
+
+  test('the panel carries FURNITURE and the object count as rows; the objects are tiles in the aside, each by its key', () => {
+    expect(vm.place.rows).toEqual([
+      { label: 'FURNITURE', value: 'overturned tatami mat, cracked shoji screen' },
+      { label: 'OBJECTS_DETECTED', value: '2' },
+    ]);
+    expect(vm.place.tags[1]).toEqual({ key: 'stable', label: 'RESONANCE', value: '[STABLE]' });
+    expect(vm.aside.objects).toEqual({
+      label: 'In this room',
+      heading: 'IN THIS ROOM',
+      empty: '',
+      tiles: [
+        { key: 'with|tatami mat|floppy disk', name: 'floppy disk with tatami mat' },
+        { key: 'culture|katana rack', name: 'katana rack' },
+      ],
+    });
+  });
+
+  test('an empty room says so in words and has no OBJECTS_DETECTED row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
+    const bare = presenter.toViewModel({
+      ...ROOM,
+      place: {
+        ...(ROOM.place ?? ({} as never)),
+        contents: { objects: [], furniture: ['overturned tatami mat', 'cracked shoji screen'] },
+      },
+    });
+    expect(bare.aside.objects).toEqual({
+      label: 'In this room',
+      heading: 'IN THIS ROOM',
+      empty: 'No objects detected.',
+      tiles: [],
+    });
+    expect(bare.place.rows).toEqual([
+      { label: 'FURNITURE', value: 'overturned tatami mat, cracked shoji screen' },
+    ]);
+    const planet = presenter.toViewModel(PLANET);
+    expect(planet.aside).toEqual({ objects: null, telemetry: null });
+    expect(planet.place.rows).toEqual([]);
+  });
+
+  test('inside a building the aside carries the system telemetry: sync, a spectrogram of five bars, the decode log with the trace (TelemetryComponent.groovy:127-143)', () => {
+    expect(vm.aside.telemetry).toEqual({
+      label: 'System telemetry',
+      heading: '[SYSTEM_TELEMETRY]',
+      sync: 'LATTICE_SYNC: [NOMINAL]',
+      spectrogram: { heading: '[QUANTUM_SPECTROGRAM]', bars: ['███', '█', '█████████', '████', '██'] },
+      logs: { heading: '[DECODE_LOGS]', lines: ['> Trace: 0.0.0.0.1.0.0.0.0.0.0.0.0'] },
+    });
+    expect(vm.regions.aside).toBe('Readouts');
   });
 });
 
@@ -333,6 +422,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
       place: 'Where you are',
       travel: 'Places to enter',
       moves: 'Moves',
+      aside: 'Readouts',
       dock: 'Leave and game',
     });
   });

@@ -1,13 +1,22 @@
 import type { Apartment } from './Apartment.ts';
+import type { Atmosphere } from './Atmosphere.ts';
+import type { Contents } from './Contents.ts';
 import type { Fact } from './Fact.ts';
+import { Glitch } from './Glitch.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
 import type { Origin } from './Origin.ts';
+import type { Relic } from './Relic.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 
 export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
+
+/** Under an anomaly the interpretation is glitched: structure, walls and lighting each at its own share (Room.groovy:268-272). */
+const STATIC = new Glitch();
+const GLITCHED = { structure: 0.2, walls: 0.1, lighting: 0.3 } as const;
+const STATIC_KEY = 'static';
 
 /** Back to the previous room unless this is the first, forward to the next unless it is the last. */
 const MOVES = new MoveTable<Room>([
@@ -24,16 +33,18 @@ export class Room extends Location {
   readonly #apartment: Apartment;
   readonly #name: string;
   readonly #category: RoomCategory;
-  readonly #atmosphere: { structure: string; colour: string; walls: string; lighting: string };
+  readonly #atmosphere: Atmosphere;
   readonly #traits: { oxygen: number; temperature: number; signal: string };
+  readonly #furniture: readonly string[];
 
   constructor(
     origin: Origin<Apartment>,
     facts: {
       name: string;
       category: RoomCategory;
-      atmosphere: { structure: string; colour: string; walls: string; lighting: string };
+      atmosphere: Atmosphere;
       traits: { oxygen: number; temperature: number; signal: string };
+      furniture: readonly string[];
     },
   ) {
     super(origin);
@@ -42,6 +53,7 @@ export class Room extends Location {
     this.#category = facts.category;
     this.#atmosphere = facts.atmosphere;
     this.#traits = facts.traits;
+    this.#furniture = Object.freeze([...facts.furniture]);
   }
 
   kind(): LocationKind {
@@ -72,6 +84,26 @@ export class Room extends Location {
     return this.#traits.signal;
   }
 
+  /** What the room is made of and lit by — the words its description is built from. */
+  atmosphere(): Atmosphere {
+    return this.#atmosphere;
+  }
+
+  /** One to three pieces of the culture's furniture in some condition; not loot (Guide:171). */
+  furniture(): readonly string[] {
+    return this.#furniture;
+  }
+
+  /** The relics lying here — the apartment's, the ones it dealt to this room (Guide:167: objects live in apartments). */
+  objects(): readonly Relic[] {
+    return this.#apartment.relicsIn(this.index());
+  }
+
+  /** A room is the kind that holds things: its relics and its furniture. */
+  override contents(): Contents {
+    return { objects: this.objects(), furniture: this.furniture() };
+  }
+
   /** A room lists no places: its rooms are its siblings, walked with forward and back. */
   override listing(): readonly Location[] {
     return [];
@@ -99,22 +131,29 @@ export class Room extends Location {
     return 'Exit Apartment';
   }
 
-  /** The neural-link interpretation (Room.groovy:274-276), one sentence per line. */
+  /** The neural-link interpretation (Room.groovy:274-276), one sentence per line; glitched under an anomaly. */
   description(): readonly string[] {
     const { structure, colour, walls, lighting } = this.#atmosphere;
+    const read = (part: keyof typeof GLITCHED, text: string): string =>
+      this.#apartment.anomaly()
+        ? STATIC.mangle(text, GLITCHED[part], this.seed().branch(STATIC_KEY).branch(part))
+        : text;
     return [
-      `You are in ${structure}. The walls are ${colour} ${walls}.`,
-      `The space is illuminated by ${lighting}.`,
+      `You are in ${read('structure', structure)}. The walls are ${colour} ${read('walls', walls)}.`,
+      `The space is illuminated by ${read('lighting', lighting)}.`,
     ];
   }
 
-  /** The local cell diagnostic (Room.groovy:124-130). */
+  /** The local cell diagnostic (Room.groovy:124-130): the resonance is degraded under an anomaly. */
   override facts(): readonly Fact[] {
     return [
       { key: 'reading', label: 'TYPE', value: this.type() },
       { key: 'reading', label: 'OXY', value: `${String(this.#traits.oxygen)}%` },
       { key: 'reading', label: 'TEMP', value: `${String(this.#traits.temperature)}°C` },
       { key: 'signal', label: 'SIGNAL', value: this.#traits.signal },
+      this.#apartment.anomaly()
+        ? { key: 'alert', label: 'RESONANCE', value: '[DEGRADED]' }
+        : { key: 'stable', label: 'RESONANCE', value: '[STABLE]' },
     ];
   }
 

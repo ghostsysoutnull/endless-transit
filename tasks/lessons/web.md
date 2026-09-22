@@ -16,3 +16,7 @@ Rule plus pointer, one or two sentences each; the story lives in the iteration's
   vanished was GO DOWN, and Enter rode back. An option carries the id that undoes it (`opposite`, from the model's
   `Move`); when the option just run is gone and its undo is on offer, the focus rests on the screen's `[data-rest]`, else
   on the first option that is not that undo. A label match in the view is not a rule. (I03 review, finding 1.)
+- **A citation is read from the file at HEAD, never remembered**: `sed -n 'a,bp' File.groovy` before writing
+  `File.groovy:a-b`, and the lines printed must hold the claim; a line-number check over every `.groovy:` in the tree
+  is one script. (I04 review: the note and twelve comments cited `ThemeService.groovy:221-328` — the file is 215 lines;
+  eleven I03 citations were beyond their files' ends too.)
