@@ -18,19 +18,27 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
 
 The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot → the
 `ScreenStage` whose presenter `accepts` it → `Presenter.toViewModel` → `View<VM>.render` (lit-html). Options are data
-`{ id, key, label, place, role, sealed, landmark, ordinal, readings, opposite, current }` with `role` travel / move /
-return / system; a new action is a registry entry in `GameEngine`, a new screen one more stage in `main.ts`; a pending
-prompt is a state, never a blocking read. A key is the ordinal when the place goes by its own number, else from the pool.
+`{ id, key, label, place, role, sealed, landmark, ordinal, readings, opposite, current, visited }` with `role` travel /
+move / return / system / debug; a new action is a registry entry in `GameEngine` that names its `Turn` (`STEP` drains
+and counts, `GLOBAL` drains only, `FREE` neither — every prompt in the world drains **before** the command, Guide:133),
+a new screen one more stage in `main.ts`; a pending prompt (`Prompt`: the reboot at zero coherence, the recap) is a
+state whose options are the only ones on offer, never a blocking read. A key is the ordinal when the place goes by its
+own number, else from the pool. The traveller (`rules/Player`: `Coherence` value, steps, the visited path by address)
+rides with the `Journey`; what the HUD draws that is noise is seeded from `FrameEntropy` (the place + the step count),
+never the clock. **Debug mode** (Decision 8): `?debug` on the page's address, read only in `main.ts`; the debug tools
+(`role: 'debug'`, the INTEGRITY ladder) are offered nowhere else, and tests turn it on with `debug: true`.
 
 The world: `model/Location` owns the **lazy-loading law** — children sit behind a private array and exist only after
 `children()`, generated once through the injected `ChildSource`. A kind of place is a class that answers for itself
 (name, words, vibe, `sealed()`, and the journey's questions: `listing()`/`admits()`, `arrival()`/`arrive()`,
 `exit()`/`leave()`, `moves()`/`move(id)` (one `MoveTable`: what is offered is what can be made), `remember()`/`recall()`,
-`current()`, `goesByNumber()`, `startOfJourney()`) plus a `LocationFactory<T, Parent>` entry in
+`current()`, `goesByNumber()`, `startOfJourney()`, `drainFactor()`) plus a `LocationFactory<T, Parent>` entry in
 `procgen/LocationRegistry`; nobody asks "which kind are you?" (`instanceof`, a `switch` on `kind().key()`). A mode a
 place can be in is a state object it asks (`Floor` → `FloorState`), never a flag the caller reads. Child `i` is born from
-`parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save is seed + path + what the
-trail remembers, and restore takes only a save the journey could have written (`saved()` after `restore()` is the save).
+`parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save (v4) is seed + path + what
+every **visited** place remembers (`remember()`/`recall()` — the one home of every per-place fact) + the traveller
+(coherence, steps, visited), and restore takes only a save the journey could have written (`saved()` after `restore()`
+is the save; a visited path is walked parents first and holds the trail).
 A presenter never cuts a name out of a label — the option carries it. **Objects live in apartments** (Guide:167): an
 apartment deals its relics (`Relic`, identity by key) from the `ObjectDeck` of its culture and era and knows which
 room each lies in; a room asks. Furniture is a culture item in a condition, never a hybrid.
@@ -59,6 +67,11 @@ A new invariant ships with its rule in the same iteration.
 Test, RED, then code. `tests/` mirrors `src/`; doubles in `tests/support/`. Pins are literals: a diff is a finding.
 Playwright owns browser behaviour and runs **twice**: `desktop` and `phone` (portrait, touch). Look at the
 screenshots in `test-results/` yourself before calling UI work done.
+
+**Play-session fixtures** (`tests/fixtures/*.json`, `{ "seed": "XXXX-XXXX-XXXX-XXXX", "history": [...optionIds] }`
+from the title on, discovered by directory listing in `tests/engine/rules/Sessions.test.ts`): each is replayed in debug
+mode with a reload after every tap — the reloaded game shows the same screen and its next tap writes the same save. A
+new kind of turn gets a fixture that takes it.
 
 **Goldens** (`tests/goldens/*.txt`, written by `tests/content/Goldens.test.ts`): the full text of a fixed walk,
 street to room, for three seeds. Nothing else writes them: `npx vitest run tests/content/Goldens.test.ts -u` is the

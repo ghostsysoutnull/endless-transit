@@ -64,7 +64,7 @@ describe('Player — the traveller: coherence, steps, the visited path (Player.g
     expect(player.footprints()).toEqual(['0', '0.1']);
   });
 
-  test('the debug INTEGRITY sets coherence to a value (Guide:441, SetIntegrityCommand.groovy:76)', () => {
+  test('the debug INTEGRITY sets coherence to a value (Guide:441, SetIntegrityCommand.groovy:19)', () => {
     const player = new Player();
     player.setCoherence(35);
     expect(player.coherence().value()).toBe(35);

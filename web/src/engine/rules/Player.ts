@@ -46,7 +46,7 @@ export class Player {
     this.#coherence = this.#coherence.restored(amount);
   }
 
-  /** The debug INTEGRITY (Guide:441, SetIntegrityCommand.groovy:76): coherence set to a value outright. */
+  /** The debug INTEGRITY (Guide:441, SetIntegrityCommand.groovy:19): coherence set to a value outright. */
   setCoherence(value: number): void {
     this.#coherence = new Coherence(value);
   }

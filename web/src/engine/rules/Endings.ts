@@ -1,6 +1,6 @@
 import type { Ending, Run } from './Ending.ts';
 
-/** A full recap needs this many places visited (Guide:426, SessionRecap.groovy:30). */
+/** A full recap needs this many places visited (Guide:426, SessionRecap.groovy:33). */
 const EXPEDITION_PLACES = 20;
 
 /**
