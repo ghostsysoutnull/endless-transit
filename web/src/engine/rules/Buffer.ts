@@ -49,16 +49,32 @@ export class Buffer {
     return taken;
   }
 
-  /** The hybrid of the fragments at `first` and `second`, now last in the buffer; nothing, touching nothing, unless they are two different fragments (HK-015). */
-  merge(first: number, second: number): Hybrid | undefined {
+  /**
+   * The fragments at `first` and `second` merged — into their hybrid, unless `into` says what else the two
+   * become (a primed building's Keystone) — now last in the buffer; nothing, touching nothing, unless they
+   * are two different fragments (HK-015).
+   */
+  merge(
+    first: number,
+    second: number,
+    into?: (one: Fragment, other: Fragment) => Fragment,
+  ): Fragment | undefined {
     if (first === second) return undefined;
     const one = this.#fragments[first];
     const other = this.#fragments[second];
     if (one === undefined || other === undefined) return undefined;
-    const hybrid = new Hybrid(one, other);
+    const made = into === undefined ? new Hybrid(one, other) : into(one, other);
     this.#fragments.splice(Math.max(first, second), 1);
     this.#fragments.splice(Math.min(first, second), 1);
-    this.#fragments.push(hybrid);
-    return hybrid;
+    this.#fragments.push(made);
+    return made;
+  }
+
+  /** This very fragment out of the buffer (the Keystone the breach spends); false when it is not held. */
+  remove(fragment: Fragment): boolean {
+    const at = this.#fragments.indexOf(fragment);
+    if (at < 0) return false;
+    this.#fragments.splice(at, 1);
+    return true;
   }
 }

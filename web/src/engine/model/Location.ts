@@ -2,12 +2,14 @@ import type { Seed } from '#engine/rng/Seed.ts';
 import { Address } from './Address.ts';
 import type { Capture } from './Capture.ts';
 import type { Contents } from './Contents.ts';
+import type { Echo } from './Echo.ts';
 import type { Era } from './Era.ts';
 import type { Fact } from './Fact.ts';
 import type { Fragment } from './Fragment.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
+import type { ScanReport } from './ScanReport.ts';
 import type { Vibe } from './Vibe.ts';
 
 /** The locus hash is two readings of 0.000 … 99.999, each drawn in thousandths. */
@@ -157,6 +159,27 @@ export abstract class Location {
     return null;
   }
 
+  /**
+   * What a scan reads here (Guide:87: doors, nearby floors or the rooms of the apartment); nothing for a kind
+   * with no scan-compatible structure. `seen` says which places the traveller has been to — the model is told,
+   * it never asks the player.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a kind that scans does
+  scan(_seen: (place: Location) => boolean): ScanReport | undefined {
+    return undefined;
+  }
+
+  /** What a scan of the list this place is on reads about it (a door's trace, a room's frequency); nothing for most kinds. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a room does
+  scanned(_seen: (place: Location) => boolean): readonly Fact[] {
+    return [];
+  }
+
+  /** The sensory line a scan reads under this place's row (a door's); empty for most kinds. */
+  sensed(): string {
+    return '';
+  }
+
   /** The fragment a capture of relic `key` here yields — what the room dealt, at what it is worth here; nothing for every other kind or a relic not dealt here. */
   findRelic(key: string): Fragment | undefined {
     return this.contents()?.objects.find((each) => each.key() === key);
@@ -176,6 +199,64 @@ export abstract class Location {
       throw new Error(`${this.kind().key()} holds things but takes none in (${fragment.name()})`);
     }
     return false;
+  }
+
+  /** The free lottery (Guide:186-190): what a room hands over on the move that landed here at `steps`; nothing for every other kind. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default rolls nothing; a room does
+  lottery(_steps: number): Fragment | undefined {
+    return undefined;
+  }
+
+  /** The echo this place holds and the hunt for it (Guide:192-195); nothing for every kind but a Null Reach. */
+  echo(): Echo | undefined {
+    return undefined;
+  }
+
+  /** A capture happened here: the floor above hears of it and tells its building (the ritual, Guide:263-266); nothing above a building. */
+  sample(): void {
+    this.parent()?.sample();
+  }
+
+  /** A merge happened here: the building above counts it (Guide:267-270); nothing above a building. */
+  infuse(): void {
+    this.parent()?.infuse();
+  }
+
+  /** What a merge here yields instead of a hybrid, given what is held: a primed building's Keystone; nothing anywhere else. */
+  forge(held: readonly Fragment[]): Fragment | undefined {
+    return this.parent()?.forge(held);
+  }
+
+  /** The Keystone of the building this place is in — a fresh value, identity by the building's address; nothing outside a building. */
+  keystone(): Fragment | undefined {
+    return this.parent()?.keystone();
+  }
+
+  /** The debug PRIME (Guide:438) on the building this place is in; false where there is none. */
+  prime(): boolean {
+    return this.parent()?.prime() ?? false;
+  }
+
+  /** Whether the bedrock can be breached from here with what is held (Guide:275-276); only a floor ever says yes. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a floor does
+  breachOffered(_held: readonly Fragment[]): boolean {
+    return false;
+  }
+
+  /** Breaches the bedrock from here: the Keystone used, to be taken out of what was held; nothing when it is not offered. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a floor does
+  breach(_held: readonly Fragment[]): Fragment | undefined {
+    return undefined;
+  }
+
+  /** Whether this place is below a building's bedrock (the Groovy `isAbyssal`): the parent's answer, false at the top. */
+  abyssal(): boolean {
+    return this.parent()?.abyssal() ?? false;
+  }
+
+  /** The places this one is counted among on the HUD (`ORBIT 02/05`): its parent's children, unless the kind counts otherwise; none at the top. */
+  peers(): readonly Location[] {
+    return this.parent()?.children() ?? [];
   }
 
   /** The universe this place is in — the top of its trail. */
@@ -264,11 +345,25 @@ export abstract class Location {
    * One strict walker: an index nobody answers, or a sealed place on the way, is nowhere.
    */
   descendant(address: Address): Location | undefined {
-    let here: Location | undefined = this.sealed() ? undefined : this;
-    for (const index of address.indices().slice(this.depth())) {
-      here = here?.children()[index];
-      if (here?.sealed() === true) return undefined;
-    }
-    return here;
+    if (this.sealed()) return undefined;
+    return address
+      .indices()
+      .slice(this.depth())
+      .reduce<Location | undefined>((here, index) => {
+        const next = here?.children()[index];
+        return next?.sealed() === true ? undefined : next;
+      }, this);
+  }
+
+  /**
+   * The place an address names, sealed or not — a place that exists but cannot be stood in (a Layer of an
+   * unbreached building). A traveller's footprints may name one: the world was rebuilt under them (the
+   * reboot keeps the visited path, Guide:145-146).
+   */
+  locate(address: Address): Location | undefined {
+    return address
+      .indices()
+      .slice(this.depth())
+      .reduce<Location | undefined>((here, index) => here?.children()[index], this);
   }
 }

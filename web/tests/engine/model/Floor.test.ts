@@ -92,27 +92,38 @@ describe('Building — where its elevator stands (Building.groovy:24, 189; Floor
     const third = must(unit.children()[2]);
     expect(third.arrive()).toBe(third);
     expect(unit.children().map((each) => each.current())).toEqual([false, false, true, false]);
-    expect(unit.remember()).toBe('2');
+    expect(unit.remember()).toBe('{"elevator":2}');
     // Arriving at the corridor lands on its floor and calls the elevator there too.
     expect(must(unit.children()[1]?.children()[0]).arrive()).toBe(unit.children()[1]);
-    expect(unit.remember()).toBe('1');
+    expect(unit.remember()).toBe('{"elevator":1}');
     // Leaving a floor, or walking its corridor, moves nothing: the elevator waits where it was called.
     must(unit.children()[1]).move('corridor');
     must(unit.children()[1]).leave();
-    expect(unit.remember()).toBe('1');
+    expect(unit.remember()).toBe('{"elevator":1}');
   });
 
-  test('recall: the saved floor number puts the elevator there; past the top, below the ground or not a floor number is refused', () => {
+  test('recall: the saved elevator floor puts the elevator there; past the top, below the ground of an unbreached building, the lobby or not a floor number is refused', () => {
     const { building: unit } = building();
-    expect(unit.recall('3')).toBe(true);
+    expect(unit.recall('{"elevator":3}')).toBe(true);
     expect(must(unit.children()[3]).current()).toBe(true);
-    expect(unit.remember()).toBe('3');
-    for (const bad of ['4', '-1', '1.5', 'x', '', '03', ' 1', '1e0']) {
+    expect(unit.remember()).toBe('{"elevator":3}');
+    for (const bad of [
+      '3',
+      '{"elevator":4}',
+      '{"elevator":-1}',
+      '{"elevator":1.5}',
+      '{"elevator":"1"}',
+      '{"elevator":0}',
+      'x',
+      '',
+      '{}',
+    ]) {
       expect(unit.recall(bad), bad).toBe(false);
-      expect(unit.remember(), bad).toBe('3');
+      expect(unit.remember(), bad).toBe('{"elevator":3}');
     }
-    expect(unit.recall('0')).toBe(true);
-    expect(unit.remember()).toBeUndefined();
+    // The lobby is the default: it is never written, so it is never read back (Journey: a recalled state is written again).
+    expect(unit.recall('{"elevator":1}')).toBe(true);
+    expect(unit.remember()).toBe('{"elevator":1}');
   });
 });
 

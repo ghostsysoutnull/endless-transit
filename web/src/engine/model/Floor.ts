@@ -3,10 +3,12 @@ import { CorridorState } from './CorridorState.ts';
 import { ElevatorState } from './ElevatorState.ts';
 import type { Fact } from './Fact.ts';
 import type { FloorState } from './FloorState.ts';
+import type { Fragment } from './Fragment.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
+import type { ScanReport } from './ScanReport.ts';
 
 export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤', indexLabel: 'Z-AXIS' });
 
@@ -107,6 +109,16 @@ export class Floor extends Location {
     return this.#building;
   }
 
+  /** The elevator's one-line diagnostic (ElevatorState.groovy status); a Layer answers otherwise. */
+  diagnostic(): string {
+    return 'SYSTEM_DIAGNOSTIC: [NOMINAL]';
+  }
+
+  /** A floor stands among the building's floors, never its Layers. */
+  override peers(): readonly Location[] {
+    return this.#building.children().slice(0, this.#building.floors());
+  }
+
   /** The floor's one child. */
   corridor(): Location {
     const corridor = this.children()[0];
@@ -114,10 +126,23 @@ export class Floor extends Location {
     return corridor;
   }
 
-  /** The floor `steps` above (below when negative) in the same building; nothing past the top or the ground. */
+  /** The floor `steps` above (below when negative) in the same building; nothing past the top, nothing below the ground until the bedrock is breached. */
   neighbour(steps: number): Location | undefined {
-    const number = this.#number + steps;
-    return number < 0 || number >= this.#building.floors() ? undefined : this.#building.children()[number];
+    return this.#building.floorNumbered(this.#number + steps);
+  }
+
+  /** A capture under this floor samples it for the ritual (RitualTracker.groovy:26-33). */
+  override sample(): void {
+    this.#building.sampleFloor(this.#number);
+  }
+
+  /** The breach is a fact about the floor, not the mode (HK-018; Floor.groovy:64-80): the building decides. */
+  override breachOffered(held: readonly Fragment[]): boolean {
+    return this.#building.breachOfferedAt(this.#number, held);
+  }
+
+  override breach(held: readonly Fragment[]): Fragment | undefined {
+    return this.#building.breachFrom(this.#number, held);
   }
 
   /** Spatial pivot, elevator → corridor. The only way into the corridor mode. */
@@ -181,5 +206,15 @@ export class Floor extends Location {
 
   approachVerb(): string {
     return this.#state.approachVerb(this);
+  }
+
+  /** What a scan on this floor inspects is decided by the mode, never by the caller (Floor.groovy:82-85). */
+  override scan(seen: (place: Location) => boolean): ScanReport | undefined {
+    return this.#state.scan(this, seen);
+  }
+
+  /** The building's strata pulse reads a floor's zone (ScanCommand.groovy:149-150). */
+  override scanned(): readonly Fact[] {
+    return [{ key: 'zone', label: 'FUNCTION', value: this.#zone }];
   }
 }

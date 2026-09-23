@@ -2,6 +2,7 @@ import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { DoorInscription } from '#engine/model/DoorInscription.ts';
 import { INSCRIPTION_STYLES } from '#engine/model/InscriptionStyle.ts';
 import { RoomCategory } from '#engine/model/RoomCategory.ts';
+import { Trace } from '#engine/model/Trace.ts';
 import type { Trait } from '#engine/model/Trait.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 
@@ -9,9 +10,10 @@ const LISTS = 'names/rooms';
 
 /**
  * Owns one fact: which kinds of room a country's trait allows, and which of them a room is — the list
- * `names/rooms/<Trait>` (four names, each with the door words it guarantees or none), one drawn on the
- * room's own seed (NameGenerator.groovy:131-141). The same draw, made on the first room's seed, is how a
- * door learns what it leads to (CorridorFactory.groovy:44-45). Built once per trait.
+ * `names/rooms/<Trait>` (four lines of `name|guarantee|trace`: the door words it guarantees or none, and
+ * the trace its door carries), one drawn on the room's own seed (NameGenerator.groovy:131-141). The same
+ * draw, made on the first room's seed, is how a door learns what it leads to (CorridorFactory.groovy:44-45).
+ * Built once per trait.
  */
 export class RoomCategories {
   readonly #library: ContentLibrary;
@@ -25,9 +27,13 @@ export class RoomCategories {
     let categories = this.#byTrait.get(trait.key());
     if (categories === undefined) {
       categories = Object.freeze(
-        this.#library
-          .pairs(`${LISTS}/${trait.key()}`)
-          .map(([name, guarantee]) => new RoomCategory(name, this.#inscription(guarantee))),
+        this.#library.pairs(`${LISTS}/${trait.key()}`).map(([name, rest]) => {
+          const cut = rest.indexOf('|');
+          if (cut < 0) throw new Error(`${LISTS}: '${name}|${rest}' is not 'name|guarantee|trace'`);
+          const trace = Trace.of(rest.slice(cut + 1).trim());
+          if (trace === undefined) throw new Error(`${LISTS}: '${name}' names no known trace`);
+          return new RoomCategory(name, this.#inscription(rest.slice(0, cut).trim()), trace);
+        }),
       );
       this.#byTrait.set(trait.key(), categories);
     }

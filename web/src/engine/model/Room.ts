@@ -5,8 +5,10 @@ import type { Contents } from './Contents.ts';
 import type { Fact } from './Fact.ts';
 import type { Fragment } from './Fragment.ts';
 import { FragmentReader } from './FragmentReader.ts';
+import { Frequency } from './Frequency.ts';
 import { Gematria } from './Gematria.ts';
 import { Glitch } from './Glitch.ts';
+import { HiddenFrequency } from './HiddenFrequency.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
@@ -15,6 +17,7 @@ import type { Origin } from './Origin.ts';
 import type { Relic } from './Relic.ts';
 import { RelicFragment } from './RelicFragment.ts';
 import type { RoomCategory } from './RoomCategory.ts';
+import type { ScanReport } from './ScanReport.ts';
 
 export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
 
@@ -24,6 +27,12 @@ const GLITCHED = { structure: 0.2, walls: 0.1, lighting: 0.3 } as const;
 const STATIC_KEY = 'static';
 /** Reads dropped fragments back from a memento, through the world (stateless). */
 const READER = new FragmentReader();
+/** The free lottery (Guide:187-188; Room.groovy:71-72): three moves in ten win, one to ten million hertz; rolled on the old game's own branch key. */
+const LOTTERY = 'action';
+const WIN = 0.3;
+const PRIZE = { min: 1_000_000, max: 9_999_999 };
+/** The scan's WAVE column (ScanCommand.groovy:188-189): resonant, plain, and degraded under an anomaly. */
+const WAVES = { resonant: '≈≈≈', plain: '~~~', degraded: '###' } as const;
 
 /** Back to the previous room unless this is the first, forward to the next unless it is the last. */
 const MOVES = new MoveTable<Room>([
@@ -204,6 +213,49 @@ export class Room extends Location {
     return [];
   }
 
+  /**
+   * The free lottery (Guide:186-190; Room.groovy:69-78): on the move that landed here at `steps`, three in ten
+   * a Hidden Frequency worth one to ten million hertz — rolled on the room and the step, so a reload or a
+   * prompt spent standing still never rolls again, and the reader can ask for the same prize.
+   */
+  override lottery(steps: number): Fragment | undefined {
+    const roll = this.seed().branch(LOTTERY).branch(steps);
+    if (!roll.branch('win').probability(WIN)) return undefined;
+    return new HiddenFrequency({
+      from: this.address(),
+      steps,
+      frequency: new Frequency(roll.branch('hertz').range(PRIZE.min, PRIZE.max)),
+    });
+  }
+
+  /** A scan in a room is the apartment's strata overview (ScanCommand.groovy:46-47). */
+  override scan(seen: (place: Location) => boolean): ScanReport | undefined {
+    return this.#apartment.scan(seen);
+  }
+
+  /**
+   * The overview's line about this room (ScanCommand.groovy:180-204): the frequency of its name at this
+   * depth, the wave (resonant, plain, or degraded under an anomaly), whether the traveller has seen it, its
+   * kind and its name.
+   */
+  override scanned(seen: (place: Location) => boolean): readonly Fact[] {
+    const frequency = new Gematria(this.#name).frequencyAt(this.depth());
+    const wave: Fact = this.#apartment.anomaly()
+      ? { key: 'alert', label: 'WAVE', value: WAVES.degraded }
+      : frequency.resonant()
+        ? { key: 'stable', label: 'WAVE', value: WAVES.resonant }
+        : { key: 'signal', label: 'WAVE', value: WAVES.plain };
+    return [
+      { key: 'reading', label: 'FREQ', value: `${String(frequency.hertz())}Hz` },
+      wave,
+      seen(this)
+        ? { key: 'stable', label: 'STATUS', value: '[VISITED]' }
+        : { key: 'reading', label: 'STATUS', value: '[UNSTABLE]' },
+      { key: 'reading', label: 'TYPE', value: this.type() },
+      { key: 'reading', label: 'IDENTIFIER', value: this.#name },
+    ];
+  }
+
   /** The room `steps` further along the apartment (back when negative); nothing past either end. */
   neighbour(steps: number): Location | undefined {
     return this.#apartment.children()[this.index() + steps];
@@ -239,9 +291,14 @@ export class Room extends Location {
     ];
   }
 
-  /** The local cell diagnostic (Room.groovy:124-130): the resonance is degraded under an anomaly. */
+  /**
+   * The local cell diagnostic (Room.groovy:124-130): the resonance is degraded under an anomaly — and first
+   * the apartment's era marker, which the old game wrote on a screen nobody ever saw (Apartment.groovy:44;
+   * Decision 7: a label that never showed is made to show, where the traveller stands).
+   */
   override facts(): readonly Fact[] {
     return [
+      { key: 'era', label: 'TEMPORAL_MARKER', value: this.#apartment.era().key() },
       { key: 'reading', label: 'TYPE', value: this.type() },
       { key: 'reading', label: 'OXY', value: `${String(this.#traits.oxygen)}%` },
       { key: 'reading', label: 'TEMP', value: `${String(this.#traits.temperature)}°C` },

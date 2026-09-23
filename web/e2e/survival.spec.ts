@@ -76,7 +76,7 @@ test('debug mode: the bar changes with the thresholds — yellow from 69, static
   await page.goto('./?debug');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   const debug = page.getByTestId('debug');
-  await expect(debug.getByRole('button')).toHaveCount(8);
+  await expect(debug.getByRole('button')).toHaveCount(10); // the INTEGRITY ladder, PRIME and KEYSTONE (I07)
   const clean = await page.locator('.desc').innerText();
   expect(clean).not.toMatch(STATIC);
 

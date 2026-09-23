@@ -1,4 +1,4 @@
-Hydroponic Bay|
-Spore Farm|
-Oxygen Sump|
-Growth Chamber|
+Hydroponic Bay||stillness
+Spore Farm||stillness
+Oxygen Sump||stillness
+Growth Chamber||stillness

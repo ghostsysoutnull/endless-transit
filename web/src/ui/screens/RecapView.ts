@@ -5,7 +5,7 @@ import type { View } from '#ui/View.ts';
 import type { RecapVM } from './RecapVM.ts';
 
 /**
- * Draws the session recap with lit-html: the ending's heading, its figures or its shutdown steps, the closing
+ * Draws the session recap with lit-html: the ending's heading, its figures, its shutdown steps or the void's lines, the closing
  * line, two buttons. Every word comes from the view-model (`RecapPresenter` owns them); this file owns
  * markup only. The note line here is for the eye; the shell's own live region speaks the status.
  */
@@ -59,6 +59,13 @@ export class RecapView implements View<RecapVM> {
                     `,
                   )}
                 </ol>`
+          }
+          ${
+            vm.lines.length === 0
+              ? nothing
+              : html`<div class="void-lines" data-testid="void-lines">
+                  ${vm.lines.map((line) => html`<p>${line}</p>`)}
+                </div>`
           }
           <p class="closing" data-testid="closing">${vm.closing}</p>
           <p class=${vm.note === '' ? 'status quiet' : 'status'} data-testid="status">${vm.note}</p>

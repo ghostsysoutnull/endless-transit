@@ -1,4 +1,4 @@
-Trading Floor|
-Logic Market|
-Credit Hub|
-Supply Node|
+Trading Floor||stillness
+Logic Market||stillness
+Credit Hub||humming
+Supply Node||clicking

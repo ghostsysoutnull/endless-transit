@@ -2,6 +2,7 @@ import { Coherence } from '#engine/rules/Coherence.ts';
 import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
+import { frameOf } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
@@ -9,8 +10,33 @@ import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
-const DEFAULT_FRAME = 'default';
 const RETURN_MARK = '▲ ';
+/** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
+const SCAN_MARK = { text: '>>', label: 'You are here' } as const;
+/**
+ * The HUD's labels above and below the bedrock (HUDHeaderComponent.groovy:34, 44, 54-60, 79; Guide:280):
+ * Coherence is relabelled Integrity down there, the locus becomes a void trace.
+ */
+const LABELS = {
+  lattice: {
+    meter: 'COHERENCE',
+    depth: 'HOP_DENSITY',
+    locus: 'LOCUS',
+    hash: 'LOCUS_HASH',
+    path: 'Path from the universe',
+    sync: 'LATTICE_SYNC: [NOMINAL]',
+  },
+  void: {
+    meter: 'INTEGRITY',
+    depth: 'ABYSSAL_DEPTH',
+    locus: 'VOID_LOCUS',
+    hash: 'VOID_HASH',
+    path: 'Void trace from the universe',
+    sync: 'VOID_SYNC: [PRESSURE_HIGH]',
+  },
+} as const;
+/** The void's line in the decode log (HUDHeaderComponent.groovy:87). */
+const VOID_PREFIX = '[VOID] ';
 /** The elevator column's current-floor mark (Building.groovy:198-201), and what a reader hears instead. */
 const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
 /** The visited mark of the old lists, drawn from the engine's letter (its one owner), and what a reader hears instead. */
@@ -22,6 +48,8 @@ const BAR = '█';
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
  * out. No DOM. It never asks what kind of place this is — the snapshot already says what it is called and
  * what it shows; options are sorted by their `role`, which is data the engine put there for that purpose.
+ * Below the bedrock (`place.abyssal`) the labels change and the frame is the void's; a scan on the
+ * snapshot becomes a panel of rows.
  */
 export class HudPresenter implements Presenter<HudVM> {
   readonly #masthead: Masthead;
@@ -53,13 +81,14 @@ export class HudPresenter implements Presenter<HudVM> {
       .filter((option) => option.role === 'debug')
       .map((option) => this.#docked(option));
     const pad = (value: number): string => String(value).padStart(2, '0');
+    const labels = place.abyssal ? LABELS.void : LABELS.lattice;
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
-      frame: place.frame ?? DEFAULT_FRAME,
+      frame: frameOf(place),
       crumbs: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
       meter: {
-        label: 'COHERENCE',
+        label: labels.meter,
         ...Coherence.range(),
         value: player.coherence,
         text: `${String(player.coherence)}%`,
@@ -73,7 +102,7 @@ export class HudPresenter implements Presenter<HudVM> {
           label: 'TRACE_BUFFER',
           value: `${pad(snapshot.buffer?.size ?? 0)}/${pad(snapshot.buffer?.capacity ?? 0)}`,
         },
-        { label: 'HOP_DENSITY', value: pad(place.depth) },
+        { label: labels.depth, value: pad(place.depth) },
         ...(place.position === null
           ? []
           : [
@@ -82,8 +111,8 @@ export class HudPresenter implements Presenter<HudVM> {
                 value: `${pad(place.position.index)}/${pad(place.position.total)}`,
               },
             ]),
-        { label: 'LOCUS', value: place.address },
-        { label: 'LOCUS_HASH', value: place.hash },
+        { label: labels.locus, value: place.address },
+        { label: labels.hash, value: place.hash },
         { label: 'SEED', value: snapshot.world?.seed ?? '' },
       ],
       place: {
@@ -99,7 +128,23 @@ export class HudPresenter implements Presenter<HudVM> {
         rows: this.#rows(place),
         diagnostic: place.status,
       },
-      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0),
+      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0, labels.sync),
+      scan:
+        snapshot.scan === null
+          ? null
+          : {
+              label: 'Scan',
+              heading: snapshot.scan.title,
+              notes: snapshot.scan.notes,
+              rows: snapshot.scan.rows.map((row) => ({
+                // A reading with nothing to say (a door without words) shows no bare label.
+                cells: row.cells
+                  .filter((cell) => cell.value !== '')
+                  .map((cell) => ({ key: cell.key, label: cell.label, value: cell.value })),
+                mark: row.current ? SCAN_MARK : null,
+                note: row.note,
+              })),
+            },
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
       moves,
@@ -122,8 +167,9 @@ export class HudPresenter implements Presenter<HudVM> {
       build: this.#masthead.buildLine(),
       regions: {
         hud: 'Position',
-        path: 'Path from the universe',
+        path: labels.path,
         place: 'Where you are',
+        scan: 'Scan',
         travel: 'Places to enter',
         moves: 'Moves',
         aside: 'Readouts',
@@ -153,7 +199,7 @@ export class HudPresenter implements Presenter<HudVM> {
    * for its number, none while the buffer is full (the takes come sealed) — and the telemetry block when it
    * is indoors.
    */
-  #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number): AsideVM {
+  #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number, sync: string): AsideVM {
     const contents = place.contents;
     const full = takes.some((take) => take.sealed);
     return {
@@ -182,14 +228,18 @@ export class HudPresenter implements Presenter<HudVM> {
           : {
               label: 'System telemetry',
               heading: '[SYSTEM_TELEMETRY]',
-              sync: 'LATTICE_SYNC: [NOMINAL]',
+              sync,
               spectrogram: {
                 heading: '[QUANTUM_SPECTROGRAM]',
                 bars: place.telemetry.spectrogram.map((height) => BAR.repeat(height)),
               },
               logs: {
                 heading: '[DECODE_LOGS]',
-                lines: [`> Trace: ${place.address}`, `> Resonant traces: ${String(resonant)}`],
+                lines: [
+                  `> Trace: ${place.address}`,
+                  `> Resonant traces: ${String(resonant)}`,
+                  ...(place.telemetry.voice === null ? [] : [`${VOID_PREFIX}${place.telemetry.voice}`]),
+                ],
               },
             },
     };

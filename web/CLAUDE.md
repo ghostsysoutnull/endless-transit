@@ -24,7 +24,9 @@ move / return / system / debug / take / pick / drop; a new action is a registry 
 command, Guide:133), a new screen one more stage in `main.ts`; a pending prompt (`Prompt`: the reboot at zero
 coherence, the recap, the buffer screen) is a state whose options are the only ones on offer, never a blocking read —
 an answer is a `Reply` that settles it or keeps it open, and costs nothing. A key is the ordinal when the place goes
-by its own number, else from the pool. The traveller (`rules/Player`: `Coherence` value, steps, the visited path by
+by its own number, else from the pool. SCAN is a global command whose panel (`ScanSummary`) rides on the snapshot
+until the next step; the echo hunt (`echo`, `capture-echo`) and the breach (`breach`) are steps offered as moves when
+the place says so; after every step that counts the room rolls the free lottery (`Location.lottery(steps)`). The traveller (`rules/Player`: `Coherence` value, steps, the visited path by
 address, the `Buffer`, the resonance tally) rides with the `Journey`; what the HUD draws that is noise is seeded from
 `FrameEntropy` (the place + the step count), never the clock. **Debug mode** (Decision 8): `?debug` on the page's address, read only in `main.ts`; the debug tools
 (`role: 'debug'`, the INTEGRITY ladder) are offered nowhere else, and tests turn it on with `debug: true`.
@@ -36,17 +38,28 @@ The world: `model/Location` owns the **lazy-loading law** — children sit behin
 `current()`, `goesByNumber()`, `startOfJourney()`, `drainFactor()`) plus a `LocationFactory<T, Parent>` entry in
 `procgen/LocationRegistry`; nobody asks "which kind are you?" (`instanceof`, a `switch` on `kind().key()`). A mode a
 place can be in is a state object it asks (`Floor` → `FloorState`), never a flag the caller reads. Child `i` is born from
-`parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save (v5) is seed + path + what
+`parentSeed.branch(i)` and nothing else. **The ritual** lives on the `Building` (sampled floors, merges, the breach): a
+capture tells the trail `sample()`, a merge `infuse()`, and the building answers `primed()`, `forge(held)` (its
+`Keystone`, bound by address) and the breach (the Peak, in either mode); a building's children are its floors then ten
+`Layer`s, sealed until the breach, each with an `Artery` (the bedrock's vibe: abyssal culture, atomic era, the
+country's trait), `Crypt`s and `Shard`s — four more registry entries, the apartment and room factories registered
+again with a shape; `Location.abyssal()` is the parent's answer, a Layer's is true and it doubles the drain. A
+`NullReach` owns its `Echo` (the signal, the capture once ever) and remembers it. A scan is `Location.scan(seen)`: the
+state decides what a floor scans; a kind answers `scanned(seen)`/`sensed()` for its row.
+Where the traveller stands: `rules/Journey`; a save (v6) is seed + path + what
 every **visited** place remembers (`remember()`/`recall()` — the one home of every per-place fact: a room's taken keys
 and dropped fragments) + the traveller (coherence, steps, visited, the buffer as fragment data, the tally), and restore
-takes only a save the journey could have written (`saved()` after `restore()` is the save; a visited path is walked
-parents first and holds the trail; every fragment is read back **through the world** by the `FragmentReader`).
+takes only a save the journey could have written (`saved()` after `restore()` is the save; the states are recalled
+before any place is looked for, so a breach unseals the Layers a save stands on; a visited path is walked parents
+first and holds the trail, and may name a sealed place — the reboot keeps the path; every fragment is read back
+**through the world** by the `FragmentReader`, which refuses data the fragment would not write back).
 A presenter never cuts a name out of a label — the option carries it. **Objects live in apartments** (Guide:167): an
 apartment deals its relics (`Relic`, identity by key) from the `ObjectDeck` of its culture and era and knows which
 room each lies in; a room asks. Furniture is a culture item in a condition, never a hybrid. **Items:** a `Fragment`
 is what the buffer holds — a `RelicFragment` (a relic with its provenance, the room that gives it its `Frequency` from
-the `Gematria` of its name; 0 Hz never resonates) or a `Hybrid` of two; a kind of fragment is one class and one row in
-the reader's table. A capture is one transaction of the `Journey` (the room hands over only what the `Buffer` takes,
+the `Gematria` of its name; 0 Hz never resonates), a `Hybrid` of two, a `Keystone` (a building's, 0 Hz), a
+`HiddenFrequency` (a room and the step that won it) or a `SpectralEcho` (a reach's); a kind of fragment is one class
+and one row in the reader's table. A capture is one transaction of the `Journey` (the room hands over only what the `Buffer` takes,
 sixteen at most); a dropped fragment lies in the room as it was; only a _fresh_ capture counts toward the tally.
 
 ## The walls (each proven RED on a scratch file when added)

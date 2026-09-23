@@ -1,4 +1,4 @@
-Laboratory|stamped DATA_VAULT
-Neural Link Array|
-Observation Deck|
-Bio-Server|stamped DATA_VAULT
+Laboratory|stamped DATA_VAULT|ozone
+Neural Link Array||ozone
+Observation Deck||stillness
+Bio-Server|stamped DATA_VAULT|ozone

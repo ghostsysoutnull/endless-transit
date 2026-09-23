@@ -1,6 +1,7 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Building, BUILDING_KIND } from '#engine/model/Building.ts';
 import { FLOOR_KIND } from '#engine/model/Floor.ts';
+import { LAYER_KIND } from '#engine/model/Layer.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
@@ -10,15 +11,17 @@ import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import { Progeny } from './Progeny.ts';
 
-/** A building: a size, then a name that depends on it; as many floors as the size said, floor `n` from `branch(n)`. */
+/** A building: a size, then a name that depends on it; as many floors as the size said, floor `n` from `branch(n)`, then its Layers past them. */
 export class BuildingFactory implements LocationFactory<Building> {
   readonly #namer: BuildingNamer;
   readonly #sizes = new BuildingSizes();
   readonly #floors: Progeny;
+  readonly #layers: Progeny;
 
   constructor(world: FactoryLookup, library: ContentLibrary) {
     this.#namer = new BuildingNamer(library);
     this.#floors = new Progeny(world, undefined, () => world.factoryFor(FLOOR_KIND));
+    this.#layers = new Progeny(world, undefined, () => world.factoryFor(LAYER_KIND));
   }
 
   kind(): LocationKind {
@@ -47,6 +50,9 @@ export class BuildingFactory implements LocationFactory<Building> {
   }
 
   populate(parent: Building): readonly Location[] {
-    return this.#floors.exactly(parent, parent.floors());
+    return [
+      ...this.#floors.exactly(parent, parent.floors()),
+      ...this.#layers.exactly(parent, parent.layers(), parent.floors()),
+    ];
   }
 }

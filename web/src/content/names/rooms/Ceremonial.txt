@@ -1,4 +1,4 @@
-Prayer Hall|
-Ritual Chamber|
-Archive|
-Memory Well|
+Prayer Hall||stillness
+Ritual Chamber||stillness
+Archive||stillness
+Memory Well||frost

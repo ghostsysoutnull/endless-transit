@@ -4,11 +4,24 @@ import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
+import type { ScanReport } from './ScanReport.ts';
 
-/** Up unless this is the top floor, down unless the ground floor, and the corridor (ElevatorState.groovy:22-45). */
+/** The ground floor: below it lies the substrate, not another floor (ElevatorState.groovy:32-38). */
+const GROUND = 0;
+/**
+ * Up unless this is the top floor, down unless the ground floor — where, once the bedrock is breached, the
+ * descent into the substrate is offered instead (Guide:277-278) — and the corridor (ElevatorState.groovy:22-45).
+ */
 const MOVES = new MoveTable<Floor>([
   { move: { id: 'up', label: 'Go Up', opposite: 'down' }, to: (floor) => floor.neighbour(1) },
-  { move: { id: 'down', label: 'Go Down', opposite: 'up' }, to: (floor) => floor.neighbour(-1) },
+  {
+    move: { id: 'down', label: 'Go Down', opposite: 'up' },
+    to: (floor) => (floor.number() === GROUND ? undefined : floor.neighbour(-1)),
+  },
+  {
+    move: { id: 'descend', label: 'Descend into the Substrate', opposite: 'up' },
+    to: (floor) => (floor.number() === GROUND ? floor.neighbour(-1) : undefined),
+  },
   {
     move: { id: 'corridor', label: 'Enter Corridor', opposite: 'elevator' },
     to: (floor) => floor,
@@ -65,8 +78,8 @@ export class ElevatorState implements FloorState {
     return [`${floor.name()}. ${floor.sentence()}`, 'Local signal is STABLE. Corridor access authorized.'];
   }
 
-  status(): string {
-    return 'SYSTEM_DIAGNOSTIC: [NOMINAL]';
+  status(floor: Floor): string {
+    return floor.diagnostic();
   }
 
   childrenHeading(): string {
@@ -75,5 +88,10 @@ export class ElevatorState implements FloorState {
 
   approachVerb(): string {
     return '';
+  }
+
+  /** At the elevator the scan is the building's vertical strata pulse around this floor (ElevatorState.groovy:83-86). */
+  scan(floor: Floor, seen: (place: Location) => boolean): ScanReport | undefined {
+    return floor.building().scanAround(floor.number(), seen);
   }
 }

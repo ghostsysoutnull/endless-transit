@@ -17,7 +17,8 @@ const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
  * open its answers are the only things on offer, and none of them costs anything — the old screen read
  * its own commands outside the turn. A merge is two picks: the first selects a fragment, the second, on
  * another, merges them (Guide:241-243) and gives fifteen back (Guide:141); picking the selected one again
- * unselects it. In a room, every fragment can be dropped where the traveller stands (Guide:120-121); the
+ * unselects it — or, inside a primed building, forges its Keystone (Guide:250-252, 271-274). In a room, every
+ * fragment can be dropped where the traveller stands (Guide:120-121); the
  * old screen's destroy is not carried — with a capacity, a drop covers every use. Back to reality closes
  * it. The selection is the prompt's own and is not saved: a reload lands in the world.
  */
@@ -82,9 +83,13 @@ export class BufferPrompt implements Prompt {
     }
     this.#selected = undefined;
     if (selected === index) return '';
-    const hybrid = this.#journey.merge(selected, index);
-    if (hybrid === undefined) return '';
-    const resonance = hybrid.resonant() ? ' Resonance detected.' : '';
-    return `Synthesis complete: ${hybrid.name()} (${String(hybrid.frequency().hertz())} Hz). Coherence +15.${resonance}`;
+    const merge = this.#journey.merge(selected, index);
+    if (merge === undefined) return '';
+    const { fragment } = merge;
+    if (merge.forged) {
+      return `Critical waveform collapse: KEYSTONE_STABILIZED. The fragments merge into a silent, heavy anchor: ${fragment.name()}. Coherence +15.`;
+    }
+    const resonance = fragment.resonant() ? ' Resonance detected.' : '';
+    return `Synthesis complete: ${fragment.name()} (${String(fragment.frequency().hertz())} Hz). Coherence +15.${resonance}`;
   }
 }

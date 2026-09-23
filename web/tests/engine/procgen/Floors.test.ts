@@ -18,10 +18,13 @@ function buildingOf(n: number): { building: Building; floors: Floor[] } {
   const street = must(toStreet(registry.universe(sampleSeed(n)), () => n).at(-1));
   const building = must(street.children()[n % street.children().length]);
   if (!(building instanceof Building)) throw new Error('a street holds buildings');
-  const floors = building.children().map((floor) => {
-    if (!(floor instanceof Floor)) throw new Error('a building holds floors');
-    return floor;
-  });
+  const floors = building
+    .children()
+    .slice(0, building.floors())
+    .map((floor) => {
+      if (!(floor instanceof Floor)) throw new Error('a building holds floors');
+      return floor;
+    });
   return { building, floors };
 }
 

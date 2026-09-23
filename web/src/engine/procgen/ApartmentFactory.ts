@@ -1,6 +1,7 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Apartment, APARTMENT_KIND } from '#engine/model/Apartment.ts';
 import type { Corridor } from '#engine/model/Corridor.ts';
+import type { ApartmentShape } from './ApartmentShape.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
@@ -20,6 +21,12 @@ const ROOMS = { min: 1, max: 10 };
 /** 5 to 19 relics per apartment (Guide:167; ApartmentFactory.groovy:40). */
 const RELICS = { min: 5, max: 19 };
 const HOARD = 'relics';
+/** The shape above the bedrock: an apartment of rooms. */
+const APARTMENT: ApartmentShape = {
+  kind: APARTMENT_KIND,
+  rooms: ROOM_KIND,
+  make: (origin, facts) => new Apartment(origin, facts),
+};
 
 /**
  * An apartment: its door — inscribed for what its first room will be — and its culture and era, the
@@ -28,21 +35,28 @@ const HOARD = 'relics';
  * (ApartmentFactory.groovy:40-45, HK-016 step 2).
  */
 export class ApartmentFactory implements LocationFactory<Apartment, Corridor> {
+  readonly #shape: ApartmentShape;
   readonly #doors: Doors;
   readonly #categories: RoomCategories;
   readonly #rooms: Progeny;
   readonly #deck: ObjectDeck;
   readonly #deal = new Deal();
 
-  constructor(world: FactoryLookup, library: ContentLibrary, categories: RoomCategories) {
+  constructor(
+    world: FactoryLookup,
+    library: ContentLibrary,
+    categories: RoomCategories,
+    shape: ApartmentShape = APARTMENT,
+  ) {
+    this.#shape = shape;
     this.#doors = new Doors(library);
     this.#categories = categories;
-    this.#rooms = new Progeny(world, ROOMS, () => world.factoryFor(ROOM_KIND));
+    this.#rooms = new Progeny(world, ROOMS, () => world.factoryFor(shape.rooms));
     this.#deck = new ObjectDeck(library);
   }
 
   kind(): LocationKind {
-    return APARTMENT_KIND;
+    return this.#shape.kind;
   }
 
   create(origin: Origin<Corridor>): Apartment {
@@ -55,11 +69,11 @@ export class ApartmentFactory implements LocationFactory<Apartment, Corridor> {
     const culture = anomaly ? vibe.culture() : vibe.pickCulture(origin.seed.branch('culture'));
     const era = anomaly ? vibe.era() : vibe.pickEra(origin.seed.branch('era'));
     const hoard = origin.seed.branch(HOARD);
-    return new Apartment(origin, {
-      door: this.#doors.of(
-        origin.seed.branch('door'),
-        this.#categories.categoryOf(origin.seed.branch(0), trait),
-      ),
+    // The first room's own draw (child 0's seed): the door is inscribed and traced for what it leads to.
+    const behind = this.#categories.categoryOf(origin.seed.branch(0), trait);
+    return this.#shape.make(origin, {
+      door: this.#doors.of(origin.seed.branch('door'), behind),
+      behind,
       culture,
       era,
       anomaly,

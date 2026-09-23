@@ -3,6 +3,7 @@ import type { GameOption } from './GameOption.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
 import type { PlayerSummary } from './PlayerSummary.ts';
 import type { PromptSummary } from './PromptSummary.ts';
+import type { ScanSummary } from './ScanSummary.ts';
 import type { WorldSummary } from './WorldSummary.ts';
 
 /** What `GameEngine.step` returns: plain readonly data — JSON-safe, no objects with behaviour. */
@@ -19,4 +20,6 @@ export interface GameSnapshot {
   readonly options: readonly GameOption[];
   /** What just happened, for the status line / live region. Empty when nothing did. */
   readonly message: string;
+  /** The panel the last SCAN read, until the next step; `null` when the last step was no scan. */
+  readonly scan: ScanSummary | null;
 }

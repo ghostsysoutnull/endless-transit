@@ -129,8 +129,8 @@ for (const [what, text, kind] of [
   ['the lobby of its first building', save(LOBBY), 'FLOOR'],
   ['the lobby in its corridor', save(LOBBY, { [LOBBY]: 'corridor' }), 'FLOOR'],
   ['the first room behind the first door', save(`${LOBBY}.0.0.0`, { [LOBBY]: 'corridor' }), 'ROOM'],
-  ['floor 5, the elevator called there', save(`${BUILDING}.5`, { [BUILDING]: '5' }), 'FLOOR'],
-  ['the building, the elevator at 5', save(BUILDING, { [BUILDING]: '5' }), 'BUILDING'],
+  ['floor 5, the elevator called there', save(`${BUILDING}.5`, { [BUILDING]: '{"elevator":5}' }), 'FLOOR'],
+  ['the building, the elevator at 5', save(BUILDING, { [BUILDING]: '{"elevator":5}' }), 'BUILDING'],
 ] as const) {
   test(`the control: the same seed with ${what} as its path is a good save, and is restored`, async ({
     page,

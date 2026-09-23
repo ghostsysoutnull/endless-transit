@@ -32,6 +32,7 @@ describe('TitlePresenter.toViewModel', () => {
       prompt: null,
       options: [option('new-world', 'n', 'New world')],
       message: '',
+      scan: null,
     });
     expect(vm.world).toBeNull();
     expect(vm.options).toEqual([{ id: 'new-world', key: 'N', label: 'NEW WORLD', opposite: '' }]);
@@ -49,6 +50,7 @@ describe('TitlePresenter.toViewModel', () => {
       prompt: null,
       options: [option('reroll', 'r', 'Re-roll')],
       message: 'World 1111-1111-2222-2222 drawn.',
+      scan: null,
     });
     expect(vm.world).toEqual({
       nameLabel: 'UNIVERSE',
@@ -70,6 +72,7 @@ describe('TitlePresenter.toViewModel', () => {
       prompt: null,
       options: [],
       message: '',
+      scan: null,
     });
     expect(vm.title).toBe('ENDLESS TRANSIT');
     expect(vm.regions).toEqual({ stage: 'Uplink', world: 'World', actions: 'Actions' });
@@ -85,6 +88,7 @@ describe('TitlePresenter.toViewModel', () => {
         prompt: null,
         options: [],
         message: '',
+        scan: null,
       }).build,
     ).toBe('build a1b2c3d');
     expect(
@@ -96,6 +100,7 @@ describe('TitlePresenter.toViewModel', () => {
         prompt: null,
         options: [],
         message: '',
+        scan: null,
       }).build,
     ).toBe('build dev');
   });
@@ -109,6 +114,7 @@ describe('TitlePresenter.toViewModel', () => {
       prompt: null,
       options: [],
       message: '',
+      scan: null,
     };
     expect(presenter.accepts(atTitle)).toBe(true);
     expect(presenter.toViewModel(atTitle).scene).toBe('title');
@@ -128,6 +134,7 @@ describe('TitlePresenter.toViewModel', () => {
       childrenHeading: '',
       contents: null,
       telemetry: null,
+      abyssal: false,
     };
     expect(
       presenter.accepts({ ...atTitle, place, player: { coherence: 100, band: 'stable', steps: 0 } }),
@@ -143,6 +150,7 @@ describe('TitlePresenter.toViewModel', () => {
       prompt: null,
       options: [],
       message: '',
+      scan: null,
     });
     expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
   });

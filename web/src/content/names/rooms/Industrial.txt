@@ -1,4 +1,4 @@
-Power Plant|
-Processing Core|
-Maintenance Bay|
-Fuel Depot|
+Power Plant||ozone
+Processing Core||ozone
+Maintenance Bay||clicking
+Fuel Depot||humming

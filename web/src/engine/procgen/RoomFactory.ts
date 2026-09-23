@@ -10,6 +10,7 @@ import { Deal } from './Deal.ts';
 import { Furnishings } from './Furnishings.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import type { RoomCategories } from './RoomCategories.ts';
+import type { RoomShape } from './RoomShape.ts';
 
 const ADJECTIVES = 'names/buildings/adj';
 const OXYGEN = { min: 12, max: 21 };
@@ -17,6 +18,8 @@ const TEMPERATURE = { min: 5, max: 25 };
 const SIGNALS = ['[SHIELDED]', '[CLEAR]'] as const;
 /** One to three pieces of furniture (Guide:171; RoomFactory.groovy:57). */
 const FURNITURE = { min: 1, max: 3 };
+/** The shape above the bedrock: a room. */
+const ROOM: RoomShape = { kind: ROOM_KIND, make: (origin, facts) => new Room(origin, facts) };
 
 /**
  * A room: named `<adjective> <category>` — the category one of the trait's four, the adjective dealt by
@@ -26,13 +29,20 @@ const FURNITURE = { min: 1, max: 3 };
  * apartment's business.
  */
 export class RoomFactory implements LocationFactory<Room, Apartment> {
+  readonly #shape: RoomShape;
   readonly #library: ContentLibrary;
   readonly #categories: RoomCategories;
   readonly #atmospheres: Atmospheres;
   readonly #furnishings: Furnishings;
   readonly #deal = new Deal();
 
-  constructor(library: ContentLibrary, categories: RoomCategories, warnings: WarningSink) {
+  constructor(
+    library: ContentLibrary,
+    categories: RoomCategories,
+    warnings: WarningSink,
+    shape: RoomShape = ROOM,
+  ) {
+    this.#shape = shape;
     this.#library = library;
     this.#categories = categories;
     this.#atmospheres = new Atmospheres(library, warnings);
@@ -40,7 +50,7 @@ export class RoomFactory implements LocationFactory<Room, Apartment> {
   }
 
   kind(): LocationKind {
-    return ROOM_KIND;
+    return this.#shape.kind;
   }
 
   create(origin: Origin<Apartment>): Room {
@@ -54,7 +64,7 @@ export class RoomFactory implements LocationFactory<Room, Apartment> {
       this.#library.list(`${ADJECTIVES}/${apartment.culture().key()}`),
       origin.index,
     );
-    return new Room(origin, {
+    return this.#shape.make(origin, {
       name: `${adjective} ${category.name()}`,
       category,
       atmosphere: this.#atmospheres.of(origin.seed, {

@@ -45,7 +45,7 @@ test('a room reads like the old game: its interpretation, furniture, the object 
   await expect(page.locator('.desc p').nth(1)).toHaveText(
     'The space is illuminated by a soft holographic haze with no visible source.',
   );
-  await expect(page.locator('.tag')).toHaveCount(5);
+  await expect(page.locator('.tag')).toHaveCount(6); // TEMPORAL_MARKER (I07), TYPE, OXY, TEMP, SIGNAL, RESONANCE
   await expect(page.locator('.tag[data-fact="stable"]')).toHaveText(/RESONANCE\s+\[STABLE\]/);
   await expect(page.locator('.prow').nth(0)).toHaveText(
     /FURNITURE\s*half-dismantled stained glass shard, scorched funeral mask/,

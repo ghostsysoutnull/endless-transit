@@ -9,8 +9,10 @@ export interface RecapVM extends Screen {
   readonly heading: string;
   /** The recap's figures (the full ending); none for the short one. */
   readonly figures: readonly { readonly label: string; readonly value: string }[];
-  /** The shutdown steps (the short ending); none for the full one. */
+  /** The shutdown steps (the short ending); none for the others. */
   readonly steps: readonly { readonly label: string; readonly process: string; readonly done: string }[];
+  /** The void's typewritten lines (the ending below the bedrock); none for the others. */
+  readonly lines: readonly string[];
   readonly closing: string;
   readonly options: readonly OptionVM[];
   /** The engine's message, for the eye; the heading is already on the page. */

@@ -212,18 +212,18 @@ describe('Journey — where the traveller stands', () => {
     expect(trip.saved()?.states()).toEqual(new Map());
     expect(trip.descend(13)).toBe(true);
     expect(trip.here()?.name()).toBe('Floor 2');
-    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '2']]));
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '{"elevator":2}']]));
     expect(trip.move('up')).toBe(true);
-    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '3']]));
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '{"elevator":3}']]));
     expect(trip.leave()).toBe(true);
     expect(trip.here()).toBe(building);
     expect(building.listing().filter((floor) => floor.current())).toEqual([building.children()[3]]);
-    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '3']]));
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '{"elevator":3}']]));
     // Off the trail the elevator is still saved: the building was visited, and every visited place remembers (v4).
     expect(trip.leave()).toBe(true);
-    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '3']]));
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '{"elevator":3}']]));
     const again = journey();
-    const atTheBuilding = save(`${STREET}.0`, new Map([[`${STREET}.0`, '3']]));
+    const atTheBuilding = save(`${STREET}.0`, new Map([[`${STREET}.0`, '{"elevator":3}']]));
     expect(again.restore(atTheBuilding)).toBe(true);
     expect(
       again
@@ -298,26 +298,34 @@ describe('Journey — where the traveller stands', () => {
     const room = `${lobby}.0.0.0`;
     const cases: readonly [string, string | undefined, ReadonlyMap<string, string>][] = [
       ['a floor off the path in corridor mode', STREET, new Map([[`${building}.3`, 'corridor']])],
-      ['a building off the path with its elevator up', STREET, new Map([[building, '3']])],
-      ['a state while nobody has entered the world', undefined, new Map([[building, '3']])],
+      ['a building off the path with its elevator up', STREET, new Map([[building, '{"elevator":3}']])],
+      ['a state while nobody has entered the world', undefined, new Map([[building, '{"elevator":3}']])],
       ['a room below a floor still at its elevator', room, new Map()],
       [
         'a room below a floor at its elevator, with the elevator there',
         `${building}.5.0.0.0`,
-        new Map([[building, '5']]),
+        new Map([[building, '{"elevator":5}']]),
       ],
       ['a floor the elevator has not been called to', `${building}.5`, new Map()],
-      ['a floor other than the one the elevator stands at', `${building}.5`, new Map([[building, '4']])],
+      [
+        'a floor other than the one the elevator stands at',
+        `${building}.5`,
+        new Map([[building, '{"elevator":4}']]),
+      ],
       [
         'a room whose building has the elevator elsewhere',
         room,
         new Map([
           [lobby, 'corridor'],
-          [building, '4'],
+          [building, '{"elevator":4}'],
         ]),
       ],
       ['a mode a floor takes but would never write', lobby, new Map([[lobby, 'elevator']])],
-      ['a floor number a building takes but would never write', building, new Map([[building, '0']])],
+      [
+        'a floor number a building takes but would never write',
+        building,
+        new Map([[building, '{"elevator":0}']]),
+      ],
     ];
     for (const [what, path, states] of cases) {
       const trip = journey();
@@ -346,10 +354,10 @@ describe('Journey — where the traveller stands', () => {
       ],
       ['a visited place that is nowhere', STREET, new Map(), [...trailOf(STREET), `${STREET}.99`]],
       [
-        'a visited place nobody can stand in is fine, but not past the last',
+        'a visited place nobody can stand in is fine (a sealed Layer: child 16), but not past the last (26)',
         STREET,
         new Map(),
-        [...trailOf(STREET), building, `${building}.16`],
+        [...trailOf(STREET), building, `${building}.26`],
       ],
     ];
     for (const [what, path, states, visited] of cases) {
@@ -360,7 +368,13 @@ describe('Journey — where the traveller stands', () => {
     // …and the same building, visited with its floor 3, takes its elevator state off the trail.
     const trip = journey();
     expect(
-      trip.restore(save(STREET, new Map([[building, '3']]), [...trailOf(STREET), building, `${building}.3`])),
+      trip.restore(
+        save(STREET, new Map([[building, '{"elevator":3}']]), [
+          ...trailOf(STREET),
+          building,
+          `${building}.3`,
+        ]),
+      ),
     ).toBe(true);
     expect(
       must(trip.here())
@@ -377,14 +391,14 @@ describe('Journey — where the traveller stands', () => {
       ['drawn, not entered', undefined, new Map()],
       ['the street', STREET, new Map()],
       ['the building, elevator at the lobby', building, new Map()],
-      ['the building, elevator at 3', building, new Map([[building, '3']])],
+      ['the building, elevator at 3', building, new Map([[building, '{"elevator":3}']])],
       ['the lobby', `${building}.0`, new Map()],
-      ['floor 5', `${building}.5`, new Map([[building, '5']])],
+      ['floor 5', `${building}.5`, new Map([[building, '{"elevator":5}']])],
       [
         'floor 5 in its corridor',
         `${building}.5`,
         new Map([
-          [building, '5'],
+          [building, '{"elevator":5}'],
           [`${building}.5`, 'corridor'],
         ]),
       ],
@@ -394,7 +408,7 @@ describe('Journey — where the traveller stands', () => {
         'the first room off floor 5',
         `${building}.5.0.0.0`,
         new Map([
-          [building, '5'],
+          [building, '{"elevator":5}'],
           [`${building}.5`, 'corridor'],
         ]),
       ],
@@ -425,7 +439,7 @@ describe('Journey — where the traveller stands', () => {
     expect(second.name()).toBe('brass censer fused to laser cutter');
     expect(trip.player().resonantTraces()).toBe(2); // both fresh, both in a matching room
     expect(trip.merge(0, 0)).toBeUndefined();
-    const hybrid = must(trip.merge(0, 1));
+    const hybrid = must(trip.merge(0, 1)).fragment;
     expect(hybrid.name()).toBe('plasma-brass Hybrid');
     expect(hybrid.frequency().hertz()).toBe(3194 + 3577);
     expect(trip.player().buffer().fragments()).toEqual([hybrid]);

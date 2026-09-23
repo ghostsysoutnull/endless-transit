@@ -22,6 +22,8 @@ export interface PlaceSummary {
   readonly facts: readonly Fact[];
   /** The colour name of the planet's frame; nothing above planet level. */
   readonly frame: string | null;
+  /** Below a building's bedrock (Guide:279-280): the screen relabels and recolours by it. */
+  readonly abyssal: boolean;
   readonly childrenHeading: string;
   /** What the place holds, when it is a kind that holds things (a room): relics by stable key and words, furniture described; null for every other kind. */
   readonly contents: {

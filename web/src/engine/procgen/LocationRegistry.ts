@@ -1,10 +1,13 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { WarningSink } from '#engine/content/WarningSink.ts';
 import type { Location } from '#engine/model/Location.ts';
+import { Crypt, CRYPT_KIND } from '#engine/model/Crypt.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
+import { Shard, SHARD_KIND } from '#engine/model/Shard.ts';
 import { UNIVERSE_KIND } from '#engine/model/Universe.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { ApartmentFactory } from './ApartmentFactory.ts';
+import { ArteryFactory } from './ArteryFactory.ts';
 import { BuildingFactory } from './BuildingFactory.ts';
 import { CityFactory } from './CityFactory.ts';
 import { CorridorFactory } from './CorridorFactory.ts';
@@ -12,6 +15,7 @@ import { CountryFactory } from './CountryFactory.ts';
 import type { FactoryLookup } from './FactoryLookup.ts';
 import { FilamentFactory } from './FilamentFactory.ts';
 import { FloorFactory } from './FloorFactory.ts';
+import { LayerFactory } from './LayerFactory.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import { NullReachFactory } from './NullReachFactory.ts';
 import { PlanetFactory } from './PlanetFactory.ts';
@@ -48,6 +52,18 @@ export class LocationRegistry implements FactoryLookup {
       new CorridorFactory(this, library),
       new ApartmentFactory(this, library, categories),
       new RoomFactory(library, categories, warnings),
+      // Below the bedrock (I07): the same factories, registered again as the abyssal kinds.
+      new LayerFactory(this),
+      new ArteryFactory(this, themes),
+      new ApartmentFactory(this, library, categories, {
+        kind: CRYPT_KIND,
+        rooms: SHARD_KIND,
+        make: (origin, facts) => new Crypt(origin, facts),
+      }),
+      new RoomFactory(library, categories, warnings, {
+        kind: SHARD_KIND,
+        make: (origin, facts) => new Shard(origin, facts),
+      }),
     ];
     this.#factories = new Map(entries.map((factory) => [factory.kind().key(), factory]));
   }
