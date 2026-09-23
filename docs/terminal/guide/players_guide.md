@@ -12,7 +12,7 @@ This page is written in plain language. The rest of this site is written in the 
 know how the game *actually* works, what the numbers are, and where the good stuff is, you are in the right place.
 
 Every number here was read from the game's source code, first on 2026-09-16 and re-checked on 2026-09-20. If this
-page and the manual or the codex ever disagree, tell us: one of them has a bug.
+page and the manual or the codex ever disagree, tell us: one of them has a bug. **Playing in the browser?** The web game differs in places: read the [web Player's Guide]({{ "/web/players_guide.html" | relative_url }}) instead.
 
 <div class="toc" markdown="1">
 **Contents**

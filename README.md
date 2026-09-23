@@ -1,78 +1,79 @@
 # Endless Transit
 
-[![Build Status](https://img.shields.io/badge/build-nominal-00ffff.svg?style=flat-square)](#)
-[![Tests](https://img.shields.io/badge/tests-100%25_passing-00ff00.svg?style=flat-square)](#)
-[![Tech Stack](https://img.shields.io/badge/engine-Groovy_4.x-cyan.svg?style=flat-square)](#)
+[![Play](https://img.shields.io/badge/play-in_the_browser-00ffff.svg?style=flat-square)](https://ghostsysoutnull.github.io/endless-transit/play/)
+[![Web](https://img.shields.io/badge/web-TypeScript-3178c6.svg?style=flat-square)](#the-web-game-web)
+[![Terminal](https://img.shields.io/badge/terminal-Groovy_5_(frozen)-cyan.svg?style=flat-square)](#the-terminal-game-terminal)
 [![Neural Link](https://img.shields.io/badge/link-persistent-magenta.svg?style=flat-square)](#)
 
 > "The world is not a place. It is a sequence of frequencies."
 
-**Endless Transit** is an infinite procedural universe simulation and text-adventure. You operate as an **Observer**, beaming your consciousness across a recursive lattice of realities through an immersive, high-fidelity cyber-terminal interface.
+**Endless Transit** is an infinite procedural universe simulation and text-adventure. You operate as an **Observer**,
+beaming your consciousness across a recursive lattice of realities — universe, filament, sector, solar system, planet,
+country, city, street, building, floor, corridor, apartment, room — through a cyber-terminal interface. One seed builds
+one world, every time.
+
+This repository holds **two games**:
+
+| | Where | Status | Play it |
+| :-- | :-- | :-- | :-- |
+| **The web game** | [`web/`](web/) | the live game, where development happens | **[ghostsysoutnull.github.io/endless-transit/play/](https://ghostsysoutnull.github.io/endless-transit/play/)** — phone or desktop, nothing to install |
+| **The terminal game** | [`terminal/`](terminal/) | the original, frozen: it takes no more features | `cd terminal && ./run.sh` |
+
+The web game is a rule-by-rule port of the terminal game (touch first, saves in the browser, the terminal game's known
+bugs fixed rather than copied); every place the two differ is listed in the
+[web Player's Guide](https://ghostsysoutnull.github.io/endless-transit/web/players_guide.html).
 
 ---
 
-## ⚡ [SYSTEM_INITIALIZATION]
+## 🌐 The web game (`web/`)
 
-Experience the infinite scale of the Neural Web through our **Adaptive Command Bridge**.
+Strict TypeScript, Vite, lit-html; a pure deterministic engine under `src/engine/`, browser adapters under
+`src/platform/`, the screens under `src/ui/`. Node 24 or later.
 
-```text
-╔══════════════════════════════════════════════════════════════════════════════════════════╗
-║ LATTICE: ∞ »» ○ ☼ ⊕ ⬚ 🏙 ═ ⌂ | TRAVERSAL: 142 | COHERENCE: [████████░░] 84%              ║
-║ LOCUS_TRACE: ...Planet > Country > City > Street > Building                              ║
-╚══════════════════════════════════════════════════════════════════════════════════════════╝
-```
-
-### 📡 **[LAUNCH_PROTOCOL]**
-The terminal game lives in the **`terminal/`** folder. To initialize the neural link, ensure you have **Groovy 4.x+** installed, then execute:
 ```bash
-cd terminal
-./run.sh
+cd web
+npm install
+npm run dev            # play while developing (http://localhost:5173/)
+npm run check          # the gate: typecheck + lint + format + unit tests → one STATUS= line
+npm run e2e            # browser tests against the production build, twice: desktop and phone
+npm run publish:site   # check → build → ../docs/play/ (commit it; a push publishes)
 ```
 
----
+Add `?debug` to the game's address for the debug tools (integrity, prime, keystone). The law of the code base, its
+layers and its walls: [`web/CLAUDE.md`](web/CLAUDE.md).
 
-## 📚 [NEURAL_LINK_MANUAL]
-For complete operational protocols, world lore, and technical whitepapers, visit the **[Official Manual](https://ghostsysoutnull.github.io/endless-transit/)**.
+## 🖥️ The terminal game (`terminal/`)
 
-*   **[SYSTEM_INITIALIZATION](docs/manual/SYSTEM_INITIALIZATION.md)**: Narrative intro and objectives.
-*   **[LATTICE_ATLAS](docs/manual/THE_LATTICE_ATLAS.md)**: Geography and the 6 Great Cultures.
-*   **[OPERATIONAL_PROTOCOLS](docs/manual/OPERATIONAL_PROTOCOLS.md)**: Coherence, Gematria, and Rituals.
-*   **[FIELD_OPERATIONS](docs/manual/LINK_NAVIGATION.md)**: Input guide and tactical navigation.
-*   **[SUBSTRATE_CODE](docs/manual/THE_SUBSTRATE_CODE.md)**: Architectural patterns and procedural logic.
+Groovy 5 on a JDK 17 or later. From `terminal/`:
 
----
-
-## 🏗️ [ARCHITECTURAL_PILLARS]
-
-The engine is built on **Domain-Driven Design (DDD)** to ensure modularity and scalability:
-
-*   **`core`**: The link-loop, player state, and trace persistence.
-*   **`model`**: The recursive 12-scale hierarchy (Universe -> Shard).
-*   **`procgen`**: Deterministic seeding and Gematria frequency math.
-*   **`ui`**: 130-char Adaptive Bridge and Wide-Telemetry scanning.
-
-### 🤖 **AI-Agent Collaboration**
-This project is optimized for **Context Localization**. Each domain features its own `CLAUDE.md`, allowing AI architects to maintain deep project alignment with minimal cognitive noise.
-
----
-
-## 🛠️ [FIELD_VALIDATION]
-
-Verify link stability using our automated diagnostic suite (from `terminal/`):
 ```bash
-cd terminal
-./vinc.sh --test            # Clinical Logic Verification (Fast, Auto-compile)
-./vinc.sh --compile         # Strict Substrate Verification
-.agents/vibe-check-ui.sh    # Aesthetic Alignment Check
-.agents/vibe-check-model.sh # Procedural Logic Check
+./run.sh                    # the immersive portal, with the intro
+./vinc.sh                   # the clinical interface: compile and start, no intro
+./vinc.sh --test            # the full suite
+./vinc.sh --lint            # house rules and invariants
+./vinc.sh --scan            # the model gate (seed 0 → 9 nodes)
 ```
 
-### 💉 **[CLINICAL_INTERFACE]**
-For developers and AI agents, use the **Vinculum Clinical Interface (VINC)** to bypass the immersive portal and execute instant operations (from `terminal/`):
-```bash
-./vinc.sh                   # Instant launch (with auto-compile)
-./vinc.sh --test            # High-velocity test execution
-```
+Its domains, tooling and records: [`terminal/CLAUDE.md`](terminal/CLAUDE.md).
+
+---
+
+## 📚 Manual and guides
+
+The site at **[ghostsysoutnull.github.io/endless-transit](https://ghostsysoutnull.github.io/endless-transit/)** serves
+the game and its documentation from [`docs/`](docs/):
+
+*   **[Web Player's Guide](https://ghostsysoutnull.github.io/endless-transit/web/players_guide.html)** and its
+    [cheat sheet](https://ghostsysoutnull.github.io/endless-transit/web/cheat_sheet.html) — plain language, every
+    number cited from `web/src`.
+*   **[Terminal Player's Guide](https://ghostsysoutnull.github.io/endless-transit/terminal/guide/players_guide.html)**
+    and the in-world manual (installation, initialization, the lattice atlas, protocols, navigation, specifications,
+    the observer's codex).
+
+### 🤖 AI-agent collaboration
+Each part of the tree carries its own `CLAUDE.md` (root, `web/`, `terminal/` and its domains), so an agent loads only
+the law of the code it touches. The operating law is [`.claude/CODEX.md`](.claude/CODEX.md); the port's record is
+[`tasks/PORT_QUEUE.md`](tasks/PORT_QUEUE.md) and one note per iteration under [`tasks/port/`](tasks/port/).
 
 ---
 *Connection Stabilized. Safe Transit, Operator.*

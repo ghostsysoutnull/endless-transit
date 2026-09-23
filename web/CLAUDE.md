@@ -1,7 +1,10 @@
 # Endless Transit — the web game
 
-Strict-TypeScript single-page game, **phone first**. Work queue and binding Decisions: `../tasks/PORT_QUEUE.md`
-(it wins over the spec, `../docs/analysis/WEB_PORT_STUDY.md`). One note per iteration: `../tasks/port/`.
+Strict-TypeScript single-page game, **phone first**, live at `https://ghostsysoutnull.github.io/endless-transit/play/`.
+The port (I01–I10) is complete; its Decisions still bind: `../tasks/PORT_QUEUE.md` (it wins over the spec,
+`../docs/analysis/WEB_PORT_STUDY.md`). One note per iteration: `../tasks/port/`. **Player docs:**
+`../docs/web/players_guide.md` and `cheat_sheet.md` cite every number as `src/…:line` — a rule or number that
+changes re-reads its citation (`sed -n`) and the "How the web game differs" list.
 OO law (eight principles, Shape table, coverage claims): `../.claude/CODEX.md`.
 Lessons: @../tasks/lessons/web.md
 
@@ -121,11 +124,12 @@ Portrait at 360 px never scrolls sideways. `prefers-reduced-motion` is respected
 
 ## Commands (from `web/`)
 
-| Do                                                                   | Command                              |
-| :------------------------------------------------------------------- | :----------------------------------- |
-| Gate: typecheck + lint + format + unit tests                         | `npm run check` → one `STATUS=` line |
-| Browser tests, both profiles, production build                       | `npm run e2e`                        |
-| Play while developing                                                | `npm run dev`                        |
-| Site → `dist/` (base `/endless-transit/play/`; `ET_BASE` overrides)  | `npm run build`                      |
-| Publish: check → build → `../docs/play/` + `build.txt` (then commit) | `npm run publish:site`               |
-| Format                                                               | `npm run format`                     |
+| Do                                                                   | Command                                   |
+| :------------------------------------------------------------------- | :---------------------------------------- |
+| Gate: typecheck + lint + format + unit tests                         | `npm run check` → one `STATUS=` line      |
+| Browser tests, both profiles, production build                       | `npm run e2e`                             |
+| The full playthrough alone (title → void → reload), both profiles    | `npx playwright test --grep @playthrough` |
+| Play while developing                                                | `npm run dev`                             |
+| Site → `dist/` (base `/endless-transit/play/`; `ET_BASE` overrides)  | `npm run build`                           |
+| Publish: check → build → `../docs/play/` + `build.txt` (then commit) | `npm run publish:site`                    |
+| Format                                                               | `npm run format`                          |
