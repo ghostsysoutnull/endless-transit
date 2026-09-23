@@ -3,6 +3,7 @@ import type { SaveStore } from '#engine/persistence/SaveStore.ts';
 import { SavedGame } from '#engine/persistence/SavedGame.ts';
 import type { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import type { EntropySource } from '#engine/rng/EntropySource.ts';
+import { Coherence } from './Coherence.ts';
 import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
@@ -34,8 +35,6 @@ const MOVE_KEYS: Readonly<Record<string, string>> = {
 /** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself. */
 const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
-/** The debug INTEGRITY's values (Guide:441, "any number from 0 to 100"): the edges of every band, full, and one from failure. */
-const INTEGRITY_LADDER = [100, 70, 69, 40, 39, 30, 29, 1];
 
 /**
  * The game, seen from outside: `step(optionId)` in, a plain-data snapshot out. Synchronous, instant, no
@@ -43,7 +42,7 @@ const INTEGRITY_LADDER = [100, 70, 69, 40, 39, 30, 29, 1];
  * is a new registry entry, not a new branch in `step` — and the turn: every prompt in the world costs
  * coherence before the command runs (Guide:133-135), a step counts, and zero coherence is a pending prompt
  * (the reboot), never a blocking read. Saves the journey after every step. In debug mode (Decision 8) the
- * INTEGRITY tool is on offer; nowhere else.
+ * INTEGRITY tool is on offer — one option per value of `Coherence.edges()` (Guide:441); nowhere else.
  */
 export class GameEngine {
   readonly #journey: Journey;
@@ -139,7 +138,7 @@ export class GameEngine {
         turn: FREE,
         options: () =>
           this.#debug && !this.#atTitle()
-            ? INTEGRITY_LADDER.map((value) => ({
+            ? Coherence.edges().map((value) => ({
                 ...systemOption(`${DEBUG_INTEGRITY}${String(value)}`, '', `Integrity ${String(value)}`),
                 role: 'debug',
               }))

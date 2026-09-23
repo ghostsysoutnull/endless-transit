@@ -60,8 +60,8 @@ export class HudView implements View<HudVM> {
               class="cohbar"
               role="meter"
               aria-label=${vm.meter.label}
-              aria-valuemin="0"
-              aria-valuemax="100"
+              aria-valuemin=${vm.meter.min}
+              aria-valuemax=${vm.meter.max}
               aria-valuenow=${vm.meter.value}
               aria-valuetext=${vm.meter.valueText}
               ><i style=${`width:${String(vm.meter.value)}%`}></i

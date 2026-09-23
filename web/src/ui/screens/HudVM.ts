@@ -15,9 +15,11 @@ export interface HudVM extends Screen {
     readonly name: string;
     readonly current: boolean;
   }[];
-  /** The coherence bar: the value, its band (a colour a screen picks by it), and what a reader hears. */
+  /** The coherence bar: the scale, the value, its band (a colour a screen picks by it), and what a reader hears. */
   readonly meter: {
     readonly label: string;
+    readonly min: number;
+    readonly max: number;
     readonly value: number;
     readonly text: string;
     readonly band: string;

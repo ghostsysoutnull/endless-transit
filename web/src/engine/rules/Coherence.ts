@@ -21,6 +21,26 @@ const CORRUPTS_BELOW = 40;
 export class Coherence {
   readonly #value: number;
 
+  /** Static: a fact of the scale, not of one value — the whole range, for a meter to say (`aria-valuemin`/`max`). */
+  static range(): { readonly min: number; readonly max: number } {
+    return { min: EMPTY, max: FULL };
+  }
+
+  /**
+   * Static: a fact of the scale, not of one value — the values worth setting by hand (the debug INTEGRITY,
+   * Guide:441), from the top down: full, each band edge and the corruption edge with the value below it,
+   * and one from failure. Derived from the bands and the corruption edge; nothing restates them.
+   */
+  static edges(): readonly number[] {
+    const edges = new Set([FULL, EMPTY + 1]);
+    for (const from of [...BANDS.map((band) => band.from), CORRUPTS_BELOW]) {
+      if (from <= EMPTY) continue;
+      edges.add(from);
+      edges.add(from - 1);
+    }
+    return [...edges].sort((a, b) => b - a);
+  }
+
   constructor(value: number = FULL) {
     if (!Number.isInteger(value) || value < EMPTY || value > FULL) {
       throw new RangeError(

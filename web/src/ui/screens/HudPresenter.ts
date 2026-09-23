@@ -1,3 +1,4 @@
+import { Coherence } from '#engine/rules/Coherence.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
@@ -58,6 +59,7 @@ export class HudPresenter implements Presenter<HudVM> {
       crumbs: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
       meter: {
         label: 'COHERENCE',
+        ...Coherence.range(),
         value: player.coherence,
         text: `${String(player.coherence)}%`,
         band: player.band,

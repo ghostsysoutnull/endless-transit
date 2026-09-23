@@ -447,6 +447,8 @@ describe('HudPresenter.toViewModel — the rest', () => {
   test('the coherence meter: the value, its band from the engine, the words a reader hears (Guide:151-156)', () => {
     expect(presenter.toViewModel(PLANET).meter).toEqual({
       label: 'COHERENCE',
+      min: 0,
+      max: 100,
       value: 87,
       text: '87%',
       band: 'stable',

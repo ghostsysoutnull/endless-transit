@@ -38,6 +38,23 @@ describe('Coherence — the one resource, as a value (Guide:43, 133-156)', () =>
     expect(new Coherence(0).band()).toBe('critical');
   });
 
+  test('the scale is the value’s to tell: its range, and the edges worth setting by hand (Guide:441) — full, each edge with the value below it, one from failure', () => {
+    expect(Coherence.range()).toEqual({ min: 0, max: 100 });
+    expect(Coherence.edges()).toEqual([100, 70, 69, 40, 39, 30, 29, 1]);
+    // Each pair on the ladder straddles a band edge or the corruption edge — the ladder is those edges, not a second copy.
+    for (const [upper, lower] of [
+      [70, 69],
+      [40, 39],
+      [30, 29],
+    ] as const) {
+      const above = new Coherence(upper);
+      const below = new Coherence(lower);
+      expect(above.band() !== below.band() || above.corrupting() !== below.corrupting(), String(upper)).toBe(
+        true,
+      );
+    }
+  });
+
   test('the description starts corrupting under 40 (Guide:155, NarrativePaneComponent.groovy:25)', () => {
     expect(new Coherence(40).corrupting()).toBe(false);
     expect(new Coherence(39).corrupting()).toBe(true);
