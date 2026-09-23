@@ -69,6 +69,7 @@ const PLANET: GameSnapshot = {
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
   player: { coherence: 87, band: 'stable', steps: 12 },
+  buffer: { size: 0, capacity: 16, fragments: [] },
   prompt: null,
   message: 'Entered Auraea.',
 };

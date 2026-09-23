@@ -15,8 +15,12 @@ export interface GameOption {
   readonly label: string;
   /** The name of the place the option leads into; empty when it leads into none. Nobody has to cut it out of the label. */
   readonly place: string;
-  /** What sort of thing it is: into a listed place, a move the place offers (up, forward …), back out, about the game itself, or a debug tool (Decision 8). */
-  readonly role: 'travel' | 'move' | 'return' | 'system' | 'debug';
+  /**
+   * What sort of thing it is: into a listed place, a move the place offers (up, forward …), back out, about
+   * the game itself, a debug tool (Decision 8), a take of what lies here, or — on the buffer screen — a pick
+   * (select, merge) or a drop of the buffer's fragment at `ordinal`.
+   */
+  readonly role: 'travel' | 'move' | 'return' | 'system' | 'debug' | 'take' | 'pick' | 'drop';
   /** Listed but not enterable: the engine ignores its id, and a screen shows it as closed — never as a button. */
   readonly sealed: boolean;
   /** The place asks its parent's list to make it stand out. */

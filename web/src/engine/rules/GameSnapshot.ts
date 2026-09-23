@@ -1,3 +1,4 @@
+import type { BufferSummary } from './BufferSummary.ts';
 import type { GameOption } from './GameOption.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
 import type { PlayerSummary } from './PlayerSummary.ts';
@@ -11,6 +12,8 @@ export interface GameSnapshot {
   readonly place: PlaceSummary | null;
   /** The traveller's coherence and steps; `null` while at the title screen. */
   readonly player: PlayerSummary | null;
+  /** The traveller's buffer; `null` while at the title screen. */
+  readonly buffer: BufferSummary | null;
   /** The prompt waiting for an answer, whose options are the only ones on offer; `null` when none is. */
   readonly prompt: PromptSummary | null;
   readonly options: readonly GameOption[];

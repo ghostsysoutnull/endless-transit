@@ -3,6 +3,7 @@ import type { GameOption } from './GameOption.ts';
 import type { Journey } from './Journey.ts';
 import type { Prompt } from './Prompt.ts';
 import type { PromptSummary } from './PromptSummary.ts';
+import type { Reply } from './Reply.ts';
 import { systemOption } from './SystemOption.ts';
 
 export const RECAP = 'recap';
@@ -12,7 +13,8 @@ const END = 'end-session';
 /**
  * The session recap (Guide:422-430, QuitCommand.groovy:16-27, SessionRecap.groovy:14-69): opened by END
  * SESSION, it shows the ending this run has reached and its figures — where the traveller stands, the
- * steps, the places visited — and asks the old `Are you sure?` as two answers: resume, or end the session,
+ * steps, the places visited, the buffer's size, the resonance tally (SessionRecap.groovy:38-46) — and asks
+ * the old `Are you sure?` as two answers: resume, or end the session,
  * which goes to the title with the place kept. Nothing is saved of the prompt itself: a reload lands in
  * the world.
  */
@@ -34,6 +36,8 @@ export class RecapPrompt implements Prompt {
         locus: here?.address().toString() ?? '',
         steps: String(player.steps()),
         places: String(player.placesVisited()),
+        buffer: String(player.buffer().size()),
+        resonant: String(player.resonantTraces()),
       },
     };
   }
@@ -42,11 +46,11 @@ export class RecapPrompt implements Prompt {
     return [systemOption(RESUME, 'b', 'Resume'), systemOption(END, 'q', 'End session')];
   }
 
-  answer(optionId: string): string | undefined {
-    if (optionId === RESUME) return '';
+  answer(optionId: string): Reply | undefined {
+    if (optionId === RESUME) return { message: '', done: true };
     if (optionId === END) {
       this.#journey.toTitle();
-      return '';
+      return { message: '', done: true };
     }
     return undefined;
   }

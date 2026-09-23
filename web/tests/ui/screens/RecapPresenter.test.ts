@@ -43,6 +43,7 @@ const RECAP: GameSnapshot = {
     telemetry: null,
   },
   player: { coherence: 61, band: 'degraded', steps: 33 },
+  buffer: { size: 2, capacity: 16, fragments: [] },
   prompt: {
     id: 'recap',
     outcome: 'expedition',

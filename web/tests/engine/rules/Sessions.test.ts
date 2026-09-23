@@ -55,8 +55,10 @@ function replay(seed: Seed, history: readonly string[]): GameSnapshot {
     twin = undefined;
     // The title screen is not restored as such: a reload lands where the traveller stood (I02), so a
     // snapshot at the title has no twin screen; the world's save is compared again on the next tap inside.
-    // The recap is a prompt the save does not hold either (a reload lands in the world); the reboot is.
+    // The recap and the buffer screen are prompts the save does not hold either (a reload lands in the
+    // world); the reboot is.
     if (text === undefined || snapshot.place === null || snapshot.prompt?.id === 'recap') continue;
+    if (snapshot.prompt?.id === 'buffer') continue;
     const restored = engineOn(seed, new MemorySaveStore(text)).snapshot();
     expect(shown(restored), where).toEqual(shown(snapshot));
     twin = new MemorySaveStore(text);
@@ -81,7 +83,8 @@ describe('Sessions — a save is the whole state, on every tap of a play session
     expect(fixtures.map(([file]) => file)).toContain('death-and-reboot.json');
     expect(fixtures.map(([file]) => file)).toContain('elevator-marathon.json');
     expect(fixtures.map(([file]) => file)).toContain('recap-and-end.json');
-    expect(fixtures.length).toBeGreaterThanOrEqual(4);
+    expect(fixtures.map(([file]) => file)).toContain('capture-merge-drop.json');
+    expect(fixtures.length).toBeGreaterThanOrEqual(5);
   });
 
   test.each(fixtures)('%s replays with a reload after every tap', (_, session) => {
@@ -119,6 +122,21 @@ describe('Sessions — a save is the whole state, on every tap of a play session
     const last = replay(seed, session.history);
     expect(last.place?.kind).toBe('Street');
     expect(last.player).toEqual({ coherence: 90, band: 'stable', steps: 54 });
+  });
+
+  test('capture-merge-drop.json takes, merges, drops, takes back and dies with a full buffer: the buffer, the tally and the rooms survive every reload and the reboot', () => {
+    const [, session] = must(fixtures.find(([file]) => file === 'capture-merge-drop.json'));
+    const seed = must(Seed.parse(session.seed));
+    const last = replay(seed, session.history);
+    expect(last.place?.kind).toBe('Street');
+    // Reborn at 100: four taps down, a capture, the buffer, a merge back to 100, three leaves.
+    expect(last.player?.coherence).toBe(97);
+    expect(last.buffer?.fragments.map((fragment) => [fragment.name, fragment.hertz])).toEqual([
+      ['prayer bench infused with plasma coil', 3603],
+      ['reliquary-marble Hybrid', 6204],
+      ['stone-plasma Hybrid', 6982],
+    ]);
+    expect(last.prompt).toBeNull();
   });
 
   test('random play: sixty taps on each of six worlds, any option on offer, a reload after every one', () => {

@@ -11,7 +11,7 @@ BUILDINGS ON THIS STREET
   02 [2] Enter Building: The Spire of Static
   03 [3] Enter Building: ArchiveRoot
   04 [4] Enter Building: SpireFall
-dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE STREET | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ ORNATE SANCTUM  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum *
@@ -87,7 +87,7 @@ BUILDING STRATA DIAGNOSTICS
        ST: 100%
        RES: 2152Hz
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████ ██████ ████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0
-dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE BUILDING | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
@@ -100,7 +100,7 @@ diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ ████ ██ ████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0
-dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE FLOOR | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
@@ -131,7 +131,7 @@ LOCAL ACCESS LIST
   09 [9] Access: Reinforced Polymer [RUSTED]
        APPEARANCE: A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ████ █████ ██ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0
-dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE FLOOR | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ GRAND POWER PLANT  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 _void_sink_ Brutalist Slab [PITTED] > □ Grand Power Plant *
@@ -147,7 +147,7 @@ status: Entered Grand Power Plant.
 moves: [F] GO FORWARD
 IN THIS ROOM: plasma coil with reliquary box <with|reliquary box|plasma coil> | brass censer fused to laser cutter <fused|brass censer|laser cutter> | stone gargoyle infused with orbital beacon <infused|stone gargoyle|orbital beacon> | prayer bench infused with plasma coil <infused|prayer bench|plasma coil>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █████ █████ █████████ █████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0
-dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ EXIT APARTMENT | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ BAROQUE MAINTENANCE BAY  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 _void_sink_ Brutalist Slab [PITTED] > □ Baroque Maintenance Bay *
@@ -163,4 +163,4 @@ status: Entered Baroque Maintenance Bay.
 moves: [B] GO BACK
 IN THIS ROOM: velvet kneeling-rug fused to optic implant <fused|velvet kneeling-rug|optic implant> | reliquary box fused to drone dock <fused|reliquary box|drone dock> | nanotech mesh grafted onto carved choir stall <grafted|carved choir stall|nanotech mesh> | plasma coil with prayer bench <with|prayer bench|plasma coil>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ███ ███████ ██████ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.1
-dock: [T] TITLE SCREEN | [Q] END SESSION
+dock: [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
