@@ -1361,11 +1361,24 @@ body {
   border-color: var(--yl);
 }
 
-/* Debug tools (Decision 8): a strip of small dashed buttons under the dock, only in debug mode. */
+/* Debug tools (Decision 8): a strip of small dashed buttons under the dock, only in debug mode, folded
+   behind one DEBUG button until the tester opens it (I09). */
 .debug {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.debug .fold {
+  display: contents;
+}
+
+.debug[data-open='false'] .fold {
+  display: none;
+}
+
+.debug .pb.dbg {
+  flex: 0 1 140px;
 }
 
 .debug .pb {

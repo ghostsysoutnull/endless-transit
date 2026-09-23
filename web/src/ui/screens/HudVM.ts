@@ -92,6 +92,8 @@ export interface HudVM extends Screen {
   };
   /** The debug tools (Decision 8): a strip of their own, empty outside debug mode. */
   readonly debug: readonly OptionVM[];
+  /** The word on the button the strip folds behind (I09). */
+  readonly debugToggle: string;
   /** The live-region text: what just happened. */
   readonly status: string;
   readonly build: string;

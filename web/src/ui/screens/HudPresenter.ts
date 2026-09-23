@@ -192,6 +192,7 @@ export class HudPresenter implements Presenter<HudVM> {
         label: 'More of the dock',
       },
       debug,
+      debugToggle: 'DEBUG',
       options: [
         ...takes.filter((take) => !take.sealed).map((take) => this.#take(take)),
         ...rows

@@ -28,7 +28,8 @@ type Slot = 'pane' | 'map' | 'trace';
  * the game, folded again by the next step (I09); the stylesheet unfolds it on a desktop, so every button is
  * always in the markup and a key always works. The HUD folds the same way on a phone (the readout button):
  * the last crumbs and the readouts that matter stay, the rest opens on a tap and stays open. The moves a
- * place offers sit under its title, so the first screen of a phone shows one (I09). The drawn map and trace
+ * place offers sit under its title, so the first screen of a phone shows one (I09). The debug strip (Decision 8)
+ * sits last, folded behind one DEBUG button, every one of its buttons out of the tab order. The drawn map and trace
  * are canvases mounted into host elements the template keeps alive (`CanvasSlots`); their words sit beside
  * them for a reader.
  */
@@ -39,6 +40,8 @@ export class HudView implements View<HudVM> {
   #more = false;
   /** The HUD's fold on a phone (I09): the whole readout, open until the player folds it — a step keeps it. */
   #readout = false;
+  /** The debug strip's fold (I09): closed until the tester opens it, then open until the screen goes. */
+  #debugOpen = false;
   readonly #canvases = new CanvasSlots({
     pane: () => new CanvasView(new MapPicture()),
     map: () => new CanvasView(new MapPicture()),
@@ -71,6 +74,7 @@ export class HudView implements View<HudVM> {
     this.#vm = undefined;
     this.#more = false;
     this.#readout = false;
+    this.#debugOpen = false;
   }
 
   #host(slot: Slot): HTMLElement | null {
@@ -84,6 +88,11 @@ export class HudView implements View<HudVM> {
 
   #toggleReadout(): void {
     this.#readout = !this.#readout;
+    if (this.#vm !== undefined) this.#paint(this.#vm);
+  }
+
+  #toggleDebug(): void {
+    this.#debugOpen = !this.#debugOpen;
     if (this.#vm !== undefined) this.#paint(this.#vm);
   }
 
@@ -250,12 +259,32 @@ export class HudView implements View<HudVM> {
           vm.debug.length === 0
             ? nothing
             : html`
-                <nav class="debug" aria-label=${vm.regions.debug} data-testid="debug">
-                  ${repeat(
-                    vm.debug,
-                    (option) => option.id,
-                    (option) => this.#docked(option),
-                  )}
+                <nav
+                  class="debug"
+                  aria-label=${vm.regions.debug}
+                  data-testid="debug"
+                  data-open=${this.#debugOpen ? 'true' : 'false'}
+                >
+                  <button
+                    type="button"
+                    class="pb dbg"
+                    data-testid="debug-toggle"
+                    tabindex="-1"
+                    aria-expanded=${this.#debugOpen ? 'true' : 'false'}
+                    aria-controls="debug-fold"
+                    @click=${() => {
+                      this.#toggleDebug();
+                    }}
+                  >
+                    <span>${vm.debugToggle}</span>
+                  </button>
+                  <div class="fold" id="debug-fold">
+                    ${repeat(
+                      vm.debug,
+                      (option) => option.id,
+                      (option) => this.#docked(option, -1),
+                    )}
+                  </div>
                 </nav>
               `
         }
@@ -453,9 +482,10 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  #docked(option: OptionVM): TemplateResult {
+  /** A dock-style button; a `tabIndex` of −1 keeps it out of the tab order (the debug tools, I09). */
+  #docked(option: OptionVM, tabIndex?: number): TemplateResult {
     return html`
-      <button type="button" class="pb" data-option=${option.id}>
+      <button type="button" class="pb" data-option=${option.id} tabindex=${tabIndex ?? nothing}>
         ${option.key === '' ? nothing : html`<kbd aria-hidden="true">${option.key}</kbd>`}<span
           >${option.label}</span
         >

@@ -678,6 +678,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
       ],
     });
     expect(vm.debug).toEqual([{ id: 'debug:integrity:39', key: '', label: 'INTEGRITY 39', opposite: '' }]);
+    expect(vm.debugToggle).toBe('DEBUG');
     expect(vm.options.at(-1)?.id).toBe('debug:integrity:39');
     expect(vm.dock.map((option) => option.id)).toEqual(['leave', 'to-title']);
     expect(presenter.toViewModel(PLANET).debug).toEqual([]);
