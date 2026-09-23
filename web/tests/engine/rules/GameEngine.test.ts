@@ -461,6 +461,24 @@ describe('GameEngine — walking the big world', () => {
     ).toBe('123456789aghijk');
   });
 
+  test('the visited mark’s letter is claimed like a command’s: no child is keyed v, so a row never reads [V] … [V]', () => {
+    const engine = new GameEngine({
+      world: realRegistry(),
+      entropy: new FixedEntropySource([new Seed(0, 0)]),
+      saves: new MemorySaveStore(),
+    });
+    engine.step('new-world');
+    // Broad Alley (seed 0000-…): twenty buildings — the twentieth once read `20 [V] Enter Building: CellFall`.
+    const street = engine.step('enter-world');
+    expect(street.place?.name).toBe('Broad Alley');
+    expect(
+      street.options
+        .filter((option) => option.role === 'travel')
+        .map((option) => option.key)
+        .join(''),
+    ).toBe('123456789aghijkmopsw');
+  });
+
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
     const engine = engineOn(new MemorySaveStore());
     const snapshot = walkedDown(engine, 5);

@@ -26,7 +26,7 @@ BUILDINGS ON THIS STREET
   17 [O] Enter Building: FieldReach
   18 [P] Enter Building: Silent Void
   19 [S] Enter Building: Unmarked Gravity
-  20 [V] Enter Building: CellFall
+  20 [W] Enter Building: CellFall
 dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ HORIZONWELL  [frame grey]

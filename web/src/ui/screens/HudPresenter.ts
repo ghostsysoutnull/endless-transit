@@ -1,5 +1,5 @@
 import { Coherence } from '#engine/rules/Coherence.ts';
-import type { GameOption } from '#engine/rules/GameOption.ts';
+import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { Masthead } from '#ui/Masthead.ts';
@@ -13,8 +13,8 @@ const DEFAULT_FRAME = 'default';
 const RETURN_MARK = '▲ ';
 /** The elevator column's current-floor mark (Building.groovy:198-201), and what a reader hears instead. */
 const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
-/** The visited mark of the old lists (Corridor.groovy:72, Building.groovy:222), and what a reader hears instead. */
-const SEEN_MARK = { text: '[V]', label: 'Visited' } as const;
+/** The visited mark of the old lists, drawn from the engine's letter (its one owner), and what a reader hears instead. */
+const SEEN_MARK = { text: `[${VISITED_KEY.toUpperCase()}]`, label: 'Visited' } as const;
 /** One cell of a spectrogram bar (TelemetryComponent.groovy:136). */
 const BAR = '█';
 

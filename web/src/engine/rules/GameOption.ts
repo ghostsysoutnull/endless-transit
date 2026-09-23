@@ -1,5 +1,12 @@
 import type { Fact } from '#engine/model/Fact.ts';
 
+/**
+ * The letter of the visited mark the old lists drew after a name (`[V]`, Corridor.groovy:71-72,
+ * Building.groovy:222). One owner: a screen draws the mark from it, and the engine keeps it out of the
+ * keys it hands to listed places — so a row never reads `[V] … [V]`.
+ */
+export const VISITED_KEY = 'v';
+
 /** A thing the player can do right now — data, never a closure. The engine resolves `id` to the action. */
 export interface GameOption {
   readonly id: string;

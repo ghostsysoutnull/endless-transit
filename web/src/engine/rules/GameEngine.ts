@@ -8,7 +8,7 @@ import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
-import type { GameOption } from './GameOption.ts';
+import { type GameOption, VISITED_KEY } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { Journey } from './Journey.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
@@ -32,7 +32,7 @@ const MOVE_KEYS: Readonly<Record<string, string>> = {
   back: 'b',
   forward: 'f',
 };
-/** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself. */
+/** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself and the visited mark does not use. */
 const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
 
@@ -150,7 +150,7 @@ export class GameEngine {
         },
       },
     ];
-    const claimed = new Set(this.#commands.flatMap((entry) => entry.keys));
+    const claimed = new Set([...this.#commands.flatMap((entry) => entry.keys), VISITED_KEY]);
     this.#childKeys = [...DIGITS, ...LETTERS.filter((letter) => !claimed.has(letter))];
     this.#restore();
   }
