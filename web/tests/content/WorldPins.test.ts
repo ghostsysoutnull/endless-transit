@@ -19,7 +19,7 @@ function namesAlong(seed: Seed, index: number): string[] {
     ...chain.map((location) => `${location.kind().key()}: ${location.name()}`),
     `vibe: ${vibe?.culture().key() ?? '-'}/${vibe?.era().key() ?? '-'}, then ${vibe?.secondCulture().key() ?? '-'}/${vibe?.secondEra().key() ?? '-'}, ${vibe?.mutation()?.key() ?? '-'} @ ${String(vibe?.stability())}`,
     `buildings: ${String(street.children().length)}, first: ${street.children()[0]?.name() ?? '-'}`,
-    `building ${String(index)}: ${building.name()}, ${String(building.children().length)} floors, ${String(lobby.listing().length)} doors, corridor theme ${lobby.facts()[0]?.value ?? '-'}, top floor ${must(building.listing()[0]).readings()[0]?.value ?? '-'}`,
+    `building ${String(index)}: ${building.name()}, ${String(building.listing().length)} floors, ${String(lobby.listing().length)} doors, corridor theme ${lobby.facts()[0]?.value ?? '-'}, top floor ${must(building.listing()[0]).readings()[0]?.value ?? '-'}`,
     `doors: ${lobby
       .listing()
       .map((each) => each.name())

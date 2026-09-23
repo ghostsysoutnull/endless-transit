@@ -19,6 +19,8 @@ const LOBBY = 0;
 const SCAN_REACH = 2;
 /** The merges inside the building the ritual asks for (Guide:267-270; Building.groovy:34). */
 const INFUSIONS = 7;
+/** How deep the substrate goes: the pressure readout saturates at −10 (Guide:505-506, Building.groovy:95); a list has no bottomless form under the lazy-loading law. */
+const SUBSTRATE_DEPTH = 10;
 /** The fields of the memento, in the order they are written. */
 const MEMENTO_FIELDS = ['elevator', 'sampled', 'merges', 'breached'];
 
@@ -67,6 +69,11 @@ export class Building extends Location {
 
   floors(): number {
     return this.#floors;
+  }
+
+  /** How many Layers lie below the bedrock. */
+  layers(): number {
+    return SUBSTRATE_DEPTH;
   }
 
   /** How many doors every corridor of this building has. */
@@ -215,7 +222,7 @@ export class Building extends Location {
    * and size, and the floors within two of `number`, top first, each with its zone, the floor itself marked.
    */
   scanAround(number: number, seen: (place: Location) => boolean): ScanReport {
-    const near = this.children()
+    const near = this.listing()
       .filter((floor) => Math.abs(floor.ordinal() - number) <= SCAN_REACH)
       .sort((one, other) => other.ordinal() - one.ordinal());
     return {

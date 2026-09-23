@@ -337,7 +337,7 @@ export class GameEngine {
   }
 
   #summaryOf(here: Location, player: Player): PlaceSummary {
-    const siblings = here.parent()?.children();
+    const peers = here.peers();
     const frame = this.#frames.of(here, player.steps());
     return {
       kind: here.kind().title(),
@@ -347,9 +347,9 @@ export class GameEngine {
       hash: here.hash(),
       depth: here.depth(),
       position:
-        siblings === undefined
+        peers.length === 0
           ? null
-          : { label: here.kind().indexLabel(), index: here.index() + 1, total: siblings.length },
+          : { label: here.kind().indexLabel(), index: peers.indexOf(here) + 1, total: peers.length },
       trail: here.trail().map((step) => ({
         icon: step.kind().icon(),
         kind: step.kind().title(),

@@ -109,6 +109,16 @@ export class Floor extends Location {
     return this.#building;
   }
 
+  /** The elevator's one-line diagnostic (ElevatorState.groovy status); a Layer answers otherwise. */
+  diagnostic(): string {
+    return 'SYSTEM_DIAGNOSTIC: [NOMINAL]';
+  }
+
+  /** A floor stands among the building's floors, never its Layers. */
+  override peers(): readonly Location[] {
+    return this.#building.children().slice(0, this.#building.floors());
+  }
+
   /** The floor's one child. */
   corridor(): Location {
     const corridor = this.children()[0];

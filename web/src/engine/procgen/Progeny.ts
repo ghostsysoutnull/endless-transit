@@ -37,9 +37,10 @@ export class Progeny {
     return parentSeed.branch(COUNT).range(this.#count.min, this.#count.max) * this.#count.unit;
   }
 
-  /** Exactly `count` children — for a parent that decided its count when it was made (a building its floors). */
-  exactly(parent: Location, count: number): readonly Location[] {
-    return Array.from({ length: count }, (_, index) => {
+  /** Exactly `count` children — for a parent that decided its count when it was made (a building its floors) — from child index `from` on. */
+  exactly(parent: Location, count: number, from = 0): readonly Location[] {
+    return Array.from({ length: count }, (_, n) => {
+      const index = from + n;
       const seed = parent.seed().branch(index);
       return this.#factoryOf(seed).create({ parent, seed, index, children: this.#world });
     });

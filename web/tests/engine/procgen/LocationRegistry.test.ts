@@ -3,6 +3,7 @@ import { Address } from '#engine/model/Address.ts';
 import type { Location } from '#engine/model/Location.ts';
 import { LocationKind } from '#engine/model/LocationKind.ts';
 import { Seed } from '#engine/rng/Seed.ts';
+import { Building } from '#engine/model/Building.ts';
 import { descend, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
@@ -21,8 +22,13 @@ function portrait(location: Location): unknown {
 }
 
 describe('LocationRegistry — a kind is a registry entry', () => {
-  test('fourteen kinds are registered, in the order of the chain', () => {
-    expect(registry.kinds().map((kind) => kind.key())).toEqual([
+  test('the fourteen kinds of the surface are registered first, in the order of the chain (the four below the bedrock: Substrate.test)', () => {
+    expect(
+      registry
+        .kinds()
+        .slice(0, 14)
+        .map((kind) => kind.key()),
+    ).toEqual([
       'universe',
       'filament',
       'sector',
@@ -98,11 +104,17 @@ describe('LocationRegistry — a kind is a registry entry', () => {
       expect(street.children().length).toBeGreaterThan(0);
       expect(street.children().every((building) => building.kind().key() === 'building')).toBe(true);
       const building = must(street.descendant(street.address().child(0)));
-      expect(building.children().every((floor) => floor.kind().key() === 'floor')).toBe(true);
-      expect(building.children().map((floor) => floor.ordinal())).toEqual(
-        building.children().map((_floor, number) => number),
-      );
-      const floor = must(building.children()[n % building.children().length]);
+      if (!(building instanceof Building)) throw new Error('a street holds buildings');
+      const floors = building.children().slice(0, building.floors());
+      expect(floors.every((floor) => floor.kind().key() === 'floor')).toBe(true);
+      expect(
+        building
+          .children()
+          .slice(building.floors())
+          .every((layer) => layer.kind().key() === 'layer'),
+      ).toBe(true);
+      expect(floors.map((floor) => floor.ordinal())).toEqual(floors.map((_floor, number) => number));
+      const floor = must(floors[n % floors.length]);
       expect(floor.children().map((child) => child.kind().key())).toEqual(['corridor']);
     }
   });

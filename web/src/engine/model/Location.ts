@@ -242,6 +242,11 @@ export abstract class Location {
     return this.parent()?.abyssal() ?? false;
   }
 
+  /** The places this one is counted among on the HUD (`ORBIT 02/05`): its parent's children, unless the kind counts otherwise; none at the top. */
+  peers(): readonly Location[] {
+    return this.parent()?.children() ?? [];
+  }
+
   /** The universe this place is in — the top of its trail. */
   root(): Location {
     return this.parent()?.root() ?? this;

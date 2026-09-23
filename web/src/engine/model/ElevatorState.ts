@@ -6,10 +6,22 @@ import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-/** Up unless this is the top floor, down unless the ground floor, and the corridor (ElevatorState.groovy:22-45). */
+/** The ground floor: below it lies the substrate, not another floor (ElevatorState.groovy:202-208). */
+const GROUND = 0;
+/**
+ * Up unless this is the top floor, down unless the ground floor — where, once the bedrock is breached, the
+ * descent into the substrate is offered instead (Guide:277-278) — and the corridor (ElevatorState.groovy:22-45).
+ */
 const MOVES = new MoveTable<Floor>([
   { move: { id: 'up', label: 'Go Up', opposite: 'down' }, to: (floor) => floor.neighbour(1) },
-  { move: { id: 'down', label: 'Go Down', opposite: 'up' }, to: (floor) => floor.neighbour(-1) },
+  {
+    move: { id: 'down', label: 'Go Down', opposite: 'up' },
+    to: (floor) => (floor.number() === GROUND ? undefined : floor.neighbour(-1)),
+  },
+  {
+    move: { id: 'descend', label: 'Descend into the Substrate', opposite: 'up' },
+    to: (floor) => (floor.number() === GROUND ? floor.neighbour(-1) : undefined),
+  },
   {
     move: { id: 'corridor', label: 'Enter Corridor', opposite: 'elevator' },
     to: (floor) => floor,
@@ -66,8 +78,8 @@ export class ElevatorState implements FloorState {
     return [`${floor.name()}. ${floor.sentence()}`, 'Local signal is STABLE. Corridor access authorized.'];
   }
 
-  status(): string {
-    return 'SYSTEM_DIAGNOSTIC: [NOMINAL]';
+  status(floor: Floor): string {
+    return floor.diagnostic();
   }
 
   childrenHeading(): string {

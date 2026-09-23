@@ -5,7 +5,10 @@ import { Trait } from '#engine/model/Trait.ts';
 
 const PLANET_FRAMES = 'themes/planet-frames';
 const ERAS = 'themes/timelines';
+const CULTURES_INDEX = 'themes/cultures';
 const TRAITS = 'themes/traits';
+/** The bedrock's one culture and its era (Corridor.groovy:118; Guide:282): the culture is in the index without a planet frame. */
+const BEDROCK = { culture: 'abyssal', era: 'atomic' } as const;
 
 /**
  * Owns one fact: how the theme lists become domain values — the cultures a planet can have (the
@@ -28,6 +31,16 @@ export class ThemeCatalog {
       this.#library.pairs(PLANET_FRAMES).map(([key, frame]) => new Culture(key, frame)),
     );
     return this.#cultures;
+  }
+
+  /** What the whole basement is made of (Guide:282-284): the abyssal culture, framed in its own colour, in the atomic era. */
+  bedrock(): { readonly culture: Culture; readonly era: Era } {
+    if (!this.#library.index(CULTURES_INDEX).includes(BEDROCK.culture)) {
+      throw new Error(`${CULTURES_INDEX}/index names no '${BEDROCK.culture}' culture`);
+    }
+    const era = this.eras().find((each) => each.key() === BEDROCK.era);
+    if (era === undefined) throw new Error(`${ERAS}/index names no '${BEDROCK.era}' era`);
+    return { culture: new Culture(BEDROCK.culture, BEDROCK.culture), era };
   }
 
   eras(): readonly Era[] {
