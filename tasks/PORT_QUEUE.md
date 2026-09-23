@@ -47,7 +47,7 @@ try); the note and the merge commit are the record.
 | [x] | I07 | **The ritual**: scans, Keystone, breach, descent, the abyssal layer | complete the Keystone ritual and descend |
 | [x] | I08 | **Map and trace**: the drawn canvas — lattice map, trace, effects seeded from the frame | open the map and the trace on both devices |
 | [x] | I09 | **Polish** (phone: a panel opened by SCAN/MAP/TRACE sits below the fold under the dock — scroll it into view; the first screen of a room/corridor shows no move without scrolling; the dock): help, debug mode, reduced motion, focus, phone layout fine-tuning, first-screen fold on phone (a move visible without scrolling — I04 review: a room or corridor's first screen shows none, a 20-door corridor is ≈ 6 screens at 360×640); every known bug of decision 7 confirmed fixed by a test | play a full run comfortably with one thumb |
-| [ ] | I10 | **Wrap-up**: player docs for the web game, README, site link to the game, final full-playthrough test on both profiles | play the finished game from the site |
+| [x] | I10 | **Wrap-up**: player docs for the web game, README, site link to the game, final full-playthrough test on both profiles | play the finished game from the site |
 
 **Done (2026-09-23):** I01–I10 complete under the Standing Order. The web game is live at
 `https://ghostsysoutnull.github.io/endless-transit/play/`; its player docs are `docs/web/players_guide.md` and
