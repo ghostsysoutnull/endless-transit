@@ -50,6 +50,7 @@ const PLANET: GameSnapshot = {
     childrenHeading: 'Planetary landmasses scanned:',
     contents: null,
     telemetry: null,
+    lattice: null,
   },
   options: [
     option({
@@ -74,6 +75,8 @@ const PLANET: GameSnapshot = {
   prompt: null,
   message: 'Entered Auraea.',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 const STREET: GameSnapshot = {
@@ -138,6 +141,8 @@ const FLOOR: GameSnapshot = {
   ],
   message: 'Enter Corridor.',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 /** A building: floors listed top first, numbered by floor, with their readings. */
@@ -193,6 +198,7 @@ const ROOM: GameSnapshot = {
       furniture: ['overturned tatami mat', 'cracked shoji screen'],
     },
     telemetry: { spectrogram: [3, 1, 9, 4, 2], voice: null },
+    lattice: null,
     childrenHeading: '',
   },
   buffer: {
@@ -225,6 +231,8 @@ const ROOM: GameSnapshot = {
   ],
   message: 'Entered Grand Power Plant.',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 describe('HudPresenter — which snapshots it takes', () => {
@@ -500,6 +508,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
       name: 'Grand Power Plant',
       contents: { objects: [], furniture: ['overturned pew'] },
       telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: null },
+      lattice: null,
     },
     options: [],
   };
@@ -580,6 +589,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
         kind: 'Shard',
         abyssal: true,
         telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: 'We see you.' },
+        lattice: null,
       },
     });
     expect(below.frame).toBe('abyssal');

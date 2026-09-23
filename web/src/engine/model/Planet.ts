@@ -49,6 +49,11 @@ export class Planet extends Location {
     return `RESONANCE: [${this.#vibe.culture().key().toUpperCase()}]`;
   }
 
+  /** The trace's note (Planet.groovy:30-34): a planet is always the surface. */
+  override meta(): string {
+    return ` [SURFACE | ERA: ${this.#vibe.era().key().toUpperCase()}]`;
+  }
+
   childrenHeading(): string {
     return 'Planetary landmasses scanned:';
   }

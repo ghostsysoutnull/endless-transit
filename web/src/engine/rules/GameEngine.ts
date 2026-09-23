@@ -13,6 +13,8 @@ import type { GameCommand } from './GameCommand.ts';
 import { type GameOption, VISITED_KEY } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { Journey } from './Journey.ts';
+import { LatticeMap } from './LatticeMap.ts';
+import type { MapSummary } from './MapSummary.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
 import type { Player } from './Player.ts';
 import type { Prompt } from './Prompt.ts';
@@ -21,12 +23,15 @@ import { RECAP, RecapPrompt } from './RecapPrompt.ts';
 import type { ScanSummary } from './ScanSummary.ts';
 import { systemOption } from './SystemOption.ts';
 import { Telemetry } from './Telemetry.ts';
+import type { TraceSummary } from './TraceSummary.ts';
 import { FREE, GLOBAL, STEP } from './Turn.ts';
 
 const TRAVEL = 'enter:';
 const MOVE = 'move:';
 const CAPTURE = 'capture:';
 const SCAN = 'scan';
+const MAP = 'map';
+const TRACE = 'trace';
 const ECHO = 'echo';
 const CAPTURE_ECHO = 'capture-echo';
 const BREACH = 'breach';
@@ -49,6 +54,8 @@ const MOVE_KEYS: Readonly<Record<string, string>> = {
 const BREACH_KEY = 'j';
 const ECHO_KEY = 'e';
 const CAPTURE_KEY = 'c';
+/** The Guide's key for the map (Guide:91); the trace's `ll` is two letters, so it has no key. */
+const MAP_KEY = 'm';
 /** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself and the visited mark does not use. */
 const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
@@ -63,7 +70,8 @@ const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.cha
  * answers — pick, merge, drop, close — cost nothing. SCAN (a global command, Guide:87, 134) reads a panel
  * that stays until the next step. In a Null Reach the echo hunt is two moves (Guide:116); on a floor the
  * breach is one, when the place offers it (Guide:275). After every step that counts, the room rolls the
- * free lottery (Guide:186-190). In debug mode (Decision 8) the INTEGRITY tool, PRIME and KEYSTONE are on
+ * free lottery (Guide:186-190). MAP and TRACE (global commands, Guide:91-92) draw a panel that stays
+ * until the next step, like SCAN. In debug mode (Decision 8) the INTEGRITY tool, PRIME and KEYSTONE are on
  * offer (Guide:438-441); nowhere else.
  */
 export class GameEngine {
@@ -76,10 +84,13 @@ export class GameEngine {
   readonly #drain = new Drain();
   readonly #frames = new FrameEntropy();
   readonly #telemetry = new Telemetry();
+  readonly #lattice = new LatticeMap();
   readonly #corruption = new Corruption();
   #prompt: Prompt | undefined;
   #message = '';
   #scan: ScanSummary | null = null;
+  #map: MapSummary | null = null;
+  #trace: TraceSummary | null = null;
 
   constructor(deps: { world: LocationRegistry; entropy: EntropySource; saves: SaveStore; debug?: boolean }) {
     this.#journey = new Journey(deps.world);
@@ -201,6 +212,38 @@ export class GameEngine {
         },
       },
       {
+        keys: [MAP_KEY],
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption(MAP, MAP_KEY, 'Map')]),
+        run: () => {
+          const here = this.#journey.here();
+          const map = here === undefined ? null : this.#latticeOf(here, this.#journey.player());
+          if (map === null) return 'SCAN_ERROR: Current location does not support spatial projection.';
+          this.#map = map;
+          return `NEURAL_LATTICE_PROJECTION: ${String(map.nodes.length)} nodes plotted from ${map.origin.name}.`;
+        },
+      },
+      {
+        keys: [],
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption(TRACE, '', 'Trace')]),
+        run: () => {
+          const trail = this.#journey.here()?.trail() ?? [];
+          this.#trace = {
+            steps: trail.map((step, depth) => ({
+              depth,
+              icon: step.kind().icon(),
+              kind: step.kind().title(),
+              name: step.name(),
+              meta: step.meta(),
+              current: depth === trail.length - 1,
+              abyssal: step.abyssal(),
+            })),
+          };
+          return `NEURAL_LATTICE_TRACE_INITIATED: ${String(trail.length)} levels from the universe.`;
+        },
+      },
+      {
         keys: ['i'],
         turn: GLOBAL,
         options: () => (this.#atTitle() ? [] : [systemOption(BUFFER, 'i', 'Buffer')]),
@@ -274,6 +317,8 @@ export class GameEngine {
    */
   step(optionId: string): GameSnapshot {
     this.#scan = null;
+    this.#map = null;
+    this.#trace = null;
     const prompt = this.#prompt;
     if (prompt !== undefined) {
       const reply = prompt.answer(optionId);
@@ -328,6 +373,8 @@ export class GameEngine {
       options: this.#prompt?.options() ?? this.#commands.flatMap((entry) => entry.options()),
       message: this.#message,
       scan: this.#scan,
+      map: this.#map,
+      trace: this.#trace,
     };
   }
 
@@ -471,7 +518,18 @@ export class GameEngine {
       childrenHeading: here.childrenHeading(),
       contents: this.#contentsOf(here),
       telemetry: this.#telemetry.of(here, frame),
+      lattice: this.#latticeOf(here, player),
     };
+  }
+
+  /** The place's map on this frame: the children as the traveller has or has not seen them, the marks of the coherence. */
+  #latticeOf(here: Location, player: Player): MapSummary | null {
+    return this.#lattice.of(
+      here,
+      (place) => player.visited(place),
+      player.coherence(),
+      this.#frames.of(here, player.steps()),
+    );
   }
 
   #bufferOf(player: Player): BufferSummary {

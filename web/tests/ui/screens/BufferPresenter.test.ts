@@ -42,6 +42,7 @@ const OPEN: GameSnapshot = {
     childrenHeading: '',
     contents: { objects: [], furniture: [] },
     telemetry: { spectrogram: [1, 1, 1, 1, 1], voice: null },
+    lattice: null,
   },
   player: { coherence: 54, band: 'degraded', steps: 6 },
   buffer: {
@@ -68,6 +69,8 @@ const OPEN: GameSnapshot = {
   ],
   message: '',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groovy:20-52; Guide:124-126)', () => {

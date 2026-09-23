@@ -49,6 +49,11 @@ export class Country extends Location {
     return `TRAIT: [${this.#trait.key().toUpperCase()}]`;
   }
 
+  /** The trace's note (Country.groovy:30-32). */
+  override meta(): string {
+    return ` [TRAIT: ${this.#trait.key().toUpperCase()}]`;
+  }
+
   childrenHeading(): string {
     return 'Regional cities identified:';
   }

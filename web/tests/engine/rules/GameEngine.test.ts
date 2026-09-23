@@ -145,6 +145,8 @@ describe('GameEngine — walking the big world', () => {
       'enter:3',
       'leave',
       'scan',
+      'map',
+      'trace',
       'buffer',
       'to-title',
       'recap',
@@ -167,6 +169,22 @@ describe('GameEngine — walking the big world', () => {
       childrenHeading: 'Primary filaments radiating from root:',
       contents: null,
       telemetry: null,
+      lattice: {
+        width: 30,
+        height: 15,
+        origin: { name: 'The Endless Universe', glyph: '∞' },
+        frame: null,
+        abyssal: false,
+        nodes: [
+          { x: 5, y: 1, glyph: '»', name: 'Zeta-915-Link', visited: true, noise: false },
+          { x: 18, y: 10, glyph: '»', name: 'Delta-901-Strand', visited: false, noise: false },
+          { x: 16, y: 12, glyph: '»', name: 'Iota-678-Thread', visited: false, noise: false },
+          { x: 10, y: 13, glyph: '»', name: 'Mu-655-Sync', visited: false, noise: false },
+          { x: 21, y: 10, glyph: '»', name: 'Gamma-486-Link', visited: false, noise: false },
+          { x: 4, y: 0, glyph: '»', name: 'Kappa-957-Pulse', visited: false, noise: false },
+        ],
+        marks: [],
+      },
     });
     const travel = snapshot.options.filter((option) => option.role === 'travel');
     expect(travel.length).toBeGreaterThanOrEqual(3);
@@ -186,8 +204,10 @@ describe('GameEngine — walking the big world', () => {
       visited: true,
     });
     expect(ids(snapshot)).not.toContain('leave');
-    expect(snapshot.options.slice(-4)).toEqual([
+    expect(snapshot.options.slice(-6)).toEqual([
       system('scan', 's', 'Scan'),
+      system('map', 'm', 'Map'),
+      system('trace', '', 'Trace'),
       system('buffer', 'i', 'Buffer'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
@@ -320,6 +340,8 @@ describe('GameEngine — walking the big world', () => {
       move('corridor', 'c', 'Enter Corridor', 'elevator'),
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
       system('scan', 's', 'Scan'),
+      system('map', 'm', 'Map'),
+      system('trace', '', 'Trace'),
       system('buffer', 'i', 'Buffer'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
@@ -425,6 +447,8 @@ describe('GameEngine — walking the big world', () => {
       move('forward', 'f', 'Go forward', 'back'),
       { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
       system('scan', 's', 'Scan'),
+      system('map', 'm', 'Map'),
+      system('trace', '', 'Trace'),
       system('buffer', 'i', 'Buffer'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
@@ -434,6 +458,8 @@ describe('GameEngine — walking the big world', () => {
     expect(second.options.filter((option) => option.role !== 'take').map((option) => option.id)).toEqual([
       'move:back',
       'scan',
+      'map',
+      'trace',
       'buffer',
       'to-title',
       'recap',
@@ -467,12 +493,12 @@ describe('GameEngine — walking the big world', () => {
     }
   });
 
-  test('the letters children get are the alphabet minus every key a command claims (e i l n q r s t, the breach’s j, and the moves’ u d c b f)', () => {
+  test('the letters children get are the alphabet minus every key a command claims (e i l n q r s t, the breach’s j, the map’s m, and the moves’ u d c b f)', () => {
     const engine = engineOn(new MemorySaveStore());
     engine.step('new-world');
     engine.step('enter-world');
     for (let level = 0; level < 7; level++) engine.step('leave');
-    // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's).
+    // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's, m the map's).
     for (const index of [0, 0, 0, 0, 2, 0]) engine.step(`enter:${String(index)}`);
     const city = engine.snapshot();
     expect(city.place?.name).toBe('Steamspire');
@@ -481,7 +507,7 @@ describe('GameEngine — walking the big world', () => {
         .filter((option) => option.role === 'travel')
         .map((option) => option.key)
         .join(''),
-    ).toBe('123456789aghkmo');
+    ).toBe('123456789aghkop');
   });
 
   test('the visited mark’s letter is claimed like a command’s: no child is keyed v, so a row never reads [V] … [V]', () => {
@@ -499,7 +525,7 @@ describe('GameEngine — walking the big world', () => {
         .filter((option) => option.role === 'travel')
         .map((option) => option.key)
         .join(''),
-    ).toBe('123456789aghkmopwxyz');
+    ).toBe('123456789aghkopwxyz');
   });
 
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
