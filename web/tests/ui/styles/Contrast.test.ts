@@ -19,7 +19,7 @@ function namedIn(pattern: RegExp): readonly string[] {
   return [...new Set([...source.matchAll(pattern)].map((hit) => hit[1] ?? ''))].sort();
 }
 
-/** The nine planet colours `--frame` may take: what the stylesheet sets it to. */
+/** The nine planet colours `--frame` may take, and the void's below the bedrock: what the stylesheet sets it to. */
 const FRAMES = namedIn(/--frame:\s*var\(--([\w-]+)\)/g);
 /** Every token the stylesheet paints text with — `color:` — the frame alias followed to each of its colours. */
 const TEXT = [
@@ -70,8 +70,9 @@ describe('every text colour of the stylesheet reads on every surface it may sit 
   test('the scan sees the real palette, the real surfaces and the real text tokens', () => {
     expect(palette.get('ground')).toBe('#080c0d');
     expect(BACKGROUNDS).toEqual(['frame', ...SURFACES, 'yl']);
-    expect(FRAMES).toHaveLength(9);
-    expect(PRESSED).toHaveLength(10);
+    expect(FRAMES).toHaveLength(10);
+    expect(FRAMES).toContain('ab');
+    expect(PRESSED).toHaveLength(11);
     expect(STILL).not.toContain('@keyframes');
     expect(STILL).toContain('.sigil');
     expect(onSurfaces).toContain('dim');

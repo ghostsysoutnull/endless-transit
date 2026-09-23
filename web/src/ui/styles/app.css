@@ -19,6 +19,7 @@
   --wh: #e8efec;
   --gy: #8a9a96;
   --bc: #9af2f2;
+  --ab: #e9917f;
   --frame: var(--cy);
   --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -300,6 +301,19 @@ body {
 }
 .app[data-frame='blue'] {
   --frame: var(--bl);
+}
+
+/* Below the bedrock (I07): the void's own hue frames every screen, whatever the planet's colour (HUDHeaderComponent.groovy:27-28). */
+.app[data-frame='abyssal'] {
+  --frame: var(--ab);
+}
+
+.app[data-frame='abyssal'] .cap h2 {
+  color: var(--ab);
+}
+
+.app[data-frame='abyssal'] .crumb.you .cn {
+  color: var(--ab);
 }
 
 /* The link-failure screen (the mock's dead frame): everything framed goes red, the sigil stops pulsing. */
@@ -1049,6 +1063,103 @@ body {
   color: var(--cy);
   line-height: 1.1;
   font-size: 11px;
+}
+
+/* The last scan's panel (I07): a titled list of readings under the narrative, never a modal. */
+.scan {
+  border: 1px solid var(--rule-hi);
+  background: var(--panel2);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.scan .heading {
+  margin: 0;
+  color: var(--frame);
+}
+
+.scan .tl {
+  margin: 0;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.srows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.srow {
+  border-top: 1px solid var(--rule);
+  padding-top: 6px;
+  min-width: 0;
+}
+
+.srow.you {
+  border-left: 2px solid var(--yl);
+  padding-left: 8px;
+}
+
+.srow .cells {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.srow .mark {
+  color: var(--yl);
+}
+
+.cell .k {
+  color: var(--dim);
+}
+
+.cell[data-fact='zone'] {
+  color: var(--text);
+}
+
+.cell[data-fact='signal'] {
+  color: var(--mg);
+}
+
+.cell[data-fact='alert'] {
+  color: var(--rd);
+}
+
+.cell[data-fact='stable'] {
+  color: var(--gn);
+}
+
+.snote {
+  margin: 4px 0 0;
+  color: var(--dim);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* The void's typewritten lines on the recap (SessionRecap.groovy:22-27). */
+.void-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.void-lines p {
+  margin: 0;
+  color: var(--ab);
+  letter-spacing: 0.04em;
 }
 
 /* The moves a place offers — up, down, into the corridor, on to the next room — sit under the panel, never sticky. */

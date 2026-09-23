@@ -1,12 +1,12 @@
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PromptSummary } from '#engine/rules/PromptSummary.ts';
+import { frameOf } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { RecapVM } from './RecapVM.ts';
 
 /** The prompt this screen claims — the engine's stable key for it. */
 const RECAP = 'recap';
-const DEFAULT_FRAME = 'default';
 
 /** The figures of the full recap, in the old order (SessionRecap.groovy:38-46), each with its words. */
 const FIGURES: readonly { readonly key: string; readonly label: string; readonly unit: string }[] = [
@@ -24,18 +24,44 @@ const SHUTDOWN = [
   'RELEASING_NEURAL_CARRIER',
   'STABILIZING_SUBSTRATE_WAVEFORM',
 ];
+/** The void's typewritten lines (SessionRecap.groovy:22-27); the last one closes. */
+const VOID_LINES = [
+  'Your echoes are sinking into the strata.',
+  'The web is folding back upon itself.',
+  'The v-v-void... it remembers... [OK]',
+] as const;
 /** The words of each ending, by the engine's key (Guide:424-428); a new ending is one more entry. */
 const ENDINGS: Readonly<
-  Record<string, { readonly heading: string; readonly figures: boolean; readonly closing: string }>
+  Record<
+    string,
+    {
+      readonly heading: string;
+      readonly figures: boolean;
+      readonly shutdown: boolean;
+      readonly lines: readonly string[];
+      readonly closing: string;
+    }
+  >
 > = {
+  void: {
+    heading: '[VOID_RESONANCE_TERMINATION]',
+    figures: false,
+    shutdown: false,
+    lines: VOID_LINES,
+    closing: 'Sleep among the static, Operator.',
+  },
   expedition: {
     heading: '[SESSION_RECAP_INITIALIZED]',
     figures: true,
+    shutdown: false,
+    lines: [],
     closing: 'Expedition successful. Trace synchronized to substrate.',
   },
   severed: {
     heading: '[LINK_TERMINATION_PROTOCOL]',
     figures: false,
+    shutdown: true,
+    lines: [],
     closing: 'Neural link severed. Waveform stabilized.',
   },
 };
@@ -63,12 +89,13 @@ export class RecapPresenter implements Presenter<RecapVM> {
     return {
       scene: RECAP,
       title: this.#masthead.name(),
-      frame: snapshot.place?.frame ?? DEFAULT_FRAME,
+      frame: frameOf(snapshot.place),
       heading: ending.heading,
       figures: ending.figures ? this.#figures(prompt) : [],
-      steps: ending.figures
-        ? []
-        : SHUTDOWN.map((process) => ({ label: '[STATUS]', process: `${process}...`, done: '[DONE]' })),
+      steps: ending.shutdown
+        ? SHUTDOWN.map((process) => ({ label: '[STATUS]', process: `${process}...`, done: '[DONE]' }))
+        : [],
+      lines: ending.lines,
       closing: ending.closing,
       options: snapshot.options.map((option) => ({
         id: option.id,

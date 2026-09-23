@@ -103,6 +103,25 @@ describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRec
     expect(vm.closing).toBe('Neural link severed. Waveform stabilized.');
   });
 
+  test('below the bedrock: the void’s termination — three typewritten lines, no figures, no shutdown, ending "Sleep among the static, Operator." in the abyssal frame (Guide:424-425; SessionRecap.groovy:19-32)', () => {
+    const vm = presenter.toViewModel({
+      ...RECAP,
+      place: { ...(RECAP.place ?? ({} as never)), abyssal: true },
+      prompt: { ...(RECAP.prompt ?? ({} as never)), outcome: 'void' },
+    });
+    expect(vm.heading).toBe('[VOID_RESONANCE_TERMINATION]');
+    expect(vm.figures).toEqual([]);
+    expect(vm.steps).toEqual([]);
+    expect(vm.lines).toEqual([
+      'Your echoes are sinking into the strata.',
+      'The web is folding back upon itself.',
+      'The v-v-void... it remembers... [OK]',
+    ]);
+    expect(vm.closing).toBe('Sleep among the static, Operator.');
+    expect(vm.frame).toBe('abyssal');
+    expect(vm.status).toBe('[VOID_RESONANCE_TERMINATION]');
+  });
+
   test('the status a reader hears: the engine says nothing when the recap opens, so the live region gets the heading of the ending', () => {
     expect(presenter.toViewModel(RECAP).status).toBe('[SESSION_RECAP_INITIALIZED]');
     expect(presenter.toViewModel(RECAP).note).toBe('');
@@ -119,7 +138,7 @@ describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRec
 
   test('an ending the presenter has no words for is a failed render, not a blank screen', () => {
     expect(() =>
-      presenter.toViewModel({ ...RECAP, prompt: { id: 'recap', outcome: 'void', figures: {} } }),
-    ).toThrow(/void/);
+      presenter.toViewModel({ ...RECAP, prompt: { id: 'recap', outcome: 'rapture', figures: {} } }),
+    ).toThrow(/rapture/);
   });
 });

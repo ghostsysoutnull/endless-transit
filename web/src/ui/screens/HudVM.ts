@@ -39,6 +39,20 @@ export interface HudVM extends Screen {
   };
   /** The right column's second pane: what the place holds, and the telemetry every place indoors shows. */
   readonly aside: AsideVM;
+  /** The panel the last SCAN read (Guide:87): a title, its notes, rows of labelled cells; nothing when the last step was no scan. */
+  readonly scan: {
+    /** The panel's accessible name. */
+    readonly label: string;
+    readonly heading: string;
+    readonly notes: readonly string[];
+    readonly rows: readonly {
+      readonly cells: readonly { readonly key: string; readonly label: string; readonly value: string }[];
+      /** The row about where the traveller stands: `text` shown, `label` read out; nothing on the others. */
+      readonly mark: { readonly text: string; readonly label: string } | null;
+      /** The sensory line under the row; empty when none. */
+      readonly note: string;
+    }[];
+  } | null;
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
@@ -60,6 +74,7 @@ export interface HudVM extends Screen {
     readonly hud: string;
     readonly path: string;
     readonly place: string;
+    readonly scan: string;
     readonly travel: string;
     readonly moves: string;
     readonly aside: string;

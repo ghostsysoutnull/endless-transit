@@ -491,6 +491,115 @@ describe('HudPresenter.toViewModel — options stay data', () => {
   });
 });
 
+describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the void’s labels', () => {
+  const room: GameSnapshot = {
+    ...PLANET,
+    place: {
+      ...(PLANET.place ?? ({} as never)),
+      kind: 'Room',
+      name: 'Grand Power Plant',
+      contents: { objects: [], furniture: ['overturned pew'] },
+      telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: null },
+    },
+    options: [],
+  };
+
+  test('a scan on the snapshot becomes a panel: heading, notes, rows of labelled cells, the current row marked with words for a reader, the sensory line under a row; none when there was no scan', () => {
+    expect(presenter.toViewModel(room).scan).toBeNull();
+    const vm = presenter.toViewModel({
+      ...room,
+      scan: {
+        title: 'NEURAL_PROXIMITY_REPORT',
+        notes: ['BUILDING: Ornate Sanctum', 'TOTAL_STRATA: 16 units detected.'],
+        rows: [
+          {
+            cells: [
+              { key: 'reading', label: 'ID', value: '01' },
+              { key: 'zone', label: 'FUNCTION', value: 'POWER_RELAY' },
+            ],
+            current: false,
+            note: '',
+          },
+          {
+            cells: [
+              { key: 'reading', label: 'ID', value: '00' },
+              { key: 'zone', label: 'FUNCTION', value: 'TRANSIT_LOBBY' },
+            ],
+            current: true,
+            note: 'A heavy door.',
+          },
+        ],
+      },
+    });
+    expect(vm.scan).toEqual({
+      label: 'Scan',
+      heading: 'NEURAL_PROXIMITY_REPORT',
+      notes: ['BUILDING: Ornate Sanctum', 'TOTAL_STRATA: 16 units detected.'],
+      rows: [
+        {
+          cells: [
+            { key: 'reading', label: 'ID', value: '01' },
+            { key: 'zone', label: 'FUNCTION', value: 'POWER_RELAY' },
+          ],
+          mark: null,
+          note: '',
+        },
+        {
+          cells: [
+            { key: 'reading', label: 'ID', value: '00' },
+            { key: 'zone', label: 'FUNCTION', value: 'TRANSIT_LOBBY' },
+          ],
+          mark: { text: '>>', label: 'You are here' },
+          note: 'A heavy door.',
+        },
+      ],
+    });
+    expect(vm.regions.scan).toBe('Scan');
+  });
+
+  test('below the bedrock: INTEGRITY for COHERENCE, ABYSSAL_DEPTH, VOID_LOCUS and VOID_HASH, the void trace, the void’s sync line and its voice in the decode log, and the abyssal frame whatever the planet’s (Guide:280; HUDHeaderComponent.groovy:34-88)', () => {
+    const above = presenter.toViewModel(room);
+    expect(above.frame).toBe('yellow');
+    expect(above.meter.label).toBe('COHERENCE');
+    expect(above.stats.map((stat) => stat.label)).toEqual([
+      'PULSE_TRAVERSAL',
+      'TRACE_BUFFER',
+      'HOP_DENSITY',
+      'ORBIT',
+      'LOCUS',
+      'LOCUS_HASH',
+      'SEED',
+    ]);
+    expect(above.regions.path).toBe('Path from the universe');
+    expect(above.aside.telemetry?.sync).toBe('LATTICE_SYNC: [NOMINAL]');
+    expect(above.aside.telemetry?.logs.lines).toHaveLength(2);
+    const below = presenter.toViewModel({
+      ...room,
+      place: {
+        ...(room.place ?? ({} as never)),
+        kind: 'Shard',
+        abyssal: true,
+        telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: 'We see you.' },
+      },
+    });
+    expect(below.frame).toBe('abyssal');
+    expect(below.meter.label).toBe('INTEGRITY');
+    expect(below.stats.map((stat) => stat.label)).toEqual([
+      'PULSE_TRAVERSAL',
+      'TRACE_BUFFER',
+      'ABYSSAL_DEPTH',
+      'ORBIT',
+      'VOID_LOCUS',
+      'VOID_HASH',
+      'SEED',
+    ]);
+    expect(below.regions.path).toBe('Void trace from the universe');
+    expect(below.aside.telemetry?.sync).toBe('VOID_SYNC: [PRESSURE_HIGH]');
+    expect(below.aside.telemetry?.logs.lines.at(-1)).toBe('[VOID] We see you.');
+    expect(below.place.eyebrow).toBe('SHARD');
+  });
+});
+
 describe('HudPresenter.toViewModel — the rest', () => {
   test('the scene changes with the place, so the shell knows when to start the page from the top', () => {
     expect(presenter.toViewModel(PLANET).scene).not.toBe(presenter.toViewModel(STREET).scene);
@@ -507,6 +616,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
       hud: 'Position',
       path: 'Path from the universe',
       place: 'Where you are',
+      scan: 'Scan',
       travel: 'Places to enter',
       moves: 'Moves',
       aside: 'Readouts',

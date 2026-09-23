@@ -111,6 +111,7 @@ export class HudView implements View<HudVM> {
           <p class="diag">${vm.place.diagnostic}</p>
           <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
         </section>
+        ${this.#scan(vm)}
         ${
           vm.moves.length === 0
             ? nothing
@@ -166,6 +167,41 @@ export class HudView implements View<HudVM> {
         }
         <footer class="build" data-testid="build">${vm.build}</footer>
       </div>
+    `;
+  }
+
+  /** The last scan's panel: its title, its notes, one row per reading with labelled cells and the sensory line under it. */
+  #scan(vm: HudVM): TemplateResult | typeof nothing {
+    const scan = vm.scan;
+    if (scan === null) return nothing;
+    return html`
+      <section class="scan" data-testid="scan" aria-label=${scan.label}>
+        <h3 class="heading">${scan.heading}</h3>
+        ${scan.notes.map((note) => html`<p class="tl">${note}</p>`)}
+        <ol class="srows">
+          ${scan.rows.map(
+            (row) => html`
+              <li class=${row.mark === null ? 'srow' : 'srow you'}>
+                <p class="cells">
+                  ${
+                    row.mark === null
+                      ? nothing
+                      : html`<span class="mark" aria-hidden="true">${row.mark.text}</span
+                          ><span class="vh">${row.mark.label}</span>`
+                  }${row.cells.map(
+                    (cell) => html`
+                      <span class="cell" data-fact=${cell.key}
+                        ><span class="k">${cell.label}</span> ${cell.value}</span
+                      >
+                    `,
+                  )}
+                </p>
+                ${row.note === '' ? nothing : html`<p class="snote">${row.note}</p>`}
+              </li>
+            `,
+          )}
+        </ol>
+      </section>
     `;
   }
 

@@ -1,5 +1,6 @@
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import { frameOf } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
@@ -7,7 +8,6 @@ import type { BufferVM } from './BufferVM.ts';
 
 /** The prompt this screen claims — the engine's stable key for it. */
 const BUFFER = 'buffer';
-const DEFAULT_FRAME = 'default';
 const RETURN_MARK = '▲ ';
 /** The old overlay's signal bar: ten cells, hertz mod 100 over ten plus one of them lit (InventoryOverlayComponent.groovy:35-37). */
 const CELLS = 10;
@@ -69,7 +69,7 @@ export class BufferPresenter implements Presenter<BufferVM> {
     return {
       scene: BUFFER,
       title: this.#masthead.name(),
-      frame: snapshot.place?.frame ?? DEFAULT_FRAME,
+      frame: frameOf(snapshot.place),
       heading,
       count: { label: 'TRACE_BUFFER', value: `${pad(buffer.size)}/${pad(buffer.capacity)} FRAGMENTS` },
       tally: { label: 'RESONANT_TRACES', value: String(buffer.resonant) },
