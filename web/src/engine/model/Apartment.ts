@@ -70,6 +70,7 @@ export class Apartment extends Location {
     return this.#culture;
   }
 
+  /** Its own era — its objects and its lighting. The drain never reads it: `drainEra()` is the street header's (Guide:313). */
   era(): Era {
     return this.#era;
   }

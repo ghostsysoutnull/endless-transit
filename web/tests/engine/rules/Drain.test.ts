@@ -11,7 +11,7 @@ import { Seed } from '#engine/rng/Seed.ts';
 import { Drain } from '#engine/rules/Drain.ts';
 import { AbyssalStandIn } from '#tests/support/AbyssalStandIn.ts';
 import { CountingChildSource } from '#tests/support/CountingChildSource.ts';
-import { must } from '#tests/support/world.ts';
+import { must, realRegistry, toStreet } from '#tests/support/world.ts';
 
 const SEED = new Seed(3, 4);
 const RUST = new Culture('rust', 'red');
@@ -70,5 +70,22 @@ describe('Drain — what one prompt costs where the traveller stands (Guide:133-
     expect(universe.drainFactor()).toBe(1);
     expect(street(1).drainFactor()).toBe(1);
     expect(must(street(1).children()[0]).drainFactor()).toBe(2);
+  });
+
+  test('the drain follows the street header, not the apartment’s drift (Guide:313): a room in an ancient apartment under an entropic street costs the street’s two', () => {
+    // Seed 0000-0005-0000-0023: Bright Road is entropic; door 3 of its first corridor drifted to `ancient`.
+    const bright = must(toStreet(realRegistry().universe(new Seed(5, 0x23)), () => 0).at(-1));
+    expect(bright.name()).toBe('Bright Road');
+    expect(bright.vibe()?.era().key()).toBe('entropic');
+    const apartment = must(bright.children()[0]?.children()[0]?.children()[0]?.children()[3]);
+    const room = must(apartment.children()[0]);
+    expect(apartment.facts()).toEqual([{ key: 'era', label: 'TEMPORAL_MARKER', value: 'ancient' }]);
+    // The place answers which era the drain reads: the header's, never its own.
+    expect(apartment.drainEra()?.key()).toBe('entropic');
+    expect(room.drainEra()?.key()).toBe('entropic');
+    expect(universe.drainEra()).toBeUndefined();
+    expect(drain.cost(bright)).toBe(2);
+    expect(drain.cost(apartment)).toBe(drain.cost(bright));
+    expect(drain.cost(room)).toBe(drain.cost(bright));
   });
 });
