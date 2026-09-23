@@ -204,8 +204,7 @@ export class HudView implements View<HudVM> {
                                       aria-label=${tile.action.label}
                                     >
                                       <span class="ord" aria-hidden="true">${tile.ordinal}</span
-                                      ><span aria-hidden="true">${tile.name}</span
-                                      >${tile.action.key === '' ? nothing : html`<kbd aria-hidden="true">${tile.action.key}</kbd>`}
+                                      ><span aria-hidden="true">${tile.name}</span>
                                     </button>
                                   </li>`,
                           )}

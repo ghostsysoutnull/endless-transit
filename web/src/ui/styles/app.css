@@ -890,14 +890,6 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.tile.take kbd {
-  font: inherit;
-  color: var(--yl);
-  border: 1px solid var(--rule-hi);
-  padding: 0 5px;
-  font-size: 11px;
-}
-
 .tile.take:active {
   background: var(--frame);
   color: var(--ground);
@@ -1206,10 +1198,6 @@ body {
     min-height: 56px;
   }
 
-  .tile.take kbd {
-    display: none;
-  }
-
   .rd[data-fact='narrative'] {
     font-size: 13.5px;
   }
@@ -1220,6 +1208,12 @@ body {
 }
 
 @media (max-width: 520px) {
+  /* The buffer heading is thirty characters of mono: smaller than the recap's, so it never breaks mid-word at 360 px. */
+  .trace .rh {
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
   .stage {
     aspect-ratio: auto;
     min-height: 170px;

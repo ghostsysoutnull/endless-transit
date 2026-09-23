@@ -127,7 +127,7 @@ export class Room extends Location {
   }
 
   /**
-   * Takes what lies at `index` (Room.groovy:213-228): a dealt relic leaves the deal for good and is a fresh
+   * Takes what lies at `index` (Room.groovy:216-231): a dealt relic leaves the deal for good and is a fresh
    * capture; a dropped fragment leaves the floor as it was, not fresh.
    */
   override capture(index: number): Capture | undefined {

@@ -53,10 +53,10 @@ test('a room reads like the old game: its interpretation, furniture, the object 
   await expect(page.locator('.prow').nth(1)).toHaveText(/OBJECTS_DETECTED\s*4/);
   const tiles = page.locator('.tile');
   await expect(tiles).toHaveCount(4);
-  await expect(tiles.first()).toHaveText('plasma coil with reliquary box');
+  await expect(tiles.first()).toContainText('plasma coil with reliquary box');
   await expect(tiles.first()).toHaveAttribute('data-relic', 'with|reliquary box|plasma coil');
-  // Nothing is taken yet (I06): a tile is not a button, and no button is a tile.
-  expect(await page.locator('button.tile, .tile button').count()).toBe(0);
+  // Every tile is a take (I06): a real button carrying the option.
+  await expect(page.locator('button.tile[data-option="capture:0"]')).toHaveCount(1);
   await expect(page.getByTestId('telemetry')).toContainText('[SYSTEM_TELEMETRY]');
   await expect(page.getByTestId('telemetry')).toContainText('> Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0');
   // Each pane of the aside is a region with its own name (an aside called "Telemetry" that opens with IN THIS ROOM misleads).
@@ -72,7 +72,7 @@ test('a room reads like the old game: its interpretation, furniture, the object 
   await press(page, /go forward/i, hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('BAROQUE MAINTENANCE BAY');
   await expect(page.locator('.prow').nth(0)).toContainText('bolted-down velvet kneeling-rug');
-  await expect(tiles.first()).toHaveText('velvet kneeling-rug fused to optic implant');
+  await expect(tiles.first()).toContainText('velvet kneeling-rug fused to optic implant');
   expect(problems).toEqual([]);
 });
 
