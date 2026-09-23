@@ -169,7 +169,7 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  /** The objects of a room as tiles (a list, not buttons: nothing is taken yet) and the telemetry block. */
+  /** The objects of a room as tiles — a button each while the buffer has room, a plain tile otherwise — and the telemetry block. */
   #aside(vm: HudVM): TemplateResult | typeof nothing {
     const { objects, telemetry } = vm.aside;
     if (objects === null && telemetry === null) return nothing;
@@ -182,12 +182,32 @@ export class HudView implements View<HudVM> {
                 <section class="objects" data-testid="objects" aria-label=${objects.label}>
                   <h3 class="heading">${objects.heading}</h3>
                   ${objects.empty === '' ? nothing : html`<p class="empty">${objects.empty}</p>`}
+                  ${objects.note === '' ? nothing : html`<p class="empty" data-testid="buffer-full">${objects.note}</p>`}
                   ${
                     objects.tiles.length === 0
                       ? nothing
                       : html`<ul class="tiles">
-                          ${objects.tiles.map(
-                            (tile) => html`<li class="tile" data-relic=${tile.key}>${tile.name}</li>`,
+                          ${repeat(
+                            objects.tiles,
+                            (tile) => `${vm.scene}/${tile.ordinal}`,
+                            (tile) =>
+                              tile.action === null
+                                ? html`<li class="tile" data-relic=${tile.key}>
+                                    <span class="ord">${tile.ordinal}</span>${tile.name}
+                                  </li>`
+                                : html`<li>
+                                    <button
+                                      type="button"
+                                      class="tile take"
+                                      data-option=${tile.action.id}
+                                      data-relic=${tile.key}
+                                      aria-label=${tile.action.label}
+                                    >
+                                      <span class="ord" aria-hidden="true">${tile.ordinal}</span
+                                      ><span aria-hidden="true">${tile.name}</span
+                                      >${tile.action.key === '' ? nothing : html`<kbd aria-hidden="true">${tile.action.key}</kbd>`}
+                                    </button>
+                                  </li>`,
                           )}
                         </ul>`
                   }

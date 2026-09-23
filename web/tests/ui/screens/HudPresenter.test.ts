@@ -69,7 +69,7 @@ const PLANET: GameSnapshot = {
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
   player: { coherence: 87, band: 'stable', steps: 12 },
-  buffer: { size: 0, capacity: 16, fragments: [] },
+  buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: null,
   message: 'Entered Auraea.',
 };
@@ -192,9 +192,32 @@ const ROOM: GameSnapshot = {
     telemetry: { spectrogram: [3, 1, 9, 4, 2] },
     childrenHeading: '',
   },
+  buffer: {
+    size: 1,
+    capacity: 16,
+    resonant: 2,
+    fragments: [{ key: 'culture|tatami mat', name: 'tatami mat', hertz: 1188, resonant: true }],
+  },
   options: [
+    option({
+      id: 'capture:0',
+      key: '1',
+      label: 'Take floppy disk with tatami mat',
+      place: 'floppy disk with tatami mat',
+      role: 'take',
+      ordinal: '1',
+    }),
+    option({
+      id: 'capture:1',
+      key: '2',
+      label: 'Take katana rack',
+      place: 'katana rack',
+      role: 'take',
+      ordinal: '2',
+    }),
     option({ id: 'move:forward', key: 'f', label: 'Go forward', role: 'move', opposite: 'move:back' }),
     option({ id: 'leave', key: 'l', label: 'Exit Apartment', role: 'return' }),
+    option({ id: 'buffer', key: 'i', label: 'Buffer', role: 'system' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
   message: 'Entered Grand Power Plant.',
@@ -238,6 +261,7 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
   test('the stats line: the steps, depth, position among siblings under the kind’s own label, the locus, its hash, the seed', () => {
     expect(vm.stats).toEqual([
       { label: 'PULSE_TRAVERSAL', value: '12' },
+      { label: 'TRACE_BUFFER', value: '00/16' },
       { label: 'HOP_DENSITY', value: '04' },
       { label: 'ORBIT', value: '02/05' },
       { label: 'LOCUS', value: '0.0.0.0.1' },
@@ -253,6 +277,7 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
     });
     expect(universe.stats.map((stat) => stat.label)).toEqual([
       'PULSE_TRAVERSAL',
+      'TRACE_BUFFER',
       'HOP_DENSITY',
       'LOCUS',
       'LOCUS_HASH',
@@ -279,7 +304,7 @@ describe('HudPresenter.toViewModel — the narrative panel', () => {
 describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; the mock’s console column)', () => {
   const vm = presenter.toViewModel(ROOM);
 
-  test('the panel carries FURNITURE and the object count as rows; the objects are tiles in the aside, each by its key', () => {
+  test('the panel carries FURNITURE and the object count as rows; the objects are tiles in the aside, each by its key, each a take when the engine offers one; the buffer count rides in the stats', () => {
     expect(vm.place.rows).toEqual([
       { label: 'FURNITURE', value: 'overturned tatami mat, cracked shoji screen' },
       { label: 'OBJECTS_DETECTED', value: '2' },
@@ -289,11 +314,46 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
       label: 'In this room',
       heading: 'IN THIS ROOM',
       empty: '',
+      note: '',
       tiles: [
-        { key: 'with|tatami mat|floppy disk', name: 'floppy disk with tatami mat' },
-        { key: 'culture|katana rack', name: 'katana rack' },
+        {
+          key: 'with|tatami mat|floppy disk',
+          name: 'floppy disk with tatami mat',
+          ordinal: '1',
+          action: { id: 'capture:0', key: '1', label: 'Take floppy disk with tatami mat', opposite: '' },
+        },
+        {
+          key: 'culture|katana rack',
+          name: 'katana rack',
+          ordinal: '2',
+          action: { id: 'capture:1', key: '2', label: 'Take katana rack', opposite: '' },
+        },
       ],
     });
+    expect(vm.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '01/16' });
+    expect(vm.options.map((each) => each.id)).toEqual([
+      'capture:0',
+      'capture:1',
+      'move:forward',
+      'leave',
+      'buffer',
+      'to-title',
+    ]);
+    expect(vm.dock.map((each) => each.label)).toEqual(['▲ EXIT APARTMENT', 'BUFFER', 'TITLE SCREEN']);
+  });
+
+  test('a full buffer: the takes come sealed, so the tiles have no action and the pane says why; nothing of it is on offer', () => {
+    const full = presenter.toViewModel({
+      ...ROOM,
+      buffer: { size: 16, capacity: 16, resonant: 0, fragments: [] },
+      options: ROOM.options.map((option) =>
+        option.role === 'take' ? { ...option, key: '', sealed: true } : option,
+      ),
+    });
+    expect(full.aside.objects?.note).toBe('BUFFER FULL — merge or drop a fragment to take more.');
+    expect(full.aside.objects?.tiles.map((tile) => tile.action)).toEqual([null, null]);
+    expect(full.options.map((each) => each.id)).toEqual(['move:forward', 'leave', 'buffer', 'to-title']);
+    expect(full.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '16/16' });
   });
 
   test('an empty room says so in words and has no OBJECTS_DETECTED row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
@@ -303,11 +363,13 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
         ...(ROOM.place ?? ({} as never)),
         contents: { objects: [], furniture: ['overturned tatami mat', 'cracked shoji screen'] },
       },
+      options: ROOM.options.filter((option) => option.role !== 'take'),
     });
     expect(bare.aside.objects).toEqual({
       label: 'In this room',
       heading: 'IN THIS ROOM',
       empty: 'No objects detected.',
+      note: '',
       tiles: [],
     });
     expect(bare.place.rows).toEqual([
@@ -324,7 +386,10 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
       heading: '[SYSTEM_TELEMETRY]',
       sync: 'LATTICE_SYNC: [NOMINAL]',
       spectrogram: { heading: '[QUANTUM_SPECTROGRAM]', bars: ['███', '█', '█████████', '████', '██'] },
-      logs: { heading: '[DECODE_LOGS]', lines: ['> Trace: 0.0.0.0.1.0.0.0.0.0.0.0.0'] },
+      logs: {
+        heading: '[DECODE_LOGS]',
+        lines: ['> Trace: 0.0.0.0.1.0.0.0.0.0.0.0.0', '> Resonant traces: 2'],
+      },
     });
     expect(vm.regions.aside).toBe('Readouts');
   });
@@ -399,6 +464,7 @@ describe('HudPresenter.toViewModel — options stay data', () => {
       { id: 'to-title', key: 'T', label: 'TITLE SCREEN', opposite: '' },
     ]);
     expect(vm.options.map((each) => each.id)).toEqual(['enter:0', 'move:elevator', 'leave', 'to-title']);
+    expect(vm.aside.objects).toBeNull();
     expect(vm.heading).toBe('LOCAL ACCESS LIST');
     expect(vm.rows[0]?.label).toBe('Access: [DATA_VAULT] Heavy Bulkhead [COLD]');
     expect(vm.regions.moves).toBe('Moves');

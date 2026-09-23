@@ -888,7 +888,7 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
   test('a room offers one take per object, keyed 1–9 in order; a capture is a step (costs one, counts one), the object leaves the room, the fragment enters the buffer with its frequency, and the status says what was found', () => {
     const engine = engineOn(new MemorySaveStore());
     const room = inTheFirstRoom(engine);
-    expect(room.buffer).toEqual({ size: 0, capacity: 16, fragments: [] });
+    expect(room.buffer).toEqual({ size: 0, capacity: 16, resonant: 0, fragments: [] });
     expect(room.options.filter((option) => option.role === 'take')).toEqual([
       take(0, '1', 'plasma coil with reliquary box'),
       take(1, '2', 'brass censer fused to laser cutter'),
@@ -903,6 +903,7 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     expect(taken.buffer).toEqual({
       size: 1,
       capacity: 16,
+      resonant: 1,
       fragments: [
         {
           key: 'fused|brass censer|laser cutter',

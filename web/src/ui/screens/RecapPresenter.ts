@@ -13,6 +13,9 @@ const FIGURES: readonly { readonly key: string; readonly label: string; readonly
   { key: 'locus', label: 'FINAL_LOCUS', unit: '' },
   { key: 'steps', label: 'PULSE_TRAVERSAL', unit: ' steps' },
   { key: 'places', label: 'CELLS_MAPPED', unit: ' footprints' },
+  { key: 'buffer', label: 'BUFFER_DENSITY', unit: ' spectral fragments' },
+  // The old line said "stabilized" (HK-023); the tally counts resonant traces, and says so.
+  { key: 'resonant', label: 'RESONANT_TRACES', unit: ' resonant' },
 ];
 /** The shutdown steps of the short ending (SessionRecap.groovy:54-59). */
 const SHUTDOWN = [

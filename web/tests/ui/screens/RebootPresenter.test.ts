@@ -9,7 +9,7 @@ const DEAD: GameSnapshot = {
   world: { seed: '7F3A-91C2-0B4D-E6A8', name: 'The Endless Universe' },
   place: null,
   player: { coherence: 0, band: 'critical', steps: 12 },
-  buffer: { size: 0, capacity: 16, fragments: [] },
+  buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: { id: 'reboot', outcome: 'rebooting', figures: {} },
   options: [
     {

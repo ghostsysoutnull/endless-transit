@@ -370,6 +370,7 @@ export class GameEngine {
     return {
       size: buffer.size(),
       capacity: buffer.capacity(),
+      resonant: player.resonantTraces(),
       fragments: buffer.fragments().map((fragment) => ({
         key: fragment.key(),
         name: fragment.name(),
