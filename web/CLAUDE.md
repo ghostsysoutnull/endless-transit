@@ -13,7 +13,10 @@ no `Math.random`. It receives what it needs through interfaces it owns (`Content
 `src/content/` the `.txt` lists + the ONE `import.meta.glob` (`BundledContent`). **Order = the `index.txt` order.**
 Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture carry no index of their own;
 `names/rooms` is keyed by trait (`themes/traits.txt`) the same way.
-`src/platform/` browser adapters. `src/ui/` screens, input, styles — depends on the engine, never the reverse.
+`src/platform/` browser adapters. `src/ui/` screens, input, styles — depends on the engine, never the reverse;
+`src/ui/canvas/` is the only hand-written canvas code (study D7): a `Picture` is a pure function of plain data, a
+`CanvasView` draws it into a host element with the stylesheet's tokens (`Inks` lists the ones it may paint text
+with) and stays still under `prefers-reduced-motion`.
 `src/main.ts` the composition root: the only place adapters are built.
 
 The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot → the
@@ -24,8 +27,10 @@ move / return / system / debug / take / pick / drop; a new action is a registry 
 command, Guide:133), a new screen one more stage in `main.ts`; a pending prompt (`Prompt`: the reboot at zero
 coherence, the recap, the buffer screen) is a state whose options are the only ones on offer, never a blocking read —
 an answer is a `Reply` that settles it or keeps it open, and costs nothing. A key is the ordinal when the place goes
-by its own number, else from the pool. SCAN is a global command whose panel (`ScanSummary`) rides on the snapshot
-until the next step; the echo hunt (`echo`, `capture-echo`) and the breach (`breach`) are steps offered as moves when
+by its own number, else from the pool. SCAN, MAP and TRACE are global commands whose panel (`ScanSummary`, `MapSummary`, `TraceSummary`) rides on the
+snapshot until the next step (a map is the place's `mapNodes()` on a grid — a room has none, a floor maps its doors —
+with the marks of a low Coherence and the void's static drawn on the frame; `place.lattice` is the pane's map
+outdoors); the dock folds after four behind MORE, a toggle of the view; the echo hunt (`echo`, `capture-echo`) and the breach (`breach`) are steps offered as moves when
 the place says so; after every step that counts the room rolls the free lottery (`Location.lottery(steps)`). The traveller (`rules/Player`: `Coherence` value, steps, the visited path by
 address, the `Buffer`, the resonance tally) rides with the `Journey`; what the HUD draws that is noise is seeded from
 `FrameEntropy` (the place + the step count), never the clock. **Debug mode** (Decision 8): `?debug` on the page's address, read only in `main.ts`; the debug tools
