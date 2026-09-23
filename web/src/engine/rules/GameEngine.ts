@@ -18,6 +18,7 @@ import type { Player } from './Player.ts';
 import type { Prompt } from './Prompt.ts';
 import { RebootPrompt } from './RebootPrompt.ts';
 import { RECAP, RecapPrompt } from './RecapPrompt.ts';
+import type { ScanSummary } from './ScanSummary.ts';
 import { systemOption } from './SystemOption.ts';
 import { Telemetry } from './Telemetry.ts';
 import { FREE, GLOBAL, STEP } from './Turn.ts';
@@ -25,16 +26,29 @@ import { FREE, GLOBAL, STEP } from './Turn.ts';
 const TRAVEL = 'enter:';
 const MOVE = 'move:';
 const CAPTURE = 'capture:';
+const SCAN = 'scan';
+const ECHO = 'echo';
+const CAPTURE_ECHO = 'capture-echo';
+const BREACH = 'breach';
 const DEBUG_INTEGRITY = 'debug:integrity:';
+const DEBUG_PRIME = 'debug:prime';
+const DEBUG_KEYSTONE = 'debug:keystone';
+/** The echo can be captured from this signal on (Guide:193). */
+const LOCKED = 100;
 /** The keyboard extra of each move a place may offer (Guide:112-115); a move with no entry here gets none. */
 const MOVE_KEYS: Readonly<Record<string, string>> = {
   up: 'u',
   down: 'd',
+  descend: 'd',
   corridor: 'c',
   elevator: 'b',
   back: 'b',
   forward: 'f',
 };
+/** The Guide's keys for the breach and the echo hunt (Guide:112-116). */
+const BREACH_KEY = 'j';
+const ECHO_KEY = 'e';
+const CAPTURE_KEY = 'c';
 /** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself and the visited mark does not use. */
 const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
@@ -46,8 +60,11 @@ const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.cha
  * coherence before the command runs (Guide:133-135), a step counts, and zero coherence is a pending prompt
  * (the reboot), never a blocking read. Saves the journey after every step and after every answer to a
  * prompt. In a room, one take per object (a step); BUFFER opens the buffer screen (a global command) whose
- * answers — pick, merge, drop, close — cost nothing. In debug mode (Decision 8) the INTEGRITY tool is on
- * offer — one option per value of `Coherence.edges()` (Guide:441); nowhere else.
+ * answers — pick, merge, drop, close — cost nothing. SCAN (a global command, Guide:87, 134) reads a panel
+ * that stays until the next step. In a Null Reach the echo hunt is two moves (Guide:116); on a floor the
+ * breach is one, when the place offers it (Guide:275). After every step that counts, the room rolls the
+ * free lottery (Guide:186-190). In debug mode (Decision 8) the INTEGRITY tool, PRIME and KEYSTONE are on
+ * offer (Guide:438-441); nowhere else.
  */
 export class GameEngine {
   readonly #journey: Journey;
@@ -62,6 +79,7 @@ export class GameEngine {
   readonly #corruption = new Corruption();
   #prompt: Prompt | undefined;
   #message = '';
+  #scan: ScanSummary | null = null;
 
   constructor(deps: { world: LocationRegistry; entropy: EntropySource; saves: SaveStore; debug?: boolean }) {
     this.#journey = new Journey(deps.world);
@@ -137,6 +155,52 @@ export class GameEngine {
         run: () => this.#moved(this.#journey.leave(), `Returned to ${this.#journey.here()?.name() ?? ''}.`),
       },
       {
+        keys: [BREACH_KEY],
+        turn: STEP,
+        options: () =>
+          this.#journey.breachOffered()
+            ? [{ ...systemOption(BREACH, BREACH_KEY, 'Breach the Bedrock'), role: 'move' }]
+            : [],
+        run: () =>
+          this.#journey.breach() === undefined
+            ? this.#message
+            : 'HARMONIC_INVERSION_PROTOCOL_ENGAGED — breaching the bedrock substrate. Lattice weight normalized: aperture opening at root. The Keystone is spent.',
+      },
+      {
+        keys: [ECHO_KEY],
+        turn: STEP,
+        options: () => this.#echoOptions(),
+        run: (optionId) => {
+          if (optionId === ECHO) {
+            const signal = this.#journey.echo();
+            if (signal === undefined) return this.#message;
+            return signal >= LOCKED
+              ? 'HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated. Signal 100%.'
+              : `SCANNING_VOID: Signal strength increasing... ${String(signal)}%.`;
+          }
+          const echo = this.#journey.captureEcho();
+          if (echo === undefined) return this.#message;
+          return `VOID_RESONANCE: Echo captured and stabilized. Frequency: ${String(echo.frequency().hertz())} Hz.`;
+        },
+      },
+      {
+        keys: ['s'],
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption(SCAN, 's', 'Scan')]),
+        run: () => {
+          const here = this.#journey.here();
+          const player = this.#journey.player();
+          const report = here?.scan((place) => player.visited(place));
+          if (report === undefined) return 'No scan-compatible structure detected in this strata.';
+          this.#scan = {
+            title: report.title,
+            notes: report.notes,
+            rows: report.rows.map((row) => ({ cells: row.cells, current: row.current, note: row.note })),
+          };
+          return `LOCAL_LATTICE_SCAN_INITIATED [LOCUS: ${here?.address().toString() ?? ''}]. SCAN_COMPLETE. LOCAL_PHASE_SYNCHRONIZED.`;
+        },
+      },
+      {
         keys: ['i'],
         turn: GLOBAL,
         options: () => (this.#atTitle() ? [] : [systemOption(BUFFER, 'i', 'Buffer')]),
@@ -176,6 +240,26 @@ export class GameEngine {
           return `Integrity set to ${String(value)}%.`;
         },
       },
+      {
+        keys: [],
+        turn: FREE,
+        options: () =>
+          this.#debug && this.#journey.here()?.indoors() === true
+            ? [
+                { ...systemOption(DEBUG_PRIME, '', 'Prime building'), role: 'debug' },
+                { ...systemOption(DEBUG_KEYSTONE, '', 'Spawn Keystone'), role: 'debug' },
+              ]
+            : [],
+        run: (optionId) => {
+          if (optionId === DEBUG_PRIME) {
+            return this.#journey.prime()
+              ? 'Building primed: every floor sampled, seven merges in.'
+              : this.#message;
+          }
+          const keystone = this.#journey.spawnKeystone();
+          return keystone === undefined ? this.#message : `${keystone.name()} generated in the trace buffer.`;
+        },
+      },
     ];
     const claimed = new Set([...this.#commands.flatMap((entry) => entry.keys), VISITED_KEY]);
     this.#childKeys = [...DIGITS, ...LETTERS.filter((letter) => !claimed.has(letter))];
@@ -189,6 +273,7 @@ export class GameEngine {
    * command; the link fails and the reboot is the only thing on offer.
    */
   step(optionId: string): GameSnapshot {
+    this.#scan = null;
     const prompt = this.#prompt;
     if (prompt !== undefined) {
       const reply = prompt.answer(optionId);
@@ -215,7 +300,13 @@ export class GameEngine {
       }
     }
     this.#message = command.run(optionId);
-    if (command.turn.counts()) player.count();
+    if (command.turn.counts()) {
+      player.count();
+      const prize = this.#journey.lottery();
+      if (prize !== undefined) {
+        this.#message = `${this.#message} SPECTRAL_DEVIATION: Extracted Frequency ${String(prize.frequency().hertz())} Hz.`;
+      }
+    }
     this.#save();
     return this.snapshot();
   }
@@ -236,6 +327,7 @@ export class GameEngine {
       prompt: this.#prompt?.summary() ?? null,
       options: this.#prompt?.options() ?? this.#commands.flatMap((entry) => entry.options()),
       message: this.#message,
+      scan: this.#scan,
     };
   }
 
@@ -325,6 +417,22 @@ export class GameEngine {
     }));
   }
 
+  /** The echo hunt of a Null Reach (Guide:116, 192-195): scan until the signal locks, then capture — sealed while the buffer is full. */
+  #echoOptions(): readonly GameOption[] {
+    const echo = this.#journey.here()?.echo();
+    if (echo === undefined || echo.found()) return [];
+    const scan: GameOption = { ...systemOption(ECHO, ECHO_KEY, 'Scan for spectral echoes'), role: 'move' };
+    if (!echo.locked()) return [scan];
+    return [
+      scan,
+      {
+        ...systemOption(CAPTURE_ECHO, CAPTURE_KEY, 'Capture Spectral Echo'),
+        role: 'move',
+        sealed: this.#journey.player().buffer().full(),
+      },
+    ];
+  }
+
   /** One option per move the place offers, with the key the Guide gives it and the option that undoes it. */
   #moveOptions(): readonly GameOption[] {
     const here = this.#journey.here();
@@ -359,6 +467,7 @@ export class GameEngine {
       description: this.#corruption.read(here.description(), player.coherence(), frame),
       facts: here.facts(),
       frame: here.vibe()?.frame() ?? null,
+      abyssal: here.abyssal(),
       childrenHeading: here.childrenHeading(),
       contents: this.#contentsOf(here),
       telemetry: this.#telemetry.of(here, frame),

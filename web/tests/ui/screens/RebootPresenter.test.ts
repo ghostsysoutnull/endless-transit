@@ -28,6 +28,7 @@ const DEAD: GameSnapshot = {
     },
   ],
   message: '',
+  scan: null,
 };
 
 describe('RebootPresenter — what zero coherence puts on screen (Guide:144-147)', () => {

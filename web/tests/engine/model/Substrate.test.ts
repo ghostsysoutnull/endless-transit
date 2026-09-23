@@ -6,6 +6,8 @@ import type { Location } from '#engine/model/Location.ts';
 import { Room } from '#engine/model/Room.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { Drain } from '#engine/rules/Drain.ts';
+import { FrameEntropy } from '#engine/rules/FrameEntropy.ts';
+import { Telemetry } from '#engine/rules/Telemetry.ts';
 import { must, realRegistry, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
@@ -224,6 +226,34 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
         /exception|thread|process|cube|observer|altar|sigil|pact|deity|gate|hunger|null/.test(name),
       ),
     ).toBe(true);
+  });
+
+  test('the void’s voice (Guide:283; HUDHeaderComponent.groovy:85-88): below the bedrock about a third of the frames carry one of four lines, drawn on the frame; above it never', () => {
+    const { building } = sanctum();
+    breach(building);
+    const telemetry = new Telemetry();
+    const layer = floorOf(building, -1);
+    const voices = new Set<string>();
+    let silent = 0;
+    for (let steps = 0; steps < 300; steps++) {
+      const voice = telemetry.of(layer, new FrameEntropy().of(layer, steps))?.voice ?? null;
+      if (voice === null) silent++;
+      else voices.add(voice);
+      expect(
+        telemetry.of(floorOf(building, 0), new FrameEntropy().of(floorOf(building, 0), steps))?.voice,
+      ).toBeNull();
+    }
+    expect([...voices].sort()).toEqual([
+      'Bedrock approaching.',
+      'It is cold down here.',
+      'Return to the surface.',
+      'We see you.',
+    ]);
+    expect(silent).toBeGreaterThan(170);
+    expect(silent).toBeLessThan(250);
+    expect(telemetry.of(layer, new FrameEntropy().of(layer, 7))?.voice).toBe(
+      telemetry.of(layer, new FrameEntropy().of(layer, 7))?.voice,
+    );
   });
 
   test('position: a floor stands among the floors, a layer among the layers (peers), so Z-AXIS reads 16 of 16 and STRATA 10 of 10', () => {

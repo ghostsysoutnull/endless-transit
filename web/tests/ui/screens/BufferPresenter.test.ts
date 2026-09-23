@@ -38,9 +38,10 @@ const OPEN: GameSnapshot = {
     description: [],
     facts: [],
     frame: 'yellow',
+    abyssal: false,
     childrenHeading: '',
     contents: { objects: [], furniture: [] },
-    telemetry: { spectrogram: [1, 1, 1, 1, 1] },
+    telemetry: { spectrogram: [1, 1, 1, 1, 1], voice: null },
   },
   player: { coherence: 54, band: 'degraded', steps: 6 },
   buffer: {
@@ -66,6 +67,7 @@ const OPEN: GameSnapshot = {
     option({ id: 'close', key: 'b', label: 'Back to reality', role: 'return' }),
   ],
   message: '',
+  scan: null,
 };
 
 describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groovy:20-52; Guide:124-126)', () => {

@@ -9,6 +9,8 @@ import { must, realRegistry } from '#tests/support/world.ts';
 
 const FIRST = new Seed(0x7f3a91c2, 0x0b4de6a8);
 const SECOND = new Seed(0x33333333, 0x44444444);
+/** Grand Power Plant: the first room behind the lobby's first door of Ornate Sanctum. */
+const FIRST_ROOM = '0.0.0.0.0.0.0.0.0.0.0.0.0';
 
 function engineOn(saves: MemorySaveStore, debug = false): GameEngine {
   return new GameEngine({
@@ -51,7 +53,7 @@ function trailOf(path: string): string[] {
   return steps.map((_, depth) => steps.slice(0, depth + 1).join('.'));
 }
 
-/** A v5 save text on the first seed, as the game writes one unless a field is bent on purpose. */
+/** A v6 save text on the first seed, as the game writes one unless a field is bent on purpose. */
 function saveText(
   path: string,
   states: Record<string, string> = {},
@@ -59,7 +61,7 @@ function saveText(
   traveller: { coherence?: number; steps?: number; buffer?: readonly unknown[]; resonant?: number } = {},
 ): string {
   return JSON.stringify({
-    version: 5,
+    version: 6,
     seed: '7F3A-91C2-0B4D-E6A8',
     path,
     states,
@@ -142,6 +144,7 @@ describe('GameEngine — walking the big world', () => {
       'enter:2',
       'enter:3',
       'leave',
+      'scan',
       'buffer',
       'to-title',
       'recap',
@@ -160,6 +163,7 @@ describe('GameEngine — walking the big world', () => {
       description: ['A neural web of infinite complexity.'],
       facts: [],
       frame: null,
+      abyssal: false,
       childrenHeading: 'Primary filaments radiating from root:',
       contents: null,
       telemetry: null,
@@ -182,7 +186,8 @@ describe('GameEngine — walking the big world', () => {
       visited: true,
     });
     expect(ids(snapshot)).not.toContain('leave');
-    expect(snapshot.options.slice(-3)).toEqual([
+    expect(snapshot.options.slice(-4)).toEqual([
+      system('scan', 's', 'Scan'),
       system('buffer', 'i', 'Buffer'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
@@ -314,6 +319,7 @@ describe('GameEngine — walking the big world', () => {
       move('up', 'u', 'Go Up', 'down'),
       move('corridor', 'c', 'Enter Corridor', 'elevator'),
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
+      system('scan', 's', 'Scan'),
       system('buffer', 'i', 'Buffer'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
@@ -391,13 +397,17 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.trail[11]?.name).toBe('_void_sink_ Brutalist Slab [PITTED]');
     expect(room.place?.description).toHaveLength(2);
     expect(room.place?.facts.map((fact) => fact.label)).toEqual([
+      'TEMPORAL_MARKER',
       'TYPE',
       'OXY',
       'TEMP',
       'SIGNAL',
       'RESONANCE',
     ]);
-    expect(room.message).toBe('Entered Grand Power Plant.');
+    // The free lottery rolled on the move that landed here (Guide:187): step 4 of this walk wins (Void.test pins the roll).
+    expect(room.message).toBe(
+      'Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.',
+    );
     // What the room holds rides on the snapshot as plain data: relics by key and name, furniture, and the
     // telemetry every place inside a building shows (five bars of 1–9, drawn on the place's own seed).
     expect(room.place?.contents).toEqual({
@@ -409,11 +419,12 @@ describe('GameEngine — walking the big world', () => {
       ],
       furniture: ['half-dismantled stained glass shard', 'scorched funeral mask'],
     });
-    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9] });
+    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], voice: null });
     expect(engine.snapshot().place?.telemetry).toEqual(room.place?.telemetry);
     expect(room.options.filter((option) => option.role !== 'take')).toEqual([
       move('forward', 'f', 'Go forward', 'back'),
       { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
+      system('scan', 's', 'Scan'),
       system('buffer', 'i', 'Buffer'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
@@ -422,6 +433,7 @@ describe('GameEngine — walking the big world', () => {
     expect(second.place?.position?.index).toBe(2);
     expect(second.options.filter((option) => option.role !== 'take').map((option) => option.id)).toEqual([
       'move:back',
+      'scan',
       'buffer',
       'to-title',
       'recap',
@@ -455,7 +467,7 @@ describe('GameEngine — walking the big world', () => {
     }
   });
 
-  test('the letters children get are the alphabet minus every key a command claims (e i l n q r t, and the moves’ u d c b f)', () => {
+  test('the letters children get are the alphabet minus every key a command claims (e i l n q r s t, the breach’s j, and the moves’ u d c b f)', () => {
     const engine = engineOn(new MemorySaveStore());
     engine.step('new-world');
     engine.step('enter-world');
@@ -469,7 +481,7 @@ describe('GameEngine — walking the big world', () => {
         .filter((option) => option.role === 'travel')
         .map((option) => option.key)
         .join(''),
-    ).toBe('123456789aghjkm');
+    ).toBe('123456789aghkmo');
   });
 
   test('the visited mark’s letter is claimed like a command’s: no child is keyed v, so a row never reads [V] … [V]', () => {
@@ -487,7 +499,7 @@ describe('GameEngine — walking the big world', () => {
         .filter((option) => option.role === 'travel')
         .map((option) => option.key)
         .join(''),
-    ).toBe('123456789aghjkmopswx');
+    ).toBe('123456789aghkmopwxyz');
   });
 
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
@@ -512,7 +524,10 @@ describe('GameEngine — the place is remembered', () => {
     const saves = new MemorySaveStore();
     const engine = engineOn(saves);
     const played = inTheFirstRoom(engine);
-    expect(saves.load()).toContain('"states":{"0.0.0.0.0.0.0.0.0.0":"corridor"}');
+    // The lottery's prize sampled the lobby for the ritual: the building remembers it, then the floor its mode.
+    expect(saves.load()).toContain(
+      '"states":{"0.0.0.0.0.0.0.0.0":"{\\"sampled\\":[0]}","0.0.0.0.0.0.0.0.0.0":"corridor"}',
+    );
     const again = engineOn(saves);
     expect(again.snapshot().place).toEqual(played.place);
     expect(again.snapshot().options).toEqual(played.options);
@@ -522,7 +537,8 @@ describe('GameEngine — the place is remembered', () => {
     // …and the floor left from the corridor is at the elevator again after a reload, as it is without one.
     again.step('leave');
     engine.step('leave');
-    expect(saves.load()).toContain('"states":{}');
+    // Off the trail, the building still remembers the sampled lobby (every visited place remembers, I05).
+    expect(saves.load()).toContain('"states":{"0.0.0.0.0.0.0.0.0":"{\\"sampled\\":[0]}"}');
     expect(engineOn(saves).step('enter:15').options).toEqual(engine.step('enter:15').options);
   });
 
@@ -682,6 +698,8 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
       'debug:integrity:30',
       'debug:integrity:29',
       'debug:integrity:1',
+      'debug:prime',
+      'debug:keystone',
     ]);
   });
 
@@ -689,7 +707,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     const saves = new MemorySaveStore();
     const engine = engineOn(saves, true);
     const room = inTheFirstRoom(engine);
-    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9] });
+    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], voice: null });
     engine.step('move:forward');
     const back = engine.step('move:back');
     expect(back.place?.address).toBe(room.place?.address);
@@ -888,7 +906,14 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
   test('a room offers one take per object, keyed 1–9 in order; a capture is a step (costs one, counts one), the object leaves the room, the fragment enters the buffer with its frequency, and the status says what was found', () => {
     const engine = engineOn(new MemorySaveStore());
     const room = inTheFirstRoom(engine);
-    expect(room.buffer).toEqual({ size: 0, capacity: 16, resonant: 0, fragments: [] });
+    // The walk's landing won the lottery (Guide:187): one Hidden Frequency, no tally, before any take.
+    const prize = {
+      key: `hidden(${FIRST_ROOM}@4)`,
+      name: 'Hidden Frequency',
+      hertz: 1243085,
+      resonant: false,
+    };
+    expect(room.buffer).toEqual({ size: 1, capacity: 16, resonant: 0, fragments: [prize] });
     expect(room.options.filter((option) => option.role === 'take')).toEqual([
       take(0, '1', 'plasma coil with reliquary box'),
       take(1, '2', 'brass censer fused to laser cutter'),
@@ -901,10 +926,11 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     );
     expect(taken.player).toEqual({ coherence: 95, band: 'stable', steps: 5 });
     expect(taken.buffer).toEqual({
-      size: 1,
+      size: 2,
       capacity: 16,
       resonant: 1,
       fragments: [
+        prize,
         {
           key: 'fused|brass censer|laser cutter',
           name: 'brass censer fused to laser cutter',
@@ -934,7 +960,7 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     const room = inTheFirstRoom(engine);
     expect(room.options.find((option) => option.id === 'buffer')).toEqual(system('buffer', 'i', 'Buffer'));
     engine.step('capture:0');
-    engine.step('capture:0');
+    engine.step('capture:0'); // step 6 wins the lottery too: four fragments now
     const opened = engine.step('buffer');
     expect(opened.player).toEqual({ coherence: 93, band: 'stable', steps: 6 });
     expect(opened.prompt).toEqual({ id: 'buffer', outcome: '', figures: { selected: '' } });
@@ -944,6 +970,10 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
       { ...system('drop:0', '', 'Drop here'), role: 'drop', ordinal: '1' },
       { ...system('pick:1', '2', 'Select'), role: 'pick', ordinal: '2' },
       { ...system('drop:1', '', 'Drop here'), role: 'drop', ordinal: '2' },
+      { ...system('pick:2', '3', 'Select'), role: 'pick', ordinal: '3' },
+      { ...system('drop:2', '', 'Drop here'), role: 'drop', ordinal: '3' },
+      { ...system('pick:3', '4', 'Select'), role: 'pick', ordinal: '4' },
+      { ...system('drop:3', '', 'Drop here'), role: 'drop', ordinal: '4' },
       { ...system('close', 'b', 'Back to reality'), role: 'return' },
     ]);
     // Nothing else is heard while it is open.
@@ -958,23 +988,27 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
   test('synthesis: select one, merge with another — the hybrid last in the buffer at the sum, 15 coherence back, the selection cleared; unselect by picking again; a resonant hybrid says so and counts', () => {
     const engine = engineOn(new MemorySaveStore(), true);
     inTheFirstRoom(engine);
+    // The walk landed a Hidden Frequency at step 4 and the second take wins another at step 6 (Void.test):
+    // the buffer is [hidden, 3194, 3577, hidden]; the relics are picked by their positions.
     engine.step('capture:0'); // 3194
     engine.step('capture:0'); // 3577
     engine.step('debug:integrity:40');
     engine.step('buffer');
-    const picked = engine.step('pick:1');
-    expect(picked.prompt?.figures).toEqual({ selected: '1' });
+    const picked = engine.step('pick:2');
+    expect(picked.prompt?.figures).toEqual({ selected: '2' });
     expect(picked.options.filter((option) => option.role === 'pick').map((option) => option.label)).toEqual([
       'Merge',
+      'Merge',
       'Unselect',
+      'Merge',
     ]);
-    expect(engine.step('pick:1').prompt?.figures).toEqual({ selected: '' });
-    engine.step('pick:1');
-    const merged = engine.step('pick:0');
+    expect(engine.step('pick:2').prompt?.figures).toEqual({ selected: '' });
+    engine.step('pick:2');
+    const merged = engine.step('pick:1');
     expect(merged.message).toBe('Synthesis complete: brass-plasma Hybrid (6771 Hz). Coherence +15.');
     expect(merged.player?.coherence).toBe(54); // 40, one for opening the buffer, fifteen back
     expect(merged.prompt?.figures).toEqual({ selected: '' });
-    expect(merged.buffer?.fragments).toEqual([
+    expect(merged.buffer?.fragments.slice(2)).toEqual([
       {
         key: 'hybrid(fused|brass censer|laser cutter+with|reliquary box|plasma coil)',
         name: 'brass-plasma Hybrid',
@@ -982,7 +1016,15 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
         resonant: false,
       },
     ]);
-    expect(merged.options.map((option) => option.id)).toEqual(['pick:0', 'drop:0', 'close']);
+    expect(merged.options.map((option) => option.id)).toEqual([
+      'pick:0',
+      'drop:0',
+      'pick:1',
+      'drop:1',
+      'pick:2',
+      'drop:2',
+      'close',
+    ]);
     // Behind the second door: 3300 + 2904 = 6204 = 11 × 564 — resonant.
     engine.step('close');
     engine.step('leave');
@@ -995,10 +1037,12 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     );
     engine.step('capture:3');
     engine.step('capture:5');
-    expect(engine.snapshot().buffer?.fragments.map((fragment) => fragment.hertz)).toEqual([6771, 3300, 2904]);
+    expect(engine.snapshot().buffer?.fragments.map((fragment) => fragment.hertz)).toEqual([
+      1243085, 1415632, 6771, 3300, 2904,
+    ]);
     engine.step('buffer');
-    engine.step('pick:1');
-    const resonant = engine.step('pick:2');
+    engine.step('pick:3');
+    const resonant = engine.step('pick:4');
     expect(resonant.message).toBe(
       'Synthesis complete: reliquary-marble Hybrid (6204 Hz). Coherence +15. Resonance detected.',
     );
@@ -1006,6 +1050,8 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     expect(
       resonant.buffer?.fragments.map((fragment) => [fragment.name, fragment.hertz, fragment.resonant]),
     ).toEqual([
+      ['Hidden Frequency', 1243085, false],
+      ['Hidden Frequency', 1415632, false],
       ['brass-plasma Hybrid', 6771, false],
       ['reliquary-marble Hybrid', 6204, true],
     ]);
@@ -1014,8 +1060,8 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
       locus: '0.0.0.0.0.0.0.0.0.0.0.1.0',
       steps: '10',
       places: '15',
-      buffer: '2',
-      resonant: '5', // four fresh resonant captures and one resonant merge
+      buffer: '4',
+      resonant: '5', // four fresh resonant captures and one resonant merge; the prizes never count
     });
   });
 
@@ -1025,18 +1071,24 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     inTheFirstRoom(engine);
     engine.step('capture:0');
     engine.step('capture:0');
-    engine.step('buffer');
-    engine.step('pick:0');
+    engine.step('buffer'); // [hidden, 3194, 3577, hidden]: the relics are at 1 and 2
     engine.step('pick:1');
+    engine.step('pick:2');
     engine.step('close');
     expect(engine.step('recap').prompt?.figures.resonant).toBe('2');
     engine.step('resume');
     engine.step('move:forward');
     engine.step('buffer');
-    const dropped = engine.step('drop:0');
+    const dropped = engine.step('drop:2');
     expect(dropped.message).toBe('Dropped plasma-brass Hybrid here.');
-    expect(dropped.buffer?.size).toBe(0);
-    expect(dropped.options.map((option) => option.id)).toEqual(['close']);
+    expect(dropped.buffer?.size).toBe(2);
+    expect(dropped.options.map((option) => option.id)).toEqual([
+      'pick:0',
+      'drop:0',
+      'pick:1',
+      'drop:1',
+      'close',
+    ]);
     const room = engine.step('close');
     expect(room.place?.contents?.objects.at(-1)).toEqual({
       key: 'hybrid(with|reliquary box|plasma coil+fused|brass censer|laser cutter)',
@@ -1049,13 +1101,18 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     expect(engineOn(saves).snapshot().place?.contents?.objects.at(-1)?.name).toBe('plasma-brass Hybrid');
     const back = engine.step('capture:4');
     expect(back.message).toBe('Captured plasma-brass Hybrid. Frequency: 6771 Hz.');
-    expect(back.buffer?.fragments[0]?.hertz).toBe(6771);
+    expect(back.buffer?.fragments.at(-1)?.hertz).toBe(6771);
     expect(engine.step('recap').prompt?.figures.resonant).toBe('2');
     // Outside a room the buffer offers no drop.
     engine.step('resume');
     engine.step('move:back');
     engine.step('leave');
-    expect(engine.step('buffer').options.map((option) => option.id)).toEqual(['pick:0', 'close']);
+    expect(engine.step('buffer').options.map((option) => option.id)).toEqual([
+      'pick:0',
+      'pick:1',
+      'pick:2',
+      'close',
+    ]);
   });
 
   test('a full buffer: the takes are listed sealed and a tap on one changes nothing; a merge makes room', () => {
@@ -1101,12 +1158,15 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     engine.step('capture:0');
     engine.step('buffer');
     expect(engineOn(saves, true).snapshot().prompt).toBeNull();
-    expect(engineOn(saves, true).snapshot().buffer?.size).toBe(1);
+    expect(engineOn(saves, true).snapshot().buffer?.size).toBe(2); // the walk's Hidden Frequency and the relic
     engine.step('close');
     engine.step('debug:integrity:1');
     engine.step('move:forward');
     const reborn = engine.step('reboot');
-    expect(reborn.buffer?.fragments[0]?.name).toBe('plasma coil with reliquary box');
+    expect(reborn.buffer?.fragments.map((fragment) => fragment.name)).toEqual([
+      'Hidden Frequency',
+      'plasma coil with reliquary box',
+    ]);
     expect(engine.step('recap').prompt?.figures.resonant).toBe('1');
     // The world's own state is undone: the relic lies in the room again.
     engine.step('resume');

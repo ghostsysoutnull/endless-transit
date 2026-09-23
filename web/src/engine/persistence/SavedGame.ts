@@ -3,7 +3,7 @@ import type { FragmentData } from '#engine/model/Fragment.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 
-const VERSION = 5;
+const VERSION = 6;
 
 /** What a save is made of; a drawn-but-not-entered world has only its seed. */
 export interface SavedFacts {
@@ -26,7 +26,9 @@ export interface SavedFacts {
  * traveller stands in (`null` while a world is drawn but not entered), what the visited places remember of
  * their own state by address (a floor in corridor mode, a building's elevator floor, a room's taken and
  * dropped relics — every per-place fact has its home here), and the traveller: coherence, steps, the
- * visited path, the buffer as fragment data, the resonance tally (Guide:364-366). The world itself is never
+ * visited path, the buffer as fragment data, the resonance tally (Guide:364-366); v6 (I07) is v5 whose
+ * states may hold a building's ritual and breach, a reach's hunt, and whose buffer may hold a Keystone, a
+ * Hidden Frequency or an echo. The world itself is never
  * stored: seed + path rebuild it. Another version is "no save" — there is nobody to migrate for. What the
  * text says is checked for shape here; whether the world could have written it (every fragment included)
  * is the journey's question.

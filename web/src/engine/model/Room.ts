@@ -27,8 +27,8 @@ const GLITCHED = { structure: 0.2, walls: 0.1, lighting: 0.3 } as const;
 const STATIC_KEY = 'static';
 /** Reads dropped fragments back from a memento, through the world (stateless). */
 const READER = new FragmentReader();
-/** The free lottery (Guide:187-188; Room.groovy:71-72): three moves in ten win, one to ten million hertz. */
-const LOTTERY = 'lottery';
+/** The free lottery (Guide:187-188; Room.groovy:71-72): three moves in ten win, one to ten million hertz; rolled on the old game's own branch key. */
+const LOTTERY = 'action';
 const WIN = 0.3;
 const PRIZE = { min: 1_000_000, max: 9_999_999 };
 /** The scan's WAVE column (ScanCommand.groovy:188-189): resonant, plain, and degraded under an anomaly. */
@@ -291,9 +291,14 @@ export class Room extends Location {
     ];
   }
 
-  /** The local cell diagnostic (Room.groovy:124-130): the resonance is degraded under an anomaly. */
+  /**
+   * The local cell diagnostic (Room.groovy:124-130): the resonance is degraded under an anomaly — and first
+   * the apartment's era marker, which the old game wrote on a screen nobody ever saw (Apartment.groovy:44;
+   * Decision 7: a label that never showed is made to show, where the traveller stands).
+   */
   override facts(): readonly Fact[] {
     return [
+      { key: 'era', label: 'TEMPORAL_MARKER', value: this.#apartment.era().key() },
       { key: 'reading', label: 'TYPE', value: this.type() },
       { key: 'reading', label: 'OXY', value: `${String(this.#traits.oxygen)}%` },
       { key: 'reading', label: 'TEMP', value: `${String(this.#traits.temperature)}°C` },

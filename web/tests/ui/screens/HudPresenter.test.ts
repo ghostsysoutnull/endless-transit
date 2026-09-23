@@ -46,6 +46,7 @@ const PLANET: GameSnapshot = {
       { key: 'era', label: 'TIMELINE', value: 'future' },
     ],
     frame: 'yellow',
+    abyssal: false,
     childrenHeading: 'Planetary landmasses scanned:',
     contents: null,
     telemetry: null,
@@ -72,6 +73,7 @@ const PLANET: GameSnapshot = {
   buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: null,
   message: 'Entered Auraea.',
+  scan: null,
 };
 
 const STREET: GameSnapshot = {
@@ -135,6 +137,7 @@ const FLOOR: GameSnapshot = {
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
   message: 'Enter Corridor.',
+  scan: null,
 };
 
 /** A building: floors listed top first, numbered by floor, with their readings. */
@@ -189,7 +192,7 @@ const ROOM: GameSnapshot = {
       ],
       furniture: ['overturned tatami mat', 'cracked shoji screen'],
     },
-    telemetry: { spectrogram: [3, 1, 9, 4, 2] },
+    telemetry: { spectrogram: [3, 1, 9, 4, 2], voice: null },
     childrenHeading: '',
   },
   buffer: {
@@ -221,6 +224,7 @@ const ROOM: GameSnapshot = {
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
   message: 'Entered Grand Power Plant.',
+  scan: null,
 };
 
 describe('HudPresenter — which snapshots it takes', () => {

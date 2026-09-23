@@ -345,11 +345,25 @@ export abstract class Location {
    * One strict walker: an index nobody answers, or a sealed place on the way, is nowhere.
    */
   descendant(address: Address): Location | undefined {
-    let here: Location | undefined = this.sealed() ? undefined : this;
-    for (const index of address.indices().slice(this.depth())) {
-      here = here?.children()[index];
-      if (here?.sealed() === true) return undefined;
-    }
-    return here;
+    if (this.sealed()) return undefined;
+    return address
+      .indices()
+      .slice(this.depth())
+      .reduce<Location | undefined>((here, index) => {
+        const next = here?.children()[index];
+        return next?.sealed() === true ? undefined : next;
+      }, this);
+  }
+
+  /**
+   * The place an address names, sealed or not — a place that exists but cannot be stood in (a Layer of an
+   * unbreached building). A traveller's footprints may name one: the world was rebuilt under them (the
+   * reboot keeps the visited path, Guide:145-146).
+   */
+  locate(address: Address): Location | undefined {
+    return address
+      .indices()
+      .slice(this.depth())
+      .reduce<Location | undefined>((here, index) => here?.children()[index], this);
   }
 }

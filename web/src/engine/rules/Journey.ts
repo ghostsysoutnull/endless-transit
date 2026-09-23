@@ -1,11 +1,11 @@
 import { Address } from '#engine/model/Address.ts';
 import type { Fragment } from '#engine/model/Fragment.ts';
 import { FragmentReader } from '#engine/model/FragmentReader.ts';
-import type { Hybrid } from '#engine/model/Hybrid.ts';
 import type { Location } from '#engine/model/Location.ts';
 import { SavedGame } from '#engine/persistence/SavedGame.ts';
 import type { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { Merge } from './Merge.ts';
 import { Player } from './Player.ts';
 
 /** Reads a save's buffer back through the world (stateless). */
@@ -15,7 +15,8 @@ const READER = new FragmentReader();
  * Owns one fact: where the traveller stands — which world, which place in it, the place to come back to
  * after a visit to the title screen — and the traveller's own record of the walk (the `Player`: coherence,
  * steps, the visited path, the buffer). It changes only through moves that mean something (`begin`, `enter`,
- * `descend`, `move`, `leave`, `toTitle`, `reboot`, `capture`, `drop`, `merge`); a move that cannot be made
+ * `descend`, `move`, `leave`, `toTitle`, `reboot`, `capture`, `drop`, `merge`, `lottery`, `echo`,
+ * `captureEcho`, `breach`, `prime`, `spawnKeystone`); a move that cannot be made
  * changes nothing and says so. Every step lands where the chosen place receives travellers (`arrive`), so
  * a corridor puts the traveller on its floor and a door in the first room, the place arrived at does what
  * arriving does there (a floor calls the elevator), and the landing leaves a footprint. A capture is one
@@ -107,10 +108,37 @@ export class Journey {
     return true;
   }
 
-  /** What lies here at `index`, into the buffer (Guide:120); nothing — and the place untouched — when the buffer is full or nothing lies there. */
+  /** What lies here at `index`, into the buffer (Guide:120), and the floor above sampled for the ritual; nothing — and the place untouched — when the buffer is full or nothing lies there. */
   capture(index: number): Fragment | undefined {
     if (this.#here === undefined || this.#player.buffer().full()) return undefined;
     const capture = this.#here.capture(index);
+    if (capture === undefined) return undefined;
+    this.#player.capture(capture);
+    this.#here.sample();
+    return capture.fragment;
+  }
+
+  /** The free lottery on the move that landed here (Guide:186-190): the prize into the buffer, the floor sampled (any capture counts, Guide:264); nothing when the place rolls nothing, lost, or the buffer is full. */
+  lottery(): Fragment | undefined {
+    if (this.#here === undefined || this.#player.buffer().full()) return undefined;
+    const prize = this.#here.lottery(this.#player.steps());
+    if (prize === undefined) return undefined;
+    this.#player.capture({ fragment: prize, fresh: true });
+    this.#here.sample();
+    return prize;
+  }
+
+  /** One scan for the echo here at the traveller's step count (Guide:192-194): the signal after it; nothing where there is no echo to hunt. */
+  echo(): number | undefined {
+    const echo = this.#here?.echo();
+    if (echo === undefined || echo.found()) return undefined;
+    return echo.scan(this.#player.steps());
+  }
+
+  /** The echo, once locked, into the buffer (Guide:194-195); nothing when it is not locked, already taken, or the buffer is full. */
+  captureEcho(): Fragment | undefined {
+    if (this.#player.buffer().full()) return undefined;
+    const capture = this.#here?.echo()?.capture();
     if (capture === undefined) return undefined;
     this.#player.capture(capture);
     return capture.fragment;
@@ -124,9 +152,43 @@ export class Journey {
     return this.#player.drop(index);
   }
 
-  /** Two fragments of the buffer merged into their hybrid, with what a merge gives (Guide:141, 241-243); nothing for a merge the buffer refuses. */
-  merge(first: number, second: number): Hybrid | undefined {
-    return this.#player.merge(first, second);
+  /**
+   * Two fragments of the buffer merged — into their hybrid, or into what the place forges instead (a primed
+   * building's Keystone, Guide:250-252) — with what a merge gives (Guide:141, 241-243); the merge counts for
+   * the building after the forge is decided (Guide:271-274); nothing for a merge the buffer refuses.
+   */
+  merge(first: number, second: number): Merge | undefined {
+    const forged = this.#here?.forge(this.#player.buffer().fragments());
+    const fragment = this.#player.merge(first, second, forged);
+    if (fragment === undefined) return undefined;
+    this.#here?.infuse();
+    return { fragment, forged: forged !== undefined };
+  }
+
+  /** Whether the bedrock can be breached from here with what the traveller holds (Guide:275-276). */
+  breachOffered(): boolean {
+    return this.#here?.breachOffered(this.#player.buffer().fragments()) ?? false;
+  }
+
+  /** The breach (Guide:275-276; Floor.groovy:74-78): the Keystone spent, the building open; nothing when it is not offered here. */
+  breach(): Fragment | undefined {
+    const keystone = this.#here?.breach(this.#player.buffer().fragments());
+    if (keystone === undefined) return undefined;
+    this.#player.discard(keystone);
+    return keystone;
+  }
+
+  /** The debug PRIME on the building the traveller is in (Guide:438); false outside one. */
+  prime(): boolean {
+    return this.#here?.prime() ?? false;
+  }
+
+  /** The debug KEYSTONE (Guide:439): the building's Keystone straight into the buffer; nothing outside a building or with a full buffer. */
+  spawnKeystone(): Fragment | undefined {
+    const keystone = this.#here?.keystone();
+    if (keystone === undefined || this.#player.buffer().full()) return undefined;
+    this.#player.capture({ fragment: keystone, fresh: false });
+    return keystone;
   }
 
   /**
@@ -174,28 +236,36 @@ export class Journey {
    */
   restore(saved: SavedGame): boolean {
     const universe = this.#registry.universe(saved.seed());
-    const address = saved.address();
-    const place = address === undefined ? undefined : universe.descendant(address);
-    if (address !== undefined) {
-      if (place === undefined) return false;
-      if (place.arrival() !== place) return false;
-    }
+    // The visited path first as text: a traveller could have walked it (each parent before its child).
     const visited = new Set<string>();
     for (const text of saved.visited()) {
       const each = Address.parse(text);
-      if (each === undefined || universe.descendant(each) === undefined) return false;
+      if (each === undefined) return false;
       const parent = each.parent();
       if (parent !== undefined && !visited.has(parent.toString())) return false;
       visited.add(text);
     }
-    const trail = place?.trail() ?? [];
-    if (trail.some((step) => !visited.has(step.address().toString()))) return false;
+    // Then the states, in the order the game wrote them (parents first): a building's breach unseals the
+    // Layers below it, so a place is looked for only once what stands above it has been recalled.
     for (const [text, memento] of saved.states()) {
       const owner = Address.parse(text);
       const keeper = owner === undefined || !visited.has(text) ? undefined : universe.descendant(owner);
       if (keeper === undefined) return false;
       if (!keeper.recall(memento) || keeper.remember() !== memento) return false;
     }
+    // Every footprint names a place — sealed or not: a reboot keeps the path walked below a bedrock now closed.
+    for (const text of saved.visited()) {
+      const each = Address.parse(text);
+      if (each === undefined || universe.locate(each) === undefined) return false;
+    }
+    const address = saved.address();
+    const place = address === undefined ? undefined : universe.descendant(address);
+    if (address !== undefined) {
+      if (place === undefined) return false;
+      if (place.arrival() !== place) return false;
+    }
+    const trail = place?.trail() ?? [];
+    if (trail.some((step) => !visited.has(step.address().toString()))) return false;
     for (const [step, above] of trail.entries()) {
       const below = trail[step + 1];
       if (below !== undefined && !above.admits(below)) return false;

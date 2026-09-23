@@ -155,7 +155,14 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(new Set(rooms.map((room) => room.signal()))).toEqual(new Set(['[SHIELDED]', '[CLEAR]']));
     const room = must(rooms[0]);
     expect(room.status()).toBe(`ATMOS: ${String(room.oxygen())}% | TEMP: ${String(room.temperature())}°C`);
-    expect(room.facts().map((fact) => fact.label)).toEqual(['TYPE', 'OXY', 'TEMP', 'SIGNAL', 'RESONANCE']);
+    expect(room.facts().map((fact) => fact.label)).toEqual([
+      'TEMPORAL_MARKER',
+      'TYPE',
+      'OXY',
+      'TEMP',
+      'SIGNAL',
+      'RESONANCE',
+    ]);
   });
 
   test('the room’s words are its atmosphere — structure, walls with a colour, lighting — from its own culture, era and trait in all but the glitched few (Room.groovy:274-276; ThemeService.groovy:87-124)', () => {

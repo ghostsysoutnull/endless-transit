@@ -354,10 +354,10 @@ describe('Journey — where the traveller stands', () => {
       ],
       ['a visited place that is nowhere', STREET, new Map(), [...trailOf(STREET), `${STREET}.99`]],
       [
-        'a visited place nobody can stand in is fine, but not past the last',
+        'a visited place nobody can stand in is fine (a sealed Layer: child 16), but not past the last (26)',
         STREET,
         new Map(),
-        [...trailOf(STREET), building, `${building}.16`],
+        [...trailOf(STREET), building, `${building}.26`],
       ],
     ];
     for (const [what, path, states, visited] of cases) {
@@ -439,7 +439,7 @@ describe('Journey — where the traveller stands', () => {
     expect(second.name()).toBe('brass censer fused to laser cutter');
     expect(trip.player().resonantTraces()).toBe(2); // both fresh, both in a matching room
     expect(trip.merge(0, 0)).toBeUndefined();
-    const hybrid = must(trip.merge(0, 1));
+    const hybrid = must(trip.merge(0, 1)).fragment;
     expect(hybrid.name()).toBe('plasma-brass Hybrid');
     expect(hybrid.frequency().hertz()).toBe(3194 + 3577);
     expect(trip.player().buffer().fragments()).toEqual([hybrid]);

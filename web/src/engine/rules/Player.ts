@@ -1,6 +1,5 @@
 import type { Capture } from '#engine/model/Capture.ts';
 import type { Fragment } from '#engine/model/Fragment.ts';
-import type { Hybrid } from '#engine/model/Hybrid.ts';
 import type { Location } from '#engine/model/Location.ts';
 import { Buffer } from './Buffer.ts';
 import { Coherence } from './Coherence.ts';
@@ -71,13 +70,22 @@ export class Player {
     return true;
   }
 
-  /** Two fragments of the buffer into their hybrid: fifteen coherence back, and a count when it resonates; nothing for a merge the buffer refuses (HK-015). */
-  merge(first: number, second: number): Hybrid | undefined {
-    const hybrid = this.#buffer.merge(first, second);
-    if (hybrid === undefined) return undefined;
+  /**
+   * Two fragments of the buffer into their hybrid — or into `forged`, what the place says a merge here
+   * yields instead (a Keystone) — fifteen coherence back, and a count when it resonates (a Keystone never
+   * does, Decision 7); nothing for a merge the buffer refuses (HK-015).
+   */
+  merge(first: number, second: number, forged?: Fragment): Fragment | undefined {
+    const made = this.#buffer.merge(first, second, forged === undefined ? undefined : () => forged);
+    if (made === undefined) return undefined;
     this.restore(MERGE_RESTORES);
-    if (hybrid.resonant()) this.#resonant += 1;
-    return hybrid;
+    if (made.resonant()) this.#resonant += 1;
+    return made;
+  }
+
+  /** This very fragment spent (the breach's Keystone): out of the buffer, nothing given back; false when not held. */
+  discard(fragment: Fragment): boolean {
+    return this.#buffer.remove(fragment);
   }
 
   /** The fragment at `index`, out of the buffer, to be laid down somewhere; nothing at a position nobody holds. */

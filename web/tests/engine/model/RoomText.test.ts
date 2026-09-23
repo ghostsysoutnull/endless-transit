@@ -90,10 +90,17 @@ describe('the glitch (Terminal.groovy:173-183, seeded here on the place instead 
 });
 
 describe('a room’s text (Room.groovy:116-134, 262-297)', () => {
-  test('the diagnostic: TYPE, OXY, TEMP, SIGNAL and RESONANCE — [STABLE] in green, [DEGRADED] in red under an anomaly (Room.groovy:129)', () => {
+  test('the diagnostic: TEMPORAL_MARKER (the apartment’s era, Decision 7), TYPE, OXY, TEMP, SIGNAL and RESONANCE — [STABLE] in green, [DEGRADED] in red under an anomaly (Room.groovy:129)', () => {
     expect(anomalies.length).toBeGreaterThan(20);
     for (const room of sound.slice(0, 200)) {
-      expect(room.facts().map((fact) => fact.label)).toEqual(['TYPE', 'OXY', 'TEMP', 'SIGNAL', 'RESONANCE']);
+      expect(room.facts().map((fact) => fact.label)).toEqual([
+        'TEMPORAL_MARKER',
+        'TYPE',
+        'OXY',
+        'TEMP',
+        'SIGNAL',
+        'RESONANCE',
+      ]);
       expect(room.facts().at(-1)).toEqual({ key: 'stable', label: 'RESONANCE', value: '[STABLE]' });
     }
     for (const room of anomalies) {

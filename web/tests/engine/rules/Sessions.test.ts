@@ -32,8 +32,9 @@ function engineOn(seed: Seed, saves: MemorySaveStore): GameEngine {
   });
 }
 
-function shown(snapshot: GameSnapshot): Omit<GameSnapshot, 'message'> {
-  return { ...snapshot, message: undefined } as Omit<GameSnapshot, 'message'>;
+/** Everything but the status message and the scan panel: both belong to the last step, not to the state a save holds. */
+function shown(snapshot: GameSnapshot): Omit<GameSnapshot, 'message' | 'scan'> {
+  return { ...snapshot, message: undefined, scan: undefined } as Omit<GameSnapshot, 'message' | 'scan'>;
 }
 
 /**
@@ -84,7 +85,8 @@ describe('Sessions — a save is the whole state, on every tap of a play session
     expect(fixtures.map(([file]) => file)).toContain('elevator-marathon.json');
     expect(fixtures.map(([file]) => file)).toContain('recap-and-end.json');
     expect(fixtures.map(([file]) => file)).toContain('capture-merge-drop.json');
-    expect(fixtures.length).toBeGreaterThanOrEqual(5);
+    expect(fixtures.map(([file]) => file)).toContain('keystone-and-descent.json');
+    expect(fixtures.length).toBeGreaterThanOrEqual(6);
   });
 
   test.each(fixtures)('%s replays with a reload after every tap', (_, session) => {
@@ -131,12 +133,37 @@ describe('Sessions — a save is the whole state, on every tap of a play session
     expect(last.place?.kind).toBe('Street');
     // Reborn at 100: four taps down, a capture, the buffer, a merge back to 100, three leaves.
     expect(last.player?.coherence).toBe(97);
+    // The lottery (I07) lands Hidden Frequencies along the walk (Void.test pins the rolls); the taps are the same.
     expect(last.buffer?.fragments.map((fragment) => [fragment.name, fragment.hertz])).toEqual([
-      ['prayer bench infused with plasma coil', 3603],
-      ['reliquary-marble Hybrid', 6204],
-      ['stone-plasma Hybrid', 6982],
+      ['stone gargoyle infused with orbital beacon', 3788],
+      ['Hidden Frequency', 2906631],
+      ['reliquary box fused to copper pipe', 3300],
+      ['Hidden Frequency', 1181618],
+      ['marble cherub fused to foundry ladle', 2904],
+      ['Hidden-brass Hybrid', 3718017],
+      ['plasma coil with reliquary box', 3194],
+      ['Hidden Frequency', 6964442],
+      ['Hidden-prayer Hybrid', 1419235],
     ]);
     expect(last.prompt).toBeNull();
+  });
+
+  test('keystone-and-descent.json primes, forges, rides to the Peak, breaches, descends, takes a shard’s relic, scans on every level, dies below the bedrock and is reborn on the street with the buffer', () => {
+    const [, session] = must(fixtures.find(([file]) => file === 'keystone-and-descent.json'));
+    const seed = must(Seed.parse(session.seed));
+    const last = replay(seed, session.history);
+    expect(last.place?.name).toBe('Floor 0');
+    expect(last.buffer?.fragments.map((fragment) => fragment.name)).toEqual([
+      'Hidden Frequency',
+      'Hidden Frequency',
+      'null reference infused with radar dish',
+    ]);
+    // Reborn at 100: enter the building, enter the lobby — the building sealed again.
+    expect(last.player?.coherence).toBe(98);
+    expect(last.options.filter((option) => option.role === 'move').map((option) => option.id)).toEqual([
+      'move:up',
+      'move:corridor',
+    ]);
   });
 
   test('random play: sixty taps on each of six worlds, any option on offer, a reload after every one', () => {

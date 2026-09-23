@@ -38,6 +38,7 @@ const RECAP: GameSnapshot = {
     description: [],
     facts: [],
     frame: 'yellow',
+    abyssal: false,
     childrenHeading: '',
     contents: null,
     telemetry: null,
@@ -51,6 +52,7 @@ const RECAP: GameSnapshot = {
   },
   options: [option('resume', 'b', 'Resume'), option('end-session', 'q', 'End session')],
   message: '',
+  scan: null,
 };
 
 describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRecap.groovy:14-69)', () => {

@@ -13,11 +13,14 @@ type Reading = (
   reader: FragmentReader,
 ) => Fragment | undefined;
 
-/** The place an address in a save names, seen from the universe; nothing for text that is no address. */
+/**
+ * The place an address in a save names, seen from the universe — sealed or not: a relic taken below a
+ * bedrock the reboot closed again is still what that room dealt (Guide:145-146). Nothing for text that is no address.
+ */
 function placeAt(universe: Location, text: unknown): Location | undefined {
   if (typeof text !== 'string') return undefined;
   const address = Address.parse(text);
-  return address === undefined ? undefined : universe.descendant(address);
+  return address === undefined ? undefined : universe.locate(address);
 }
 
 /** The same JSON whatever order the keys came in: so data can be compared with what a fragment writes. */
