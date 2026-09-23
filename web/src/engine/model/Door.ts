@@ -58,7 +58,7 @@ export class Door {
     return this.#inscription === undefined ? seen : `${seen} ${this.#inscription.narrative()}`;
   }
 
-  /** What a scan senses at the door: the appearance, then the trace, then the words (Door.groovy:240-253). */
+  /** What a scan senses at the door: the appearance, then the trace, then the words (Door.groovy:79-92). */
   sensed(): string {
     const seen = `${this.#told.material} ${this.#told.state} ${this.#trace.sentence()}`;
     return this.#inscription === undefined ? seen : `${seen} ${this.#inscription.narrative()}`;

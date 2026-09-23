@@ -6,7 +6,7 @@ import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-/** The ground floor: below it lies the substrate, not another floor (ElevatorState.groovy:202-208). */
+/** The ground floor: below it lies the substrate, not another floor (ElevatorState.groovy:32-38). */
 const GROUND = 0;
 /**
  * Up unless this is the top floor, down unless the ground floor — where, once the bedrock is breached, the
@@ -90,7 +90,7 @@ export class ElevatorState implements FloorState {
     return '';
   }
 
-  /** At the elevator the scan is the building's vertical strata pulse around this floor (ElevatorState.groovy:253-256). */
+  /** At the elevator the scan is the building's vertical strata pulse around this floor (ElevatorState.groovy:83-86). */
   scan(floor: Floor, seen: (place: Location) => boolean): ScanReport | undefined {
     return floor.building().scanAround(floor.number(), seen);
   }

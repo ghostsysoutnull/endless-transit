@@ -90,7 +90,7 @@ describe('the ritual on the building (Guide:257-276; Building.groovy:19-35, Ritu
     expect(buildingOf(way, 0).sampled()).toEqual([]);
   });
 
-  test('the seventh merge is counted after the check: forge answers nothing at six merges and every floor, the Keystone once the seventh is in (Guide:271-274; Player.groovy:79-81)', () => {
+  test('the seventh merge is counted after the check: forge answers nothing at six merges and every floor, the Keystone once the seventh is in (Guide:271-274; Player.groovy:92-94)', () => {
     const unit = buildingOf(street(), 0);
     for (let number = 0; number < FLOORS; number++) floorOf(unit, number).sample();
     for (let merge = 0; merge < 6; merge++) unit.infuse();

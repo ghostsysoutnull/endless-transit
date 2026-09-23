@@ -139,7 +139,7 @@ export class Building extends Location {
     return this.primed() && this.#keystoneAmong(held) === undefined ? this.keystone() : undefined;
   }
 
-  /** The debug PRIME (Guide:438; PrimeBuildingCommand.groovy:16-19): every floor sampled, the count at seven. */
+  /** The debug PRIME (Guide:438; PrimeBuildingCommand.groovy:17-20): every floor sampled, the count at seven. */
   override prime(): boolean {
     for (let number = 0; number < this.#floors; number++) this.#sampled.add(number);
     this.#merges = INFUSIONS;

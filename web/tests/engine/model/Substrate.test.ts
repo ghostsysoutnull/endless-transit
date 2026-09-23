@@ -93,7 +93,7 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     expect(building.status()).toBe('BEDROCK_BREACHED');
   });
 
-  test('descend: from floor 0 of a breached building `down` says Descend into the Substrate and leads to Layer −1; below, Go Down and Go Up walk the layers; the way up from −1 is floor 0 (Guide:277-278; ElevatorState.groovy:202-208)', () => {
+  test('descend: from floor 0 of a breached building `down` says Descend into the Substrate and leads to Layer −1; below, Go Down and Go Up walk the layers; the way up from −1 is floor 0 (Guide:277-278; ElevatorState.groovy:32-38)', () => {
     const { building } = sanctum();
     breach(building);
     const lobby = floorOf(building, 0);
