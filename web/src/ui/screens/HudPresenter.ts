@@ -1,13 +1,17 @@
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
+import type { TraceSummary } from '#engine/rules/TraceSummary.ts';
+import type { LegendTone, NodeTone } from '#ui/canvas/MapPictureVM.ts';
 import { frameOf } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
+import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
 const RETURN_MARK = '▲ ';
@@ -43,6 +47,21 @@ const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
 const SEEN_MARK = { text: `[${VISITED_KEY.toUpperCase()}]`, label: 'Visited' } as const;
 /** One cell of a spectrogram bar (TelemetryComponent.groovy:136). */
 const BAR = '█';
+/** The map's words (LatticeMapComponent.groovy:52-66, TelemetryComponent.groovy:80-82): the glitch mark's glyph and the legend. */
+const MARK_GLYPH = 'X';
+const LEGEND: Readonly<Record<LegendTone, string>> = {
+  you: 'YOU',
+  visited: 'VISITED',
+  unvisited: 'UNVISITED',
+  noise: 'STATIC',
+  mark: 'GLITCH',
+};
+const MAP_HEADING = '[NEURAL_LATTICE_PROJECTION]';
+const TRACE_HEADING = '[NEURAL_LATTICE_TRACE_INITIATED]';
+/** The trace's mark on the current line (LatticeTraceComponent.groovy:85). */
+const TRACE_MARK = '>> ';
+/** How many dock buttons stay out of the fold: the way out and the three most used (I08; I09 polishes the dock). */
+const FOLD_AFTER = 4;
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -145,6 +164,8 @@ export class HudPresenter implements Presenter<HudVM> {
                 note: row.note,
               })),
             },
+      map: snapshot.map === null ? null : this.#mapPanel(snapshot.map, MAP_HEADING),
+      trace: snapshot.trace === null ? null : this.#tracePanel(snapshot.trace),
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
       moves,
@@ -153,6 +174,7 @@ export class HudPresenter implements Presenter<HudVM> {
         : null,
       sealedTag: 'SEALED',
       dock,
+      fold: { after: FOLD_AFTER, more: 'MORE', less: 'LESS', label: 'More of the dock' },
       debug,
       options: [
         ...takes.filter((take) => !take.sealed).map((take) => this.#take(take)),
@@ -170,6 +192,8 @@ export class HudPresenter implements Presenter<HudVM> {
         path: labels.path,
         place: 'Where you are',
         scan: 'Scan',
+        map: 'Map',
+        trace: 'Trace',
         travel: 'Places to enter',
         moves: 'Moves',
         aside: 'Readouts',
@@ -195,9 +219,70 @@ export class HudPresenter implements Presenter<HudVM> {
   }
 
   /**
+   * A map as a panel: the picture for the canvas — every node with its tone, the marks, the legend built
+   * from the very glyphs the grid uses (HK-023) — and the words a reader gets instead.
+   */
+  #mapPanel(map: MapSummary, heading: string): MapPanelVM {
+    const tone = (node: MapSummary['nodes'][number]): NodeTone =>
+      node.noise ? 'noise' : node.visited ? 'visited' : 'unvisited';
+    const nodeGlyph = map.nodes.find((node) => !node.noise)?.glyph ?? map.origin.glyph;
+    const visited = map.nodes.filter((node) => node.visited).length;
+    const legend: MapPanelVM['picture']['legend'] = [
+      { glyph: map.origin.glyph, label: LEGEND.you, tone: 'you' },
+      { glyph: nodeGlyph, label: LEGEND.visited, tone: 'visited' },
+      { glyph: nodeGlyph, label: LEGEND.unvisited, tone: 'unvisited' },
+      ...(map.marks.length === 0 ? [] : [{ glyph: MARK_GLYPH, label: LEGEND.mark, tone: 'mark' as const }]),
+    ];
+    const marks =
+      map.marks.length === 0
+        ? ''
+        : `, ${String(map.marks.length)} glitch mark${map.marks.length === 1 ? '' : 's'}`;
+    return {
+      label: 'Lattice map',
+      heading,
+      origin: `SCAN_ORIGIN: ${map.origin.name}`,
+      picture: {
+        width: map.width,
+        height: map.height,
+        origin: { glyph: map.origin.glyph, label: LEGEND.you },
+        nodes: map.nodes.map((node) => ({ x: node.x, y: node.y, glyph: node.glyph, tone: tone(node) })),
+        marks: map.marks,
+        markGlyph: MARK_GLYPH,
+        legend,
+      },
+      nodes: map.nodes.map((node) => ({
+        glyph: node.glyph,
+        name: node.name,
+        note: `${node.visited ? 'visited' : 'unvisited'}${node.noise ? ', static' : ''}`,
+      })),
+      summary: `Lattice map of ${map.origin.name}: ${String(map.nodes.length)} nodes, ${String(visited)} visited${marks}.`,
+    };
+  }
+
+  /** The trace as a panel: the picture's rows, and the same rows as lines of text (the old `ll` output) for a reader. */
+  #tracePanel(trace: TraceSummary): HudVM['trace'] {
+    const rows = trace.steps.map((step) => ({
+      depth: `[${String(step.depth).padStart(2, '0')}]`,
+      glyph: step.icon,
+      kind: step.kind.toUpperCase(),
+      name: `${step.name}${step.meta}`,
+      current: step.current,
+      abyssal: step.abyssal,
+    }));
+    return {
+      label: 'Lattice trace',
+      heading: TRACE_HEADING,
+      picture: { rows },
+      lines: rows.map(
+        (row) => `${row.current ? TRACE_MARK : ''}${row.depth} ${row.glyph} ${row.kind} : ${row.name}`,
+      ),
+    };
+  }
+
+  /**
    * The objects as tiles when the place is one that holds things — each with the take the engine offers
-   * for its number, none while the buffer is full (the takes come sealed) — and the telemetry block when it
-   * is indoors.
+   * for its number, none while the buffer is full (the takes come sealed) — the telemetry block when it
+   * is indoors, and the map when it is not (Guide:339) and the place has one.
    */
   #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number, sync: string): AsideVM {
     const contents = place.contents;
@@ -242,6 +327,10 @@ export class HudPresenter implements Presenter<HudVM> {
                 ],
               },
             },
+      map:
+        place.telemetry !== null || place.lattice === null
+          ? null
+          : this.#mapPanel(place.lattice, `[NEURAL_MAP: ${place.kind.toUpperCase()}]`),
     };
   }
 

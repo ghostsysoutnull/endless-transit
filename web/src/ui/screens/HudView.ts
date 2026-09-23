@@ -1,9 +1,17 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
+import { CanvasView } from '#ui/canvas/CanvasView.ts';
+import { MapPicture } from '#ui/canvas/MapPicture.ts';
+import { TracePicture } from '#ui/canvas/TracePicture.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { View } from '#ui/View.ts';
 import type { HudVM } from './HudVM.ts';
+import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+
+/** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
+type Slot = 'pane' | 'map' | 'trace';
 
 /**
  * Draws the world screen with lit-html: the HUD (path and stats), the narrative panel, the list of places
@@ -15,10 +23,20 @@ import type { TravelRowVM } from './TravelRowVM.ts';
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
- * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again.
+ * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again. The
+ * dock folds after `fold.after` buttons behind one MORE button — a toggle of this view, not of the game;
+ * it survives a render and resets with the screen. The drawn map and trace are canvases mounted into host
+ * elements the template keeps alive (`CanvasSlots`); their words sit beside them for a reader.
  */
 export class HudView implements View<HudVM> {
   #container: HTMLElement | undefined;
+  #vm: HudVM | undefined;
+  #more = false;
+  readonly #canvases = new CanvasSlots({
+    pane: () => new CanvasView(new MapPicture()),
+    map: () => new CanvasView(new MapPicture()),
+    trace: () => new CanvasView(new TracePicture()),
+  });
 
   mount(container: HTMLElement): void {
     this.#container = container;
@@ -26,12 +44,28 @@ export class HudView implements View<HudVM> {
 
   render(vm: HudVM): void {
     if (this.#container === undefined) throw new Error('HudView.render before mount');
+    this.#vm = vm;
     render(this.#template(vm), this.#container);
+    this.#canvases.bind('pane', this.#host('pane'), vm.aside.map?.picture ?? null);
+    this.#canvases.bind('map', this.#host('map'), vm.map?.picture ?? null);
+    this.#canvases.bind('trace', this.#host('trace'), vm.trace?.picture ?? null);
   }
 
   dispose(): void {
+    this.#canvases.dispose();
     if (this.#container !== undefined) render(nothing, this.#container);
     this.#container = undefined;
+    this.#vm = undefined;
+    this.#more = false;
+  }
+
+  #host(slot: Slot): HTMLElement | null {
+    return this.#container?.querySelector(`[data-canvas="${slot}"]`) ?? null;
+  }
+
+  #toggleMore(): void {
+    this.#more = !this.#more;
+    if (this.#vm !== undefined) this.render(this.#vm);
   }
 
   #template(vm: HudVM): TemplateResult {
@@ -111,7 +145,8 @@ export class HudView implements View<HudVM> {
           <p class="diag">${vm.place.diagnostic}</p>
           <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
         </section>
-        ${this.#scan(vm)}
+        ${this.#scan(vm)} ${vm.map === null ? nothing : this.#map(vm.map, 'map', 'map', vm.regions.map)}
+        ${this.#trace(vm)}
         ${
           vm.moves.length === 0
             ? nothing
@@ -147,10 +182,37 @@ export class HudView implements View<HudVM> {
         </div>
         <nav class="dock" aria-label=${vm.regions.dock}>
           ${repeat(
-            vm.dock,
+            vm.dock.slice(0, vm.fold.after),
             (option) => option.id,
             (option) => this.#docked(option),
           )}
+          ${
+            vm.dock.length <= vm.fold.after
+              ? nothing
+              : html`
+                  <button
+                    type="button"
+                    class="pb more"
+                    data-testid="more"
+                    aria-label=${vm.fold.label}
+                    aria-expanded=${this.#more ? 'true' : 'false'}
+                    @click=${() => {
+                      this.#toggleMore();
+                    }}
+                  >
+                    <span>${this.#more ? vm.fold.less : vm.fold.more}</span>
+                  </button>
+                  ${
+                    this.#more
+                      ? repeat(
+                          vm.dock.slice(vm.fold.after),
+                          (option) => option.id,
+                          (option) => this.#docked(option),
+                        )
+                      : nothing
+                  }
+                `
+          }
         </nav>
         ${
           vm.debug.length === 0
@@ -205,10 +267,42 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  /** The objects of a room as tiles — a button each while the buffer has room, a plain tile otherwise — and the telemetry block. */
+  /**
+   * A drawn map: the canvas in its host, the origin line under it, and — for a reader only — the summary
+   * as the picture's name and every node as a list item.
+   */
+  #map(map: MapPanelVM, slot: Slot, testId: string, region: string): TemplateResult {
+    return html`
+      <section class=${slot === 'pane' ? 'map pane' : 'map'} data-testid=${testId} aria-label=${region}>
+        <h3 class="heading">${map.heading}</h3>
+        <div class="cv" data-canvas=${slot} role="img" aria-label=${map.summary}></div>
+        <p class="tl">${map.origin}</p>
+        <ul class="vh">
+          ${map.nodes.map((node) => html`<li>${node.glyph} ${node.name}, ${node.note}</li>`)}
+        </ul>
+      </section>
+    `;
+  }
+
+  /** The drawn trace: the canvas in its host, and the same rows as lines for a reader only. */
+  #trace(vm: HudVM): TemplateResult | typeof nothing {
+    const trace = vm.trace;
+    if (trace === null) return nothing;
+    return html`
+      <section class="tracep" data-testid="trace" aria-label=${vm.regions.trace}>
+        <h3 class="heading">${trace.heading}</h3>
+        <div class="cv" data-canvas="trace" role="img" aria-label=${trace.label}></div>
+        <ol class="vh">
+          ${trace.lines.map((line) => html`<li>${line}</li>`)}
+        </ol>
+      </section>
+    `;
+  }
+
+  /** The objects of a room as tiles — a button each while the buffer has room, a plain tile otherwise — the telemetry block, or the map. */
   #aside(vm: HudVM): TemplateResult | typeof nothing {
-    const { objects, telemetry } = vm.aside;
-    if (objects === null && telemetry === null) return nothing;
+    const { objects, telemetry, map } = vm.aside;
+    if (objects === null && telemetry === null && map === null) return nothing;
     return html`
       <aside class="aside" aria-label=${vm.regions.aside}>
         ${
@@ -265,6 +359,7 @@ export class HudView implements View<HudVM> {
                 </section>
               `
         }
+        ${map === null ? nothing : this.#map(map, 'pane', 'pane-map', map.label)}
       </aside>
     `;
   }

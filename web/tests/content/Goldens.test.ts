@@ -44,7 +44,12 @@ function page(vm: HudVM): string {
       for (const reading of row.readings) lines.push(`       ${reading.label}: ${reading.value}`);
     }
   }
-  const { objects, telemetry } = vm.aside;
+  const { objects, telemetry, map } = vm.aside;
+  if (map !== null) {
+    lines.push(
+      `${map.heading} ${map.origin} | ${map.nodes.map((node) => `${node.glyph} ${node.name} (${node.note})`).join(' | ')}`,
+    );
+  }
   if (objects !== null) {
     lines.push(
       `${objects.heading}: ${objects.empty === '' ? objects.tiles.map((tile) => `${tile.name} <${tile.key}>`).join(' | ') : objects.empty}`,

@@ -11,6 +11,7 @@ BUILDINGS ON THIS STREET
   02 [2] Enter Building: The Spire of Static
   03 [3] Enter Building: ArchiveRoot
   04 [4] Enter Building: SpireFall
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Bright Boulevard | ⌂ Ornate Sanctum (unvisited) | ⌂ The Spire of Static (unvisited) | ⌂ ArchiveRoot (unvisited) | ⌂ SpireFall (unvisited)
 dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [] TRACE | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ ORNATE SANCTUM  [frame yellow]

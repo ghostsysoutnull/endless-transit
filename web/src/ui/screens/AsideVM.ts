@@ -1,6 +1,7 @@
+import type { MapPanelVM } from './MapPanelVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 
-/** The pane beside the list: the objects of a room as tiles — each a take when the engine offers one — and the telemetry block. */
+/** The pane beside the list: the objects of a room as tiles — each a take when the engine offers one — the telemetry block indoors, the map outdoors. */
 export interface AsideVM {
   readonly objects: {
     /** The pane's accessible name. */
@@ -27,4 +28,6 @@ export interface AsideVM {
     readonly spectrogram: { readonly heading: string; readonly bars: readonly string[] };
     readonly logs: { readonly heading: string; readonly lines: readonly string[] };
   } | null;
+  /** The map of the place, from street level upward (Guide:339); nothing where the telemetry is, nothing for a kind with no map. */
+  readonly map: MapPanelVM | null;
 }

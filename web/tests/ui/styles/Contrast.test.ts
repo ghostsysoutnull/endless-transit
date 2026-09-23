@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
+import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 
 const STYLESHEET = new URL('../../../src/ui/styles/app.css', import.meta.url);
 const source = readFileSync(STYLESHEET, 'utf8');
@@ -21,10 +22,10 @@ function namedIn(pattern: RegExp): readonly string[] {
 
 /** The nine planet colours `--frame` may take, and the void's below the bedrock: what the stylesheet sets it to. */
 const FRAMES = namedIn(/--frame:\s*var\(--([\w-]+)\)/g);
-/** Every token the stylesheet paints text with — `color:` — the frame alias followed to each of its colours. */
+/** Every token the stylesheet paints text with — `color:` — and every ink a canvas writes glyphs with (I08), the frame alias followed to each of its colours. */
 const TEXT = [
   ...new Set(
-    namedIn(/(?<![\w-])color:\s*var\(--([\w-]+)\)/g).flatMap((token) =>
+    [...namedIn(/(?<![\w-])color:\s*var\(--([\w-]+)\)/g), ...TEXT_INKS].flatMap((token) =>
       token === 'frame' ? FRAMES : [token],
     ),
   ),
@@ -78,6 +79,10 @@ describe('every text colour of the stylesheet reads on every surface it may sit 
     expect(onSurfaces).toContain('dim');
     expect(onSurfaces).toContain('text');
     expect(onSurfaces.length).toBeGreaterThan(10);
+    // The canvas paints its surfaces with grounds and rules the stylesheet has, never with a text ink.
+    for (const token of SURFACE_INKS) expect(palette.has(token), `--${token}`).toBe(true);
+    for (const token of TEXT_INKS) expect(token === 'frame' || palette.has(token), `--${token}`).toBe(true);
+    expect(SURFACE_INKS.some((token) => TEXT_INKS.includes(token))).toBe(false);
   });
 
   test.each(onSurfaces)('--%s on the page and its panels', (token) => {

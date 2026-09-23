@@ -27,6 +27,7 @@ BUILDINGS ON THIS STREET
   18 [Y] Enter Building: Silent Void
   19 [Z] Enter Building: Unmarked Gravity
   20 [] Enter Building: CellFall
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Broad Alley | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited)
 dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [] TRACE | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ HORIZONWELL  [frame grey]

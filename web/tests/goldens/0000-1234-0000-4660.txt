@@ -17,6 +17,7 @@ BUILDINGS ON THIS STREET
   08 [8] Enter Building: TeahouseGate
   09 [9] Enter Building: BridgeGate
   10 [A] Enter Building: TowerSpire
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Grand Avenue | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited)
 dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [] TRACE | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ CEDAR LANTERN  [frame magenta]
