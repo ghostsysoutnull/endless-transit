@@ -19,13 +19,14 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
 The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot → the
 `ScreenStage` whose presenter `accepts` it → `Presenter.toViewModel` → `View<VM>.render` (lit-html). Options are data
 `{ id, key, label, place, role, sealed, landmark, ordinal, readings, opposite, current, visited }` with `role` travel /
-move / return / system / debug; a new action is a registry entry in `GameEngine` that names its `Turn` (`STEP` drains
-and counts, `GLOBAL` drains only, `FREE` neither — every prompt in the world drains **before** the command, Guide:133),
-a new screen one more stage in `main.ts`; a pending prompt (`Prompt`: the reboot at zero coherence, the recap) is a
-state whose options are the only ones on offer, never a blocking read. A key is the ordinal when the place goes by its
-own number, else from the pool. The traveller (`rules/Player`: `Coherence` value, steps, the visited path by address)
-rides with the `Journey`; what the HUD draws that is noise is seeded from `FrameEntropy` (the place + the step count),
-never the clock. **Debug mode** (Decision 8): `?debug` on the page's address, read only in `main.ts`; the debug tools
+move / return / system / debug / take / pick / drop; a new action is a registry entry in `GameEngine` that names its
+`Turn` (`STEP` drains and counts, `GLOBAL` drains only, `FREE` neither — every prompt in the world drains **before** the
+command, Guide:133), a new screen one more stage in `main.ts`; a pending prompt (`Prompt`: the reboot at zero
+coherence, the recap, the buffer screen) is a state whose options are the only ones on offer, never a blocking read —
+an answer is a `Reply` that settles it or keeps it open, and costs nothing. A key is the ordinal when the place goes
+by its own number, else from the pool. The traveller (`rules/Player`: `Coherence` value, steps, the visited path by
+address, the `Buffer`, the resonance tally) rides with the `Journey`; what the HUD draws that is noise is seeded from
+`FrameEntropy` (the place + the step count), never the clock. **Debug mode** (Decision 8): `?debug` on the page's address, read only in `main.ts`; the debug tools
 (`role: 'debug'`, the INTEGRITY ladder) are offered nowhere else, and tests turn it on with `debug: true`.
 
 The world: `model/Location` owns the **lazy-loading law** — children sit behind a private array and exist only after
@@ -35,13 +36,18 @@ The world: `model/Location` owns the **lazy-loading law** — children sit behin
 `current()`, `goesByNumber()`, `startOfJourney()`, `drainFactor()`) plus a `LocationFactory<T, Parent>` entry in
 `procgen/LocationRegistry`; nobody asks "which kind are you?" (`instanceof`, a `switch` on `kind().key()`). A mode a
 place can be in is a state object it asks (`Floor` → `FloorState`), never a flag the caller reads. Child `i` is born from
-`parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save (v4) is seed + path + what
-every **visited** place remembers (`remember()`/`recall()` — the one home of every per-place fact) + the traveller
-(coherence, steps, visited), and restore takes only a save the journey could have written (`saved()` after `restore()`
-is the save; a visited path is walked parents first and holds the trail).
+`parentSeed.branch(i)` and nothing else. Where the traveller stands: `rules/Journey`; a save (v5) is seed + path + what
+every **visited** place remembers (`remember()`/`recall()` — the one home of every per-place fact: a room's taken keys
+and dropped fragments) + the traveller (coherence, steps, visited, the buffer as fragment data, the tally), and restore
+takes only a save the journey could have written (`saved()` after `restore()` is the save; a visited path is walked
+parents first and holds the trail; every fragment is read back **through the world** by the `FragmentReader`).
 A presenter never cuts a name out of a label — the option carries it. **Objects live in apartments** (Guide:167): an
 apartment deals its relics (`Relic`, identity by key) from the `ObjectDeck` of its culture and era and knows which
-room each lies in; a room asks. Furniture is a culture item in a condition, never a hybrid.
+room each lies in; a room asks. Furniture is a culture item in a condition, never a hybrid. **Items:** a `Fragment`
+is what the buffer holds — a `RelicFragment` (a relic with its provenance, the room that gives it its `Frequency` from
+the `Gematria` of its name; 0 Hz never resonates) or a `Hybrid` of two; a kind of fragment is one class and one row in
+the reader's table. A capture is one transaction of the `Journey` (the room hands over only what the `Buffer` takes,
+sixteen at most); a dropped fragment lies in the room as it was; only a _fresh_ capture counts toward the tally.
 
 ## The walls (each proven RED on a scratch file when added)
 
