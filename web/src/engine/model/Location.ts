@@ -200,6 +200,48 @@ export abstract class Location {
     return false;
   }
 
+  /** A capture happened here: the floor above hears of it and tells its building (the ritual, Guide:263-266); nothing above a building. */
+  sample(): void {
+    this.parent()?.sample();
+  }
+
+  /** A merge happened here: the building above counts it (Guide:267-270); nothing above a building. */
+  infuse(): void {
+    this.parent()?.infuse();
+  }
+
+  /** What a merge here yields instead of a hybrid, given what is held: a primed building's Keystone; nothing anywhere else. */
+  forge(held: readonly Fragment[]): Fragment | undefined {
+    return this.parent()?.forge(held);
+  }
+
+  /** The Keystone of the building this place is in — a fresh value, identity by the building's address; nothing outside a building. */
+  keystone(): Fragment | undefined {
+    return this.parent()?.keystone();
+  }
+
+  /** The debug PRIME (Guide:438) on the building this place is in; false where there is none. */
+  prime(): boolean {
+    return this.parent()?.prime() ?? false;
+  }
+
+  /** Whether the bedrock can be breached from here with what is held (Guide:275-276); only a floor ever says yes. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a floor does
+  breachOffered(_held: readonly Fragment[]): boolean {
+    return false;
+  }
+
+  /** Breaches the bedrock from here: the Keystone used, to be taken out of what was held; nothing when it is not offered. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a floor does
+  breach(_held: readonly Fragment[]): Fragment | undefined {
+    return undefined;
+  }
+
+  /** Whether this place is below a building's bedrock (the Groovy `isAbyssal`): the parent's answer, false at the top. */
+  abyssal(): boolean {
+    return this.parent()?.abyssal() ?? false;
+  }
+
   /** The universe this place is in — the top of its trail. */
   root(): Location {
     return this.parent()?.root() ?? this;

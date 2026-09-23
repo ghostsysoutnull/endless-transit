@@ -3,6 +3,7 @@ import { CorridorState } from './CorridorState.ts';
 import { ElevatorState } from './ElevatorState.ts';
 import type { Fact } from './Fact.ts';
 import type { FloorState } from './FloorState.ts';
+import type { Fragment } from './Fragment.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
@@ -115,10 +116,23 @@ export class Floor extends Location {
     return corridor;
   }
 
-  /** The floor `steps` above (below when negative) in the same building; nothing past the top or the ground. */
+  /** The floor `steps` above (below when negative) in the same building; nothing past the top, nothing below the ground until the bedrock is breached. */
   neighbour(steps: number): Location | undefined {
-    const number = this.#number + steps;
-    return number < 0 || number >= this.#building.floors() ? undefined : this.#building.children()[number];
+    return this.#building.floorNumbered(this.#number + steps);
+  }
+
+  /** A capture under this floor samples it for the ritual (RitualTracker.groovy:26-33). */
+  override sample(): void {
+    this.#building.sampleFloor(this.#number);
+  }
+
+  /** The breach is a fact about the floor, not the mode (HK-018; Floor.groovy:64-80): the building decides. */
+  override breachOffered(held: readonly Fragment[]): boolean {
+    return this.#building.breachOfferedAt(this.#number, held);
+  }
+
+  override breach(held: readonly Fragment[]): Fragment | undefined {
+    return this.#building.breachFrom(this.#number, held);
   }
 
   /** Spatial pivot, elevator → corridor. The only way into the corridor mode. */
