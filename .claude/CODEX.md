@@ -13,12 +13,14 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
 1. **"hi" means go, and keep going.** Read `tasks/RECOVERY_PROMPT.md` and `tasks/PORT_QUEUE.md`. Run anything under
    "Reported by the tester" first, then the first unticked iteration, then the next — until the queue is empty. If the
    session ends mid-run, the next "hi" continues from the queue.
-2. **The main session manages; sub-agents write.** Per iteration: branch `port/<id>-<name>` → one fresh sub-agent does
-   the work (it reads the queue's Decisions, the study, the Groovy source it ports and the web code so far; writes the
-   note `tasks/port/<id>.md`, tests first, then code; one commit per module with its tests, a pure move is one commit)
-   → the main session runs the gates itself → a second fresh agent reviews the diff against the iteration, the
-   Decisions and the eight OO principles, and confirmed findings are fixed → screenshots looked at, desktop and phone
-   → merge `--no-ff` → tick the queue, make the handover true → commit → push → confirm the live build answers.
+2. **The main session manages; one sub-agent writes.** Per iteration: branch `port/<id>-<name>` → one fresh
+   sub-agent does the work (reads the queue's Decisions, the study, the Groovy source it ports and the web code so
+   far; writes a short note `tasks/port/<id>.md`; tests first, green is done — no mutant ritual; one commit per module
+   with its tests) → the main session runs `npm run check` and `npm run e2e` once, looks at the screenshots, fixes
+   or sends back what is wrong → merge `--no-ff` → tick the queue, make the handover true → commit → push → confirm
+   the live build answers. No separate reviewer or fixer agent (lean process, user decision 2026-09-23: iterations
+   1–5 ran writer + reviewer + fixer at ~900k tokens each; the reviews found real bugs, but half their findings were
+   test tightness, not player-facing — the tester's findings are the review from here on).
 3. **No questions.** The user answered them up front — the queue's Decisions. Anything not covered: decide in the
    spirit of those decisions, write the choice in the note, continue.
 4. **Safety net.** Merge only when every gate of the touched tree is green (`web/**` → `npm run check`, browser tests in

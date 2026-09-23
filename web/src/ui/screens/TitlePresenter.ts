@@ -14,9 +14,9 @@ export class TitlePresenter implements Presenter<TitleVM> {
     this.#masthead = masthead;
   }
 
-  /** The title is the screen of a game that stands nowhere yet. */
+  /** The title is the screen of a game that stands nowhere yet, with no prompt in the way. */
   accepts(snapshot: GameSnapshot): boolean {
-    return snapshot.place === null;
+    return snapshot.place === null && snapshot.prompt === null;
   }
 
   toViewModel(snapshot: GameSnapshot): TitleVM {

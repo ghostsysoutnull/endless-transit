@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { press } from './support/harness.ts';
+import { press, saveText } from './support/harness.ts';
 
 /** What holds the focus right now, as `TAG[data-option]`. */
 const FOCUSED = `(() => {
@@ -72,10 +72,7 @@ async function plantOnAPlanet(page: Page): Promise<void> {
       window.sessionStorage.setItem('planted', 'yes');
       window.localStorage.setItem(slot, text);
     },
-    [
-      'endless-transit.save',
-      JSON.stringify({ version: 3, seed: '7F3A-91C2-0B4D-E6A8', path: '0.0.0.0.0', states: {} }),
-    ] as const,
+    ['endless-transit.save', saveText('7F3A-91C2-0B4D-E6A8', '0.0.0.0.0')] as const,
   );
 }
 
@@ -127,10 +124,7 @@ async function plantAt(page: Page, path: string, states: Record<string, string> 
       window.sessionStorage.setItem('planted', 'yes');
       window.localStorage.setItem(slot, text);
     },
-    [
-      'endless-transit.save',
-      JSON.stringify({ version: 3, seed: '7F3A-91C2-0B4D-E6A8', path, states }),
-    ] as const,
+    ['endless-transit.save', saveText('7F3A-91C2-0B4D-E6A8', path, states)] as const,
   );
 }
 

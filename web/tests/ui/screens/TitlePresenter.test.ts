@@ -18,6 +18,7 @@ function option(id: string, key: string, label: string): GameOption {
     readings: [],
     opposite: '',
     current: false,
+    visited: false,
   };
 }
 
@@ -26,6 +27,8 @@ describe('TitlePresenter.toViewModel', () => {
     const vm = presenter.toViewModel({
       world: null,
       place: null,
+      player: null,
+      prompt: null,
       options: [option('new-world', 'n', 'New world')],
       message: '',
     });
@@ -40,6 +43,8 @@ describe('TitlePresenter.toViewModel', () => {
     const vm = presenter.toViewModel({
       world: { seed: '1111-1111-2222-2222', name: 'Hollow Reach' },
       place: null,
+      player: null,
+      prompt: null,
       options: [option('reroll', 'r', 'Re-roll')],
       message: 'World 1111-1111-2222-2222 drawn.',
     });
@@ -55,19 +60,35 @@ describe('TitlePresenter.toViewModel', () => {
   });
 
   test('every word on the screen is carried by the view-model, region names for screen readers included', () => {
-    const vm = presenter.toViewModel({ world: null, place: null, options: [], message: '' });
+    const vm = presenter.toViewModel({
+      world: null,
+      place: null,
+      player: null,
+      prompt: null,
+      options: [],
+      message: '',
+    });
     expect(vm.title).toBe('ENDLESS TRANSIT');
     expect(vm.regions).toEqual({ stage: 'Uplink', world: 'World', actions: 'Actions' });
   });
 
   test('the build stamp names the build the page was made from — handed in, the engine never sees it', () => {
-    expect(presenter.toViewModel({ world: null, place: null, options: [], message: '' }).build).toBe(
-      'build a1b2c3d',
-    );
+    expect(
+      presenter.toViewModel({
+        world: null,
+        place: null,
+        player: null,
+        prompt: null,
+        options: [],
+        message: '',
+      }).build,
+    ).toBe('build a1b2c3d');
     expect(
       new TitlePresenter(new Masthead('dev')).toViewModel({
         world: null,
         place: null,
+        player: null,
+        prompt: null,
         options: [],
         message: '',
       }).build,
@@ -75,7 +96,7 @@ describe('TitlePresenter.toViewModel', () => {
   });
 
   test('the title is the screen of a snapshot without a place — and only of that one', () => {
-    const atTitle = { world: null, place: null, options: [], message: '' };
+    const atTitle = { world: null, place: null, player: null, prompt: null, options: [], message: '' };
     expect(presenter.accepts(atTitle)).toBe(true);
     expect(presenter.toViewModel(atTitle).scene).toBe('title');
     const place = {
@@ -95,11 +116,20 @@ describe('TitlePresenter.toViewModel', () => {
       contents: null,
       telemetry: null,
     };
-    expect(presenter.accepts({ ...atTitle, place })).toBe(false);
+    expect(
+      presenter.accepts({ ...atTitle, place, player: { coherence: 100, band: 'stable', steps: 0 } }),
+    ).toBe(false);
   });
 
   test('the view-model is plain data', () => {
-    const vm = presenter.toViewModel({ world: null, place: null, options: [], message: '' });
+    const vm = presenter.toViewModel({
+      world: null,
+      place: null,
+      player: null,
+      prompt: null,
+      options: [],
+      message: '',
+    });
     expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
   });
 });

@@ -18,6 +18,7 @@ function page(vm: HudVM): string {
   lines.push(
     `path: ${vm.crumbs.map((crumb) => `${crumb.icon} ${crumb.name}${crumb.current ? ' *' : ''}`).join(' > ')}`,
   );
+  lines.push(`${vm.meter.label}: ${vm.meter.text} ${vm.meter.bandLabel}`);
   lines.push(`stats: ${vm.stats.map((stat) => `${stat.label} ${stat.value}`).join(' | ')}`);
   if (vm.place.tags.length > 0) {
     lines.push(`tags: ${vm.place.tags.map((tag) => `${tag.label} ${tag.value} (${tag.key})`).join(' | ')}`);
@@ -31,7 +32,12 @@ function page(vm: HudVM): string {
   if (vm.rows.length > 0) {
     lines.push(`${vm.heading}${vm.sealedNote === null ? '' : ` (${vm.sealedNote})`}`);
     for (const row of vm.rows) {
-      const marks = [row.sealed ? vm.sealedTag : '', row.landmark ? 'LANDMARK' : '', row.mark?.text ?? '']
+      const marks = [
+        row.sealed ? vm.sealedTag : '',
+        row.landmark ? 'LANDMARK' : '',
+        row.mark?.text ?? '',
+        row.seen?.text ?? '',
+      ]
         .filter((mark) => mark !== '')
         .join(' ');
       lines.push(`  ${row.ordinal} [${row.key}] ${row.label}${marks === '' ? '' : ` ${marks}`}`);

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, tapOption, watchForErrors } from './support/harness.ts';
+import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world, so names and list lengths are known: the save format is the way in, as for any player. */
@@ -26,7 +26,7 @@ async function plant(page: Page, path: string | null): Promise<void> {
       window.sessionStorage.setItem('planted', 'yes');
       window.localStorage.setItem(slot, text);
     },
-    [SLOT, JSON.stringify({ version: 3, seed: SEED, path, states: {} })] as const,
+    [SLOT, saveText(SEED, path)] as const,
   );
 }
 
@@ -112,7 +112,8 @@ test('a long street: twenty buildings, every one a button, two of them landmarks
   await expect(page.getByTestId('sealed-note')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
   await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
-  await expect(page.getByRole('button')).toHaveCount(22);
+  // Twenty buildings, LEAVE, TITLE SCREEN, END SESSION.
+  await expect(page.getByRole('button')).toHaveCount(23);
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);

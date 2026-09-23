@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, tapOption, watchForErrors } from './support/harness.ts';
+import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world: its street is Bright Boulevard; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
@@ -15,7 +15,7 @@ async function plant(page: Page, path: string | null, states: Record<string, str
       window.sessionStorage.setItem('planted', 'yes');
       window.localStorage.setItem(slot, text);
     },
-    [SLOT, JSON.stringify({ version: 3, seed: SEED, path, states })] as const,
+    [SLOT, saveText(SEED, path, states)] as const,
   );
 }
 

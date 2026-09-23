@@ -1,0 +1,28 @@
+{
+  "seed": "0000-0005-0000-0023",
+  "history": [
+    "new-world",
+    "enter-world",
+    "enter:2",
+    "debug:integrity:39",
+    "enter:0",
+    "move:corridor",
+    "enter:1",
+    "move:forward",
+    "debug:integrity:1",
+    "move:back",
+    "move:forward",
+    "leave",
+    "reboot",
+    "enter:2",
+    "debug:integrity:30",
+    "leave",
+    "enter:0",
+    "debug:integrity:1",
+    "to-title",
+    "reboot",
+    "to-title",
+    "enter-world",
+    "enter:3"
+  ]
+}

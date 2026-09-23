@@ -10,8 +10,13 @@ import { must, realRegistry } from '#tests/support/world.ts';
 const FIRST = new Seed(0x7f3a91c2, 0x0b4de6a8);
 const SECOND = new Seed(0x33333333, 0x44444444);
 
-function engineOn(saves: MemorySaveStore): GameEngine {
-  return new GameEngine({ world: realRegistry(), entropy: new FixedEntropySource([FIRST, SECOND]), saves });
+function engineOn(saves: MemorySaveStore, debug = false): GameEngine {
+  return new GameEngine({
+    world: realRegistry(),
+    entropy: new FixedEntropySource([FIRST, SECOND]),
+    saves,
+    debug,
+  });
 }
 
 function system(id: string, key: string, label: string): GameOption {
@@ -27,6 +32,7 @@ function system(id: string, key: string, label: string): GameOption {
     readings: [],
     opposite: '',
     current: false,
+    visited: false,
   };
 }
 
@@ -37,6 +43,31 @@ function move(id: string, key: string, label: string, opposite: string): GameOpt
 
 function ids(snapshot: GameSnapshot): string[] {
   return snapshot.options.map((option) => option.id);
+}
+
+/** Every address from the universe down to `path`. */
+function trailOf(path: string): string[] {
+  const steps = path.split('.');
+  return steps.map((_, depth) => steps.slice(0, depth + 1).join('.'));
+}
+
+/** A v4 save text on the first seed, as the game writes one unless a field is bent on purpose. */
+function saveText(
+  path: string,
+  states: Record<string, string> = {},
+  visited: readonly string[] = trailOf(path),
+  traveller: { coherence?: number; steps?: number } = {},
+): string {
+  return JSON.stringify({
+    version: 4,
+    seed: '7F3A-91C2-0B4D-E6A8',
+    path,
+    states,
+    coherence: 100,
+    steps: 0,
+    visited,
+    ...traveller,
+  });
 }
 
 /** A world entered (on its street), climbed to the universe, and walked down the first child `levels` times. */
@@ -110,6 +141,7 @@ describe('GameEngine — walking the big world', () => {
       'enter:3',
       'leave',
       'to-title',
+      'recap',
     ]);
     const snapshot = walkedDown(engine, 0);
     expect(snapshot.place).toEqual({
@@ -143,9 +175,14 @@ describe('GameEngine — walking the big world', () => {
       readings: [],
       opposite: '',
       current: false,
+      // The first filament is on the way to the street a new world starts on, so it has been visited (Guide:430).
+      visited: true,
     });
     expect(ids(snapshot)).not.toContain('leave');
-    expect(snapshot.options.at(-1)).toEqual(system('to-title', 't', 'Title screen'));
+    expect(snapshot.options.slice(-2)).toEqual([
+      system('to-title', 't', 'Title screen'),
+      system('recap', 'q', 'End session'),
+    ]);
   });
 
   test('tapping a child goes down one level; the trail, the position and the way back follow', () => {
@@ -171,6 +208,7 @@ describe('GameEngine — walking the big world', () => {
       readings: [],
       opposite: '',
       current: false,
+      visited: false,
     });
     expect(snapshot.message).toBe('Entered Zeta-915-Link.');
   });
@@ -232,6 +270,7 @@ describe('GameEngine — walking the big world', () => {
       ],
       opposite: '',
       current: false,
+      visited: false,
     });
     expect(floors.map((option) => option.ordinal)).toEqual(
       Array.from({ length: 16 }, (_, n) => String(15 - n)),
@@ -272,6 +311,7 @@ describe('GameEngine — walking the big world', () => {
       move('corridor', 'c', 'Enter Corridor', 'elevator'),
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
       system('to-title', 't', 'Title screen'),
+      system('recap', 'q', 'End session'),
     ]);
     expect(engine.step('move:down').message).toBe(lobby.message);
     const second = engine.step('move:up');
@@ -323,6 +363,7 @@ describe('GameEngine — walking the big world', () => {
       ],
       opposite: '',
       current: false,
+      visited: false,
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
       move('elevator', 'b', 'Back to Elevator', 'corridor'),
@@ -363,16 +404,17 @@ describe('GameEngine — walking the big world', () => {
       ],
       furniture: ['half-dismantled stained glass shard', 'scorched funeral mask'],
     });
-    expect(room.place?.telemetry).toEqual({ spectrogram: [8, 6, 7, 8, 4] });
+    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9] });
     expect(engine.snapshot().place?.telemetry).toEqual(room.place?.telemetry);
     expect(room.options).toEqual([
       move('forward', 'f', 'Go forward', 'back'),
       { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
       system('to-title', 't', 'Title screen'),
+      system('recap', 'q', 'End session'),
     ]);
     const second = engine.step('move:forward');
     expect(second.place?.position?.index).toBe(2);
-    expect(second.options.map((option) => option.id)).toEqual(['move:back', 'to-title']);
+    expect(second.options.map((option) => option.id)).toEqual(['move:back', 'to-title', 'recap']);
     expect(engine.step('leave').place?.position?.index).toBe(2);
     engine.step('move:back');
     const floor = engine.step('leave');
@@ -417,6 +459,24 @@ describe('GameEngine — walking the big world', () => {
         .map((option) => option.key)
         .join(''),
     ).toBe('123456789aghijk');
+  });
+
+  test('the visited mark’s letter is claimed like a command’s: no child is keyed v, so a row never reads [V] … [V]', () => {
+    const engine = new GameEngine({
+      world: realRegistry(),
+      entropy: new FixedEntropySource([new Seed(0, 0)]),
+      saves: new MemorySaveStore(),
+    });
+    engine.step('new-world');
+    // Broad Alley (seed 0000-…): twenty buildings — the twentieth once read `20 [V] Enter Building: CellFall`.
+    const street = engine.step('enter-world');
+    expect(street.place?.name).toBe('Broad Alley');
+    expect(
+      street.options
+        .filter((option) => option.role === 'travel')
+        .map((option) => option.key)
+        .join(''),
+    ).toBe('123456789aghijkmopsw');
   });
 
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
@@ -483,14 +543,18 @@ describe('GameEngine — the place is remembered', () => {
 
   test('a corrupt save, or a path that leads nowhere, is a fresh game — not a crash, not half a world', () => {
     for (const text of [
-      '{"version":3,"seed":',
+      '{"version":4,"seed":',
       '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0"}',
-      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.99","states":{}}',
-      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.999","states":{}}',
-      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0.0","states":{}}',
-      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0","states":{"0.0.0.0.0.0.0.0.0.0":"lift"}}',
-      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0.0.0.0.0.0","states":{}}',
-      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0","states":{"0.0.0.0.0.0.0.0.0.3":"corridor"}}',
+      '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0","states":{}}',
+      saveText('0.99'),
+      saveText('0.0.0.0.0.0.0.0.999'),
+      saveText('0.0.0.0.0.0.0.0.0.0.0'),
+      saveText('0.0.0.0.0.0.0.0.0.0', { '0.0.0.0.0.0.0.0.0.0': 'lift' }),
+      saveText('0.0.0.0.0.0.0.0.0.0.0.0.0'),
+      saveText('0.0.0.0.0.0.0.0', { '0.0.0.0.0.0.0.0.0.3': 'corridor' }),
+      saveText('0.0.0.0.0.0.0.0', {}, ['0']),
+      saveText('0.0.0.0.0.0.0.0', {}, undefined, { coherence: 101 }),
+      saveText('0.0.0.0.0.0.0.0', {}, undefined, { steps: -1 }),
     ]) {
       const snapshot = engineOn(new MemorySaveStore(text)).snapshot();
       expect(snapshot.world, text).toBeNull();
@@ -498,5 +562,300 @@ describe('GameEngine — the place is remembered', () => {
       expect(snapshot.message, text).toBe('');
       expect(ids(snapshot), text).toEqual(['new-world']);
     }
+  });
+});
+
+describe('GameEngine — the turn: every prompt in the world costs coherence before the command runs (Guide:133-147)', () => {
+  test("a new world stands on its street with 100 coherence and no steps; the title's own commands cost nothing", () => {
+    const engine = engineOn(new MemorySaveStore());
+    expect(engine.step('new-world').player).toBeNull();
+    const street = engine.step('enter-world');
+    expect(street.player).toEqual({ coherence: 100, band: 'stable', steps: 0 });
+  });
+
+  test('a move costs one and counts one; the drain runs before the command, so the place moved into is the one shown at the new value', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    const building = engine.step('enter:0');
+    expect(building.place?.kind).toBe('Building');
+    expect(building.player).toEqual({ coherence: 99, band: 'stable', steps: 1 });
+    const lobby = engine.step('enter:15');
+    expect(lobby.player).toEqual({ coherence: 98, band: 'stable', steps: 2 });
+    const corridor = engine.step('move:corridor');
+    expect(corridor.player).toEqual({ coherence: 97, band: 'stable', steps: 3 });
+    const floor = engine.step('leave');
+    expect(floor.place?.kind).toBe('Building');
+    expect(floor.player).toEqual({ coherence: 96, band: 'stable', steps: 4 });
+  });
+
+  test('the title screen is a global command: it costs one and counts no step; continuing is free; a stale tap costs nothing', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    engine.step('enter:0');
+    const title = engine.step('to-title');
+    expect(title.player).toBeNull();
+    const back = engine.step('enter-world');
+    expect(back.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    expect(engine.step('open-pod-bay-doors').player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    expect(engine.step('move:up').player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+  });
+
+  test("the drain follows the street's era: two per prompt where it is entropic (Guide:137, 304-305), on every screen below it", () => {
+    // Seed 0000-0005-0000-0023: the street a new world starts on, Bright Road, is entropic.
+    const engine = new GameEngine({
+      world: realRegistry(),
+      entropy: new FixedEntropySource([new Seed(5, 0x23)]),
+      saves: new MemorySaveStore(),
+    });
+    engine.step('new-world');
+    const street = engine.step('enter-world');
+    expect(street.place?.facts.find((fact) => fact.key === 'era')?.value).toBe('entropic');
+    expect(engine.step('enter:0').player?.coherence).toBe(98);
+    const floors = engine.snapshot().options.filter((option) => option.role === 'travel');
+    expect(engine.step(must(floors.at(-1)).id).player?.coherence).toBe(96);
+    expect(engine.step('move:corridor').player?.coherence).toBe(94);
+    expect(engine.step('enter:0').place?.kind).toBe('Room');
+    expect(engine.snapshot().player?.coherence).toBe(92);
+    // …and one per prompt on a street whose era is not.
+    engine.step('leave');
+    engine.step('leave');
+    engine.step('leave');
+    engine.step('leave');
+    expect(engine.snapshot().place?.kind).toBe('City');
+    expect(engine.snapshot().player?.coherence).toBe(84);
+  });
+
+  test('the bands ride on the snapshot at the exact edges, and the description corrupts under 40 — seeded on the place and the step, so the same screen reads the same', () => {
+    const engine = engineOn(new MemorySaveStore(), true);
+    const room = inTheFirstRoom(engine);
+    const clean = room.place?.description ?? [];
+    expect(engine.step('debug:integrity:70').player?.band).toBe('stable');
+    expect(engine.step('debug:integrity:69').player?.band).toBe('degraded');
+    expect(engine.step('debug:integrity:30').player?.band).toBe('degraded');
+    expect(engine.step('debug:integrity:29').player?.band).toBe('critical');
+    expect(engine.step('debug:integrity:40').place?.description).toEqual(clean);
+    const corrupt = engine.step('debug:integrity:39').place?.description ?? [];
+    expect(corrupt).toHaveLength(clean.length);
+    expect(corrupt).not.toEqual(clean);
+    expect(corrupt.map((line) => line.length)).toEqual(clean.map((line) => line.length));
+    expect(engine.snapshot().place?.description).toEqual(corrupt);
+    // The debug tool costs nothing and counts nothing (Decision 8: a tool, not a prompt).
+    expect(engine.snapshot().player?.steps).toBe(room.player?.steps);
+  });
+
+  test('the debug INTEGRITY exists only in debug mode', () => {
+    const plain = engineOn(new MemorySaveStore());
+    inTheFirstRoom(plain);
+    expect(plain.snapshot().options.filter((option) => option.role === 'debug')).toEqual([]);
+    expect(plain.step('debug:integrity:1').player?.coherence).toBe(96);
+    const debug = engineOn(new MemorySaveStore(), true);
+    inTheFirstRoom(debug);
+    expect(
+      debug
+        .snapshot()
+        .options.filter((option) => option.role === 'debug')
+        .map((o) => o.id),
+    ).toEqual([
+      'debug:integrity:100',
+      'debug:integrity:70',
+      'debug:integrity:69',
+      'debug:integrity:40',
+      'debug:integrity:39',
+      'debug:integrity:30',
+      'debug:integrity:29',
+      'debug:integrity:1',
+    ]);
+  });
+
+  test('the telemetry is drawn on the place and the step count: the same place reads differently after a move, the same again on a reload', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves, true);
+    const room = inTheFirstRoom(engine);
+    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9] });
+    engine.step('move:forward');
+    const back = engine.step('move:back');
+    expect(back.place?.address).toBe(room.place?.address);
+    expect(back.place?.telemetry).not.toEqual(room.place?.telemetry);
+    expect(engineOn(saves, true).snapshot().place?.telemetry).toEqual(back.place?.telemetry);
+    // A debug tool changes nothing of the frame.
+    expect(engine.step('debug:integrity:100').place?.telemetry).toEqual(back.place?.telemetry);
+  });
+
+  test("zero coherence: the tap that drains the last point does not run; the world reboots — the same seed, the starting street, 100 coherence; steps and visited places kept, the world's own state undone (Guide:144-147)", () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves, true);
+    const room = inTheFirstRoom(engine);
+    engine.step('debug:integrity:1');
+    const dead = engine.step('move:forward');
+    expect(dead.place?.address).toBe(room.place?.address);
+    expect(dead.player).toEqual({ coherence: 0, band: 'critical', steps: 4 });
+    expect(dead.prompt).toEqual({ id: 'reboot', outcome: 'rebooting', figures: {} });
+    expect(dead.options).toEqual([system('reboot', '', 'Rebuild')]);
+    expect(dead.message).toBe('');
+    // Nothing else is heard while the link is down.
+    expect(engine.step('move:forward').prompt?.id).toBe('reboot');
+    expect(engine.step('leave').prompt?.id).toBe('reboot');
+    // A reload finds the link still down.
+    expect(engineOn(saves, true).snapshot().prompt?.id).toBe('reboot');
+    const reborn = engine.step('reboot');
+    expect(reborn.prompt).toBeNull();
+    expect(reborn.place?.kind).toBe('Street');
+    expect(reborn.place?.address).toBe('0.0.0.0.0.0.0.0');
+    expect(reborn.world?.seed).toBe('7F3A-91C2-0B4D-E6A8');
+    expect(reborn.player).toEqual({ coherence: 100, band: 'stable', steps: 4 });
+    expect(reborn.message).toBe('Substrate rebuilt. Coherence 100.');
+    // Visited places are kept: the building and its lobby are marked; the world's own state is undone: the lobby is at its elevator again.
+    const buildings = reborn.options.filter((option) => option.role === 'travel');
+    expect(buildings.map((option) => option.visited)).toEqual([true, false, false, false]);
+    expect(saves.load()).toContain('"states":{}');
+    const building = engine.step('enter:0');
+    expect(
+      building.options
+        .filter((option) => option.role === 'travel')
+        .map((o) => o.visited)
+        .indexOf(true),
+    ).toBe(15);
+    expect(engine.step('enter:15').options.filter((option) => option.role === 'travel')).toEqual([]);
+  });
+
+  test('visited marks: a place is marked once entered, and every ancestor on the way (Guide:430); the marks survive a reload', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    engine.step('new-world');
+    engine.step('enter-world');
+    expect(
+      engine
+        .snapshot()
+        .options.filter((o) => o.role === 'travel')
+        .map((o) => o.visited),
+    ).toEqual([false, false, false, false]);
+    engine.step('enter:0');
+    engine.step('enter:15');
+    engine.step('move:corridor');
+    engine.step('enter:2');
+    engine.step('leave');
+    const corridor = engine.snapshot();
+    expect(corridor.options.filter((o) => o.role === 'travel').map((o) => o.visited)).toEqual(
+      corridor.options.filter((o) => o.role === 'travel').map((_, i) => i === 2),
+    );
+    engine.step('leave');
+    expect(
+      engine
+        .snapshot()
+        .options.filter((o) => o.role === 'travel')
+        .map((o) => o.visited)
+        .filter(Boolean),
+    ).toHaveLength(1);
+    engine.step('leave');
+    const street = engine.snapshot();
+    expect(street.options.filter((o) => o.role === 'travel').map((o) => o.visited)).toEqual([
+      true,
+      false,
+      false,
+      false,
+    ]);
+    expect(engineOn(saves).snapshot().options).toEqual(street.options);
+    for (let level = 0; level < 7; level++) engine.step('leave');
+    const filaments = engine
+      .snapshot()
+      .options.filter((o) => o.role === 'travel')
+      .map((o) => o.visited);
+    expect(filaments.length).toBeGreaterThanOrEqual(3);
+    expect(filaments).toEqual(filaments.map((_, i) => i === 0));
+  });
+});
+
+describe('GameEngine — the recap: the endings of `quit`, by places visited (Guide:422-430, SessionRecap.groovy:14-69)', () => {
+  test('END SESSION is a global command on every world screen, keyed q: it costs one and counts no step, and opens the recap as a pending prompt with the figures', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    const street = engine.step('enter-world');
+    expect(street.options.find((option) => option.id === 'recap')).toEqual(
+      system('recap', 'q', 'End session'),
+    );
+    engine.step('enter:0');
+    const recap = engine.step('recap');
+    expect(recap.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    expect(recap.place?.kind).toBe('Building');
+    expect(recap.prompt).toEqual({
+      id: 'recap',
+      outcome: 'severed',
+      figures: { locus: '0.0.0.0.0.0.0.0.0', steps: '1', places: '9' },
+    });
+    expect(recap.options).toEqual([
+      system('resume', 'b', 'Resume'),
+      system('end-session', 'q', 'End session'),
+    ]);
+    // Nothing else is heard while it is open; resuming costs nothing and changes nothing.
+    expect(engine.step('enter:15').prompt?.id).toBe('recap');
+    const resumed = engine.step('resume');
+    expect(resumed.prompt).toBeNull();
+    expect(resumed.place).toEqual(recap.place);
+    expect(resumed.player).toEqual(recap.player);
+    expect(resumed.message).toBe('');
+  });
+
+  test('ending the session goes to the title, the place kept: Continue returns to it', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    engine.step('new-world');
+    engine.step('enter-world');
+    const building = engine.step('enter:0');
+    engine.step('recap');
+    const title = engine.step('end-session');
+    expect(title.place).toBeNull();
+    expect(title.prompt).toBeNull();
+    expect(ids(title)).toEqual(['enter-world', 'reroll']);
+    expect(title.options[0]?.label).toBe('Continue');
+    const back = engine.step('enter-world');
+    expect(back.place).toEqual(building.place);
+    expect(back.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    // The recap is not a saved state: a reload after opening it lands in the world.
+    engine.step('recap');
+    expect(engineOn(saves).snapshot().prompt).toBeNull();
+  });
+
+  test('the ending at the exact edge: nineteen places visited is "severed", twenty is "expedition" (Guide:426-430)', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    // The street's trail is eight places; each building entered is one more.
+    engine.step('enter:0');
+    engine.step('leave');
+    engine.step('enter:1');
+    engine.step('leave');
+    engine.step('enter:2');
+    engine.step('leave');
+    engine.step('enter:3');
+    engine.step('leave');
+    // 12. Up to the city, and into its other seven streets (eight in all): each street is one more.
+    engine.step('leave');
+    const streets = engine.snapshot().options.filter((option) => option.role === 'travel');
+    expect(streets).toHaveLength(8);
+    for (const index of [1, 2, 3, 4, 5, 6, 7]) {
+      engine.step(`enter:${String(index)}`);
+      engine.step('leave');
+    }
+    const nineteen = engine.step('recap');
+    expect(nineteen.prompt?.figures.places).toBe('19');
+    expect(nineteen.prompt?.outcome).toBe('severed');
+    engine.step('resume');
+    // 20. Up once more: the country was on the trail; its second city is new.
+    engine.step('leave');
+    engine.step('enter:1');
+    const twenty = engine.step('recap');
+    expect(twenty.prompt?.figures.places).toBe('20');
+    expect(twenty.prompt?.outcome).toBe('expedition');
+    expect(twenty.prompt?.figures.steps).toBe(String(twenty.player?.steps ?? -1));
+    expect(twenty.prompt?.figures.locus).toBe(twenty.place?.address);
+  });
+
+  test('when the tap that opens the recap takes the last point, the link fails instead', () => {
+    const engine = engineOn(new MemorySaveStore(), true);
+    inTheFirstRoom(engine);
+    engine.step('debug:integrity:1');
+    expect(engine.step('recap').prompt?.id).toBe('reboot');
   });
 });

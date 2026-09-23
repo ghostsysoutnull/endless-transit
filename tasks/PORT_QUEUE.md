@@ -42,7 +42,7 @@ try); the note and the merge commit are the record.
 | [x] | I02 | **The big world**: universe → filament → sector → solar system → planet → country → city → street; options as data, tap to go down and back up; first HUD from the mock | walk from the universe down to a street and back, on both devices |
 | [x] | I03 | **Buildings**: building → floor → corridor → apartment → room, elevator, doors, Null Sector; a new world starts on a street (Guide:41) | ride the elevator, walk corridors, open doors, enter rooms |
 | [x] | I04 | **World richness**: names, themes, cultures and eras, objects, furniture, room text; the mock's look; variety floors and first snapshot pins | read a world that feels like the old game and looks like the mock |
-| [ ] | I05 | **Survival**: turns, coherence drain, death, recap; save and continue in the browser; visited marks on lists (`[V]`, needs the visited path saved) | play until death; close the tab and continue |
+| [x] | I05 | **Survival**: turns, coherence drain, death, recap; save and continue in the browser; visited marks on lists (`[V]`, needs the visited path saved) | play until death; close the tab and continue |
 | [ ] | I06 | **Items**: capture, inventory, quantum buffer, gematria, spectral frequency, synthesis | collect, inspect, combine and drop relics |
 | [ ] | I07 | **The ritual**: scans, Keystone, breach, descent, the abyssal layer | complete the Keystone ritual and descend |
 | [ ] | I08 | **Map and trace**: the drawn canvas — lattice map, trace, effects seeded from the frame | open the map and the trace on both devices |

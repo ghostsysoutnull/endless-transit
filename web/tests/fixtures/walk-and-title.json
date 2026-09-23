@@ -1,0 +1,30 @@
+{
+  "seed": "7F3A-91C2-0B4D-E6A8",
+  "history": [
+    "new-world",
+    "enter-world",
+    "enter:0",
+    "enter:15",
+    "move:up",
+    "move:up",
+    "move:corridor",
+    "enter:3",
+    "move:forward",
+    "move:back",
+    "leave",
+    "enter:0",
+    "leave",
+    "move:elevator",
+    "move:down",
+    "leave",
+    "to-title",
+    "enter-world",
+    "leave",
+    "enter:1",
+    "leave",
+    "leave",
+    "leave",
+    "enter:0",
+    "enter:0"
+  ]
+}

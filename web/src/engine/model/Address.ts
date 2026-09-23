@@ -27,6 +27,11 @@ export class Address {
     return new Address([...this.#indices, index]);
   }
 
+  /** One step up; nothing above the universe. */
+  parent(): Address | undefined {
+    return this.#indices.length === 0 ? undefined : new Address(this.#indices.slice(0, -1));
+  }
+
   indices(): readonly number[] {
     return this.#indices;
   }

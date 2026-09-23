@@ -1,0 +1,23 @@
+{
+  "seed": "7F3A-91C2-0B4D-E6A8",
+  "history": [
+    "new-world",
+    "enter-world",
+    "recap",
+    "resume",
+    "enter:0",
+    "enter:15",
+    "move:corridor",
+    "enter:4",
+    "recap",
+    "enter:0",
+    "end-session",
+    "enter-world",
+    "leave",
+    "recap",
+    "end-session",
+    "reroll",
+    "enter-world",
+    "enter:1"
+  ]
+}

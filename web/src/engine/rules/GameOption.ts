@@ -1,5 +1,12 @@
 import type { Fact } from '#engine/model/Fact.ts';
 
+/**
+ * The letter of the visited mark the old lists drew after a name (`[V]`, Corridor.groovy:71-72,
+ * Building.groovy:222). One owner: a screen draws the mark from it, and the engine keeps it out of the
+ * keys it hands to listed places — so a row never reads `[V] … [V]`.
+ */
+export const VISITED_KEY = 'v';
+
 /** A thing the player can do right now — data, never a closure. The engine resolves `id` to the action. */
 export interface GameOption {
   readonly id: string;
@@ -8,8 +15,8 @@ export interface GameOption {
   readonly label: string;
   /** The name of the place the option leads into; empty when it leads into none. Nobody has to cut it out of the label. */
   readonly place: string;
-  /** What sort of thing it is: into a listed place, a move the place offers (up, forward …), back out, or about the game itself. */
-  readonly role: 'travel' | 'move' | 'return' | 'system';
+  /** What sort of thing it is: into a listed place, a move the place offers (up, forward …), back out, about the game itself, or a debug tool (Decision 8). */
+  readonly role: 'travel' | 'move' | 'return' | 'system' | 'debug';
   /** Listed but not enterable: the engine ignores its id, and a screen shows it as closed — never as a button. */
   readonly sealed: boolean;
   /** The place asks its parent's list to make it stand out. */
@@ -22,4 +29,6 @@ export interface GameOption {
   readonly opposite: string;
   /** The listed place is the current one on its list — where the elevator stands, on a building's list. */
   readonly current: boolean;
+  /** The listed place has been visited — the old game's `[V]` (Corridor.groovy:71-72, Building.groovy:222). */
+  readonly visited: boolean;
 }

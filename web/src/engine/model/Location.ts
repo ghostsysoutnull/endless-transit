@@ -1,6 +1,7 @@
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Address } from './Address.ts';
 import type { Contents } from './Contents.ts';
+import type { Era } from './Era.ts';
 import type { Fact } from './Fact.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
@@ -159,9 +160,23 @@ export abstract class Location {
     return this.parent()?.indoors() ?? false;
   }
 
+  /** How much more a prompt costs here than at the surface: the parent's, 1 at the top — the bedrock (I07) answers 2 (Guide:137-139). */
+  drainFactor(): number {
+    return this.parent()?.drainFactor() ?? 1;
+  }
+
   /** What the planet above decided; nothing above planet level. */
   vibe(): Vibe | undefined {
     return this.parent()?.vibe();
+  }
+
+  /**
+   * The era the drain reads here: the header's — what the planet decided for this part of the world, as
+   * the street shows it under `TECH_ERA` — never a place's own. An apartment that drifted to the second era
+   * still costs what its street costs (Guide:313); nothing above planet level. One owner: no kind overrides it.
+   */
+  drainEra(): Era | undefined {
+    return this.vibe()?.era();
   }
 
   /** How much likelier landmarks are below this place; 1 unless something above says otherwise. */

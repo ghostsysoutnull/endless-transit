@@ -44,3 +44,28 @@ export async function expectTouchable(page: Page, where: string): Promise<void> 
     `${where}: options that are not buttons`,
   ).toBe(0);
 }
+
+/** Every address from the universe down to `path`: what a traveller who stands there has walked at the least. */
+export function trailOf(path: string | null): string[] {
+  if (path === null) return [];
+  const steps = path.split('.');
+  return steps.map((_, depth) => steps.slice(0, depth + 1).join('.'));
+}
+
+/** A v4 save as the game writes one: a fresh traveller who has walked the trail, unless a field is set on purpose. */
+export function saveText(
+  seed: string,
+  path: string | null,
+  states: Record<string, string> = {},
+  traveller: { coherence?: number; steps?: number; visited?: readonly string[] } = {},
+): string {
+  return JSON.stringify({
+    version: 4,
+    seed,
+    path,
+    states,
+    coherence: traveller.coherence ?? 100,
+    steps: traveller.steps ?? 0,
+    visited: traveller.visited ?? trailOf(path),
+  });
+}

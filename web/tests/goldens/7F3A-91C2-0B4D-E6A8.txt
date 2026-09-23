@@ -1,6 +1,7 @@
 === STREET ═ BRIGHT BOULEVARD  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard *
-stats: HOP_DENSITY 07 | WAY 01/08 | LOCUS 0.0.0.0.0.0.0.0 | LOCUS_HASH 27.929 / 47.851 | SEED 7F3A-91C2-0B4D-E6A8
+COHERENCE: 100% stable
+stats: PULSE_TRAVERSAL 0 | HOP_DENSITY 07 | WAY 01/08 | LOCUS 0.0.0.0.0.0.0.0 | LOCUS_HASH 27.929 / 47.851 | SEED 7F3A-91C2-0B4D-E6A8
 tags: TECH_ERA FUTURE (era) | RESONANCE BAROQUE (culture)
   Buildings stand in pairs along both sides of the way.
 diag: SYNC: [STABLE]
@@ -10,11 +11,12 @@ BUILDINGS ON THIS STREET
   02 [2] Enter Building: The Spire of Static
   03 [3] Enter Building: ArchiveRoot
   04 [4] Enter Building: SpireFall
-dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN
+dock: [L] ▲ LEAVE STREET | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ ORNATE SANCTUM  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum *
-stats: HOP_DENSITY 08 | STRATA 01/04 | LOCUS 0.0.0.0.0.0.0.0.0 | LOCUS_HASH 23.869 / 7.776 | SEED 7F3A-91C2-0B4D-E6A8
+COHERENCE: 99% stable
+stats: PULSE_TRAVERSAL 1 | HOP_DENSITY 08 | STRATA 01/04 | LOCUS 0.0.0.0.0.0.0.0.0 | LOCUS_HASH 23.869 / 7.776 | SEED 7F3A-91C2-0B4D-E6A8
 tags: THEME BAROQUE (culture)
   Analyzing vertical lattice structure...
 diag: STRUCTURAL_STABLE
@@ -84,24 +86,26 @@ BUILDING STRATA DIAGNOSTICS
        FUNCTION: TRANSIT_LOBBY
        ST: 100%
        RES: 2152Hz
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ ████████ █ ███████ █████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0
-dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████ ██████ ████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0
+dock: [L] ▲ LEAVE BUILDING | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
-stats: HOP_DENSITY 09 | Z-AXIS 01/16 | LOCUS 0.0.0.0.0.0.0.0.0.0 | LOCUS_HASH 66.018 / 25.612 | SEED 7F3A-91C2-0B4D-E6A8
+COHERENCE: 98% stable
+stats: PULSE_TRAVERSAL 2 | HOP_DENSITY 09 | Z-AXIS 01/16 | LOCUS 0.0.0.0.0.0.0.0.0.0 | LOCUS_HASH 66.018 / 25.612 | SEED 7F3A-91C2-0B4D-E6A8
 tags: TECH_ERA FUTURE (era) | RESONANCE BAROQUE (culture) | STABILITY 77.00% (reading) | ATMOS_SHIFT INDUSTRIAL (trait)
   Floor 0. BAROQUE geometry presses in from every wall; the elevator sighs shut behind you.
   Local signal is STABLE. Corridor access authorized.
 diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███ ████ ████████ ████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0
-dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ ████ ██ ████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0
+dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
-stats: HOP_DENSITY 09 | Z-AXIS 01/16 | LOCUS 0.0.0.0.0.0.0.0.0.0 | LOCUS_HASH 66.018 / 25.612 | SEED 7F3A-91C2-0B4D-E6A8
+COHERENCE: 97% stable
+stats: PULSE_TRAVERSAL 3 | HOP_DENSITY 09 | Z-AXIS 01/16 | LOCUS 0.0.0.0.0.0.0.0.0.0 | LOCUS_HASH 66.018 / 25.612 | SEED 7F3A-91C2-0B4D-E6A8
 tags: THEME BAROQUE (culture)
   A curved gallery of doors beneath a single strip of light.
 diag: TRAFFIC: [STABLE] | THEME: [BAROQUE]
@@ -126,12 +130,13 @@ LOCAL ACCESS LIST
        APPEARANCE: A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is blackened in a fan shape, as if something burned its way out.
   09 [9] Access: Reinforced Polymer [RUSTED]
        APPEARANCE: A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███ ████ ████████ ████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0
-dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ████ █████ ██ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0
+dock: [L] ▲ LEAVE FLOOR | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ GRAND POWER PLANT  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 _void_sink_ Brutalist Slab [PITTED] > □ Grand Power Plant *
-stats: HOP_DENSITY 12 | CELL 01/02 | LOCUS 0.0.0.0.0.0.0.0.0.0.0.0.0 | LOCUS_HASH 4.556 / 65.238 | SEED 7F3A-91C2-0B4D-E6A8
+COHERENCE: 96% stable
+stats: PULSE_TRAVERSAL 4 | HOP_DENSITY 12 | CELL 01/02 | LOCUS 0.0.0.0.0.0.0.0.0.0.0.0.0 | LOCUS_HASH 4.556 / 65.238 | SEED 7F3A-91C2-0B4D-E6A8
 tags: TYPE POWER PLANT (reading) | OXY 14% (reading) | TEMP 7°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
   You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.
   The space is illuminated by a soft holographic haze with no visible source.
@@ -141,12 +146,13 @@ diag: ATMOS: 14% | TEMP: 7°C
 status: Entered Grand Power Plant.
 moves: [F] GO FORWARD
 IN THIS ROOM: plasma coil with reliquary box <with|reliquary box|plasma coil> | brass censer fused to laser cutter <fused|brass censer|laser cutter> | stone gargoyle infused with orbital beacon <infused|stone gargoyle|orbital beacon> | prayer bench infused with plasma coil <infused|prayer bench|plasma coil>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████████ ██████ ███████ ████████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0
-dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █████ █████ █████████ █████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0
+dock: [L] ▲ EXIT APARTMENT | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ BAROQUE MAINTENANCE BAY  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 _void_sink_ Brutalist Slab [PITTED] > □ Baroque Maintenance Bay *
-stats: HOP_DENSITY 12 | CELL 02/02 | LOCUS 0.0.0.0.0.0.0.0.0.0.0.0.1 | LOCUS_HASH 3.603 / 34.437 | SEED 7F3A-91C2-0B4D-E6A8
+COHERENCE: 95% stable
+stats: PULSE_TRAVERSAL 5 | HOP_DENSITY 12 | CELL 02/02 | LOCUS 0.0.0.0.0.0.0.0.0.0.0.0.1 | LOCUS_HASH 3.603 / 34.437 | SEED 7F3A-91C2-0B4D-E6A8
 tags: TYPE MAINTENANCE BAY (reading) | OXY 19% (reading) | TEMP 20°C (reading) | SIGNAL [SHIELDED] (signal) | RESONANCE [STABLE] (stable)
   You are in a pump room throbbing behind a steel grille. The walls are red gilt mouldings peeling from plaster.
   The space is illuminated by the violet corona of an idle plasma coil.
@@ -156,5 +162,5 @@ diag: ATMOS: 19% | TEMP: 20°C
 status: Entered Baroque Maintenance Bay.
 moves: [B] GO BACK
 IN THIS ROOM: velvet kneeling-rug fused to optic implant <fused|velvet kneeling-rug|optic implant> | reliquary box fused to drone dock <fused|reliquary box|drone dock> | nanotech mesh grafted onto carved choir stall <grafted|carved choir stall|nanotech mesh> | plasma coil with prayer bench <with|prayer bench|plasma coil>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ██████ █████████ ██ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.1
-dock: [T] TITLE SCREEN
+[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ███ ███████ ██████ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.1
+dock: [T] TITLE SCREEN | [Q] END SESSION

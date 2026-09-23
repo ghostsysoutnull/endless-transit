@@ -13,6 +13,24 @@ function journey(): Journey {
   return new Journey(realRegistry());
 }
 
+/** Every address from the universe down to `path`: what a traveller who stands there has walked at the least. */
+function trailOf(path: string | undefined): string[] {
+  if (path === undefined) return [];
+  const steps = path.split('.');
+  return steps.map((_, depth) => steps.slice(0, depth + 1).join('.'));
+}
+
+/** A save as the game writes one: the visited path is the trail unless the test says more. */
+function save(
+  path: string | undefined,
+  states: ReadonlyMap<string, string> = new Map(),
+  visited: readonly string[] = trailOf(path),
+  traveller: { coherence?: number; steps?: number } = {},
+): SavedGame {
+  const address = path === undefined ? undefined : must(Address.parse(path));
+  return new SavedGame({ seed: SEED, address, states, visited, ...traveller });
+}
+
 /** A journey standing on Bright Boulevard. */
 function onTheStreet(): Journey {
   const trip = journey();
@@ -52,6 +70,50 @@ describe('Journey — where the traveller stands', () => {
     for (let level = 0; level < 7; level++) expect(trip.leave()).toBe(true);
     expect(trip.here()?.kind().key()).toBe('universe');
     expect(trip.leave()).toBe(false);
+  });
+
+  test('the traveller walks with the journey: a new world is a new traveller, every landing is a footprint, a reboot rebuilds the same world on its street and keeps the steps and the path (Guide:145-147)', () => {
+    const trip = journey();
+    expect(trip.player().footprints()).toEqual([]);
+    trip.begin(SEED);
+    expect(trip.player().footprints()).toEqual([]);
+    trip.enter();
+    expect(trip.player().footprints()).toHaveLength(8);
+    expect(trip.descend(0)).toBe(true);
+    expect(trip.player().footprints()).toHaveLength(9);
+    expect(trip.descend(13)).toBe(true);
+    expect(trip.here()?.name()).toBe('Floor 2');
+    expect(trip.player().footprints().at(-1)).toBe(`${STREET}.0.2`);
+    expect(trip.move('corridor')).toBe(true);
+    expect(trip.descend(0)).toBe(true);
+    expect(trip.player().footprints().slice(-3)).toEqual([
+      `${STREET}.0.2.0`,
+      `${STREET}.0.2.0.0`,
+      `${STREET}.0.2.0.0.0`,
+    ]);
+    expect(trip.here()?.remember()).toBeUndefined();
+    trip.player().count();
+    trip.player().drain(100);
+    const before = trip.player().footprints();
+    trip.reboot();
+    expect(trip.here()?.address().toString()).toBe(STREET);
+    expect(trip.world()?.equals(SEED)).toBe(true);
+    expect(trip.player().coherence().value()).toBe(100);
+    expect(trip.player().steps()).toBe(1);
+    expect(trip.player().footprints()).toEqual(before);
+    // The world is rebuilt: the floor is back at its elevator, the elevator back at the lobby.
+    expect(trip.saved()?.states()).toEqual(new Map());
+    expect(trip.descend(0)).toBe(true);
+    expect(
+      must(trip.here())
+        .listing()
+        .find((floor) => floor.current())
+        ?.name(),
+    ).toBe('Floor 0');
+    // A new world is a new traveller.
+    trip.begin(new Seed(5, 6));
+    expect(trip.player().steps()).toBe(0);
+    expect(trip.player().footprints()).toEqual([]);
   });
 
   test('descend goes into the place listed at an index, leave comes back; the save follows', () => {
@@ -156,11 +218,11 @@ describe('Journey — where the traveller stands', () => {
     expect(trip.here()).toBe(building);
     expect(building.listing().filter((floor) => floor.current())).toEqual([building.children()[3]]);
     expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '3']]));
-    // Off the trail, nothing is saved: on the street the building's elevator is forgotten by the save (not by the world).
+    // Off the trail the elevator is still saved: the building was visited, and every visited place remembers (v4).
     expect(trip.leave()).toBe(true);
-    expect(trip.saved()?.states()).toEqual(new Map());
+    expect(trip.saved()?.states()).toEqual(new Map([[`${STREET}.0`, '3']]));
     const again = journey();
-    const atTheBuilding = new SavedGame(SEED, Address.parse(`${STREET}.0`), new Map([[`${STREET}.0`, '3']]));
+    const atTheBuilding = save(`${STREET}.0`, new Map([[`${STREET}.0`, '3']]));
     expect(again.restore(atTheBuilding)).toBe(true);
     expect(
       again
@@ -223,7 +285,7 @@ describe('Journey — where the traveller stands', () => {
     ];
     for (const [path, states] of cases) {
       const trip = journey();
-      expect(trip.restore(new SavedGame(SEED, new Address(path), states)), path.join('.')).toBe(false);
+      expect(trip.restore(save(`0.${path.join('.')}`, states)), path.join('.')).toBe(false);
       expect(trip.world()).toBeUndefined();
       expect(trip.here()).toBeUndefined();
     }
@@ -258,14 +320,57 @@ describe('Journey — where the traveller stands', () => {
     ];
     for (const [what, path, states] of cases) {
       const trip = journey();
-      const address = path === undefined ? undefined : must(Address.parse(path));
-      expect(trip.restore(new SavedGame(SEED, address, states)), what).toBe(false);
+      expect(trip.restore(save(path, states)), what).toBe(false);
       expect(trip.world(), what).toBeUndefined();
       expect(trip.here(), what).toBeUndefined();
     }
   });
 
-  test('restore then saved() gives back exactly the save, for every valid save — the states are the path’s own', () => {
+  test('restore refuses a visited path the traveller could not have walked, and a trail the visited path does not hold', () => {
+    const building = `${STREET}.0`;
+    const cases: readonly [string, string | undefined, ReadonlyMap<string, string>, readonly string[]][] = [
+      ['the street with nothing visited', STREET, new Map(), []],
+      ['the street with its trail short one step', STREET, new Map(), trailOf(STREET).slice(1)],
+      [
+        'the street with the city missing from the middle',
+        STREET,
+        new Map(),
+        trailOf(STREET).filter((a) => a !== '0.0.0.0.0.0.0'),
+      ],
+      [
+        'a child visited before its parent',
+        STREET,
+        new Map(),
+        [...trailOf(STREET), `${building}.3`, building],
+      ],
+      ['a visited place that is nowhere', STREET, new Map(), [...trailOf(STREET), `${STREET}.99`]],
+      [
+        'a visited place nobody can stand in is fine, but not past the last',
+        STREET,
+        new Map(),
+        [...trailOf(STREET), building, `${building}.16`],
+      ],
+    ];
+    for (const [what, path, states, visited] of cases) {
+      const trip = journey();
+      expect(trip.restore(save(path, states, visited)), what).toBe(false);
+      expect(trip.here(), what).toBeUndefined();
+    }
+    // …and the same building, visited with its floor 3, takes its elevator state off the trail.
+    const trip = journey();
+    expect(
+      trip.restore(save(STREET, new Map([[building, '3']]), [...trailOf(STREET), building, `${building}.3`])),
+    ).toBe(true);
+    expect(
+      must(trip.here())
+        .children()[0]
+        ?.listing()
+        .find((floor) => floor.current())
+        ?.name(),
+    ).toBe('Floor 3');
+  });
+
+  test('restore then saved() gives back exactly the save, for every valid save — the states are the visited places’ own, the traveller as saved', () => {
     const building = `${STREET}.0`;
     const valid: readonly [string, string | undefined, ReadonlyMap<string, string>][] = [
       ['drawn, not entered', undefined, new Map()],
@@ -295,16 +400,18 @@ describe('Journey — where the traveller stands', () => {
     ];
     for (const [what, path, states] of valid) {
       const trip = journey();
-      const address = path === undefined ? undefined : must(Address.parse(path));
-      const saved = new SavedGame(SEED, address, states);
+      const traveller = path === undefined ? {} : { coherence: 41, steps: 7 };
+      const saved = save(path, states, trailOf(path), traveller);
       expect(trip.restore(saved), what).toBe(true);
       expect(trip.saved()?.toText(), what).toBe(saved.toText());
+      expect(trip.player().coherence().value(), what).toBe(traveller.coherence ?? 100);
+      expect(trip.player().steps(), what).toBe(traveller.steps ?? 0);
     }
   });
 
   test('restore of a world that was drawn but never entered waits at the title', () => {
     const trip = journey();
-    expect(trip.restore(new SavedGame(SEED))).toBe(true);
+    expect(trip.restore(save(undefined))).toBe(true);
     expect(trip.world()?.equals(SEED)).toBe(true);
     expect(trip.here()).toBeUndefined();
     expect(trip.resumes()).toBe(false);
