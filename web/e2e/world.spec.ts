@@ -52,7 +52,8 @@ test('walk from the title down to a street and back up to the universe, by tappi
   for (const [depth, kind] of LEVELS.entries()) {
     await expect(page.getByTestId('place-kind')).toHaveText(kind);
     await expect(page.getByTestId('place-name')).toHaveText(/\S/);
-    await expect(page.getByTestId('path').getByRole('listitem')).toHaveCount(depth + 1);
+    // The path's length is data; a phone folds all but the last two crumbs behind the readout button (I09).
+    await expect(page.getByTestId('path').locator('li')).toHaveCount(depth + 1);
     await expectTouchable(page, kind);
     const shot = shots[kind];
     if (shot !== undefined) {
@@ -102,6 +103,7 @@ test('reload restores the place; the title screen is one tap away and the place 
 
 test('a long street: twenty buildings, every one a button, two of them landmarks; the way out on the first screen', async ({
   page,
+  isMobile,
 }, testInfo) => {
   const problems = watchForErrors(page);
   await plant(page, LONG_STREET);
@@ -112,8 +114,9 @@ test('a long street: twenty buildings, every one a button, two of them landmarks
   await expect(page.getByTestId('sealed-note')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
   await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
-  // Twenty buildings, LEAVE, SCAN, MAP, BUFFER and the dock's MORE (I08); the rest wait behind it.
-  await expect(page.getByRole('button')).toHaveCount(25);
+  // Twenty buildings and the dock: on a phone LEAVE, MORE and the HUD's readout button (I09), the rest folded;
+  // on a desktop every dock button — LEAVE, SCAN, MAP, BUFFER, TRACE, TITLE SCREEN, END SESSION.
+  await expect(page.getByRole('button')).toHaveCount(20 + (isMobile ? 3 : 7));
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);

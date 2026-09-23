@@ -10,12 +10,16 @@ export interface HudVM extends Screen {
   readonly title: string;
   /** The colour name of the frame (`yellow`), `default` above planet level; the stylesheet owns the hue. */
   readonly frame: string;
-  /** The path from the universe, one crumb per level; the last one is where the player stands. `kind` is read out, not hovered for. */
+  /**
+   * The path from the universe, one crumb per level; the last one is where the player stands. `kind` is read
+   * out, not hovered for. The `tail` crumbs are the ones a folded readout keeps (I09): where you are and one above.
+   */
   readonly crumbs: readonly {
     readonly icon: string;
     readonly kind: string;
     readonly name: string;
     readonly current: boolean;
+    readonly tail: boolean;
   }[];
   /** The coherence bar: the scale, the value, its band (a colour a screen picks by it), and what a reader hears. */
   readonly meter: {
@@ -28,7 +32,10 @@ export interface HudVM extends Screen {
     readonly bandLabel: string;
     readonly valueText: string;
   };
-  readonly stats: readonly { readonly label: string; readonly value: string }[];
+  /** The readouts; a `more` one is behind the fold on a phone (I09) — the locus, its hash, the seed, the depth. */
+  readonly stats: readonly { readonly label: string; readonly value: string; readonly more: boolean }[];
+  /** The HUD's fold on a phone (I09): the name of the button that opens the whole readout, and its two faces. */
+  readonly readout: { readonly label: string; readonly more: string; readonly less: string };
   readonly place: {
     readonly eyebrow: string;
     readonly icon: string;
@@ -74,9 +81,9 @@ export interface HudVM extends Screen {
   readonly sealedNote: string | null;
   /** The word on a closed row. */
   readonly sealedTag: string;
-  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button. */
+  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button on a phone; all of them on a desktop. */
   readonly dock: readonly OptionVM[];
-  /** How the dock folds: how many stay out, and the words of the button that opens and closes the rest. */
+  /** How the dock folds on a phone: how many stay out (the way out), and the words of the button that opens and closes the rest. */
   readonly fold: {
     readonly after: number;
     readonly more: string;

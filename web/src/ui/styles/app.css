@@ -410,6 +410,7 @@ body {
 }
 
 .hud {
+  position: relative;
   border: 1px solid var(--frame);
   background: var(--panel);
   padding: 8px 10px;
@@ -417,6 +418,38 @@ body {
   flex-direction: column;
   gap: 6px;
   min-width: 0;
+}
+
+/* The HUD's fold (I09): on a phone one button in the corner opens the whole readout; a desktop shows it all and no button. */
+.pt {
+  all: unset;
+  box-sizing: border-box;
+  display: none;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--rule-hi);
+  color: var(--dim);
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pt:active {
+  background: var(--yl);
+  color: var(--ground);
+}
+
+.pt:focus-visible {
+  outline: 2px solid var(--yl);
+  outline-offset: 2px;
 }
 
 .spark {
@@ -1076,6 +1109,14 @@ body {
   min-width: 0;
 }
 
+/* A panel takes the focus when it opens (the shell's spotlight rule, I09): a ring says so, for keyboards only. */
+.scan:focus-visible,
+.map:focus-visible,
+.tracep:focus-visible {
+  outline: 2px solid var(--yl);
+  outline-offset: 2px;
+}
+
 .scan .heading {
   margin: 0;
   color: var(--frame);
@@ -1206,11 +1247,12 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* The moves a place offers — up, down, into the corridor, on to the next room — sit under the panel, never sticky. */
+/* The moves a place offers — up, down, into the corridor, on to the next room — sit under its title (I09), never sticky. */
 .moves {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-block: 2px;
 }
 
 .moves .pb {
@@ -1219,11 +1261,17 @@ body {
   font-size: 13px;
 }
 
-/* The dock's fold: one button opens the rest (I08); it looks like the others, dashed to say it is not a move. */
+/* The dock's fold: one button opens the rest (I08); it looks like the others, dashed to say it is not a move.
+   The folded group is a box only on a phone (the rule under the phone media query); elsewhere its buttons sit
+   in the dock's own row and the MORE button is gone. */
 .dock .pb.more {
   border-style: dashed;
   border-color: var(--rule-hi);
   color: var(--dim);
+}
+
+.dock .fold {
+  display: contents;
 }
 
 /* Leave and the game's own options stay at the bottom edge, however long the list above them is. */
@@ -1271,7 +1319,7 @@ body {
     grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
     /* The list may be far taller than the panel beside it: the panel and the dock keep their own height
        and one filler row takes the rest — otherwise the grid pushes the way out below the fold. */
-    grid-template-rows: auto auto auto auto auto auto auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto auto auto auto auto 1fr auto;
     grid-template-areas:
       'bar bar'
       'hud hud'
@@ -1279,12 +1327,16 @@ body {
       'scan side'
       'map side'
       'trace side'
-      'moves side'
       'dock side'
       'debug side'
       '. side'
       'build build';
     align-items: start;
+  }
+
+  /* A desktop has room for every dock button: no fold, no MORE. */
+  .world .dock .pb.more {
+    display: none;
   }
 
   .world .scan {
@@ -1313,10 +1365,6 @@ body {
 
   .world .side {
     grid-area: side;
-  }
-
-  .world .moves {
-    grid-area: moves;
   }
 
   .world .dock {
@@ -1381,6 +1429,71 @@ body {
 
   .row.sealed {
     grid-template-columns: 2.4em minmax(0, 1fr) auto;
+  }
+}
+
+/* The one-column layout (a phone, or a narrow window): the folds are real, the panels come after the list. */
+@media (max-width: 899px) {
+  /* What `scrollIntoView` keeps clear of the sticky dock and the top edge (the shell's spotlight rule, I09). */
+  html {
+    scroll-padding-block: 8px 96px;
+  }
+
+  .hud {
+    padding-right: 56px;
+  }
+
+  .pt {
+    display: inline-flex;
+  }
+
+  .hud[data-open='false'] .crumb:not(.tail),
+  .hud[data-open='false'] .stat.more {
+    display: none;
+  }
+
+  /* The folded path says there is more above the two crumbs it keeps. */
+  .hud[data-open='false'] .crumb.tail:nth-last-child(2)::before {
+    content: '… ›';
+  }
+
+  /* The dock's row: the way out takes the wider share, MORE the rest; the fold is hidden until MORE, then its
+     buttons rise above that row, sharing rows by their width. */
+  .dock > .pb:first-child {
+    flex: 2 1 160px;
+  }
+
+  .dock .pb.more {
+    flex: 1 1 96px;
+  }
+
+  .dock[data-open='false'] .fold {
+    display: none;
+  }
+
+  .dock .fold .pb {
+    order: -1;
+    flex: 1 1 auto;
+  }
+
+  /* A panel the player asked for (scan, map, trace) comes after the list and is scrolled into view — the
+     first screen stays the place's own. */
+  .world .scan,
+  .world > .map,
+  .world .tracep {
+    order: 1;
+  }
+
+  .world .dock {
+    order: 2;
+  }
+
+  .world .debug {
+    order: 3;
+  }
+
+  .world .build {
+    order: 4;
   }
 }
 

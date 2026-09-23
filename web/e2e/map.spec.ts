@@ -187,18 +187,28 @@ test('below the bedrock every node is ☠ in the void’s frame; TRACE draws the
   expect(problems).toEqual([]);
 });
 
-test('TRACE on a street, from the universe down, on both devices; the dock’s MORE opens and closes', async ({
+test('TRACE on a street, from the universe down, on both devices; on a phone the dock’s MORE opens, the step folds it, and it opens and closes again', async ({
   page,
   hasTouch,
+  isMobile,
 }) => {
   const problems = watchForErrors(page);
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
   const more = page.getByTestId('more');
-  await expect(more).toHaveText('MORE');
-  await expect(page.getByRole('button', { name: /^trace$/i })).toHaveCount(0);
+  const traceButton = page.getByRole('button', { name: /^trace$/i });
+  if (isMobile) {
+    // The fold is the phone's (I09): TRACE waits behind MORE, a real disclosure.
+    await expect(more).toHaveText('MORE');
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    await expect(traceButton).toHaveCount(0);
+  } else {
+    await expect(more).toBeHidden();
+    await expect(traceButton).toBeVisible();
+  }
   await press(page, /^trace$/i, hasTouch);
-  await expect(more).toHaveText('LESS');
+  // The step folds the dock again.
+  if (isMobile) await expect(more).toHaveText('MORE');
   const trace = page.getByTestId('trace');
   await expect(trace.locator('.vh li')).toHaveCount(8);
   await expect(trace.locator('.vh li').nth(4)).toHaveText('[04] ⊕ PLANET : Auraea [SURFACE | ERA: FUTURE]');
@@ -206,9 +216,15 @@ test('TRACE on a street, from the universe down, on both devices; the dock’s M
   await expectDrawn(trace.locator('.cv'), 'the street trace', 'top');
   await expectTouchable(page, 'street with the trace');
   await shoot(page, '6-trace-street', trace);
-  await (hasTouch ? more.tap() : more.click());
-  await expect(more).toHaveText('MORE');
-  await expect(page.getByRole('button', { name: /^trace$/i })).toHaveCount(0);
+  if (isMobile) {
+    await (hasTouch ? more.tap() : more.click());
+    await expect(more).toHaveText('LESS');
+    await expect(more).toHaveAttribute('aria-expanded', 'true');
+    await expect(traceButton).toBeVisible();
+    await (hasTouch ? more.tap() : more.click());
+    await expect(more).toHaveText('MORE');
+    await expect(traceButton).toHaveCount(0);
+  }
   expect(problems).toEqual([]);
 });
 

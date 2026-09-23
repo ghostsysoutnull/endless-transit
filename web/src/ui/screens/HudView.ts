@@ -24,14 +24,21 @@ type Slot = 'pane' | 'map' | 'trace';
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again. The
- * dock folds after `fold.after` buttons behind one MORE button — a toggle of this view, not of the game;
- * it survives a render and the trip to another screen, so the way back finds the button it left. The drawn map and trace are canvases mounted into host
- * elements the template keeps alive (`CanvasSlots`); their words sit beside them for a reader.
+ * dock folds after `fold.after` buttons behind one MORE button on a phone — a disclosure of this view, not of
+ * the game, folded again by the next step (I09); the stylesheet unfolds it on a desktop, so every button is
+ * always in the markup and a key always works. The HUD folds the same way on a phone (the readout button):
+ * the last crumbs and the readouts that matter stay, the rest opens on a tap and stays open. The moves a
+ * place offers sit under its title, so the first screen of a phone shows one (I09). The drawn map and trace
+ * are canvases mounted into host elements the template keeps alive (`CanvasSlots`); their words sit beside
+ * them for a reader.
  */
 export class HudView implements View<HudVM> {
   #container: HTMLElement | undefined;
   #vm: HudVM | undefined;
+  /** The dock's fold: open until the next step (I09), which folds it again. */
   #more = false;
+  /** The HUD's fold on a phone (I09): the whole readout, open until the player folds it — a step keeps it. */
+  #readout = false;
   readonly #canvases = new CanvasSlots({
     pane: () => new CanvasView(new MapPicture()),
     map: () => new CanvasView(new MapPicture()),
@@ -42,7 +49,13 @@ export class HudView implements View<HudVM> {
     this.#container = container;
   }
 
+  /** A step's render: the dock folds again; the view's other toggles keep their state. */
   render(vm: HudVM): void {
+    this.#more = false;
+    this.#paint(vm);
+  }
+
+  #paint(vm: HudVM): void {
     if (this.#container === undefined) throw new Error('HudView.render before mount');
     this.#vm = vm;
     render(this.#template(vm), this.#container);
@@ -56,6 +69,8 @@ export class HudView implements View<HudVM> {
     if (this.#container !== undefined) render(nothing, this.#container);
     this.#container = undefined;
     this.#vm = undefined;
+    this.#more = false;
+    this.#readout = false;
   }
 
   #host(slot: Slot): HTMLElement | null {
@@ -64,19 +79,38 @@ export class HudView implements View<HudVM> {
 
   #toggleMore(): void {
     this.#more = !this.#more;
-    if (this.#vm !== undefined) this.render(this.#vm);
+    if (this.#vm !== undefined) this.#paint(this.#vm);
+  }
+
+  #toggleReadout(): void {
+    this.#readout = !this.#readout;
+    if (this.#vm !== undefined) this.#paint(this.#vm);
   }
 
   #template(vm: HudVM): TemplateResult {
     return html`
       <div class="app world" data-frame=${vm.frame}>
         <header class="bar"><h1>${vm.title}</h1></header>
-        <section class="hud" aria-label=${vm.regions.hud}>
+        <section class="hud" aria-label=${vm.regions.hud} data-open=${this.#readout ? 'true' : 'false'}>
+          <button
+            type="button"
+            class="pt"
+            data-testid="readout"
+            aria-label=${vm.readout.label}
+            aria-expanded=${this.#readout ? 'true' : 'false'}
+            @click=${() => {
+              this.#toggleReadout();
+            }}
+          >
+            <span aria-hidden="true">${this.#readout ? vm.readout.less : vm.readout.more}</span>
+          </button>
           <nav aria-label=${vm.regions.path}>
             <ol class="spark" data-testid="path">
               ${vm.crumbs.map(
                 (crumb) => html`
-                  <li class=${crumb.current ? 'crumb you' : 'crumb'}>
+                  <li
+                    class=${['crumb', crumb.current ? 'you' : '', crumb.tail ? 'tail' : ''].join(' ').trim()}
+                  >
                     <span class="vh">${crumb.kind}</span
                     ><span class="ic" aria-hidden="true">${crumb.icon}</span
                     ><span class="cn" aria-current=${crumb.current ? 'location' : nothing}
@@ -105,7 +139,7 @@ export class HudView implements View<HudVM> {
           <dl class="stats">
             ${vm.stats.map(
               (stat) => html`
-                <div class="stat">
+                <div class=${stat.more ? 'stat more' : 'stat'}>
                   <dt>${stat.label}</dt>
                   <dd>${stat.value}</dd>
                 </div>
@@ -126,6 +160,19 @@ export class HudView implements View<HudVM> {
               `,
             )}
           </ul>
+          ${
+            vm.moves.length === 0
+              ? nothing
+              : html`
+                  <nav class="moves" aria-label=${vm.regions.moves}>
+                    ${repeat(
+                      vm.moves,
+                      (option) => option.id,
+                      (option) => this.#docked(option),
+                    )}
+                  </nav>
+                `
+          }
           <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
           ${
             vm.place.rows.length === 0
@@ -146,19 +193,6 @@ export class HudView implements View<HudVM> {
         </section>
         ${this.#scan(vm)} ${vm.map === null ? nothing : this.#map(vm.map, 'map', 'map', vm.regions.map)}
         ${this.#trace(vm)}
-        ${
-          vm.moves.length === 0
-            ? nothing
-            : html`
-                <nav class="moves" aria-label=${vm.regions.moves}>
-                  ${repeat(
-                    vm.moves,
-                    (option) => option.id,
-                    (option) => this.#docked(option),
-                  )}
-                </nav>
-              `
-        }
         <div class="side">
           ${
             vm.rows.length === 0
@@ -179,7 +213,7 @@ export class HudView implements View<HudVM> {
           }
           ${this.#aside(vm)}
         </div>
-        <nav class="dock" aria-label=${vm.regions.dock}>
+        <nav class="dock" aria-label=${vm.regions.dock} data-open=${this.#more ? 'true' : 'false'}>
           ${repeat(
             vm.dock.slice(0, vm.fold.after),
             (option) => option.id,
@@ -195,21 +229,20 @@ export class HudView implements View<HudVM> {
                     data-testid="more"
                     aria-label=${vm.fold.label}
                     aria-expanded=${this.#more ? 'true' : 'false'}
+                    aria-controls="dock-fold"
                     @click=${() => {
                       this.#toggleMore();
                     }}
                   >
                     <span>${this.#more ? vm.fold.less : vm.fold.more}</span>
                   </button>
-                  ${
-                    this.#more
-                      ? repeat(
-                          vm.dock.slice(vm.fold.after),
-                          (option) => option.id,
-                          (option) => this.#docked(option),
-                        )
-                      : nothing
-                  }
+                  <div class="fold" id="dock-fold">
+                    ${repeat(
+                      vm.dock.slice(vm.fold.after),
+                      (option) => option.id,
+                      (option) => this.#docked(option),
+                    )}
+                  </div>
                 `
           }
         </nav>
@@ -236,7 +269,7 @@ export class HudView implements View<HudVM> {
     const scan = vm.scan;
     if (scan === null) return nothing;
     return html`
-      <section class="scan" data-testid="scan" aria-label=${scan.label}>
+      <section class="scan" data-testid="scan" aria-label=${scan.label} tabindex="-1" data-spot>
         <h3 class="heading">${scan.heading}</h3>
         ${scan.notes.map((note) => html`<p class="tl">${note}</p>`)}
         <ol class="srows">
@@ -268,11 +301,18 @@ export class HudView implements View<HudVM> {
 
   /**
    * A drawn map: the canvas in its host, the origin line under it, and — for a reader only — the summary
-   * as the picture's name and every node as a list item.
+   * as the picture's name and every node as a list item. The MAP panel is a spotlight (the shell scrolls
+   * to it and focuses it); the pane's map is furniture.
    */
   #map(map: MapPanelVM, slot: Slot, testId: string, region: string): TemplateResult {
     return html`
-      <section class=${slot === 'pane' ? 'map pane' : 'map'} data-testid=${testId} aria-label=${region}>
+      <section
+        class=${slot === 'pane' ? 'map pane' : 'map'}
+        data-testid=${testId}
+        aria-label=${region}
+        tabindex=${slot === 'pane' ? nothing : '-1'}
+        ?data-spot=${slot !== 'pane'}
+      >
         <h3 class="heading">${map.heading}</h3>
         <div class="cv" data-canvas=${slot} role="img" aria-label=${map.summary}></div>
         <p class="tl">${map.origin}</p>
@@ -288,7 +328,7 @@ export class HudView implements View<HudVM> {
     const trace = vm.trace;
     if (trace === null) return nothing;
     return html`
-      <section class="tracep" data-testid="trace" aria-label=${vm.regions.trace}>
+      <section class="tracep" data-testid="trace" aria-label=${vm.regions.trace} tabindex="-1" data-spot>
         <h3 class="heading">${trace.heading}</h3>
         <div class="cv" data-canvas="trace" role="img" aria-label=${trace.label}></div>
         <ol class="vh">

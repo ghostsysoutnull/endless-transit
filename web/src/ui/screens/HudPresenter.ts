@@ -60,8 +60,10 @@ const MAP_HEADING = '[NEURAL_LATTICE_PROJECTION]';
 const TRACE_HEADING = '[NEURAL_LATTICE_TRACE_INITIATED]';
 /** The trace's mark on the current line (LatticeTraceComponent.groovy:85). */
 const TRACE_MARK = '>> ';
-/** How many dock buttons stay out of the fold: the way out and the three most used (I08; I09 polishes the dock). */
-const FOLD_AFTER = 4;
+/** How many crumbs a folded readout keeps on a phone (I09): where you are, and one above. */
+const TAIL = 2;
+/** The readouts a folded HUD keeps on a phone (I09): the steps, the buffer, the place's position among its peers. */
+const ALWAYS_SHOWN = new Set(['PULSE_TRAVERSAL', 'TRACE_BUFFER']);
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -105,7 +107,11 @@ export class HudPresenter implements Presenter<HudVM> {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
       frame: frameOf(place),
-      crumbs: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
+      crumbs: place.trail.map((step, index) => ({
+        ...step,
+        current: index === place.trail.length - 1,
+        tail: index >= place.trail.length - TAIL,
+      })),
       meter: {
         label: labels.meter,
         ...Coherence.range(),
@@ -133,7 +139,11 @@ export class HudPresenter implements Presenter<HudVM> {
         { label: labels.locus, value: place.address },
         { label: labels.hash, value: place.hash },
         { label: 'SEED', value: snapshot.world?.seed ?? '' },
-      ],
+      ].map((stat) => ({
+        ...stat,
+        more: !ALWAYS_SHOWN.has(stat.label) && stat.label !== place.position?.label,
+      })),
+      readout: { label: 'The whole readout', more: '⋯', less: '×' },
       place: {
         eyebrow: place.kind.toUpperCase(),
         icon: place.icon,
@@ -174,7 +184,13 @@ export class HudPresenter implements Presenter<HudVM> {
         : null,
       sealedTag: 'SEALED',
       dock,
-      fold: { after: FOLD_AFTER, more: 'MORE', less: 'LESS', label: 'More of the dock' },
+      // On a phone only the way out stays out of the fold (I09): one row, LEAVE and MORE, under the thumb.
+      fold: {
+        after: snapshot.options.filter((option) => option.role === 'return').length,
+        more: 'MORE',
+        less: 'LESS',
+        label: 'More of the dock',
+      },
       debug,
       options: [
         ...takes.filter((take) => !take.sealed).map((take) => this.#take(take)),

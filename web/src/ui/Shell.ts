@@ -8,8 +8,9 @@ import type { ScreenStage } from './ScreenStage.ts';
 /**
  * The loop of the page: input → `engine.step` → the screen that accepts the snapshot → its view. The
  * engine pushes nothing and the views pull nothing; this class is the only one that knows all three. It
- * owns three things every screen gets without writing them: where the focus goes after a render, that a
- * new scene starts from the top of the page, and the one live region that says what just happened — one
+ * owns four things every screen gets without writing them: where the focus goes after a render, that a
+ * new scene starts from the top of the page, that a panel the player just asked for (`[data-spot]`) is
+ * brought into view and given the focus, and the one live region that says what just happened — one
  * node, mounted once, whose text changes; a region born with the screen would not be announced.
  */
 export class Shell {
@@ -67,6 +68,8 @@ export class Shell {
     this.#offered = screen.options;
     this.#announce(screen.status);
     if (held?.isConnected === false) this.#focusAnOption(screen.scene, this.#pressed);
+    const spot = container.querySelector<HTMLElement>('[data-spot]');
+    if (spot !== null && screen.scene === this.#scene) this.#spotlight(spot);
     if (screen.scene !== this.#scene) {
       this.#startFromTheTop();
       const optionId = held instanceof HTMLElement ? held.dataset.option : undefined;
@@ -107,26 +110,48 @@ export class Shell {
    * the one that undoes it is on offer, the ride has reached its end (the Peak, the last room) and the
    * focus rests on the screen's resting place (`[data-rest]`) — never on the way back, where the next Enter
    * would undo the ride; anywhere else, to the first option that is not that way back. Which option undoes
-   * which is data the option carries; the shell matches no label. Focus that was not inside the screen is
-   * never taken. The page is not scrolled to it: that is the next rule's business.
+   * which is data the option carries; the shell matches no label. Only a button that is shown can take the
+   * focus (a folded dock hides some, I09): back in the scene just left with that button folded away, the
+   * focus rests on the screen rather than on a button that would go a step deeper. Focus that was not
+   * inside the screen is never taken. The page is not scrolled to it: that is the next rule's business.
    */
   #focusAnOption(scene: string, pressed: OptionVM | undefined): void {
     const container = this.#container;
-    const options = [...(container?.querySelectorAll<HTMLElement>('button[data-option]') ?? [])];
+    const options = [...(container?.querySelectorAll<HTMLElement>('button[data-option]') ?? [])].filter(
+      (each) => each.offsetParent !== null,
+    );
+    const rest = container?.querySelector<HTMLElement>('[data-rest]');
     const left = this.#left;
-    const back =
-      left?.scene === scene ? options.find((each) => each.dataset.option === left.optionId) : undefined;
-    if (back !== undefined) {
-      back.focus({ preventScroll: true });
-      return;
+    if (left?.scene === scene) {
+      const back = options.find((each) => each.dataset.option === left.optionId);
+      if (back !== undefined) {
+        back.focus({ preventScroll: true });
+        return;
+      }
+      if (rest != null) {
+        rest.focus({ preventScroll: true });
+        return;
+      }
     }
     const undo = pressed?.opposite ?? '';
-    const rest = container?.querySelector<HTMLElement>('[data-rest]');
     if (undo !== '' && this.#offered.some((option) => option.id === undo) && rest != null) {
       rest.focus({ preventScroll: true });
       return;
     }
     options.find((each) => each.dataset.option !== undo)?.focus({ preventScroll: true });
+  }
+
+  /**
+   * The spotlight rule (I09): a panel the player just asked for — a scan, a map, a trace — is brought into
+   * view (on a phone it sits below the list, under the dock) and takes the focus, so a reader lands on it
+   * and a keyboard reads it next. Smooth unless motion is reduced; `scroll-padding` keeps it clear of the
+   * dock. Only while the scene stays: a new scene starts from the top instead.
+   */
+  #spotlight(panel: HTMLElement): void {
+    const view = panel.ownerDocument.defaultView;
+    const reduced = view?.matchMedia('(prefers-reduced-motion: reduce)').matches ?? true;
+    panel.focus({ preventScroll: true });
+    panel.scrollIntoView({ block: 'nearest', behavior: reduced ? 'instant' : 'smooth' });
   }
 
   /**
