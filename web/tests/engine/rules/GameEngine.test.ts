@@ -567,6 +567,31 @@ describe('GameEngine — walking the big world', () => {
     ).toBe('123456789agkopwxyz');
   });
 
+  test('a door once entered is marked visited on the corridor list, the others not, and a reload keeps the mark (Decision 7: the old Door.visited was never set, HK-021)', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    inTheFirstRoom(engine);
+    const corridor = engine.step('leave');
+    expect(corridor.place?.kind).toBe('Floor');
+    const doors = corridor.options.filter((option) => option.role === 'travel');
+    expect(doors).toHaveLength(9);
+    expect(doors.map((door) => door.visited)).toEqual([
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    const reloaded = engineOn(saves).snapshot();
+    expect(reloaded.options.filter((option) => option.role === 'travel').map((door) => door.visited)).toEqual(
+      [true, false, false, false, false, false, false, false, false],
+    );
+  });
+
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
     const engine = engineOn(new MemorySaveStore());
     const snapshot = walkedDown(engine, 5);
