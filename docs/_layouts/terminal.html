@@ -22,6 +22,8 @@
         </div>
         <nav class="comms-array" aria-label="Manual sections">
             <a href="{{ "/" | relative_url }}"{% if page.url == "/" %} class="active"{% endif %}>[INDEX]</a>
+            <a href="{{ "/play/" | relative_url }}" class="nav-play">[PLAY]</a>
+            <a href="{{ "/web/players_guide.html" | relative_url }}" class="nav-guide{% if page.url contains "/web/" %} active{% endif %}">[WEB_GUIDE]</a>
             <a href="{{ "/terminal/guide/players_guide.html" | relative_url }}" class="nav-guide{% if page.url == "/terminal/guide/players_guide.html" %} active{% endif %}">[GUIDE]</a>
             <a href="{{ "/terminal/manual/installation_guide.html" | relative_url }}"{% if page.url == "/terminal/manual/installation_guide.html" %} class="active"{% endif %}>[LINK_SETUP]</a>
             <a href="{{ "/terminal/manual/system_initialization.html" | relative_url }}"{% if page.url == "/terminal/manual/system_initialization.html" %} class="active"{% endif %}>[00_INIT]</a>

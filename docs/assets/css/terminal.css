@@ -106,6 +106,17 @@ body.terminal-body {
     color: #000;
 }
 
+.comms-array a.nav-play {
+    color: #00ffff;
+    font-weight: 700;
+    border-color: rgba(0, 255, 255, 0.5);
+}
+
+.comms-array a.nav-play:hover {
+    background: #00ffff;
+    color: #000;
+}
+
 /* Split Pane Layout */
 .adaptive-bridge {
     display: grid;
