@@ -33,7 +33,7 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await press(page, /enter world/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await expect(page.getByTestId('place-name')).toHaveText('BRIGHT BOULEVARD');
-  await expect(page.getByTestId('path').getByRole('listitem')).toHaveCount(8);
+  await expect(page.getByTestId('path').locator('li')).toHaveCount(8);
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(4);
   await expectTouchable(page, 'street');
 
@@ -92,7 +92,7 @@ test('from the title: a new world lands on a street; into a building, the elevat
 
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(page.getByTestId('path').getByRole('listitem')).toHaveCount(13);
+  await expect(page.getByTestId('path').locator('li')).toHaveCount(13);
   await expect(page.getByTestId('path')).toContainText('Corridor');
   await expect(page.locator('.tag')).toHaveCount(6); // TEMPORAL_MARKER (I07), TYPE, OXY, TEMP, SIGNAL, RESONANCE
   await expect(page.locator('.desc p')).toHaveCount(2);

@@ -30,11 +30,19 @@ an answer is a `Reply` that settles it or keeps it open, and costs nothing. A ke
 by its own number, else from the pool. SCAN, MAP and TRACE are global commands whose panel (`ScanSummary`, `MapSummary`, `TraceSummary`) rides on the
 snapshot until the next step (a map is the place's `mapNodes()` on a grid — a room has none, a floor maps its doors —
 with the marks of a low Coherence and the void's static drawn on the frame; `place.lattice` is the pane's map
-outdoors); the dock folds after four behind MORE, a toggle of the view; the echo hunt (`echo`, `capture-echo`) and the breach (`breach`) are steps offered as moves when
+outdoors); HELP opens the manual (`HelpPrompt`, its words in `HelpPresenter`); the echo hunt (`echo`, `capture-echo`) and the breach (`breach`) are steps offered as moves when
 the place says so; after every step that counts the room rolls the free lottery (`Location.lottery(steps)`). The traveller (`rules/Player`: `Coherence` value, steps, the visited path by
 address, the `Buffer`, the resonance tally) rides with the `Journey`; what the HUD draws that is noise is seeded from
 `FrameEntropy` (the place + the step count), never the clock. **Debug mode** (Decision 8): `?debug` on the page's address, read only in `main.ts`; the debug tools
-(`role: 'debug'`, the INTEGRITY ladder) are offered nowhere else, and tests turn it on with `debug: true`.
+(`role: 'debug'`, the INTEGRITY ladder, PRIME, KEYSTONE) are offered nowhere else, and tests turn it on with `debug: true`. On the
+page they are the last strip, folded behind one DEBUG button (`data-testid="debug-toggle"`, `aria-expanded`), every button
+`tabindex="-1"` — never on the first screen, never in the tab order; the e2e harness opens the fold as a tester would.
+
+**Phone first screen (I09):** the world screen's moves sit under the place's title; under 900 px the HUD folds behind
+its readout button (the last two crumbs, the steps, the buffer and the position stay), the dock keeps the way out beside
+MORE — a disclosure the next step folds again — and a panel the player asked for (scan, map, trace) comes after the list;
+a desktop shows every dock button and the whole HUD. `e2e/fold.spec.ts` asserts an action on the first screen of every
+screen kind, at the device size and at 360 × 640.
 
 The world: `model/Location` owns the **lazy-loading law** — children sit behind a private array and exist only after
 `children()`, generated once through the injected `ChildSource`. A kind of place is a class that answers for itself
@@ -84,7 +92,9 @@ A new invariant ships with its rule in the same iteration.
 - Randomness: `seed.branch(key)` then one helper (`pick`, `range`, `probability`). Never a stream. Text keys never
   start with `#` (Seed's own); `branch(1)` ≠ `branch('1')`.
 - Words live in the presenter; a `*View.ts` has no literal text or aria-label. Focus after a render: `Shell` owns it —
-  an option names the option that undoes it, and a screen marks its resting place (`data-rest`).
+  an option names the option that undoes it, a screen marks its resting place (`data-rest`), and a panel that just
+  opened marks itself `data-spot`: the shell scrolls it into view (instant under `prefers-reduced-motion`, clear of the
+  dock by `scroll-padding`) and gives it the focus. Only a shown button takes the focus.
 
 ## Tests first
 

@@ -12,6 +12,7 @@ import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
 import { type GameOption, VISITED_KEY } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
+import { HELP, HelpPrompt } from './HelpPrompt.ts';
 import { Journey } from './Journey.ts';
 import { LatticeMap } from './LatticeMap.ts';
 import type { MapSummary } from './MapSummary.ts';
@@ -56,6 +57,8 @@ const ECHO_KEY = 'e';
 const CAPTURE_KEY = 'c';
 /** The Guide's key for the map (Guide:91); the trace's `ll` is two letters, so it has no key. */
 const MAP_KEY = 'm';
+/** The help's key: the Guide's `help` / `?` (Guide:96) by its first letter. */
+const HELP_KEY = 'h';
 /** Keyboard extras for the children, in order: the digits, then every letter no command claims for itself and the visited mark does not use. */
 const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
@@ -71,8 +74,9 @@ const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.cha
  * that stays until the next step. In a Null Reach the echo hunt is two moves (Guide:116); on a floor the
  * breach is one, when the place offers it (Guide:275). After every step that counts, the room rolls the
  * free lottery (Guide:186-190). MAP and TRACE (global commands, Guide:91-92) draw a panel that stays
- * until the next step, like SCAN. In debug mode (Decision 8) the INTEGRITY tool, PRIME and KEYSTONE are on
- * offer (Guide:438-441); nowhere else.
+ * until the next step, like SCAN. HELP (a global command, Guide:96) opens the help screen, whose one
+ * answer costs nothing. In debug mode (Decision 8) the INTEGRITY tool, PRIME and KEYSTONE are on offer
+ * (Guide:438-441); nowhere else.
  */
 export class GameEngine {
   readonly #journey: Journey;
@@ -250,6 +254,15 @@ export class GameEngine {
             })),
           };
           return `NEURAL_LATTICE_TRACE_INITIATED: ${String(trail.length)} levels from the universe.`;
+        },
+      },
+      {
+        keys: [HELP_KEY],
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption(HELP, HELP_KEY, 'Help')]),
+        run: () => {
+          this.#prompt = new HelpPrompt();
+          return '';
         },
       },
       {

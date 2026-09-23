@@ -14,12 +14,19 @@ export function watchForErrors(page: Page): string[] {
   return problems;
 }
 
-/** The dock folds after four buttons (I08): a button that is not on the screen may be behind MORE, as it is for a player. */
+/**
+ * The dock folds on a phone (I08, I09) and the debug strip folds everywhere (I09): a button that is not shown
+ * may be behind MORE or DEBUG, as it is for a player — open the fold it is in, as a player would.
+ */
 async function unfold(page: Page, button: Locator, hasTouch: boolean): Promise<void> {
-  if ((await button.count()) > 0) return;
-  const more = page.getByTestId('more');
-  if ((await more.count()) === 0 || (await more.getAttribute('aria-expanded')) === 'true') return;
-  await (hasTouch ? more.tap() : more.click());
+  if ((await button.count()) > 0 && (await button.first().isVisible())) return;
+  for (const fold of ['more', 'debug-toggle']) {
+    const toggle = page.getByTestId(fold);
+    if ((await toggle.count()) === 0 || !(await toggle.isVisible())) continue;
+    if ((await toggle.getAttribute('aria-expanded')) === 'true') continue;
+    await (hasTouch ? toggle.tap() : toggle.click());
+    if ((await button.count()) > 0 && (await button.first().isVisible())) return;
+  }
 }
 
 /** Tap on a touch device, click on a desktop — what a player's hand would do. */

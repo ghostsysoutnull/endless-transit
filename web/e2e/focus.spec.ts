@@ -104,8 +104,8 @@ test('keyboard: Enter on TITLE SCREEN, then Enter again, is a round trip to the 
   await plantOnAPlanet(page);
   await page.goto('./');
   const planet = await page.getByTestId('place-name').innerText();
-  // TITLE SCREEN is behind the dock's MORE (I08); the fold is the view's and survives the round trip.
-  await page.getByTestId('more').click();
+  // A desktop shows every dock button (I09): TITLE SCREEN is on the screen, no fold to open.
+  await expect(page.getByTestId('more')).toBeHidden();
   await page.locator('button[data-option="to-title"]').focus();
   await page.keyboard.press('Enter');
   await expect(page.getByTestId('world-seed')).toBeVisible();

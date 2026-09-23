@@ -148,6 +148,7 @@ describe('GameEngine — walking the big world', () => {
       'map',
       'buffer',
       'trace',
+      'help',
       'to-title',
       'recap',
     ]);
@@ -204,11 +205,12 @@ describe('GameEngine — walking the big world', () => {
       visited: true,
     });
     expect(ids(snapshot)).not.toContain('leave');
-    expect(snapshot.options.slice(-6)).toEqual([
+    expect(snapshot.options.slice(-7)).toEqual([
       system('scan', 's', 'Scan'),
       system('map', 'm', 'Map'),
       system('buffer', 'i', 'Buffer'),
       system('trace', '', 'Trace'),
+      system('help', 'h', 'Help'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
     ]);
@@ -343,6 +345,7 @@ describe('GameEngine — walking the big world', () => {
       system('map', 'm', 'Map'),
       system('buffer', 'i', 'Buffer'),
       system('trace', '', 'Trace'),
+      system('help', 'h', 'Help'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
     ]);
@@ -450,6 +453,7 @@ describe('GameEngine — walking the big world', () => {
       system('map', 'm', 'Map'),
       system('buffer', 'i', 'Buffer'),
       system('trace', '', 'Trace'),
+      system('help', 'h', 'Help'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
     ]);
@@ -461,6 +465,7 @@ describe('GameEngine — walking the big world', () => {
       'map',
       'buffer',
       'trace',
+      'help',
       'to-title',
       'recap',
     ]);
@@ -493,12 +498,12 @@ describe('GameEngine — walking the big world', () => {
     }
   });
 
-  test('the letters children get are the alphabet minus every key a command claims (e i l n q r s t, the breach’s j, the map’s m, and the moves’ u d c b f)', () => {
+  test('the letters children get are the alphabet minus every key a command claims (e i l n q r s t, the breach’s j, the map’s m, the help’s h, and the moves’ u d c b f)', () => {
     const engine = engineOn(new MemorySaveStore());
     engine.step('new-world');
     engine.step('enter-world');
     for (let level = 0; level < 7; level++) engine.step('leave');
-    // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's, m the map's).
+    // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's, m the map's, h the help's).
     for (const index of [0, 0, 0, 0, 2, 0]) engine.step(`enter:${String(index)}`);
     const city = engine.snapshot();
     expect(city.place?.name).toBe('Steamspire');
@@ -507,7 +512,41 @@ describe('GameEngine — walking the big world', () => {
         .filter((option) => option.role === 'travel')
         .map((option) => option.key)
         .join(''),
-    ).toBe('123456789aghkop');
+    ).toBe('123456789agkopw');
+  });
+
+  test('HELP (Guide:96) is a global command after TRACE, keyed h: it costs one and no step, opens the help prompt whose one answer — the way back — is free and lands where the traveller stood (I09)', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    const street = walkedDown(engine, 7);
+    expect(street.options.map((option) => option.id).slice(-7)).toEqual([
+      'scan',
+      'map',
+      'buffer',
+      'trace',
+      'help',
+      'to-title',
+      'recap',
+    ]);
+    expect(street.options.find((option) => option.id === 'help')).toEqual(system('help', 'h', 'Help'));
+    const open = engine.step('help');
+    expect(open.prompt).toEqual({ id: 'help', outcome: '', figures: {} });
+    expect(open.player).toEqual({ coherence: 85, band: 'stable', steps: 14 });
+    expect(open.place?.name).toBe('Bright Boulevard');
+    expect(open.options).toEqual([{ ...system('close', 'b', 'Back to the world'), role: 'return' }]);
+    expect(open.message).toBe('');
+    // Nothing else is heard while it is open; the way back costs nothing.
+    expect(engine.step('scan').prompt?.id).toBe('help');
+    const back = engine.step('close');
+    expect(back.prompt).toBeNull();
+    expect(back.player).toEqual({ coherence: 85, band: 'stable', steps: 14 });
+    expect(back.place?.name).toBe('Bright Boulevard');
+    expect(back.scan).toBeNull();
+    // A reload lands in the world: the prompt is not saved.
+    engine.step('help');
+    const reloaded = engineOn(saves).snapshot();
+    expect(reloaded.prompt).toBeNull();
+    expect(reloaded.place?.name).toBe('Bright Boulevard');
   });
 
   test('the visited mark’s letter is claimed like a command’s: no child is keyed v, so a row never reads [V] … [V]', () => {
@@ -525,7 +564,32 @@ describe('GameEngine — walking the big world', () => {
         .filter((option) => option.role === 'travel')
         .map((option) => option.key)
         .join(''),
-    ).toBe('123456789aghkopwxyz');
+    ).toBe('123456789agkopwxyz');
+  });
+
+  test('a door once entered is marked visited on the corridor list, the others not, and a reload keeps the mark (Decision 7: the old Door.visited was never set, HK-021)', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    inTheFirstRoom(engine);
+    const corridor = engine.step('leave');
+    expect(corridor.place?.kind).toBe('Floor');
+    const doors = corridor.options.filter((option) => option.role === 'travel');
+    expect(doors).toHaveLength(9);
+    expect(doors.map((door) => door.visited)).toEqual([
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
+    const reloaded = engineOn(saves).snapshot();
+    expect(reloaded.options.filter((option) => option.role === 'travel').map((door) => door.visited)).toEqual(
+      [true, false, false, false, false, false, false, false, false],
+    );
   });
 
   test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {

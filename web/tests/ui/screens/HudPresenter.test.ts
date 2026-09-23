@@ -266,20 +266,23 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
       'Auraea',
     ]);
     expect(vm.crumbs.map((crumb) => crumb.current)).toEqual([false, false, false, false, true]);
+    // A phone's folded readout keeps the last two crumbs (I09).
+    expect(vm.crumbs.map((crumb) => crumb.tail)).toEqual([false, false, false, true, true]);
     expect(vm.crumbs.map((crumb) => crumb.icon).join('')).toBe('∞»○☼⊕');
     expect(vm.crumbs[3]?.kind).toBe('Solar system');
   });
 
-  test('the stats line: the steps, depth, position among siblings under the kind’s own label, the locus, its hash, the seed', () => {
+  test('the stats line: the steps, depth, position among siblings under the kind’s own label, the locus, its hash, the seed; a phone’s fold keeps the steps, the buffer and the position (I09)', () => {
     expect(vm.stats).toEqual([
-      { label: 'PULSE_TRAVERSAL', value: '12' },
-      { label: 'TRACE_BUFFER', value: '00/16' },
-      { label: 'HOP_DENSITY', value: '04' },
-      { label: 'ORBIT', value: '02/05' },
-      { label: 'LOCUS', value: '0.0.0.0.1' },
-      { label: 'LOCUS_HASH', value: '43.210 / 07.654' },
-      { label: 'SEED', value: '7F3A-91C2-0B4D-E6A8' },
+      { label: 'PULSE_TRAVERSAL', value: '12', more: false },
+      { label: 'TRACE_BUFFER', value: '00/16', more: false },
+      { label: 'HOP_DENSITY', value: '04', more: true },
+      { label: 'ORBIT', value: '02/05', more: false },
+      { label: 'LOCUS', value: '0.0.0.0.1', more: true },
+      { label: 'LOCUS_HASH', value: '43.210 / 07.654', more: true },
+      { label: 'SEED', value: '7F3A-91C2-0B4D-E6A8', more: true },
     ]);
+    expect(vm.readout).toEqual({ label: 'The whole readout', more: '⋯', less: '×' });
   });
 
   test('the universe has no position among siblings — that stat is simply absent', () => {
@@ -342,7 +345,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
         },
       ],
     });
-    expect(vm.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '01/16' });
+    expect(vm.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '01/16', more: false });
     expect(vm.options.map((each) => each.id)).toEqual([
       'capture:0',
       'capture:1',
@@ -365,7 +368,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(full.aside.objects?.note).toBe('BUFFER FULL — merge or drop a fragment to take more.');
     expect(full.aside.objects?.tiles.map((tile) => tile.action)).toEqual([null, null]);
     expect(full.options.map((each) => each.id)).toEqual(['move:forward', 'leave', 'buffer', 'to-title']);
-    expect(full.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '16/16' });
+    expect(full.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '16/16', more: false });
   });
 
   test('an empty room says so in words and has no OBJECTS_DETECTED row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
@@ -652,7 +655,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
     expect(low.meter.value).toBe(12);
     expect(low.meter.band).toBe('critical');
     expect(low.meter.valueText).toBe('12 percent, critical');
-    expect(low.stats[0]).toEqual({ label: 'PULSE_TRAVERSAL', value: '3' });
+    expect(low.stats[0]).toEqual({ label: 'PULSE_TRAVERSAL', value: '3', more: false });
   });
 
   test('a visited row carries the [V] mark with words for a reader; an unvisited one none (Corridor.groovy:71-72)', () => {
@@ -675,6 +678,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
       ],
     });
     expect(vm.debug).toEqual([{ id: 'debug:integrity:39', key: '', label: 'INTEGRITY 39', opposite: '' }]);
+    expect(vm.debugToggle).toBe('DEBUG');
     expect(vm.options.at(-1)?.id).toBe('debug:integrity:39');
     expect(vm.dock.map((option) => option.id)).toEqual(['leave', 'to-title']);
     expect(presenter.toViewModel(PLANET).debug).toEqual([]);
@@ -850,7 +854,7 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
     expect(shown.regions.trace).toBe('Trace');
   });
 
-  test('the dock folds after four: the way out and the three most used stay in reach, the rest open behind MORE (I08; I09 polishes)', () => {
+  test('the dock folds after the way out (I09): on a phone LEAVE stays in reach and every other option opens behind MORE; a desktop shows them all; the fold is empty of LEAVE at the universe', () => {
     const vm = presenter.toViewModel({
       ...OUTDOORS,
       options: [
@@ -872,8 +876,15 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
       'to-title',
       'recap',
     ]);
-    expect(vm.fold).toEqual({ after: 4, more: 'MORE', less: 'LESS', label: 'More of the dock' });
+    expect(vm.fold).toEqual({ after: 1, more: 'MORE', less: 'LESS', label: 'More of the dock' });
     // Every dock option is on offer to the router whether folded or not: a key still works.
     expect(vm.options.map((option) => option.id)).toEqual(expect.arrayContaining(['to-title', 'recap']));
+    // The universe has no way out: nothing stays out of the fold.
+    const top = presenter.toViewModel({
+      ...OUTDOORS,
+      options: [option({ id: 'scan', key: 's', label: 'Scan', role: 'system' })],
+    });
+    expect(top.fold.after).toBe(0);
+    expect(top.dock.map((each) => each.id)).toEqual(['scan']);
   });
 });
