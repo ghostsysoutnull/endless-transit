@@ -59,10 +59,10 @@ function replay(seed: Seed, history: readonly string[]): GameSnapshot {
     twin = undefined;
     // The title screen is not restored as such: a reload lands where the traveller stood (I02), so a
     // snapshot at the title has no twin screen; the world's save is compared again on the next tap inside.
-    // The recap and the buffer screen are prompts the save does not hold either (a reload lands in the
-    // world); the reboot is.
+    // The recap, the buffer screen and the help are prompts the save does not hold either (a reload lands
+    // in the world); the reboot is.
     if (text === undefined || snapshot.place === null || snapshot.prompt?.id === 'recap') continue;
-    if (snapshot.prompt?.id === 'buffer') continue;
+    if (snapshot.prompt?.id === 'buffer' || snapshot.prompt?.id === 'help') continue;
     const restored = engineOn(seed, new MemorySaveStore(text)).snapshot();
     expect(shown(restored), where).toEqual(shown(snapshot));
     twin = new MemorySaveStore(text);

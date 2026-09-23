@@ -115,8 +115,8 @@ test('a long street: twenty buildings, every one a button, two of them landmarks
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
   await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
   // Twenty buildings and the dock: on a phone LEAVE, MORE and the HUD's readout button (I09), the rest folded;
-  // on a desktop every dock button — LEAVE, SCAN, MAP, BUFFER, TRACE, TITLE SCREEN, END SESSION.
-  await expect(page.getByRole('button')).toHaveCount(20 + (isMobile ? 3 : 7));
+  // on a desktop every dock button — LEAVE, SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION.
+  await expect(page.getByRole('button')).toHaveCount(20 + (isMobile ? 3 : 8));
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);

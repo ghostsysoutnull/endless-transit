@@ -307,6 +307,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
       'map:m:Map',
       'buffer:i:Buffer',
       'trace::Trace',
+      'help:h:Help',
       'to-title:t:Title screen',
       'recap:q:End session',
     ]);

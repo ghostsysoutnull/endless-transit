@@ -16,6 +16,8 @@
     "leave",
     "move:elevator",
     "move:down",
+    "help",
+    "close",
     "leave",
     "to-title",
     "enter-world",

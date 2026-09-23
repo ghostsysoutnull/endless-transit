@@ -1067,6 +1067,71 @@ body {
   letter-spacing: 0.04em;
 }
 
+/* The help screen (I09): the manual's heading like the buffer's, one term per button, the rules as lines. */
+.manual .rh {
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: var(--cy);
+}
+
+.lead {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 62ch;
+}
+
+.manual .heading {
+  margin-top: 8px;
+  color: var(--frame);
+}
+
+.terms {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.term {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-top: 1px solid var(--rule);
+  padding-top: 5px;
+}
+
+.term dt {
+  color: var(--yl);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+}
+
+.term dd {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  max-width: 62ch;
+  overflow-wrap: anywhere;
+}
+
+.rules {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  max-width: 62ch;
+}
+
+.rules li::marker {
+  color: var(--dim);
+}
+
 /* The system telemetry of the old right pane: headings in cyan, lines dim, the spectrogram in cyan. */
 .tele p {
   margin: 0;
