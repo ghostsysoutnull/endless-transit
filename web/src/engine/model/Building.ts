@@ -2,6 +2,7 @@ import type { Fact } from './Fact.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
+import type { ScanReport } from './ScanReport.ts';
 
 export const BUILDING_KIND = new LocationKind({
   key: 'building',
@@ -12,6 +13,8 @@ export const BUILDING_KIND = new LocationKind({
 
 /** Where the elevator stands before anyone rides it: the lobby (Building.groovy:24). */
 const LOBBY = 0;
+/** A scan at an elevator reads this many floors either side (ScanCommand.groovy:147). */
+const SCAN_REACH = 2;
 
 /**
  * A building on a street: a name (one in twenty-five a landmark title), a size — how many floors, how many
@@ -95,6 +98,29 @@ export class Building extends Location {
 
   description(): readonly string[] {
     return ['Analyzing vertical lattice structure...'];
+  }
+
+  /**
+   * The vertical strata pulse a scan at an elevator reads (ScanCommand.groovy:136-153): the building's name
+   * and size, and the floors within two of `number`, top first, each with its zone, the floor itself marked.
+   */
+  scanAround(number: number, seen: (place: Location) => boolean): ScanReport {
+    const near = this.children()
+      .filter((floor) => Math.abs(floor.ordinal() - number) <= SCAN_REACH)
+      .sort((one, other) => other.ordinal() - one.ordinal());
+    return {
+      title: 'NEURAL_PROXIMITY_REPORT',
+      notes: [`BUILDING: ${this.#name}`, `TOTAL_STRATA: ${String(this.#floors)} units detected.`],
+      rows: near.map((floor) => ({
+        cells: [
+          { key: 'reading', label: 'ID', value: String(floor.ordinal()).padStart(2, '0') },
+          ...floor.scanned(seen),
+        ],
+        place: undefined,
+        current: floor.ordinal() === number,
+        note: '',
+      })),
+    };
   }
 
   /** The building's theme, and the landmark banner when it is one (Building.groovy:141, 146-149). */

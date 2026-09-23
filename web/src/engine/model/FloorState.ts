@@ -2,6 +2,7 @@ import type { Fact } from './Fact.ts';
 import type { Floor } from './Floor.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
+import type { ScanReport } from './ScanReport.ts';
 
 /**
  * A floor's mode — standing at the elevator or in the corridor (the Groovy `FloorState`, OOA Phase 8). The
@@ -22,4 +23,6 @@ export interface FloorState {
   status(floor: Floor): string;
   childrenHeading(floor: Floor): string;
   approachVerb(floor: Floor): string;
+  /** What a scan on the floor inspects in this mode (Floor.groovy:82-85): the building's strata, or the corridor's doors. */
+  scan(floor: Floor, seen: (place: Location) => boolean): ScanReport | undefined;
 }

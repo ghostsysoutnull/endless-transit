@@ -4,6 +4,7 @@ import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
+import type { ScanReport } from './ScanReport.ts';
 
 /** Up unless this is the top floor, down unless the ground floor, and the corridor (ElevatorState.groovy:22-45). */
 const MOVES = new MoveTable<Floor>([
@@ -75,5 +76,10 @@ export class ElevatorState implements FloorState {
 
   approachVerb(): string {
     return '';
+  }
+
+  /** At the elevator the scan is the building's vertical strata pulse around this floor (ElevatorState.groovy:253-256). */
+  scan(floor: Floor, seen: (place: Location) => boolean): ScanReport | undefined {
+    return floor.building().scanAround(floor.number(), seen);
   }
 }

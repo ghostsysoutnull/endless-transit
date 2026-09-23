@@ -3,6 +3,7 @@ import type { Floor } from './Floor.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
+import type { ScanReport } from './ScanReport.ts';
 
 export const CORRIDOR_KIND = new LocationKind({
   key: 'corridor',
@@ -40,6 +41,26 @@ export class Corridor extends Location {
 
   override arrival(): Location {
     return this.#floor;
+  }
+
+  /**
+   * The door table a scan reads (Guide:227-231; ScanCommand.groovy:60-134): per door its trace, its words,
+   * its material and state, and the kind of the first room behind it, with the sensory line under each.
+   */
+  override scan(seen: (place: Location) => boolean): ScanReport {
+    return {
+      title: '[DATA_SUMMARY]',
+      notes: [],
+      rows: this.children().map((apartment, index) => ({
+        cells: [
+          { key: 'reading', label: 'ID', value: String(index + 1).padStart(2, '0') },
+          ...apartment.scanned(seen),
+        ],
+        place: undefined,
+        current: false,
+        note: apartment.sensed(),
+      })),
+    };
   }
 
   description(): readonly string[] {

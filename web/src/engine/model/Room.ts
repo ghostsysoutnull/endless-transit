@@ -15,6 +15,7 @@ import type { Origin } from './Origin.ts';
 import type { Relic } from './Relic.ts';
 import { RelicFragment } from './RelicFragment.ts';
 import type { RoomCategory } from './RoomCategory.ts';
+import type { ScanReport } from './ScanReport.ts';
 
 export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
 
@@ -24,6 +25,8 @@ const GLITCHED = { structure: 0.2, walls: 0.1, lighting: 0.3 } as const;
 const STATIC_KEY = 'static';
 /** Reads dropped fragments back from a memento, through the world (stateless). */
 const READER = new FragmentReader();
+/** The scan's WAVE column (ScanCommand.groovy:188-189): resonant, plain, and degraded under an anomaly. */
+const WAVES = { resonant: '≈≈≈', plain: '~~~', degraded: '###' } as const;
 
 /** Back to the previous room unless this is the first, forward to the next unless it is the last. */
 const MOVES = new MoveTable<Room>([
@@ -202,6 +205,34 @@ export class Room extends Location {
   /** A room lists no places: its rooms are its siblings, walked with forward and back. */
   override listing(): readonly Location[] {
     return [];
+  }
+
+  /** A scan in a room is the apartment's strata overview (ScanCommand.groovy:46-47). */
+  override scan(seen: (place: Location) => boolean): ScanReport | undefined {
+    return this.#apartment.scan(seen);
+  }
+
+  /**
+   * The overview's line about this room (ScanCommand.groovy:180-204): the frequency of its name at this
+   * depth, the wave (resonant, plain, or degraded under an anomaly), whether the traveller has seen it, its
+   * kind and its name.
+   */
+  override scanned(seen: (place: Location) => boolean): readonly Fact[] {
+    const frequency = new Gematria(this.#name).frequencyAt(this.depth());
+    const wave: Fact = this.#apartment.anomaly()
+      ? { key: 'alert', label: 'WAVE', value: WAVES.degraded }
+      : frequency.resonant()
+        ? { key: 'stable', label: 'WAVE', value: WAVES.resonant }
+        : { key: 'signal', label: 'WAVE', value: WAVES.plain };
+    return [
+      { key: 'reading', label: 'FREQ', value: `${String(frequency.hertz())}Hz` },
+      wave,
+      seen(this)
+        ? { key: 'stable', label: 'STATUS', value: '[VISITED]' }
+        : { key: 'reading', label: 'STATUS', value: '[UNSTABLE]' },
+      { key: 'reading', label: 'TYPE', value: this.type() },
+      { key: 'reading', label: 'IDENTIFIER', value: this.#name },
+    ];
   }
 
   /** The room `steps` further along the apartment (back when negative); nothing past either end. */

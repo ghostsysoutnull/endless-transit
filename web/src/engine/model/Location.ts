@@ -8,6 +8,7 @@ import type { Fragment } from './Fragment.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
+import type { ScanReport } from './ScanReport.ts';
 import type { Vibe } from './Vibe.ts';
 
 /** The locus hash is two readings of 0.000 … 99.999, each drawn in thousandths. */
@@ -155,6 +156,27 @@ export abstract class Location {
   /** What lies here — relics and furniture — for a kind that holds things (a room); nothing for every other kind. */
   contents(): Contents | null {
     return null;
+  }
+
+  /**
+   * What a scan reads here (Guide:87: doors, nearby floors or the rooms of the apartment); nothing for a kind
+   * with no scan-compatible structure. `seen` says which places the traveller has been to — the model is told,
+   * it never asks the player.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a kind that scans does
+  scan(_seen: (place: Location) => boolean): ScanReport | undefined {
+    return undefined;
+  }
+
+  /** What a scan of the list this place is on reads about it (a door's trace, a room's frequency); nothing for most kinds. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default reads nothing; a room does
+  scanned(_seen: (place: Location) => boolean): readonly Fact[] {
+    return [];
+  }
+
+  /** The sensory line a scan reads under this place's row (a door's); empty for most kinds. */
+  sensed(): string {
+    return '';
   }
 
   /** The fragment a capture of relic `key` here yields — what the room dealt, at what it is worth here; nothing for every other kind or a relic not dealt here. */

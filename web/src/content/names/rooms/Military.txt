@@ -1,4 +1,4 @@
-Security Station|burned DANGER
-Barracks|
-Armory|burned DANGER
-Tactical Hub|
+Security Station|burned DANGER|clicking
+Barracks||humming
+Armory|burned DANGER|clicking
+Tactical Hub||humming

@@ -9,6 +9,7 @@ import { INSCRIPTION_STYLES } from '#engine/model/InscriptionStyle.ts';
 import { RoomCategory } from '#engine/model/RoomCategory.ts';
 import { Room } from '#engine/model/Room.ts';
 import { Doors } from '#engine/procgen/Doors.ts';
+import { Trace } from '#engine/model/Trace.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { MemoryContentSource } from '#tests/support/MemoryContentSource.ts';
 import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
@@ -199,7 +200,10 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
   const [stamped, scrawled, etched, burned] = INSCRIPTION_STYLES;
 
   test('the narrative is the material’s sentence, the state’s, and how the word was applied when there is one', () => {
-    const plain = doors.of(new Seed(1, 1), new RoomCategory('Archive', undefined));
+    const plain = doors.of(
+      new Seed(1, 1),
+      new RoomCategory('Archive', undefined, must(Trace.of('stillness'))),
+    );
     expect(plain.brief()).toBe('Heavy Bulkhead [COLD]');
     expect(plain.narrative()).toBe(
       plain.inscription() === undefined
@@ -208,7 +212,11 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
     );
     const vault = doors.of(
       new Seed(2, 2),
-      new RoomCategory('Laboratory', new DoorInscription('DATA_VAULT', must(stamped))),
+      new RoomCategory(
+        'Laboratory',
+        new DoorInscription('DATA_VAULT', must(stamped)),
+        must(Trace.of('ozone')),
+      ),
     );
     if (vault.inscription() !== undefined) {
       expect(vault.narrative()).toBe(

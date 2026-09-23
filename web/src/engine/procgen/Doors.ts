@@ -28,6 +28,7 @@ export class Doors {
       material,
       state,
       inscription: seed.branch('inscribed').probability(INSCRIBED) ? this.#words(seed, behind) : undefined,
+      trace: behind.trace(),
       told: { material: materialTold, state: stateTold },
     });
   }
