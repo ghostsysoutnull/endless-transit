@@ -1,8 +1,9 @@
 import { Address } from '#engine/model/Address.ts';
+import type { FragmentData } from '#engine/model/Fragment.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 
-const VERSION = 4;
+const VERSION = 5;
 
 /** What a save is made of; a drawn-but-not-entered world has only its seed. */
 export interface SavedFacts {
@@ -14,16 +15,21 @@ export interface SavedFacts {
   readonly steps?: number;
   /** The addresses of every place visited, in the order first walked. */
   readonly visited?: readonly string[];
+  /** The buffer's fragments as data, in order. */
+  readonly buffer?: readonly FragmentData[];
+  /** The resonance tally. */
+  readonly resonant?: number;
 }
 
 /**
  * Owns one fact: the save format — versioned plain JSON carrying the world's seed, the path of the place the
  * traveller stands in (`null` while a world is drawn but not entered), what the visited places remember of
- * their own state by address (a floor in corridor mode, a building's elevator floor; a room's taken relics
- * in I06 — every per-place fact has its home here), and the traveller: coherence, steps, the visited path
- * (Guide:364-366). The world itself is never stored: seed + path rebuild it. Another version is "no save"
- * — there is nobody to migrate for. What the text says is checked for shape here; whether the world could
- * have written it is the journey's question.
+ * their own state by address (a floor in corridor mode, a building's elevator floor, a room's taken and
+ * dropped relics — every per-place fact has its home here), and the traveller: coherence, steps, the
+ * visited path, the buffer as fragment data, the resonance tally (Guide:364-366). The world itself is never
+ * stored: seed + path rebuild it. Another version is "no save" — there is nobody to migrate for. What the
+ * text says is checked for shape here; whether the world could have written it (every fragment included)
+ * is the journey's question.
  */
 export class SavedGame {
   readonly #seed: Seed;
@@ -32,6 +38,8 @@ export class SavedGame {
   readonly #coherence: number;
   readonly #steps: number;
   readonly #visited: readonly string[];
+  readonly #buffer: readonly FragmentData[];
+  readonly #resonant: number;
 
   constructor(facts: SavedFacts) {
     this.#seed = facts.seed;
@@ -40,6 +48,8 @@ export class SavedGame {
     this.#coherence = facts.coherence ?? new Coherence().value();
     this.#steps = facts.steps ?? 0;
     this.#visited = [...(facts.visited ?? [])];
+    this.#buffer = [...(facts.buffer ?? [])];
+    this.#resonant = facts.resonant ?? 0;
   }
 
   /** Static because it is the factory for the text `toText` writes. Anything unreadable is "no save". */
@@ -52,20 +62,37 @@ export class SavedGame {
       return undefined;
     }
     if (typeof data !== 'object' || data === null) return undefined;
-    const { version, seed, path, states, coherence, steps, visited } = data as Record<string, unknown>;
+    const { version, seed, path, states, coherence, steps, visited, buffer, resonant } = data as Record<
+      string,
+      unknown
+    >;
     if (version !== VERSION || typeof seed !== 'string') return undefined;
     const parsedSeed = Seed.parse(seed);
     const parsedStates = SavedGame.#statesOf(states);
     const parsedVisited = SavedGame.#visitedOf(visited);
-    if (parsedSeed === undefined || parsedStates === undefined || parsedVisited === undefined)
+    const parsedBuffer = SavedGame.#bufferOf(buffer);
+    if (
+      parsedSeed === undefined ||
+      parsedStates === undefined ||
+      parsedVisited === undefined ||
+      parsedBuffer === undefined
+    ) {
       return undefined;
-    if (!SavedGame.#isCoherence(coherence) || !SavedGame.#isCount(steps)) return undefined;
+    }
+    if (!SavedGame.#isCoherence(coherence) || !SavedGame.#isCount(steps) || !SavedGame.#isCount(resonant)) {
+      return undefined;
+    }
     const address = typeof path === 'string' ? Address.parse(path) : undefined;
     if (path !== null && address === undefined) return undefined;
     const fresh = new Coherence().value();
     if (
       address === undefined &&
-      (coherence !== fresh || steps !== 0 || parsedVisited.length !== 0 || parsedStates.size !== 0)
+      (coherence !== fresh ||
+        steps !== 0 ||
+        parsedVisited.length !== 0 ||
+        parsedStates.size !== 0 ||
+        parsedBuffer.length !== 0 ||
+        resonant !== 0)
     ) {
       return undefined;
     }
@@ -76,7 +103,22 @@ export class SavedGame {
       coherence,
       steps,
       visited: parsedVisited,
+      buffer: parsedBuffer,
+      resonant,
     });
+  }
+
+  /** Part of `parse`: a list of fragment data — each a plain object naming its kind; what the world makes of it is not asked here. */
+  static #bufferOf(buffer: unknown): readonly FragmentData[] | undefined {
+    if (!Array.isArray(buffer)) return undefined;
+    const fragments: FragmentData[] = [];
+    for (const each of buffer as unknown[]) {
+      if (typeof each !== 'object' || each === null || Array.isArray(each)) return undefined;
+      const fields = each as Record<string, unknown>;
+      if (typeof fields.kind !== 'string') return undefined;
+      fragments.push(fields as FragmentData);
+    }
+    return fragments;
   }
 
   /** Part of the `parse` factory (static for the same reason): a plain object of address → memento text; anything else is no save. */
@@ -143,6 +185,15 @@ export class SavedGame {
     return this.#visited;
   }
 
+  /** The buffer's fragments as data, in order. */
+  buffer(): readonly FragmentData[] {
+    return this.#buffer;
+  }
+
+  resonant(): number {
+    return this.#resonant;
+  }
+
   toText(): string {
     return JSON.stringify({
       version: VERSION,
@@ -152,6 +203,8 @@ export class SavedGame {
       coherence: this.#coherence,
       steps: this.#steps,
       visited: this.#visited,
+      buffer: this.#buffer,
+      resonant: this.#resonant,
     });
   }
 }

@@ -51,21 +51,23 @@ function trailOf(path: string): string[] {
   return steps.map((_, depth) => steps.slice(0, depth + 1).join('.'));
 }
 
-/** A v4 save text on the first seed, as the game writes one unless a field is bent on purpose. */
+/** A v5 save text on the first seed, as the game writes one unless a field is bent on purpose. */
 function saveText(
   path: string,
   states: Record<string, string> = {},
   visited: readonly string[] = trailOf(path),
-  traveller: { coherence?: number; steps?: number } = {},
+  traveller: { coherence?: number; steps?: number; buffer?: readonly unknown[]; resonant?: number } = {},
 ): string {
   return JSON.stringify({
-    version: 4,
+    version: 5,
     seed: '7F3A-91C2-0B4D-E6A8',
     path,
     states,
     coherence: 100,
     steps: 0,
     visited,
+    buffer: [],
+    resonant: 0,
     ...traveller,
   });
 }
@@ -543,9 +545,10 @@ describe('GameEngine — the place is remembered', () => {
 
   test('a corrupt save, or a path that leads nowhere, is a fresh game — not a crash, not half a world', () => {
     for (const text of [
-      '{"version":4,"seed":',
+      '{"version":5,"seed":',
       '{"version":2,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0"}',
       '{"version":3,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0","states":{}}',
+      '{"version":4,"seed":"7F3A-91C2-0B4D-E6A8","path":"0.0.0.0.0.0.0.0","states":{},"coherence":100,"steps":0,"visited":["0","0.0","0.0.0","0.0.0.0","0.0.0.0.0","0.0.0.0.0.0","0.0.0.0.0.0.0","0.0.0.0.0.0.0.0"]}',
       saveText('0.99'),
       saveText('0.0.0.0.0.0.0.0.999'),
       saveText('0.0.0.0.0.0.0.0.0.0.0'),
@@ -555,6 +558,10 @@ describe('GameEngine — the place is remembered', () => {
       saveText('0.0.0.0.0.0.0.0', {}, ['0']),
       saveText('0.0.0.0.0.0.0.0', {}, undefined, { coherence: 101 }),
       saveText('0.0.0.0.0.0.0.0', {}, undefined, { steps: -1 }),
+      saveText('0.0.0.0.0.0.0.0', {}, undefined, {
+        buffer: [{ kind: 'relic', from: '0.0.0.0.0.0.0.0.0.0.0.0.0', key: 'culture|nothing' }],
+      }),
+      saveText('0.0.0.0.0.0.0.0', {}, undefined, { resonant: -1 }),
     ]) {
       const snapshot = engineOn(new MemorySaveStore(text)).snapshot();
       expect(snapshot.world, text).toBeNull();

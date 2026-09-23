@@ -1,19 +1,26 @@
 import { Address } from '#engine/model/Address.ts';
+import type { Fragment } from '#engine/model/Fragment.ts';
+import { FragmentReader } from '#engine/model/FragmentReader.ts';
+import type { Hybrid } from '#engine/model/Hybrid.ts';
 import type { Location } from '#engine/model/Location.ts';
 import { SavedGame } from '#engine/persistence/SavedGame.ts';
 import type { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Player } from './Player.ts';
 
+/** Reads a save's buffer back through the world (stateless). */
+const READER = new FragmentReader();
+
 /**
  * Owns one fact: where the traveller stands — which world, which place in it, the place to come back to
  * after a visit to the title screen — and the traveller's own record of the walk (the `Player`: coherence,
- * steps, the visited path). It changes only through moves that mean something (`begin`, `enter`,
- * `descend`, `move`, `leave`, `toTitle`, `reboot`); a move that cannot be made changes nothing and says so.
- * Every step lands where the chosen place receives travellers (`arrive`), so a corridor puts the traveller
- * on its floor and a door in the first room, the place arrived at does what arriving does there (a floor
- * calls the elevator), and the landing leaves a footprint. What the visited places remember goes into the
- * save with the traveller.
+ * steps, the visited path, the buffer). It changes only through moves that mean something (`begin`, `enter`,
+ * `descend`, `move`, `leave`, `toTitle`, `reboot`, `capture`, `drop`, `merge`); a move that cannot be made
+ * changes nothing and says so. Every step lands where the chosen place receives travellers (`arrive`), so
+ * a corridor puts the traveller on its floor and a door in the first room, the place arrived at does what
+ * arriving does there (a floor calls the elevator), and the landing leaves a footprint. A capture is one
+ * transaction between the place and the buffer: the place hands over only what the buffer takes. What the
+ * visited places remember goes into the save with the traveller.
  */
 export class Journey {
   readonly #registry: LocationRegistry;
@@ -100,6 +107,28 @@ export class Journey {
     return true;
   }
 
+  /** What lies here at `index`, into the buffer (Guide:120); nothing — and the place untouched — when the buffer is full or nothing lies there. */
+  capture(index: number): Fragment | undefined {
+    if (this.#here === undefined || this.#player.buffer().full()) return undefined;
+    const capture = this.#here.capture(index);
+    if (capture === undefined) return undefined;
+    this.#player.capture(capture);
+    return capture.fragment;
+  }
+
+  /** The buffer's fragment at `index`, laid down where the traveller stands (Guide:120-121); nothing when this place takes nothing in or nobody holds that position. */
+  drop(index: number): Fragment | undefined {
+    if (this.#here?.contents() === null || this.#here === undefined) return undefined;
+    const fragment = this.#player.buffer().fragments()[index];
+    if (fragment === undefined || !this.#here.drop(fragment)) return undefined;
+    return this.#player.drop(index);
+  }
+
+  /** Two fragments of the buffer merged into their hybrid, with what a merge gives (Guide:141, 241-243); nothing for a merge the buffer refuses. */
+  merge(first: number, second: number): Hybrid | undefined {
+    return this.#player.merge(first, second);
+  }
+
   /**
    * What zero coherence does (Guide:144-147, TurnProcessor.groovy:94-100): the world is rebuilt from the
    * same seed — everything that lived inside it is undone — and the traveller stands on the starting street
@@ -125,6 +154,11 @@ export class Journey {
       coherence: this.#player.coherence().value(),
       steps: this.#player.steps(),
       visited: this.#player.footprints(),
+      buffer: this.#player
+        .buffer()
+        .fragments()
+        .map((fragment) => fragment.data()),
+      resonant: this.#player.resonantTraces(),
     });
   }
 
@@ -132,10 +166,11 @@ export class Journey {
    * Rebuilds the journey a save describes — only a save this journey could have written: the path leads
    * to a place somebody stands in; the visited path is one a traveller could have walked (every address
    * is a place, each one's parent walked before it) and holds the whole trail; every state belongs to a
-   * visited place, and that place takes it back and would write it again; and every step of the path is
-   * one the place above admits in the state just recalled (no room below a floor at its elevator, no floor
-   * the elevator is not at). Anything else is a corrupt save: nothing is restored, and `saved()` after a
-   * restore is the save itself.
+   * visited place, and that place takes it back and would write it again; every step of the path is one
+   * the place above admits in the state just recalled (no room below a floor at its elevator, no floor the
+   * elevator is not at); and every fragment of the buffer is one the world reads back (a relic from the
+   * room that dealt it, a hybrid from its parts) and the buffer holds them all. Anything else is a corrupt
+   * save: nothing is restored, and `saved()` after a restore is the save itself.
    */
   restore(saved: SavedGame): boolean {
     const universe = this.#registry.universe(saved.seed());
@@ -165,6 +200,8 @@ export class Journey {
       const below = trail[step + 1];
       if (below !== undefined && !above.admits(below)) return false;
     }
+    const buffer = READER.readAll(saved.buffer(), universe);
+    if (buffer === undefined || buffer.length > this.#player.buffer().capacity()) return false;
     this.#seed = saved.seed();
     this.#universe = universe;
     this.#here = place;
@@ -173,6 +210,8 @@ export class Journey {
       coherence: saved.coherence(),
       steps: saved.steps(),
       visited: saved.visited(),
+      buffer,
+      resonant: saved.resonant(),
     });
     return true;
   }
