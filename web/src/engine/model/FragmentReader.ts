@@ -1,9 +1,11 @@
 import { Address } from './Address.ts';
 import type { Fragment } from './Fragment.ts';
+import { HIDDEN_KIND } from './HiddenFrequency.ts';
 import { Hybrid, HYBRID_KIND } from './Hybrid.ts';
 import { KEYSTONE_KIND } from './Keystone.ts';
 import type { Location } from './Location.ts';
 import { RELIC_KIND } from './RelicFragment.ts';
+import { ECHO_KIND } from './SpectralEcho.ts';
 
 type Reading = (
   data: Record<string, unknown>,
@@ -43,12 +45,16 @@ const READINGS: Readonly<Record<string, Reading>> = {
     return one === undefined || other === undefined ? undefined : new Hybrid(one, other);
   },
   [KEYSTONE_KIND]: ({ building }, universe) => placeAt(universe, building)?.keystone(),
+  [HIDDEN_KIND]: ({ from, steps }, universe) =>
+    typeof steps === 'number' ? placeAt(universe, from)?.lottery(steps) : undefined,
+  [ECHO_KIND]: ({ from }, universe) => placeAt(universe, from)?.echo()?.fragment(),
 };
 
 /**
  * Owns one fact: how a fragment's data comes back as a fragment — through the world, never on trust. A
  * relic is asked of the room its data names (that room says what it deals and what it is worth there); a
- * hybrid is its two parts read the same way; a Keystone is asked of the building its data names. Anything
+ * hybrid is its two parts read the same way; a Keystone is asked of the building its data names; a Hidden
+ * Frequency of the room and the step that won it; an echo of its reach. Anything
  * else — a kind nobody reads, a place that is not there, a relic that room never dealt, a Keystone named by
  * a room's address, a field nobody writes — is nothing, and a save that holds it is refused: what comes
  * back must write the very data it was read from.

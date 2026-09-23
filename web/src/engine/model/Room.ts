@@ -5,8 +5,10 @@ import type { Contents } from './Contents.ts';
 import type { Fact } from './Fact.ts';
 import type { Fragment } from './Fragment.ts';
 import { FragmentReader } from './FragmentReader.ts';
+import { Frequency } from './Frequency.ts';
 import { Gematria } from './Gematria.ts';
 import { Glitch } from './Glitch.ts';
+import { HiddenFrequency } from './HiddenFrequency.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
@@ -25,6 +27,10 @@ const GLITCHED = { structure: 0.2, walls: 0.1, lighting: 0.3 } as const;
 const STATIC_KEY = 'static';
 /** Reads dropped fragments back from a memento, through the world (stateless). */
 const READER = new FragmentReader();
+/** The free lottery (Guide:187-188; Room.groovy:71-72): three moves in ten win, one to ten million hertz. */
+const LOTTERY = 'lottery';
+const WIN = 0.3;
+const PRIZE = { min: 1_000_000, max: 9_999_999 };
 /** The scan's WAVE column (ScanCommand.groovy:188-189): resonant, plain, and degraded under an anomaly. */
 const WAVES = { resonant: '≈≈≈', plain: '~~~', degraded: '###' } as const;
 
@@ -205,6 +211,21 @@ export class Room extends Location {
   /** A room lists no places: its rooms are its siblings, walked with forward and back. */
   override listing(): readonly Location[] {
     return [];
+  }
+
+  /**
+   * The free lottery (Guide:186-190; Room.groovy:69-78): on the move that landed here at `steps`, three in ten
+   * a Hidden Frequency worth one to ten million hertz — rolled on the room and the step, so a reload or a
+   * prompt spent standing still never rolls again, and the reader can ask for the same prize.
+   */
+  override lottery(steps: number): Fragment | undefined {
+    const roll = this.seed().branch(LOTTERY).branch(steps);
+    if (!roll.branch('win').probability(WIN)) return undefined;
+    return new HiddenFrequency({
+      from: this.address(),
+      steps,
+      frequency: new Frequency(roll.branch('hertz').range(PRIZE.min, PRIZE.max)),
+    });
   }
 
   /** A scan in a room is the apartment's strata overview (ScanCommand.groovy:46-47). */

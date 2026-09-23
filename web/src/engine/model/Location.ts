@@ -2,6 +2,7 @@ import type { Seed } from '#engine/rng/Seed.ts';
 import { Address } from './Address.ts';
 import type { Capture } from './Capture.ts';
 import type { Contents } from './Contents.ts';
+import type { Echo } from './Echo.ts';
 import type { Era } from './Era.ts';
 import type { Fact } from './Fact.ts';
 import type { Fragment } from './Fragment.ts';
@@ -198,6 +199,17 @@ export abstract class Location {
       throw new Error(`${this.kind().key()} holds things but takes none in (${fragment.name()})`);
     }
     return false;
+  }
+
+  /** The free lottery (Guide:186-190): what a room hands over on the move that landed here at `steps`; nothing for every other kind. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default rolls nothing; a room does
+  lottery(_steps: number): Fragment | undefined {
+    return undefined;
+  }
+
+  /** The echo this place holds and the hunt for it (Guide:192-195); nothing for every kind but a Null Reach. */
+  echo(): Echo | undefined {
+    return undefined;
   }
 
   /** A capture happened here: the floor above hears of it and tells its building (the ritual, Guide:263-266); nothing above a building. */
