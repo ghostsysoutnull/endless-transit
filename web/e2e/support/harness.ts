@@ -52,7 +52,7 @@ export function trailOf(path: string | null): string[] {
   return steps.map((_, depth) => steps.slice(0, depth + 1).join('.'));
 }
 
-/** A v5 save as the game writes one: a fresh traveller who has walked the trail, unless a field is set on purpose. */
+/** A v6 save as the game writes one: a fresh traveller who has walked the trail, unless a field is set on purpose. */
 export function saveText(
   seed: string,
   path: string | null,
@@ -66,7 +66,7 @@ export function saveText(
   } = {},
 ): string {
   return JSON.stringify({
-    version: 5,
+    version: 6,
     seed,
     path,
     states,

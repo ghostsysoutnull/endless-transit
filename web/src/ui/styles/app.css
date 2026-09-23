@@ -1220,17 +1220,22 @@ body {
     grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
     /* The list may be far taller than the panel beside it: the panel and the dock keep their own height
        and one filler row takes the rest — otherwise the grid pushes the way out below the fold. */
-    grid-template-rows: auto auto auto auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto auto auto auto 1fr auto;
     grid-template-areas:
       'bar bar'
       'hud hud'
       'cap side'
+      'scan side'
       'moves side'
       'dock side'
       'debug side'
       '. side'
       'build build';
     align-items: start;
+  }
+
+  .world .scan {
+    grid-area: scan;
   }
 
   .world .bar {

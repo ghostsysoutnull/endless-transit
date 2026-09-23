@@ -137,7 +137,10 @@ export class HudPresenter implements Presenter<HudVM> {
               heading: snapshot.scan.title,
               notes: snapshot.scan.notes,
               rows: snapshot.scan.rows.map((row) => ({
-                cells: row.cells.map((cell) => ({ key: cell.key, label: cell.label, value: cell.value })),
+                // A reading with nothing to say (a door without words) shows no bare label.
+                cells: row.cells
+                  .filter((cell) => cell.value !== '')
+                  .map((cell) => ({ key: cell.key, label: cell.label, value: cell.value })),
                 mark: row.current ? SCAN_MARK : null,
                 note: row.note,
               })),

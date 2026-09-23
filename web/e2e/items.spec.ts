@@ -54,11 +54,12 @@ test('take an object: every tile is a button; the status names the frequency; th
     path: test.info().outputPath(`${test.info().project.name}-1a-room-take-tiles.png`),
   });
 
+  // Step 1 of this room wins the free lottery (Guide:187; Void.test pins the roll): the prize lands after the relic.
   await tapOption(page, 'capture:0', hasTouch);
   await expect(page.getByTestId('status')).toHaveText(
-    'Captured plasma coil with reliquary box. Frequency: 3194 Hz. Harmonic resonance: +10%.',
+    'Captured plasma coil with reliquary box. Frequency: 3194 Hz. Harmonic resonance: +10%. SPECTRAL_DEVIATION: Extracted Frequency 3493777 Hz.',
   );
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('01/16');
+  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('02/16');
   await expect(stat(page, 'PULSE_TRAVERSAL')).toHaveText('1');
   await expect(page.getByTestId('coherence')).toHaveText('99%');
   await expect(page.locator('button.tile')).toHaveCount(3);
@@ -75,23 +76,26 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
   await plant(page, saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }));
   await page.goto('./?debug');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await tapOption(page, 'capture:0', hasTouch);
+  await tapOption(page, 'capture:0', hasTouch); // step 1 wins the lottery too: [3194, the prize]
   await tapOption(page, 'capture:0', hasTouch);
   await tapOption(page, 'debug:integrity:40', hasTouch);
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('02/16');
+  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('03/16');
 
   await press(page, /^buffer$/i, hasTouch);
   await expect(page.getByTestId('buffer-heading')).toHaveText('[QUANTUM_TRACE_BUFFER_SYNC...]');
-  await expect(page.getByTestId('buffer-count')).toHaveText('02/16 FRAGMENTS');
+  await expect(page.getByTestId('buffer-count')).toHaveText('03/16 FRAGMENTS');
   await expect(page.getByTestId('resonant-traces')).toHaveText('2');
   const rows = page.locator('.frag');
-  await expect(rows).toHaveCount(2);
+  await expect(rows).toHaveCount(3);
   await expect(rows.nth(0)).toContainText('3194Hz');
   await expect(rows.nth(0)).toContainText('[STABLE]');
   await expect(rows.nth(0)).toContainText('plasma coil with reliquary box');
   await expect(rows.nth(0).locator('.badge')).toHaveText('[RESONANT]');
-  await expect(rows.nth(1)).toContainText('3577Hz');
-  await expect(rows.nth(1)).toContainText('[SHIFTING]');
+  await expect(rows.nth(1)).toContainText('3493777Hz');
+  await expect(rows.nth(1)).toContainText('Hidden Frequency');
+  await expect(rows.nth(1).locator('.badge')).toHaveCount(0);
+  await expect(rows.nth(2)).toContainText('3577Hz');
+  await expect(rows.nth(2)).toContainText('[SHIFTING]');
   await expect(page.getByRole('button', { name: /back to reality/i })).toBeInViewport({ ratio: 1 });
   await expectTouchable(page, 'buffer with two fragments');
   await shoot(page, '2-buffer');
@@ -99,41 +103,41 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
   await tapOption(page, 'pick:0', hasTouch);
   await expect(rows.nth(0)).toHaveClass(/selected/);
   await expect(rows.nth(0).locator('button[data-option="pick:0"]')).toHaveText(/UNSELECT/);
-  await expect(rows.nth(1).locator('button[data-option="pick:1"]')).toHaveText(/MERGE/);
+  await expect(rows.nth(2).locator('button[data-option="pick:2"]')).toHaveText(/MERGE/);
   await shoot(page, '2a-buffer-selected');
-  await tapOption(page, 'pick:1', hasTouch);
+  await tapOption(page, 'pick:2', hasTouch);
   await expect(page.getByTestId('status')).toHaveText(
     'Synthesis complete: plasma-brass Hybrid (6771 Hz). Coherence +15.',
   );
-  await expect(rows).toHaveCount(1);
-  await expect(rows.nth(0)).toContainText('6771Hz');
-  await expect(rows.nth(0)).toContainText('plasma-brass Hybrid');
-  await expect(page.getByTestId('buffer-count')).toHaveText('01/16 FRAGMENTS');
+  await expect(rows).toHaveCount(2);
+  await expect(rows.nth(1)).toContainText('6771Hz');
+  await expect(rows.nth(1)).toContainText('plasma-brass Hybrid');
+  await expect(page.getByTestId('buffer-count')).toHaveText('02/16 FRAGMENTS');
   await shoot(page, '2b-buffer-merged');
 
   await press(page, /back to reality/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(page.getByTestId('coherence')).toHaveText('54%'); // 40, the buffer's own cost, fifteen back
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('01/16');
+  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('02/16');
 
   await press(page, /go forward/i, hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('BAROQUE MAINTENANCE BAY');
   await expect(page.locator('button.tile')).toHaveCount(4);
   await press(page, /^buffer$/i, hasTouch);
-  await tapOption(page, 'drop:0', hasTouch);
+  await tapOption(page, 'drop:1', hasTouch);
   await expect(page.getByTestId('status')).toHaveText('Dropped plasma-brass Hybrid here.');
-  await expect(page.getByTestId('buffer-empty')).toHaveText('(No spectral traces detected in local buffer)');
-  await expect(page.getByTestId('buffer-count')).toHaveText('00/16 FRAGMENTS');
+  await expect(page.getByTestId('buffer-empty')).toHaveCount(0); // the prize stays
+  await expect(page.getByTestId('buffer-count')).toHaveText('01/16 FRAGMENTS');
   await press(page, /back to reality/i, hasTouch);
   await expect(page.locator('button.tile')).toHaveCount(5);
   await expect(page.locator('button.tile').last()).toHaveText(/plasma-brass Hybrid/);
 
-  // A reload finds the hybrid on the floor, the buffer empty, the coherence and the tally kept.
+  // A reload finds the hybrid on the floor, the prize alone in the buffer, the coherence and the tally kept.
   await page.reload();
   await expect(page.getByTestId('place-name')).toHaveText('BAROQUE MAINTENANCE BAY');
   await expect(page.locator('button.tile')).toHaveCount(5);
   await expect(page.locator('button.tile').last()).toHaveText(/plasma-brass Hybrid/);
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('00/16');
+  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('01/16');
   await expect(page.getByTestId('coherence')).toHaveText('52%'); // 54, go forward, the buffer
   await expect(page.getByTestId('telemetry')).toContainText('> Resonant traces: 2');
   await shoot(page, '3-room-dropped');
@@ -146,7 +150,7 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
   await expect(page.locator('button.tile')).toHaveCount(2);
   await page.reload();
   await expect(page.locator('button.tile')).toHaveCount(2);
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('01/16');
+  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('02/16');
   expect(problems).toEqual([]);
 });
 
@@ -207,24 +211,24 @@ test('the recap lists the buffer and the tally', async ({ page, hasTouch }) => {
   expect(problems).toEqual([]);
 });
 
-test('on a desktop, 1 takes, I opens the buffer, 1 and 2 merge, B goes back', async ({ page, hasTouch }) => {
+test('on a desktop, 1 takes, I opens the buffer, 1 and 3 merge, B goes back', async ({ page, hasTouch }) => {
   test.skip(hasTouch, 'keys are a desktop extra');
   const problems = watchForErrors(page);
   await plant(page, saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }));
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await page.keyboard.press('1');
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('01/16');
-  await page.keyboard.press('1');
+  await page.keyboard.press('1'); // step 1 wins the lottery: two fragments
   await expect(stat(page, 'TRACE_BUFFER')).toHaveText('02/16');
+  await page.keyboard.press('1');
+  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('03/16');
   await page.keyboard.press('i');
   await expect(page.getByTestId('buffer-heading')).toBeVisible();
   await page.keyboard.press('1');
-  await page.keyboard.press('2');
-  await expect(page.locator('.frag')).toHaveCount(1);
+  await page.keyboard.press('3');
+  await expect(page.locator('.frag')).toHaveCount(2);
   await page.keyboard.press('b');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('01/16');
+  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('02/16');
   expect(problems).toEqual([]);
 });
 
