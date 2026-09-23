@@ -25,7 +25,7 @@ type Slot = 'pane' | 'map' | 'trace';
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again. The
  * dock folds after `fold.after` buttons behind one MORE button — a toggle of this view, not of the game;
- * it survives a render and resets with the screen. The drawn map and trace are canvases mounted into host
+ * it survives a render and the trip to another screen, so the way back finds the button it left. The drawn map and trace are canvases mounted into host
  * elements the template keeps alive (`CanvasSlots`); their words sit beside them for a reader.
  */
 export class HudView implements View<HudVM> {
@@ -56,7 +56,6 @@ export class HudView implements View<HudVM> {
     if (this.#container !== undefined) render(nothing, this.#container);
     this.#container = undefined;
     this.#vm = undefined;
-    this.#more = false;
   }
 
   #host(slot: Slot): HTMLElement | null {

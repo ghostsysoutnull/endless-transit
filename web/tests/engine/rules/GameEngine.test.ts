@@ -146,8 +146,8 @@ describe('GameEngine — walking the big world', () => {
       'leave',
       'scan',
       'map',
-      'trace',
       'buffer',
+      'trace',
       'to-title',
       'recap',
     ]);
@@ -207,8 +207,8 @@ describe('GameEngine — walking the big world', () => {
     expect(snapshot.options.slice(-6)).toEqual([
       system('scan', 's', 'Scan'),
       system('map', 'm', 'Map'),
-      system('trace', '', 'Trace'),
       system('buffer', 'i', 'Buffer'),
+      system('trace', '', 'Trace'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
     ]);
@@ -341,8 +341,8 @@ describe('GameEngine — walking the big world', () => {
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
       system('scan', 's', 'Scan'),
       system('map', 'm', 'Map'),
-      system('trace', '', 'Trace'),
       system('buffer', 'i', 'Buffer'),
+      system('trace', '', 'Trace'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
     ]);
@@ -448,8 +448,8 @@ describe('GameEngine — walking the big world', () => {
       { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
       system('scan', 's', 'Scan'),
       system('map', 'm', 'Map'),
-      system('trace', '', 'Trace'),
       system('buffer', 'i', 'Buffer'),
+      system('trace', '', 'Trace'),
       system('to-title', 't', 'Title screen'),
       system('recap', 'q', 'End session'),
     ]);
@@ -459,8 +459,8 @@ describe('GameEngine — walking the big world', () => {
       'move:back',
       'scan',
       'map',
-      'trace',
       'buffer',
+      'trace',
       'to-title',
       'recap',
     ]);

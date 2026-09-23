@@ -97,7 +97,7 @@ test('a door tells its full appearance under its name on the corridor list; one 
   expect(problems).toEqual([]);
 });
 
-test('on a desktop the right column is filled on the elevator and in a room: the telemetry pane, and the room’s objects; nothing of it outdoors', async ({
+test('on a desktop the right column is filled on the elevator and in a room: the telemetry pane, and the room’s objects; the map outdoors', async ({
   page,
   isMobile,
 }) => {
@@ -124,7 +124,9 @@ test('on a desktop the right column is filled on the elevator and in a room: the
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await expect(page.getByTestId('telemetry')).toHaveCount(0);
   await expect(page.getByTestId('objects')).toHaveCount(0);
-  await expect(page.locator('.aside')).toHaveCount(0);
+  // Outdoors the pane is the drawn map (I08; Guide:339), still to the right of the narrative.
+  await expect(page.getByTestId('pane-map')).toBeVisible();
+  expect(await rightOf(page, '.aside', '.cap')).toBe(true);
   expect(problems).toEqual([]);
 });
 

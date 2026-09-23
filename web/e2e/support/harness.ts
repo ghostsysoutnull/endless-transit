@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /** Collects everything the page complains about; a test ends by asserting it stayed empty. */
 export function watchForErrors(page: Page): string[] {
@@ -14,14 +14,24 @@ export function watchForErrors(page: Page): string[] {
   return problems;
 }
 
+/** The dock folds after four buttons (I08): a button that is not on the screen may be behind MORE, as it is for a player. */
+async function unfold(page: Page, button: Locator, hasTouch: boolean): Promise<void> {
+  if ((await button.count()) > 0) return;
+  const more = page.getByTestId('more');
+  if ((await more.count()) === 0 || (await more.getAttribute('aria-expanded')) === 'true') return;
+  await (hasTouch ? more.tap() : more.click());
+}
+
 /** Tap on a touch device, click on a desktop — what a player's hand would do. */
 export async function press(page: Page, name: RegExp, hasTouch: boolean): Promise<void> {
   const button = page.getByRole('button', { name });
+  await unfold(page, button, hasTouch);
   await (hasTouch ? button.tap() : button.click());
 }
 
 export async function tapOption(page: Page, id: string, hasTouch: boolean): Promise<void> {
   const button = page.locator(`button[data-option="${id}"]`);
+  await unfold(page, button, hasTouch);
   await (hasTouch ? button.tap() : button.click());
 }
 

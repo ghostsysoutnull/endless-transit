@@ -305,8 +305,8 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     expect(system.map((option) => `${option.id}:${option.key}:${option.label}`)).toEqual([
       'scan:s:Scan',
       'map:m:Map',
-      'trace::Trace',
       'buffer:i:Buffer',
+      'trace::Trace',
       'to-title:t:Title screen',
       'recap:q:End session',
     ]);

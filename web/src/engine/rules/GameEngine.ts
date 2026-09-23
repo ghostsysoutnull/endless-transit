@@ -224,6 +224,15 @@ export class GameEngine {
         },
       },
       {
+        keys: ['i'],
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption(BUFFER, 'i', 'Buffer')]),
+        run: () => {
+          this.#prompt = new BufferPrompt(this.#journey);
+          return '';
+        },
+      },
+      {
         keys: [],
         turn: GLOBAL,
         options: () => (this.#atTitle() ? [] : [systemOption(TRACE, '', 'Trace')]),
@@ -241,15 +250,6 @@ export class GameEngine {
             })),
           };
           return `NEURAL_LATTICE_TRACE_INITIATED: ${String(trail.length)} levels from the universe.`;
-        },
-      },
-      {
-        keys: ['i'],
-        turn: GLOBAL,
-        options: () => (this.#atTitle() ? [] : [systemOption(BUFFER, 'i', 'Buffer')]),
-        run: () => {
-          this.#prompt = new BufferPrompt(this.#journey);
-          return '';
         },
       },
       {
