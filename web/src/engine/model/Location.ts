@@ -1,8 +1,10 @@
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Address } from './Address.ts';
+import type { Capture } from './Capture.ts';
 import type { Contents } from './Contents.ts';
 import type { Era } from './Era.ts';
 import type { Fact } from './Fact.ts';
+import type { Fragment } from './Fragment.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
@@ -153,6 +155,32 @@ export abstract class Location {
   /** What lies here — relics and furniture — for a kind that holds things (a room); nothing for every other kind. */
   contents(): Contents | null {
     return null;
+  }
+
+  /** The fragment a capture of relic `key` here yields — what the room dealt, at what it is worth here; nothing for every other kind or a relic not dealt here. */
+  findRelic(key: string): Fragment | undefined {
+    return this.contents()?.objects.find((each) => each.key() === key);
+  }
+
+  /** Takes what lies here at `index` out of the place; nothing when nothing lies there or the kind holds nothing. */
+  capture(index: number): Capture | undefined {
+    if (this.contents()?.objects[index] !== undefined) {
+      throw new Error(`${this.kind().key()} holds things but does not hand them over`);
+    }
+    return undefined;
+  }
+
+  /** Lays a fragment down here, to be taken again; false when the kind holds nothing. */
+  drop(fragment: Fragment): boolean {
+    if (this.contents() !== null) {
+      throw new Error(`${this.kind().key()} holds things but takes none in (${fragment.name()})`);
+    }
+    return false;
+  }
+
+  /** The universe this place is in — the top of its trail. */
+  root(): Location {
+    return this.parent()?.root() ?? this;
   }
 
   /** Whether this place is inside a building — where the HUD's map gives way to telemetry (TelemetryComponent.groovy:48-55). */
