@@ -43,10 +43,11 @@ const RECAP: GameSnapshot = {
     telemetry: null,
   },
   player: { coherence: 61, band: 'degraded', steps: 33 },
+  buffer: { size: 2, capacity: 16, resonant: 1, fragments: [] },
   prompt: {
     id: 'recap',
     outcome: 'expedition',
-    figures: { locus: '0.0.0.0.0.0.0.0.0', steps: '33', places: '24' },
+    figures: { locus: '0.0.0.0.0.0.0.0.0', steps: '33', places: '24', buffer: '2', resonant: '1' },
   },
   options: [option('resume', 'b', 'Resume'), option('end-session', 'q', 'End session')],
   message: '',
@@ -70,6 +71,8 @@ describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRec
       { label: 'FINAL_LOCUS', value: '0.0.0.0.0.0.0.0.0' },
       { label: 'PULSE_TRAVERSAL', value: '33 steps' },
       { label: 'CELLS_MAPPED', value: '24 footprints' },
+      { label: 'BUFFER_DENSITY', value: '2 spectral fragments' },
+      { label: 'RESONANT_TRACES', value: '1 resonant' },
     ]);
     expect(vm.steps).toEqual([]);
     expect(vm.closing).toBe('Expedition successful. Trace synchronized to substrate.');

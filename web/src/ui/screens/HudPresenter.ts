@@ -48,6 +48,7 @@ export class HudPresenter implements Presenter<HudVM> {
     const dock = snapshot.options
       .filter((option) => option.role === 'return' || option.role === 'system')
       .map((option) => this.#docked(option));
+    const takes = snapshot.options.filter((option) => option.role === 'take');
     const debug = snapshot.options
       .filter((option) => option.role === 'debug')
       .map((option) => this.#docked(option));
@@ -68,6 +69,10 @@ export class HudPresenter implements Presenter<HudVM> {
       },
       stats: [
         { label: 'PULSE_TRAVERSAL', value: String(player.steps) },
+        {
+          label: 'TRACE_BUFFER',
+          value: `${pad(snapshot.buffer?.size ?? 0)}/${pad(snapshot.buffer?.capacity ?? 0)}`,
+        },
         { label: 'HOP_DENSITY', value: pad(place.depth) },
         ...(place.position === null
           ? []
@@ -94,7 +99,7 @@ export class HudPresenter implements Presenter<HudVM> {
         rows: this.#rows(place),
         diagnostic: place.status,
       },
-      aside: this.#aside(place),
+      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0),
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
       moves,
@@ -105,6 +110,7 @@ export class HudPresenter implements Presenter<HudVM> {
       dock,
       debug,
       options: [
+        ...takes.filter((take) => !take.sealed).map((take) => this.#take(take)),
         ...rows
           .filter((row) => !row.sealed)
           .map((row) => ({ id: row.id, key: row.key, label: row.label, opposite: '' })),
@@ -142,9 +148,14 @@ export class HudPresenter implements Presenter<HudVM> {
     ];
   }
 
-  /** The objects as tiles when the place is one that holds things; the telemetry block when it is indoors. */
-  #aside(place: PlaceSummary): AsideVM {
+  /**
+   * The objects as tiles when the place is one that holds things — each with the take the engine offers
+   * for its number, none while the buffer is full (the takes come sealed) — and the telemetry block when it
+   * is indoors.
+   */
+  #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number): AsideVM {
     const contents = place.contents;
+    const full = takes.some((take) => take.sealed);
     return {
       objects:
         contents === null
@@ -153,7 +164,17 @@ export class HudPresenter implements Presenter<HudVM> {
               label: 'In this room',
               heading: 'IN THIS ROOM',
               empty: contents.objects.length === 0 ? 'No objects detected.' : '',
-              tiles: contents.objects.map((relic) => ({ key: relic.key, name: relic.name })),
+              note: full ? 'BUFFER FULL — merge or drop a fragment to take more.' : '',
+              tiles: contents.objects.map((relic, index) => {
+                const ordinal = String(index + 1);
+                const take = takes.find((each) => each.ordinal === ordinal && !each.sealed);
+                return {
+                  key: relic.key,
+                  name: relic.name,
+                  ordinal,
+                  action: take === undefined ? null : this.#take(take),
+                };
+              }),
             },
       telemetry:
         place.telemetry === null
@@ -166,7 +187,10 @@ export class HudPresenter implements Presenter<HudVM> {
                 heading: '[QUANTUM_SPECTROGRAM]',
                 bars: place.telemetry.spectrogram.map((height) => BAR.repeat(height)),
               },
-              logs: { heading: '[DECODE_LOGS]', lines: [`> Trace: ${place.address}`] },
+              logs: {
+                heading: '[DECODE_LOGS]',
+                lines: [`> Trace: ${place.address}`, `> Resonant traces: ${String(resonant)}`],
+              },
             },
     };
   }
@@ -184,6 +208,11 @@ export class HudPresenter implements Presenter<HudVM> {
       mark: option.current ? CURRENT_MARK : null,
       seen: option.visited ? SEEN_MARK : null,
     };
+  }
+
+  /** A take keeps the engine's words: the tile shows the object's name, the button is the take. */
+  #take(option: GameOption): OptionVM {
+    return { id: option.id, key: option.key.toUpperCase(), label: option.label, opposite: '' };
   }
 
   #docked(option: GameOption): OptionVM {

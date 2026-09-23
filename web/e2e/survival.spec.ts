@@ -259,8 +259,20 @@ test('the recap: twenty places visited is the full ending with its figures', asy
   await press(page, /end session/i, hasTouch);
   await expect(page.getByTestId('recap-heading')).toHaveText('[SESSION_RECAP_INITIALIZED]');
   const figures = page.getByTestId('figures');
-  await expect(figures.locator('dt')).toHaveText(['FINAL_LOCUS', 'PULSE_TRAVERSAL', 'CELLS_MAPPED']);
-  await expect(figures.locator('dd')).toHaveText([STREET, '41 steps', '20 footprints']);
+  await expect(figures.locator('dt')).toHaveText([
+    'FINAL_LOCUS',
+    'PULSE_TRAVERSAL',
+    'CELLS_MAPPED',
+    'BUFFER_DENSITY',
+    'RESONANT_TRACES',
+  ]);
+  await expect(figures.locator('dd')).toHaveText([
+    STREET,
+    '41 steps',
+    '20 footprints',
+    '0 spectral fragments',
+    '0 resonant',
+  ]);
   await expect(page.getByTestId('shutdown')).toHaveCount(0);
   await expect(page.getByTestId('closing')).toHaveText(
     'Expedition successful. Trace synchronized to substrate.',

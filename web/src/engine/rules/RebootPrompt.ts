@@ -2,6 +2,7 @@ import type { GameOption } from './GameOption.ts';
 import type { Journey } from './Journey.ts';
 import type { Prompt } from './Prompt.ts';
 import type { PromptSummary } from './PromptSummary.ts';
+import type { Reply } from './Reply.ts';
 import { systemOption } from './SystemOption.ts';
 
 export const REBOOT = 'reboot';
@@ -26,9 +27,12 @@ export class RebootPrompt implements Prompt {
     return [systemOption(REBOOT, '', 'Rebuild')];
   }
 
-  answer(optionId: string): string | undefined {
+  answer(optionId: string): Reply | undefined {
     if (optionId !== REBOOT) return undefined;
     this.#journey.reboot();
-    return `Substrate rebuilt. Coherence ${String(this.#journey.player().coherence().value())}.`;
+    return {
+      message: `Substrate rebuilt. Coherence ${String(this.#journey.player().coherence().value())}.`,
+      done: true,
+    };
   }
 }

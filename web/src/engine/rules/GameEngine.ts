@@ -3,6 +3,8 @@ import type { SaveStore } from '#engine/persistence/SaveStore.ts';
 import { SavedGame } from '#engine/persistence/SavedGame.ts';
 import type { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import type { EntropySource } from '#engine/rng/EntropySource.ts';
+import { BUFFER, BufferPrompt } from './BufferPrompt.ts';
+import type { BufferSummary } from './BufferSummary.ts';
 import { Coherence } from './Coherence.ts';
 import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
@@ -22,6 +24,7 @@ import { FREE, GLOBAL, STEP } from './Turn.ts';
 
 const TRAVEL = 'enter:';
 const MOVE = 'move:';
+const CAPTURE = 'capture:';
 const DEBUG_INTEGRITY = 'debug:integrity:';
 /** The keyboard extra of each move a place may offer (Guide:112-115); a move with no entry here gets none. */
 const MOVE_KEYS: Readonly<Record<string, string>> = {
@@ -41,8 +44,10 @@ const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.cha
  * output device, nothing blocks on input. Owns the registry of commands — a new thing the player can do
  * is a new registry entry, not a new branch in `step` — and the turn: every prompt in the world costs
  * coherence before the command runs (Guide:133-135), a step counts, and zero coherence is a pending prompt
- * (the reboot), never a blocking read. Saves the journey after every step. In debug mode (Decision 8) the
- * INTEGRITY tool is on offer — one option per value of `Coherence.edges()` (Guide:441); nowhere else.
+ * (the reboot), never a blocking read. Saves the journey after every step and after every answer to a
+ * prompt. In a room, one take per object (a step); BUFFER opens the buffer screen (a global command) whose
+ * answers — pick, merge, drop, close — cost nothing. In debug mode (Decision 8) the INTEGRITY tool is on
+ * offer — one option per value of `Coherence.edges()` (Guide:441); nowhere else.
  */
 export class GameEngine {
   readonly #journey: Journey;
@@ -89,6 +94,19 @@ export class GameEngine {
       {
         keys: [],
         turn: STEP,
+        options: () => this.#takeOptions(),
+        run: (optionId) => {
+          const player = this.#journey.player();
+          const counted = player.resonantTraces();
+          const fragment = this.#journey.capture(Number(optionId.slice(CAPTURE.length)));
+          if (fragment === undefined) return this.#message;
+          const resonance = player.resonantTraces() > counted ? ' Harmonic resonance: +10%.' : '';
+          return `Captured ${fragment.name()}. Frequency: ${String(fragment.frequency().hertz())} Hz.${resonance}`;
+        },
+      },
+      {
+        keys: [],
+        turn: STEP,
         options: () => this.#travelOptions(),
         run: (optionId) => {
           const moved = this.#journey.descend(Number(optionId.slice(TRAVEL.length)));
@@ -117,6 +135,15 @@ export class GameEngine {
           return [{ ...systemOption('leave', 'l', here.leaveLabel()), role: 'return' }];
         },
         run: () => this.#moved(this.#journey.leave(), `Returned to ${this.#journey.here()?.name() ?? ''}.`),
+      },
+      {
+        keys: ['i'],
+        turn: GLOBAL,
+        options: () => (this.#atTitle() ? [] : [systemOption(BUFFER, 'i', 'Buffer')]),
+        run: () => {
+          this.#prompt = new BufferPrompt(this.#journey);
+          return '';
+        },
       },
       {
         keys: ['t'],
@@ -164,10 +191,10 @@ export class GameEngine {
   step(optionId: string): GameSnapshot {
     const prompt = this.#prompt;
     if (prompt !== undefined) {
-      const message = prompt.answer(optionId);
-      if (message !== undefined) {
-        this.#prompt = undefined;
-        this.#message = message;
+      const reply = prompt.answer(optionId);
+      if (reply !== undefined) {
+        if (reply.done) this.#prompt = undefined;
+        this.#message = reply.message;
         this.#save();
       }
       return this.snapshot();
@@ -205,6 +232,7 @@ export class GameEngine {
         here === undefined
           ? null
           : { coherence: player.coherence().value(), band: player.coherence().band(), steps: player.steps() },
+      buffer: here === undefined ? null : this.#bufferOf(player),
       prompt: this.#prompt?.summary() ?? null,
       options: this.#prompt?.options() ?? this.#commands.flatMap((entry) => entry.options()),
       message: this.#message,
@@ -275,6 +303,28 @@ export class GameEngine {
     }));
   }
 
+  /**
+   * One take per object lying here, in the room's order, keyed by the digits (the old `t` menu's numbers,
+   * Guide:120); listed sealed while the buffer is full — shown, not tappable — so the room still reads whole.
+   */
+  #takeOptions(): readonly GameOption[] {
+    const here = this.#journey.here();
+    const contents = here?.contents();
+    if (contents === undefined || contents === null) return [];
+    const full = this.#journey.player().buffer().full();
+    return contents.objects.map((fragment, index) => ({
+      ...systemOption(
+        `${CAPTURE}${String(index)}`,
+        full ? '' : (DIGITS[index] ?? ''),
+        `Take ${fragment.name()}`,
+      ),
+      place: fragment.name(),
+      role: 'take',
+      sealed: full,
+      ordinal: String(index + 1),
+    }));
+  }
+
   /** One option per move the place offers, with the key the Guide gives it and the option that undoes it. */
   #moveOptions(): readonly GameOption[] {
     const here = this.#journey.here();
@@ -312,6 +362,21 @@ export class GameEngine {
       childrenHeading: here.childrenHeading(),
       contents: this.#contentsOf(here),
       telemetry: this.#telemetry.of(here, frame),
+    };
+  }
+
+  #bufferOf(player: Player): BufferSummary {
+    const buffer = player.buffer();
+    return {
+      size: buffer.size(),
+      capacity: buffer.capacity(),
+      resonant: player.resonantTraces(),
+      fragments: buffer.fragments().map((fragment) => ({
+        key: fragment.key(),
+        name: fragment.name(),
+        hertz: fragment.frequency().hertz(),
+        resonant: fragment.resonant(),
+      })),
     };
   }
 

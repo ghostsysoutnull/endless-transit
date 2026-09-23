@@ -28,6 +28,7 @@ describe('TitlePresenter.toViewModel', () => {
       world: null,
       place: null,
       player: null,
+      buffer: null,
       prompt: null,
       options: [option('new-world', 'n', 'New world')],
       message: '',
@@ -44,6 +45,7 @@ describe('TitlePresenter.toViewModel', () => {
       world: { seed: '1111-1111-2222-2222', name: 'Hollow Reach' },
       place: null,
       player: null,
+      buffer: null,
       prompt: null,
       options: [option('reroll', 'r', 'Re-roll')],
       message: 'World 1111-1111-2222-2222 drawn.',
@@ -64,6 +66,7 @@ describe('TitlePresenter.toViewModel', () => {
       world: null,
       place: null,
       player: null,
+      buffer: null,
       prompt: null,
       options: [],
       message: '',
@@ -78,6 +81,7 @@ describe('TitlePresenter.toViewModel', () => {
         world: null,
         place: null,
         player: null,
+        buffer: null,
         prompt: null,
         options: [],
         message: '',
@@ -88,6 +92,7 @@ describe('TitlePresenter.toViewModel', () => {
         world: null,
         place: null,
         player: null,
+        buffer: null,
         prompt: null,
         options: [],
         message: '',
@@ -96,7 +101,15 @@ describe('TitlePresenter.toViewModel', () => {
   });
 
   test('the title is the screen of a snapshot without a place — and only of that one', () => {
-    const atTitle = { world: null, place: null, player: null, prompt: null, options: [], message: '' };
+    const atTitle = {
+      world: null,
+      place: null,
+      player: null,
+      buffer: null,
+      prompt: null,
+      options: [],
+      message: '',
+    };
     expect(presenter.accepts(atTitle)).toBe(true);
     expect(presenter.toViewModel(atTitle).scene).toBe('title');
     const place = {
@@ -126,6 +139,7 @@ describe('TitlePresenter.toViewModel', () => {
       world: null,
       place: null,
       player: null,
+      buffer: null,
       prompt: null,
       options: [],
       message: '',

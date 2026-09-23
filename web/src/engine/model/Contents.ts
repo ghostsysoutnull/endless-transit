@@ -1,7 +1,7 @@
-import type { Relic } from './Relic.ts';
+import type { Fragment } from './Fragment.ts';
 
-/** What a place that holds things holds: its relics and its furniture. A kind that holds nothing answers no Contents at all. */
+/** What a place that holds things holds: what can be taken, and what is only furniture. */
 export interface Contents {
-  readonly objects: readonly Relic[];
+  readonly objects: readonly Fragment[];
   readonly furniture: readonly string[];
 }

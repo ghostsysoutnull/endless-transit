@@ -12,6 +12,8 @@ import { ConsoleWarningSink } from '#platform/ConsoleWarningSink.ts';
 import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { Masthead } from '#ui/Masthead.ts';
+import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
+import { BufferView } from '#ui/screens/BufferView.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { HudView } from '#ui/screens/HudView.ts';
 import { RebootPresenter } from '#ui/screens/RebootPresenter.ts';
@@ -40,6 +42,7 @@ const masthead = new Masthead(__ET_BUILD__);
 new Shell(engine, [
   new ScreenStage(new RebootPresenter(masthead), new RebootView()),
   new ScreenStage(new RecapPresenter(masthead), new RecapView()),
+  new ScreenStage(new BufferPresenter(masthead), new BufferView()),
   new ScreenStage(new TitlePresenter(masthead), new TitleView()),
   new ScreenStage(new HudPresenter(masthead), new HudView()),
 ]).start(container);

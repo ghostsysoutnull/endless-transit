@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { Address } from '#engine/model/Address.ts';
+import type { FragmentData } from '#engine/model/Fragment.ts';
 import { SavedGame } from '#engine/persistence/SavedGame.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { Journey } from '#engine/rules/Journey.ts';
@@ -407,6 +408,171 @@ describe('Journey — where the traveller stands', () => {
       expect(trip.player().coherence().value(), what).toBe(traveller.coherence ?? 100);
       expect(trip.player().steps(), what).toBe(traveller.steps ?? 0);
     }
+  });
+
+  test('capture, drop and merge are moves of the journey: the room hands over only what the buffer takes, a drop lies where the traveller stands, and all of it rides in the save (Guide:120-122, 365)', () => {
+    const trip = inTheFirstRoom();
+    const room = must(trip.here());
+    expect(room.contents()?.objects).toHaveLength(4);
+    const first = must(trip.capture(0));
+    expect(first.name()).toBe('plasma coil with reliquary box');
+    expect(first.frequency().hertz()).toBe(3194);
+    expect(trip.player().buffer().fragments()).toEqual([first]);
+    expect(trip.player().resonantTraces()).toBe(1);
+    expect(room.contents()?.objects.map((each) => each.name())).not.toContain(first.name());
+    expect(trip.capture(9)).toBeUndefined();
+    const second = must(trip.capture(0));
+    expect(second.name()).toBe('brass censer fused to laser cutter');
+    expect(trip.player().resonantTraces()).toBe(2); // both fresh, both in a matching room
+    expect(trip.merge(0, 0)).toBeUndefined();
+    const hybrid = must(trip.merge(0, 1));
+    expect(hybrid.name()).toBe('plasma-brass Hybrid');
+    expect(hybrid.frequency().hertz()).toBe(3194 + 3577);
+    expect(trip.player().buffer().fragments()).toEqual([hybrid]);
+    expect(trip.move('forward')).toBe(true);
+    expect(trip.drop(0)).toBe(hybrid);
+    expect(trip.drop(0)).toBeUndefined();
+    expect(trip.here()?.contents()?.objects.at(-1)).toBe(hybrid);
+    expect(trip.player().buffer().size()).toBe(0);
+    const saved = must(trip.saved());
+    expect(saved.buffer()).toEqual([]);
+    expect(saved.resonant()).toBe(2); // 6771 Hz is no multiple of 11: the merge did not count
+    expect(JSON.parse(must(saved.states().get(room.address().toString())))).toEqual({
+      taken: ['with|reliquary box|plasma coil', 'fused|brass censer|laser cutter'],
+      dropped: [],
+    });
+    expect(JSON.parse(must(saved.states().get(must(trip.here()).address().toString())))).toEqual({
+      taken: [],
+      dropped: [hybrid.data()],
+    });
+    // Back in the first room, the dropped hybrid comes back not fresh: the tally stays.
+    expect(trip.move('back')).toBe(true);
+    expect(trip.move('forward')).toBe(true);
+    const back = must(trip.capture(must(trip.here()?.contents()?.objects.length) - 1));
+    expect(back.frequency().hertz()).toBe(3194 + 3577);
+    expect(trip.player().resonantTraces()).toBe(2);
+    // A drop outside a room goes nowhere and keeps the fragment.
+    expect(trip.move('back')).toBe(true);
+    expect(trip.leave()).toBe(true);
+    expect(trip.here()?.kind().key()).toBe('floor');
+    expect(trip.drop(0)).toBeUndefined();
+    expect(trip.player().buffer().size()).toBe(1);
+    expect(trip.capture(0)).toBeUndefined();
+  });
+
+  test('a capture is refused, touching nothing, when the buffer is full', () => {
+    const trip = inTheFirstRoom();
+    const room = must(trip.here());
+    for (let n = 0; n < 4; n++) expect(trip.capture(0), String(n)).toBeDefined();
+    expect(trip.move('forward')).toBe(true);
+    for (let n = 0; n < 4; n++) expect(trip.capture(0), String(n)).toBeDefined();
+    expect(trip.player().buffer().size()).toBe(8);
+    for (let n = 0; n < 4; n++) trip.merge(0, 1);
+    expect(trip.player().buffer().size()).toBe(4);
+    // Fill up from the second apartment's rooms.
+    expect(trip.move('back')).toBe(true);
+    expect(trip.leave()).toBe(true);
+    expect(trip.descend(1)).toBe(true);
+    while (!trip.player().buffer().full()) {
+      if (trip.capture(0) === undefined)
+        expect(trip.move('forward'), 'a room with something left').toBe(true);
+    }
+    expect(trip.player().buffer().size()).toBe(16);
+    if ((trip.here()?.contents()?.objects.length ?? 0) === 0) expect(trip.move('forward')).toBe(true);
+    const here = must(trip.here());
+    const objects = here.contents()?.objects.length ?? 0;
+    expect(objects).toBeGreaterThan(0);
+    const memento = here.remember();
+    expect(trip.capture(0)).toBeUndefined();
+    expect(here.contents()?.objects).toHaveLength(objects);
+    expect(here.remember()).toBe(memento);
+    expect(trip.player().buffer().size()).toBe(16);
+    expect(room.remember()).toContain('taken');
+  });
+
+  test('restore refuses a buffer the world could not have filled — a fragment from a room that never dealt it, from nowhere, a hybrid with a bad part, seventeen fragments — and a tally that is no count is no save at all', () => {
+    const building = `${STREET}.0`;
+    const room = `${building}.0.0.0.0`;
+    const good = { kind: 'relic', from: room, key: 'with|reliquary box|plasma coil' };
+    const cases: readonly [string, readonly FragmentData[]][] = [
+      ['a relic the room never dealt', [{ kind: 'relic', from: room, key: 'culture|nothing' }]],
+      [
+        'a relic from a room that is not there',
+        [{ kind: 'relic', from: `${building}.0.0.9.0`, key: good.key }],
+      ],
+      ['a relic from a place that is not a room', [{ kind: 'relic', from: building, key: good.key }]],
+      ['a kind nobody reads', [{ kind: 'keystone', from: room }]],
+      [
+        'a hybrid with a bad part',
+        [{ kind: 'hybrid', parts: [good, { kind: 'relic', from: room, key: 'x' }] }],
+      ],
+      ['seventeen fragments', Array.from({ length: 17 }, () => good)],
+    ];
+    for (const [what, buffer] of cases) {
+      const trip = journey();
+      const saved = new SavedGame({
+        seed: SEED,
+        address: must(Address.parse(STREET)),
+        visited: trailOf(STREET),
+        buffer,
+      });
+      expect(trip.restore(saved), what).toBe(false);
+      expect(trip.world(), what).toBeUndefined();
+    }
+    const sixteen = journey();
+    expect(
+      sixteen.restore(
+        new SavedGame({
+          seed: SEED,
+          address: must(Address.parse(STREET)),
+          visited: trailOf(STREET),
+          buffer: Array.from({ length: 16 }, () => good),
+          resonant: 16,
+        }),
+      ),
+    ).toBe(true);
+    expect(sixteen.player().buffer().size()).toBe(16);
+    expect(sixteen.player().resonantTraces()).toBe(16);
+    expect(sixteen.player().buffer().fragments()[0]?.frequency().hertz()).toBe(3194);
+  });
+
+  test('restore then saved() gives back exactly the save with a buffer of a relic and a hybrid, and a room that remembers a take and a drop', () => {
+    const building = `${STREET}.0`;
+    const lobby = `${building}.0`;
+    const first = `${lobby}.0.0.0`;
+    const second = `${lobby}.0.0.1`;
+    const relic = { kind: 'relic', from: first, key: 'with|reliquary box|plasma coil' };
+    const other = { kind: 'relic', from: first, key: 'fused|brass censer|laser cutter' };
+    const saved = new SavedGame({
+      seed: SEED,
+      address: must(Address.parse(second)),
+      states: new Map([
+        [lobby, 'corridor'],
+        [first, JSON.stringify({ taken: [relic.key, other.key], dropped: [] })],
+        [second, JSON.stringify({ taken: [], dropped: [{ kind: 'hybrid', parts: [relic, other] }] })],
+      ]),
+      visited: [...trailOf(first), second], // the way into an apartment is its first room
+      coherence: 60,
+      steps: 5,
+      buffer: [relic, { kind: 'hybrid', parts: [other, relic] }],
+      resonant: 2,
+    });
+    const trip = journey();
+    expect(trip.restore(saved)).toBe(true);
+    expect(trip.saved()?.toText()).toBe(saved.toText());
+    expect(
+      trip
+        .player()
+        .buffer()
+        .fragments()
+        .map((each) => each.name()),
+    ).toEqual(['plasma coil with reliquary box', 'brass-plasma Hybrid']);
+    expect(
+      trip
+        .here()
+        ?.contents()
+        ?.objects.map((each) => each.name()),
+    ).toContain('plasma-brass Hybrid');
   });
 
   test('restore of a world that was drawn but never entered waits at the title', () => {
