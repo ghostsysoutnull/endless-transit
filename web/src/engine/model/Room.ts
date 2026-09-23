@@ -213,6 +213,11 @@ export class Room extends Location {
     return [];
   }
 
+  /** A room projects no map (Guide:92; LatticeMapComponent.groovy:23-28). */
+  override mapped(): boolean {
+    return false;
+  }
+
   /**
    * The free lottery (Guide:186-190; Room.groovy:69-78): on the move that landed here at `steps`, three in ten
    * a Hidden Frequency worth one to ten million hertz — rolled on the room and the step, so a reload or a

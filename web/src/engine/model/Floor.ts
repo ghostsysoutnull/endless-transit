@@ -119,6 +119,11 @@ export class Floor extends Location {
     return this.#building.children().slice(0, this.#building.floors());
   }
 
+  /** A floor's map is its doors, at the elevator as in the corridor (the floor's own rooms; Guide:92). */
+  override mapNodes(): readonly Location[] {
+    return this.corridor().listing();
+  }
+
   /** The floor's one child. */
   corridor(): Location {
     const corridor = this.children()[0];

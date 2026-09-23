@@ -50,6 +50,7 @@ const PLANET: GameSnapshot = {
     childrenHeading: 'Planetary landmasses scanned:',
     contents: null,
     telemetry: null,
+    lattice: null,
   },
   options: [
     option({
@@ -74,6 +75,8 @@ const PLANET: GameSnapshot = {
   prompt: null,
   message: 'Entered Auraea.',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 const STREET: GameSnapshot = {
@@ -138,6 +141,8 @@ const FLOOR: GameSnapshot = {
   ],
   message: 'Enter Corridor.',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 /** A building: floors listed top first, numbered by floor, with their readings. */
@@ -193,6 +198,7 @@ const ROOM: GameSnapshot = {
       furniture: ['overturned tatami mat', 'cracked shoji screen'],
     },
     telemetry: { spectrogram: [3, 1, 9, 4, 2], voice: null },
+    lattice: null,
     childrenHeading: '',
   },
   buffer: {
@@ -225,6 +231,8 @@ const ROOM: GameSnapshot = {
   ],
   message: 'Entered Grand Power Plant.',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 describe('HudPresenter — which snapshots it takes', () => {
@@ -380,7 +388,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
       { label: 'FURNITURE', value: 'overturned tatami mat, cracked shoji screen' },
     ]);
     const planet = presenter.toViewModel(PLANET);
-    expect(planet.aside).toEqual({ objects: null, telemetry: null });
+    expect(planet.aside).toEqual({ objects: null, telemetry: null, map: null });
     expect(planet.place.rows).toEqual([]);
   });
 
@@ -500,6 +508,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
       name: 'Grand Power Plant',
       contents: { objects: [], furniture: ['overturned pew'] },
       telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: null },
+      lattice: null,
     },
     options: [],
   };
@@ -580,6 +589,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
         kind: 'Shard',
         abyssal: true,
         telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: 'We see you.' },
+        lattice: null,
       },
     });
     expect(below.frame).toBe('abyssal');
@@ -617,6 +627,8 @@ describe('HudPresenter.toViewModel — the rest', () => {
       path: 'Path from the universe',
       place: 'Where you are',
       scan: 'Scan',
+      map: 'Map',
+      trace: 'Trace',
       travel: 'Places to enter',
       moves: 'Moves',
       aside: 'Readouts',
@@ -671,5 +683,197 @@ describe('HudPresenter.toViewModel — the rest', () => {
   test('the view-model is plain data', () => {
     const vm = presenter.toViewModel(STREET);
     expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
+  });
+});
+
+describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels with words for a reader, the pane map outdoors, the dock’s fold', () => {
+  const LATTICE = {
+    width: 30,
+    height: 15,
+    origin: { name: 'Bright Boulevard', glyph: '═' },
+    frame: 'yellow',
+    abyssal: false,
+    nodes: [
+      { x: 7, y: 12, glyph: '⌂', name: 'Ornate Sanctum', visited: true, noise: false },
+      { x: 15, y: 7, glyph: '⌂', name: 'The Spire of Static', visited: false, noise: false },
+      { x: 12, y: 2, glyph: '▒', name: 'ArchiveRoot', visited: false, noise: true },
+    ],
+    marks: [{ x: 5, y: 11 }],
+  } as const;
+  const OUTDOORS: GameSnapshot = {
+    ...STREET,
+    place: { ...(STREET.place ?? ({} as never)), lattice: LATTICE },
+  };
+
+  test('the pane beside the list carries the map outdoors (Guide:339) — the picture, and every node as words; nothing where the telemetry is', () => {
+    const street = presenter.toViewModel(OUTDOORS);
+    expect(street.aside.telemetry).toBeNull();
+    expect(street.aside.map).toEqual({
+      label: 'Lattice map',
+      heading: '[NEURAL_MAP: STREET]',
+      origin: 'SCAN_ORIGIN: Bright Boulevard',
+      picture: {
+        width: 30,
+        height: 15,
+        origin: { glyph: '═', label: 'YOU' },
+        nodes: [
+          { x: 7, y: 12, glyph: '⌂', tone: 'visited' },
+          { x: 15, y: 7, glyph: '⌂', tone: 'unvisited' },
+          { x: 12, y: 2, glyph: '▒', tone: 'noise' },
+        ],
+        marks: [{ x: 5, y: 11 }],
+        markGlyph: 'X',
+        legend: [
+          { glyph: '═', label: 'YOU', tone: 'you' },
+          { glyph: '⌂', label: 'VISITED', tone: 'visited' },
+          { glyph: '⌂', label: 'UNVISITED', tone: 'unvisited' },
+          { glyph: 'X', label: 'GLITCH', tone: 'mark' },
+        ],
+      },
+      nodes: [
+        { glyph: '⌂', name: 'Ornate Sanctum', note: 'visited' },
+        { glyph: '⌂', name: 'The Spire of Static', note: 'unvisited' },
+        { glyph: '▒', name: 'ArchiveRoot', note: 'unvisited, static' },
+      ],
+      summary: 'Lattice map of Bright Boulevard: 3 nodes, 1 visited, 1 glitch mark.',
+    });
+    // Indoors the pane is the telemetry; the map waits for the MAP command.
+    const room = presenter.toViewModel(ROOM);
+    expect(room.aside.map).toBeNull();
+    expect(room.aside.telemetry).not.toBeNull();
+    // A place with no map (a room) and no telemetry would show neither.
+    expect(presenter.toViewModel(PLANET).aside).toEqual({ objects: null, telemetry: null, map: null });
+  });
+
+  test('the MAP command’s panel is the same picture under the narrative, headed as the old screen was; none when the last step was no map; no GLITCH entry without marks; ☠ below the bedrock', () => {
+    expect(presenter.toViewModel(OUTDOORS).map).toBeNull();
+    const shown = presenter.toViewModel({ ...OUTDOORS, map: LATTICE });
+    expect(shown.map?.label).toBe('Lattice map');
+    expect(shown.map?.heading).toBe('[NEURAL_LATTICE_PROJECTION]');
+    expect(shown.map?.origin).toBe('SCAN_ORIGIN: Bright Boulevard');
+    expect(shown.map?.picture).toEqual(presenter.toViewModel(OUTDOORS).aside.map?.picture);
+    expect(shown.regions.map).toBe('Map');
+    const calm = presenter.toViewModel({ ...OUTDOORS, map: { ...LATTICE, marks: [] } });
+    expect(calm.map?.picture.legend.map((entry) => entry.label)).toEqual(['YOU', 'VISITED', 'UNVISITED']);
+    expect(calm.map?.summary).toBe('Lattice map of Bright Boulevard: 3 nodes, 1 visited.');
+    const below = presenter.toViewModel({
+      ...OUTDOORS,
+      map: {
+        ...LATTICE,
+        abyssal: true,
+        origin: { name: 'Layer -0x1', glyph: '☠' },
+        nodes: [{ x: 1, y: 1, glyph: '☠', name: 'Crypt 1', visited: false, noise: false }],
+      },
+    });
+    expect(below.map?.picture.legend).toEqual([
+      { glyph: '☠', label: 'YOU', tone: 'you' },
+      { glyph: '☠', label: 'VISITED', tone: 'visited' },
+      { glyph: '☠', label: 'UNVISITED', tone: 'unvisited' },
+      { glyph: 'X', label: 'GLITCH', tone: 'mark' },
+    ]);
+    expect(below.map?.heading).toBe('[NEURAL_LATTICE_PROJECTION]');
+  });
+
+  test('the TRACE command’s panel: one row per level with the depth, the kind in capitals, the name with its note, the current one last; the rows as words for a reader', () => {
+    expect(presenter.toViewModel(OUTDOORS).trace).toBeNull();
+    const shown = presenter.toViewModel({
+      ...OUTDOORS,
+      trace: {
+        steps: [
+          {
+            depth: 0,
+            icon: '∞',
+            kind: 'Universe',
+            name: 'The Endless Universe',
+            meta: '',
+            current: false,
+            abyssal: false,
+          },
+          {
+            depth: 8,
+            icon: '⌂',
+            kind: 'Building',
+            name: 'Ornate Sanctum',
+            meta: ' [BREACHED]',
+            current: false,
+            abyssal: false,
+          },
+          {
+            depth: 12,
+            icon: '☠',
+            kind: 'Shard',
+            name: 'Inverted Processing Core',
+            meta: '',
+            current: true,
+            abyssal: true,
+          },
+        ],
+      },
+    });
+    expect(shown.trace).toEqual({
+      label: 'Lattice trace',
+      heading: '[NEURAL_LATTICE_TRACE_INITIATED]',
+      picture: {
+        rows: [
+          {
+            depth: '[00]',
+            glyph: '∞',
+            kind: 'UNIVERSE',
+            name: 'The Endless Universe',
+            current: false,
+            abyssal: false,
+          },
+          {
+            depth: '[08]',
+            glyph: '⌂',
+            kind: 'BUILDING',
+            name: 'Ornate Sanctum [BREACHED]',
+            current: false,
+            abyssal: false,
+          },
+          {
+            depth: '[12]',
+            glyph: '☠',
+            kind: 'SHARD',
+            name: 'Inverted Processing Core',
+            current: true,
+            abyssal: true,
+          },
+        ],
+      },
+      lines: [
+        '[00] ∞ UNIVERSE : The Endless Universe',
+        '[08] ⌂ BUILDING : Ornate Sanctum [BREACHED]',
+        '>> [12] ☠ SHARD : Inverted Processing Core',
+      ],
+    });
+    expect(shown.regions.trace).toBe('Trace');
+  });
+
+  test('the dock folds after four: the way out and the three most used stay in reach, the rest open behind MORE (I08; I09 polishes)', () => {
+    const vm = presenter.toViewModel({
+      ...OUTDOORS,
+      options: [
+        option({ id: 'leave', key: 'l', label: 'Leave Street', role: 'return' }),
+        option({ id: 'scan', key: 's', label: 'Scan', role: 'system' }),
+        option({ id: 'map', key: 'm', label: 'Map', role: 'system' }),
+        option({ id: 'buffer', key: 'i', label: 'Buffer', role: 'system' }),
+        option({ id: 'trace', key: '', label: 'Trace', role: 'system' }),
+        option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
+        option({ id: 'recap', key: 'q', label: 'End session', role: 'system' }),
+      ],
+    });
+    expect(vm.dock.map((option) => option.id)).toEqual([
+      'leave',
+      'scan',
+      'map',
+      'buffer',
+      'trace',
+      'to-title',
+      'recap',
+    ]);
+    expect(vm.fold).toEqual({ after: 4, more: 'MORE', less: 'LESS', label: 'More of the dock' });
+    // Every dock option is on offer to the router whether folded or not: a key still works.
+    expect(vm.options.map((option) => option.id)).toEqual(expect.arrayContaining(['to-title', 'recap']));
   });
 });

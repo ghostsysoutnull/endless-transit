@@ -263,6 +263,11 @@ export class Building extends Location {
     return true;
   }
 
+  /** The trace's note (Building.groovy:120-124): the breach once made, the floor count before it. */
+  override meta(): string {
+    return this.#breached ? ' [BREACHED]' : ` [FLOORS: ${String(this.#floors)}]`;
+  }
+
   childrenHeading(): string {
     return 'Building strata diagnostics:';
   }

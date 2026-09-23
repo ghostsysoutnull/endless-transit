@@ -33,6 +33,8 @@ describe('TitlePresenter.toViewModel', () => {
       options: [option('new-world', 'n', 'New world')],
       message: '',
       scan: null,
+      map: null,
+      trace: null,
     });
     expect(vm.world).toBeNull();
     expect(vm.options).toEqual([{ id: 'new-world', key: 'N', label: 'NEW WORLD', opposite: '' }]);
@@ -51,6 +53,8 @@ describe('TitlePresenter.toViewModel', () => {
       options: [option('reroll', 'r', 'Re-roll')],
       message: 'World 1111-1111-2222-2222 drawn.',
       scan: null,
+      map: null,
+      trace: null,
     });
     expect(vm.world).toEqual({
       nameLabel: 'UNIVERSE',
@@ -73,6 +77,8 @@ describe('TitlePresenter.toViewModel', () => {
       options: [],
       message: '',
       scan: null,
+      map: null,
+      trace: null,
     });
     expect(vm.title).toBe('ENDLESS TRANSIT');
     expect(vm.regions).toEqual({ stage: 'Uplink', world: 'World', actions: 'Actions' });
@@ -89,6 +95,8 @@ describe('TitlePresenter.toViewModel', () => {
         options: [],
         message: '',
         scan: null,
+        map: null,
+        trace: null,
       }).build,
     ).toBe('build a1b2c3d');
     expect(
@@ -101,6 +109,8 @@ describe('TitlePresenter.toViewModel', () => {
         options: [],
         message: '',
         scan: null,
+        map: null,
+        trace: null,
       }).build,
     ).toBe('build dev');
   });
@@ -115,6 +125,8 @@ describe('TitlePresenter.toViewModel', () => {
       options: [],
       message: '',
       scan: null,
+      map: null,
+      trace: null,
     };
     expect(presenter.accepts(atTitle)).toBe(true);
     expect(presenter.toViewModel(atTitle).scene).toBe('title');
@@ -134,6 +146,7 @@ describe('TitlePresenter.toViewModel', () => {
       childrenHeading: '',
       contents: null,
       telemetry: null,
+      lattice: null,
       abyssal: false,
     };
     expect(
@@ -151,6 +164,8 @@ describe('TitlePresenter.toViewModel', () => {
       options: [],
       message: '',
       scan: null,
+      map: null,
+      trace: null,
     });
     expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
   });

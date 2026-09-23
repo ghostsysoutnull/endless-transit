@@ -11,6 +11,8 @@ const BANDS: readonly { readonly key: string; readonly from: number }[] = [
 ];
 /** Under this the place's description starts corrupting (Guide:155, NarrativePaneComponent.groovy:25). */
 const CORRUPTS_BELOW = 40;
+/** Under the critical band's edge the map gains one glitch mark per this many points (LatticeMapComponent.groovy:45). */
+const MARK_STEP = 2;
 
 /**
  * Owns one fact: the traveller's one resource as a value — a whole number from 0 to 100 (Guide:43), what
@@ -75,6 +77,16 @@ export class Coherence {
   /** Whether the description of the place is read through static at this value. */
   corrupting(): boolean {
     return this.#value < CORRUPTS_BELOW;
+  }
+
+  /**
+   * How many glitch marks the map sprouts at this value (Guide:156; LatticeMapComponent.groovy:43-49): none
+   * down to the critical band's edge, one more for every two points below it.
+   */
+  glitchMarks(): number {
+    // The last band is the critical one; it starts where the band before it ends.
+    const edge = BANDS.at(-2)?.from ?? EMPTY;
+    return Math.max(0, Math.floor((edge - this.#value) / MARK_STEP));
   }
 
   equals(other: Coherence): boolean {

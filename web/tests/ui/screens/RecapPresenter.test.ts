@@ -42,6 +42,7 @@ const RECAP: GameSnapshot = {
     childrenHeading: '',
     contents: null,
     telemetry: null,
+    lattice: null,
   },
   player: { coherence: 61, band: 'degraded', steps: 33 },
   buffer: { size: 2, capacity: 16, resonant: 1, fragments: [] },
@@ -53,6 +54,8 @@ const RECAP: GameSnapshot = {
   options: [option('resume', 'b', 'Resume'), option('end-session', 'q', 'End session')],
   message: '',
   scan: null,
+  map: null,
+  trace: null,
 };
 
 describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRecap.groovy:14-69)', () => {

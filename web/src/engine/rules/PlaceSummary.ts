@@ -1,4 +1,5 @@
 import type { Fact } from '#engine/model/Fact.ts';
+import type { MapSummary } from './MapSummary.ts';
 import type { TelemetrySummary } from './Telemetry.ts';
 
 /** What the screen may know about the place the traveller stands in: plain text and numbers only. */
@@ -32,4 +33,6 @@ export interface PlaceSummary {
   } | null;
   /** The telemetry pane's readings; nothing outdoors. */
   readonly telemetry: TelemetrySummary | null;
+  /** The place's lattice map — its children on a grid, this frame's marks; nothing for a kind with no map (a room). */
+  readonly lattice: MapSummary | null;
 }

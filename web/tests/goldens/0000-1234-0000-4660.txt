@@ -17,7 +17,8 @@ BUILDINGS ON THIS STREET
   08 [8] Enter Building: TeahouseGate
   09 [9] Enter Building: BridgeGate
   10 [A] Enter Building: TowerSpire
-dock: [L] ▲ LEAVE STREET | [S] SCAN | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Grand Avenue | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited)
+dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ CEDAR LANTERN  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern *
@@ -57,7 +58,7 @@ BUILDING STRATA DIAGNOSTICS
        ST: 100%
        RES: 1104Hz
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ███ ████████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2 > Resonant traces: 0
-dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
@@ -70,7 +71,7 @@ diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ████ ██████ ███ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ FLOOR 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
@@ -87,7 +88,7 @@ LOCAL ACCESS LIST
   02 [2] Access: Lacquered Timber Gate [RUSTED]
        APPEARANCE: A timber gate under many coats of black lacquer. The metal hinges are fused by deep, flakey oxidation.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ █████ ████████ █████████ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ LACQUERED BARRACKS  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 [HOLLOW] Bone-Lattice Aperture [COLD] > □ Lacquered Barracks *
@@ -103,7 +104,7 @@ status: Entered Lacquered Barracks.
 moves: [F] GO FORWARD
 IN THIS ROOM: answering machine grafted onto shoji screen <grafted|shoji screen|answering machine> | answering machine with straw sandal <with|straw sandal|answering machine>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ █ ███████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ EXIT APARTMENT | [S] SCAN | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ EXIT APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ PAPER SECURITY STATION  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 [HOLLOW] Bone-Lattice Aperture [COLD] > □ Paper Security Station *
@@ -119,4 +120,4 @@ status: Entered Paper Security Station.
 moves: [B] GO BACK | [F] GO FORWARD
 IN THIS ROOM: calligraphy scroll infused with oscilloscope <infused|calligraphy scroll|oscilloscope> | answering machine with tatami mat <with|tatami mat|answering machine> | kabuto helmet infused with rotary phone <infused|kabuto helmet|rotary phone> | hanging scroll infused with magnetic strip <infused|hanging scroll|magnetic strip>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ ████████ ████████ ██████ █████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.1 > Resonant traces: 0
-dock: [S] SCAN | [I] BUFFER | [T] TITLE SCREEN | [Q] END SESSION
+dock: [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [T] TITLE SCREEN | [Q] END SESSION

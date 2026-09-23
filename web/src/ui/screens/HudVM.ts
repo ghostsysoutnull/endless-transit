@@ -1,6 +1,8 @@
+import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
-import type { AsideVM } from './AsideVM.ts';
 import type { Screen } from '#ui/Screen.ts';
+import type { AsideVM } from './AsideVM.ts';
+import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
 /** The world screen as plain readonly data — framework-free. */
@@ -53,6 +55,16 @@ export interface HudVM extends Screen {
       readonly note: string;
     }[];
   } | null;
+  /** The map the last MAP drew (Guide:92): the picture and its words; nothing when the last step was no map. */
+  readonly map: MapPanelVM | null;
+  /** The trace the last TRACE drew (Guide:92): the picture and one line per level for a reader; nothing when the last step was no trace. */
+  readonly trace: {
+    /** The panel's accessible name. */
+    readonly label: string;
+    readonly heading: string;
+    readonly picture: TracePictureVM;
+    readonly lines: readonly string[];
+  } | null;
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
@@ -62,8 +74,15 @@ export interface HudVM extends Screen {
   readonly sealedNote: string | null;
   /** The word on a closed row. */
   readonly sealedTag: string;
-  /** Leave and the game's own options: always within reach of a thumb. */
+  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button. */
   readonly dock: readonly OptionVM[];
+  /** How the dock folds: how many stay out, and the words of the button that opens and closes the rest. */
+  readonly fold: {
+    readonly after: number;
+    readonly more: string;
+    readonly less: string;
+    readonly label: string;
+  };
   /** The debug tools (Decision 8): a strip of their own, empty outside debug mode. */
   readonly debug: readonly OptionVM[];
   /** The live-region text: what just happened. */
@@ -75,6 +94,8 @@ export interface HudVM extends Screen {
     readonly path: string;
     readonly place: string;
     readonly scan: string;
+    readonly map: string;
+    readonly trace: string;
     readonly travel: string;
     readonly moves: string;
     readonly aside: string;

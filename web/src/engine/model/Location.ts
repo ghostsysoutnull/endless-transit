@@ -15,6 +15,9 @@ import type { Vibe } from './Vibe.ts';
 /** The locus hash is two readings of 0.000 … 99.999, each drawn in thousandths. */
 const HASH_STEPS = 1000;
 const HASH_TOP = 100 * HASH_STEPS - 1;
+/** Below the bedrock every node of the map is this (Guide:279; Room.groovy:143-146). */
+const VOID_GLYPH = '☠';
+const MAP_SPOT = 'map';
 
 /**
  * A place in the world tree. Owns the **lazy-loading law**: children live behind a private backing array
@@ -267,6 +270,32 @@ export abstract class Location {
   /** Whether this place is inside a building — where the HUD's map gives way to telemetry (TelemetryComponent.groovy:48-55). */
   indoors(): boolean {
     return this.parent()?.indoors() ?? false;
+  }
+
+  /** Whether a map can be drawn of this place — its children on a grid; every kind but a room (Guide:92). */
+  mapped(): boolean {
+    return true;
+  }
+
+  /** The places a map of this one plots (Guide:92: "the children of the place you are in"): what it lists, unless the kind maps otherwise. */
+  mapNodes(): readonly Location[] {
+    return this.listing();
+  }
+
+  /** The glyph this place is plotted with on its parent's map: `☠` below the bedrock (Guide:279), else its kind's icon. One owner. */
+  mapGlyph(): string {
+    return this.abyssal() ? VOID_GLYPH : this.kind().icon();
+  }
+
+  /** The cell this place takes on its parent's map, drawn from its own seed (Container.groovy:59-62) — the same at every visit. */
+  mapSpot(width: number, height: number): { readonly x: number; readonly y: number } {
+    const spot = this.seed().branch(MAP_SPOT);
+    return { x: spot.branch('x').range(0, width - 1), y: spot.branch('y').range(0, height - 1) };
+  }
+
+  /** What the lattice trace says beside this place's name (`[FLOORS: 16]`, LatticeTraceComponent.groovy:67); empty for most kinds. */
+  meta(): string {
+    return '';
   }
 
   /** How much more a prompt costs here than at the surface: the parent's, 1 at the top — the bedrock (I07) answers 2 (Guide:137-139). */

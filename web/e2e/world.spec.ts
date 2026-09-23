@@ -112,8 +112,8 @@ test('a long street: twenty buildings, every one a button, two of them landmarks
   await expect(page.getByTestId('sealed-note')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
   await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
-  // Twenty buildings, LEAVE, BUFFER, TITLE SCREEN, END SESSION.
-  await expect(page.getByRole('button')).toHaveCount(25); // twenty buildings, leave, scan, buffer, title, end
+  // Twenty buildings, LEAVE, SCAN, MAP, BUFFER and the dock's MORE (I08); the rest wait behind it.
+  await expect(page.getByRole('button')).toHaveCount(25);
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);

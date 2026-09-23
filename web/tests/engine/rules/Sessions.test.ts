@@ -32,9 +32,12 @@ function engineOn(seed: Seed, saves: MemorySaveStore): GameEngine {
   });
 }
 
-/** Everything but the status message and the scan panel: both belong to the last step, not to the state a save holds. */
-function shown(snapshot: GameSnapshot): Omit<GameSnapshot, 'message' | 'scan'> {
-  return { ...snapshot, message: undefined, scan: undefined } as Omit<GameSnapshot, 'message' | 'scan'>;
+/** Everything but the status message and the panels (scan, map, trace): they belong to the last step, not to the state a save holds. */
+function shown(snapshot: GameSnapshot): Omit<GameSnapshot, 'message' | 'scan' | 'map' | 'trace'> {
+  return { ...snapshot, message: undefined, scan: undefined, map: undefined, trace: undefined } as Omit<
+    GameSnapshot,
+    'message' | 'scan' | 'map' | 'trace'
+  >;
 }
 
 /**

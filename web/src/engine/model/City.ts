@@ -48,6 +48,11 @@ export class City extends Location {
     return this.#rebelVibe === undefined ? 'STABILITY: [STABLE]' : 'STABILITY: [VOLATILE]';
   }
 
+  /** The trace's note (City.groovy:30-32): a rebel district says so. */
+  override meta(): string {
+    return this.#rebelVibe === undefined ? '' : ' [UNAUTHORIZED_ZONE]';
+  }
+
   childrenHeading(): string {
     return 'Streets detected in this city:';
   }
