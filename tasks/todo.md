@@ -64,7 +64,8 @@
 - [x] Concept — web port study (2026-09-21): ten user decisions, verified stack, `web/` tree, stages — `docs/analysis/WEB_PORT_STUDY.md`. No source change; no chronicle, this line is the record.
 - [x] Concept — web port, how the work is run (2026-09-21): one session per wave, one writer, agents read and check, tests first — study §12. No chronicle; this line is the record.
 - [x] Workflow — port standing order (2026-09-21, user Directive): "hi" works `tasks/PORT_QUEUE.md` to the end; CODEX "The Standing Order". No chronicle; this line is the record.
-- [ ] Next: **the web port queue** — `tasks/PORT_QUEUE.md`, iteration I01 (port iterations add no lines here). Other open threads: **CONCEPT-001** (the verdict column), HK-021/023/024 (the port's fix list, queue decision 7), O1, WF-010/011/006/012.
+- [x] **Web port (2026-09-21 → 09-23):** ten iterations, all live — `tasks/PORT_QUEUE.md`, notes `tasks/port/`. Groovy frozen in `terminal/`; the game is `web/`. HK-021/023/024/013 and CONCEPT-002 closed by it. No chronicle; this line is the record.
+- [ ] Next: nothing in progress — wait for a Directive. Open: the user's findings from playing; **CONCEPT-001** ships (the verdict column first); WF-010/011/006/012/013.
 
 ---
 
