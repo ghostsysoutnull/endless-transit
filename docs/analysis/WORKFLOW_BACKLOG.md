@@ -12,6 +12,10 @@ improvement session is planned before the next phase begins.
 
 ## 🔴 OPEN
 
+### WF-013 — Run the web checks on every push (GitHub Actions)
+**Priority:** Low | **Found:** 2026-09-24 (port wrap-up).
+No workflow file exists; the site publishes from `master:/docs`. One Action running `cd web && npm ci && npm run check` on push would catch a broken push without anyone running anything. Needs the `workflow` scope on the machine's GitHub login once (`gh auth refresh -s workflow`), which is the user's to grant. Not the publish pipeline — `npm run publish:site` stays.
+
 ### WF-012 — Lessons diet: the old lesson bullets are stories, not rules
 **Priority:** Low | **Found:** 2026-09-20 (context diet `0xb629529`); logged 2026-09-21 — until then it lived only in the recovery prompt.
 New lessons are rule + pointer (CODEX, Self-Improvement Loop); the older bullets in `tasks/lessons/*.md` are paragraphs loaded every session. **Decide:** rewrite them as rule + pointer. Needs bullet-by-bullet user review, because a shortened lesson can lose the rule. User call, deferred.
