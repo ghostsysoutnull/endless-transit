@@ -40,7 +40,8 @@ npm run publish:site   # check → build → ../docs/play/ (commit it; a push pu
 ```
 
 Add `?debug` to the game's address for the debug tools (integrity, prime, keystone). The law of the code base, its
-layers and its walls: [`web/CLAUDE.md`](web/CLAUDE.md).
+layers and its walls: [`web/CLAUDE.md`](web/CLAUDE.md). How it is built — the engine, the screens, the tests, and how it
+stands against the terminal game: [`docs/analysis/WEB_GAME_ARCHITECTURE.md`](docs/analysis/WEB_GAME_ARCHITECTURE.md).
 
 ## 🖥️ The terminal game (`terminal/`)
 

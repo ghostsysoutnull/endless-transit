@@ -5,7 +5,8 @@ The port (I01–I10) is complete; its Decisions still bind: `../tasks/PORT_QUEUE
 `../docs/analysis/WEB_PORT_STUDY.md`). One note per iteration: `../tasks/port/`. **Player docs:**
 `../docs/web/players_guide.md` and `cheat_sheet.md` cite every number as `src/…:line` — a rule or number that
 changes re-reads its citation (`sed -n`) and the "How the web game differs" list.
-OO law (eight principles, Shape table, coverage claims): `../.claude/CODEX.md`.
+OO law (eight principles, Shape table, coverage claims): `../.claude/CODEX.md`. The shape this law produced, explained
+for a reader: `../docs/analysis/WEB_GAME_ARCHITECTURE.md` (keep it true when a layer, a wall or the save format changes).
 Lessons: @../tasks/lessons/web.md
 
 ## Layers — who may import whom
