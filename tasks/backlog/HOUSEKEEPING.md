@@ -10,8 +10,9 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-### HK-024 — Undecided: should the debug glitch `KEYSTONE` also prime the building?
-**Found:** 2026-09-16 in the HK-019 session (diagnosed, nothing changed); logged 2026-09-21 — until then it lived only in the recovery prompt. Today the glitch gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions. **A user decision, not a bug:** prime the building too (the glitch becomes a full shortcut to the descent), or leave it (the glitch tests binding only) and say so in the debug help.
+*(none — 2026-09-24)*
+
+## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators
 **CLOSED 2026-09-20** — merge `9549527`, chronicle `0x9549527`, plan + record `tasks/completed/HK_022_PLAN.md`. One `NameGenerator` per `ProceduralFactory` (`nameGenerator`, final); the eleven factories ask `registry.nameGenerator`; no static methods; off the `NoNewStaticLogic` allow-list (16 → 15). No name moved. `NameGeneratorContractTest` 7 pins + wiring pin C3.
@@ -29,7 +30,13 @@ Plan + record: `tasks/completed/HK_020_PLAN.md`. `GlobalCommands` (keys + aliase
 `TurnProcessor`), and `normalize` asks it instead of carrying a list. Pin first: which keys are deliberately case-sensitive today
 (`s`, `ll`, `p`/`P`, `quitnow` — guide `:102-103`), `InputHandlerNormalizeTest` for the rest. No player-visible change intended.
 
+
+### HK-024 — Undecided: should the debug glitch `KEYSTONE` also prime the building?
+**CLOSED 2026-09-24** — decided by the web game: `prime` and `spawn keystone` are two separate debug buttons under `?debug` (`tasks/port/I07.md`); the Groovy question is moot, Groovy is frozen.
+**Found:** 2026-09-16 in the HK-019 session (diagnosed, nothing changed); logged 2026-09-21 — until then it lived only in the recovery prompt. Today the glitch gives a correctly bound Keystone but no `j`, because `Building.isPrimed` needs every floor sampled + 7 infusions. **A user decision, not a bug:** prime the building too (the glitch becomes a full shortcut to the descent), or leave it (the glitch tests binding only) and say so in the debug help.
+
 ### HK-021 — Residue of HK-015: five low-value player-facing oddities
+**CLOSED 2026-09-24** — fixed in the web game, never in Groovy (frozen): `Door.visited` set, no second corridor screen, a dropped relic keeps its frequency; proof table with assertion lines `tasks/port/I09.md`. The dead-code bullets are moot.
 **Found:** 2026-09-16 with HK-015 (its "also noted" list); split off 2026-09-17 when HK-015's five numbered items closed. None has a plan.
 `Door.visited` is never set (`Door.groovy:57` prefix is dead); `CaptureCommand.groovy:32` says `/screenshots/`
 (real dir is relative); a Keystone dropped in a room is stored as its name only and comes back as a plain item (`Room.groovy:168`, `InventoryItem` rebuilt without `isKeystone`/`boundLip`), so the guide's "You can stash a Keystone in a room" is false (HK-018, E5);
@@ -39,6 +46,7 @@ after leaving an apartment the player stands on the Corridor *location* (menu wi
 so a dropped Hybrid or "Hidden Frequency" also comes back at its name-derived Hz. The guide, the manual and the codex now *warn* about this instead of recommending the stash (`tasks/completed/GH_PAGES_AUDIT_PLAN.md`); a fix here must turn those warnings back.
 
 ### HK-023 — Game-side oddities found by the GitHub Pages audit
+**CLOSED 2026-09-24** — fixed in the web game, never in Groovy (frozen): breach flag saved, resonant count saved, one walker, 0 Hz not resonant, `[TEMPORAL_MARKER]` shown, tally counts once, "resonant" label, map legend drawn; proof table `tasks/port/I09.md`.
 **Found:** 2026-09-20, fact-check of the published player pages against the source (session scope was the pages only; nothing here was fixed then). Slice 1 — the restore bullet — is done; no other bullet has a plan.
 - ~~A save made below the Bedrock does not restore~~ — **FIXED 2026-09-20** (slice 1), merge `55f9460`, chronicle `0x55f9460`, record `tasks/completed/HK_023_RESTORE_PLAN.md`: a breached building regrows its Layers when a LIP asks (`Building.childAt`), Layers are created in order, an unresolvable save is refused whole. `AbyssalRestoreContractTest`, 6 pins.
 - **Two LIP walkers** (found by slice 1): `Universe.resolveLIP` and the static `WorldGenesis.resolveLIP` walk the same tree with different leniency (null / empty / `"Universe"` / no leading `0`). The bounds rule now has one owner (`Container.childAt`); the walk still has two. The static one serves only the memento path (`PersistenceService.restore`).
@@ -58,6 +66,7 @@ so a dropped Hybrid or "Hidden Frequency" also comes back at its name-derived Hz
 - `GlobalCommandsContractTest.groovy:9` cites `players_guide.md:102-103` by line number. The GitHub Pages wave kept lines 1–103 of the guide stable on purpose, so the pointer still holds — but any edit above it breaks it silently; cite the heading ("Case matters…") instead.
 
 ### HK-013 — Nine production methods exceed 50 lines (held in the lint baseline) — **8 remain**
+**CLOSED 2026-09-24 as moot** — Groovy is frozen (study §2.4); the eight entries stay in `terminal/config/lint/baseline.xml`, which only `terminal/vinc.sh --lint --baseline` writes.
 **Slice 1 done (2026-09-16, branch `housekeeping/hk-013-restore`, plan `tasks/completed/HK_013_RESTORE_PLAN.md`):** `SyncManager.restore` split into `restorePlayer` / `applyMutations` / `remarkFootprints`
 (by script, zero drift; `RestoreContractTest` 5 pins first — counters, footprint sets, merge count and both failure paths had no assertion). Baseline 9 → 8, removal only.
 Rule for the rest: when the ratchet fires, extract or re-baseline with a stated reason — never reformat to the recorded length (lesson in `infrastructure.md`).
@@ -68,8 +77,6 @@ They are the only entries in `config/lint/baseline.xml`; each entry carries the 
 of them resurfaces the violation — pay it down then, or in a bounded housekeeping commit (extract by script, reverse-substitution
 check, goldens as the gate for the four `ui` methods). Regenerate the baseline with `./vinc.sh --lint --baseline` and commit the
 shrunken file with the change.
-
-## 🟢 CLOSED
 
 ### HK-015 — Five player-facing bugs surfaced by the Player's Guide
 **CLOSED 2026-09-17** — branch `housekeeping/hk-015-player-bugs`, merge `a47cdb6`. Record: chronicle `0xa47cdb6`; plan `tasks/completed/HK_015_PLAN.md`.
