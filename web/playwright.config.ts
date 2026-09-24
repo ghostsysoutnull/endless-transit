@@ -10,9 +10,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: process.env.CI !== undefined,
   retries: 0,
-  // A page takes seconds to come up on a small machine with every worker busy: fewer workers and a longer
-  // leash, rather than retries that would hide a real flake.
-  workers: 3,
+  // One worker: with three, phone-profile tests timed out under load in I09/I10 while every one passed alone.
+  // A longer leash rather than retries that would hide a real flake.
+  workers: 1,
   timeout: 60_000,
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
   use: {
