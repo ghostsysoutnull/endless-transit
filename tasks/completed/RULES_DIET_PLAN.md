@@ -1,6 +1,6 @@
 # Rules diet — plan (WF-012, widened)
 
-**Status:** plan, not started. Written 2026-09-25 in a process session; the build runs in the next session.
+**Status:** done 2026-09-25, same session (steps 1–8; step 7 ran before the survival check so it covered everything; the check's fixes are one commit). Written 2026-09-25 in a process session; the build runs in the next session.
 **Evidence:** an independent read-only investigation of every rule home and 16 past sessions (22 user corrections).
 Its row-by-row inventory (86 rules: file:line, words, category, verdict, plus the duplicate, contradiction and
 incident lists) is `tasks/RULES_DIET_INVENTORY.md` — model output: step 0 re-reads every cited line before trusting it.

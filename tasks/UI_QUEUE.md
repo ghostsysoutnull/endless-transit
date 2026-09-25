@@ -1,7 +1,7 @@
 # The UI Queue
 **What this is:** the web game's picture-first rework, cut into playable iterations. **"hi" = run the first unticked
 iteration, then the next, until the queue is empty** — the rules are in `.claude/CODEX.md`, "The Standing Order" (it
-covers this queue as it covered the port's, with its item 8: a plan the user approves before each iteration's code). **Spec: the mock** `docs/analysis/mocks/transit-reframed.html` (v5.3; the
+covers this queue as it covered the port's, with its item 2: a plan the user approves before each iteration's code). **Spec: the mock** `docs/analysis/mocks/transit-reframed.html` (v5.3; the
 same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3NpWhAuZ`, version 8) and the wireframe
 `docs/analysis/mocks/pole-wireframe.html`; how the mock maps onto the web game: `docs/analysis/UI_REFRAME_STUDY.md`.
 **Where the study and this file disagree, this file wins.** Each iteration leaves one short note, `tasks/ui/<id>.md`
@@ -53,8 +53,8 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 16. **Tests change on purpose.** A browser test or golden that pins an old label is changed in the iteration that
     retires the label, and the note names it. The first-screen rule stays: a move is visible without scrolling at
     360 × 640 on every screen.
-17. **How to ask** (if a question is ever unavoidable): one per message, lettered options, the pick marked first
-    (`(A) ★ …`), ambitious options, plain words. Build the pick; do not re-ask.
+17. **How to ask**: the user block at the top of `CLAUDE.md` is the one home (one question per message, lettered
+    options, the pick first, plain words; a pick is built, not re-asked).
 
 ## Reported by the tester
 *(the user's findings — each becomes a fix piece run before the next iteration)*

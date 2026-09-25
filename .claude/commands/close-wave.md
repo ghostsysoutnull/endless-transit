@@ -6,7 +6,7 @@ table. It sizes itself: step 0 picks a tier from the diff. It never commits, mer
 
 Origin: WF-007 (the gate) and WF-008 (the tiers) in `docs/analysis/WORKFLOW_BACKLOG.md`.
 
-**Web port queue sessions do not run this command.** Their close-out is the Standing Order in `.claude/CODEX.md`:
+**Queue sessions do not run this command.** Their close-out is the Standing Order in `.claude/CODEX.md`:
 gates green, queue ticked, handover true, `./terminal/vinc.sh --docs` green, commit, push — no chronicle, no retro (user,
 2026-09-21).
 
@@ -63,7 +63,9 @@ memory is **not done**, whatever the answer.
 ### 2. REPORT
 Header: `wave · tier (floor evidence) · add-ons (reason each)`. Then the table of the rows run, each **done**
 (evidence) or **n/a** (reason); rows outside the tier are not listed. End with one of:
-- **READY TO CLOSE** — ask for the commit/merge Directive. Only after that merge may the chat say **closed**.
+- **READY TO CLOSE** — when the user's commit/push Directive is already given, commit, merge and push now, no second
+  ask (the user block at the top of `CLAUDE.md` outranks this command, rule 10); otherwise ask for it once. Only after
+  that merge may the chat say **closed**.
 - **OPEN ROWS** — list them; the wave is not closed.
 
 ### 3. COMMIT DISCIPLINE (after the Directive)
