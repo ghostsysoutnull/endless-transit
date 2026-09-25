@@ -40,7 +40,7 @@ Initialize session for the Endless Transit substrate.
 | Resource | Path |
 | :--- | :--- |
 | History | `journals/CHRONICLE_INDEX.md` → `journals/LOG_*`; finished plans `tasks/completed/`; the port `tasks/port/` |
-| Law + commands | root `CLAUDE.md` (the user block first); `.claude/CODEX.md`; `web/CLAUDE.md`; `.claude/commands/{grill,chronicle}.md`; `./.claude/docs-check.sh` |
+| Law + commands | root `CLAUDE.md` (the user block first); `.claude/CODEX.md`; `web/CLAUDE.md`; `.claude/brief.md` (every agent brief starts from it); `.claude/commands/{grill,chronicle}.md`; `./.claude/docs-check.sh` |
 | Backlogs | `tasks/backlog/CONCEPTS.md` (OPEN: CONCEPT-001); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-011, WF-006, WF-013 Low) |
 | Lessons | `tasks/lessons/infrastructure.md` (process, every session); `tasks/lessons/web.md` (with `web/`) |
 | Player docs + site | `docs/web/` (web game guide + cheat sheet, numbers cited from `web/src`); live at `https://ghostsysoutnull.github.io/endless-transit/` — GitHub Pages from `master:/docs`, so **a push republishes the site**; branches are never published |
