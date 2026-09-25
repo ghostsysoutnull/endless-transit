@@ -11,10 +11,11 @@ close-out of § 1.5. The rest of this file (OO principles, Shape
 table, coverage claims, tests before fixes) still governs the code that gets written.
 
 1. **"hi" runs the queue** — the user block at the top of `CLAUDE.md` outranks this order (a question or process talk
-   pauses the run until an explicit go). Read `tasks/RECOVERY_PROMPT.md` and the active queue. Run anything under
-   "Reported by the tester" first, then the first unticked iteration, then the next — until the queue is empty. Each
-   UI iteration stops once, at its plan (item 2); "hi" resumes at the next plan, never past it. The next "hi" continues
-   from the queue.
+   pauses the run until an explicit go). Read `tasks/RECOVERY_PROMPT.md` and the active queue. Every "hi" opens with
+   the queue, one line per iteration — done ✓, next ▶, to come · — each with its name and what the tester can try,
+   read from the queue's table; then the work starts. Run anything under "Reported by the tester" first, then the
+   first unticked iteration, then the next — until the queue is empty. Each UI iteration stops once, at its plan (item
+   2); "hi" resumes at the next plan, never past it. The next "hi" continues from the queue.
 2. **The main session manages; one writer works in two turns.** Per iteration: branch `ui/<id>-<name>` → the writer,
    briefed from `.claude/brief.md`, reads (the queue's Decisions, the study, the mock, the web code so far) and
    returns a plan — scope, Shape table, the tests that change, what the tester can try, a token estimate — and waits;
