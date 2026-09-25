@@ -20,7 +20,8 @@
    it prevents is not offered. A pick is built, not re-asked.
 7. Stay in scope: recommend only inside what was asked. No devices, tools or extra rounds the user didn't mention.
 8. All findings in one message, fixed in one go once authorized. A finished task ends with its result, never with "fix
-   this too?".
+   this too?". A plan is judged before it is shown: what the tester sees new, what changes underneath, its tokens —
+   one whose cost dwarfs its result is re-cut first, never left for the user to catch.
 9. Every leftover fact carries its verdict: nothing to do, what was done, or one question. Tidy what is in scope
    instead of reporting it.
 10. A commit/push directive covers the wave's close-out records. No second confirmation.

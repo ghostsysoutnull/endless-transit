@@ -17,10 +17,12 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
    first unticked iteration, then the next — until the queue is empty. Each UI iteration stops once, at its plan (item
    2); "hi" resumes at the next plan, never past it. The next "hi" continues from the queue.
 2. **The main session manages; one writer works in two turns.** Per iteration: branch `ui/<id>-<name>` → the writer,
-   briefed from `.claude/brief.md`, reads (the queue's Decisions, the study, the mock, the web code so far) and
-   returns a plan — scope, Shape table, the tests that change, what the tester can try, a token estimate — and waits;
-   a true unknown gets a probe of minutes, never a throwaway spike; an iteration too big is split in the plan → the
-   main session grills it (the Decisions, the Shape Gate) and shows the user about ten lines → on the user's go the
+   briefed from `.claude/brief.md`, reads what the brief names (the queue's Decisions, the mock's section for this scene, the study's lines, the code
+   files it touches — never the whole mock; a plan turn is about 60k tokens) and returns a plan — scope, Shape table,
+   the tests that change, what the tester can try, what changes underneath, a token estimate — and waits;
+   a true unknown gets a probe of minutes, never a throwaway spike; an iteration too big is split in the plan into slices that each show the tester something new → the main
+   session grills it (the Decisions, the Shape Gate, and the build's tokens against what the tester sees new — a plan
+   whose cost dwarfs its result is re-cut before it is shown) and shows the user about ten lines → on the user's go the
    **same writer** builds (a fresh builder gets only the approved plan and its reading list when the go comes in a
    later session, when the plan's approach (not a detail) was rejected, or when the writer reports its context more
    than half full): tests first, green is done, one commit per module with its tests, a note `tasks/ui/<id>.md` (it
