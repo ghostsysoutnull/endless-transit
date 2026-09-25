@@ -12,17 +12,18 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
 1. **"hi" runs the queue** — the user block at the top of `CLAUDE.md` outranks this order (a question or process talk
    pauses the run until an explicit go). Read `tasks/RECOVERY_PROMPT.md` and the active queue. Run anything under
    "Reported by the tester" first, then the first unticked iteration, then the next — until the queue is empty. Each
-   UI iteration stops once, at its plan (item 2). The next "hi" continues from the queue.
+   UI iteration stops once, at its plan (item 2); "hi" resumes at the next plan, never past it. The next "hi" continues
+   from the queue.
 2. **The main session manages; one writer works in two turns.** Per iteration: branch `ui/<id>-<name>` → the writer
    reads (the queue's Decisions, the study, the mock, the web code so far) and returns a plan — scope, Shape table, the
    tests that change, what the tester can try, a token estimate — and waits; a true unknown gets a probe of minutes,
    never a throwaway spike; an iteration too big is split in the plan → the main session grills it (the Decisions, the
    Shape Gate) and shows the user about ten lines → on the user's go the **same writer** builds (a fresh builder gets
-   only the approved plan and its reading list when the go comes in a later session, when the plan's approach was
-   rejected, or when the writer reports its context more than half full): tests first, green is done, one commit per
+   only the approved plan and its reading list when the go comes in a later session, when the plan's approach (not a
+   detail) was rejected, or when the writer reports its context more than half full): tests first, green is done, one commit per
    module with its tests, a note `tasks/ui/<id>.md`; it runs `npm run check` and only the browser specs it touches,
-   phone profile, and past 1.5× its token estimate it stops and reports → the main session runs the full
-   `npm run e2e` once, looks at the fixed screenshots (the new scene on the phone and the desktop, and under reduced
+   phone profile, and past 1.5× its token estimate it stops and reports → the main session runs
+   `npm run check` and the full `npm run e2e` once, looks at the fixed screenshots (the new scene on the phone and the desktop, and under reduced
    motion), fixes or sends back → merge `--no-ff` → tick the queue, make the handover true → commit → push → confirm
    the live build answers. No reviewer or fixer agent (user decision 2026-09-23: they cost ~900k tokens an iteration
    and half their findings were test tightness; the tester's findings are the review).
@@ -32,7 +33,8 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
    a desktop and a phone profile; Groovy → the `vinc.sh` gates). **The only early stop:** a gate still red after honest
    tries — that iteration stays unmerged and the run ends with a plain report.
 5. **Lean records.** No chronicle, no retro, no blueprint, no `todo.md` line, no workflow-backlog entry — the note and
-   the merge commit are the record. A user correction still becomes a one-line lesson. `--docs` stays green while it exists.
+   the merge commit are the record. A user correction still becomes a line: in the block at the top of `CLAUDE.md` when it is about working with the
+   user, else a one-line lesson. `--docs` stays green while it exists.
 6. **Ends clean.** The last message says what was done, what the tester can try and where. No leftovers list, no
    closing question.
 7. **No users, no compatibility.** Saves, journals and old seeds need no protection and no migration. Still name the
@@ -41,12 +43,12 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
 ---
 
 ## 🛡️ THE VINCULUM PROTOCOL: Non-Action by Default
-*(Outside the web port queue. Queue sessions run under the Standing Order above.)*
+*(Outside a queue session. Queue sessions run under the Standing Order above.)*
 
 1. **Authorization**: This session is **READ-ONLY** and **ANALYSIS-ONLY** by default. No file creation, modification, deletion, or git operations (commit/push) are authorized without a specific **Directive**.
 2. **Directives vs. Inquiries**:
    * **Inquiry**: Any question, request for review, brainstorming, or request for a plan is an Inquiry. Inquiries **DO NOT** authorize implementation.
-   * **Directive**: Only an explicit instruction to "Execute," "Apply," "Commit," or "Push" constitutes a Directive.
+   * **Directive**: Only an explicit instruction to act constitutes a Directive: "Execute," "Apply," "Do it," "Commit," "Push," or a go on a named plan (a short "go" takes the smaller reading — the user block, rule 3).
 3. **Ambiguity Guard**: If a user request implies a change (e.g., "Fix this bug") without using Directive language, present a Plan and ask for explicit authorization before touching the substrate.
 
 ---
@@ -108,7 +110,7 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
   `tasks/lessons/<domain>.md` file.
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.
-* **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave (`(HK-012)`) — the incident lives in that wave's chronicle and retro. The lessons files are loaded every session; every sentence in them is paid for each time. Existing long bullets are left as they are until a lessons diet is decided.
+* **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave (`(HK-012)`) — the incident lives in that wave's chronicle and retro. `infrastructure.md` loads every session and the domain files whenever their folder is touched; every sentence is paid for each time.
 * Lessons load with their domain: each Groovy domain `CLAUDE.md` imports its `terminal/tasks/lessons/<domain>.md` when that directory is touched; `terminal/CLAUDE.md` imports `terminal/tasks/lessons/groovy-tooling.md`; `infrastructure.md` (process lessons) loads every session.
 
 ## 🏛️ Safety Mandates

@@ -2,7 +2,9 @@
 
 Lessons that are only about the frozen Groovy game's tooling (`vinc.sh`, `groovyc`, the classpath, CodeNarc, the goldens).
 Moved verbatim from `tasks/lessons/infrastructure.md` by port iteration I01; paths in them are relative to `terminal/`.
-Loaded only from `terminal/CLAUDE.md`. Process lessons that apply to any code stay in `tasks/lessons/infrastructure.md`.
+Loaded only from `terminal/CLAUDE.md`. Process lessons that apply to any code stay in `tasks/lessons/infrastructure.md`;
+the section at the end holds the root lessons whose detail is Groovy-only (moved 2026-09-25; their general rule, where
+there is one, is a line in the root file).
 
 ## Patterns
 - **Directory Structure**: Aligning with standard JVM layouts (`src/main/groovy`, `src/test/groovy`) simplifies classpath management and tool integration.
