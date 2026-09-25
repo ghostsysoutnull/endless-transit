@@ -36,6 +36,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* A panel taller than the window is brought in with its top a little clear of the edge (the spotlight rule);
+     a phone's rule below adds the dock's height at the bottom. */
+  scroll-padding-top: 8px;
 }
 
 body {
@@ -409,77 +412,80 @@ body {
   font-size: 14px;
 }
 
+/* The top of the world screen (U01a): the game's name, the steps and the buffer on one line, the meter under
+   them on a phone; one line on a desktop. */
 .hud {
-  position: relative;
   border: 1px solid var(--frame);
   background: var(--panel);
-  padding: 8px 10px;
+  padding: 6px 10px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
   min-width: 0;
 }
 
-/* The HUD's fold (I09): on a phone one button in the corner opens the whole readout; a desktop shows it all and no button. */
-.pt {
-  all: unset;
-  box-sizing: border-box;
-  display: none;
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 44px;
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-  border: 1px dashed var(--rule-hi);
-  color: var(--dim);
-  font: inherit;
-  font-size: 18px;
-  cursor: pointer;
-  user-select: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+.hud .brand {
+  margin: 0;
+  flex: 1 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--frame);
 }
 
-.pt:active {
-  background: var(--yl);
-  color: var(--ground);
+.hud .stats {
+  flex: 0 1 auto;
 }
 
-.pt:focus-visible {
-  outline: 2px solid var(--yl);
-  outline-offset: 2px;
+.hud .meter {
+  flex: 1 1 100%;
 }
 
-.spark {
+/* The depth rail (U01a, Decision 6): a glyph per level from the universe down, joined by a thread; where you
+   stand is ringed in the frame's colour. A phone reads the names out; a desktop shows them in its own column. */
+.rail {
+  min-width: 0;
+}
+
+.rail ol {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 0;
+  align-items: center;
+  gap: 4px 0;
   color: var(--dim);
   font-size: 12px;
 }
 
 .crumb {
   display: inline-flex;
-  align-items: baseline;
-  gap: 5px;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
 .crumb + .crumb::before {
-  content: '›';
-  color: var(--dim);
-  margin-inline: 7px 2px;
+  content: '';
+  flex: none;
+  width: 8px;
+  border-top: 1px solid var(--rule-hi);
 }
 
 .crumb .ic {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid transparent;
+  border-radius: 50%;
   color: var(--dim);
-  font-size: 11px;
+  font-size: 13px;
+  line-height: 1;
 }
 
 .crumb.you {
@@ -489,6 +495,7 @@ body {
 
 .crumb.you .ic {
   color: var(--frame);
+  border-color: var(--frame);
 }
 
 /* The coherence meter (the mock's instruments row): a bar filled with the band's own colour, animated between
@@ -571,6 +578,11 @@ body {
   overflow-wrap: anywhere;
 }
 
+.world .cap {
+  padding: 10px 12px;
+  gap: 6px;
+}
+
 .world .cap h2 {
   display: flex;
   align-items: baseline;
@@ -589,8 +601,16 @@ body {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 14px;
+  gap: 6px;
   font-size: 12px;
+}
+
+/* A chip (U01a): the place's position and its facts, each a small box — the label dim, the value in its colour. */
+.tags li {
+  border: 1px solid var(--rule-hi);
+  padding: 0 6px;
+  font-size: 11.5px;
+  line-height: 1.5;
 }
 
 .tags:empty {
@@ -1394,22 +1414,48 @@ body {
   .app.world {
     max-width: 1080px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+    max-width: 1280px;
+    grid-template-columns: minmax(0, 160px) minmax(0, 1fr) minmax(0, 400px);
     /* The list may be far taller than the panel beside it: the panel and the dock keep their own height
        and one filler row takes the rest — otherwise the grid pushes the way out below the fold. */
-    grid-template-rows: auto auto auto auto auto auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto auto auto auto 1fr auto;
     grid-template-areas:
-      'bar bar'
-      'hud hud'
-      'cap side'
-      'scan side'
-      'map side'
-      'trace side'
-      'dock side'
-      'debug side'
-      '. side'
-      'build build';
+      'rail hud hud'
+      'rail cap side'
+      'rail scan side'
+      'rail map side'
+      'rail trace side'
+      'rail dock side'
+      'rail debug side'
+      'rail . side'
+      'build build build';
     align-items: start;
+  }
+
+  /* The rail runs down the left, a level a line, its names shown. */
+  .world .rail {
+    grid-area: rail;
+    position: sticky;
+    top: 12px;
+  }
+
+  .rail ol {
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  .crumb + .crumb::before {
+    display: none;
+  }
+
+  .crumb + .crumb {
+    border-top: 1px solid var(--rule);
+  }
+
+  .crumb {
+    padding-block: 3px;
   }
 
   /* A desktop has room for every dock button: no fold, no MORE. */
@@ -1429,12 +1475,12 @@ body {
     grid-area: trace;
   }
 
-  .world .bar {
-    grid-area: bar;
-  }
-
   .world .hud {
     grid-area: hud;
+  }
+
+  .hud .meter {
+    flex: 1 1 260px;
   }
 
   .world .cap {
@@ -1517,22 +1563,19 @@ body {
     scroll-padding-block: 8px 96px;
   }
 
-  .hud {
-    padding-right: 56px;
+  /* A phone's rail shows the glyphs; every level's name is still read out. */
+  .rail .cn {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
-  .pt {
-    display: inline-flex;
-  }
-
-  .hud[data-open='false'] .crumb:not(.tail),
-  .hud[data-open='false'] .stat.more {
-    display: none;
-  }
-
-  /* The folded path says there is more above the two crumbs it keeps. */
-  .hud[data-open='false'] .crumb.tail:nth-last-child(2)::before {
-    content: '… ›';
+  .crumb {
+    gap: 0;
   }
 
   /* The dock's row: the way out takes the wider share, MORE the rest; the fold is hidden until MORE, then its

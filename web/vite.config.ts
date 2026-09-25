@@ -14,8 +14,8 @@ export default defineConfig(({ command, isPreview }) => {
     test: {
       include: ['tests/**/*.test.ts'],
       environment: 'node',
-      // Half the cores: on every core the heavy tests starve and pass their 5 s limit.
-      maxWorkers: '50%',
+      // A quarter of the cores: at a half or more the heavy tests starve on this machine and pass their 5 s limit.
+      maxWorkers: '25%',
     },
   };
 });

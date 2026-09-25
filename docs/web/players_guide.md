@@ -62,17 +62,17 @@ type one in. <!-- src/engine/rules/GameEngine.ts:104-126, src/platform/CryptoEnt
 in the world puts you straight back where you stood — the game saves itself after every tap, in this browser only.
 See [Saving](#saving-seeds-and-the-debug-tools).
 
-**The screen, on a phone.** The top box is the HUD: the last two crumbs of your path, the Coherence bar,
-`PULSE_TRAVERSAL` (your steps), `TRACE_BUFFER` (what you carry, out of 16) and your position among your neighbours
-(`Z-AXIS` on a floor, `STRATA` in a building or below it, `INDEX` elsewhere). The `⋯` button in its corner opens the
-whole readout: the full path, `HOP_DENSITY` (depth), `LOCUS` (the address), `LOCUS_HASH` and `SEED`; it stays open until
-you tap `×`. <!-- src/ui/screens/HudPresenter.ts:24-37, 63-66, 125-146 --> Under the HUD is the place: its kind, its name,
-its tags, then the **moves** as buttons, then its description. Below that, the list of what lies one level down, one
+**The screen, on a phone.** The top box is the HUD: the game's name, **Steps**, **Buffer** (what you carry, out of
+16) and the Coherence bar (Integrity below the bedrock). Under it runs the **depth rail**: one glyph for each level from
+the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:24-35, 99-115 --> Under the
+rail is the place: its kind, its name, its chips (your position among your neighbours, such as `Z-axis 1 of 16` on a
+floor or `Strata 2 of 20` in a building, then its tags), then the **moves** as buttons, then its description.
+<!-- src/ui/screens/HudPresenter.ts:116-131 --> Below that, the list of what lies one level down, one
 button per place. At the bottom, always in reach of your thumb, is the **dock**: the way out (`▲ LEAVE …`) and **MORE**.
 MORE opens the rest of the dock above it — SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again
-after your next tap. <!-- src/ui/screens/HudPresenter.ts:186-195 -->
+after your next tap. <!-- src/ui/screens/HudPresenter.ts:162-169 -->
 
-**The screen, on a desktop.** The same, with the whole HUD open, the list beside the place, all eight dock buttons in
+**The screen, on a desktop.** The same, with the rail down the left and each level's name beside its glyph, the list beside the place, all eight dock buttons in
 a row, and a letter on every button: that letter is its key. A phone needs none.
 
 **Your first walk.** Every action is a button. Tap it.
@@ -93,7 +93,7 @@ inside the game.
 
 ## Every button
 
-A tap does one of three things: a **step** (a move, a place, a take) costs Coherence and counts on `PULSE_TRAVERSAL`;
+A tap does one of three things: a **step** (a move, a place, a take) costs Coherence and counts on **Steps**;
 a **command** (SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION) costs Coherence and counts nothing; an
 **answer** on a screen the game opened (the buffer, the recap, HELP, the link failure) costs nothing.
 <!-- src/engine/rules/Turn.ts, src/engine/rules/GameEngine.ts:331-370 --> A tap on something that is no longer on
@@ -109,7 +109,7 @@ offer changes nothing and costs nothing.
 | **ENTER CORRIDOR** / **BACK TO ELEVATOR** | The corridor lists the floor's doors; a door opens an apartment's first room. |
 | **GO FORWARD** / **GO BACK** | Walk an apartment's rooms. |
 | **EXIT APARTMENT** | Back to the corridor, from the first room only. <!-- src/engine/model/Room.ts:282-284 --> |
-| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`BUFFER FULL — merge or drop a fragment to take more`). <!-- src/ui/screens/HudPresenter.ts:315 --> |
+| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`BUFFER FULL — merge or drop a fragment to take more`). <!-- src/ui/screens/HudPresenter.ts:291 --> |
 | **BREACH THE BEDROCK** | On the top floor of a primed building whose Keystone you hold, in the elevator or the corridor. Spends the Keystone. |
 | **DESCEND INTO THE SUBSTRATE** | On floor 0 of a breached building, where GO DOWN used to be. |
 | **SCAN FOR SPECTRAL ECHOES** / **CAPTURE SPECTRAL ECHO** | In a Null Reach: scan until the signal reaches 100, then capture. <!-- src/engine/rules/GameEngine.ts:480-494 --> |
@@ -311,14 +311,14 @@ even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/
 
 ## Reading the screen
 
-**The crumbs** across the top of the HUD are your path, one icon per level, the current one bright: `∞` universe,
+**The depth rail** under the HUD is your path, one glyph for each level, the current one ringed: `∞` universe,
 `»` filament, `○` sector or null reach, `☼` solar system, `⊕` planet, `⬚` country, `🏙` city, `═` street, `⌂` building,
-`▤` floor, `▅` corridor, `🚪` apartment, `□` room; below bedrock the shard is `☠`. On a phone only the last two show;
-`⋯` opens the rest.
+`▤` floor, `▅` corridor, `🚪` apartment, `□` room; below bedrock the shard is `☠`. Its length is how deep you are: one
+glyph at the universe, thirteen in a room. A phone shows the glyphs, and a screen reader reads each level's kind and
+name. A desktop shows the names too, in a column down the left.
 
-**PULSE_TRAVERSAL** is how many steps the game accepted: moves, places and takes alike; it carries over when you
-reload. Commands cost Coherence but do not count here. **HOP_DENSITY** is how deep you are, with the universe at 0 and
-rooms at 12. **LOCUS** is the place's address; **LOCUS_HASH** looks like coordinates but is decorative.
+**Steps** is how many steps the game accepted: moves, places and takes alike. It carries over when you reload.
+Commands cost Coherence but do not count here.
 
 **The pane** beside the list (under it on a phone) is a drawn map from the street level upward and a telemetry block
 from the building level downward. On the map, dim symbols are unvisited and bright ones are visited.
@@ -350,7 +350,7 @@ breached, whether a reach's echo is taken. There is one slot; a new world replac
 a browser may clear its storage at any time. There is no export and no import.
 </div>
 
-**Finding your seed.** It is on the title screen and in the HUD (`SEED`, behind `⋯` on a phone).
+**Finding your seed.** It is on the title screen: **TITLE SCREEN** in the dock shows it, and **CONTINUE** takes you back.
 
 **Playing a specific seed.** There is no seed box. RE-ROLL draws a new one; a seed you like, keep by not re-rolling.
 
@@ -402,7 +402,7 @@ port's iteration notes (`tasks/port/I02.md` to `I09.md`).
 10. **Saves live in the browser only**, one slot, written after every tap; no `sync`, no `session.trace`, no export,
     no import, and a browser may clear it. There is no restore prompt: a reload continues.
 11. **No screenshots.** The terminal `p` and `P` commands have no browser equivalent; the seed is on the title screen
-    and in the HUD instead.
+    instead.
 12. **A typo costs nothing.** Buttons cannot mistype; a tap on something no longer offered changes nothing. In the
     terminal game every prompt, typos included, costs 1.
 13. **The tap that takes your last point never runs.** The terminal game runs the last command and kills you on the

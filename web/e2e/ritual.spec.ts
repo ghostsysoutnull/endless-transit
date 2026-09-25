@@ -57,7 +57,7 @@ test('scan a corridor: the door table as a panel under the narrative — trace, 
     'A sharp smell of ozone escapes the frame',
   );
   await expect(page.getByTestId('coherence')).toHaveText('99%');
-  await expect(stat(page, 'PULSE_TRAVERSAL')).toHaveText('0');
+  await expect(stat(page, 'Steps')).toHaveText('0');
   await expectTouchable(page, 'corridor with a scan');
   await shoot(page, '1-scan-corridor');
   await press(page, /back to elevator/i, hasTouch);
@@ -79,7 +79,7 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
   await plant(page, saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }));
   await page.goto('./?debug');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TEMPORAL_MARKER\s*FUTURE/);
+  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TEMPORAL_MARKER\s*Future/);
   await tapOption(page, 'debug:prime', hasTouch);
   await expect(page.getByTestId('status')).toHaveText(
     'Building primed: every floor sampled, seven merges in.',
@@ -89,9 +89,9 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
   await expect(page.getByTestId('status')).toContainText(
     'SPECTRAL_DEVIATION: Extracted Frequency 3493777 Hz.',
   );
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('02/16');
+  await expect(stat(page, 'Buffer')).toHaveText('2/16');
   await tapOption(page, 'capture:0', hasTouch);
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('03/16');
+  await expect(stat(page, 'Buffer')).toHaveText('3/16');
   await press(page, /^buffer$/i, hasTouch);
   const rows = page.locator('.frag');
   await expect(rows).toHaveCount(3);
@@ -121,8 +121,8 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
     saveText(SEED, PEAK, { [BUILDING]: PRIMED }, { buffer: [KEYSTONE], visited: trailOf(PEAK) }),
   );
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 15');
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('01/16');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 15');
+  await expect(stat(page, 'Buffer')).toHaveText('1/16');
   const breach = page.getByRole('button', { name: /breach the bedrock/i });
   await expect(breach).toBeVisible();
   await expect(page.locator('.moves button')).toHaveCount(3);
@@ -134,7 +134,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await press(page, /back to elevator/i, hasTouch);
   await press(page, /breach the bedrock/i, hasTouch);
   await expect(page.getByTestId('status')).toContainText('HARMONIC_INVERSION_PROTOCOL_ENGAGED');
-  await expect(stat(page, 'TRACE_BUFFER')).toHaveText('00/16');
+  await expect(stat(page, 'Buffer')).toHaveText('0/16');
   await expect(page.getByRole('button', { name: /breach the bedrock/i })).toHaveCount(0);
   await expect(page.locator('.moves button')).toHaveCount(2);
 
@@ -145,18 +145,19 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await expect(page.locator('button[data-option="enter:16"]')).toContainText('Layer -0x1');
   await expect(page.locator('button[data-option="enter:16"]')).toContainText('P: 10%');
   await tapOption(page, 'enter:15', hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   const descend = page.getByRole('button', { name: /descend into the substrate/i });
   await expect(descend).toBeVisible();
   await expect(page.getByRole('button', { name: /go down/i })).toHaveCount(0);
   await press(page, /descend into the substrate/i, hasTouch);
 
   await expect(page.getByTestId('place-kind')).toHaveText('LAYER');
-  await expect(page.getByTestId('place-name')).toHaveText('LAYER -0X1');
+  await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
   await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
-  await expect(page.locator('.meter .ml')).toHaveText('INTEGRITY');
-  await expect(page.locator('.stat', { hasText: 'ABYSSAL_DEPTH' })).toHaveCount(1);
-  await expect(page.locator('.stat', { hasText: 'STRATA' }).locator('dd')).toHaveText('01/10');
+  await expect(page.locator('.meter .ml')).toHaveText('Integrity');
+  // The depth is the rail's length (U01a): the universe down to the building, and the Layer under it.
+  await expect(page.getByTestId('path').locator('li')).toHaveCount(10);
+  await expect(page.locator('.chip.pos')).toHaveText(/Strata\s+1 of 10/);
   await expect(page.locator('.diag')).toHaveText('SYSTEM_STATUS: [ABYSS_SYNC]');
   await expect(page.getByTestId('telemetry')).toContainText('VOID_SYNC: [PRESSURE_HIGH]');
   await expect(page.getByTestId('coherence')).toHaveText('94%'); // 100: the corridor and back, the breach, leave, the lobby, the descent
@@ -168,7 +169,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await expect(page.getByTestId('scan').locator('.srow.you')).toContainText('ABYSSAL_SUBSTRATE');
 
   await page.reload();
-  await expect(page.getByTestId('place-name')).toHaveText('LAYER -0X1');
+  await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
   await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
   await expect(page.getByTestId('coherence')).toHaveText('92%');
 
@@ -178,7 +179,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('SHARD');
   await expect(page.locator('.crumb.you .ic')).toHaveText('☠');
-  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TEMPORAL_MARKER\s*ATOMIC/);
+  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TEMPORAL_MARKER\s*Atomic/);
   await expect(page.locator('button.tile')).toHaveCount(1);
   await expect(page.locator('button.tile').first()).toContainText('null reference infused with radar dish');
   await tapOption(page, 'capture:0', hasTouch);
@@ -204,15 +205,15 @@ test('on a desktop, S scans, J breaches, D descends', async ({ page, hasTouch })
     saveText(SEED, PEAK, { [BUILDING]: PRIMED }, { buffer: [KEYSTONE], visited: trailOf(PEAK) }),
   );
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 15');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 15');
   await page.keyboard.press('s');
   await expect(page.getByTestId('scan')).toBeVisible();
   await page.keyboard.press('j');
   await expect(page.getByTestId('status')).toContainText('HARMONIC_INVERSION_PROTOCOL_ENGAGED');
   for (let floor = 15; floor > 0; floor--) await page.keyboard.press('d');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await page.keyboard.press('d');
-  await expect(page.getByTestId('place-name')).toHaveText('LAYER -0X1');
+  await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
   expect(problems).toEqual([]);
 });
 
@@ -231,7 +232,7 @@ test('on a phone at 360 px the scan panel and a Shard read without sideways scro
     }),
   );
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('LAYER -0X1');
+  await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
   await press(page, /^scan$/i, hasTouch);
   await expect(page.getByTestId('scan').locator('.srow')).toHaveCount(9);
   await expectTouchable(page, 'artery scan at 360');

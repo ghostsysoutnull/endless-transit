@@ -158,8 +158,6 @@ describe('GameEngine — walking the big world', () => {
       icon: '∞',
       name: 'The Endless Universe',
       address: '0',
-      hash: '23.825 / 43.173',
-      depth: 0,
       position: null,
       trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe' }],
       status: 'UNIMATRIX_STABLE',
@@ -223,7 +221,7 @@ describe('GameEngine — walking the big world', () => {
     expect(place.kind).toBe('Cosmic filament');
     expect(place.name).toBe('Zeta-915-Link');
     expect(place.address).toBe('0.0');
-    expect(place.depth).toBe(1);
+    expect(place.trail).toHaveLength(2);
     expect(place.position?.label).toBe('CONDUIT');
     expect(place.position?.index).toBe(1);
     expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Zeta-915-Link']);
@@ -416,7 +414,7 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.kind).toBe('Room');
     expect(room.place?.name).toBe('Grand Power Plant');
     expect(room.place?.address).toBe('0.0.0.0.0.0.0.0.0.0.0.0.0');
-    expect(room.place?.depth).toBe(12);
+    expect(room.place?.trail).toHaveLength(13);
     expect(room.place?.position).toEqual({ label: 'CELL', index: 1, total: 2 });
     expect(room.place?.trail.map((step) => step.icon).join('')).toBe('∞»○☼⊕⬚🏙═⌂▤▅🚪□');
     expect(room.place?.trail[11]?.name).toBe('_void_sink_ Brutalist Slab [PITTED]');

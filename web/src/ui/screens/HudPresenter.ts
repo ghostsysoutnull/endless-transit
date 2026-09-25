@@ -18,23 +18,17 @@ const RETURN_MARK = '▲ ';
 /** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
 const SCAN_MARK = { text: '>>', label: 'You are here' } as const;
 /**
- * The HUD's labels above and below the bedrock (HUDHeaderComponent.groovy:34, 44, 54-60, 79; Guide:280):
- * Coherence is relabelled Integrity down there, the locus becomes a void trace.
+ * The HUD's labels above and below the bedrock (HUDHeaderComponent.groovy:34, 79; Guide:280): Coherence is
+ * relabelled Integrity down there, the path becomes a void trace. Plain words since U01a (Decision 1).
  */
 const LABELS = {
   lattice: {
-    meter: 'COHERENCE',
-    depth: 'HOP_DENSITY',
-    locus: 'LOCUS',
-    hash: 'LOCUS_HASH',
+    meter: 'Coherence',
     path: 'Path from the universe',
     sync: 'LATTICE_SYNC: [NOMINAL]',
   },
   void: {
-    meter: 'INTEGRITY',
-    depth: 'ABYSSAL_DEPTH',
-    locus: 'VOID_LOCUS',
-    hash: 'VOID_HASH',
+    meter: 'Integrity',
     path: 'Void trace from the universe',
     sync: 'VOID_SYNC: [PRESSURE_HIGH]',
   },
@@ -60,10 +54,6 @@ const MAP_HEADING = '[NEURAL_LATTICE_PROJECTION]';
 const TRACE_HEADING = '[NEURAL_LATTICE_TRACE_INITIATED]';
 /** The trace's mark on the current line (LatticeTraceComponent.groovy:85). */
 const TRACE_MARK = '>> ';
-/** How many crumbs a folded readout keeps on a phone (I09): where you are, and one above. */
-const TAIL = 2;
-/** The readouts a folded HUD keeps on a phone (I09): the steps, the buffer, the place's position among its peers. */
-const ALWAYS_SHOWN = new Set(['PULSE_TRAVERSAL', 'TRACE_BUFFER']);
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -101,17 +91,12 @@ export class HudPresenter implements Presenter<HudVM> {
     const debug = snapshot.options
       .filter((option) => option.role === 'debug')
       .map((option) => this.#docked(option));
-    const pad = (value: number): string => String(value).padStart(2, '0');
     const labels = place.abyssal ? LABELS.void : LABELS.lattice;
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
       frame: frameOf(place),
-      crumbs: place.trail.map((step, index) => ({
-        ...step,
-        current: index === place.trail.length - 1,
-        tail: index >= place.trail.length - TAIL,
-      })),
+      rail: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
       meter: {
         label: labels.meter,
         ...Coherence.range(),
@@ -122,36 +107,27 @@ export class HudPresenter implements Presenter<HudVM> {
         valueText: `${String(player.coherence)} percent, ${player.band}`,
       },
       stats: [
-        { label: 'PULSE_TRAVERSAL', value: String(player.steps) },
+        { label: 'Steps', value: String(player.steps) },
         {
-          label: 'TRACE_BUFFER',
-          value: `${pad(snapshot.buffer?.size ?? 0)}/${pad(snapshot.buffer?.capacity ?? 0)}`,
+          label: 'Buffer',
+          value: `${String(snapshot.buffer?.size ?? 0)}/${String(snapshot.buffer?.capacity ?? 0)}`,
         },
-        { label: labels.depth, value: pad(place.depth) },
-        ...(place.position === null
-          ? []
-          : [
-              {
-                label: place.position.label,
-                value: `${pad(place.position.index)}/${pad(place.position.total)}`,
-              },
-            ]),
-        { label: labels.locus, value: place.address },
-        { label: labels.hash, value: place.hash },
-        { label: 'SEED', value: snapshot.world?.seed ?? '' },
-      ].map((stat) => ({
-        ...stat,
-        more: !ALWAYS_SHOWN.has(stat.label) && stat.label !== place.position?.label,
-      })),
-      readout: { label: 'The whole readout', more: '⋯', less: '×' },
+      ],
       place: {
         eyebrow: place.kind.toUpperCase(),
         icon: place.icon,
-        name: place.name.toUpperCase(),
+        name: place.name,
+        position:
+          place.position === null
+            ? null
+            : {
+                label: this.#capitalised(place.position.label.toLowerCase()),
+                value: `${String(place.position.index)} of ${String(place.position.total)}`,
+              },
         tags: place.facts.map((fact) => ({
           key: fact.key,
           label: fact.label,
-          value: fact.value.toUpperCase(),
+          value: this.#capitalised(fact.value),
         })),
         description: place.description,
         rows: this.#rows(place),
@@ -369,6 +345,11 @@ export class HudPresenter implements Presenter<HudVM> {
   /** A take keeps the engine's words: the tile shows the object's name, the button is the take. */
   #take(option: GameOption): OptionVM {
     return { id: option.id, key: option.key.toUpperCase(), label: option.label, opposite: '' };
+  }
+
+  /** The text with its first letter a capital, the rest as it is: `baroque` → `Baroque`; `[STABLE]` stays. */
+  #capitalised(text: string): string {
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
   #docked(option: GameOption): OptionVM {

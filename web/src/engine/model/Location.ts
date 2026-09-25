@@ -12,9 +12,6 @@ import type { Origin } from './Origin.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Vibe } from './Vibe.ts';
 
-/** The locus hash is two readings of 0.000 … 99.999, each drawn in thousandths. */
-const HASH_STEPS = 1000;
-const HASH_TOP = 100 * HASH_STEPS - 1;
 /** Below the bedrock every node of the map is this (Guide:279; Room.groovy:143-146). */
 const VOID_GLYPH = '☠';
 const MAP_SPOT = 'map';
@@ -341,17 +338,6 @@ export abstract class Location {
 
   depth(): number {
     return this.address().depth();
-  }
-
-  /**
-   * The HUD's LOCUS_HASH: looks like coordinates, is decorative — a stable random pair per place, drawn
-   * from the place's own seed (the Groovy `getCoordinates`).
-   */
-  hash(): string {
-    const coords = this.seed().branch('coords');
-    const reading = (axis: string): string =>
-      (coords.branch(axis).range(0, HASH_TOP) / HASH_STEPS).toFixed(3);
-    return `${reading('x')} / ${reading('y')}`;
   }
 
   /** From the universe down to here. */

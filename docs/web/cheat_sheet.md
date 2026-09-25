@@ -40,7 +40,7 @@ letter on a button is its key. The game saves itself after every tap, in this br
 | **HELP** | the manual, inside the game |
 | **TITLE SCREEN** · **END SESSION** | the title (the world waits behind **CONTINUE**) · the recap (**RESUME** comes back) |
 
-`⋯` in the HUD's corner opens the whole readout (the full path, the address, your seed).
+The depth rail under the HUD is your path, one glyph for each level; the one you stand in is ringed.
 
 ## What things cost
 

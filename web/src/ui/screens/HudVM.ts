@@ -11,15 +11,14 @@ export interface HudVM extends Screen {
   /** The colour name of the frame (`yellow`), `default` above planet level; the stylesheet owns the hue. */
   readonly frame: string;
   /**
-   * The path from the universe, one crumb per level; the last one is where the player stands. `kind` is read
-   * out, not hovered for. The `tail` crumbs are the ones a folded readout keeps (I09): where you are and one above.
+   * The depth rail (U01a, Decision 6): the path from the universe, one level per step; the last one is where
+   * the player stands. Its glyph is shown; `kind` and `name` are read out, not hovered for.
    */
-  readonly crumbs: readonly {
+  readonly rail: readonly {
     readonly icon: string;
     readonly kind: string;
     readonly name: string;
     readonly current: boolean;
-    readonly tail: boolean;
   }[];
   /** The coherence bar: the scale, the value, its band (a colour a screen picks by it), and what a reader hears. */
   readonly meter: {
@@ -32,14 +31,14 @@ export interface HudVM extends Screen {
     readonly bandLabel: string;
     readonly valueText: string;
   };
-  /** The readouts; a `more` one is behind the fold on a phone (I09) — the locus, its hash, the seed, the depth. */
-  readonly stats: readonly { readonly label: string; readonly value: string; readonly more: boolean }[];
-  /** The HUD's fold on a phone (I09): the name of the button that opens the whole readout, and its two faces. */
-  readonly readout: { readonly label: string; readonly more: string; readonly less: string };
+  /** The readouts beside the meter, in plain words (U01a, Decision 1): the steps and the buffer. */
+  readonly stats: readonly { readonly label: string; readonly value: string }[];
   readonly place: {
     readonly eyebrow: string;
     readonly icon: string;
     readonly name: string;
+    /** Its position among its siblings as a chip (`Orbit`, `2 of 5`); nothing for the universe. */
+    readonly position: { readonly label: string; readonly value: string } | null;
     readonly tags: readonly { readonly key: string; readonly label: string; readonly value: string }[];
     readonly description: readonly string[];
     /** Labelled lines under the description — a room's FURNITURE, its object count (the mock's rows). */

@@ -66,16 +66,9 @@ test('the path says what kind of place each crumb is, to a screen reader, withou
   await page.goto('./');
   await press(page, /new world/i, hasTouch);
   await press(page, /enter world/i, hasTouch);
-  // A new world starts on a street: eight crumbs, the universe first. A phone keeps two until the readout
-  // button — a disclosure with its state — opens the rest (I09).
+  // A new world starts on a street: eight levels on the depth rail, the universe first. Every one is in the
+  // markup on every screen size — a phone shows the glyphs and reads the kind and the name out (U01a).
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  const readout = page.getByTestId('readout');
-  if (await readout.isVisible()) {
-    await expect(readout).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.getByTestId('path').getByRole('listitem')).toHaveCount(2);
-    await (hasTouch ? readout.tap() : readout.click());
-    await expect(readout).toHaveAttribute('aria-expanded', 'true');
-  }
   const crumbs = page.getByTestId('path').getByRole('listitem');
   await expect(crumbs).toHaveCount(8);
   await expect(crumbs.nth(0)).toHaveText(/^\s*Universe/i);

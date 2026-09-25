@@ -43,10 +43,10 @@ address, the `Buffer`, the resonance tally) rides with the `Journey`; what the H
 page they are the last strip, folded behind one DEBUG button (`data-testid="debug-toggle"`, `aria-expanded`), every button
 `tabindex="-1"` — never on the first screen, never in the tab order; the e2e harness opens the fold as a tester would.
 
-**Phone first screen (I09):** the world screen's moves sit under the place's title; under 900 px the HUD folds behind
-its readout button (the last two crumbs, the steps, the buffer and the position stay), the dock keeps the way out beside
-MORE — a disclosure the next step folds again — and a panel the player asked for (scan, map, trace) comes after the list;
-a desktop shows every dock button and the whole HUD. `e2e/fold.spec.ts` asserts an action on the first screen of every
+**Phone first screen (I09, U01a):** the world screen's moves sit under the place's title; the HUD is one small box (the
+name, Steps, Buffer, the meter) and the depth rail a line of glyphs under it (a desktop gives the rail a left column with
+the names). Under 900 px the dock keeps the way out beside MORE — a disclosure the next step folds again — and a panel
+the player asked for (scan, map, trace) comes after the list; a desktop shows every dock button. `e2e/fold.spec.ts` asserts an action on the first screen of every
 screen kind, at the device size and at 360 × 640.
 
 The world: `model/Location` owns the **lazy-loading law** — children sit behind a private array and exist only after
