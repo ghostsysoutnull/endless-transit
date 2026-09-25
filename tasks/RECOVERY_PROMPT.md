@@ -26,7 +26,7 @@
 
 Initialize session for the Endless Transit substrate.
 
-1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, the Gates table, Coverage Claim Protocol.
+1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol (the Groovy Gates table: `terminal/CLAUDE.md`).
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb`; `git log --oneline -5`. Read `tasks/todo.md`, this file's **Next**, the top rows of
    `journals/CHRONICLE_INDEX.md` (open a log only when its wave matters to the task), the OPEN items of `tasks/backlog/HOUSEKEEPING.md`, `tasks/backlog/CONCEPTS.md` and
    `docs/analysis/WORKFLOW_BACKLOG.md`. Groovy-only recipes and records: `terminal/CLAUDE.md`.

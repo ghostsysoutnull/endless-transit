@@ -56,6 +56,29 @@ HK and phase plans `tasks/completed/`. History — read on demand, never rewritt
   for the user's decision on the `KEYSTONE` debug glitch. HK-013 and WF-006 go moot with the freeze (study §2.4).
 - **The OOA plan** (`docs/analysis/OOA_REFACTOR_PLAN.md`, per-phase execution records) is not loaded automatically — read on demand.
 
+## ⚙️ Groovy workflow and gates (moved from the root CODEX, 2026-09-25; text unchanged)
+* Each refactoring phase runs on its own git branch: `refactor/phase-N-short-name`.
+* Merge to `master` only when ALL phase gates pass (`./terminal/vinc.sh --test`, `./terminal/vinc.sh --lint`, `./terminal/vinc.sh --scan` where applicable).
+* Every new class created during refactoring MUST include `@CompileStatic`.
+* Write a phase retrospective in `terminal/docs/retro/RETRO_PHASE_N.md` after every phase (chronicle first, retro second). Promote any evergreen lessons to `tasks/lessons/<domain>.md`.
+* The active task pointer in `CLAUDE.md` should reflect the current refactoring phase document, not a stale task.
+* **Visual Baseline Protocol**: The UI gate is the golden-frame suite (`BridgeViewGoldenFrameTest` + `ViewComponentGoldenTest`, run by `./terminal/vinc.sh --test`) — 36 frames compared byte for byte. `./terminal/vinc.sh --scan` is a **model** gate (world generation); it never draws the HUD (WF-003). Regenerate goldens with `./terminal/vinc.sh --goldens` only after an intended visual change, review the diff, commit them with the change. Run both gates before and after any change to `model` or `ui`.
+* **Verification Protocol**:
+    * **Compilation Check**: Every change MUST pass `./terminal/vinc.sh --compile` (or `--test`).
+    * **Full Verification**: Run `./terminal/vinc.sh --test` before marking any major task complete.
+    * **Lint Check (O2)**: `./terminal/vinc.sh --lint` must be green before any merge; `terminal/config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
+    * **Docs Check (WF-007)**: `./terminal/vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, every class blueprint stamped with its class's current hash, and the recovery prompt under its 1,000-word cap (current state only; history lives in the chronicle). A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
+* **The Gates** (mandatory after every phase; the full history is in `terminal/docs/analysis/OOA_REFACTOR_PLAN.md`, read on demand):
+
+| Gate | Command | Checks |
+| :--- | :--- | :--- |
+| Logic | `./terminal/vinc.sh --test` | full suite |
+| Visual | golden frames inside `--test` | 36 HUD frames byte-identical |
+| Model | `./terminal/vinc.sh --scan` | seed 0 → 9-node match |
+| Lint | `./terminal/vinc.sh --lint` | house rules + invariants; baseline may only shrink |
+| Determinism | `DeterministicUniverseTest` | same seed → same world (procgen/model changes) |
+| Docs | `./terminal/vinc.sh --docs` | handover facts + blueprint stamps (at close-out) |
+
 ## 🏛️ Development Conventions
 - **Groovy Tooling Lessons**: @tasks/lessons/groovy-tooling.md
 - Process lessons that apply to any code: root `tasks/lessons/infrastructure.md` (loaded every session).

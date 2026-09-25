@@ -20,3 +20,4 @@ Rule plus pointer, one or two sentences each; the story lives in the iteration's
   `File.groovy:a-b`, and the lines printed must hold the claim; a line-number check over every `.groovy:` in the tree
   is one script. (I04 review: the note and twelve comments cited `ThemeService.groovy:221-328` — the file is 215 lines;
   eleven I03 citations were beyond their files' ends too.)
+- **A UI change is unverified until it has been seen, and `command -v chromium` is not a search for a browser**: look in `~/.cache/ms-playwright` and `find / -name playwright-core` before saying there is none; drive it in real time (`docs/analysis/mocks/look.js`) — a headless `--virtual-time-budget` screenshot freezes animations and lies. (CONCEPT-001 visual mock: a day of blind publishing, one invisible-canvas bug the user had to report.)
