@@ -1,45 +1,33 @@
 # Infrastructure Lessons
+Rule plus pointer, one or two lines; the story lives in the wave's record. How to work with the user: the block at the
+top of `CLAUDE.md`.
 
-## Patterns
-- **Verified AI-TDD**: Before fixing any bug, create a reproduction test (e.g., `NewGameTest.groovy`) that stress-tests the failure condition across multiple random seeds.
-
-- **A test never reads, writes or deletes a file the player owns**: `session.trace` was overwritten by two persistence tests on every suite run for six months and deleted by `HeadlessRunner` before every headless run; gitignore hid it and only a user report surfaced it (HK-012). Any file the game writes for the player needs a path the test can redirect (`Game.saveFile`, `JournalManager.journalFile`); tests point it at a temp file, delete it in `finally`, and — for the file that matters — assert the real one's size and mtime are unchanged afterwards. "Delete it so the prompt doesn't hang" is never an acceptable test setup.
-- **Polling over sleeping**: When a test waits for an async side-effect (file write, event, state change), use a polling loop (`while deadline not reached: check condition, sleep 50ms`) rather than a fixed sleep. The common-case path exits in 1–2 iterations; the timeout ceiling still catches regressions.
-
-- **Consistency beats correctness-in-isolation**: When two services share the same loading pattern (both use filesystem paths), fix them together rather than converting one to a better pattern while leaving the other behind. Temporary divergence creates two patterns with no clear owner and obscures which is canonical.
-
-- **A failing test during authoring is information, not failure**: When a new test fails unexpectedly during the writing phase, investigate *why* before fixing the assertion. The failure may reveal a real production gap — as with the "not all SILENCE" test that surfaced the `TOPOLOGY_WARN` scenario in `populateCorridor`.
-
-- **`replace_all` is only safe when indentation is truly identical across all instances**: The tool matches exact whitespace. Two occurrences of the "same" pattern at different nesting depths will not both match — the shallower one is replaced and the deeper one is silently skipped. In `@CompileStatic` code a missed replacement becomes a compile error; in dynamic Groovy it becomes a silent runtime failure. Safe default: grep first to confirm all instances share identical surrounding whitespace, then use `replace_all`. When indentation differs, replace each site individually.
-
-- **Blast radius analysis must include the test tree, not just production source**: When planning a field type change or method signature change, grep `src/test/` for direct accesses to that field/method as a separate step from grepping `src/main/`. Production blast radius analysis misses test-only coupling — assertions like `assertEquals(literal, item.field)` won't appear in any production file but will fail at runtime. Phase 3b-ii found 3 unplanned test files this way (InventoryObjectTest, AbyssalRitualTest, TracePersistenceTest).
-
-
-
-
-- **Move method bodies by script with a reverse-substitution check**: when extracting a method into a new class, lift the exact text programmatically, apply only the listed substitutions (e.g. `Terminal.drawX(` → `lines << Terminal.boxX(`), write the target, and assert that reversing the substitutions reproduces the original body. Eight Phase 7 extractions had zero drift; hand-retyping an 80-line method is where drift comes from.
-
-- **Assert after the last edit, and never on text the edit itself inserts**: in scripted refactors, put sanity checks at the end of the script (after doc/comment replacements) and grep for markers the script does not add — two of three failed harness edits in the post-Phase-7 housekeeping were self-inflicted checks (a comment containing the literal being searched; a doc sentence checked before it was replaced). Guard the pipeline with `&&` so a failed check never reaches a commit. Corollary (HK-005): assert on the *construct* you removed (`"void populateChildren()" not in file`), not on the bare token — a comment in `Building` legitimately mentioned `populateChildren` and tripped the broad form. Put the asserts before the write so a false positive costs a rerun, not a revert.
-- **Run a new pin RED and GREEN before trusting it, and read its own logic for a contradiction**: `ThemeResourceCoverageTest` asserted "walls from the culture's own file *and not* monolith's" — impossible for monolith itself; it failed on first run against the very tree it was written to bless. A pin that is green only after its own bug is fixed has proven nothing until it is also shown red against the old state (here: a `git archive` of the pre-change resources placed first on the classpath). (HK-016 step 1.)
-
-- **A new gate ships green on its first commit — baseline the debt, then ratchet it down**: `./terminal/vinc.sh --lint` (O2) landed with all 100 pre-existing violations recorded in `terminal/config/lint/baseline.xml`, so every commit on the branch was independently green and reverted alone; the fix commits then shrank the file (gate: `git diff` shows removals only). A gate that is red until the fixes land breaks "each commit reverts alone" and invites bulk fixes. CodeNarc baseline entries are keyed by file + rule + message with no line numbers, and `MethodSize`'s message embeds the length — so a baselined long method resurfaces the moment it changes, which is the ratchet.
-- **A close-out script is a pipeline too — chain every step, and never name the top commit in a file that the next commit will bury**: the HK-013 hand-off ran `python3 - <<EOF … EOF` on one line and `git add && git commit && git merge` on the next, *unchained*; the script asserted halfway (a search string that did not match the file), and the half-edited recovery prompt was committed and merged anyway. Two more docs commits repaired it, and the same session had already dropped a todo line into the wrong section with an `rfind` on a generic marker. Rules: `script && git add && git commit` on one chain (the "move bodies by script" lesson applies to docs); anchor inserts on a *unique* neighbouring line and assert `count == 1`; after a scripted docs edit, read the edited region before committing; and write orientation hints that survive one more commit ("the last code merge is X"), not "the top commit is Y".
-- **A workflow fix must cost less than the failure it fixes — measure the ritual against the work**: WF-007's close-out wrote as many words as its work (~2,200 each, the same facts seven times) and applied every row to every wave; an hour later the agent skipped it for a one-line fix, so the "mandatory" rule was already discretionary. The user asked whether it was too hungry and too broad; it was. Rules: size a ritual mechanically from the diff (tiers), let judgment only *add* steps with a named reason, keep one record per wave and point at it everywhere else, and put a machine cap on any file that every close-out appends to (`--docs` D4). When codifying a habit into a command, question the habit first. (WF-008, user correction.)
-- **A process step is offered only with its cost, what it teaches that is not already known, and the failure it prevents**: a spike, a review or an extra agent that cannot name the last two is not an option; "ambitious" is for the game's design, never for process. (UI queue process refinement: a throwaway spike was offered as the pick for a risk the mock had already measured, user correction.)
-- **A law states the principle; the incident is its pointer**: the first WF-009 draft codified the two smells that had just happened (static function, two owners); the user asked whether the law should not be more generic. Write the principle set once, each line with the wave that taught it, and give the grill only the questions that have a verifiable form — a generic "follow SOLID" gates nothing, and a smell-by-smell law is a lesson wearing a law's uniform. (WF-009, user question.)
-- **"Expand item X" means read the code and bring fix options, not restate the backlog**: a decision question is only askable once each option names the change, its cost and its edge. (HK-015, user correction.)
-- **Never `git add -A` (or `git add .`) in this repository — name the paths**: the player's untracked save backup sat in the tree all session and one `-A` committed and pushed it. `git status --short` before every commit, and the staged list must contain only files the wave wrote. (GitHub Pages audit close-out; `session.trace.bak*` is now ignored.)
-- **A close-out that ends in a "leftovers" list is not a close-out**: run `/close-wave` after the wave's *last* action (for a wave that publishes: after the merge, the push and the live checks), or re-run its row 2 after them; whatever is left is either done or put to the user as one question — never reported as "small, not urgent". (GitHub Pages audit, user correction; WF-010.)
-- **A constraint stated with the request is outside "what is your take"**: give the take on what is still open; never argue against an ordering or scope the user has just fixed, and grep the backlog for a finding before presenting it as new. (HK-023 logging, user correction.)
-- **A take on a game idea starts at the concept, not the code**: what it is, how the player meets it, where it fits; code facts wait until asked, or go in an appendix. (CONCEPT-001, user correction.)
-- **A leftover fact carries its verdict**: "nothing to do", what was done, or one question — and what is in scope (a merged branch, a file near its cap) is tidied inside the task, not reported. (CONCEPT-001 follow-up, user correction.)
-- **A confirm option names its scope**: "apply everything" is not a scope — the question itself lists the files and the kind of edit, and what is *not* touched. (Context diet `0xb629529`, user correction.)
-- **Scripted edits: a comment goes on its own line, and a cut is bounded**: a `//` appended inside a one-line statement swallowed the rest of the line; a range replace from one anchor to a far one deleted the styles between them. Before a range replace, print what lies between the anchors. (CONCEPT-001 visual mock.)
-- **After a long assessment, ask one decision per message**: a batch of seven questions was unanswerable; one question, lettered options, a marked pick, then the next. Standing rule for the web-port effort. (Web port study, user correction.) **Every question is asked this way — never as prose ending "want me to…?" — and the pick mark opens its option: `(A) ★ …`.** (UI mock, user correction.)
-- **Design options are ambitious, and a pick is built, not re-asked**: never make the simplest option the pick because it is simple; once the user picks, build it and report in a few short lines — no new question round between steps. (UI mock, user corrections.)
-- **A question's options stand on their own words**: no `§`, no section numbers, no document shorthand in chat — say what would be saved and where in plain words; when asked "what is X", give the content, not the location. (Web port execution research, user correction.)
-- **A commit-and-push Directive covers the wave's close-out records**: run `/close-wave`, commit its record edits and push in the same go; coming back to ask for a second commit is the loop the user does not want. (Web port execution research, user correction.)
-
-## Mistakes/Corrections
-- **A disabled test guards nothing**: quote assertions from *enabled* tests only when making a coverage claim (the Phase 10 coverage audit found `EventBusTest` `@Disabled`, so what it named was UNGUARDED). (Moved here from the recovery prompt by WF-008.)
-- **A coverage claim is not a grep hit — read the assertions**: The Phase 6b draft plan stated that `GameMementoTest` pinned input-history restoration. The test asserts seed, LIP, and coherence only; history was never checked. The claim came from the file name and a remembered purpose, not from reading the assertion lines. Blast-radius grep finds *references* to a field; it says nothing about which *behaviors* are asserted. Rule: before writing "test X guards Y" in a plan, open X and quote the assertion. If none exists, the behavior is UNGUARDED and a pre-check test is step 0 (see Coverage Claim Protocol in `.claude/CODEX.md`). Caught by user review before any code changed, 2026-09-11.
+- **A test never reads, writes or deletes a file the player owns**: the path is injectable, the test uses a temp file
+  and asserts the real one is untouched. (HK-012)
+- **Poll, don't sleep**: wait for an async effect with a deadline loop, never a fixed sleep.
+- **Two places sharing a pattern are fixed together**: converting one alone leaves two patterns and no owner.
+- **A new test that fails unexpectedly is information**: find out why before touching the assertion.
+- **`replace_all` matches exact whitespace**: grep that every instance is indented alike first, else replace each site.
+- **Blast radius includes the tests**: grep them separately from the source for every field or signature changed.
+  (Phase 3b-ii)
+- **Move code by script**: lift the text, apply only the listed substitutions, assert the reverse gives back the
+  original. (Phase 7)
+- **A scripted edit asserts at its end**, on the construct it removed, never on text it inserts; chain it with `&&` so
+  a failed check never commits. (HK-005)
+- **A scripted edit puts a comment on its own line**, and prints what lies between two anchors before a range replace.
+  (CONCEPT-001)
+- **Show a new pin RED against the old state and GREEN against the new** before trusting it, and read its logic for a
+  self-contradiction. (HK-016)
+- **A coverage claim quotes the assertion lines of an enabled test, read this session**: a file name, a grep hit or a
+  disabled test guards nothing. (Phase 6b, Phase 10)
+- **A new gate ships green on its first commit**: baseline today's debt, then let the baseline only shrink. (O2)
+- **A docs edit is a pipeline**: `script && git add && git commit` in one chain; anchor inserts on a unique line (assert
+  one match); read the edited region before committing; never write "the top commit is X" into a file the next commit
+  buries. (HK-013)
+- **Never `git add -A` or `git add .`**: name the paths, `git status --short` first. (GitHub Pages audit)
+- **`/close-wave` runs after the wave's last action** — the merge, the push, the live check. (WF-010)
+- **Grep the backlog before presenting a finding as new.** (HK-023)
+- **A ritual costs less than the failure it prevents**: size it from the diff, judgment only adds steps with a named
+  reason, one record per wave, a cap on any file every close-out appends to. (WF-008)
+- **A law states the principle with its incident as the pointer**; the grill asks only questions with a verifiable
+  form. (WF-009)
