@@ -30,8 +30,6 @@ const OPEN: GameSnapshot = {
     icon: '□',
     name: 'Grand Power Plant',
     address: '0.0.0.0.0.0.0.0.0.0.0.0.0',
-    hash: '1.000 / 2.000',
-    depth: 12,
     position: { label: 'CELL', index: 1, total: 2 },
     trail: [],
     status: 'ATMOS: 14% | TEMP: 7°C',

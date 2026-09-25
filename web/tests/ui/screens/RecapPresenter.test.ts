@@ -30,8 +30,6 @@ const RECAP: GameSnapshot = {
     icon: '⌂',
     name: 'Ornate Sanctum',
     address: '0.0.0.0.0.0.0.0.0',
-    hash: '1.000 / 2.000',
-    depth: 8,
     position: null,
     trail: [],
     status: '',

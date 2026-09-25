@@ -29,8 +29,6 @@ const PLANET: GameSnapshot = {
     icon: '⊕',
     name: 'Auraea',
     address: '0.0.0.0.1',
-    hash: '43.210 / 07.654',
-    depth: 4,
     position: { label: 'ORBIT', index: 2, total: 5 },
     trail: [
       { icon: '∞', kind: 'Universe', name: 'The Endless Universe' },
@@ -86,7 +84,6 @@ const STREET: GameSnapshot = {
     kind: 'Street',
     name: 'Bright Boulevard',
     address: '0.0.0.0.1.0.0.0',
-    hash: '1.000 / 2.000',
   },
   options: [
     option({
@@ -184,7 +181,6 @@ const ROOM: GameSnapshot = {
     icon: '□',
     name: 'Grand Power Plant',
     address: '0.0.0.0.1.0.0.0.0.0.0.0.0',
-    depth: 12,
     position: { label: 'CELL', index: 1, total: 2 },
     facts: [
       { key: 'reading', label: 'TYPE', value: 'Power Plant' },
