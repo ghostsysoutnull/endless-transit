@@ -1,12 +1,10 @@
 #!/bin/bash
-# WF-007: the mechanical half of /close-wave. Read-only — this script never writes a file.
-#   D1  suite count      DISCOVERED (./vinc.sh --test --agent) == tasks/RECOVERY_PROMPT.md "Test Suite" == tasks/todo.md "Suite baseline"
-#   D2  latest chronicle top LOG_ID of journals/CHRONICLE_INDEX.md == recovery prompt "Latest chronicle" == newest journals/LOG_* file
+# WF-007: the Groovy half of the docs gate. Read-only — this script never writes a file. The project's own checks
+# (chronicle, handover size, user block) moved to the root `.claude/docs-check.sh` on 2026-09-25; D2, D4 and D5 retired
+# here with them, so a web close-out never runs the Groovy suite.
+#   D1  suite count      DISCOVERED (./vinc.sh --test --agent) == terminal/CLAUDE.md "Test Suite" == tasks/todo.md "Suite baseline"
 #   D3  blueprint stamps each terminal/docs/blueprints/logic/classes/<pkg>/<Class>.md ends in a stamp carrying the first 10 chars of
 #                        `git hash-object` of its class file ("Verified against:" or "Baselined (not audited) against:")
-#   D4  handover size    tasks/RECOVERY_PROMPT.md <= 1000 words — it holds current state only; history lives in the chronicle (WF-008)
-#   D5  user block       the "Working with the user" block at the top of CLAUDE.md: <= 12 rules, <= 500 words — a new rule
-#                        merges or replaces, it never grows the block (rules diet, 2026-09-25)
 # Env (for negative checks against a scratch copy; the tree is never touched):
 #   DOCS_ROOT        repository root to read from (default: the parent of terminal/). Project records (tasks/, journals/)
 #                    are read from it; the Groovy records (blueprints, src/) from its terminal/ folder.
@@ -27,24 +25,15 @@ if [ -n "$VINC_DISCOVERED" ]; then
 else
     ACTUAL=$("$HERE/vinc.sh" --test --agent 2>/dev/null | sed -n 's/.*STATUS=PASS DISCOVERED=\([0-9]*\).*/\1/p')
 fi
-RP_COUNT=$(sed -n 's/^- \*\*Test Suite:\*\* \([0-9]*\) discovered.*/\1/p' "$ROOT/tasks/RECOVERY_PROMPT.md" | head -1)
+RP_COUNT=$(sed -n 's/^- \*\*Test Suite:\*\* \([0-9]*\) discovered.*/\1/p' "$TERM_ROOT/CLAUDE.md" | head -1)
 TODO_COUNT=$(sed -n 's/^\*\*Suite baseline:\*\* \([0-9]*\) discovered.*/\1/p' "$ROOT/tasks/todo.md" | head -1)
 D1=ok
 if [ -z "$ACTUAL" ]; then
     D1=FAIL; fail "D1 suite did not report STATUS=PASS — run ./vinc.sh --test -q"
 else
-    [ "$RP_COUNT" = "$ACTUAL" ]   || { D1=FAIL; fail "D1 tasks/RECOVERY_PROMPT.md 'Test Suite' says '${RP_COUNT:-<missing>}', suite discovered $ACTUAL"; }
+    [ "$RP_COUNT" = "$ACTUAL" ]   || { D1=FAIL; fail "D1 terminal/CLAUDE.md 'Test Suite' says '${RP_COUNT:-<missing>}', suite discovered $ACTUAL"; }
     [ "$TODO_COUNT" = "$ACTUAL" ] || { D1=FAIL; fail "D1 tasks/todo.md 'Suite baseline' says '${TODO_COUNT:-<missing>}', suite discovered $ACTUAL"; }
 fi
-
-# --- D2: latest chronicle --------------------------------------------------------------------------------------------
-IDX_ID=$(sed -n 's/^| \*\*\(0x[0-9A-Fa-f]*\)\*\* |.*/\1/p' "$ROOT/journals/CHRONICLE_INDEX.md" | head -1)
-RP_ID=$(sed -n 's/^- \*\*Latest chronicle:\*\* `\(0x[0-9A-Fa-f]*\)`.*/\1/p' "$ROOT/tasks/RECOVERY_PROMPT.md" | head -1)
-LOG_ID=$(ls "$ROOT"/journals/LOG_*.md 2>/dev/null | sort | tail -1 | sed -n 's/.*_\(0x[0-9A-Fa-f]*\)\.md$/\1/p')
-D2=ok
-[ -n "$IDX_ID" ] || { D2=FAIL; fail "D2 journals/CHRONICLE_INDEX.md has no '| **0x…** |' row"; }
-[ "$RP_ID" = "$IDX_ID" ]  || { D2=FAIL; fail "D2 tasks/RECOVERY_PROMPT.md 'Latest chronicle' is '${RP_ID:-<missing>}', index top row is '$IDX_ID'"; }
-[ "$LOG_ID" = "$IDX_ID" ] || { D2=FAIL; fail "D2 newest journals/LOG_* file is '${LOG_ID:-<missing>}', index top row is '$IDX_ID'"; }
 
 # --- D3: blueprint stamps --------------------------------------------------------------------------------------------
 D3=ok; BP_COUNT=0
@@ -60,26 +49,9 @@ for BP in "$TERM_ROOT"/docs/blueprints/logic/classes/*/*.md; do
 done
 [ $BP_COUNT -gt 0 ] || { D3=FAIL; fail "D3 no blueprints found under terminal/docs/blueprints/logic/classes"; }
 
-# --- D4: handover size ----------------------------------------------------------------------------------------------
-RP_WORDS=$(wc -w < "$ROOT/tasks/RECOVERY_PROMPT.md" | tr -d ' ')
-D4=ok
-[ "${RP_WORDS:-0}" -le 1000 ] || { D4=FAIL; fail "D4 tasks/RECOVERY_PROMPT.md is $RP_WORDS words (cap 1000) — it holds current state only; move history to the chronicle, do not raise the cap"; }
-
-# --- D5: user block size ------------------------------------------------------------------------------------------
-BLOCK=$(awk '/^## 🤝 Working with the user/{f=1} f&&/^$/{exit} f' "$ROOT/CLAUDE.md")
-UB_RULES=$(printf '%s\n' "$BLOCK" | grep -cE '^[0-9]+\. ')
-UB_WORDS=$(printf '%s\n' "$BLOCK" | wc -w | tr -d ' ')
-D5=ok
-if [ -z "$BLOCK" ]; then
-    D5=FAIL; fail "D5 CLAUDE.md has no '## 🤝 Working with the user' block"
-else
-    [ "$UB_RULES" -le 12 ] || { D5=FAIL; fail "D5 the user block in CLAUDE.md has $UB_RULES rules (cap 12) — merge or replace, do not raise the cap"; }
-    [ "$UB_WORDS" -le 500 ] || { D5=FAIL; fail "D5 the user block in CLAUDE.md is $UB_WORDS words (cap 500) — tighten a rule, do not raise the cap"; }
-fi
-
 # --- report ----------------------------------------------------------------------------------------------------------
 if [ ${#FAILS[@]} -eq 0 ]; then STATUS=PASS; EXIT=0; else STATUS=FAIL; EXIT=1; fi
-LINE="DOCS=$STATUS D1=$D1(${ACTUAL:-?}) D2=$D2(${IDX_ID:-?}) D3=$D3($BP_COUNT) D4=$D4(${RP_WORDS:-?}) D5=$D5(${UB_RULES:-?}/${UB_WORDS:-?})"
+LINE="DOCS=$STATUS D1=$D1(${ACTUAL:-?}) D3=$D3($BP_COUNT)"
 if [ $AGENT -eq 1 ]; then
     for F in "${FAILS[@]}"; do echo "$F" >&2; done
     echo "$LINE"

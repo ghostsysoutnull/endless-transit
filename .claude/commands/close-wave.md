@@ -7,14 +7,14 @@ table. It sizes itself: step 0 picks a tier from the diff. It never commits, mer
 Origin: WF-007 (the gate) and WF-008 (the tiers) in `docs/analysis/WORKFLOW_BACKLOG.md`.
 
 **Queue sessions do not run this command.** Their close-out is the Standing Order in `.claude/CODEX.md`:
-gates green, queue ticked, handover true, `./terminal/vinc.sh --docs` green, commit, push — no chronicle, no retro (user,
+gates green, queue ticked, handover true, `./.claude/docs-check.sh` green, commit, push — no chronicle, no retro (user,
 2026-09-21).
 
 ---
 
 ## 🌌 PHILOSOPHY
 The author of a change remembers what they *touched*; nobody remembers what they *made false*. So this pass
-assumes a document is stale and looks for which one. Two halves: `./terminal/vinc.sh --docs` owns the facts a machine
+assumes a document is stale and looks for which one. Two halves: `./.claude/docs-check.sh` (and, for a wave under `terminal/src/`, `./terminal/vinc.sh --docs`) owns the facts a machine
 can check; this protocol owns the ones that need reading. And a close-out must cost less than the work it
 closes: **one record per wave, pointers everywhere else.**
 
@@ -57,8 +57,8 @@ memory is **not done**, whatever the answer.
 | 6 | **Retro** | `terminal/docs/retro/RETRO_<WAVE>.md` — what went well / wrong / concerns, not a second changelog. Friction → `WORKFLOW_BACKLOG.md`; a `High` item blocks the next phase. | file, items logged |
 | 7 | **Lessons** | One lesson per user correction → `tasks/lessons/<domain>.md`. Never Claude's memory. | title, or n/a |
 | 8 | **Task records** | Pointers, not retellings: `tasks/todo.md` line ≤ 30 words; backlog entry → CLOSED, resolution ≤ 60 words + record link; plan → `tasks/completed/` with commits + gate lines only; the active task document's status line. With no chronicle, the todo line is the record. | files |
-| 9 | **Recovery prompt** | `tasks/RECOVERY_PROMPT.md` holds **current state only**: header, the status lines (Test Suite, Latest chronicle, Lint, Docs, Branch), Active Work ≤ 60 words, Next (every open thread and undecided user question), resume steps, links. No per-wave history — that is the chronicle's job, and D4 caps the file. Hints must survive one more commit ("the last code merge is X", never "the top commit is Y"). | lines changed |
-| 10 | **Gate** | `./terminal/vinc.sh --docs --agent` → `DOCS=PASS`. A FAIL names the file and the stale value. Never edit a stamp, a count or a word total to match without doing the row it belongs to. | the output line |
+| 9 | **Recovery prompt** | `tasks/RECOVERY_PROMPT.md` holds **current state only**: header, the status lines (Latest chronicle, Docs, Branch, Web game; a Groovy wave's suite and lint lines live in `terminal/CLAUDE.md`), Active Work ≤ 60 words, Next (every open thread and undecided user question), resume steps, links. No per-wave history — that is the chronicle's job, and D4 caps the file. Hints must survive one more commit ("the last code merge is X", never "the top commit is Y"). | lines changed |
+| 10 | **Gate** | `./.claude/docs-check.sh --agent` → `DOCS=PASS`; a wave under `terminal/src/` also `./terminal/vinc.sh --docs --agent`. A FAIL names the file and the stale value. Never edit a stamp, a count or a word total to match without doing the row it belongs to. | the output line |
 
 ### 2. REPORT
 Header: `wave · tier (floor evidence) · add-ons (reason each)`. Then the table of the rows run, each **done**
@@ -72,7 +72,7 @@ Header: `wave · tier (floor evidence) · add-ons (reason each)`. Then the table
 - One branch (`docs/close-<wave>`, or the wave's own branch when it had no `terminal/src/` change). Scripted edits and
   `git add && git commit` on one `&&` chain; anchor inserts on a unique line and assert `count == 1`; read
   the edited region before committing.
-- `./terminal/vinc.sh --docs --agent` again after the merge. Push only on the user's word.
+- `./.claude/docs-check.sh --agent` again after the merge. Push only on the user's word.
 
 ---
 
