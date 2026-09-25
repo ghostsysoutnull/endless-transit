@@ -4,18 +4,19 @@ This file defines the immutable behavioral mandates and workflow orchestration f
 
 ---
 
-## 🚦 THE STANDING ORDER — web port sessions (user Directive, 2026-09-21)
-For every session that works `tasks/PORT_QUEUE.md`, this section **replaces**: the Vinculum Protocol below, the
+## 🚦 THE STANDING ORDER — queue sessions (user Directive, 2026-09-21; extended to the UI queue 2026-09-24)
+For every session that works a queue — `tasks/PORT_QUEUE.md` (done) or `tasks/UI_QUEUE.md` — this section **replaces**: the Vinculum Protocol below, the
 "Explicit Confirmation" and "Git Gatekeeper" mandates of the 2026-03-11 post-mortem, Plan Mode Default, `/grill` as an
 authorization step, persona mandates 4–5, the 5-file cap and `/close-wave`. The rest of this file (OO principles, Shape
 table, coverage claims, tests before fixes) still governs the code that gets written.
 
-1. **"hi" means go, and keep going.** Read `tasks/RECOVERY_PROMPT.md` and `tasks/PORT_QUEUE.md`. Run anything under
+1. **"hi" means go, and keep going.** Read `tasks/RECOVERY_PROMPT.md` and the active queue. Run anything under
    "Reported by the tester" first, then the first unticked iteration, then the next — until the queue is empty. If the
    session ends mid-run, the next "hi" continues from the queue.
-2. **The main session manages; one sub-agent writes.** Per iteration: branch `port/<id>-<name>` → one fresh
-   sub-agent does the work (reads the queue's Decisions, the study, the Groovy source it ports and the web code so
-   far; writes a short note `tasks/port/<id>.md`; tests first, green is done — no mutant ritual; one commit per module
+2. **The main session manages; one sub-agent writes.** Per iteration: branch `port/<id>-<name>` (UI queue:
+   `ui/<id>-<name>`) → one fresh sub-agent does the work (reads the queue's Decisions, the study, the source it ports —
+   the Groovy, or for the UI queue the mock — and the web code so far; writes a short note `tasks/port/<id>.md` or
+   `tasks/ui/<id>.md`; tests first, green is done — no mutant ritual; one commit per module
    with its tests) → the main session runs `npm run check` and `npm run e2e` once, looks at the screenshots, fixes
    or sends back what is wrong → merge `--no-ff` → tick the queue, make the handover true → commit → push → confirm
    the live build answers. No separate reviewer or fixer agent (lean process, user decision 2026-09-23: iterations

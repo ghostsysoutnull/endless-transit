@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-24 (the web port is complete; nothing is in progress). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./terminal/vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-24 (the web port is complete; the picture-first UI rework is queued, nothing run yet). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./terminal/vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
 - **Test Suite:** 296 discovered / 296 pass / 0 skipped / 0 failed (`./terminal/vinc.sh --test --agent 2>/dev/null`)
@@ -8,7 +8,7 @@
 - **Docs:** `./terminal/vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (15 blueprints; which are `Verified`: `terminal/CLAUDE.md`)
 - **Branch:** `master`. The last Groovy code merge is `55f9460`. A push republishes the site, game included: `cd web && npm run publish:site` writes `docs/play/` (commit it), live at `https://ghostsysoutnull.github.io/endless-transit/play/`. Web gates: `npm run check`, `npm run e2e` (from `web/`). The user's old untracked save and journal files stay where they are; never `git add -A`.
 - **Web game:** `cd web && npm run check` → `STATUS=PASS … TESTS=ok(476/476)`; `npm run e2e` → 233 passed / 23 skipped by design (desktop + phone profiles, one worker, ≈ 5 min); save format v6; player docs `docs/web/{players_guide,cheat_sheet}.md`; the full playthrough: `npx playwright test --grep @playthrough`.
-- **Active Work:** none. The **web port** (CONCEPT-002) is complete — ten iterations, 2026-09-21 → 09-23, record `tasks/PORT_QUEUE.md` + `tasks/port/I01..I10.md`; the user has played it and called it good. Groovy is frozen in `terminal/`; the TypeScript game in `web/` is the game (law: `web/CLAUDE.md`; how it is built: `docs/analysis/WEB_GAME_ARCHITECTURE.md`). Any new effort waits for a Directive; the Standing Order in `.claude/CODEX.md` applies only to `tasks/PORT_QUEUE.md`, which is empty.
+- **Active Work:** the **picture-first UI rework** — **`tasks/UI_QUEUE.md`** (Decisions, 8 iterations, none run), run under the Standing Order (`.claude/CODEX.md`): **"hi" starts U01**. Look: the mock `docs/analysis/mocks/transit-reframed.html` (+ `pole-wireframe.html`); how it maps onto `web/`: `docs/analysis/UI_REFRAME_STUDY.md`; notes go to `tasks/ui/`. The **web port** (CONCEPT-002) is complete — record `tasks/PORT_QUEUE.md` + `tasks/port/I01..I10.md`; Groovy is frozen in `terminal/`; the TypeScript game in `web/` is the game (law: `web/CLAUDE.md`; how it is built: `docs/analysis/WEB_GAME_ARCHITECTURE.md`).
 - **Open threads — none has a plan.** Every plan with a `src/` change carries a **Shape table** (CODEX § 4, WF-009). One line each; the detail lives at the pointer.
   - **The user's findings** from playing the web game, when they send them — each becomes a fix piece (queue section "Reported by the tester").
   - **CONCEPT-001** ships: concept `docs/analysis/SHIPS_CONCEPT.md`, every rule the mocks run on `docs/analysis/SHIPS_RULES.md`, two mocks (text v1, visual v13). **Open: the concept's §7 verdict column — eleven decisions, none judged.** No plan until then.
@@ -31,7 +31,7 @@ Initialize session for the Endless Transit substrate.
    `docs/analysis/WORKFLOW_BACKLOG.md`. Groovy-only recipes and records: `terminal/CLAUDE.md`.
 3. **Audit:** `./terminal/vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=296 …`; `./terminal/vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
    `./terminal/vinc.sh --scan` → seed 0, 9 nodes; `./terminal/vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
-4. **Wait for a Directive.** Nothing is in progress. Questions: one per message, plain words (no symbols, no section numbers), lettered
+4. **"hi" runs `tasks/UI_QUEUE.md`** under the Standing Order (it replaces steps 3 and 5 for queue sessions); anything else waits for a Directive. Questions: one per message, plain words (no symbols, no section numbers), lettered
    options, a marked pick. Chat summaries short and plain. Recommend only inside what the user asked for.
 5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → ≤ 5 production files per commit → full suite + `--lint` after every commit →
    merge `--no-ff` → **`/close-wave`** (it prints its tier and table) **before saying "closed"**. Push only on the user's word.

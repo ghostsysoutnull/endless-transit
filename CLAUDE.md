@@ -13,8 +13,9 @@ Project records stay at the root: `docs/` (the player site, plus `docs/analysis/
 - **@.claude/CODEX.md**
 
 ## 🚀 Active Task
-The web port — **`tasks/PORT_QUEUE.md`**, run under the Standing Order (`.claude/CODEX.md`). Spec:
-`docs/analysis/WEB_PORT_STUDY.md`; one note per iteration in `tasks/port/`.
+The picture-first UI rework — **`tasks/UI_QUEUE.md`**, run under the Standing Order (`.claude/CODEX.md`). Spec: the
+mock `docs/analysis/mocks/transit-reframed.html` and `docs/analysis/UI_REFRAME_STUDY.md`; one note per iteration in
+`tasks/ui/`. (The web port, `tasks/PORT_QUEUE.md`, is done; its Decisions still bind the web game.)
 
 ## 📡 Handover
 Current state: **`tasks/RECOVERY_PROMPT.md`**. History, read on demand: `journals/CHRONICLE_INDEX.md` → `journals/LOG_*`.
