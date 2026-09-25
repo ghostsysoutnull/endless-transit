@@ -107,5 +107,5 @@ Shape table. Facts stay for the words; the pictures read the typed fields.
 
 The queue's iterations (re-cut 2026-09-25; the queue wins): U01a the frame → U01b the street, drawn → U02 inside the
 building (tower and corridor) → U03 the apartment and the room → U04 above, below and the trace → U05 the pole and the
-vibe → U06 plain words and wrap-up. U01b carries the risk (the scene host, the clock, the hit-to-option path, the first-screen choice); later iterations
+vibe → U06 wrap-up. U01b carries the risk (the scene host, the clock, the hit-to-option path, the first-screen choice); later iterations
 add pictures and interactions to a host that already works.

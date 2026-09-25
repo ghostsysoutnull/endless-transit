@@ -16,17 +16,18 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
    read from the queue's table; then the work starts. Run anything under "Reported by the tester" first, then the
    first unticked iteration, then the next — until the queue is empty. Each UI iteration stops once, at its plan (item
    2); "hi" resumes at the next plan, never past it. The next "hi" continues from the queue.
-2. **The main session manages; one writer works in two turns.** Per iteration: branch `ui/<id>-<name>` → the writer,
-   briefed from `.claude/brief.md`, reads what the brief names (the queue's Decisions, the mock's section for this scene, the study's lines, the code
-   files it touches — never the whole mock; a plan turn is about 60k tokens) and returns a plan — scope, Shape table,
-   the tests that change, what the tester can try, what changes underneath, a token estimate — and waits;
-   a true unknown gets a probe of minutes, never a throwaway spike; an iteration too big is split in the plan into slices that each show the tester something new → the main
+2. **The main session manages; a writer plans, a fresh builder builds.** Per iteration: branch `ui/<id>-<name>` → the
+   writer, briefed from `.claude/brief.md`, reads what the brief names (the queue's Decisions, the mock's part for this
+   scene in full, the study's lines, the code files it will change; a targeted plan ends near 105–140k of context) and
+   returns a plan — scope, Shape table, the tests that change, what the tester can try, what changes underneath, a
+   token estimate, the file list a builder needs — and ends; a true unknown gets a probe of minutes, never a throwaway
+   spike; an iteration too big is split in the plan into slices that each show the tester something new → the main
    session grills it (the Decisions, the Shape Gate, and the build's tokens against what the tester sees new — a plan
-   whose cost dwarfs its result is re-cut before it is shown) and shows the user about ten lines → on the user's go the
-   **same writer** builds (a fresh builder gets only the approved plan and its reading list when the go comes in a
-   later session, when the plan's approach (not a detail) was rejected, or when the writer reports its context more
-   than half full): tests first, green is done, one commit per module with its tests, a note `tasks/ui/<id>.md` (it
-   records the writer's actual tokens for the plan and the build, from the agent tool's report, beside the estimate);
+   whose cost dwarfs its result is re-cut before it is shown) and shows the user about ten lines → on the user's go a
+   **fresh builder** gets the approved plan and its file list and builds (every build step re-reads its whole context:
+   the writer's plan carried into U01a's build was 70% of its spend, `tasks/ui/U01-cost.md`): tests first, green is
+   done, one commit per module with its tests, a note `tasks/ui/<id>.md` (it records for the plan and the build the
+   agent tool's figure — the final context — and the processed tokens from the transcript, beside the estimate);
    it runs `npm run check` and only the browser specs it touches, phone profile, and past 1.5× its token estimate it
    stops and reports → the main session runs `npm run check` and the full `npm run e2e` once, looks at the fixed
    screenshots (the new scene on the phone and the desktop, and under reduced motion), fixes or sends back → merge
