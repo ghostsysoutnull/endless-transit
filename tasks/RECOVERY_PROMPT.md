@@ -1,5 +1,5 @@
 # RECOVERY HANDOVER
-**Last updated:** 2026-09-24 (the web port is complete; the picture-first UI rework is queued, nothing run yet). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./terminal/vinc.sh --docs` (D4) caps this file at 1,000 words.
+**Last updated:** 2026-09-25 (the rules diet is done; the UI rework is queued, nothing run yet). This file holds **current state only** — history lives in `journals/CHRONICLE_INDEX.md` and the logs it points to; `./terminal/vinc.sh --docs` (D4) caps this file at 1,000 words.
 
 ## 🎯 Current Status
 - **Test Suite:** 296 discovered / 296 pass / 0 skipped / 0 failed (`./terminal/vinc.sh --test --agent 2>/dev/null`)
@@ -26,16 +26,16 @@
 
 Initialize session for the Endless Transit substrate.
 
-1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, Coverage Claim Protocol (the Groovy Gates table: `terminal/CLAUDE.md`).
-2. **Orient:** `git branch --show-current` = `master`; `git status -sb`; `git log --oneline -5`. Read `tasks/todo.md`, this file's **Next**, the top rows of
-   `journals/CHRONICLE_INDEX.md` (open a log only when its wave matters to the task), the OPEN items of `tasks/backlog/HOUSEKEEPING.md`, `tasks/backlog/CONCEPTS.md` and
-   `docs/analysis/WORKFLOW_BACKLOG.md`. Groovy-only recipes and records: `terminal/CLAUDE.md`.
-3. **Audit:** `./terminal/vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=296 …`; `./terminal/vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
-   `./terminal/vinc.sh --scan` → seed 0, 9 nodes; `./terminal/vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
-4. **"hi" runs `tasks/UI_QUEUE.md`** under the Standing Order (it replaces steps 3 and 5 for queue sessions); anything else waits for a Directive. How to talk to the user: the block at the top of
-   `CLAUDE.md`.
-5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → full suite + `--lint` after every commit →
-   merge `--no-ff` → **`/close-wave`** (it prints its tier and table) **before saying "closed"**. Push only on the user's word.
+1. **Rules:** the user block at the top of `CLAUDE.md` first; then `.claude/CODEX.md` (the Standing Order, the Coverage
+   Claim Protocol, the OO table).
+2. **Orient:** `git branch --show-current` = `master`; `git status -sb`; `git log --oneline -5`; this file's Active Work
+   and open threads; the active queue. Records on demand: `journals/CHRONICLE_INDEX.md`, the backlogs.
+3. **Audit:** `cd web && npm run check` → `STATUS=PASS`; `./terminal/vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
+   The Groovy gates only when `terminal/` is touched (`terminal/CLAUDE.md`).
+4. **"hi" runs `tasks/UI_QUEUE.md`** under the Standing Order; anything else waits for a Directive.
+5. **Every task outside a queue:** plan file (with its Shape table, CODEX § 4) → `/grill` → the user's go → branch →
+   the touched tree's gates after every commit → merge `--no-ff` → **`/close-wave`** before saying "closed". Push only
+   on the user's word; a commit/push directive covers the close-out.
 
 **END_PROMPT**
 
