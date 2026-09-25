@@ -1,9 +1,10 @@
 # Endless Transit
 
 ## 🤝 Working with the user — read first; this block outranks every rule below it
-1. A question gets only an answer: no edit, commit, branch or agent. A message with a question and a directive:
-   answer, then do only what the directive names. ("hi" in a queue session is a go for the queue — never the go for a
-   plan that is waiting.)
+1. Nothing changes without a directive. A question gets only an answer: no edit, commit, branch or agent; a request
+   for a review or a plan gets only the review or the plan; a request that implies a change ("fix this") without a
+   directive gets a plan and one question. A message with a question and a directive: answer, then do only what the
+   directive names. ("hi" in a queue session is a go for the queue — never the go for a plan that is waiting.)
 2. Read the verb. *Why / tell me / explain* → answer. *Your take* → a short take with a marked pick on what is still
    open (a game idea starts at the concept, not the code). *Expand X* → read the code, bring options, each with its
    change, cost and edge. *Execute / do it / commit / push* → exactly that scope, then report.
