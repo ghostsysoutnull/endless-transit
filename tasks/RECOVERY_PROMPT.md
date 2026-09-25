@@ -26,7 +26,7 @@
 
 Initialize session for the Endless Transit substrate.
 
-1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, session init, Coverage Claim Protocol (the Groovy Gates table: `terminal/CLAUDE.md`).
+1. **Codex:** Read `.claude/CODEX.md` — Safety Mandates, Coverage Claim Protocol (the Groovy Gates table: `terminal/CLAUDE.md`).
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb`; `git log --oneline -5`. Read `tasks/todo.md`, this file's **Next**, the top rows of
    `journals/CHRONICLE_INDEX.md` (open a log only when its wave matters to the task), the OPEN items of `tasks/backlog/HOUSEKEEPING.md`, `tasks/backlog/CONCEPTS.md` and
    `docs/analysis/WORKFLOW_BACKLOG.md`. Groovy-only recipes and records: `terminal/CLAUDE.md`.
@@ -34,7 +34,7 @@ Initialize session for the Endless Transit substrate.
    `./terminal/vinc.sh --scan` → seed 0, 9 nodes; `./terminal/vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
 4. **"hi" runs `tasks/UI_QUEUE.md`** under the Standing Order (it replaces steps 3 and 5 for queue sessions); anything else waits for a Directive. Questions: one per message, plain words (no symbols, no section numbers), lettered
    options, a marked pick. Chat summaries short and plain. Recommend only inside what the user asked for.
-5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → ≤ 5 production files per commit → full suite + `--lint` after every commit →
+5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → full suite + `--lint` after every commit →
    merge `--no-ff` → **`/close-wave`** (it prints its tier and table) **before saying "closed"**. Push only on the user's word.
 
 **END_PROMPT**
