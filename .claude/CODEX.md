@@ -33,6 +33,19 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
    closing question.
 7. **No users, no compatibility.** Saves, journals and old seeds need no protection and no migration. Still name the
    paths in `git add` — never `-A`.
+8. **The UI queue runs with a plan gate** (user decisions, 2026-09-25; they amend 1–3 for `tasks/UI_QUEUE.md`):
+   - **Plan before code, every iteration.** The writer reads, then returns a plan — scope, Shape table, the tests that
+     change, what the tester can try, and a token estimate — and waits. Where something is truly unknown it runs a probe
+     of minutes (a timing, a layout measure), never a throwaway spike; an iteration too big is split in the plan. The
+     main session grills the plan (the Decisions, the Shape Gate) and shows the user about ten lines; the user's go
+     starts the build, which then runs without questions. "hi" resumes at the next plan, not past it.
+   - **One writer, two turns.** The go is sent to the same writer (it keeps what it read). A fresh builder gets only the
+     approved plan and its reading list when the go comes in a later session, when the plan's approach (not a detail)
+     was rejected, or when the writer reports its context more than half full after reading.
+   - **Tests: targeted while working, full once.** The writer runs `npm run check` and only the browser specs it
+     touches, phone profile; the main session runs the full `npm run e2e` once, before merge. Screenshots are a fixed
+     set: the new scene on the phone and the desktop, and under reduced motion. A writer past 1.5× its token estimate
+     stops and reports.
 
 ---
 
