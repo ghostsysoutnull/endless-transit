@@ -10,20 +10,25 @@ For every session that works a queue — `tasks/PORT_QUEUE.md` (done) or `tasks/
 authorization step, persona mandates 4–5, the 5-file cap and `/close-wave`. The rest of this file (OO principles, Shape
 table, coverage claims, tests before fixes) still governs the code that gets written.
 
-1. **"hi" means go, and keep going.** Read `tasks/RECOVERY_PROMPT.md` and the active queue. Run anything under
-   "Reported by the tester" first, then the first unticked iteration, then the next — until the queue is empty. If the
-   session ends mid-run, the next "hi" continues from the queue.
-2. **The main session manages; one sub-agent writes.** Per iteration: branch `port/<id>-<name>` (UI queue:
-   `ui/<id>-<name>`) → one fresh sub-agent does the work (reads the queue's Decisions, the study, the source it ports —
-   the Groovy, or for the UI queue the mock — and the web code so far; writes a short note `tasks/port/<id>.md` or
-   `tasks/ui/<id>.md`; tests first, green is done — no mutant ritual; one commit per module
-   with its tests) → the main session runs `npm run check` and `npm run e2e` once, looks at the screenshots, fixes
-   or sends back what is wrong → merge `--no-ff` → tick the queue, make the handover true → commit → push → confirm
-   the live build answers. No separate reviewer or fixer agent (lean process, user decision 2026-09-23: iterations
-   1–5 ran writer + reviewer + fixer at ~900k tokens each; the reviews found real bugs, but half their findings were
-   test tightness, not player-facing — the tester's findings are the review from here on).
-3. **No questions.** The user answered them up front — the queue's Decisions. Anything not covered: decide in the
-   spirit of those decisions, write the choice in the note, continue.
+1. **"hi" runs the queue** — the user block at the top of `CLAUDE.md` outranks this order (a question or process talk
+   pauses the run until an explicit go). Read `tasks/RECOVERY_PROMPT.md` and the active queue. Run anything under
+   "Reported by the tester" first, then the first unticked iteration, then the next — until the queue is empty. Each
+   UI iteration stops once, at its plan (item 2). The next "hi" continues from the queue.
+2. **The main session manages; one writer works in two turns.** Per iteration: branch `ui/<id>-<name>` → the writer
+   reads (the queue's Decisions, the study, the mock, the web code so far) and returns a plan — scope, Shape table, the
+   tests that change, what the tester can try, a token estimate — and waits; a true unknown gets a probe of minutes,
+   never a throwaway spike; an iteration too big is split in the plan → the main session grills it (the Decisions, the
+   Shape Gate) and shows the user about ten lines → on the user's go the **same writer** builds (a fresh builder gets
+   only the approved plan and its reading list when the go comes in a later session, when the plan's approach was
+   rejected, or when the writer reports its context more than half full): tests first, green is done, one commit per
+   module with its tests, a note `tasks/ui/<id>.md`; it runs `npm run check` and only the browser specs it touches,
+   phone profile, and past 1.5× its token estimate it stops and reports → the main session runs the full
+   `npm run e2e` once, looks at the fixed screenshots (the new scene on the phone and the desktop, and under reduced
+   motion), fixes or sends back → merge `--no-ff` → tick the queue, make the handover true → commit → push → confirm
+   the live build answers. No reviewer or fixer agent (user decision 2026-09-23: they cost ~900k tokens an iteration
+   and half their findings were test tightness; the tester's findings are the review).
+3. **After the go, no questions.** What the plan and the Decisions do not cover, the build decides in their spirit and
+   writes in the note.
 4. **Safety net.** Merge only when every gate of the touched tree is green (`web/**` → `npm run check`, browser tests in
    a desktop and a phone profile; Groovy → the `vinc.sh` gates). **The only early stop:** a gate still red after honest
    tries — that iteration stays unmerged and the run ends with a plain report.
@@ -33,19 +38,6 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
    closing question.
 7. **No users, no compatibility.** Saves, journals and old seeds need no protection and no migration. Still name the
    paths in `git add` — never `-A`.
-8. **The UI queue runs with a plan gate** (user decisions, 2026-09-25; they amend 1–3 for `tasks/UI_QUEUE.md`):
-   - **Plan before code, every iteration.** The writer reads, then returns a plan — scope, Shape table, the tests that
-     change, what the tester can try, and a token estimate — and waits. Where something is truly unknown it runs a probe
-     of minutes (a timing, a layout measure), never a throwaway spike; an iteration too big is split in the plan. The
-     main session grills the plan (the Decisions, the Shape Gate) and shows the user about ten lines; the user's go
-     starts the build, which then runs without questions. "hi" resumes at the next plan, not past it.
-   - **One writer, two turns.** The go is sent to the same writer (it keeps what it read). A fresh builder gets only the
-     approved plan and its reading list when the go comes in a later session, when the plan's approach (not a detail)
-     was rejected, or when the writer reports its context more than half full after reading.
-   - **Tests: targeted while working, full once.** The writer runs `npm run check` and only the browser specs it
-     touches, phone profile; the main session runs the full `npm run e2e` once, before merge. Screenshots are a fixed
-     set: the new scene on the phone and the desktop, and under reduced motion. A writer past 1.5× its token estimate
-     stops and reports.
 
 ---
 
