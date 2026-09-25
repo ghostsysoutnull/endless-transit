@@ -1,0 +1,242 @@
+<title>Pole Wireframe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+/* Pole wireframe (2026-09-24): structure only, for option B of the pole question. Not game code; the look comes later from the mock. */
+:root {
+  --paper: #eceeed; --sheet: #f7f8f7; --ink: #1d2726; --line: #8f9b99; --soft: #c9d0ce; --dim: #7a8684; --you: #a86f0c; --mark: #1d2726;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace; --sans: 'IBM Plex Sans', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #111615; --sheet: #182020; --ink: #dfe6e4; --line: #5d6b69; --soft: #2c3736; --dim: #8b9896; --you: #e0b24f; --mark: #dfe6e4; color-scheme: dark; } }
+:root[data-theme="dark"] { --paper: #111615; --sheet: #182020; --ink: #dfe6e4; --line: #5d6b69; --soft: #2c3736; --dim: #8b9896; --you: #e0b24f; --mark: #dfe6e4; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--paper); color: var(--ink); font: 14px/1.5 var(--sans); padding-inline: 16px; }
+.page { max-width: 1180px; margin-inline: auto; padding-block: 24px 60px; display: grid; gap: 36px; }
+h1 { margin: 0; font: 600 20px var(--mono); letter-spacing: .04em; }
+.lead { margin: 6px 0 0; max-width: 70ch; color: var(--dim); }
+section > h2 { margin: 0 0 4px; font: 600 13px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+section > p { margin: 0 0 12px; max-width: 72ch; color: var(--dim); }
+.scroll { overflow-x: auto; padding-bottom: 6px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--you); outline-offset: 2px; }
+
+/* ── frames ── */
+.frame { border: 1.5px solid var(--ink); background: var(--sheet); border-radius: 6px; }
+.box { border: 1px dashed var(--line); border-radius: 4px; color: var(--dim); font: 12px var(--mono); display: grid; place-items: center; text-align: center; padding: 8px; }
+.n { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: var(--sheet); font: 600 11px var(--mono); flex: 0 0 auto; }
+.ctl { border: 1px solid var(--ink); background: var(--sheet); border-radius: 4px; padding: 6px 10px; font: 12px var(--mono); min-height: 34px; }
+.ctl[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.seg { display: inline-flex; } .seg .ctl { border-radius: 0; } .seg .ctl:first-child { border-radius: 4px 0 0 4px; } .seg .ctl + .ctl { border-left: 0; border-radius: 0 4px 4px 0; }
+
+/* desktop game */
+.desk { width: 1100px; min-height: 560px; padding: 14px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr) 280px; grid-template-rows: auto 1fr auto; }
+.desk .top { grid-column: 2 / -1; height: 30px; }
+.desk .side { grid-column: 1; grid-row: 1 / -1; }
+.desk .scene { grid-column: 2; grid-row: 2; min-height: 360px; }
+.desk .words { grid-column: 3; grid-row: 2 / -1; }
+.desk .dock { grid-column: 2; grid-row: 3; height: 52px; }
+
+/* the rail, collapsed */
+.rail { width: 52px; border: 1px solid var(--line); border-radius: 4px; display: grid; justify-items: center; align-content: start; gap: 6px; padding: 8px 0; }
+.rail i { width: 26px; height: 26px; border: 1px solid var(--line); border-radius: 50%; font: 10px/24px var(--mono); text-align: center; color: var(--dim); font-style: normal; }
+.rail i.you { border: 2px solid var(--you); color: var(--you); }
+
+/* ── the pole ── */
+.pole { border: 1px solid var(--ink); border-radius: 4px; background: var(--sheet); }
+.pole-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--soft); font: 600 12px var(--mono); letter-spacing: .1em; }
+.pole-head .sp { flex: 1; }
+.lanes { display: grid; grid-template-columns: 56px 22px minmax(190px, 1fr) 76px 84px 88px 118px; font: 12px var(--mono); }
+.lanes .h { padding: 6px 6px; color: var(--dim); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; border-bottom: 1px solid var(--soft); }
+.row { display: contents; }
+.row > * { padding: 7px 6px; border-bottom: 1px solid var(--soft); display: flex; align-items: center; min-height: 34px; }
+.row:hover > *, .row:focus-within > * { background: color-mix(in srgb, var(--soft) 45%, transparent); }
+.scale { color: var(--dim); justify-content: flex-end; font-size: 11px; }
+.spine { position: relative; justify-content: center; padding-inline: 0 !important; }
+.spine::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: var(--ink); }
+.row:first-of-type .spine::before { top: 50%; }
+.row.you .spine::before { bottom: 50%; }
+.spine b { position: relative; width: 12px; height: 12px; border-radius: 50%; background: var(--sheet); border: 2px solid var(--ink); }
+.row.you .spine b { width: 16px; height: 16px; border-color: var(--you); background: var(--you); }
+.name { gap: 2px 8px; flex-wrap: wrap; } .name small { color: var(--dim); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.name .st { border: 1px solid var(--ink); border-radius: 3px; padding: 0 4px; font-size: 10px; }
+.row.you .name { color: var(--you); font-weight: 600; }
+.name-btn { all: unset; cursor: pointer; display: flex; gap: 8px; align-items: baseline; flex-basis: 100%; }
+.name-btn:focus-visible { outline: 2px solid var(--you); outline-offset: 2px; }
+.v { color: var(--dim); }                         /* inherited from the level above */
+.v.set { color: var(--ink); font-weight: 600; }    /* set or changed here */
+.v.set::before { content: "●"; font-size: 8px; margin-right: 5px; }
+.v.none::before { content: "—"; }
+.ship { gap: 6px; } .ship span { border: 1px dashed var(--ink); border-radius: 3px; padding: 1px 5px; font-size: 10px; color: var(--ink); }
+
+/* trace overlay */
+.overlay { width: 1100px; padding: 18px; background: repeating-linear-gradient(45deg, var(--paper) 0 10px, var(--soft) 10px 11px); }
+.ov-box { border: 1.5px solid var(--ink); background: var(--sheet); border-radius: 6px; }
+.ov-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--soft); font: 600 13px var(--mono); letter-spacing: .12em; flex-wrap: wrap; }
+.ov-head .sp { flex: 1; }
+.ov-body { padding: 12px; }
+.bands { display: grid; gap: 10px; }
+.band { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; align-items: stretch; }
+.band .box { min-height: 70px; }
+.band.hit { outline: 2px solid var(--you); outline-offset: 3px; border-radius: 4px; }
+
+/* phone */
+.phones { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+.phone { width: 360px; max-width: 100%; border: 1.5px solid var(--ink); border-radius: 22px; background: var(--sheet); padding: 12px 10px 16px; }
+.ph-cap { font: 11px var(--mono); color: var(--dim); text-align: center; margin: 0 0 8px; }
+.ph-head { display: flex; align-items: center; gap: 6px; padding: 4px 2px 10px; border-bottom: 1px solid var(--soft); font: 600 12px var(--mono); flex-wrap: wrap; }
+.ph-head .sp { flex: 1; }
+.plist { list-style: none; margin: 0; padding: 0; }
+.plist li { display: grid; grid-template-columns: 44px 18px 1fr; column-gap: 6px; font: 11.5px var(--mono); min-height: 52px; }
+.plist .scale { padding-top: 6px; display: block; text-align: right; }
+.plist .spine { display: flex; align-items: flex-start; padding-top: 7px; }
+.plist .spine::before { top: 0; }
+.plist li:first-child .spine::before { top: 12px; } .plist li.you .spine::before { bottom: auto; height: 12px; }
+.plist .body { padding: 4px 0 8px; border-bottom: 1px solid var(--soft); display: grid; gap: 3px; }
+.plist .chips { display: flex; flex-wrap: wrap; gap: 4px; font-size: 10.5px; }
+.plist .chips .v { border: 1px solid var(--soft); border-radius: 3px; padding: 0 4px; }
+.plist .chips .v.set { border-color: var(--ink); }
+.plist li.you .body > b { color: var(--you); }
+
+/* notes */
+.notes { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; max-width: 80ch; }
+.notes li { display: flex; gap: 10px; align-items: flex-start; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 12px var(--mono); color: var(--dim); margin-top: 10px; }
+</style>
+
+<div class="page">
+  <header>
+    <h1>Pole wireframe — option B</h1>
+    <p class="lead">Structure only: where the pole lives and what it shows. Grey boxes are the parts that already exist in the mock. The buttons work, so you can switch the states.</p>
+    <div class="legend">
+      <span><span class="v set">Future</span> set or changed at this level</span>
+      <span><span class="v">Future</span> inherited from above</span>
+      <span><span class="v none"></span> does not apply</span>
+      <span><span class="ship"><span>ship</span></span> ships lane (preview)</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>1 · Desktop, while playing</h2>
+    <p>The rail on the left expands into the pole and stays pinned beside the game. The place picture and the words shrink to make room; nothing else moves.</p>
+    <div class="scroll">
+      <div class="frame desk" id="desk">
+        <div class="side" id="deskSide"></div>
+        <div class="box top">Endless Transit · coherence bar</div>
+        <div class="box scene">The place, drawn (street, tower, corridor, plan, room)</div>
+        <div class="box words">Place name, chips, words, moves</div>
+        <div class="box dock">Out · Trace · Scan · Buffer</div>
+      </div>
+    </div>
+    <ol class="notes">
+      <li><span class="n">1</span><span>Collapsed, the rail is what the mock has now: one icon per level. The expand button turns it into the pole; the pin keeps it open from one place to the next.</span></li>
+      <li><span class="n">2</span><span>Each row is one level. Reading down a lane (era, culture, trait) shows at once where the world changes: a dot marks a value set or changed at that level.</span></li>
+      <li><span class="n">3</span><span>Tapping a level's name opens the Trace overlay on the column, at that level.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>2 · The Trace overlay, with the switch</h2>
+    <p>Trace opens over everything, as in the mock. The new switch in its header picks Pole or Column and remembers the last choice. Dive stays where it is.</p>
+    <div class="scroll">
+      <div class="frame overlay">
+        <div class="ov-box">
+          <div class="ov-head">TRACE <span class="sp"></span>
+            <span class="seg" role="group" aria-label="View"><button class="ctl" id="swPole" type="button" aria-pressed="true">Pole</button><button class="ctl" id="swCol" type="button" aria-pressed="false">Column</button></span>
+            <button class="ctl" type="button">↓ Dive</button><button class="ctl" type="button" aria-label="Close">✕</button>
+          </div>
+          <div class="ov-body">
+            <div id="ovPole"></div>
+            <div id="ovCol" hidden><div class="bands" id="bands"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ol class="notes">
+      <li><span class="n">4</span><span>Same pole as the pinned one, larger: every level on one screen, no scrolling. It is the glance; the column is the reading.</span></li>
+      <li><span class="n">5</span><span>Tap a level name in the pole: the switch flips to Column and scrolls to that band (try it).</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>3 · Phone</h2>
+    <p>No pinned pole on a phone (no room beside the game); the rail stays a row of icons. The Trace overlay has the same switch. Each level takes two lines: its name, then its chips.</p>
+    <div class="phones">
+      <div>
+        <p class="ph-cap">Trace overlay · Pole</p>
+        <div class="phone">
+          <div class="ph-head">TRACE <span class="sp"></span><span class="seg"><button class="ctl" type="button" aria-pressed="true">Pole</button><button class="ctl" type="button" aria-pressed="false">Column</button></span><button class="ctl" type="button">↓</button><button class="ctl" type="button" aria-label="Close">✕</button></div>
+          <ul class="plist" id="phonePole"></ul>
+        </div>
+      </div>
+      <div>
+        <p class="ph-cap">The game screen (unchanged)</p>
+        <div class="phone" style="display:grid;gap:8px">
+          <div class="box" style="min-height:28px">coherence</div>
+          <div class="box" style="min-height:40px">rail: ○ ○ ○ ○ ○ ○ ○ ● · Trace</div>
+          <div class="box" style="min-height:220px">the place, drawn</div>
+          <div class="box" style="min-height:110px">words and moves</div>
+          <div class="box" style="min-height:48px">Out · Trace · Scan · Buffer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+'use strict';
+/* the path of the mock's deep walk; set = the value is set or changes here, else it is inherited ('' = does not apply) */
+const LEVELS = [
+  { scale:'10²⁶ m', kind:'Universe', name:'The Endless Universe', era:'', culture:'', trait:'' },
+  { scale:'10²⁴ m', kind:'Filament', name:'Zeta-915-Link', era:'', culture:'', trait:'' },
+  { scale:'10²¹ m', kind:'Sector', name:'Outer Expanse 91', era:'', culture:'', trait:'' },
+  { scale:'10¹³ m', kind:'System', name:'Zeta Borealis', era:'', culture:'', trait:'' },
+  { scale:'10⁷ m', kind:'Planet', name:'Auraea', era:'Future*', culture:'', trait:'', ship:'Kestrel · in orbit' },
+  { scale:'10⁶ m', kind:'Country', name:'Southern Glacier Kingdom', era:'Future', culture:'', trait:'Industrial*' },
+  { scale:'10⁴ m', kind:'City', name:'Rainhaven', era:'Future', culture:'', trait:'Industrial', ship:'berth 4 · empty' },
+  { scale:'10³ m', kind:'Street', name:'Bright Boulevard', era:'Future', culture:'Baroque*', trait:'Industrial' },
+  { scale:'10² m', kind:'Building', name:'The Spire of Static', era:'Future', culture:'Baroque', trait:'Industrial' },
+  { scale:'60 m', kind:'Floor', name:'Floor 91', era:'Future', culture:'Baroque', trait:'Industrial', note:'curved' },
+  { scale:'40 m', kind:'Corridor', name:'Curved gallery', era:'Future', culture:'Baroque', trait:'Industrial', note:'20 doors' },
+  { scale:'15 m', kind:'Apartment', name:'Copper-Veined Aperture', era:'Analog*', culture:'Monolith*', trait:'Industrial', state:'frozen' },
+  { scale:'5 m', kind:'Room', name:'Static Nursery', era:'Atomic*', culture:'Monolith', trait:'Industrial' }
+];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[c]);
+const val = v => v ? `<span class="v${v.endsWith('*') ? ' set' : ''}">${esc(v.replace('*', ''))}</span>` : '<span class="v none"></span>';
+const last = LEVELS.length - 1;
+
+function pole(pinned){
+  const head = pinned
+    ? `<div class="pole-head"><span class="n">1</span>POLE<span class="sp"></span><button class="ctl" type="button" aria-pressed="true" id="pin">● Pinned</button><button class="ctl" type="button" id="collapse">◂ Collapse</button></div>`
+    : `<div class="pole-head"><span class="n">4</span>ALL LEVELS AT A GLANCE<span class="sp"></span></div>`;
+  const rows = LEVELS.map((L, i) => `<div class="row${i === last ? ' you' : ''}">
+      <span class="scale">${L.scale}</span><span class="spine"><b></b></span>
+      <span class="name"><button class="name-btn" type="button" data-i="${i}"><small>${L.kind}</small>${esc(L.name)}</button>${L.state ? `<span class="st">${L.state}</span>` : ''}${L.note ? `<small>${L.note}</small>` : ''}</span>
+      <span>${val(L.era)}</span><span>${val(L.culture)}</span><span>${val(L.trait)}</span>
+      <span class="ship">${L.ship ? `<span>${esc(L.ship)}</span>` : ''}</span></div>`).join('');
+  return `<div class="pole">${head}<div class="lanes"><span class="h">Scale</span><span class="h"></span><span class="h">Level ${pinned ? '<span class="n">3</span>' : '<span class="n">5</span>'}</span><span class="h">Era <span class="n">2</span></span><span class="h">Culture</span><span class="h">Trait</span><span class="h">Ships · preview</span>${rows}</div></div>`;
+}
+function rail(){ return `<div class="rail"><button class="ctl" type="button" id="expand" title="Expand into the pole" style="padding:4px 6px">▸</button>${LEVELS.map((L, i) => `<i class="${i === last ? 'you' : ''}">${L.kind[0]}</i>`).join('')}<span class="n" style="margin-top:6px">1</span></div>`; }
+
+let expanded = true;
+function renderDesk(){ const side = document.getElementById('deskSide'); side.innerHTML = expanded ? pole(true) : rail();
+  document.getElementById('desk').style.gridTemplateColumns = expanded ? '660px minmax(0, 1fr) 190px' : 'auto minmax(0, 1fr) 280px';
+  const b = document.getElementById(expanded ? 'collapse' : 'expand'); b.onclick = () => { expanded = !expanded; renderDesk(); }; }
+renderDesk();
+
+document.getElementById('ovPole').innerHTML = pole(false);
+document.getElementById('bands').innerHTML = LEVELS.map((L, i) => `<div class="band" id="band${i}"><div class="box">${L.kind} picture (animated)</div><div class="box" style="justify-items:start;text-align:left">Depth ${String(i).padStart(2, '0')} · ${L.kind}<br>${esc(L.name)}<br>chips · words · facts</div></div>`).join('');
+function show(col){ document.getElementById('ovPole').hidden = col; document.getElementById('ovCol').hidden = !col;
+  document.getElementById('swPole').setAttribute('aria-pressed', !col); document.getElementById('swCol').setAttribute('aria-pressed', col); }
+document.getElementById('swPole').onclick = () => show(false); document.getElementById('swCol').onclick = () => show(true);
+document.addEventListener('click', ev => { const b = ev.target.closest('.name-btn'); if (!b) return; const i = +b.dataset.i; show(true);
+  document.querySelectorAll('.band.hit').forEach(x => x.classList.remove('hit')); const band = document.getElementById('band' + i); band.classList.add('hit');
+  band.scrollIntoView({ block:'center', behavior:'smooth' }); });
+
+document.getElementById('phonePole').innerHTML = LEVELS.map((L, i) => `<li class="${i === last ? 'you' : ''}"><span class="scale">${L.scale}</span><span class="spine"><b></b></span>
+  <span class="body"><b>${esc(L.name)}${L.state ? ` <span class="st" style="border:1px solid var(--ink);border-radius:3px;padding:0 3px;font-size:10px;font-weight:400">${L.state}</span>` : ''}</b>
+  <span class="chips">${[L.era, L.culture, L.trait].filter(Boolean).map(val).join('')}${L.ship ? `<span class="ship"><span>${esc(L.ship)}</span></span>` : ''}</span></span></li>`).join('');
+</script>

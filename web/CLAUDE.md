@@ -1,7 +1,8 @@
 # Endless Transit — the web game
 
 Strict-TypeScript single-page game, **phone first**, live at `https://ghostsysoutnull.github.io/endless-transit/play/`.
-The port (I01–I10) is complete; its Decisions still bind: `../tasks/PORT_QUEUE.md` (it wins over the spec,
+**Active: the picture-first UI rework, `../tasks/UI_QUEUE.md`** (its Decisions, its study `../docs/analysis/UI_REFRAME_STUDY.md`,
+its look `../docs/analysis/mocks/transit-reframed.html`). The port (I01–I10) is complete; its Decisions still bind: `../tasks/PORT_QUEUE.md` (it wins over the spec,
 `../docs/analysis/WEB_PORT_STUDY.md`). One note per iteration: `../tasks/port/`. **Player docs:**
 `../docs/web/players_guide.md` and `cheat_sheet.md` cite every number as `src/…:line` — a rule or number that
 changes re-reads its citation (`sed -n`) and the "How the web game differs" list.

@@ -1,0 +1,1484 @@
+<title>Transit Reframed</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="UI mock v1 for the web game: picture-first places, a depth rail that opens a drawn trace, coherence you can feel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+/* Transit Reframed — UI mock v5 (2026-09-24): v4 + the pole, in the Trace overlay and pinned beside the game. Before that, v4: v3 + the trace as a column you scroll, the dive kept behind its own button. Before that, v3: v2 + one motion clock with momentum, the floors view at thumb size, real sliders, apartment plans up to 48 rooms. Not game code. The palette is the web game's (web/src/ui/styles/app.css). */
+:root {
+  --ground: #080c0d; --panel: #0e1516; --panel2: #121c1d; --rule: #1f3435; --rule-hi: #2f5052;
+  --text: #c8d6d2; --dim: #7d9591; --cy: #55d6d6; --yl: #e6c35c; --rd: #e4665c; --gn: #71d083;
+  --mg: #c987dd; --bl: #6fa3e8; --wh: #e8efec;
+  --frame: var(--cy); --meter: var(--gn);
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --tap: 48px; --decay: 0;
+  color-scheme: dark;
+}
+:root[data-state="degraded"] { --meter: var(--yl); }
+:root[data-state="corrupting"] { --meter: #e9917f; --frame: #7fc9c0; }
+:root[data-state="critical"] { --meter: var(--rd); --frame: var(--rd); }
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--ground); }
+body { color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.5;
+  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid var(--yl); outline-offset: 2px; }
+
+.app { max-width: 1240px; margin-inline: auto; padding-block: 12px 108px; display: grid; gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "top" "rail" "stage" "side" "bench"; }
+
+/* ── top: name + coherence ─────────────────────────────── */
+.top { grid-area: top; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.brand { font-family: var(--mono); font-weight: 600; letter-spacing: .22em; font-size: 13px; color: var(--yl); margin: 0; white-space: nowrap; }
+.coh { flex: 1 1 200px; display: flex; align-items: center; gap: 10px; min-width: 0; font-family: var(--mono); font-size: 12px; }
+.coh-bar { flex: 1; height: 6px; background: var(--panel2); border-radius: 3px; overflow: hidden; position: relative; }
+.coh-bar i { position: absolute; inset: 0 auto 0 0; width: 94%; background: var(--meter); border-radius: 3px;
+  box-shadow: 0 0 10px var(--meter); transition: width .5s ease, background .5s; }
+.coh b { color: var(--wh); font-weight: 600; font-variant-numeric: tabular-nums; min-width: 2ch; text-align: right; }
+.coh span { color: var(--meter); letter-spacing: .12em; text-transform: uppercase; font-size: 11px; min-width: 9ch; }
+
+/* ── the depth rail: where you stand; tap to open the trace ─ */
+.rail { grid-area: rail; display: flex; align-items: center; overflow-x: auto; scrollbar-width: none;
+  padding: 2px 2px 4px; gap: 0; position: relative; }
+.rail::-webkit-scrollbar { display: none; }
+.rail button { flex: 0 0 auto; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none;
+  color: var(--dim); position: relative; border-radius: 50%; }
+.rail button + button::before { content: ""; position: absolute; right: 100%; top: 50%; width: 6px; height: 1px; background: var(--rule-hi); }
+.rail button svg { width: 22px; height: 22px; }
+.rail button[aria-current="location"] { color: var(--yl); }
+.rail button[aria-current="location"]::after { content: ""; position: absolute; inset: 4px; border-radius: 50%;
+  border: 1px solid var(--yl); box-shadow: 0 0 12px rgba(230, 195, 92, .45); animation: here 2.4s ease-in-out infinite; }
+.rail button.new { animation: arrive .6s ease-out; }
+.rail .rail-open { width: auto; padding-inline: 12px; border-radius: 22px; border: 1px solid var(--rule-hi); color: var(--cy);
+  font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; margin-left: 10px; height: 36px; }
+.rail .rail-open::before { display: none; }
+@keyframes here { 50% { box-shadow: 0 0 20px rgba(230, 195, 92, .7); } }
+@keyframes arrive { from { transform: scale(.3); opacity: 0; } }
+
+/* ── the stage: the place, drawn ───────────────────────── */
+.stage { grid-area: stage; align-self: start; position: relative; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: #05090a; }
+.stage canvas { display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 66dvh; touch-action: manipulation; }
+/* the elevator gauge and the corridor slider: sliders laid over the picture */
+.gauge { position: absolute; top: max(10%, 52px); bottom: max(9%, 38px); right: 4px; width: 58px; touch-action: none; cursor: ns-resize; }
+.g-track { position: absolute; top: 0; bottom: 0; right: 16px; width: 2px; background: rgba(85, 214, 214, .35); border-radius: 1px; }
+.g-tick { position: absolute; right: -4px; width: 10px; height: 1px; background: var(--rule-hi); }
+.g-tick span { position: absolute; right: 14px; top: -7px; font: 9px var(--mono); color: var(--dim); }
+.g-seen { position: absolute; right: -6px; width: 14px; height: 2px; margin-top: -1px; background: var(--yl); opacity: .85; }
+.g-win { position: absolute; left: -10px; width: 22px; min-height: 22px; border: 1px solid var(--cy); border-radius: 6px; background: rgba(85, 214, 214, .14);
+  box-shadow: 0 0 12px rgba(85, 214, 214, .25); cursor: grab; }
+.g-car { position: absolute; left: -20px; margin-top: -5px; border: 5px solid transparent; border-left: 8px solid var(--yl); }
+.scrub { position: absolute; left: 10px; right: 10px; bottom: 10px; height: 52px; border-radius: 26px; background: rgba(5, 9, 10, .88);
+  border: 1px solid var(--rule-hi); touch-action: none; cursor: ew-resize; }
+.s-track { position: absolute; left: 34px; right: 76px; top: 50%; height: 2px; margin-top: -1px; background: rgba(85, 214, 214, .35); }
+.s-tick { position: absolute; width: 2px; height: 9px; margin-left: -1px; background: var(--cy); opacity: .8; }
+.s-tick.up { bottom: 5px; } .s-tick.dn { top: 5px; }
+.s-tick.st-frozen, .s-tick.st-cold { background: var(--bl); } .s-tick.st-static { background: var(--mg); } .s-tick.seen { background: var(--yl); opacity: 1; }
+.s-win { position: absolute; top: -16px; height: 32px; min-width: 26px; border: 1px solid var(--cy); border-radius: 16px; background: rgba(85, 214, 214, .14);
+  box-shadow: 0 0 12px rgba(85, 214, 214, .25); cursor: grab; }
+.s-you { position: absolute; top: -6px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--yl); box-shadow: 0 0 10px rgba(230, 195, 92, .8); }
+.s-end { position: absolute; top: 50%; transform: translateY(-50%); font: 10px var(--mono); color: var(--dim); letter-spacing: .06em; pointer-events: none; }
+.s-in { left: 14px; } .s-out { right: 12px; }
+.gauge:focus-visible, .scrub:focus-visible { outline: 2px solid var(--yl); outline-offset: 2px; }
+.zoom { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 6px; }
+.zoom button { min-width: 44px; height: 44px; border: 1px solid var(--rule-hi); background: rgba(5, 9, 10, .88); border-radius: 8px; font: 15px var(--mono); color: var(--text); }
+.hint { position: absolute; left: 12px; top: 10px; margin: 0; font-family: var(--mono); font-size: 11px; color: var(--dim);
+  letter-spacing: .06em; pointer-events: none; background: rgba(5, 9, 10, .7); padding: 2px 6px; border-radius: 3px; max-width: calc(100% - 24px); }
+.hint.fade { animation: hintFade 6s ease-in forwards; }
+@keyframes hintFade { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ── the side: words and moves ─────────────────────────── */
+.side { grid-area: side; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.eyebrow { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); font-weight: 500; }
+.card { display: grid; gap: 8px; }
+.card h1 { margin: 0; font-family: var(--mono); font-weight: 600; font-size: clamp(20px, 5vw, 26px); color: var(--wh);
+  letter-spacing: .02em; line-height: 1.2; text-wrap: balance; }
+:root[data-state="corrupting"] .card h1, :root[data-state="critical"] .card h1 { animation: tear 3.2s steps(1) infinite; }
+@keyframes tear { 0%, 88%, 100% { text-shadow: none; transform: none; }
+  90% { text-shadow: 2px 0 var(--rd), -2px 0 var(--cy); transform: translateX(1px) skewX(-4deg); }
+  94% { text-shadow: -3px 0 var(--rd), 3px 0 var(--cy); transform: translateX(-2px); } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.chips li { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; padding: 3px 8px; border-radius: 3px;
+  border: 1px solid var(--rule-hi); color: var(--text); }
+.chips li b { color: var(--dim); font-weight: 400; margin-right: 5px; }
+.chips li.warm { border-color: rgba(230, 195, 92, .5); color: var(--yl); }
+.chips li.cold { border-color: rgba(111, 163, 232, .5); color: var(--bl); }
+.chips li.drift { border-color: rgba(201, 135, 221, .55); color: var(--mg); }
+.chips li.rebel { border-color: rgba(228, 102, 92, .6); color: var(--rd); }
+.prose { margin: 0; max-width: 62ch; color: var(--text); }
+.prose + .prose { color: #aebfba; }
+.whisper { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--cy); min-height: 1.5em; }
+.whisper:not(:empty)::before { content: "› "; color: var(--dim); }
+
+.moves { display: grid; gap: 8px; }
+.move-list { display: grid; gap: 6px; }
+.move-list.keypad { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); }
+.move-list.cells { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.move { min-height: var(--tap); display: flex; align-items: center; gap: 12px; text-align: left; padding: 8px 12px;
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 5px; transition: border-color .15s, background .15s; }
+.move:hover, .move.lit { border-color: var(--cy); background: var(--panel2); }
+.move .glyph { flex: 0 0 auto; width: 26px; height: 26px; color: var(--cy); display: grid; place-items: center; }
+.move .glyph svg { width: 20px; height: 20px; }
+.move .t { display: grid; min-width: 0; }
+.move .t span { color: var(--wh); font-weight: 500; overflow-wrap: anywhere; }
+.move .t small { color: var(--dim); font-size: 12.5px; line-height: 1.35; }
+.move .seen { margin-left: auto; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.move.state-frozen .glyph, .move.state-cold .glyph { color: var(--bl); }
+.move.state-static .glyph { color: var(--mg); }
+.keypad .move, .cells .move { justify-content: center; text-align: center; font-family: var(--mono); padding: 6px; }
+.keypad .move.visited, .cells .move.visited { border-color: var(--rule-hi); color: var(--dim); }
+.keypad .move.here { border-color: var(--yl); color: var(--yl); }
+.cells .move { font-family: var(--sans); font-size: 13px; line-height: 1.25; min-height: 56px; }
+.cells .move b { color: var(--cy); font: 500 11px var(--mono); margin-right: 4px; }
+.cells .move.fog { border-style: dashed; color: var(--dim); }
+.note { margin: 0; color: var(--dim); font-size: 13px; max-width: 62ch; }
+.all-rooms summary { min-height: 44px; display: flex; align-items: center; font: 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--cy); cursor: pointer; }
+.all-rooms .move-list { margin-top: 8px; }
+.move.take .glyph { color: var(--yl); }
+.tens { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 4px; scrollbar-width: none; }
+.tens button { flex: 0 0 auto; min-height: 44px; min-width: 64px; padding: 0 10px; border: 1px solid var(--rule); background: var(--panel); border-radius: 22px;
+  font-family: var(--mono); font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.tens button[aria-pressed="true"] { border-color: var(--cy); color: var(--wh); background: var(--panel2); }
+
+/* ── the dock: the way out and the tools ───────────────── */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 6px;
+  padding: 8px max(12px, env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-right));
+  background: linear-gradient(to top, var(--ground) 70%, rgba(8, 12, 13, .85)); border-top: 1px solid var(--rule); }
+.dock button { min-height: 56px; display: grid; place-items: center; gap: 2px; padding: 6px 4px; border-radius: 6px;
+  border: 1px solid var(--rule-hi); background: var(--panel); font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.dock button svg { width: 20px; height: 20px; color: var(--cy); }
+.dock .out { border-color: var(--frame); color: var(--wh); grid-template-columns: auto 1fr; justify-items: start; text-align: left; gap: 8px; padding-inline: 12px; }
+.dock .out small { display: block; text-transform: none; letter-spacing: 0; color: var(--dim); font-size: 11px; font-family: var(--sans); }
+.dock .out svg { color: var(--yl); }
+.dock b { color: var(--yl); font-weight: 600; }
+.dock .bump { animation: bump .5s ease-out; }
+@keyframes bump { 40% { transform: scale(1.12); border-color: var(--yl); } }
+
+/* ── bench: mock controls ──────────────────────────────── */
+.bench { grid-area: bench; border: 1px dashed var(--rule-hi); border-radius: 6px; padding: 10px 14px; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.bench summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; letter-spacing: .12em; text-transform: uppercase; }
+.bench .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 8px; }
+.bench input[type="range"] { flex: 1 1 180px; accent-color: var(--yl); }
+.bench button { border: 1px solid var(--rule-hi); background: var(--panel); border-radius: 4px; padding: 8px 12px; min-height: 40px; }
+.bench label { display: flex; align-items: center; gap: 8px; min-height: 40px; }
+.bench p { margin: 8px 0 0; max-width: 70ch; font-family: var(--sans); font-size: 13px; }
+
+/* ── the trace ─────────────────────────────────────────── */
+.trace { position: fixed; inset: 0; z-index: 10; background: rgba(3, 6, 7, .78); backdrop-filter: blur(3px);
+  display: grid; place-items: center; animation: fade .25s ease-out; }
+.trace-box { width: min(1180px, 100%); height: 100%; max-height: 100dvh; background: #060a0b; display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto; overflow: hidden;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 0 calc(10px + env(safe-area-inset-bottom, 0px)); }
+.trace-head { display: flex; align-items: center; gap: 10px; padding: 0 14px 8px; }
+.trace-head h2 { margin: 0; font-family: var(--mono); font-size: 14px; letter-spacing: .24em; color: var(--cy); font-weight: 600; }
+.trace-head p { margin: 0; color: var(--dim); font-size: 13px; flex: 1; min-width: 0; }
+.icon-btn { min-width: 44px; min-height: 44px; border: 1px solid var(--rule-hi); background: var(--panel); border-radius: 6px;
+  display: inline-grid; place-items: center; padding-inline: 10px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.trace-view { position: relative; min-height: 0; }
+.trace-view canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+.trace-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 14px 12px; display: grid; gap: 4px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(6, 10, 11, 0), rgba(6, 10, 11, .88) 42%); }
+.trace-cap .eyebrow { color: var(--yl); }
+.trace-cap h3 { margin: 0; font-family: var(--mono); font-size: clamp(18px, 4.6vw, 24px); color: var(--wh); font-weight: 600; text-shadow: 0 1px 8px #000; }
+.trace-cap p { margin: 0; color: var(--text); max-width: 56ch; text-shadow: 0 1px 6px #000; font-size: 14px; }
+.trace-cap .chips li { background: rgba(6, 10, 11, .7); }
+.trace-skip { position: absolute; top: 10px; right: 14px; margin: 0; font-family: var(--mono); font-size: 11px; color: var(--dim); letter-spacing: .1em; pointer-events: none; }
+.trace-nav { display: flex; gap: 8px; padding: 10px 14px 6px; }
+.trace-nav button { flex: 1; min-height: 48px; border: 1px solid var(--rule-hi); background: var(--panel); border-radius: 6px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+.trace-nav button:disabled { opacity: .35; cursor: default; }
+.trace-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 14px 2px; scrollbar-width: thin; }
+.trace-strip button { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 6px 12px 6px 8px;
+  border: 1px solid var(--rule); background: var(--panel); border-radius: 24px; text-align: left; max-width: 240px; }
+.trace-strip button svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--cy); }
+.trace-strip button span { display: grid; min-width: 0; }
+.trace-strip button small { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.trace-strip button em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+.trace-strip button[aria-current="true"] { border-color: var(--yl); }
+.trace-strip button[aria-current="true"] svg { color: var(--yl); }
+.trace-strip button.here em::after { content: " · you"; color: var(--yl); font-family: var(--mono); font-size: 11px; }
+@keyframes fade { from { opacity: 0; } }
+
+/* ── the trace column ──────────────────────────────────── */
+.column { position: fixed; inset: 0; z-index: 10; background: rgba(3, 6, 7, .86); display: grid; place-items: center; animation: fade .25s ease-out; }
+.col-box { width: min(1180px, 100%); height: 100%; background: #05090a; display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0px); animation: rise .3s cubic-bezier(.2, .8, .2, 1); }
+.col-head { position: relative; display: flex; align-items: center; gap: 10px; padding: 16px 14px 10px; border-bottom: 1px solid var(--rule); touch-action: none; }
+.col-head h2 { margin: 0; font: 600 14px var(--mono); letter-spacing: .24em; color: var(--cy); }
+.col-head p { margin: 0; color: var(--dim); font-size: 13px; flex: 1; min-width: 0; }
+.grabber { position: absolute; top: 5px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 2px; background: var(--rule-hi); }
+.dive-btn { gap: 6px; grid-auto-flow: column; color: var(--yl); border-color: rgba(230, 195, 92, .5); }
+.dive-btn svg { width: 18px; height: 18px; }
+.col-view { position: relative; min-height: 0; }
+.col-scroll { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; scroll-snap-type: y proximity; padding: 26vh 14px 30vh; }
+.col-thread { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.bands { list-style: none; margin: 0; padding: 0; display: grid; gap: 34px; }
+/* the band dims its picture and its words separately, so its words always sit above the thread */
+.band { position: relative; scroll-snap-align: center; border-radius: 8px; cursor: pointer; }
+.band .b-pic, .band .b-info { opacity: .45; transition: opacity .35s; }
+.band.focus .b-pic, .band.focus .b-info { opacity: 1; }
+.band:focus-visible { outline: 2px solid var(--yl); outline-offset: 4px; }
+.band.flash .b-pic { animation: flash 1.4s ease-out; }
+@keyframes flash { 0%, 30% { box-shadow: 0 0 0 2px var(--yl), 0 0 24px rgba(230, 195, 92, .6); } }
+.b-pic { position: relative; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: #05090a; }
+.band.here .b-pic { border-color: rgba(230, 195, 92, .6); }
+.b-pic canvas { display: block; width: 100%; aspect-ratio: 4 / 3; }
+.band.open .b-pic canvas { aspect-ratio: 4 / 5; }
+.b-scale { position: absolute; top: 8px; right: 10px; z-index: 3; font: 11px var(--mono); color: var(--cy); background: rgba(5, 9, 10, .75); padding: 2px 7px; border-radius: 3px; letter-spacing: .04em; }
+.b-info { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: grid; gap: 4px; padding: 44px 14px 12px; border-radius: 0 0 8px 8px;
+  background: linear-gradient(to bottom, rgba(5, 9, 10, 0), rgba(5, 9, 10, .9) 40%); pointer-events: none; }
+.band.open .b-info { position: relative; background: none; padding: 12px 2px 0; }
+.band.here .b-info .eyebrow { color: var(--yl); }
+.b-info h3 { margin: 0; font: 600 clamp(17px, 4.6vw, 22px) var(--mono); color: var(--wh); text-shadow: 0 1px 8px #000; }
+.b-words { margin: 0; font-size: 14px; max-width: 58ch; text-shadow: 0 1px 6px #000; }
+.band:not(.open) .b-words { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.b-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font: 12px var(--mono); color: var(--dim); }
+.band:not(.open) .b-facts li:not(:first-child) { display: none; }
+.b-facts li::before { content: "› "; color: var(--cy); }
+.trace.cinema { z-index: 14; }
+.trace.cinema .trace-nav, .trace.cinema .trace-strip, .trace.cinema #traceDive { display: none; }
+
+/* ── the pole: in the Trace overlay (Pole | Column) and pinned beside the game on a desktop ── */
+.seg { display: inline-flex; }
+.seg button { min-height: 44px; padding: 0 12px; border: 1px solid var(--rule-hi); background: var(--panel); font: 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.seg button:first-child { border-radius: 6px 0 0 6px; } .seg button + button { border-left: 0; border-radius: 0 6px 6px 0; }
+.seg button[aria-pressed="true"] { background: var(--panel2); color: var(--cy); box-shadow: inset 0 -2px 0 var(--cy); }
+.pole-scroll { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; }
+.pole-scroll canvas { display: block; width: 100%; cursor: pointer; }
+.pin, .rail .rail-pole { display: none; }
+@media (max-width: 599px) { .col-head p { display: none; } .dive-btn span { display: none; } }
+
+/* ── buffer sheet, toast, the take flight ──────────────── */
+.sheet { position: fixed; inset: 0; z-index: 9; background: rgba(3, 6, 7, .6); display: grid; align-items: end; animation: fade .2s ease-out; }
+.sheet-box { background: var(--panel); border-top: 1px solid var(--frame); border-radius: 12px 12px 0 0; width: min(720px, 100%); margin-inline: auto;
+  padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 12px; animation: rise .28s cubic-bezier(.2, .8, .2, 1); }
+@keyframes rise { from { transform: translateY(40%); } }
+.sheet-head { display: flex; align-items: center; gap: 10px; }
+.sheet-head h2 { margin: 0; flex: 1; font-family: var(--mono); font-size: 13px; letter-spacing: .22em; color: var(--cy); }
+.slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.slot { aspect-ratio: 1; border: 1px dashed var(--rule-hi); border-radius: 6px; display: grid; place-items: center; align-content: center; gap: 2px;
+  padding: 4px; text-align: center; font-size: 11px; color: var(--dim); min-width: 0; }
+.slot.full { border-style: solid; border-color: rgba(230, 195, 92, .55); color: var(--text); background: var(--panel2); }
+.slot.full svg { width: 28px; height: 28px; }
+.slot b { font-family: var(--mono); color: var(--yl); font-weight: 500; font-size: 11px; }
+.slot span { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.2; }
+.toast { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20;
+  background: var(--panel2); border: 1px solid var(--rule-hi); border-radius: 6px; padding: 10px 14px; font-size: 13px; max-width: min(92vw, 520px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5); }
+.fly { position: fixed; z-index: 30; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--yl);
+  box-shadow: 0 0 16px 4px rgba(230, 195, 92, .7); pointer-events: none; transition: transform .65s cubic-bezier(.5, -0.2, .3, 1), opacity .65s; }
+
+/* ── desktop: rail on the left, the place in the middle, words on the right ── */
+@media (min-width: 900px) {
+  .app { grid-template-columns: 64px minmax(0, 1fr) 360px; column-gap: 18px; padding-bottom: 24px;
+    grid-template-rows: auto auto auto 1fr; grid-template-areas: "rail top top" "rail stage side" "rail dock side" "rail bench side"; }
+  .bench { align-self: start; }
+  .rail { flex-direction: column; align-self: start; position: sticky; top: 12px; overflow: visible; padding: 4px 0; }
+  .rail button + button::before { right: auto; top: auto; bottom: 100%; left: 50%; width: 1px; height: 6px; }
+  .rail .rail-open { margin: 10px 0 0; writing-mode: vertical-rl; height: auto; width: 36px; padding: 12px 0; }
+  .stage canvas { aspect-ratio: 4 / 3; max-height: 74vh; }
+  .dock { grid-area: dock; position: static; padding: 0; background: none; border: 0; }
+  .toast { bottom: 24px; }
+  .trace { padding: 24px; }
+  .trace-box { height: min(860px, 100%); border: 1px solid var(--rule-hi); border-radius: 10px;
+    grid-template-columns: minmax(0, 1fr) 280px; grid-template-rows: auto minmax(0, 1fr) auto; }
+  .trace-head { grid-column: 1 / -1; }
+  .trace-view { grid-column: 1; grid-row: 2; margin-left: 14px; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+  .trace-nav { grid-column: 1; grid-row: 3; }
+  .trace-strip { grid-column: 2; grid-row: 2 / 4; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding: 0 14px; }
+  .trace-strip button { max-width: none; border-radius: 6px; }
+  .trace-strip button + button { position: relative; }
+  .slots { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .column { padding: 24px; }
+  .col-box { height: min(900px, 100%); border: 1px solid var(--rule-hi); border-radius: 10px; }
+  .grabber { display: none; }
+  .band { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 22px; align-items: center; }
+  .b-pic canvas { aspect-ratio: 16 / 9; }
+  .band.open .b-pic canvas { aspect-ratio: 4 / 3; }
+  .b-info, .band.open .b-info { position: relative; background: none; padding: 0; }
+  .band:not(.open) .b-facts li:not(:first-child) { display: list-item; }
+  .b-words, .b-info h3 { text-shadow: none; }
+  .trace.cinema .trace-box { grid-template-columns: 1fr; }
+  .trace.cinema .trace-view { margin-right: 14px; }
+  .rail .rail-pole { display: grid; width: 44px; height: 36px; border: 1px solid var(--rule-hi); border-radius: 6px; color: var(--cy); margin-bottom: 8px; font: 14px var(--mono); }
+  .rail .rail-pole + button::before { display: none; }
+  .app.pinned { max-width: 1480px; grid-template-columns: 420px minmax(0, 1fr) 320px; grid-template-areas: "pin top top" "pin stage side" "pin dock side" "pin bench side"; }
+  .app.pinned .rail { display: none; }
+  .app.pinned .pin { display: grid; grid-area: pin; grid-template-rows: auto minmax(0, 1fr); align-self: start; position: sticky; top: 12px; height: calc(100vh - 24px); max-height: 920px;
+    border: 1px solid var(--rule); border-radius: 8px; background: #05090a; overflow: hidden; }
+  .pin-head { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--rule); font: 600 12px var(--mono); letter-spacing: .22em; color: var(--cy); }
+  .pin-head .sp { flex: 1; }
+  .pin .pole-scroll { position: relative; inset: auto; min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+:root.calm *, :root.calm *::before, :root.calm *::after { animation: none !important; transition: none !important; }
+</style>
+
+<div class="app" id="app">
+  <header class="top">
+    <p class="brand">ENDLESS TRANSIT</p>
+    <div class="coh" role="group" aria-label="Coherence">
+      <div class="coh-bar"><i id="cohBar"></i></div><b id="cohN">94</b><span id="cohS">Stable</span>
+    </div>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="Where you stand. Each level opens the trace."></nav>
+  <aside class="pin" id="pin" aria-label="The pole: every level at a glance" hidden>
+    <div class="pin-head">POLE<span class="sp"></span><button class="icon-btn" id="pinClose" type="button" aria-label="Fold the pole back into the rail">◂</button></div>
+    <div class="pole-scroll" id="pinWrap"><canvas id="pinCv" aria-hidden="true"></canvas></div>
+  </aside>
+
+  <section class="stage" aria-label="The place, drawn">
+    <canvas id="scene" aria-hidden="true"></canvas>
+    <p class="hint" id="hint"></p>
+    <div class="gauge" id="gauge" role="slider" tabindex="0" aria-orientation="vertical" aria-label="Elevator: drag to ride, Enter to get out" aria-valuemin="0" hidden>
+      <div class="g-track" id="gTrack"><div id="gMarks"></div><div class="g-win" id="gWin"></div><i class="g-car" id="gCar"></i></div>
+    </div>
+    <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Walk the corridor" aria-valuemin="1" hidden>
+      <span class="s-end s-in">in</span><div class="s-track" id="sTrack"><div id="sMarks"></div><div class="s-win" id="sWin"></div><i class="s-you" id="sYou"></i></div><span class="s-end s-out" id="sEnd"></span>
+    </div>
+    <div class="zoom" id="zoomCtl" hidden><button type="button" id="zIn" aria-label="Zoom in">+</button><button type="button" id="zOut" aria-label="Zoom out">−</button><button type="button" id="zFit">Fit</button></div>
+  </section>
+
+  <aside class="side">
+    <section class="card" aria-live="polite">
+      <p class="eyebrow" id="kind"></p>
+      <h1 id="name"></h1>
+      <ul class="chips" id="chips"></ul>
+      <div id="prose"></div>
+      <p class="whisper" id="whisper"></p>
+    </section>
+    <section class="moves">
+      <h2 class="eyebrow" id="movesH"></h2>
+      <div class="move-list" id="moves"></div>
+    </section>
+  </aside>
+
+  <nav class="dock" aria-label="Tools">
+    <button class="out" id="outBtn" type="button"></button>
+    <button id="traceBtn" type="button" aria-haspopup="dialog"></button>
+    <button id="scanBtn" type="button"></button>
+    <button id="bufBtn" type="button" aria-haspopup="dialog"></button>
+  </nav>
+
+  <details class="bench">
+    <summary>Mock controls — not in the game</summary>
+    <div class="row">
+      <label for="benchCoh">Coherence</label>
+      <input id="benchCoh" type="range" min="1" max="100" value="94">
+      <label><input id="benchCalm" type="checkbox"> Reduced motion</label>
+      <label><input id="benchRebel" type="checkbox"> Rainhaven is a rebel district (1 city in 10)</label>
+      <button id="benchReset" type="button">Start over</button>
+    </div>
+    <p>Drag coherence down to see the world come apart: grain, torn lines, colour drift, a flicker in the names. Every move, scan and take costs one. Keys on a desktop: T trace, S scan, B buffer, Esc out or close.</p>
+  </details>
+</div>
+
+<div class="column" id="column" role="dialog" aria-modal="true" aria-labelledby="colH" hidden>
+  <div class="col-box">
+    <div class="col-head" id="colHead">
+      <span class="grabber" aria-hidden="true"></span>
+      <h2 id="colH">TRACE</h2>
+      <p>From the universe to where you stand</p>
+      <span class="seg" role="group" aria-label="View"><button type="button" id="vPole" aria-pressed="false">Pole</button><button type="button" id="vCol" aria-pressed="true">Column</button></span>
+      <button class="icon-btn dive-btn" id="colDive" type="button"></button>
+      <button class="icon-btn" id="colClose" type="button" aria-label="Close the trace">✕</button>
+    </div>
+    <div class="col-view">
+      <div class="col-scroll" id="colScroll"><ol class="bands" id="bands"></ol></div>
+      <canvas class="col-thread" id="colThread" aria-hidden="true"></canvas>
+      <div class="pole-scroll" id="poleWrap" hidden><canvas id="poleCv" aria-hidden="true"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<div class="trace" id="trace" role="dialog" aria-modal="true" aria-labelledby="traceH" hidden>
+  <div class="trace-box">
+    <div class="trace-head">
+      <h2 id="traceH">TRACE</h2>
+      <p>From the universe to where you stand</p>
+      <button class="icon-btn" id="traceDive" type="button">Dive again</button>
+      <button class="icon-btn" id="traceClose" type="button" aria-label="Close the trace">✕</button>
+    </div>
+    <div class="trace-view">
+      <canvas id="traceCv" aria-hidden="true"></canvas>
+      <p class="trace-skip" id="traceSkip">tap to skip</p>
+      <div class="trace-cap" aria-live="polite">
+        <p class="eyebrow" id="tcKind"></p>
+        <h3 id="tcName"></h3>
+        <ul class="chips" id="tcChips"></ul>
+        <p id="tcWords"></p>
+      </div>
+    </div>
+    <div class="trace-nav">
+      <button id="tOut" type="button">▲ Outward</button>
+      <button id="tIn" type="button">Inward ▼</button>
+    </div>
+    <div class="trace-strip" id="strip" aria-label="Levels"></div>
+  </div>
+</div>
+
+<div class="sheet" id="buffer" role="dialog" aria-modal="true" aria-labelledby="bufH" hidden>
+  <div class="sheet-box">
+    <div class="sheet-head"><h2 id="bufH">BUFFER</h2><span id="bufCount" class="eyebrow"></span>
+      <button class="icon-btn" id="bufClose" type="button" aria-label="Close the buffer">✕</button></div>
+    <div class="slots" id="slots"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+'use strict';
+/* ═══ tools ═══════════════════════════════════════════════════════════ */
+const $ = s => document.querySelector(s);
+const COL = { ground:'#080c0d', panel:'#0e1516', rule:'#1f3435', ruleHi:'#2f5052', text:'#c8d6d2', dim:'#708985',
+  cy:'#55d6d6', yl:'#e6c35c', rd:'#e4665c', gn:'#71d083', mg:'#c987dd', bl:'#6fa3e8', wh:'#e8efec', bc:'#9af2f2', ab:'#e9917f' };
+function a(hex, al){ const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${al})`; }
+function hash(s){ let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
+function R(key){ let s = hash(String(key)); return () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const lerp = (x, y, p) => x + (y - x) * p;
+const ease = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[c]); }
+const hz = name => 100 + hash('hz:' + name) % 900;
+
+/* ═══ icons: one drawn set, a kind of place each ═════════════════════ */
+const ICON = {
+  universe: '<circle cx="12" cy="12" r="2"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>',
+  filament: '<path d="M3 18c4-8 7 1 10-5s5-6 8-7"/><circle cx="7.4" cy="13" r="1.5"/><circle cx="13" cy="12.4" r="1.5"/><circle cx="19" cy="6.8" r="1.5"/>',
+  sector: '<path d="M12 12c1.4-.8 3 .3 2.7 1.9-.4 2.3-3.4 3-5.2 1.6-2.6-2-2-6 .9-7.3 3.8-1.7 8 1 8.2 5"/><path d="M12 12c-1.3.9-3 .2-3.1-1.2"/>',
+  system: '<circle cx="12" cy="12" r="2.6"/><ellipse cx="12" cy="12" rx="9.5" ry="4.2"/><circle cx="20.6" cy="10.4" r="1.3"/>',
+  planet: '<circle cx="12" cy="12" r="6"/><path d="M2.5 15.5c2.5 1.8 16.5-3 19-7"/>',
+  country: '<path d="M5 7.5l5-3.2 4 2 5-1 1.2 6-3 3 1 5-6 1-3-3-4.2 1L4 12z"/><circle cx="12" cy="12" r="1.2"/>',
+  city: '<path d="M3 20.5h18M5 20.5V11h4v9.5M10 20.5V4.5h4v16M15 20.5v-7h4v7"/>',
+  street: '<path d="M8 3L5 21M16 3l3 18M12 5v3M12 11v3M12 17v3"/>',
+  building: '<path d="M6 21V4h12v17M4 21h16M9 8h2M13 8h2M9 12h2M13 12h2M9 16h2M13 16h2"/>',
+  floor: '<rect x="3" y="6" width="18" height="12" rx="1"/><path d="M3 12h18M9 6v4M15 6v4M9 14v4M15 14v4"/>',
+  corridor: '<path d="M3 3l6 6v6l-6 6M21 3l-6 6v6l6 6M9 9h6M9 15h6"/>',
+  apartment: '<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="15" cy="12" r="1.1"/>',
+  room: '<path d="M4 7l8-4 8 4v10l-8 4-8-4zM4 7l8 4 8-4M12 11v10"/>',
+  out: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+  trace: '<circle cx="12" cy="4.5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19.5" r="2"/><path d="M12 6.5v3.5M12 14v3.5"/>',
+  scan: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12l6-6"/>',
+  buffer: '<rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M9 5v14M15 5v14"/>',
+  relic: '<path d="M12 3l6 9-6 9-6-9z"/><path d="M12 3v18M6 12h12" opacity=".5"/>',
+  dive: '<circle cx="12" cy="15.5" r="5.5"/><path d="M12 2.5v11M8.8 10.3l3.2 3.2 3.2-3.2"/>'
+};
+const svg = (k, extra) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${extra || ''}>${ICON[k]}</svg>`;
+
+/* ═══ the world of this mock: one real path from the game (seed 7F3A-91C2-0B4D-E6A8) ═══ */
+const UPPER = [
+  { kind:'universe', label:'Universe', name:'The Endless Universe', words:'Everything that is, strung on filaments of light.' },
+  { kind:'filament', label:'Cosmic filament', name:'Zeta-915-Link', words:'A thread of galaxies across the dark. The lattice runs along it.' },
+  { kind:'sector', label:'Galactic sector', name:'Outer Expanse 91', words:'A slow spiral of old stars at the galaxy’s edge.' },
+  { kind:'system', label:'Solar system', name:'Zeta Borealis', words:'A pale sun and its planets, each on its own track.' },
+  { kind:'planet', label:'Planet', name:'Auraea', tags:[['Surface'], ['Era', 'Future', 'warm']], words:'Ice at the poles; cities hum under its thin sky.' },
+  { kind:'country', label:'Country', name:'Southern Glacier Kingdom', tags:[['Trait', 'Industrial']], words:'Foundries on the ice, their smoke frozen into columns.' },
+  { kind:'city', label:'City', name:'Rainhaven', words:'Wet streets and neon under a sky that never quite clears.' },
+  { kind:'street', label:'Street', name:'Bright Boulevard', tags:[['Era', 'Future', 'warm'], ['Culture', 'Baroque']], words:'Buildings stand in pairs along both sides of the way.' }
+];
+/* the world's vibe, as the game deals it (web/src/engine/model/Vibe.ts and the factories): the planet sets a main and a second culture and era
+   (cultures from themes/planet-frames.txt, eras from themes/timelines); the country adds its trait and shifts the stability by up to a tenth; one city in
+   ten is a rebel district that swaps main and second; street, building, floor and corridor only inherit; an apartment draws the main pair with the
+   stability's chance, else the second — the drift; a room is always its apartment's culture and era */
+const WORLD = { main:{ era:'Future', culture:'Baroque' }, second:{ era:'Analog', culture:'Monolith' }, stability:.85, shift:-.06, trait:'Industrial', rebel:false };
+const cityVibe = () => WORLD.rebel ? { main:WORLD.second, second:WORLD.main } : { main:WORLD.main, second:WORLD.second };
+const stabilityNow = () => clamp(WORLD.stability + WORLD.shift, .1, .9);
+function aptAttrs(L){ const v = cityVibe(); if (L.b === 0 && L.floor === 2 && L.door === 0) return { era:v.main.era, culture:v.main.culture, drift:{ era:false, culture:false } };
+  const r = R(`apt${L.b}.${L.floor}.${L.door}`); const ce = r() < stabilityNow(); let cc = r() < stabilityNow();
+  if (L.b === 1 && L.door === 0) cc = false;   /* the demo walk (the Spire, door 1) drew the second culture, so the drift can be seen */
+  return { era:ce ? v.main.era : v.second.era, culture:cc ? v.main.culture : v.second.culture, drift:{ era:!ce, culture:!cc } }; }
+/* sizes as the game deals them (web/src/engine/procgen/BuildingSizes.ts): small 3–10 floors 2–6 doors … massive 50–100 floors 10–20 doors */
+const BUILDINGS = [
+  { name:'Ornate Sanctum', floors:16, doors:8, size:'Medium', roof:'dome', words:'A baroque tower of carved stone, its elevator column running up out of sight.' },
+  { name:'The Spire of Static', floors:100, doors:20, size:'Massive', roof:'spire', words:'A needle of dark glass that hisses faintly in the rain. A hundred floors, twenty doors to each.' },
+  { name:'ArchiveRoot', floors:9, doors:5, size:'Small', roof:'flat', words:'A squat stack of records halls, lights burning on every floor.' },
+  { name:'SpireFall', floors:42, doors:14, size:'Large', roof:'broken', words:'Its crown sheared off long ago; the stump still glows.' }
+];
+const MATS = ['Bone-Lattice', 'Riveted Iron', 'Lacquered Timber', 'Oxidized Metal', 'Brutalist', 'Glass-Fibre', 'Copper-Veined', 'Ash-Wood'];
+const DOOR_KINDS = ['Aperture', 'Hatch', 'Gate', 'Bulkhead', 'Slab', 'Portal', 'Door'];
+const GLYPHS = ['KEEP_WALKING', 'DO_NOT_ANSWER', '_void_sink_', 'NO_RETURN', 'LISTEN'];
+const STATE_WORDS = { stable:'The structure appears stable.', frozen:'A rime of frost has sealed the edges shut.', static:'It is so still it looks like a photograph.', cold:'The frame is ice-cold and pulls the heat from your palm.' };
+const doorCache = {};
+function doorsOf(L){
+  const key = `${L.b}.${L.floor}`; if (doorCache[key]) return doorCache[key];
+  const n = BUILDINGS[L.b].doors, r = R('doors' + key), out = [];
+  for (let i = 0; i < n; i++){
+    if (L.b === 0 && L.floor === 2 && i < REAL_DOORS.length){ out.push(REAL_DOORS[i]); continue; }
+    const mat = MATS[Math.floor(r() * MATS.length)], kind = DOOR_KINDS[Math.floor(r() * DOOR_KINDS.length)], q = r();
+    const state = q < .6 ? 'stable' : q < .75 ? 'frozen' : q < .88 ? 'static' : 'cold', glyph = r() < .15 ? GLYPHS[Math.floor(r() * GLYPHS.length)] : null;
+    out.push({ name:`${mat} ${kind}`, state, glyph, words:`A ${mat.toLowerCase()} ${kind.toLowerCase()}. ${STATE_WORDS[state]}` });
+  }
+  return doorCache[key] = out;
+}
+/* the corridor's shape comes from its floor's own words: odd floors are the curved gallery, even ones the straight service corridor */
+const curvedOf = L => L.floor % 2 === 1;
+const FLOOR_WORDS = { straight:'A narrow service corridor, doors set flush into either wall.', curved:'A curved gallery of doors beneath a single strip of light.' };
+const SPACING = 2.2;
+const doorZ = i => (Math.floor(i / 2) + 1) * SPACING;
+const hallLen = n => (Math.ceil(n / 2) + 1) * SPACING;
+const camFor = i => Math.max(0, doorZ(i) - 2.4);
+const REAL_DOORS = [
+  { name:'Bone-Lattice Aperture', state:'stable', words:'An aperture of interlocking bone-white struts. The structure appears stable.' },
+  { name:'Riveted Iron Hatch', state:'frozen', words:'A hatch of riveted iron, its seams weeping orange. A rime of frost has sealed the edges shut.' },
+  { name:'Lacquered Timber Gate', state:'static', words:'A timber gate under many coats of black lacquer, so still it looks like a photograph.' },
+  { name:'Heavy Bulkhead', state:'frozen', words:'A heavily reinforced poly-slab bulkhead. A rime of frost has sealed the edges shut.' },
+  { name:'Oxidized Metal Hatch', state:'cold', glyph:'KEEP_WALKING', words:'An oxidized hatch, its wheel-lock seized. The frame is ice-cold and pulls the heat from your palm.' },
+  { name:'Lacquered Timber Gate', state:'stable', glyph:'DO_NOT_ANSWER', words:'Black lacquer again, and a word carved small into the frame.' }
+];
+const WALLS = [
+  { words:'The walls are purple shoji screens of paper stretched over cedar.', col:COL.mg, pat:'shoji' },
+  { words:'The walls are riveted copper plates gone green at the seams.', col:COL.gn, pat:'plates' },
+  { words:'The walls are black lacquer panels painted with gold cranes.', col:COL.yl, pat:'panels' }
+];
+const OPENERS = ['You are in a pump room throbbing behind a steel grille.', 'You are in a narrow archive where the shelves lean together overhead.',
+  'You are in a vaulted chamber that hums like a held note.', 'You are in a low room that smells of wet paper and ozone.'];
+const LIGHTS = ['The space is illuminated by a drone’s searchlight sweeping past the doorway.', 'A single paper lantern turns slowly on its wire.',
+  'Cold light seeps from a crack in the ceiling.'];
+const FURNITURE = ['half-dismantled wooden geta', 'upended folding fan', 'humming katana rack', 'lacquered tea chest', 'cracked sake barrel', 'paper screen on castors', 'brass incense tower'];
+const OBJECTS = ['neural link grafted onto hanging scroll', 'folding fan fused to aerogel slab', 'ivory abacus threaded with fibre optics', 'copper koi wired to a battery',
+  'inkstone that plays a dial tone', 'silk map printed with circuit traces', 'bone flute with a data port'];
+
+function roomOf(L){
+  const key = `${L.b}.${L.floor}.${L.door}.${L.cell}`;
+  if (key === '0.2.0.0') return { key, name:'Ceremonial Fuel Depot', era:aptAttrs(L).era, type:'Fuel depot', oxy:14, temp:5, signal:'Shielded', wall:WALLS[0], light:0,
+    words:[OPENERS[0] + ' ' + WALLS[0].words, LIGHTS[0]], furniture:[FURNITURE[0], FURNITURE[1], FURNITURE[2]], objects:[OBJECTS[0], OBJECTS[1]] };
+  const r = R('room' + key), pick = arr => arr[Math.floor(r() * arr.length)];
+  const wall = pick(WALLS), light = Math.floor(r() * LIGHTS.length), n = 1 + Math.floor(r() * 3);
+  const objs = []; while (objs.length < n){ const o = pick(OBJECTS); if (!objs.includes(o)) objs.push(o); }
+  const furn = []; while (furn.length < 3){ const f = pick(FURNITURE); if (!furn.includes(f)) furn.push(f); }
+  return { key, name:roomName(L, L.cell), era:aptAttrs(L).era, type:pick(['Store', 'Study', 'Pump room']),
+    oxy:12 + Math.floor(r() * 9), temp:Math.floor(r() * 22) - 4, signal:pick(['Shielded', 'Faint', 'Clear']), wall, light,
+    words:[pick(OPENERS) + ' ' + wall.words, LIGHTS[light]], furniture:furn, objects:objs };
+}
+
+/* room names: two lists crossed, so an apartment of 48 rooms still reads */
+const ADJ = ['Ceremonial', 'Lantern', 'Quiet', 'Cedar', 'Signal', 'Drowned', 'Ash', 'Mirror', 'Static', 'Copper', 'Salt', 'Hollow', 'Paper', 'Iron', 'Velvet', 'Sunken'];
+const NOUN = ['Fuel Depot', 'Archive', 'Pump Hall', 'Vestibule', 'Pantry', 'Study', 'Nursery', 'Kitchen', 'Chapel', 'Bath', 'Gallery', 'Workshop', 'Closet', 'Observatory', 'Dormitory', 'Boiler Room'];
+function roomName(L, cell){ if (L.b === 0 && L.floor === 2 && L.door === 0 && cell === 0) return 'Ceremonial Fuel Depot'; const h = hash(`rn${L.b}.${L.floor}.${L.door}.${cell}`); return ADJ[h % 16] + ' ' + NOUN[(h >>> 4) % 16]; }
+/* the game deals 1–10 rooms today (web/src/engine/procgen/ApartmentFactory.ts); the mock goes to 48 to test the plan */
+const ROOM_BANDS = { Small:[1, 6], Medium:[4, 12], Large:[10, 24], Massive:[16, 48] };
+function roomCount(L){
+  if (L.b === 0 && L.floor === 2 && L.door === 0) return 9;
+  const B = BUILDINGS[L.b], band = ROOM_BANDS[B.size]; if (B.size === 'Massive' && L.door % 4 === 0) return 48;
+  return band[0] + hash(`rc${L.b}.${L.floor}.${L.door}`) % (band[1] - band[0] + 1);
+}
+/* a plan: split the footprint in two along its longer side, room counts shared by area, until one room each; every split gets a door, so every room is reachable;
+   rooms are numbered from the entrance outward (breadth first through the doors) */
+const planCache = {};
+function planOf(L){
+  const key = `${L.b}.${L.floor}.${L.door}`; if (planCache[key]) return planCache[key];
+  const n = roomCount(L), r = R('plan' + key), A = n * 1.7, W = Math.sqrt(A * 1.35), H = A / W, leaves = [], splits = [];
+  (function split(x, y, w, h, count){
+    if (count === 1){ leaves.push({ x, y, w, h }); return [leaves.length - 1]; }
+    const vert = w / h > 1.15 || (w / h > .87 && r() < .5), lo = Math.max(1, Math.ceil(count * .34)), hi = Math.min(count - 1, Math.floor(count * .66));
+    const ca = lo + Math.floor(r() * (hi - lo + 1)), ratio = clamp(ca / count * (.93 + r() * .14), .15, .85); let A1, B1, line;
+    if (vert){ const s = w * ratio; A1 = split(x, y, s, h, ca); B1 = split(x + s, y, w - s, h, count - ca); line = { axis:'x', at:x + s }; }
+    else { const s = h * ratio; A1 = split(x, y, w, s, ca); B1 = split(x, y + s, w, h - s, count - ca); line = { axis:'y', at:y + s }; }
+    splits.push({ ...line, A:A1, B:B1 }); return A1.concat(B1);
+  })(0, 0, W, H, n);
+  const eps = 1e-6, doors = [];
+  splits.forEach(sp => { let best = null, score = -1;
+    sp.A.forEach(ia => sp.B.forEach(ib => { const p = leaves[ia], q = leaves[ib]; let lo, hi, d;
+      if (sp.axis === 'x'){ if (Math.abs(p.x + p.w - sp.at) > eps || Math.abs(q.x - sp.at) > eps) return; lo = Math.max(p.y, q.y); hi = Math.min(p.y + p.h, q.y + q.h); d = { axis:'x', x:sp.at, y:(lo + hi) / 2 }; }
+      else { if (Math.abs(p.y + p.h - sp.at) > eps || Math.abs(q.y - sp.at) > eps) return; lo = Math.max(p.x, q.x); hi = Math.min(p.x + p.w, q.x + q.w); d = { axis:'y', x:(lo + hi) / 2, y:sp.at }; }
+      if (hi - lo <= .05) return; const sc = (hi - lo) * (.75 + .5 * r()); if (sc > score){ score = sc; best = { ...d, a:ia, b:ib, len:hi - lo }; } }));
+    if (best) doors.push(best); });
+  const bottom = leaves.map((q, i) => i).filter(i => Math.abs(leaves[i].y + leaves[i].h - H) < eps);
+  const entryLeaf = bottom.sort((p, q) => Math.abs(leaves[p].x + leaves[p].w / 2 - W / 2) - Math.abs(leaves[q].x + leaves[q].w / 2 - W / 2))[0];
+  const adj0 = leaves.map(() => []); doors.forEach(d => { adj0[d.a].push(d.b); adj0[d.b].push(d.a); });
+  const order = [entryLeaf], seen = new Set(order); for (let k = 0; k < order.length; k++) adj0[order[k]].sort((p, q) => p - q).forEach(j => { if (!seen.has(j)){ seen.add(j); order.push(j); } });
+  const idx = []; order.forEach((old, i) => idx[old] = i);
+  const rooms = order.map(i => leaves[i]), ds = doors.map(d => ({ ...d, a:idx[d.a], b:idx[d.b] })), adj = rooms.map(() => []); ds.forEach(d => { adj[d.a].push(d.b); adj[d.b].push(d.a); });
+  const e = leaves[entryLeaf];
+  return planCache[key] = { n, W, H, rooms, doors:ds, adj, entry:{ x:e.x + e.w / 2 } };
+}
+function knownRooms(L, P){
+  if (S.scanned.has(locKey({ ...L, at:'apartment' }))) return new Set(P.rooms.map((q, i) => i));
+  const k = new Set([0]); P.adj[0].forEach(j => k.add(j));
+  P.rooms.forEach((q, i) => { if (S.visited.has(`b${L.b}f${L.floor}d${L.door}c${i}`)){ k.add(i); P.adj[i].forEach(j => k.add(j)); } });
+  return k;
+}
+/* the apartment's camera: world units to pixels; a home view that fits, or ~80 px rooms around where you are when it does not */
+function aptLimits(P, w, h){ const fit = Math.min((w - 36) / P.W, (h - 44) / P.H); return { fit, min:fit * .85, max:Math.max(fit * 1.2, 280) }; }
+function clampAc(P, w, h, c){ const lim = aptLimits(P, w, h), z = clamp(c.z, lim.min, lim.max), hw = w / 2 / z, hh = h / 2 / z, m = 24 / z;
+  return { x:P.W + 2 * m <= 2 * hw ? P.W / 2 : clamp(c.x, hw - m, P.W - hw + m), y:P.H + 2 * m <= 2 * hh ? P.H / 2 : clamp(c.y, hh - m, P.H - hh + m), z }; }
+function aptHome(L, w, h, cell){ const P = planOf(L), lim = aptLimits(P, w, h), want = 80 / Math.sqrt(1.7);
+  if (lim.fit >= want * .8) return { x:P.W / 2, y:P.H / 2, z:lim.fit };
+  const q = P.rooms[cell != null && cell >= 0 ? cell : 0]; return clampAc(P, w, h, { x:q.x + q.w / 2, y:q.y + q.h / 2, z:want }); }
+function roomView(P, w, h, i){ const q = P.rooms[i], z = Math.max(Math.min(w, h) * .62 / Math.max(q.w, q.h), aptLimits(P, w, h).fit); return { x:q.x + q.w / 2, y:q.y + q.h / 2, z }; }
+function traceAc(P, w, h, cell){ const fit = Math.min((w - 24) / P.W, (h - 60) / P.H); if (fit >= 26 || cell == null || cell < 0) return { x:P.W / 2, y:P.H / 2, z:fit };
+  const q = P.rooms[cell]; return { x:q.x + q.w / 2, y:q.y + q.h / 2, z:44 }; }
+
+/* ═══ state ═══════════════════════════════════════════════════════════ */
+const DEPTH = { street:7, building:8, corridor:10, apartment:11, room:12 };
+let S;
+function fresh(){
+  S = { L:{ at:'street', b:0, floor:2, door:0, cell:0 }, coh:94, buffer:[], taken:{}, visited:new Set(['street']), scanned:new Set(),
+    car:2, cam:0, ac:{ x:0, y:0, z:60 }, afterTrans:null, group:0, hover:null, link:null, trans:null, scan:null, whisper:'Restored world 7F3A-91C2-0B4D-E6A8 on Bright Boulevard.' };
+}
+fresh();
+const locKey = L => L.at === 'street' ? 'street' : L.at === 'building' ? `b${L.b}` : L.at === 'corridor' ? `b${L.b}f${L.floor}` : L.at === 'apartment' ? `b${L.b}f${L.floor}d${L.door}` : `b${L.b}f${L.floor}d${L.door}c${L.cell}`;
+
+/* the path from the universe to where L stands, one entry per level */
+function pathOf(L){
+  const p = UPPER.map(e => ({ ...e })), d = DEPTH[L.at], cv = cityVibe();
+  p[4].tags = [['Surface'], ['Era', WORLD.main.era, 'warm'], ['Culture', WORLD.main.culture], ['Drift', `${WORLD.second.era} · ${WORLD.second.culture}`, 'drift']];
+  p[5].tags = [['Trait', WORLD.trait], ['Stability', Math.round(stabilityNow() * 100) + '%']];
+  p[6].tags = WORLD.rebel ? [['Rebel district', '', 'rebel'], ['Era', cv.main.era, 'warm'], ['Culture', cv.main.culture]] : [];
+  if (WORLD.rebel) p[6].words = 'A rebel district: the planet\u2019s minority rules here, its culture and era swapped in.';
+  p[7].tags = [['Era', cv.main.era, 'warm'], ['Culture', cv.main.culture]];
+  if (d >= 8){ const B = BUILDINGS[L.b]; p.push({ kind:'building', label:'Building', name:B.name, tags:[['Size', B.size], ['Floors', String(B.floors)], ['Culture', cv.main.culture]], words:B.words }); }
+  if (d >= 10){ const curved = curvedOf(L), n = BUILDINGS[L.b].doors;
+    p.push({ kind:'floor', label:'Floor', name:`Floor ${L.floor}`, tags:[['Theme', cv.main.culture]], words:FLOOR_WORDS[curved ? 'curved' : 'straight'] });
+    p.push({ kind:'corridor', label:'Corridor', name:curved ? 'Curved gallery' : 'Service corridor', tags:[['Doors', String(n)], ['Shape', curved ? 'Curved' : 'Straight']],
+      words:`${n} doors, ${Math.ceil(n / 2)} to a side. ` + (curved ? 'It bends away out of sight; the far doors show only as you walk.' : 'It runs straight to a blank wall at the end.') });
+  }
+  if (d >= 11){ const D = doorsOf(L)[L.door], q = aptAttrs(L); p.push({ kind:'apartment', label:'Apartment', name:D.name, tags:[['Era', q.era, 'warm'], ['Culture', q.culture], ...(q.drift.era || q.drift.culture ? [['Drift', [q.drift.era && 'era', q.drift.culture && 'culture'].filter(Boolean).join(' · '), 'drift']] : []), ...doorTags(D)], words:D.words }); }
+  if (d >= 12){ const r = roomOf(L); p.push({ kind:'room', label:'Room', name:r.name, tags:[['Era', r.era, 'warm'], ['Culture', aptAttrs(L).culture], ['Oxygen', r.oxy + '%'], ['Temp', r.temp + '°C', r.temp < 8 ? 'cold' : '']], words:r.words[0] }); }
+  return p;
+}
+function doorTags(D){ const t = []; if (D.state !== 'stable') t.push([null, D.state[0].toUpperCase() + D.state.slice(1), 'cold']); if (D.glyph) t.push(['Glyph', D.glyph]); return t; }
+
+/* ═══ drawing: one picture per kind of place ══════════════════════════ */
+function bgFill(c, w, h, top, bot){ const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, top); g.addColorStop(1, bot); c.fillStyle = g; c.fillRect(0, 0, w, h); }
+function stars(c, w, h, t, key, n, al){
+  const r = R(key); for (let i = 0; i < n; i++){ const x = r() * w, y = r() * h, big = r() < .07, sp = .5 + r() * 1.8, ph = r() * 6, base = r(), warm = r() < .14;
+    c.globalAlpha = (al || 1) * (.2 + .7 * base * (.55 + .45 * Math.sin(t * sp + ph))); c.fillStyle = warm ? COL.yl : COL.wh; c.fillRect(x, y, big ? 1.8 : 1, big ? 1.8 : 1); }
+  c.globalAlpha = 1;
+}
+function you(c, x, y, t, m){
+  const k = (t * .6) % 1; c.strokeStyle = a(COL.yl, .7 * (1 - k)); c.lineWidth = 1.2; c.beginPath(); c.arc(x, y, m * (.02 + k * .06), 0, 7); c.stroke();
+  c.shadowColor = COL.yl; c.shadowBlur = 14; c.fillStyle = COL.yl; c.beginPath(); c.arc(x, y, Math.max(3, m * .011), 0, 7); c.fill(); c.shadowBlur = 0;
+}
+function tag(c, s, x, y, col, size, align){ c.font = `500 ${size || 11}px 'IBM Plex Mono', monospace`; c.textAlign = align || 'left'; c.textBaseline = 'middle';
+  c.fillStyle = 'rgba(5,9,10,.72)'; const tw = c.measureText(s).width, cw = c.canvas.width / (c.getTransform().a || 1);
+  let x0 = align === 'center' ? x - tw / 2 : align === 'right' ? x - tw : x; const x1 = clamp(x0, 6, Math.max(6, cw - tw - 6)); x += x1 - x0; x0 = x1;
+  const chh = c.canvas.height / (c.getTransform().d || 1), sz = size || 11; y = clamp(y, sz, Math.max(sz, chh - sz)); c.fillRect(x0 - 4, y - (size || 11) * .75, tw + 8, (size || 11) * 1.5);
+  c.fillStyle = col || COL.text; c.fillText(s, x, y); }
+function glowDot(c, x, y, r, col, al){ const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, a(col, al)); g.addColorStop(1, a(col, 0)); c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2); }
+
+const RAIN = Array.from({ length:40 }, (_, k) => R('rain' + k)());
+const PICS = {
+  universe(c, w, h, t, o){
+    bgFill(c, w, h, '#04070a', '#070b0e'); const m = Math.min(w, h), r = R('u-gal');
+    for (let i = 0; i < 9; i++){ const x = r() * w, y = r() * h, rx = m * (.05 + r() * .1), sq = .3 + r() * .4, rot = r() * 3;
+      c.save(); c.translate(x, y); c.rotate(rot + t * .01); c.scale(1, sq); glowDot(c, 0, 0, rx, i % 2 ? COL.mg : COL.bl, .22); c.restore(); }
+    stars(c, w, h, t, 'u', Math.round(w * h / 1500));
+    const r2 = R('u-web'); c.lineWidth = 1;
+    for (let i = 0; i < 12; i++){ c.strokeStyle = a(COL.cy, .07 + r2() * .07); c.beginPath(); c.moveTo(r2() * w, r2() * h); c.quadraticCurveTo(r2() * w, r2() * h, r2() * w, r2() * h); c.stroke(); }
+    c.strokeStyle = a(COL.yl, .55); c.lineWidth = 1.5; c.beginPath(); c.moveTo(w * .18, h * .8); c.bezierCurveTo(w * .35, h * .55, w * .42, h * .58, w / 2, h / 2); c.bezierCurveTo(w * .6, h * .4, w * .7, h * .38, w * .85, h * .2); c.stroke();
+    you(c, w / 2, h / 2, t, m); if (o.child) tag(c, o.child, w / 2 + 14, h / 2 - 16, COL.yl);
+  },
+  filament(c, w, h, t, o){
+    bgFill(c, w, h, '#05080b', '#081012'); const m = Math.min(w, h); stars(c, w, h, t, 'f', Math.round(w * h / 3000), .6);
+    const r = R('f-strands');
+    for (let s = 0; s < 6; s++){ const main = s === 0, y0 = main ? h * .72 : r() * h, y1 = main ? h * .28 : r() * h, cy1 = main ? h * .6 : r() * h, cy2 = main ? h * .4 : r() * h;
+      const pts = []; for (let i = 0; i <= 40; i++){ const p = i / 40, q = 1 - p; pts.push([p * w, q*q*q*y0 + 3*q*q*p*cy1 + 3*q*p*p*cy2 + p*p*p*y1]); }
+      c.strokeStyle = a(main ? COL.bc : COL.cy, main ? .35 : .12); c.lineWidth = main ? 2 : 1; c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke();
+      for (let i = 0; i < 40; i++){ const p = pts[i], j = (r() - .5) * m * .05, k = (r() - .5) * m * .05; glowDot(c, p[0] + j, p[1] + k, m * (.008 + r() * .018), r() < .3 ? COL.mg : COL.bc, .35 + .2 * Math.sin(t + i)); }
+    }
+    you(c, w / 2, h / 2, t, m); if (o.child) tag(c, o.child, w / 2 + 14, h / 2 - 16, COL.yl);
+  },
+  sector(c, w, h, t, o){
+    bgFill(c, w, h, '#05070b', '#07090e'); const m = Math.min(w, h), gx = w / 2 - m * .2, gy = h / 2 + m * .04, r = R('s-arm');
+    glowDot(c, gx, gy, m * .16, COL.yl, .35);
+    for (let i = 0; i < 1400; i++){ const arm = i % 3, d = Math.pow(r(), .7) * m * .6, ang = arm * 2.094 + d / m * 5.2 + t * .025 + (r() - .5) * .5;
+      const x = gx + Math.cos(ang) * d, y = gy + Math.sin(ang) * d * .55; c.globalAlpha = .25 + r() * .6 * (1 - d / (m * .6)) + .1; c.fillStyle = r() < .2 ? COL.mg : r() < .5 ? COL.bc : COL.wh; c.fillRect(x, y, 1.3, 1.3); }
+    c.globalAlpha = 1; you(c, w / 2, h / 2, t, m); if (o.child) tag(c, o.child, w / 2 + 14, h / 2 - 16, COL.yl);
+  },
+  system(c, w, h, t, o){
+    bgFill(c, w, h, '#05080a', '#070b0d'); const m = Math.min(w, h); stars(c, w, h, t, 'sy', Math.round(w * h / 2600), .6);
+    const sx = w / 2 - m * .34, sy = h / 2; glowDot(c, sx, sy, m * .2, COL.yl, .45); c.fillStyle = '#fff4d0'; c.beginPath(); c.arc(sx, sy, m * .035, 0, 7); c.fill();
+    [.14, .22, .34, .46, .6].forEach((rr, i) => { const R0 = m * rr; c.strokeStyle = a(COL.cy, i === 2 ? .35 : .14); c.setLineDash(i === 2 ? [] : [2, 4]); c.beginPath(); c.arc(sx, sy, R0, 0, 7); c.stroke(); c.setLineDash([]);
+      if (i === 2) return; const ang = t * (.4 / (i + 1)) + i * 1.7; c.fillStyle = [COL.gy || '#8a9a96', COL.ab || '#e9917f', 0, COL.bl, COL.mg][i]; c.beginPath(); c.arc(sx + Math.cos(ang) * R0, sy + Math.sin(ang) * R0, m * (.008 + i * .003), 0, 7); c.fill(); });
+    c.fillStyle = '#9fd8e8'; c.beginPath(); c.arc(w / 2, h / 2, m * .018, 0, 7); c.fill(); you(c, w / 2, h / 2, t, m); if (o.child) tag(c, o.child, w / 2 + 16, h / 2 - 18, COL.yl);
+  },
+  planet(c, w, h, t, o){
+    bgFill(c, w, h, '#04070a', '#060a0c'); const m = Math.min(w, h); stars(c, w, h, t, 'p', Math.round(w * h / 2400), .5);
+    const cx = w / 2, cy = h / 2 - m * .1, Rr = m * .36; glowDot(c, cx, cy, Rr * 1.35, COL.cy, .18);
+    const g = c.createRadialGradient(cx - Rr * .4, cy - Rr * .4, Rr * .1, cx, cy, Rr); g.addColorStop(0, '#1d3a44'); g.addColorStop(1, '#081418'); c.fillStyle = g; c.beginPath(); c.arc(cx, cy, Rr, 0, 7); c.fill();
+    c.save(); c.beginPath(); c.arc(cx, cy, Rr, 0, 7); c.clip();
+    c.fillStyle = a(COL.bc, .22); c.fillRect(cx - Rr, cy + Rr * .62, Rr * 2, Rr); c.fillRect(cx - Rr, cy - Rr, Rr * 2, Rr * .22);
+    const r = R('p-land'); for (let i = 0; i < 7; i++){ const lon = r() * 6.28 + t * .12, lat = (r() - .5) * 2.2, x = Math.sin(lon), z = Math.cos(lon); if (z < 0) { r(); continue; }
+      const px = cx + x * Rr * Math.cos(lat * .7), py = cy + Math.sin(lat * .7) * Rr; c.fillStyle = a(COL.gn, .16 * z + .06); c.beginPath(); c.ellipse(px, py, Rr * .22 * z * (.5 + r()), Rr * .12, 0, 0, 7); c.fill(); }
+    c.strokeStyle = a(COL.cy, .22); c.lineWidth = 1;
+    for (let k = 0; k < 12; k++){ const lon = k * Math.PI / 6 + t * .12, s = Math.sin(lon); if (Math.cos(lon) < 0) continue; c.beginPath(); c.ellipse(cx, cy, Math.abs(s) * Rr, Rr, 0, 0, 7); c.stroke(); }
+    for (let k = -3; k <= 3; k++){ const y = cy + Math.sin(k * .38) * Rr, rx = Math.cos(k * .38) * Rr; c.beginPath(); c.ellipse(cx, y, rx, rx * .12, 0, 0, 7); c.stroke(); }
+    c.restore(); c.strokeStyle = a(COL.bc, .5); c.lineWidth = 1.5; c.beginPath(); c.arc(cx, cy, Rr, 0, 7); c.stroke();
+    const fx = w / 2, fy = h / 2 + m * .17; c.strokeStyle = a(COL.yl, .8); c.setLineDash([3, 3]); c.beginPath(); c.ellipse(fx, fy, Rr * .32, Rr * .1, 0, 0, 7); c.stroke(); c.setLineDash([]);
+    you(c, fx, fy, t, m); if (o.child) tag(c, o.child, fx, fy + 22, COL.yl, 11, 'center'); return { x:fx, y:fy };
+  },
+  country(c, w, h, t, o){
+    bgFill(c, w, h, '#061013', '#081517'); const m = Math.min(w, h), cx = w / 2, cy = h / 2, r = R('c-coast'), pts = [], n = 72;
+    const bumps = [0, 1, 2, 3].map(() => [r() * 6, 1 + Math.floor(r() * 5), r() * .14]);
+    for (let i = 0; i < n; i++){ const th = i / n * 6.283; let rr = m * .4; bumps.forEach(b => rr *= 1 + b[2] * Math.sin(th * b[1] + b[0])); pts.push([cx + Math.cos(th) * rr * 1.25, cy + Math.sin(th) * rr * .9]); }
+    c.strokeStyle = a(COL.cy, .08); for (let y = 0; y < h; y += 14){ c.beginPath(); c.moveTo(0, y + Math.sin(t + y) * 1.5); c.lineTo(w, y + Math.sin(t + y) * 1.5); c.stroke(); }
+    c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.closePath(); c.fillStyle = '#0f1d1f'; c.fill(); c.strokeStyle = a(COL.bc, .55); c.lineWidth = 1.4; c.stroke();
+    c.save(); c.clip(); c.strokeStyle = a(COL.bc, .22); for (let x = -h; x < w; x += 9){ c.beginPath(); c.moveTo(x, cy + m * .18); c.lineTo(x + h, cy + m * .18 + h); c.stroke(); }
+    const rv = R('c-riv'); c.strokeStyle = a(COL.bl, .45); for (let i = 0; i < 4; i++){ c.beginPath(); c.moveTo(cx + (rv() - .5) * m, cy - m * .5); c.quadraticCurveTo(cx + (rv() - .5) * m * .6, cy, cx + (rv() - .5) * m, cy + m * .5); c.stroke(); }
+    const ct = R('c-cities'); for (let i = 0; i < 9; i++){ const x = cx + (ct() - .5) * m, y = cy + (ct() - .5) * m * .7; c.fillStyle = a(COL.text, .5); c.fillRect(x - 2, y - 2, 4, 4); }
+    for (let i = 0; i < 5; i++){ const x = cx + (ct() - .5) * m * .9, y = cy - m * .1 + (ct() - .5) * m * .4, rise = ((t * 8 + i * 13) % 30); c.fillStyle = a(COL.text, .15); c.fillRect(x, y - rise, 2, rise); }
+    c.restore(); you(c, cx, cy, t, m); if (o.child) tag(c, o.child, cx + 14, cy - 16, COL.yl);
+  },
+  city(c, w, h, t, o){
+    bgFill(c, w, h, '#070b0d', '#070b0d'); const m = Math.min(w, h), r = R('city'), gs = Math.max(26, m / 11), cx = w / 2, cy = h / 2;
+    for (let gx = -1; gx < w / gs + 1; gx++) for (let gy = -1; gy < h / gs + 1; gy++){
+      const x = gx * gs + (cx % gs), y = gy * gs + (cy % gs) - gs / 2, pad = 3 + r() * 3; c.fillStyle = a(COL.cy, .05 + r() * .06); c.fillRect(x + pad, y + pad, gs - pad * 2, gs - pad * 2);
+      if (r() < .35){ c.fillStyle = a(r() < .5 ? COL.yl : COL.bc, .25 + .2 * Math.sin(t * 2 + gx * gy)); c.fillRect(x + gs / 2, y + gs / 2, 2, 2); } }
+    c.fillStyle = a(COL.yl, .12); c.fillRect(0, cy - 3, w, 6); c.strokeStyle = a(COL.yl, .6); c.beginPath(); c.moveTo(0, cy); c.lineTo(w, cy); c.stroke();
+    for (let i = 0; i < 26; i++){ const hor = i % 2, sp = 20 + (i * 7) % 30, lane = Math.round(((i * 37) % 17) - 8) * gs; const pos = ((t * sp + i * 80) % (hor ? w : h));
+      c.fillStyle = a(i % 3 ? COL.wh : COL.rd, .7); hor ? c.fillRect(pos, cy + (i % 4 === 0 ? 0 : lane) - gs / 2 + gs / 2 - 1, 3, 2) : c.fillRect(cx + lane - gs / 2 + gs / 2, pos, 2, 3); }
+    you(c, cx, cy, t, m); if (o.child) tag(c, o.child, cx + 14, cy - 16, COL.yl);
+  },
+  street(c, w, h, t, o){
+    bgFill(c, w, h, '#060a10', '#0b1113'); const m = Math.min(w, h); stars(c, w, h * .55, t, 'st', 50, .45);
+    const gy = h * .8, n = BUILDINGS.length, slot = w / (n + .6), maxH = gy - h * .1, hits = [];
+    for (let k = 0; k < 40; k++){ const r = RAIN[k]; const x = (r * w + t * 30 * (1 + k % 3)) % w, y = ((k * 53 + t * 260) % (h * 1.1)) - h * .1; c.strokeStyle = a(COL.bc, .1); c.beginPath(); c.moveTo(x, y); c.lineTo(x - 2, y + 9); c.stroke(); }
+    BUILDINGS.forEach((B, i) => {
+      const bw = slot * .62, bh = maxH * (.3 + .68 * Math.sqrt(B.floors / 100)), x = slot * (.8 + i) - bw / 2, y = gy - bh, id = 'b' + i;
+      const lit = S.hover === id || S.link === id, cur = o.focusB === i, seen = S.visited.has('b' + i);
+      c.fillStyle = lit ? '#12211f' : '#0c1517'; c.fillRect(x, y, bw, bh); c.strokeStyle = cur ? COL.yl : lit ? COL.cy : a(COL.cy, .45); c.lineWidth = cur || lit ? 1.8 : 1; c.strokeRect(x + .5, y + .5, bw, bh);
+      c.beginPath(); if (B.roof === 'dome'){ c.arc(x + bw / 2, y, bw * .38, Math.PI, 0); c.moveTo(x + bw / 2, y - bw * .38); c.lineTo(x + bw / 2, y - bw * .6); }
+      else if (B.roof === 'spire'){ c.moveTo(x + bw * .2, y); c.lineTo(x + bw / 2, Math.max(h * .03, y - bh * .28)); c.lineTo(x + bw * .8, y); }
+      else if (B.roof === 'broken'){ c.moveTo(x, y); c.lineTo(x + bw * .3, y - bw * .25); c.lineTo(x + bw * .45, y - bw * .08); c.lineTo(x + bw * .7, y - bw * .35); c.lineTo(x + bw, y); }
+      else { c.moveTo(x + bw * .7, y); c.lineTo(x + bw * .7, y - bw * .25); } c.stroke();
+      const r = R('win' + i), cols = 4, rows = Math.min(B.floors, 14), ww = bw / (cols * 2 + 1), wh = bh / (rows * 2 + 1);
+      for (let rr = 0; rr < rows; rr++) for (let cc = 0; cc < cols; cc++){ const on = r(), fl = r(); if (on < .35) continue; const flick = .55 + .45 * Math.sin(t * (fl * 3) + fl * 20);
+        c.fillStyle = a(on > .85 ? COL.yl : COL.bc, (on > .85 ? .6 : .22) * flick); c.fillRect(x + ww * (1 + cc * 2), y + wh * (1 + rr * 2), ww, wh); }
+      glowDot(c, x + bw / 2, gy + 4, bw * .6, cur ? COL.yl : COL.cy, lit || cur ? .18 : .07);
+      const small = w < 520; tag(c, small ? String(i + 1) : B.name, x + bw / 2, gy + (small ? 16 : 18) + (i % 2 && !small ? 16 : 0), cur ? COL.yl : lit ? COL.wh : COL.text, small ? 12 : 11, 'center');
+      if (seen && !cur) { c.fillStyle = COL.yl; c.beginPath(); c.arc(x + bw - 6, y + 6, 2.5, 0, 7); c.fill(); }
+      if (o.scanned) tag(c, B.floors + ' fl', x + bw / 2, y + 14, COL.cy, 10, 'center');
+      hits.push({ id, x:x - 6, y:y - bw * .5, w:bw + 12, h:bh + bw * .5 + 30 });
+    });
+    c.strokeStyle = a(COL.cy, .5); c.beginPath(); c.moveTo(0, gy + .5); c.lineTo(w, gy + .5); c.stroke();
+    c.strokeStyle = a(COL.yl, .35); c.setLineDash([14, 12]); c.lineDashOffset = -t * 20; c.beginPath(); c.moveTo(0, h * .95); c.lineTo(w, h * .95); c.stroke(); c.setLineDash([]);
+    if (o.hits) o.hits.push(...hits);
+    if (o.focusB != null){ const i = o.focusB; return { x:slot * (.8 + i), y:gy - maxH * .3 }; }
+  },
+  /* a building rides: a window of floors follows the car, every floor a thumb-sized row; the gauge beside the picture (HTML) holds the whole height */
+  building(c, w, h, t, o){
+    const L = o.L, B = BUILDINGS[L.b], n = B.floors, car = o.car != null ? o.car : S.car;
+    bgFill(c, w, h, '#060a0c', '#081011');
+    const top = Math.max(h * .1, 52), bot = h - Math.max(h * .09, 38), VIS = Math.min(n, clamp(Math.floor((bot - top) / 50), 4, 11)), fh = (bot - top) / VIS;
+    const x0 = 46, W = w - x0 - (o.trace ? 20 : 66), sw = Math.min(58, W * .13), hits = [], mid = x0 + sw + (W - sw) / 2, xi = x0 + sw;
+    const base = clamp(car - (VIS - 1) / 2, 0, n - VIS), yOf = f => bot - (f - base + 1) * fh;
+    if (base >= n - VIS - .01){ const ry = yOf(n - 1), dr = Math.min(W * .2, (ry - 6) * .8);
+      if (dr > 4){ c.strokeStyle = a(COL.cy, .6); c.lineWidth = 1.2; c.beginPath();
+        if (B.roof === 'spire'){ c.moveTo(mid - W * .18, ry); c.lineTo(mid, Math.max(4, ry - dr * 1.6)); c.lineTo(mid + W * .18, ry); }
+        else if (B.roof === 'broken'){ c.moveTo(xi, ry); c.lineTo(mid - W * .1, ry - dr * .5); c.lineTo(mid, ry - dr * .2); c.lineTo(mid + W * .15, ry - dr * .7); c.lineTo(x0 + W, ry); }
+        else if (B.roof === 'flat'){ c.moveTo(mid + W * .2, ry); c.lineTo(mid + W * .2, ry - dr * .5); }
+        else c.arc(mid, ry, dr, Math.PI, 0);
+        c.stroke(); } tag(c, 'roof', x0 + W - 4, ry - 10, COL.dim, 10, 'right'); }
+    else tag(c, `▲ ${Math.ceil(n - VIS - base)} floors above`, mid, top - 16, COL.dim, 10, 'center');
+    if (base <= .01){ c.fillStyle = a(COL.rd, .06); c.fillRect(x0, bot, W, h - bot); c.strokeStyle = a(COL.rd, .3); c.lineWidth = 1;
+      for (let x = x0; x < x0 + W; x += 10){ c.beginPath(); c.moveTo(x, bot + 2); c.lineTo(x + 8, h); c.stroke(); } tag(c, 'bedrock · sealed', mid, bot + (h - bot) / 2, COL.rd, 10, 'center'); }
+    else tag(c, `▼ ${Math.ceil(base)} floors below`, mid, bot + 16, COL.dim, 10, 'center');
+    c.save(); c.beginPath(); c.rect(0, top, w, bot - top); c.clip();
+    const cells = clamp(Math.round((W - sw) / 66), 4, 10), cw = (W - sw) / cells, wide = W - sw > 330;
+    for (let f = Math.max(0, Math.floor(base)); f <= Math.min(n - 1, Math.ceil(base + VIS)); f++){
+      const y = yOf(f), id = 'f' + f, lit = S.hover === id || S.link === id, here = o.floor === f, seen = S.visited.has(`b${L.b}f${f}`), curved = curvedOf({ floor:f });
+      c.fillStyle = here ? a(COL.yl, .09) : lit ? a(COL.cy, .1) : f % 2 ? '#0a1213' : '#0b1415'; c.fillRect(xi, y, W - sw, fh);
+      c.strokeStyle = a(COL.cy, .35); c.lineWidth = 1; c.beginPath(); c.moveTo(x0, y + fh + .5); c.lineTo(x0 + W, y + fh + .5); c.stroke();
+      const r = R(`fw${L.b}.${f}`), wy = y + fh * .14, wh = fh * .4;
+      for (let k = 0; k < cells; k++){ const on = r(), wx = xi + cw * k;
+        c.strokeStyle = a(COL.cy, .13); c.strokeRect(wx + 4.5, wy + .5, cw - 9, wh);
+        if (on > .45){ c.fillStyle = a(on > .9 ? COL.yl : COL.bc, (.1 + .08 * Math.sin(t * 1.3 + on * 40)) * (on > .9 ? 2.6 : 1)); c.fillRect(wx + 6, wy + 2, cw - 12, wh - 3); } }
+      /* the floor's corridor, drawn in its own shape, with a tick per door in its state's colour */
+      const D = doorsOf({ b:L.b, floor:f }), cyL = y + fh * .76, bow = curved ? fh * .16 : 0, cx0 = xi + 10, cx1 = x0 + W - (wide ? 150 : 12);
+      c.strokeStyle = a(here ? COL.yl : COL.cy, .45); c.beginPath(); c.moveTo(cx0, cyL); c.quadraticCurveTo((cx0 + cx1) / 2, cyL - bow * 2, cx1, cyL); c.stroke();
+      D.forEach((Dd, i) => { const p = (Math.floor(i / 2) + .5) / Math.ceil(D.length / 2), x = lerp(cx0, cx1, p), yb = cyL - bow * 4 * p * (1 - p);
+        c.fillStyle = a(Dd.state === 'frozen' || Dd.state === 'cold' ? COL.bl : Dd.state === 'static' ? COL.mg : COL.cy, .8); c.fillRect(x - 1, i % 2 ? yb + 1 : yb - 5, 2, 4); });
+      if (wide) tag(c, `${curved ? 'curved gallery' : 'service corridor'} · ${D.length} doors`, x0 + W - 8, cyL, seen ? COL.yl : COL.dim, 10, 'right');
+      tag(c, String(f), x0 - 8, y + fh / 2, here ? COL.yl : lit ? COL.wh : seen ? COL.yl : COL.text, 12, 'right');
+      if (here){ c.strokeStyle = COL.yl; c.lineWidth = 1.5; c.strokeRect(xi + .5, y + .5, W - sw - 1, fh); }
+      const hy = Math.max(top, y), hh = Math.min(bot, y + fh) - hy; if (hh > 4) hits.push({ id, x:x0 - 36, y:hy, w:W + 36, h:hh });
+    }
+    /* the shaft and the car: two doors, a glow, the cable */
+    c.fillStyle = '#070c0d'; c.fillRect(x0, top, sw, bot - top);
+    for (let f = Math.max(0, Math.floor(base)); f <= Math.min(n - 1, Math.ceil(base + VIS)); f++){ const y = yOf(f); c.strokeStyle = a(COL.cy, .18); c.beginPath(); c.moveTo(x0, y + fh + .5); c.lineTo(x0 + sw, y + fh + .5); c.stroke(); }
+    const cy = yOf(car); glowDot(c, x0 + sw / 2, cy + fh / 2, fh, COL.yl, .25);
+    c.fillStyle = a(COL.yl, .88); c.fillRect(x0 + 4, cy + 3, sw - 8, fh - 6); c.fillStyle = '#3b3113'; c.fillRect(x0 + sw / 2 - .75, cy + 6, 1.5, fh - 12);
+    c.strokeStyle = a(COL.yl, .7); c.lineWidth = 1.5; c.beginPath(); c.moveTo(x0 + sw / 2, top); c.lineTo(x0 + sw / 2, cy + 3); c.stroke();
+    c.restore();
+    c.strokeStyle = a(COL.cy, .8); c.lineWidth = 1.2; c.strokeRect(x0 + .5, top + .5, W, bot - top); c.beginPath(); c.moveTo(xi + .5, top); c.lineTo(xi + .5, bot); c.stroke();
+    if (o.hits){ o.hits.push(...hits); GEO.fh = fh; GEO.vis = VIS; }
+    if (o.floor != null) return { x:mid, y:yOf(o.floor) + fh / 2 };
+  },
+  floor(c, w, h, t, o){
+    bgFill(c, w, h, '#060b0c', '#081112'); const m = Math.min(w, h), D = doorsOf(o.L), n = D.length, pairs = Math.ceil(n / 2), cy = h / 2, x0 = w * .06, x1 = w * .94, cw = h * .1;
+    const bendY = x => curvedOf(o.L) ? -Math.sin((x - x0) / (x1 - x0) * Math.PI) * h * .14 + h * .07 : 0;
+    c.beginPath(); for (let k = 0; k <= 40; k++){ const x = x0 + (x1 - x0) * k / 40; c[k ? 'lineTo' : 'moveTo'](x, cy + bendY(x) - cw / 2); }
+    for (let k = 40; k >= 0; k--){ const x = x0 + (x1 - x0) * k / 40; c.lineTo(x, cy + bendY(x) + cw / 2); } c.closePath(); c.fillStyle = '#0d1718'; c.fill(); c.strokeStyle = a(COL.cy, .6); c.stroke();
+    let focus = null;
+    D.forEach((Dd, i) => { const side = i % 2 ? 1 : -1, k = Math.floor(i / 2), dx = x0 + (x1 - x0) * (k + .5) / pairs, aw = (x1 - x0) / pairs - 6, ah = h * .22, yy = cy + bendY(dx), ay = side < 0 ? yy - cw / 2 - ah : yy + cw / 2;
+      const here = o.door === i; c.fillStyle = here ? a(COL.yl, .08) : '#0b1415'; c.fillRect(dx - aw / 2, ay, aw, ah); c.strokeStyle = here ? COL.yl : a(COL.cy, .35); c.strokeRect(dx - aw / 2 + .5, ay + .5, aw, ah);
+      c.fillStyle = here ? COL.yl : Dd.state === 'frozen' || Dd.state === 'cold' ? COL.bl : Dd.state === 'static' ? COL.mg : COL.cy; c.fillRect(dx - Math.min(8, aw / 3), side < 0 ? yy - cw / 2 - 2 : yy + cw / 2 - 1, Math.min(16, aw * .66), 3);
+      if (here) focus = { x:dx, y:ay + ah / 2 }; });
+    if (focus){ you(c, focus.x, focus.y, t, m); if (o.child) tag(c, o.child, focus.x, focus.y + 20, COL.yl, 11, 'center'); }
+    return focus;
+  },
+  /* a corridor you walk: first person, the doors nearest you large, the rest down the hall in haze; curved floors bend away */
+  corridor(c, w, h, t, o){
+    const L = o.L, D = doorsOf(L), n = D.length, curved = curvedOf(L), cam = o.cam != null ? o.cam : S.cam, len = hallLen(n), hits = [];
+    bgFill(c, w, h, '#070b0d', '#0a1213');
+    const F = Math.min(w * .36, h * .46), vx = w / 2, vy = h * .42, FL = -.85, CE = .95, TOP = .5, FOG = 6.5, FAR = Math.min(16, len - cam), NEAR = .32;
+    const bend = z => curved ? .03 * z * z : 0, P = (x, y, z) => { z = Math.max(z, NEAR); return [vx + (x + bend(z)) / z * F, vy - y / z * F]; }, fogA = z => Math.exp(-z / FOG);
+    const zs = []; for (let z = NEAR; z < FAR; z += z < 3 ? .25 : .6) zs.push(z); zs.push(FAR);
+    c.fillStyle = '#0b1415'; c.beginPath(); zs.forEach((z, k) => c[k ? 'lineTo' : 'moveTo'](...P(-1, FL, z))); zs.slice().reverse().forEach(z => c.lineTo(...P(1, FL, z))); c.fill();
+    c.lineWidth = 1; [[-1, FL], [1, FL], [-1, CE], [1, CE]].forEach(([x, y]) => { for (let k = 1; k < zs.length; k++){ c.strokeStyle = a(COL.cy, .45 * fogA(zs[k])); c.beginPath(); c.moveTo(...P(x, y, zs[k - 1])); c.lineTo(...P(x, y, zs[k])); c.stroke(); } });
+    for (let k = Math.ceil(cam + NEAR); k < cam + FAR; k++){ const z = k - cam; c.strokeStyle = a(COL.cy, .13 * fogA(z)); c.beginPath(); c.moveTo(...P(-1, FL, z)); c.lineTo(...P(1, FL, z)); c.stroke();
+      if (k % 2 === 0){ const on = .5 + .5 * Math.sin(t * 7 + k * 3) > .1, p0 = P(-.14, CE, z), p1 = P(.14, CE, z); if (on){ glowDot(c, (p0[0] + p1[0]) / 2, p0[1] + 4, (p1[0] - p0[0]) * 1.4, COL.bc, .22 * fogA(z)); c.fillStyle = a(COL.bc, .7 * fogA(z) + .1); c.fillRect(p0[0], p0[1], p1[0] - p0[0], Math.max(1.5, 3 / z)); } } }
+    if (len - cam <= 16){ const z = len - cam; c.fillStyle = a('#0e1a1b', 1); c.beginPath(); [[-1, FL], [1, FL], [1, CE], [-1, CE]].forEach((q, k) => c[k ? 'lineTo' : 'moveTo'](...P(q[0], q[1], z))); c.closePath(); c.fill(); c.strokeStyle = a(COL.cy, .5 * fogA(z) + .1); c.stroke(); }
+    const hz0 = P(0, 0, Math.min(FAR, 9)); const hg = c.createRadialGradient(hz0[0], hz0[1], 0, hz0[0], hz0[1], F * .7); hg.addColorStop(0, a('#070b0d', .85)); hg.addColorStop(1, a('#070b0d', 0)); c.fillStyle = hg; c.fillRect(0, 0, w, h);
+    let focus = null; const order = D.map((_, i) => i).sort((p, q) => doorZ(q) - doorZ(p));
+    order.forEach(i => { const Dd = D[i], z0 = doorZ(i) - cam - .45, z1 = z0 + .9; if (z1 < NEAR + .1 || z0 > FAR) return;
+      const za = Math.max(z0, NEAR + .05), X = i % 2 ? 1 : -1, id = 'd' + i, f = fogA(za);
+      const q = [P(X, FL, za), P(X, FL, z1), P(X, TOP, z1), P(X, TOP, za)], lit = S.hover === id || S.link === id, here = o.door === i, seen = S.visited.has(`b${L.b}f${L.floor}d${i}`);
+      const base = Dd.state === 'frozen' || Dd.state === 'cold' ? COL.bl : Dd.state === 'static' ? COL.mg : COL.cy;
+      c.beginPath(); q.forEach((p, k) => c[k ? 'lineTo' : 'moveTo'](p[0], p[1])); c.closePath(); c.fillStyle = a(base, (lit ? .24 : .1) * (.4 + .6 * f)); c.fill();
+      c.strokeStyle = here ? COL.yl : lit ? COL.wh : a(base, .25 + .7 * f); c.lineWidth = here || lit ? 2 : 1.2; c.stroke();
+      const minX = Math.min(q[0][0], q[1][0]), maxX = Math.max(q[0][0], q[1][0]), minY = Math.min(q[3][1], q[2][1]), maxY = Math.max(q[0][1], q[1][1]);
+      c.save(); c.clip();
+      if (Dd.state === 'frozen'){ const r = R('frost' + i); for (let k = 0; k < 40; k++){ c.fillStyle = a(COL.wh, (.15 + .35 * r() * (.6 + .4 * Math.sin(t * 2 + k))) * f); c.fillRect(minX + r() * (maxX - minX), minY + r() * (maxY - minY), 1.5, 1.5); } }
+      if (Dd.state === 'static'){ for (let k = 0; k < 14; k++){ const yy = minY + ((k * 17 + t * 90) % Math.max(1, maxY - minY)); c.fillStyle = a(COL.mg, .25 * f); c.fillRect(minX, yy, maxX - minX, 1); } }
+      if (Dd.state === 'cold') glowDot(c, (minX + maxX) / 2, (minY + maxY) / 2, maxX - minX, COL.bl, (.15 + .08 * Math.sin(t * 1.5)) * f);
+      c.restore();
+      const mx = (minX + maxX) / 2;
+      if (za < 7 || lit || here) tag(c, lit || here ? `${i + 1} · ${Dd.name}` : String(i + 1), mx, minY - 11, here ? COL.yl : lit ? COL.wh : a(COL.text, .4 + .6 * f), 11, 'center');
+      if (Dd.glyph && za < 4.5) tag(c, `‹${Dd.glyph}›`, mx, (minY + maxY) / 2, COL.dim, 9, 'center');
+      if (seen && !here){ c.fillStyle = COL.yl; c.beginPath(); c.arc(mx, minY + 8, 2.5, 0, 7); c.fill(); }
+      if (za < 11 && maxX - minX > 6) hits.push({ id, x:minX - 4, y:minY - 18, w:maxX - minX + 8, h:maxY - minY + 22 });
+      if (here) focus = { x:mx, y:(minY + maxY) / 2 };
+    });
+    if (o.hits) o.hits.push(...hits.reverse());
+    return focus;
+  },
+  /* an apartment is a plan you look around: pan, pinch, tap; rooms you have not reached stay in fog until you visit a neighbour or scan */
+  apartment(c, w, h, t, o){
+    const L = o.L, P = planOf(L), hits = [], lit = id => S.hover === id || S.link === id, cam = o.trace ? traceAc(P, w, h, o.cell) : (o.acam || S.ac);
+    bgFill(c, w, h, '#061012', '#07121a');
+    const z = cam.z, X = u => w / 2 + (u - cam.x) * z, Y = v => h / 2 + (v - cam.y) * z, step = z > 60 ? .5 : 1;
+    c.lineWidth = 1; c.strokeStyle = a(COL.cy, .05);
+    for (let u = Math.floor((cam.x - w / 2 / z) / step) * step; u <= cam.x + w / 2 / z; u += step){ const x = Math.round(X(u)) + .5; c.beginPath(); c.moveTo(x, 0); c.lineTo(x, h); c.stroke(); }
+    for (let v = Math.floor((cam.y - h / 2 / z) / step) * step; v <= cam.y + h / 2 / z; v += step){ const y = Math.round(Y(v)) + .5; c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); }
+    const tw = clamp(z * .07, 2, 8), known = knownRooms(L, P), scanned = S.scanned.has(locKey({ ...L, at:'apartment' }));
+    c.fillStyle = '#2b4648'; c.fillRect(X(0) - tw / 2, Y(0) - tw / 2, P.W * z + tw, P.H * z + tw);
+    const box = P.rooms.map(R0 => ({ x:X(R0.x) + tw / 2, y:Y(R0.y) + tw / 2, w:R0.w * z - tw, h:R0.h * z - tw }));
+    let focus = null;
+    P.rooms.forEach((R0, i) => { const b = box[i], key = `b${L.b}f${L.floor}d${L.door}c${i}`, seen = S.visited.has(key), kn = known.has(i), here = o.cell === i, li = lit('c' + i);
+      c.fillStyle = here ? '#1b2a20' : li ? '#10292b' : seen ? '#0f1f20' : kn ? '#0b1718' : '#060b0c'; c.fillRect(b.x, b.y, b.w, b.h);
+      if (!kn){ c.save(); c.beginPath(); c.rect(b.x, b.y, b.w, b.h); c.clip(); c.strokeStyle = a(COL.cy, .06); for (let d = -b.h; d < b.w; d += 9){ c.beginPath(); c.moveTo(b.x + d, b.y + b.h); c.lineTo(b.x + d + b.h, b.y); c.stroke(); } c.restore(); }
+      else if (b.w > 70 && b.h > 56){ const r = R('af' + key); c.strokeStyle = a(COL.dim, .45); for (let k = 0; k < 3; k++){ const fw = b.w * (.12 + r() * .14), fh = b.h * (.1 + r() * .14); c.strokeRect(b.x + 6 + r() * (b.w - fw - 12), b.y + 6 + r() * (b.h - fh - 12), fw, fh); } }
+      if (here || li){ c.strokeStyle = here ? COL.yl : COL.cy; c.lineWidth = 1.6; c.strokeRect(b.x + 1, b.y + 1, b.w - 2, b.h - 2); }
+      hits.push({ id:'c' + i, x:b.x, y:b.y, w:b.w, h:b.h }); if (here) focus = { x:b.x + b.w / 2, y:b.y + b.h / 2 }; });
+    const dl = d => Math.min(.55, d.len * .6) * z;
+    P.doors.forEach(d => { const L0 = dl(d); c.fillStyle = '#0d1a1b';
+      if (d.axis === 'x') c.fillRect(X(d.x) - tw, Y(d.y) - L0 / 2, tw * 2, L0); else c.fillRect(X(d.x) - L0 / 2, Y(d.y) - tw, L0, tw * 2);
+      if (z > 40){ c.strokeStyle = a(COL.cy, .3); c.beginPath(); if (d.axis === 'x') c.arc(X(d.x), Y(d.y) - L0 / 2, L0, Math.PI / 2, Math.PI); else c.arc(X(d.x) - L0 / 2, Y(d.y), L0, 0, Math.PI / 2); c.stroke(); } });
+    const ex = X(P.entry.x), ey = Y(P.H), eL = Math.min(.6, P.rooms[0].w * .5) * z; c.fillStyle = '#061012'; c.fillRect(ex - eL / 2, ey - tw, eL, tw * 2);
+    tag(c, '▲ in', ex, ey + 14, COL.cy, 10, 'center');
+    P.rooms.forEach((R0, i) => { const b = box[i], kn = known.has(i), key = `b${L.b}f${L.floor}d${L.door}c${i}`, seen = S.visited.has(key), here = o.cell === i, li = lit('c' + i);
+      const col = here ? COL.yl : li ? COL.wh : seen ? COL.text : kn ? a(COL.text, .75) : COL.dim, cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+      if (b.w > 66 && b.h > 40 && kn){ const words = roomName(L, i).split(' '), l1 = words.slice(0, Math.ceil(words.length / 2)).join(' '), l2 = words.slice(Math.ceil(words.length / 2)).join(' ');
+        tag(c, l1, cx, cy - 7, col, 10, 'center'); if (l2) tag(c, l2, cx, cy + 8, col, 10, 'center'); tag(c, String(i + 1), b.x + 12, b.y + 11, COL.dim, 9, 'center'); }
+      else if (b.w > 20 && b.h > 16) tag(c, kn ? String(i + 1) : '?', cx, cy, col, 10, 'center');
+      if (kn && (seen || scanned) && b.w > 26){ const RM = roomOf({ ...L, cell:i }), left = RM.objects.filter(ob => !S.taken[RM.key + ob]).length;
+        for (let k = 0; k < left; k++){ const dx = b.x + b.w - 9 - k * 9, dy = b.y + 9; c.fillStyle = COL.yl; c.beginPath(); c.moveTo(dx, dy - 4); c.lineTo(dx + 3, dy); c.lineTo(dx, dy + 4); c.lineTo(dx - 3, dy); c.fill(); } }
+      if (seen && !here && b.w > 14){ c.fillStyle = COL.yl; c.beginPath(); c.arc(b.x + b.w - 7, b.y + b.h - 7, 2.3, 0, 7); c.fill(); }
+      if (here) you(c, cx, cy + (b.h > 44 ? 20 : 0), t, Math.min(w, h)); });
+    if (!o.trace && (P.W * z > w - 12 || P.H * z > h - 12)){
+      const mw0 = Math.min(118, w * .3), k = Math.min(mw0 / P.W, 84 / P.H), mw = P.W * k, mh = P.H * k, mx = w - mw - 10, my = 10;
+      c.fillStyle = 'rgba(5,9,10,.88)'; c.fillRect(mx - 5, my - 5, mw + 10, mh + 10); c.strokeStyle = a(COL.cy, .35); c.strokeRect(mx - 4.5, my - 4.5, mw + 9, mh + 9);
+      P.rooms.forEach((R0, i) => { const seen = S.visited.has(`b${L.b}f${L.floor}d${L.door}c${i}`); c.fillStyle = seen ? a(COL.yl, .5) : known.has(i) ? a(COL.cy, .22) : a(COL.cy, .06); c.fillRect(mx + R0.x * k + .5, my + R0.y * k + .5, R0.w * k - 1, R0.h * k - 1); });
+      const vx0 = clamp(cam.x - w / 2 / z, 0, P.W), vx1 = clamp(cam.x + w / 2 / z, 0, P.W), vy0 = clamp(cam.y - h / 2 / z, 0, P.H), vy1 = clamp(cam.y + h / 2 / z, 0, P.H);
+      c.strokeStyle = COL.yl; c.lineWidth = 1.2; c.strokeRect(mx + vx0 * k, my + vy0 * k, (vx1 - vx0) * k, (vy1 - vy0) * k);
+      hits.unshift({ id:'mini', x:mx - 6, y:my - 6, w:mw + 12, h:mh + 12 }); if (o.hits) GEO.mini = { mx, my, k };
+    }
+    if (o.hits) o.hits.push(...hits);
+    return focus;
+  },
+  room(c, w, h, t, o){
+    const RM = roomOf(o.L), wc = RM.wall.col; bgFill(c, w, h, '#080c0e', '#0b1012');
+    const bx0 = w * .24, bx1 = w * .76, by0 = h * .14, by1 = h * .62, hits = [];
+    c.fillStyle = '#0c1315'; c.beginPath(); c.moveTo(0, h); c.lineTo(w, h); c.lineTo(bx1, by1); c.lineTo(bx0, by1); c.fill();
+    c.fillStyle = a(wc, .05); c.fillRect(bx0, by0, bx1 - bx0, by1 - by0);
+    c.strokeStyle = a(wc, .35); c.lineWidth = 1;
+    if (RM.wall.pat === 'shoji'){ for (let k = 1; k < 8; k++){ const x = bx0 + (bx1 - bx0) * k / 8; c.beginPath(); c.moveTo(x, by0); c.lineTo(x, by1); c.stroke(); } for (let k = 1; k < 5; k++){ const y = by0 + (by1 - by0) * k / 5; c.beginPath(); c.moveTo(bx0, y); c.lineTo(bx1, y); c.stroke(); } }
+    else if (RM.wall.pat === 'plates'){ for (let k = 0; k < 4; k++) for (let j = 0; j < 3; j++){ const x = bx0 + (bx1 - bx0) * k / 4, y = by0 + (by1 - by0) * j / 3; c.strokeRect(x + 3, y + 3, (bx1 - bx0) / 4 - 6, (by1 - by0) / 3 - 6); c.fillStyle = a(wc, .4); c.fillRect(x + 5, y + 5, 2, 2); } }
+    else { for (let k = 0; k < 3; k++){ const x = bx0 + (bx1 - bx0) * (k + .5) / 3; c.beginPath(); c.moveTo(x - 16, by0 + 40); c.quadraticCurveTo(x, by0 + 20, x + 16, by0 + 40); c.stroke(); } }
+    c.strokeStyle = a(COL.cy, .45); [[0, 0, bx0, by0], [w, 0, bx1, by0], [0, h, bx0, by1], [w, h, bx1, by1]].forEach(p => { c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(p[2], p[3]); c.stroke(); });
+    c.strokeRect(bx0 + .5, by0 + .5, bx1 - bx0, by1 - by0);
+    for (let k = 0; k < 7; k++){ c.strokeStyle = a(wc, .18); c.beginPath(); c.moveTo(bx0 * (1 - k / 7), by0 * (1 - k / 7) + by0 * 0); c.lineTo(bx0 * (1 - k / 7), by1 + (h - by1) * k / 7); c.stroke(); c.beginPath(); c.moveTo(w - bx0 * (1 - k / 7), by0 * (1 - k / 7)); c.lineTo(w - bx0 * (1 - k / 7), by1 + (h - by1) * k / 7); c.stroke(); }
+    const fr = R('rf' + RM.key); RM.furniture.forEach((f, i) => { const fx = w * (.2 + i * .28 + fr() * .06), fy = by1 + (h - by1) * (.35 + fr() * .3), fw = w * (.1 + fr() * .06), fh = h * (.06 + fr() * .06);
+      c.fillStyle = '#101b1c'; c.fillRect(fx - fw / 2, fy - fh, fw, fh); c.strokeStyle = a(COL.dim, .7); c.strokeRect(fx - fw / 2 + .5, fy - fh + .5, fw, fh);
+      if (w >= 520) tag(c, f, fx, fy + 10, COL.dim, 10, 'center'); });
+    if (RM.light === 0){ const sw = Math.sin(t * .7) * .5; c.save(); c.globalCompositeOperation = 'lighter'; const g = c.createLinearGradient(w * .1, 0, w * (.5 + sw * .6), h); g.addColorStop(0, a(COL.wh, .12)); g.addColorStop(1, a(COL.wh, 0));
+      c.fillStyle = g; c.beginPath(); c.moveTo(w * .06, h * .02); c.lineTo(w * (.42 + sw * .5), h); c.lineTo(w * (.72 + sw * .5), h); c.closePath(); c.fill(); c.restore(); }
+    else if (RM.light === 1){ const lx = w / 2 + Math.sin(t * .8) * 12, ly = by0 + 30; c.strokeStyle = a(COL.dim, .6); c.beginPath(); c.moveTo(w / 2, 0); c.lineTo(lx, ly - 12); c.stroke(); glowDot(c, lx, ly, h * .35, COL.yl, .18); c.fillStyle = a(COL.yl, .8); c.fillRect(lx - 6, ly - 12, 12, 18); }
+    else { glowDot(c, w * .6, 0, h * .5, COL.bc, .12); c.strokeStyle = a(COL.bc, .7); c.beginPath(); c.moveTo(w * .52, 0); c.lineTo(w * .58, by0 * .5); c.lineTo(w * .55, by0); c.stroke(); }
+    if (RM.temp < 8){ const r = R('snow'); for (let k = 0; k < 40; k++){ const x = (r() * w + Math.sin(t + k) * 10), y = (r() * h + t * 12 * (1 + r())) % h; c.fillStyle = a(COL.wh, .35); c.fillRect(x, y, 1.5, 1.5); } }
+    RM.objects.forEach((ob, i) => { const id = 'o' + i; if (S.taken[RM.key + ob]) return; const n = RM.objects.length, ox = w * (n === 1 ? .5 : .3 + i * (.4 / (n - 1))), oy = by1 + (h - by1) * .28 + Math.sin(t * 1.6 + i * 2) * 5, rr = Math.max(9, Math.min(w, h) * .03);
+      const lit = S.hover === id || S.link === id; glowDot(c, ox, oy, rr * (lit ? 4.4 : 3.4), COL.yl, lit ? .45 : .3);
+      c.save(); c.translate(ox, oy); c.rotate(t * .6 + i); c.strokeStyle = COL.yl; c.lineWidth = 1.6; c.beginPath(); c.moveTo(0, -rr); c.lineTo(rr * .7, 0); c.lineTo(0, rr); c.lineTo(-rr * .7, 0); c.closePath(); c.stroke(); c.restore();
+      tag(c, w < 520 ? ob.split(' ')[0] + ' ' + (ob.split(' ')[1] || '') : ob, ox, oy - rr * 2.3, lit ? COL.wh : COL.yl, 10, 'center');
+      if (o.scanned) tag(c, hz(ob) + ' Hz', ox, oy - rr * 2.3 - 16, COL.cy, 10, 'center');
+      hits.push({ id, x:ox - rr * 3, y:oy - rr * 3, w:rr * 6, h:rr * 6 }); });
+    if (o.hits) o.hits.push(...hits);
+  }
+};
+
+/* the FX of a failing mind: grain, torn lines, a red drift — seeded from the frame, strength from coherence */
+function decay(){ return clamp((72 - S.coh) / 70, 0, 1); }
+function postFx(c, cv, w, h, t, d){
+  if (d <= 0) return; const fr = Math.floor(t * 12), r = R('fx' + fr);
+  const tears = Math.floor(d * 7); for (let i = 0; i < tears; i++){ if (r() > .35 + d * .5) continue; const y = r() * h, bh = 2 + r() * 14 * d, dx = (r() - .5) * 40 * d;
+    c.drawImage(cv, 0, y * cv.width / w, cv.width, bh * cv.width / w, dx, y, w, bh); }
+  c.globalAlpha = .5 * d; for (let i = 0; i < 500 * d; i++){ c.fillStyle = r() < .5 ? COL.wh : COL.rd; c.fillRect(r() * w, r() * h, 1, 1); }
+  c.globalAlpha = 1; c.fillStyle = a(COL.rd, .1 * d); c.fillRect(0, 0, w, h);
+  if (d > .5 && r() < .08 * d){ c.fillStyle = a(COL.bg || '#000', .5); c.fillRect(0, 0, w, h); }
+  const g = c.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .3, w / 2, h / 2, Math.max(w, h) * .75); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, a('#000000', .55 * d)); c.fillStyle = g; c.fillRect(0, 0, w, h);
+}
+
+/* canvases: a visible one and two buffers each, sized to the element and the device */
+function surface(cv, lean){ const off = lean ? [] : [document.createElement('canvas'), document.createElement('canvas')]; return { cv, ctx:cv.getContext('2d'), off, w:0, h:0, d:1, budget:lean ? 5e5 : 1.3e6 }; }
+/* the pixel budget: at most two device pixels per CSS pixel and about 1.3 million pixels a canvas — enough to be sharp, cheap enough to hold the frame */
+function fit(s){ const r = s.cv.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(s.budget / Math.max(1, r.width * r.height))), W = Math.round(r.width * d), H = Math.round(r.height * d);
+  if (W && H && (s.cv.width !== W || s.cv.height !== H)){ [s.cv, ...s.off].forEach(k => { k.width = W; k.height = H; }); } s.w = r.width; s.h = r.height; s.d = d; return W > 0 && H > 0; }
+function paintInto(s, k, pic, t, o){ const cv = s.off[k], c = cv.getContext('2d'); c.setTransform(s.d, 0, 0, s.d, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+  const f = PICS[pic](c, s.w, s.h, t, o) || { x:s.w / 2, y:s.h / 2 }; return f; }
+/* at rest a picture is painted straight onto the screen; the buffers are only for a transition */
+function paintDirect(s, pic, t, o){ const c = s.ctx; c.setTransform(s.d, 0, 0, s.d, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; const f = PICS[pic](c, s.w, s.h, t, o); c.setTransform(s.d, 0, 0, s.d, 0, 0); c.globalAlpha = 1; return f || { x:s.w / 2, y:s.h / 2 }; }
+function blit(s, k, cx, cy, sc, ox, oy, al){ const c = s.ctx; c.save(); c.globalAlpha = al; c.translate(cx, cy); c.scale(sc, sc); c.translate(-ox, -oy); c.drawImage(s.off[k], 0, 0, s.w, s.h); c.restore(); }
+/* a zoom between two pictures: inward, the old one grows past you and the new one opens from where you went; outward, the reverse */
+function composite(s, p, dir, fOld, fNew){
+  const e = ease(p), c = s.ctx; c.setTransform(s.d, 0, 0, s.d, 0, 0); c.fillStyle = '#05090a'; c.fillRect(0, 0, s.w, s.h);
+  if (dir > 0){ blit(s, 0, fOld.x, fOld.y, 1 + e * 5, fOld.x, fOld.y, 1 - e); blit(s, 1, lerp(fOld.x, s.w / 2, e), lerp(fOld.y, s.h / 2, e), .12 + .88 * e, s.w / 2, s.h / 2, Math.min(1, e * 1.6)); }
+  else { blit(s, 1, fNew.x, fNew.y, 6 - 5 * e, fNew.x, fNew.y, Math.min(1, e * 1.6)); blit(s, 0, lerp(s.w / 2, fNew.x, e), lerp(s.h / 2, fNew.y, e), 1 - .88 * e, s.w / 2, s.h / 2, 1 - e); }
+}
+
+/* ═══ motion: one clock, tweens by elapsed time, momentum after a drag ═══ */
+const now = () => performance.now();
+const RM_Q = matchMedia('(prefers-reduced-motion: reduce)'); let CALM = RM_Q.matches;
+function syncCalm(){ CALM = RM_Q.matches || document.documentElement.classList.contains('calm'); }
+if (RM_Q.addEventListener) RM_Q.addEventListener('change', syncCalm);
+const calm = () => CALM;
+const easeInOut = ease, easeOut = p => 1 - Math.pow(1 - p, 3);
+const TW = {}, ACC = { car:[() => S.car, v => { S.car = v; }], cam:[() => S.cam, v => { S.cam = v; }], ac:[() => S.ac, v => { S.ac = v; }] };
+function tween(key, to, dur, fn, then){ const from = ACC[key][0](); TW[key] = { from:typeof from === 'object' ? { ...from } : from, to, start:now(), dur:CALM ? 0 : dur, fn:fn || easeInOut, then }; if (CALM) stepTweens(); }
+function stepTweens(){
+  for (const key of Object.keys(TW)){ const tw = TW[key]; if (!tw) continue; const p = tw.dur ? clamp((now() - tw.start) / tw.dur, 0, 1) : 1, e = tw.fn(p);
+    ACC[key][1](typeof tw.to === 'object' ? { x:lerp(tw.from.x, tw.to.x, e), y:lerp(tw.from.y, tw.to.y, e), z:Math.exp(lerp(Math.log(tw.from.z), Math.log(tw.to.z), e)) } : lerp(tw.from, tw.to, e));
+    if (p >= 1){ delete TW[key]; if (tw.then) tw.then(); } }
+}
+function stopTw(key){ if (TW[key] && !TW[key].then) delete TW[key]; }
+const busy = () => !!S.trans || Object.values(TW).some(tw => tw.then);
+function sample(arr, v){ const t = now(); arr.push({ t, v }); while (arr.length > 2 && t - arr[0].t > 110) arr.shift(); }
+function vel(arr){ if (arr.length < 2 || now() - arr[arr.length - 1].t > 90) return 0; const p = arr[0], q = arr[arr.length - 1], dt = (q.t - p.t) / 1000; return dt > 0 ? (q.v - p.v) / dt : 0; }
+const clampCam = v => clamp(v, 0, camFor(doorsOf(S.L).length - 1));
+const clampCar = v => clamp(v, 0, BUILDINGS[S.L.b].floors - 1);
+/* an elevator accelerates, cruises and brakes: its time grows with the square root of the distance */
+function rideTo(f, then){ f = Math.round(clampCar(f)); const d = Math.abs(f - S.car);
+  const done = () => { S.group = Math.floor(f / 10); render(); if (then) then(); };
+  if (d < .01){ S.car = f; done(); return; } tween('car', f, Math.min(2400, 320 + 230 * Math.sqrt(d)), easeInOut, done); }
+function walkTo(v, then){ v = clampCam(v); const d = Math.abs(v - S.cam); if (d < .02){ S.cam = v; if (then) then(); return; } tween('cam', v, Math.min(1500, 260 + 220 * Math.sqrt(d)), easeInOut, then); }
+
+/* ═══ the scene: what you see where you stand ════════════════════════ */
+const scene = surface($('#scene'));
+let HITS = [], GEO = {}, lastT = 0;
+function optsOf(L, hits){ return { L, hits, scanned:S.scanned.has(locKey(L)), focusB:null, floor:null, door:null, cell:L.at === 'apartment' && L.cell >= 0 ? L.cell : null }; }
+function drawScene(t){
+  const was = scene.cv.width; if (!fit(scene)) return; const c = scene.ctx; c.setTransform(scene.d, 0, 0, scene.d, 0, 0);
+  if (S.trans && scene.cv.width !== was) endTrans();
+  if (S.trans){ const tr = S.trans, p = clamp((now() - tr.start) / tr.dur, 0, 1), fNew = paintInto(scene, 1, S.L.at, t, tr.toOpts);
+    composite(scene, p, tr.dir, tr.fOld, fNew); HITS = []; if (p >= 1) endTrans(); }
+  else { HITS = []; paintDirect(scene, S.L.at, t, optsOf(S.L, HITS)); }
+  if (S.scan){ const p = (now() - S.scan) / 1300; if (p >= 1) S.scan = null; else { const m = Math.max(scene.w, scene.h), rr = ease(p) * m;
+    c.strokeStyle = a(COL.cy, .8 * (1 - p)); c.lineWidth = 2; c.beginPath(); c.arc(scene.w / 2, scene.h / 2, rr, 0, 7); c.stroke(); glowDot(c, scene.w / 2, scene.h / 2, rr, COL.cy, .12 * (1 - p)); } }
+  postFx(c, scene.cv, scene.w, scene.h, t, decay());
+}
+function endTrans(){ S.trans = null; if (S.afterTrans){ const f = S.afterTrans; S.afterTrans = null; f(); } }
+
+/* ═══ the trace ═══════════════════════════════════════════════════════ */
+const trace = surface($('#traceCv'));
+const T = { open:false, i:0, from:null, start:0, dur:520, dive:false, diveAt:0, fOld:null };
+function traceOpts(i, P){
+  const L = S.L, o = { L, trace:true, child:P[i + 1] ? P[i + 1].name : null, focusB:null, floor:null, door:null, cell:null, cam:camFor(L.door), car:L.floor };
+  if (P[i].kind === 'street') o.focusB = L.b; if (P[i].kind === 'building') o.floor = L.floor;
+  if (P[i].kind === 'floor' || P[i].kind === 'corridor') o.door = L.door; if (P[i].kind === 'apartment') o.cell = L.cell;
+  return o;
+}
+function drawTrace(t){
+  if (!T.open) return; const was = trace.cv.width; if (!fit(trace)) return; const P = pathOf(S.L), c = trace.ctx; c.setTransform(trace.d, 0, 0, trace.d, 0, 0);
+  if (T.from != null && trace.cv.width !== was) T.from = null;
+  if (T.dive && T.from == null && now() - T.diveAt > 130){ if (T.i < P.length - 1) goTrace(T.i + 1, true); else endDive(); }
+  if (T.from != null){ const p = clamp((now() - T.start) / T.dur, 0, 1), dir = T.i > T.from ? 1 : -1, fNew = paintInto(trace, 1, P[T.i].kind, t, traceOpts(T.i, P));
+    composite(trace, p, dir, T.fOld, fNew); if (p >= 1){ T.from = null; T.diveAt = now(); }
+  } else paintDirect(trace, P[T.i].kind, t, traceOpts(T.i, P));
+  postFx(c, trace.cv, trace.w, trace.h, t, decay() * .6);
+}
+function renderTraceUI(){
+  const P = pathOf(S.L), e = P[T.i], here = P.length - 1;
+  $('#tcKind').textContent = `Depth ${String(T.i).padStart(2, '0')} · ${e.label}`; $('#tcName').textContent = e.name; $('#tcWords').textContent = e.words || '';
+  $('#tcChips').innerHTML = chipsHTML(e.tags); $('#tOut').disabled = T.i === 0; $('#tIn').disabled = T.i === here; $('#traceSkip').hidden = !T.dive;
+  const strip = $('#strip'); if (strip.children.length !== P.length || strip.dataset.key !== locKey(S.L)){ strip.dataset.key = locKey(S.L);
+    strip.innerHTML = P.map((p, i) => `<button type="button" data-i="${i}" class="${i === here ? 'here' : ''}">${svg(p.kind)}<span><small>${String(i).padStart(2, '0')} · ${esc(p.label)}</small><em>${esc(p.name)}</em></span></button>`).join(''); }
+  [...strip.children].forEach((b, i) => b.setAttribute('aria-current', i === T.i ? 'true' : 'false'));
+  const cur = strip.children[T.i]; if (cur) cur.scrollIntoView({ block:'nearest', inline:'center', behavior:CALM ? 'auto' : 'smooth' });
+}
+/* the outgoing picture is painted once, when the move starts; only the incoming one is live */
+function goTrace(i, diving){ const P = pathOf(S.L); i = clamp(i, 0, P.length - 1); if (i === T.i) return;
+  if (!diving) T.dive = false;
+  if (CALM || (Math.abs(i - T.i) > 3 && !diving) || !fit(trace)){ T.from = null; T.i = i; }
+  else { T.fOld = paintInto(trace, 0, P[T.i].kind, lastT, traceOpts(T.i, P)); T.from = T.i; T.i = i; T.start = now(); T.dur = diving ? 380 : 520; }
+  renderTraceUI(); }
+function endDive(){ T.dive = false; T.from = null; T.i = pathOf(S.L).length - 1; renderTraceUI(); if ($('#trace').classList.contains('cinema')) setTimeout(closeCinema, CALM ? 0 : 650); }
+function openTrace(at){ const P = pathOf(S.L); T.open = true; $('#trace').hidden = false; T.from = null;
+  if (at == null && !CALM){ T.dive = true; T.i = 0; T.diveAt = now(); } else { T.dive = false; T.i = at == null ? P.length - 1 : at; }
+  renderTraceUI(); $('#traceClose').focus(); }
+function closeTrace(){ if ($('#trace').classList.contains('cinema')){ closeCinema(); return; } T.open = false; T.dive = false; $('#trace').hidden = true; $('#traceBtn').focus(); }
+
+/* ═══ the trace column: every level from the universe down to you, one band each, a thread through the spot where you went down ═══ */
+const SCALE = { universe:'10²⁶ m', filament:'10²⁴ m', sector:'10²¹ m', system:'10¹³ m', planet:'10⁷ m', country:'10⁶ m', city:'10⁴ m', street:'10³ m',
+  building:'10² m', floor:'60 m', corridor:'40 m', apartment:'15 m', room:'5 m' };
+const C = { open:false, bands:[], P:null, focus:null, openAt:0, th:surface($('#colThread'), true) };
+function factsOf(i, P){
+  const L = S.L, K = P[i].kind, next = P[i + 1], out = [];
+  if (K === 'street') out.push(`${BUILDINGS.length} buildings · ${BUILDINGS.filter((B, k) => S.visited.has('b' + k)).length} entered`);
+  if (K === 'building'){ const B = BUILDINGS[L.b]; out.push(`${B.floors} floors · ${[...Array(B.floors).keys()].filter(f => S.visited.has(`b${L.b}f${f}`)).length} visited`); }
+  if (K === 'floor') out.push(`${curvedOf(L) ? 'Curved gallery' : 'Service corridor'} · ${doorsOf(L).length} doors`);
+  if (K === 'corridor'){ const D = doorsOf(L); out.push(`${D.length} doors · ${D.filter((d, k) => S.visited.has(`b${L.b}f${L.floor}d${k}`)).length} opened`); }
+  if (K === 'apartment'){ const PL = planOf(L); out.push(`${PL.n} rooms · ${PL.rooms.filter((q, k) => S.visited.has(`b${L.b}f${L.floor}d${L.door}c${k}`)).length} visited · ${knownRooms(L, PL).size} mapped`); }
+  if (K === 'room'){ const RM = roomOf(L); out.push(`${RM.objects.length} relics · ${RM.objects.filter(ob => S.taken[RM.key + ob]).length} taken`); out.push(`Signal ${RM.signal.toLowerCase()}`); }
+  if (next) out.push(`You went down into ${next.name}`);
+  return out;
+}
+function bandHTML(e, i, P){ const here = i === P.length - 1, d = String(i).padStart(2, '0');
+  return `<li class="band${here ? ' here' : ''}" tabindex="0" role="button" aria-expanded="false" aria-label="Depth ${i}, ${esc(e.label)}: ${esc(e.name)}${here ? ', you are here' : ''}">`
+    + `<div class="b-pic"><canvas aria-hidden="true"></canvas><span class="b-scale">${SCALE[e.kind]}</span></div>`
+    + `<div class="b-info"><p class="eyebrow">Depth ${d} · ${esc(e.label)}${here ? ' · you are here' : ''}</p><h3>${esc(e.name)}</h3><ul class="chips">${chipsHTML(e.tags)}</ul>`
+    + `<p class="b-words">${esc(e.words || '')}</p><ul class="b-facts">${factsOf(i, P).map(f => `<li>${esc(f)}</li>`).join('')}</ul></div></li>`; }
+function openColumn(at){
+  const P = pathOf(S.L); C.P = P; C.open = true; $('#column').hidden = false; setMode(at != null ? 'column' : C.mode);
+  const ol = $('#bands'); ol.innerHTML = P.map((e, i) => bandHTML(e, i, P)).join('');
+  C.bands = [...ol.children].map((el, i) => ({ el, i, kind:P[i].kind, s:surface(el.querySelector('canvas'), true), painted:false, f:null, t0:0 }));
+  C.focus = null; const b = C.bands[at == null ? P.length - 1 : clamp(at, 0, P.length - 1)];
+  b.el.scrollIntoView({ block:'center' }); C.openAt = now(); if (at != null){ b.el.classList.remove('flash'); void b.el.offsetWidth; b.el.classList.add('flash'); }
+  $('#colClose').focus({ preventScroll:true });
+}
+function closeColumn(){ C.bands.forEach(b => { b.s.cv.width = b.s.cv.height = 0; }); C.open = false; C.bands = []; $('#column').hidden = true; $('#bands').innerHTML = ''; $('#traceBtn').focus(); }
+function toBand(i, smooth){ const b = C.bands[clamp(i, 0, C.bands.length - 1)]; if (b) b.el.scrollIntoView({ block:'center', behavior:smooth && !CALM ? 'smooth' : 'auto' }); }
+/* only the band in the middle of the view moves; a band that scrolls in is painted once and holds still */
+function drawColumn(t){
+  const view = $('#colScroll').getBoundingClientRect(), mid = view.top + view.height / 2; let best = null, bd = 1e9;
+  C.bands.forEach(b => { b.r = b.s.cv.getBoundingClientRect(); const d = Math.abs(b.r.top + b.r.height / 2 - mid); if (d < bd){ bd = d; best = b; } });
+  if (best && best !== C.focus){ if (C.focus) C.focus.el.classList.remove('focus'); best.el.classList.add('focus'); C.focus = best; }
+  C.bands.forEach(b => { if (b.r.bottom < view.top - 80 || b.r.top > view.bottom + 80) return;
+    const was = b.s.cv.width; if (!fit(b.s)) return; const focus = b === C.focus;
+    if (focus || !b.painted || b.s.cv.width !== was){ b.f = paintDirect(b.s, b.kind, focus ? t : b.t0, traceOpts(b.i, C.P)); b.painted = true; if (focus) b.t0 = t; } });
+  drawThread(t, view);
+}
+function drawThread(t, view){
+  const s = C.th; if (!fit(s)) return; const c = s.ctx; c.setTransform(s.d, 0, 0, s.d, 0, 0); c.clearRect(0, 0, s.w, s.h);
+  const box = s.cv.getBoundingClientRect(), pts = C.bands.filter(b => b.r).map(b => { const f = b.f || { x:b.r.width / 2, y:b.r.height / 2 }; return { x:b.r.left - box.left + f.x, y:b.r.top - box.top + f.y, top:b.r.top - box.top, bot:b.r.bottom - box.top }; });
+  if (!pts.length) return; const path = new Path2D(); path.moveTo(pts[0].x, pts[0].y);
+  for (let k = 0; k < pts.length; k++){ const p = pts[k]; if (k){ path.lineTo(p.x, p.y); } if (k < pts.length - 1){ const q = pts[k + 1], gap = q.top - p.bot; path.lineTo(p.x, p.bot); path.bezierCurveTo(p.x, p.bot + gap * .6, q.x, q.top - gap * .6, q.x, q.top); } }
+  const me = pts[pts.length - 1], reveal = CALM ? 1 : easeOut(clamp((now() - C.openAt) / 750, 0, 1)), cut = lerp(me.y, -20, reveal), d = decay();
+  c.save(); c.beginPath(); c.rect(0, cut, s.w, s.h); c.clip();
+  c.lineCap = 'round'; c.lineJoin = 'round';
+  if (d > 0){ const r = R('fray' + Math.floor(t * 10)); [COL.rd, COL.cy].forEach(col => { c.save(); c.translate((r() - .5) * 6 * d, (r() - .5) * 3 * d); c.strokeStyle = a(col, .35 * d); c.lineWidth = 1.5; c.stroke(path); c.restore(); }); c.setLineDash([22 + 30 * (1 - d), 3 + 18 * d]); }
+  c.strokeStyle = a(COL.cy, .12); c.lineWidth = 9; c.stroke(path); c.strokeStyle = a(COL.cy, .8); c.lineWidth = 2; c.stroke(path); c.setLineDash([]);
+  if (!CALM){ c.setLineDash([3, 28]); c.lineDashOffset = -t * 70; c.strokeStyle = a(COL.wh, .75); c.lineWidth = 2.5; c.stroke(path); c.setLineDash([]); }
+  pts.forEach((p, k) => { if (k === pts.length - 1) return; c.strokeStyle = a(COL.cy, .9); c.lineWidth = 1.5; c.beginPath(); c.arc(p.x, p.y, 5, 0, 7); c.stroke(); });
+  you(c, me.x, me.y, t, 260);
+  c.restore();
+}
+function openCinema(){ $('#trace').classList.add('cinema'); openTrace(null); }
+function closeCinema(){ if (!T.open) return; T.open = false; T.dive = false; $('#trace').hidden = true; if (C.open){ toBand(C.bands.length - 1, false); C.openAt = now(); $('#colDive').focus({ preventScroll:true }); } }
+
+/* ═══ the pole: every level at a glance — a spine, a plate and a live glyph a level, era · culture · trait as ribbons that break where the world changes ═══ */
+/* what each level of the path is made of, by the game's rules; a value is inherited from above until a level sets it */
+function attrsOf(P){ const L = S.L, cv = cityVibe(); let era = '', culture = '', trait = '', second = null;
+  return P.map(e => { const was = { era, culture, trait }, states = []; let drift = { era:false, culture:false }, rebel = false;
+    if (e.kind === 'planet'){ era = WORLD.main.era; culture = WORLD.main.culture; second = WORLD.second; }
+    if (e.kind === 'country') trait = WORLD.trait;
+    if (e.kind === 'city'){ era = cv.main.era; culture = cv.main.culture; second = cv.second; if (WORLD.rebel){ rebel = true; states.push('rebel'); } }
+    if (e.kind === 'floor' && curvedOf(L)) states.push('curved');
+    if (e.kind === 'apartment'){ const q = aptAttrs(L); era = q.era; culture = q.culture; drift = q.drift; if (drift.era || drift.culture) states.push('drift'); const D = doorsOf(L)[L.door]; if (D.state !== 'stable') states.push(D.state); }
+    return { era, culture, trait, second, states, drift, rebel, set:{ era:!!era && era !== was.era, culture:!!culture && culture !== was.culture, trait:!!trait && trait !== was.trait } }; }); }
+const LANES = [['era', 'ERA', COL.yl], ['culture', 'CULTURE', COL.mg], ['trait', 'TRAIT', COL.bl]];
+function dot(c, x, y, r, col, al){ c.fillStyle = a(col, al == null ? 1 : al); c.beginPath(); c.arc(x, y, Math.max(.8, r), 0, 7); c.fill(); }
+/* one small live glyph a kind of place */
+let MINI_LW = 1.6;
+const MINI = {
+  universe(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; for (let k = 0; k < 8; k++){ const q = k * Math.PI / 4 + t * .35, L0 = k % 2 ? .55 : 1; c.beginPath(); c.moveTo(x + Math.cos(q) * r * .28, y + Math.sin(q) * r * .28); c.lineTo(x + Math.cos(q) * r * L0, y + Math.sin(q) * r * L0); c.stroke(); } dot(c, x, y, r * .2, col); },
+  filament(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.beginPath(); for (let k = 0; k <= 20; k++){ const u = k / 10 - 1; c[k ? 'lineTo' : 'moveTo'](x + u * r, y + Math.sin(u * 3 + t * 1.6) * r * .35); } c.stroke();
+    for (let j = 0; j < 3; j++){ const u = ((t * .35 + j / 3) % 1) * 2 - 1; dot(c, x + u * r, y + Math.sin(u * 3 + t * 1.6) * r * .35, r * .15, col); } },
+  sector(c, x, y, r, t, col){ for (let arm = 0; arm < 3; arm++) for (let j = 1; j <= 5; j++){ const q = arm * 2.094 + j * .55 + t * .5, d = j / 5 * r; dot(c, x + Math.cos(q) * d, y + Math.sin(q) * d * .6, r * (.13 - j * .012), col, 1 - j * .12); } dot(c, x, y, r * .2, COL.yl); },
+  system(c, x, y, r, t, col){ c.strokeStyle = a(col, .45); c.lineWidth = 1; c.beginPath(); c.ellipse(x, y, r, r * .45, 0, 0, 7); c.stroke(); dot(c, x, y, r * .26, COL.yl); const q = t * 1.1; dot(c, x + Math.cos(q) * r, y + Math.sin(q) * r * .45, r * .16, col); },
+  planet(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.beginPath(); c.arc(x, y, r * .8, 0, 7); c.stroke(); c.strokeStyle = a(col, .6); c.beginPath(); c.ellipse(x, y, Math.abs(Math.sin(t * .8)) * r * .8, r * .8, 0, 0, 7); c.stroke();
+    c.beginPath(); c.moveTo(x - r * .8, y); c.lineTo(x + r * .8, y); c.stroke(); },
+  country(c, x, y, r, t, col){ const pts = [[-.9, -.3], [-.4, -.8], [.3, -.6], [.9, -.7], [.8, .2], [.3, .8], [-.5, .6]]; c.strokeStyle = col; c.lineWidth = MINI_LW; c.beginPath(); pts.forEach((p, k) => c[k ? 'lineTo' : 'moveTo'](x + p[0] * r, y + p[1] * r)); c.closePath(); c.stroke(); dot(c, x + r * .1, y, r * .18, COL.yl, .5 + .5 * Math.sin(t * 3)); },
+  city(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; [[-.8, .3], [-.25, .9], [.35, .55]].forEach(([bx, hh], k) => { c.strokeRect(x + bx * r, y + r * .8 - hh * r * 1.6, r * .45, hh * r * 1.6);
+    for (let w = 0; w < 3; w++) if (Math.sin(t * 2 + k * 3 + w * 1.7) > 0) dot(c, x + (bx + .22) * r, y + r * .55 - w * r * .42, r * .07, COL.yl); }); },
+  street(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.beginPath(); c.moveTo(x - r * .35, y - r); c.lineTo(x - r * .75, y + r); c.moveTo(x + r * .35, y - r); c.lineTo(x + r * .75, y + r); c.stroke();
+    for (let j = 0; j < 3; j++){ const p = ((t * .6 + j / 3) % 1); c.fillStyle = a(COL.yl, .9); c.fillRect(x - 1, y - r + p * r * 2, 2, r * .3); } },
+  building(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.strokeRect(x - r * .5, y - r, r, r * 2); c.beginPath(); c.moveTo(x - r * .2, y - r); c.lineTo(x - r * .2, y + r); c.stroke();
+    c.fillStyle = COL.yl; c.fillRect(x - r * .45, y + Math.sin(t * .9) * r * .7 - r * .15, r * .22, r * .3); },
+  floor(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.strokeRect(x - r, y - r * .55, r * 2, r * 1.1); c.beginPath(); c.moveTo(x - r, y); c.lineTo(x + r, y); c.stroke();
+    const p = ((t * .5) % 1) * 2 - 1; dot(c, x + p * r * .9, y, r * .13, COL.yl); },
+  corridor(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.beginPath(); [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([u, v]) => { c.moveTo(x + u * r, y + v * r); c.lineTo(x + u * r * .3, y + v * r * .3); }); c.stroke();
+    c.strokeRect(x - r * .3, y - r * .3, r * .6, r * .6); if (Math.sin(t * 9) > -.6) dot(c, x, y - r * .8, r * .12, COL.bc); },
+  apartment(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.strokeRect(x - r * .5, y - r * .9, r, r * 1.8); const q = (Math.sin(t * 1.2) * .5 + .5) * 1.1;
+    c.strokeStyle = a(COL.yl, .9); c.beginPath(); c.moveTo(x - r * .5, y - r * .9); c.lineTo(x - r * .5 + Math.cos(q) * r, y - r * .9 + Math.sin(q) * r * .3); c.lineTo(x - r * .5 + Math.cos(q) * r, y + r * .9 - Math.sin(q) * r * .1); c.lineTo(x - r * .5, y + r * .9); c.stroke(); },
+  room(c, x, y, r, t, col){ c.strokeStyle = col; c.lineWidth = MINI_LW; c.beginPath(); c.moveTo(x, y - r); c.lineTo(x + r * .9, y - r * .5); c.lineTo(x + r * .9, y + r * .5); c.lineTo(x, y + r); c.lineTo(x - r * .9, y + r * .5); c.lineTo(x - r * .9, y - r * .5); c.closePath(); c.stroke();
+    const s = r * (.32 + .08 * Math.sin(t * 2.4)); c.fillStyle = COL.yl; c.beginPath(); c.moveTo(x, y - s); c.lineTo(x + s * .7, y); c.lineTo(x, y + s); c.lineTo(x - s * .7, y); c.fill(); }
+};
+/* a ship as the old mock drew it: a hull diamond, a tow frame, a glow; moored to a level by a tether */
+function shipMark(c, x, y, t, col, label, sub, small){
+  const b = Math.sin(t * 1.4) * 2; c.save(); c.shadowColor = col; c.shadowBlur = 10; c.strokeStyle = col; c.lineWidth = 1.6;
+  c.beginPath(); c.moveTo(x, y - 8 + b); c.lineTo(x + 8, y + b); c.lineTo(x, y + 8 + b); c.lineTo(x - 8, y + b); c.closePath(); c.stroke(); c.restore(); dot(c, x, y + b, 2, col);
+  c.strokeStyle = a(col, .7); c.lineWidth = 1; c.beginPath(); c.moveTo(x - 8, y + b); c.lineTo(x - 26, y + b); c.stroke();
+  for (let i = 0; i < 3; i++){ c.beginPath(); c.moveTo(x - 12 - i * 5, y - 3 + b); c.lineTo(x - 9 - i * 5, y + 3 + b); c.stroke(); }
+  if (!small){ tag(c, label, x - 8, y + 20, col, 10, 'center'); if (sub) tag(c, sub, x - 8, y + 33, COL.dim, 9, 'center'); }
+}
+function drawPole(c, W0, H, t, o){
+  const P = o.P, A = attrsOf(P), n = P.length, box = Math.min(W0, 820), ox = (W0 - box) / 2, W = box, small = W < 460;
+  bgFill(c, W0, H, '#05090a', '#070c0d'); c.save(); c.translate(ox, 0);
+  const top = small ? 56 : 70, bot = 26, gap = Math.min(o.gap || 64, (H - top - bot) / Math.max(1, n - 1)), y0 = top + Math.max(0, (H - top - bot - gap * (n - 1)) / 2), Y = i => y0 + gap * i;
+  const laneW = small ? 18 : W > 700 ? 34 : 24, laneGap = small ? 11 : 14, LX = k => W - 10 - (3 - k) * (laneW + laneGap) + laneGap;
+  const tx = small ? 84 : Math.min(190, W * .26), rx = Math.min(small ? 21 : 28, gap * .48), nx = tx + rx + 14, nw = LX(0) - nx - 12;
+  const reveal = o.reveal == null ? 1 : o.reveal, cut = y0 - gap + (Y(n - 1) - y0 + gap * 2) * reveal, hits = [], me = n - 1;
+  c.save(); c.beginPath(); c.rect(-ox, 0, W0, cut); c.clip();
+  /* the ruler of scale, the lane heads */
+  if (!small) P.forEach((e, i) => tag(c, SCALE[e.kind], 50, Y(i), a(COL.text, .55), 10, 'right'));
+  LANES.forEach(([key, head, col], k) => { const x = LX(k) + laneW / 2; c.save(); c.translate(x, top - 14); c.rotate(-Math.PI / 2); c.font = `600 ${small ? 8 : 9}px 'IBM Plex Mono', monospace`; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillStyle = col; c.fillText(head, 0, 0); c.restore();
+    c.strokeStyle = a(col, .12); c.lineWidth = 1; c.beginPath(); c.moveTo(x, top - 6); c.lineTo(x, Y(n - 1) + gap * .45); c.stroke(); });
+  /* the ribbons: one run a value; the notch where a level sets it; the value written along the run */
+  LANES.forEach(([key, head, col], k) => { const x = LX(k); let i = 0;
+    while (i < n){ const v = A[i][key]; if (!v){ i++; continue; } let j = i; while (j + 1 < n && A[j + 1][key] === v) j++;
+      const ya = Y(i) - gap * .42, yb = Y(j) + gap * .42, len = yb - ya, lit = o.hover != null && o.hover >= i && o.hover <= j;
+      c.fillStyle = a(col, lit ? .26 : .16); c.strokeStyle = a(col, .6); c.lineWidth = 1; c.beginPath(); c.roundRect(x, ya, laneW, len, laneW / 2); c.fill(); c.stroke();
+      c.save(); c.shadowColor = col; c.shadowBlur = 8; c.fillStyle = col; c.fillRect(x - 2, Y(i) - 1.5, laneW + 4, 3); c.restore();
+      let fs = small ? 9 : 10; c.font = `600 ${fs}px 'IBM Plex Mono', monospace`; let label = v.toUpperCase(); while (c.measureText(label).width > len - 14 && fs > 7){ fs--; c.font = `600 ${fs}px 'IBM Plex Mono', monospace`; }
+      while (c.measureText(label).width > len - 10 && label.length > 3) label = label.slice(0, -2) + '…';
+      c.save(); c.translate(x + laneW / 2, (ya + yb) / 2 + (i === j ? 0 : 0)); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = COL.wh; c.fillText(label, 0, 0); c.restore();
+      if (A[i].rebel){ c.save(); c.shadowColor = COL.rd; c.shadowBlur = 10; c.fillStyle = COL.rd; c.fillRect(x - 3, Y(i) - 2, laneW + 6, 4); c.restore(); }
+      i = j + 1; } });
+  /* the drift: the planet's second culture and era run as a faint current beside their ribbons; an apartment that drew one hooks in from it */
+  LANES.slice(0, 2).forEach(([key, head, col], k) => { const x = LX(k) - laneGap / 2, from = A.findIndex(q => q.second); if (from < 0) return;
+    c.setLineDash([2, 4]); c.strokeStyle = a(col, .45); c.lineWidth = 1; c.beginPath(); c.moveTo(x, Y(from)); c.lineTo(x, Y(n - 1) + gap * .42); c.stroke(); c.setLineDash([]);
+    A.forEach((q, i) => { if (!q.second || (i > from && A[i - 1].second && A[i - 1].second[key] === q.second[key])) return;
+      c.save(); c.translate(x, Y(i) + 6); c.rotate(Math.PI / 2); c.font = `500 8px 'IBM Plex Mono', monospace`; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillStyle = a(col, .75); c.fillText('drift · ' + q.second[key].toLowerCase(), 0, 0); c.restore(); });
+    A.forEach((q, i) => { if (!q.drift[key]) return; const y = Y(i); c.strokeStyle = col; c.lineWidth = 1.6; c.beginPath(); c.moveTo(x, y - gap * .35); c.quadraticCurveTo(x, y, LX(k) - 1, y); c.stroke();
+      c.fillStyle = col; c.beginPath(); c.moveTo(LX(k) + 1, y); c.lineTo(LX(k) - 5, y - 3.5); c.lineTo(LX(k) - 5, y + 3.5); c.fill(); }); });
+  /* the spine, its pulse flowing down to you */
+  c.strokeStyle = a(COL.cy, .14); c.lineWidth = 9; c.beginPath(); c.moveTo(tx, Y(0)); c.lineTo(tx, Y(me)); c.stroke();
+  c.strokeStyle = a(COL.cy, .85); c.lineWidth = 2; c.stroke();
+  if (!CALM) for (let j = 0; j < 4; j++){ const p = (t * .22 + j / 4) % 1; dot(c, tx, Y(0) + (Y(me) - Y(0)) * p, 2.4, COL.wh, .8 * Math.sin(p * Math.PI)); }
+  /* ships (a preview): one in orbit at the planet, an empty berth at the city */
+  P.forEach((e, i) => { const y = Y(i);
+    if (e.kind === 'planet'){ const sx = small ? tx - rx - 30 : tx - rx - 60, sy = y - (small ? 0 : 6);
+      c.setLineDash([3, 4]); c.lineDashOffset = -t * 20; c.strokeStyle = a(COL.ab, .7); c.lineWidth = 1; c.beginPath(); c.moveTo(sx + 9, sy); c.lineTo(tx - rx, y); c.stroke(); c.setLineDash([]);
+      shipMark(c, sx, sy, t, COL.ab, 'Kestrel · orbit', 'ship · preview', small); }
+    if (e.kind === 'city'){ const sx = small ? tx - rx - 28 : tx - rx - 58; c.strokeStyle = a(COL.ab, .55); c.setLineDash([2, 3]); c.strokeRect(sx - 9, y - 7, 18, 14); c.setLineDash([]); if (!small) tag(c, 'berth 4 · empty', sx, y + 17, COL.dim, 9, 'center'); } });
+  /* the plates and their glyphs, the names */
+  P.forEach((e, i) => { const y = Y(i), stag = CALM || o.reveal == null ? 1 : clamp(reveal * (n + 3) - i, 0, 1), s = easeOut(stag), isMe = i === me, hov = o.hover === i;
+    const col = isMe ? COL.yl : hov ? COL.wh : COL.cy, r = rx * s;
+    if (hov){ c.fillStyle = a(COL.cy, .06); c.fillRect(-ox + 2, y - gap / 2, W0 - 4, gap); }
+    c.save(); c.globalAlpha = s; c.fillStyle = '#060a0b'; c.beginPath(); c.ellipse(tx, y + r * .45, r, r * .38, 0, 0, 7); c.fill(); c.strokeStyle = a(col, isMe || hov ? 1 : .7); c.lineWidth = isMe ? 2 : 1.2;
+    if (isMe){ c.shadowColor = COL.yl; c.shadowBlur = 12; } c.stroke(); c.shadowBlur = 0;
+    MINI_LW = clamp(r * .1, 1.5, 2.4); c.shadowColor = col; c.shadowBlur = isMe || hov ? 12 : 7;
+    MINI[e.kind](c, tx, y - r * .3, Math.max(4, r * .78), CALM ? 0 : t, col); c.shadowBlur = 0; c.restore();
+    if (isMe && !CALM){ const p = (t * .8) % 1; c.strokeStyle = a(COL.yl, .6 * (1 - p)); c.lineWidth = 1.2; c.beginPath(); c.ellipse(tx, y + r * .45, r * (1 + p * .8), r * .38 * (1 + p * .8), 0, 0, 7); c.stroke(); }
+    c.font = `500 ${small ? 8 : 9}px 'IBM Plex Mono', monospace`; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillStyle = a(isMe ? COL.yl : COL.text, .6);
+    const kind = e.label.toUpperCase(); c.fillText(kind, nx, y - 8);
+    let kx = nx + c.measureText(kind).width + 8; c.font = `600 ${small ? 8 : 9}px 'IBM Plex Mono', monospace`;
+    A[i].states.forEach(st => { const sw2 = c.measureText(st).width + 8, sc = { curved:COL.cy, rebel:COL.rd, drift:COL.mg, static:COL.mg }[st] || COL.bl;
+      if (kx + sw2 > nx + nw) return; c.strokeStyle = a(sc, .8); c.strokeRect(kx + .5, y - 14.5, sw2, 12); c.fillStyle = sc; c.fillText(st, kx + 4, y - 8); kx += sw2 + 5; });
+    c.font = `${isMe || hov ? 600 : 500} ${small ? 11 : 12}px 'IBM Plex Mono', monospace`; let nm = e.name; while (c.measureText(nm).width > nw && nm.length > 4) nm = nm.slice(0, -2);
+    if (nm !== e.name) nm = nm.slice(0, -1) + '…'; c.fillStyle = isMe ? COL.yl : hov ? COL.wh : COL.text; c.fillText(nm, nx, y + 7);
+    hits.push({ id:'lv' + i, x:ox, y:y - gap / 2, w:W, h:gap }); });
+  c.restore(); c.restore();
+  if (o.hits) o.hits.push(...hits);
+  return { gap, Y };
+}
+
+const store = { get(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
+const POLE = { overlay:surface($('#poleCv'), true), pin:surface($('#pinCv'), true), hitsO:[], hitsP:[], hoverO:null, hoverP:null, openAt:0 };
+C.mode = store.get('et-trace-view') === 'pole' ? 'pole' : 'column';
+function setMode(m){ C.mode = m; store.set('et-trace-view', m); const pole = m === 'pole';
+  $('#colScroll').hidden = pole; $('#colThread').hidden = pole; $('#poleWrap').hidden = !pole; if (pole) $('#poleWrap').dataset.n = '';
+  $('#vPole').setAttribute('aria-pressed', pole); $('#vCol').setAttribute('aria-pressed', !pole); if (pole) POLE.openAt = now(); else C.openAt = now(); }
+function poleReveal(){ return CALM ? 1 : clamp((now() - POLE.openAt) / 900, 0, 1); }
+/* the pole keeps its levels apart; when they no longer fit, it scrolls, and it keeps you in view as the path grows */
+const POLE_GAP = 76;
+function paintPole(s, hitsKey, hoverKey){ const wrap = s.cv.parentElement, wh = wrap.clientHeight; if (!wh) return;
+  const n = pathOf(S.L).length, need = (wrap.clientWidth < 460 ? 56 : 70) + 56 + (n - 1) * POLE_GAP, hpx = Math.max(wh, need) + 'px';
+  if (s.cv.style.height !== hpx) s.cv.style.height = hpx; if (wrap.dataset.n !== String(n)){ wrap.dataset.n = n; wrap.scrollTop = 1e6; }
+  if (!fit(s)) return; const hits = []; s.ctx.setTransform(s.d, 0, 0, s.d, 0, 0); drawPole(s.ctx, s.w, s.h, lastT, { P:pathOf(S.L), hits, hover:POLE[hoverKey], reveal:poleReveal(), gap:POLE_GAP }); POLE[hitsKey] = hits; }
+function poleAt(s, hits, ev){ const r = s.cv.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top, h = hits.find(q => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h); return h ? +h.id.slice(2) : null; }
+function setPinned(on){ $('#app').classList.toggle('pinned', on); $('#pin').hidden = !on; store.set('et-pole-pinned', on ? '1' : ''); POLE.openAt = now(); $('#rail').dataset.key = ''; render(); if (!on) $('#rail .rail-pole') && $('#rail .rail-pole').focus(); }
+
+/* ═══ moving through the world ════════════════════════════════════════ */
+function spend(n){ S.coh = clamp(S.coh - n, 1, 100); if (S.coh === 1) toast('Coherence at the edge. In the game, the reboot waits here.'); }
+function go(L, dir){
+  const from = S.L, fromOpts = optsOf(from, null), toOpts = optsOf(L, null);
+  if (dir > 0){ if (from.at === 'street') fromOpts.focusB = L.b; if (from.at === 'building') fromOpts.floor = L.floor; if (from.at === 'corridor') fromOpts.door = L.door; if (from.at === 'apartment') fromOpts.cell = L.cell; }
+  else { if (L.at === 'street') toOpts.focusB = from.b; if (L.at === 'building') toOpts.floor = from.floor; if (L.at === 'corridor') toOpts.door = from.door; if (L.at === 'apartment') toOpts.cell = from.cell; }
+  let fOld = null; if (!CALM && fit(scene)) fOld = paintInto(scene, 0, from.at, lastT, fromOpts);
+  S.L = L; S.visited.add(locKey(L)); spend(1);
+  S.trans = fOld ? { dir, start:now(), dur:640, fOld, toOpts } : null; if (!S.trans && S.afterTrans) endTrans();
+  S.hover = S.link = null; render(); }
+function enter(id){
+  const L = S.L, k = id[0], n = +id.slice(1);
+  if (k === 'b'){ S.whisper = `You step off the boulevard into ${BUILDINGS[n].name}.`; S.car = 0; S.group = 0; go({ ...L, at:'building', b:n }, 1); }
+  else if (k === 'f'){ S.hover = id; rideTo(n, () => enterFloor(n)); }
+  else if (k === 'd'){ S.hover = id; walkTo(camFor(n), () => { S.whisper = `You open the ${doorsOf(L)[n].name}.`; const to = { ...L, at:'apartment', door:n, cell:-1 };
+    S.ac = aptHome(to, scene.w, scene.h, 0); go(to, 1); }); }
+  else if (k === 'c'){ const P = planOf(L); S.hover = id; tween('ac', roomView(P, scene.w, scene.h, n), 460, easeInOut, () => { S.whisper = `You step into the ${roomName(L, n)}.`; go({ ...L, at:'room', cell:n }, 1); }); }
+  else if (k === 'o') take(n);
+}
+function enterFloor(n){ S.cam = 0; S.whisper = `The car stops at floor ${n}. ` + (curvedOf({ floor:n }) ? 'A curved gallery opens.' : 'A straight corridor opens.'); go({ ...S.L, at:'corridor', floor:n, door:0 }, 1); }
+function out(){
+  const L = S.L; if (L.at === 'street'){ toast('This mock stops at the street. In the game the way goes on up to Rainhaven.'); return; }
+  const up = { building:'street', corridor:'building', apartment:'corridor', room:'apartment' }[L.at];
+  if (up === 'building'){ S.car = L.floor; S.group = Math.floor(L.floor / 10); }
+  if (up === 'corridor') S.cam = camFor(L.door);
+  if (up === 'apartment'){ const P = planOf(L); S.ac = roomView(P, scene.w, scene.h, L.cell); S.afterTrans = () => tween('ac', aptHome({ ...L, at:'apartment' }, scene.w, scene.h, L.cell), 760, easeInOut); }
+  S.whisper = { street:'Back out under the rain.', building:'Back in the elevator.', corridor:'Back in the corridor.', apartment:'Back in the apartment.' }[up];
+  go({ ...L, at:up }, -1);
+}
+function take(i){
+  const RM = roomOf(S.L), ob = RM.objects[i]; if (!ob || S.taken[RM.key + ob]) return; if (S.buffer.length >= 16){ toast('The buffer is full.'); return; }
+  const h = HITS.find(x => x.id === 'o' + i), r = scene.cv.getBoundingClientRect();
+  S.taken[RM.key + ob] = true; S.buffer.push({ name:ob, hz:hz(ob), from:RM.name }); spend(1); S.whisper = `Captured: ${ob} · ${hz(ob)} Hz.`;
+  if (h && !CALM){ const f = document.createElement('div'); f.className = 'fly'; f.style.left = (r.left + h.x + h.w / 2) + 'px'; f.style.top = (r.top + h.y + h.h / 2) + 'px'; document.body.append(f);
+    const b = $('#bufBtn').getBoundingClientRect(); requestAnimationFrame(() => requestAnimationFrame(() => { f.style.transform = `translate(${b.left + b.width / 2 - (r.left + h.x + h.w / 2)}px, ${b.top + b.height / 2 - (r.top + h.y + h.h / 2)}px) scale(.4)`; f.style.opacity = '.3'; }));
+    setTimeout(() => { f.remove(); const bb = $('#bufBtn'); bb.classList.remove('bump'); void bb.offsetWidth; bb.classList.add('bump'); }, 660); }
+  render();
+}
+function scan(){ S.scanned.add(locKey(S.L)); spend(1); if (!CALM) S.scan = now();
+  const L = S.L, words = { street:'Four signals on the boulevard. Floor counts marked on each tower.', building:'The shaft answers from every floor. Nothing sealed above.',
+    corridor:'Door states marked in the hall.', apartment:'The whole plan resolves; relics marked where they lie.', room:'Each relic hums at its own frequency.' };
+  S.whisper = 'Scan: ' + words[L.at]; render(); }
+
+/* ═══ words and buttons ═══════════════════════════════════════════════ */
+function chipsHTML(tags){ return (tags || []).map(t => `<li class="${t[2] || ''}">${t[0] ? `<b>${esc(t[0])}</b>` : ''}${esc(t[1] || '')}</li>`).join(''); }
+function render(){
+  const L = S.L, P = pathOf(L), e = P[P.length - 1];
+  const root = document.documentElement, st = S.coh >= 70 ? 'stable' : S.coh >= 50 ? 'degraded' : S.coh >= 30 ? 'corrupting' : 'critical';
+  root.dataset.state = st; $('#cohBar').style.width = S.coh + '%'; $('#cohN').textContent = S.coh; $('#cohS').textContent = st; $('#benchCoh').value = S.coh;
+  const rail = $('#rail'), key = P.map(p => p.name).join('|');
+  if (rail.dataset.key !== key){ const old = rail.children.length - 2; rail.dataset.key = key;
+    rail.innerHTML = `<button type="button" class="rail-pole" data-i="pole" title="Expand into the pole" aria-label="Expand the rail into the pole">▸</button>` + P.map((p, i) => `<button type="button" data-i="${i}" class="${i >= old && old > 0 ? 'new' : ''}" title="${esc(p.label)}: ${esc(p.name)}" aria-label="${esc(p.label)}: ${esc(p.name)}${i === P.length - 1 ? ' (you are here)' : ''}"${i === P.length - 1 ? ' aria-current="location"' : ''}>${svg(p.kind)}</button>`).join('')
+      + `<button type="button" class="rail-open" data-i="dive">Trace</button>`;
+    const cur = rail.children[P.length]; if (cur) cur.scrollIntoView({ block:'nearest', inline:'end' }); }
+  $('#kind').textContent = e.label; $('#name').textContent = e.name; $('#chips').innerHTML = chipsHTML(e.tags); $('#whisper').textContent = S.whisper;
+  let prose = [e.words], moves = '', head = '', cls = 'move-list', hint = '';
+  if (L.at === 'street'){ head = 'Buildings on this street'; hint = 'Tap a building to go in';
+    moves = BUILDINGS.map((B, i) => mv('b' + i, 'building', B.name, `${B.size} · ${B.floors} floors`, S.visited.has('b' + i))).join(''); }
+  if (L.at === 'building'){ const n = BUILDINGS[L.b].floors, car = Math.round(S.car), key = f => `<button type="button" class="move${S.visited.has(`b${L.b}f${f}`) ? ' visited' : ''}${car === f ? ' here' : ''}" data-go="f${f}" aria-label="Floor ${f}">${f}</button>`;
+    head = 'Ride to a floor'; hint = 'Drag to ride · tap a floor to get out there';
+    if (n <= 20){ cls += ' keypad'; moves = Array.from({ length:n }, (_, f) => key(f)).join(''); }
+    else { const g = S.group, tabs = Array.from({ length:Math.ceil(n / 10) }, (_, k) => `<button type="button" data-tens="${k}" aria-pressed="${k === g}">${k * 10}–${Math.min(n - 1, k * 10 + 9)}</button>`).join('');
+      moves = `<div class="tens" role="group" aria-label="Floors by tens">${tabs}</div><div class="move-list keypad">${Array.from({ length:Math.min(10, n - g * 10) }, (_, k) => key(g * 10 + k)).join('')}</div>`; } }
+  if (L.at === 'corridor'){ head = `Doors (${doorsOf(L).length})`; hint = 'Swipe to walk · tap a door';
+    moves = doorsOf(L).map((D, i) => mv('d' + i, 'apartment', `${i + 1} · ` + (D.glyph ? `${D.name} ‹${D.glyph}›` : D.name), D.words, S.visited.has(`b${L.b}f${L.floor}d${i}`), 'state-' + D.state)).join(''); }
+  if (L.at === 'apartment'){ const PL = planOf(L), known = knownRooms(L, PL);
+    const btn = i => { const seen = S.visited.has(`b${L.b}f${L.floor}d${L.door}c${i}`), kn = known.has(i); return `<button type="button" class="move${seen ? ' visited' : ''}${kn ? '' : ' fog'}" data-go="c${i}"><b>${i + 1}</b> ${kn ? esc(roomName(L, i)) : 'Unexplored'}</button>`; };
+    const list = Array.from({ length:PL.n }, (_, i) => btn(i)).join('');
+    head = `Rooms (${PL.n})`; hint = PL.n > 12 ? 'Drag · pinch or scroll to zoom · tap a room' : 'Tap a room on the plan';
+    if (PL.n <= 12){ cls += ' cells'; moves = list; }
+    else moves = `<p class="note">The game deals 1 to 10 rooms today. This one has ${PL.n}, to test the plan: rooms you have not reached stay in fog until you visit a neighbour or scan.</p><details class="all-rooms"><summary>All ${PL.n} rooms as a list</summary><div class="move-list cells">${list}</div></details>`; }
+  if (L.at === 'room'){ const RM = roomOf(L); prose = RM.words.slice(); prose.push(`Furniture: ${RM.furniture.join(', ')}.`); head = 'Relics here'; hint = 'Tap a relic to capture it';
+    const left = RM.objects.map((ob, i) => [ob, i]).filter(x => !S.taken[RM.key + x[0]]);
+    moves = left.length ? left.map(([ob, i]) => mv('o' + i, 'relic', 'Take: ' + ob, S.scanned.has(locKey(L)) ? `${hz(ob)} Hz` : 'Scan to read its frequency', false, 'take')).join('') : '<p class="prose" style="color:var(--dim)">Nothing left to take.</p>'; }
+  $('#prose').innerHTML = prose.filter(Boolean).map(p => `<p class="prose">${esc(p)}</p>`).join('');
+  $('#movesH').textContent = head; const ml = $('#moves'); ml.className = cls; const open = !!ml.querySelector('details[open]'); ml.innerHTML = moves; if (open && ml.querySelector('details')) ml.querySelector('details').open = true;
+  const hn = $('#hint'); if (hn.textContent !== hint){ hn.textContent = hint; hn.classList.remove('fade'); void hn.offsetWidth; hn.classList.add('fade'); }
+  const up = { street:'Rainhaven', building:'the street', corridor:'the elevator', apartment:'the corridor', room:'the apartment' }[L.at];
+  $('#outBtn').innerHTML = `${svg('out')}<span>Out<small>to ${up}</small></span>`;
+  $('#traceBtn').innerHTML = `${svg('trace')}Trace`; $('#scanBtn').innerHTML = `${svg('scan')}Scan`; $('#bufBtn').innerHTML = `${svg('buffer')}<span>Buffer <b>${S.buffer.length}</b></span>`;
+  scene.cv.style.touchAction = L.at === 'building' || L.at === 'corridor' || L.at === 'apartment' ? 'none' : 'manipulation';
+  renderOverlays();
+  if (!$('#buffer').hidden) renderBuffer(); if (T.open) renderTraceUI();
+}
+/* the gauge and the corridor slider: real sliders over the picture, drawn in HTML, moved every frame */
+function renderOverlays(){
+  const L = S.L, g = $('#gauge'), s = $('#scrub'); g.hidden = L.at !== 'building'; s.hidden = L.at !== 'corridor'; $('#zoomCtl').hidden = L.at !== 'apartment';
+  if (L.at === 'building'){ const n = BUILDINGS[L.b].floors, every = n > 40 ? 10 : n > 14 ? 5 : 2, pos = f => (1 - f / (n - 1)) * 100;
+    let html = ''; for (let f = 0; f < n; f += every) html += `<i class="g-tick" style="top:${pos(f)}%"><span>${f}</span></i>`;
+    html += `<i class="g-tick" style="top:0%"><span>${n - 1}</span></i>`;
+    for (let f = 0; f < n; f++) if (S.visited.has(`b${L.b}f${f}`)) html += `<i class="g-seen" style="top:${pos(f)}%"></i>`;
+    $('#gMarks').innerHTML = html; g.setAttribute('aria-valuemax', n - 1); }
+  if (L.at === 'corridor'){ const D = doorsOf(L), len = hallLen(D.length);
+    $('#sMarks').innerHTML = D.map((Dd, i) => `<i class="s-tick ${i % 2 ? 'dn' : 'up'} st-${Dd.state}${S.visited.has(`b${L.b}f${L.floor}d${i}`) ? ' seen' : ''}" data-d="${i}" style="left:${doorZ(i) / len * 100}%"></i>`).join('');
+    $('#sEnd').textContent = curvedOf(L) ? 'bends on' : 'end wall'; s.setAttribute('aria-valuemax', D.length); }
+}
+function syncOverlays(){
+  const L = S.L;
+  if (L.at === 'building'){ const n = BUILDINGS[L.b].floors, vis = Math.min(n, GEO.vis || 8), f = S.car / (n - 1), wh = vis / n * 100;
+    const gw = $('#gWin'); gw.style.height = wh + '%'; gw.style.top = clamp((1 - f) * 100 - wh / 2, 0, 100 - wh) + '%'; $('#gCar').style.top = (1 - f) * 100 + '%';
+    const g = $('#gauge'), r = Math.round(S.car); if (g.getAttribute('aria-valuenow') !== String(r)){ g.setAttribute('aria-valuenow', r); g.setAttribute('aria-valuetext', `Floor ${r} of ${n - 1}`); } }
+  if (L.at === 'corridor'){ const D = doorsOf(L), len = hallLen(D.length), sw = $('#sWin');
+    sw.style.left = S.cam / len * 100 + '%'; sw.style.width = Math.min(9, len - S.cam) / len * 100 + '%'; $('#sYou').style.left = S.cam / len * 100 + '%';
+    const near = clamp(Math.round((S.cam + 2.4) / SPACING) * 2 - 1, 1, D.length), s = $('#scrub'); if (s.getAttribute('aria-valuenow') !== String(near)){ s.setAttribute('aria-valuenow', near); s.setAttribute('aria-valuetext', `Near door ${near} of ${D.length}`); } }
+}
+function mv(id, icon, title, sub, seen, extra){ return `<button type="button" class="move ${extra || ''}" data-go="${id}">`
+  + `<span class="glyph">${svg(icon)}</span><span class="t"><span>${esc(title)}</span>${sub ? `<small>${esc(sub)}</small>` : ''}</span>${seen ? '<span class="seen">seen</span>' : ''}</button>`; }
+function renderBuffer(){ $('#bufCount').textContent = `${S.buffer.length} / 16`;
+  $('#slots').innerHTML = Array.from({ length:16 }, (_, i) => { const f = S.buffer[i]; return f ? `<div class="slot full" title="${esc(f.name)} — from the ${esc(f.from)}">${svg('relic', ' style="color:var(--yl)"')}<b>${f.hz} Hz</b><span>${esc(f.name)}</span></div>` : '<div class="slot">empty</div>'; }).join(''); }
+let toastT; function toast(s){ const el = $('#toast'); el.textContent = s; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 3200); }
+
+/* ═══ input: taps first, keys as an extra ═════════════════════════════ */
+function hitAt(ev){ const r = scene.cv.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top; return HITS.find(h => x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h); }
+function localXY(ev){ const r = scene.cv.getBoundingClientRect(); return { x:ev.clientX - r.left, y:ev.clientY - r.top }; }
+function zoomAt(mx, my, factor){ const P = planOf(S.L), c0 = S.ac, z = c0.z * factor, wx = c0.x + (mx - scene.w / 2) / c0.z, wy = c0.y + (my - scene.h / 2) / c0.z;
+  return clampAc(P, scene.w, scene.h, { x:wx - (mx - scene.w / 2) / z, y:wy - (my - scene.h / 2) / z, z }); }
+/* the picture: a tap enters; a drag walks the corridor, rides the car or pans the plan — one to one under the finger, with momentum when it lets go; two fingers zoom the plan */
+const pointers = new Map(); let gest = null;
+scene.cv.addEventListener('pointerdown', ev => {
+  if (busy()) return; pointers.set(ev.pointerId, localXY(ev)); try { scene.cv.setPointerCapture(ev.pointerId); } catch (e) {}
+  if (pointers.size === 2 && S.L.at === 'apartment'){ const [p, q] = [...pointers.values()]; stopTw('ac'); gest = { pinch:true, d0:Math.hypot(p.x - q.x, p.y - q.y) || 1, ac:{ ...S.ac } }; return; }
+  if (pointers.size > 1) return;
+  stopTw('cam'); stopTw('car'); stopTw('ac');
+  gest = { x:ev.clientX, y:ev.clientY, moved:false, cam:S.cam, car:S.car, ac:{ ...S.ac }, sa:[], sb:[] };
+});
+scene.cv.addEventListener('pointermove', ev => {
+  if (pointers.has(ev.pointerId)) pointers.set(ev.pointerId, localXY(ev));
+  if (!gest){ const h = hitAt(ev); S.hover = h ? h.id : null; const drag = S.L.at === 'corridor' || S.L.at === 'building' || S.L.at === 'apartment';
+    scene.cv.style.cursor = h ? 'pointer' : drag ? 'grab' : 'default'; return; }
+  if (gest.pinch){ if (pointers.size < 2) return; const [p, q] = [...pointers.values()], d = Math.hypot(p.x - q.x, p.y - q.y), mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
+    const P = planOf(S.L), z = gest.ac.z * d / gest.d0, wx = gest.ac.x + (mx - scene.w / 2) / gest.ac.z, wy = gest.ac.y + (my - scene.h / 2) / gest.ac.z;
+    if (!gest.m0) gest.m0 = { x:mx, y:my, wx, wy }; S.ac = clampAc(P, scene.w, scene.h, { x:gest.m0.wx - (mx - scene.w / 2) / z, y:gest.m0.wy - (my - scene.h / 2) / z, z }); return; }
+  const dx = ev.clientX - gest.x, dy = ev.clientY - gest.y; if (!gest.moved && Math.hypot(dx, dy) > 6){ gest.moved = true; S.hover = null; scene.cv.style.cursor = 'grabbing'; } if (!gest.moved) return;
+  if (S.L.at === 'corridor'){ S.cam = clampCam(gest.cam - dy / 40); sample(gest.sa, S.cam); }
+  else if (S.L.at === 'building'){ S.car = clampCar(gest.car + dy / (GEO.fh || 50)); sample(gest.sa, S.car); }
+  else if (S.L.at === 'apartment'){ S.ac = clampAc(planOf(S.L), scene.w, scene.h, { x:gest.ac.x - dx / gest.ac.z, y:gest.ac.y - dy / gest.ac.z, z:gest.ac.z }); sample(gest.sa, S.ac.x); sample(gest.sb, S.ac.y); }
+});
+function release(ev){
+  pointers.delete(ev.pointerId); const g = gest; if (!g) return;
+  if (g.pinch){ if (pointers.size < 2) gest = null; return; } gest = null;
+  if (g.moved){
+    if (S.L.at === 'corridor') tween('cam', clampCam(S.cam + vel(g.sa) * .3), 560, easeOut);
+    else if (S.L.at === 'building'){ const f = Math.round(clampCar(S.car + vel(g.sa) * .22)); tween('car', f, 380 + 40 * Math.sqrt(Math.abs(f - S.car)), easeOut, () => { S.group = Math.floor(f / 10); render(); }); }
+    else if (S.L.at === 'apartment') tween('ac', clampAc(planOf(S.L), scene.w, scene.h, { x:S.ac.x + vel(g.sa) * .3, y:S.ac.y + vel(g.sb) * .3, z:S.ac.z }), 620, easeOut);
+    return; }
+  if (ev.type !== 'pointerup') return; const h = hitAt(ev); if (!h) return;
+  if (h.id === 'mini'){ const p = localXY(ev), m = GEO.mini, P = planOf(S.L); tween('ac', clampAc(P, scene.w, scene.h, { x:(p.x - m.mx) / m.k, y:(p.y - m.my) / m.k, z:S.ac.z }), 480, easeInOut); return; }
+  enter(h.id);
+}
+scene.cv.addEventListener('pointerup', release); scene.cv.addEventListener('pointercancel', release);
+scene.cv.addEventListener('pointerleave', () => { if (!gest) S.hover = null; });
+scene.cv.addEventListener('wheel', ev => { if (busy()) return; const at = S.L.at;
+  if (at === 'corridor'){ ev.preventDefault(); tween('cam', clampCam((TW.cam ? TW.cam.to : S.cam) + ev.deltaY / 70), 300, easeOut); }
+  else if (at === 'building'){ ev.preventDefault(); rideTo((TW.car ? TW.car.to : Math.round(S.car)) - Math.sign(ev.deltaY)); }
+  else if (at === 'apartment'){ ev.preventDefault(); stopTw('ac'); const p = localXY(ev); S.ac = zoomAt(p.x, p.y, Math.exp(-ev.deltaY * .0016)); } }, { passive:false });
+$('#zIn').onclick = () => tween('ac', zoomAt(scene.w / 2, scene.h / 2, 1.5), 340, easeInOut);
+$('#zOut').onclick = () => tween('ac', zoomAt(scene.w / 2, scene.h / 2, 1 / 1.5), 340, easeInOut);
+$('#zFit').onclick = () => { const P = planOf(S.L), lim = aptLimits(P, scene.w, scene.h); tween('ac', { x:P.W / 2, y:P.H / 2, z:lim.fit }, 480, easeInOut); };
+
+/* a slider: grab anywhere; on the thumb it keeps its grip, elsewhere the thumb glides to the finger; it follows one to one and coasts when let go */
+function slider(el, thumb, o){
+  let g = null;
+  el.addEventListener('pointerdown', ev => { if (busy()) return; ev.preventDefault(); try { el.setPointerCapture(ev.pointerId); } catch (e) {} el.focus({ preventScroll:true }); o.stop();
+    const at = o.at(ev), onThumb = thumb.contains(ev.target) || Math.abs(at - o.value()) < o.grip();
+    g = { off:onThumb ? o.value() - at : 0, samples:[], moved:false, x:ev.clientX, y:ev.clientY }; if (!onThumb) o.glide(at); });
+  el.addEventListener('pointermove', ev => { if (!g) return; if (!g.moved && Math.hypot(ev.clientX - g.x, ev.clientY - g.y) > 2){ g.moved = true; o.stop(); } if (!g.moved) return; o.set(o.at(ev) + g.off); sample(g.samples, o.value()); });
+  const up = () => { if (!g) return; const m = g.moved, v = vel(g.samples); g = null; if (m) o.coast(v); };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  el.addEventListener('keydown', ev => { if (o.key(ev)) ev.preventDefault(); });
+}
+slider($('#scrub'), $('#sWin'), {
+  value:() => S.cam, stop:() => stopTw('cam'), grip:() => 4.5,
+  at:ev => { const r = $('#sTrack').getBoundingClientRect(); return (ev.clientX - r.left) / r.width * hallLen(doorsOf(S.L).length) - 4.5; },
+  set:v => { S.cam = clampCam(v); }, glide:v => tween('cam', clampCam(v), 320, easeOut), coast:v => tween('cam', clampCam(S.cam + v * .3), 560, easeOut),
+  key:ev => { const base = TW.cam ? TW.cam.to : S.cam, m = { ArrowRight:SPACING, ArrowUp:SPACING, ArrowLeft:-SPACING, ArrowDown:-SPACING }[ev.key];
+    if (m){ walkTo(base + m); return true; } if (ev.key === 'Home'){ walkTo(0); return true; } if (ev.key === 'End'){ walkTo(1e9); return true; } return false; }
+});
+slider($('#gauge'), $('#gWin'), {
+  value:() => S.car, stop:() => stopTw('car'), grip:() => Math.min(BUILDINGS[S.L.b].floors, GEO.vis || 8) / 2,
+  at:ev => { const r = $('#gTrack').getBoundingClientRect(); return (1 - (ev.clientY - r.top) / r.height) * (BUILDINGS[S.L.b].floors - 1); },
+  set:v => { S.car = clampCar(v); S.group = Math.floor(Math.round(S.car) / 10); }, glide:v => rideTo(v), coast:v => rideTo(S.car + v * .22),
+  key:ev => { const base = TW.car ? TW.car.to : Math.round(S.car), m = { ArrowUp:1, ArrowRight:1, ArrowDown:-1, ArrowLeft:-1, PageUp:10, PageDown:-10 }[ev.key];
+    if (m){ rideTo(base + m); return true; } if (ev.key === 'Home'){ rideTo(0); return true; } if (ev.key === 'End'){ rideTo(1e9); return true; }
+    if (ev.key === 'Enter'){ enter('f' + Math.round(S.car)); return true; } return false; }
+});
+
+$('#moves').addEventListener('click', ev => { const tb = ev.target.closest('[data-tens]'); if (tb){ S.group = +tb.dataset.tens; render(); return; }
+  const b = ev.target.closest('[data-go]'); if (b && !busy()) enter(b.dataset.go); });
+/* the list and the picture are one: what you point at in the list lights in the picture, and the plan glides to a room that is out of view */
+['pointerover', 'focusin'].forEach(k => $('#moves').addEventListener(k, ev => { const b = ev.target.closest('[data-go]'); S.link = b ? b.dataset.go : null;
+  if (b && S.L.at === 'apartment' && b.dataset.go[0] === 'c' && !busy()) showRoom(+b.dataset.go.slice(1)); }));
+['pointerout', 'focusout'].forEach(k => $('#moves').addEventListener(k, () => { S.link = null; }));
+function showRoom(i){ const P = planOf(S.L), q = P.rooms[i], z = S.ac.z, x0 = scene.w / 2 + (q.x - S.ac.x) * z, y0 = scene.h / 2 + (q.y - S.ac.y) * z;
+  if (x0 >= 0 && y0 >= 0 && x0 + q.w * z <= scene.w && y0 + q.h * z <= scene.h) return;
+  tween('ac', clampAc(P, scene.w, scene.h, { x:q.x + q.w / 2, y:q.y + q.h / 2, z }), 420, easeInOut); }
+$('#rail').addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; if (b.dataset.i === 'pole'){ setPinned(true); return; } openColumn(b.dataset.i === 'dive' ? null : +b.dataset.i); });
+$('#outBtn').onclick = () => { if (!busy()) out(); };
+$('#traceBtn').onclick = () => openColumn(null);
+$('#vPole').onclick = () => setMode('pole'); $('#vCol').onclick = () => { setMode('column'); toBand(C.bands.length - 1, false); };
+$('#poleCv').addEventListener('pointermove', ev => { POLE.hoverO = poleAt(POLE.overlay, POLE.hitsO, ev); });
+$('#poleCv').addEventListener('pointerleave', () => { POLE.hoverO = null; });
+$('#poleCv').addEventListener('click', ev => { const i = poleAt(POLE.overlay, POLE.hitsO, ev); if (i == null) return; setMode('column'); toBand(i, false); const b = C.bands[i]; if (b){ b.el.classList.remove('flash'); void b.el.offsetWidth; b.el.classList.add('flash'); } });
+$('#pinCv').addEventListener('pointermove', ev => { POLE.hoverP = poleAt(POLE.pin, POLE.hitsP, ev); });
+$('#pinCv').addEventListener('pointerleave', () => { POLE.hoverP = null; });
+$('#pinCv').addEventListener('click', ev => { const i = poleAt(POLE.pin, POLE.hitsP, ev); if (i != null) openColumn(i); });
+$('#pinClose').onclick = () => setPinned(false);
+$('#colDive').innerHTML = `${svg('dive')}<span>Dive</span>`; $('#colDive').onclick = openCinema; $('#colClose').onclick = closeColumn;
+$('#column').addEventListener('click', ev => { if (ev.target.id === 'column') closeColumn(); });
+$('#bands').addEventListener('click', ev => { const li = ev.target.closest('.band'); if (li) toggleBand(li); });
+$('#bands').addEventListener('keydown', ev => { const li = ev.target.closest('.band'); if (li && (ev.key === 'Enter' || ev.key === ' ')){ ev.preventDefault(); toggleBand(li); } });
+function toggleBand(li){ const open = li.classList.toggle('open'); li.setAttribute('aria-expanded', open); const b = C.bands.find(x => x.el === li); if (b) b.painted = false;
+  requestAnimationFrame(() => li.scrollIntoView({ block:'center', behavior:CALM ? 'auto' : 'smooth' })); }
+/* a swipe down on the header closes the column, as a phone sheet does */
+let pull = null; $('#colHead').addEventListener('pointerdown', ev => { if (ev.target.closest('button')) return; pull = ev.clientY; try { $('#colHead').setPointerCapture(ev.pointerId); } catch (e) {} });
+$('#colHead').addEventListener('pointerup', ev => { if (pull != null && ev.clientY - pull > 60) closeColumn(); pull = null; });
+$('#scanBtn').onclick = scan;
+$('#bufBtn').onclick = () => { renderBuffer(); $('#buffer').hidden = false; $('#bufClose').focus(); };
+$('#bufClose').onclick = () => { $('#buffer').hidden = true; $('#bufBtn').focus(); };
+$('#buffer').addEventListener('click', ev => { if (ev.target.id === 'buffer') $('#bufClose').click(); });
+$('#traceClose').onclick = closeTrace;
+$('#traceDive').onclick = () => { if (CALM) { T.i = pathOf(S.L).length - 1; renderTraceUI(); return; } T.dive = true; T.from = null; T.i = 0; T.diveAt = now(); renderTraceUI(); };
+$('#tOut').onclick = () => goTrace(T.i - 1); $('#tIn').onclick = () => goTrace(T.i + 1);
+$('#strip').addEventListener('click', ev => { const b = ev.target.closest('button'); if (b) goTrace(+b.dataset.i); });
+$('#trace').addEventListener('click', ev => { if (ev.target.id === 'trace') closeTrace(); });
+let sw = null; trace.cv.addEventListener('pointerdown', ev => { sw = { x:ev.clientX, y:ev.clientY }; });
+trace.cv.addEventListener('pointerup', ev => { if (!sw) return; const dx = ev.clientX - sw.x, dy = ev.clientY - sw.y; sw = null;
+  if (T.dive){ endDive(); return; } if (Math.max(Math.abs(dx), Math.abs(dy)) < 36) return; const d = Math.abs(dx) > Math.abs(dy) ? dx : dy; goTrace(T.i + (d < 0 ? 1 : -1)); });
+document.addEventListener('keydown', ev => {
+  if (ev.target.matches('input') || ev.target.closest('.gauge, .scrub')) return;
+  if (C.open && !T.open){ const k = ev.key.toLowerCase(), f = C.focus ? C.focus.i : C.bands.length - 1;
+    if (ev.key === 'Escape' || k === 't') closeColumn(); else if (k === 'd') openCinema();
+    else if (ev.key === 'ArrowDown' && !ev.target.closest('button')){ ev.preventDefault(); toBand(f + 1, true); } else if (ev.key === 'ArrowUp' && !ev.target.closest('button')){ ev.preventDefault(); toBand(f - 1, true); }
+    return; }
+  if (T.open){ if (ev.key === 'Escape') closeTrace(); else if (T.dive) endDive(); else if (ev.key === 'ArrowUp' || ev.key === 'ArrowLeft') goTrace(T.i - 1); else if (ev.key === 'ArrowDown' || ev.key === 'ArrowRight') goTrace(T.i + 1); else if (ev.key.toLowerCase() === 't') closeTrace(); return; }
+  if (!$('#buffer').hidden){ if (ev.key === 'Escape' || ev.key.toLowerCase() === 'b') $('#bufClose').click(); return; }
+  if (!busy() && (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') && !ev.target.closest('.move-list')){ const up = ev.key === 'ArrowUp' ? 1 : -1;
+    if (S.L.at === 'corridor'){ ev.preventDefault(); walkTo((TW.cam ? TW.cam.to : S.cam) + up * SPACING); return; }
+    if (S.L.at === 'building'){ ev.preventDefault(); rideTo((TW.car ? TW.car.to : Math.round(S.car)) + up); return; } }
+  const k = ev.key.toLowerCase(); if (k === 't') openColumn(null); else if (k === 's') scan(); else if (k === 'b') $('#bufBtn').click(); else if (ev.key === 'Escape' && !busy()) out();
+});
+$('#benchCoh').addEventListener('input', ev => { S.coh = +ev.target.value; render(); });
+$('#benchRebel').addEventListener('change', ev => { WORLD.rebel = ev.target.checked; $('#rail').dataset.key = ''; render(); });
+$('#benchCalm').addEventListener('change', ev => { document.documentElement.classList.toggle('calm', ev.target.checked); syncCalm(); });
+$('#benchReset').onclick = () => { for (const k of Object.keys(TW)) delete TW[k]; fresh(); $('#rail').dataset.key = ''; render(); };
+
+/* ═══ the loop ════════════════════════════════════════════════════════ */
+function frame(ms){
+  requestAnimationFrame(frame); lastT = CALM ? 0 : ms / 1000;
+  stepTweens(); syncOverlays();
+  if (T.open) drawTrace(lastT); else if (C.open){ if (C.mode === 'pole') paintPole(POLE.overlay, 'hitsO', 'hoverO'); else drawColumn(lastT); }
+  else { drawScene(lastT); if (!$('#pin').hidden) paintPole(POLE.pin, 'hitsP', 'hoverP'); }
+}
+render(); if (store.get('et-pole-pinned') === '1') setPinned(true); requestAnimationFrame(frame);
+</script>
+
