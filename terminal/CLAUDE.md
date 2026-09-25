@@ -36,7 +36,17 @@ repository root are the same. The game reads and writes its save, journal and lo
 Class blueprints `docs/blueprints/`, retros `docs/retro/`, the OOA plan and report `docs/analysis/OOA_*.md`, finished
 HK and phase plans `tasks/completed/`. History — read on demand, never rewritten.
 
-## 📌 Current state of the frozen tree (moved here from the recovery prompt, I02)
+## 📌 Current state of the frozen tree (moved here from the recovery prompt, I02; the status lines 2026-09-25)
+- **Test Suite:** 296 discovered / 296 pass / 0 skipped / 0 failed (`./vinc.sh --test --agent 2>/dev/null`; checked by `--docs` D1)
+- **Lint:** `./vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS FILES=222 P1=0 P2=0 P3=0`
+- **Docs:** `./vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS` (D1 suite count, D3 the 15 blueprint stamps; the project's own
+  checks are the root `.claude/docs-check.sh`). The last Groovy code merge is `55f9460`.
+- **Known declared edges:** HK-019's (`journals/LOG_20260916_231644_0x0033981.md`, "Left open") and HK-018's (pre-HK-018
+  Keystones open nothing: bound by LIP, no name fallback). **O1** HeadlessRunner DSL: moot with the freeze.
+- **Records:** retros `docs/retro/`; finished plans and execution records `tasks/completed/`; housekeeping
+  root `tasks/backlog/HOUSEKEEPING.md` (nothing OPEN: HK-021/023/024 closed by the port, HK-013 moot).
+- **Player guide numbering:** `docs/terminal/guide/players_guide.md` (root `docs/`) — every number cited from source;
+  `cheat_sheet.md` beside it is a copy the guide owns; lines 1–103 keep their numbering (a test comment cites `:102-103`).
 - **Lint baseline:** `config/lint/baseline.xml` holds 8 entries — the long methods of HK-013 (extract or re-baseline with a
   reason, never reformat); the `NoNewStaticLogic` allow-list in `config/lint/vinc-ruleset.groovy` is 15 files,
   shrink-only — none of them a rule-holding class since HK-022. One writer: `./vinc.sh --lint --baseline`. Jars: `lib/lint/`.

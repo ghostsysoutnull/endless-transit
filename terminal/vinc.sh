@@ -117,7 +117,7 @@ case "$1" in
         echo -e "  --lint        CodeNarc static analysis over src/ (house rules + Vinculum invariants; config/lint/)."
         echo -e "    --agent     Single LINT=PASS/FAIL line."
         echo -e "    --baseline  Regenerate config/lint/baseline.xml (only to accept or pay down known debt; review the diff)."
-        echo -e "  --docs        Close-out doc audit: suite count, latest chronicle, blueprint stamps, handover size (/close-wave gate)."
+        echo -e "  --docs        Groovy doc audit: suite count, blueprint stamps (the project's checks: ../.claude/docs-check.sh)."
         echo -e "    --agent     Single DOCS=PASS/FAIL line."
         echo -e "  [DEFAULT]    Launch game instantly (with auto-compile)."
         ;;

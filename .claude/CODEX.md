@@ -30,11 +30,11 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
 3. **After the go, no questions.** What the plan and the Decisions do not cover, the build decides in their spirit and
    writes in the note.
 4. **Safety net.** Merge only when every gate of the touched tree is green (`web/**` → `npm run check`, browser tests in
-   a desktop and a phone profile; Groovy → the `vinc.sh` gates). **The only early stop:** a gate still red after honest
+   a desktop and a phone profile). **The only early stop:** a gate still red after honest
    tries — that iteration stays unmerged and the run ends with a plain report.
 5. **Lean records.** No chronicle, no retro, no blueprint, no `todo.md` line, no workflow-backlog entry — the note and
    the merge commit are the record. A user correction still becomes a line: in the block at the top of `CLAUDE.md` when it is about working with the
-   user, else a one-line lesson. `--docs` stays green while it exists.
+   user, else a one-line lesson. `./.claude/docs-check.sh` stays green.
 6. **Ends clean.** The last message says what was done, what the tester can try and where. No leftovers list, no
    closing question.
 7. **No users, no compatibility.** Saves, journals and old seeds need no protection and no migration. Still name the
@@ -77,25 +77,24 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 ### 4. Verification
 * Never mark a task complete without proving it works.
 * **AI-TDD**: Create reproduction tests for all bug reports.
-* **Groovy gates** (`vinc.sh`, goldens, lint, docs): `terminal/CLAUDE.md`, loaded when `terminal/` is touched.
 * **Coverage Claim Protocol**: Any plan statement of the form "test X guards behavior Y" MUST cite
   the assertion lines that prove it, read from the test file in the current session. A file name or
   a remembered purpose is not evidence. If no assertion exists, the plan marks the behavior
   **UNGUARDED** and adds a pre-check test as step 0, committed before any production change.
 
 * **OO Principles (the Shape Gate, WF-009)**: the eight rules this codebase lives by, in one place. 1–6 are asked by
-  `/grill` check 5 with the evidence named; 7–8 are guidance.
+  `/grill` check 3 with the evidence named; 7–8 are guidance. The evidence is read in `web/` (`src/`, `tests/`, `e2e/`).
 
 | # | Principle | Taught by | Check (evidence) |
 | :-- | :-- | :-- | :-- |
-| 1 | **One owner per fact** — a rule, a list, a table lives in exactly one place | HK-020 | grep the fact's literal across `src/main`; a second owner is a FAIL unless removed in the same wave |
-| 2 | **Behavior lives with its data** — no static logic, no anemic type | HK-015, model "No Anemic Models" | every non-private `static` with a body names its reason (entry point, pure formatting, seed derivation); a static holding a rule or state is a FAIL — "pure function" is not a reason |
-| 3 | **Ask the object** — polymorphism over type checks | Phase 8/9/10, WF-004 | `instanceof` / `.class ==` / `getClass()` grep on new hierarchies and their listeners |
-| 4 | **Dependencies are injected, never located** | HK-008 | no static instance, no `new <Service>` outside its owner; the Shape table's `owner` column |
-| 5 | **A new kind is a registry entry, not a new branch** | Phase 9, HK-005 | where a registry or a state exists for the thing, the plan adds an entry; a new `if`/`switch` on kind is a FAIL |
-| 6 | **Domain values are objects with identity by stable key** — not primitives, not display strings | Phase 3, HK-018 | a new `int`/`String` field carrying a domain concept names why it is not a value object; a lookup by name is a FAIL |
+| 1 | **One owner per fact** — a rule, a list, a table lives in exactly one place | HK-020 | grep the fact's literal across `web/src`; a second owner is a FAIL unless removed in the same wave |
+| 2 | **Behavior lives with its data** — no static logic, no anemic type | HK-015, model "No Anemic Models" | every `static` names its reason in a comment (a factory for a text form, an entry point); a static holding a rule or state is a FAIL — "pure function" is not a reason |
+| 3 | **Ask the object** — polymorphism over type checks | Phase 8/9/10, WF-004 | grep the new code and its tests for `instanceof` on a place, fragment, option or prompt, and for a `switch` on `kind().key()` |
+| 4 | **Dependencies are injected, never located** | HK-008 | adapters are built only in `src/main.ts`, the composition root; the engine gets what it needs through interfaces it owns; no static instance; the Shape table's `owner` column |
+| 5 | **A new kind is a registry entry, not a new branch** | Phase 9, HK-005 | a new place kind is a `LocationRegistry` entry, a new action a `GameEngine` registry entry naming its `Turn`, a new fragment a row in the reader's table, a new screen a stage in `main.ts`; a new `if`/`switch` on kind is a FAIL |
+| 6 | **Domain values are objects with identity by stable key** — not primitives, not display strings | Phase 3, HK-018 | a new `number`/`string` field carrying a domain concept names why it is not a value object (identity by stable key, as `Relic`); a lookup by display name is a FAIL |
 | 7 | State changes through domain-meaningful methods; immutable where nothing needs to change | model "Behavior-Driven Mutation" | guidance — no gate |
-| 8 | One class, one job; one method, one job | HK-013 (`MethodSize` is the proxy) | guidance — the length ratchet is the only proxy (WF-006) |
+| 8 | One class, one job; one method, one job | HK-013 | guidance — no gate |
 
 * **Shape Claim Protocol**: every plan that adds a class, a method on a new class, or a static carries a **Shape table** —
   one row per new thing: `what | kind | owner | the one fact it owns | statics + why` (`kind` ∈ value object / entity /
@@ -106,12 +105,12 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ## 🏺 Self-Improvement Loop
 * After ANY correction from the user: a correction about how to work with the user becomes a line in the block at the
-  top of `CLAUDE.md` (≤ 12 rules, ≤ 500 words, checked by `--docs` D5 — merge or replace, never grow past); any other updates the relevant
+  top of `CLAUDE.md` (≤ 12 rules, ≤ 500 words, checked by `./.claude/docs-check.sh` — merge or replace, never grow past); any other updates the relevant
   `tasks/lessons/<domain>.md` file.
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.
 * **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave (`(HK-012)`) — the incident lives in that wave's chronicle and retro. `infrastructure.md` loads every session and the domain files whenever their folder is touched; every sentence is paid for each time.
-* Lessons load with their domain: each Groovy domain `CLAUDE.md` imports its `terminal/tasks/lessons/<domain>.md` when that directory is touched; `terminal/CLAUDE.md` imports `terminal/tasks/lessons/groovy-tooling.md`; `infrastructure.md` (process lessons) loads every session.
+* Lessons load with their domain: `infrastructure.md` (process) every session, `tasks/lessons/web.md` from `web/CLAUDE.md`.
 
 ## 🏛️ Safety Mandates
 - **A moved or refactored file keeps its logic**: read the whole original, never a template or a skeleton; after the
