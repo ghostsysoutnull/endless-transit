@@ -5,6 +5,8 @@
 #   D3  blueprint stamps each terminal/docs/blueprints/logic/classes/<pkg>/<Class>.md ends in a stamp carrying the first 10 chars of
 #                        `git hash-object` of its class file ("Verified against:" or "Baselined (not audited) against:")
 #   D4  handover size    tasks/RECOVERY_PROMPT.md <= 1000 words — it holds current state only; history lives in the chronicle (WF-008)
+#   D5  user block       the "Working with the user" block at the top of CLAUDE.md: <= 12 rules, <= 500 words — a new rule
+#                        merges or replaces, it never grows the block (rules diet, 2026-09-25)
 # Env (for negative checks against a scratch copy; the tree is never touched):
 #   DOCS_ROOT        repository root to read from (default: the parent of terminal/). Project records (tasks/, journals/)
 #                    are read from it; the Groovy records (blueprints, src/) from its terminal/ folder.
@@ -63,9 +65,21 @@ RP_WORDS=$(wc -w < "$ROOT/tasks/RECOVERY_PROMPT.md" | tr -d ' ')
 D4=ok
 [ "${RP_WORDS:-0}" -le 1000 ] || { D4=FAIL; fail "D4 tasks/RECOVERY_PROMPT.md is $RP_WORDS words (cap 1000) — it holds current state only; move history to the chronicle, do not raise the cap"; }
 
+# --- D5: user block size ------------------------------------------------------------------------------------------
+BLOCK=$(awk '/^## 🤝 Working with the user/{f=1} f&&/^$/{exit} f' "$ROOT/CLAUDE.md")
+UB_RULES=$(printf '%s\n' "$BLOCK" | grep -cE '^[0-9]+\. ')
+UB_WORDS=$(printf '%s\n' "$BLOCK" | wc -w | tr -d ' ')
+D5=ok
+if [ -z "$BLOCK" ]; then
+    D5=FAIL; fail "D5 CLAUDE.md has no '## 🤝 Working with the user' block"
+else
+    [ "$UB_RULES" -le 12 ] || { D5=FAIL; fail "D5 the user block in CLAUDE.md has $UB_RULES rules (cap 12) — merge or replace, do not raise the cap"; }
+    [ "$UB_WORDS" -le 500 ] || { D5=FAIL; fail "D5 the user block in CLAUDE.md is $UB_WORDS words (cap 500) — tighten a rule, do not raise the cap"; }
+fi
+
 # --- report ----------------------------------------------------------------------------------------------------------
 if [ ${#FAILS[@]} -eq 0 ]; then STATUS=PASS; EXIT=0; else STATUS=FAIL; EXIT=1; fi
-LINE="DOCS=$STATUS D1=$D1(${ACTUAL:-?}) D2=$D2(${IDX_ID:-?}) D3=$D3($BP_COUNT) D4=$D4(${RP_WORDS:-?})"
+LINE="DOCS=$STATUS D1=$D1(${ACTUAL:-?}) D2=$D2(${IDX_ID:-?}) D3=$D3($BP_COUNT) D4=$D4(${RP_WORDS:-?}) D5=$D5(${UB_RULES:-?}/${UB_WORDS:-?})"
 if [ $AGENT -eq 1 ]; then
     for F in "${FAILS[@]}"; do echo "$F" >&2; done
     echo "$LINE"

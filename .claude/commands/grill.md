@@ -1,66 +1,32 @@
 # /grill — The Plan Interrogation Protocol
 
-Adversarial review of a draft plan before it is presented for authorization.
-Use on every non-trivial plan (3+ steps or any ownership/structural move) and
-on any plan the user asks to have grilled. Read-only: this command never edits
-source, tests, or the plan document. It produces verdicts.
+Adversarial review of a draft plan before the user sees it: every UI-queue iteration plan (Standing Order item 2) and
+every non-trivial plan outside a queue. Read-only: this command never edits source, tests or the plan. It produces
+verdicts. Stance: **assume the plan is wrong and look for where** — the author is the worst person to find its weakest
+claim. Origin: WF-002 (a draft asserted coverage that did not exist); reshaped for the web game 2026-09-25.
 
----
+## 1. Locate
+The plan under review (the writer's returned plan, or a path the user names) and what binds it: for a UI iteration the
+queue's Decisions (`tasks/UI_QUEUE.md`, where it and the study disagree the queue wins) and its row; always
+`web/CLAUDE.md` and the CODEX OO table. A Groovy plan (rare — the tree is frozen): add the gates in `terminal/CLAUDE.md`.
 
-## 🌌 PHILOSOPHY
-A plan is a set of claims about code. Most are cheap to verify and expensive to
-get wrong. The author of a plan is the worst person to find its weakest claim,
-so this pass runs with a different stance: **assume the plan is wrong and look
-for where.** Every check below ends in a verdict, not prose. Origin: WF-002 in
-`docs/analysis/WORKFLOW_BACKLOG.md` — a Phase 6b draft asserted test coverage
-that did not exist, and only user review caught it.
+## 2. The six checks
+Each is answered from tool output produced in this session (Read, grep, a probe). From memory is a FAIL.
 
----
+| # | Check | Evidence | Verdict |
+| :-- | :-- | :-- | :-- |
+| 1 | **Coverage claims** — every "test X guards Y" | the assertion lines of X, quoted, from an enabled test | PASS / UNGUARDED (a step-0 test is added) |
+| 2 | **Decisions** — every queue Decision the plan touches, and every place it departs from one or from the mock's look | each named with the plan line that honours it; a departure carries its reason (the game wins over the mock on rules, names, numbers) | PASS / DEVIATES |
+| 3 | **Shape** — the OO table's checks 1–6 | the Shape table (a missing row is a FAIL); grep the planned client code and tests for `instanceof`, `kind().key()` switches, statics without a reason, a second owner of a fact; engine purity (no DOM, clock, `Math.random` in `src/engine/`) | PASS / UNDECLARED |
+| 4 | **Walls** — the rules the tests enforce | for each the plan touches, the enforcing test named: the first move in view at 360 × 640 (`e2e/fold.spec.ts`), picture text ≥ 12 px (`Pictures.test.ts`), contrast and no opacity (`Contrast.test.ts`), views carry no words (`ViewsCarryNoWords.test.ts`), named images and reduced motion (`e2e/a11y.spec.ts`), noise seeded from `FrameEntropy`, a tap in a picture resolves to an option id and every tappable thing is a real `button[data-option]` | PASS / UNGUARDED |
+| 5 | **Tests that move on purpose** (Decision 16) | every golden, pin and e2e selector the change retires or rewrites, by name; goldens only through their one writer | PASS / UNLISTED |
+| 6 | **Revert unit and cost** | one commit per module with its tests, each green alone; the token estimate present and plausible for the scope | PASS / UNBOUNDED |
 
-## 🛠️ WORKFLOW
+## 3. Blast radius
+grep `web/src`, `web/tests` and `web/e2e` for every type, field, method, test id and CSS class the plan touches; any
+hit the plan does not list is reported.
 
-### 1. LOCATE THE PLAN
-- Input is the draft plan under review: the most recent plan in this conversation,
-  or a file path / phase section the user names.
-- Read the matching section of `terminal/docs/analysis/OOA_REFACTOR_PLAN.md` (or the active
-  task document from `tasks/todo.md`) so deviations can be measured against it.
-
-### 2. RUN THE SIX CHECKS
-Each check must be backed by tool output produced in this session (Read, grep,
-`./terminal/vinc.sh`). A check answered from memory is a FAIL regardless of the answer.
-
-| # | Check | Evidence required | Verdict |
-| :--- | :--- | :--- | :--- |
-| 1 | **Coverage claims** — every "test X guards Y" | The assertion lines from X, quoted. No quote → behavior is UNGUARDED and the plan needs a step-0 pinning test. | PASS / UNGUARDED |
-| 2 | **Behavioral edges** — every line whose *semantics* change, not just its reference | Each edge listed with the file, the old behavior, the new behavior, and the named guard (test or scan) that would catch a regression. | PASS / UNGUARDED |
-| 3 | **Lifecycle** (ownership moves only) — who constructs, who holds, who replaces the instance | grep for `new <Type>(` and for assignments to the field across `src/main` and `src/test`. Any site that *replaces* the instance after construction is flagged. | PASS / STALE-REF RISK |
-| 4 | **Per-commit coherence** — each commit compiles and passes the full suite alone | The file list per commit, the production-file count against the phase cap, and the ordering argument for why intermediate states compile. | PASS / INCOHERENT |
-| 5 | **Deviations from the plan document** + **pattern integrity** + **shape** | Each difference between the draft and the phase section, with the reason. Silent deviations are a FAIL. Then the six checked principles of the CODEX **OO Principles** table (§ 4, WF-009), each with its evidence quoted: (1) one owner — grep the fact's literal; (2) no static logic — every non-private `static` in the plan's code or Shape table carries its reason, "pure function" is not one; (3) ask the object — grep the planned *client* code (and tests) for `instanceof <NewType>`, `.class ==`, `getClass()` on a new State/Strategy/Factory/Visitor hierarchy; for an Observer the client is the listener, so `instanceof <EventSubtype>` in a subscriber is the same FAIL (WF-004); (4) injected, not located — the Shape table's `owner` column; (5) a new kind is a registry entry; (6) domain values by stable key. A missing Shape table row is a FAIL. | PASS / UNDECLARED |
-| 6 | **Reversion unit** — what gets reverted if a gate goes red | The revert boundary (commit, sub-phase, branch) and confirmation that no commit mixes production and unrelated doc changes. | PASS / UNBOUNDED |
-
-### 3. BLAST RADIUS CROSS-CHECK
-- grep `src/main` **and** `src/test` for every field, method, and constructor the
-  plan touches. Compare the hit list to the plan's "Files" and "Test blast radius"
-  lines. Any hit absent from the plan is reported.
-
-### 4. REPORT
-Output a table of the six verdicts, then one bullet per non-PASS item stating
-the exact amendment needed. End with one of:
-- **CLEARED** — no amendments; the plan may be presented for authorization as-is.
-- **AMEND** — list the amendments; the plan is re-presented after they are made.
-- **STOP** — a check exposed a flaw in the plan's premise; re-plan before continuing.
-
----
-
-## 📍 EXAMPLE TRIGGERS
-- "Grill the 6b plan."
-- "Run /grill before you ask me to authorize this."
-- "Interrogate the ownership move in step 3."
-
----
-
-## 🏺 ARCHITECT'S NOTE
-The Vinculum Protocol makes plans the gate to every change. A plan that passes
-this interrogation has earned that authority; one that has not is a hypothesis.
-Keep the checks at six. A longer list becomes a ritual that gets skimmed.
-Shape is checked here because it is cheapest here — a wrong answer costs a plan line, not a commit (WF-009).
+## 4. Report
+The six verdicts as a table, then one line per non-PASS with the exact amendment. End with **CLEARED** (present it),
+**AMEND** (amend, re-grill, then present) or **STOP** (the premise is wrong — re-plan). Keep the checks at six: a
+longer list becomes a ritual that gets skimmed.
