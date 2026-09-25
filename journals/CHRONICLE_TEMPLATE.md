@@ -44,18 +44,16 @@ to confirm it isn't already used.
 
 ### 📍 LOCUS_CONTEXT
 (For gameplay/procgen sessions)
-- **MASTER_SEED:** `12345` (reference seed used)
-- **ACTIVE_LIP:** `0.0.0.0.0.0.0.0`
-- **SNAPSHOT:** `screenshots/...`
+- **WORLD_SEED:** `7F3A-91C2-0B4D-E6A8` (the seed used)
+- **SNAPSHOT:** `web/test-results/...`
 
-(For OOA refactoring sessions — replace fields as needed)
-- **ACTIVE_PHASE:** Phase 2b — NameGenerator Lexicon Externalization
-- **REFACTOR_TARGET:** `NameGenerator.groovy` → `src/main/resources/names/buildings/`
-- **SAFETY_GATE:** `ProcgenSnapshotTest`, `DeterministicUniverseTest`
+(For iteration sessions — replace fields as needed)
+- **ITERATION:** U01 — The stage
+- **TARGET:** `web/src/ui/…`
+- **SAFETY_GATE:** `npm run check`, `npm run e2e`
 
 (For infrastructure/tooling sessions)
-- **MASTER_SEED:** N/A (infrastructure work only)
-- **ACTIVE_LIP:** N/A
+- **WORLD_SEED:** N/A (infrastructure work only)
 - **SNAPSHOT:** reference file if applicable, else omit
 
 ### 🛠️ IMPLEMENTATION_DELTA

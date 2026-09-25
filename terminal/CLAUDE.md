@@ -50,7 +50,7 @@ HK and phase plans `tasks/completed/`. History — read on demand, never rewritt
 - **Lint baseline:** `config/lint/baseline.xml` holds 8 entries — the long methods of HK-013 (extract or re-baseline with a
   reason, never reformat); the `NoNewStaticLogic` allow-list in `config/lint/vinc-ruleset.groovy` is 15 files,
   shrink-only — none of them a rule-holding class since HK-022. One writer: `./vinc.sh --lint --baseline`. Jars: `lib/lint/`.
-- **Blueprints:** 15 under `docs/blueprints/logic/classes/` (stamped; see `/close-wave` row 3). `Room`, `TurnProcessor`,
+- **Blueprints:** 15 under `docs/blueprints/logic/classes/` (stamped; see "Closing a Groovy wave"). `Room`, `TurnProcessor`,
   `NameGenerator`, `ProceduralFactory` and `Building` are `Verified`; 10 are still `Baselined (not audited)`.
 - **Goldens:** `src/test/groovy/com/endlesstransit/ui/golden/` — one writer: `./vinc.sh --goldens`.
 - **Content (procgen lists):** `src/main/resources/{themes,names}/` — every list has a size floor in
@@ -77,7 +77,8 @@ HK and phase plans `tasks/completed/`. History — read on demand, never rewritt
     * **Compilation Check**: Every change MUST pass `./terminal/vinc.sh --compile` (or `--test`).
     * **Full Verification**: Run `./terminal/vinc.sh --test` before marking any major task complete.
     * **Lint Check (O2)**: `./terminal/vinc.sh --lint` must be green before any merge; `terminal/config/lint/baseline.xml` has one writer (`--lint --baseline`) and a diff that *adds* entries is a regression being laundered — review it like a golden.
-    * **Docs Check (WF-007)**: `./terminal/vinc.sh --docs` must be green before a wave is called closed — suite count and latest chronicle in `tasks/RECOVERY_PROMPT.md` / `tasks/todo.md`, every class blueprint stamped with its class's current hash, and the recovery prompt under its 1,000-word cap (current state only; history lives in the chronicle). A stamp or a count is never edited to match without doing the `/close-wave` row it belongs to.
+    * **Docs Check (WF-007)**: `./terminal/vinc.sh --docs` must be green before a Groovy wave is called closed — the suite
+      count in this file's "Test Suite" line and `tasks/todo.md`, and every class blueprint stamped with its class's current hash.
 * **The Gates** (mandatory after every phase; the full history is in `terminal/docs/analysis/OOA_REFACTOR_PLAN.md`, read on demand):
 
 | Gate | Command | Checks |
@@ -88,6 +89,16 @@ HK and phase plans `tasks/completed/`. History — read on demand, never rewritt
 | Lint | `./terminal/vinc.sh --lint` | house rules + invariants; baseline may only shrink |
 | Determinism | `DeterministicUniverseTest` | same seed → same world (procgen/model changes) |
 | Docs | `./terminal/vinc.sh --docs` | handover facts + blueprint stamps (at close-out) |
+
+## 🧾 Closing a Groovy wave (from the retired `/close-wave`, 2026-09-25)
+The root close-out (`.claude/CODEX.md` § 1.5), plus:
+- **Preconditions:** `./vinc.sh --test --agent`, `--lint --agent`, `--scan` if `model`/`procgen` changed.
+- **Blueprints:** for every touched class with a file in `docs/blueprints/logic/classes/<pkg>/`: read the blueprint
+  against the class, correct it, re-stamp its last line `*Verified against: <Class>.groovy @ <hash>*`
+  (`git hash-object <file> | cut -c1-10`). `Baselined (not audited)` becomes `Verified` only after the whole blueprint
+  was read against the class. Domain `CLAUDE.md` if an invariant moved.
+- **Player docs:** root `docs/terminal/` (guide, manual, codex) for every behavior the player can see.
+- **Gate:** `./vinc.sh --docs --agent` → `DOCS=PASS`, beside the root `./.claude/docs-check.sh`.
 
 ## 🏛️ Development Conventions
 - **Groovy Tooling Lessons**: @tasks/lessons/groovy-tooling.md

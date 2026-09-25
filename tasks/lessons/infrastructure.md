@@ -26,8 +26,7 @@ top of `CLAUDE.md`.
   one match); read the edited region before committing; never write "the top commit is X" into a file the next commit
   buries. (HK-013)
 - **Never `git add -A` or `git add .`**: name the paths, `git status --short` first. (GitHub Pages audit)
-- **`/close-wave` runs after the wave's last action** — the merge, the push, the live check — or re-runs its row 2
-  after them. (WF-010)
+- **The close-out runs after the wave's last action** — the merge, the push, the live check. (WF-010)
 - **Grep the backlog before presenting a finding as new.** (HK-023)
 - **An import is not a call**: grep the call before planning; a public method with no caller is a regression to log
   (`git log -S`), not a feature to wire. (Phase 10)

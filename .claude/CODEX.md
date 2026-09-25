@@ -6,7 +6,7 @@ This file defines the behavioral mandates and workflow orchestration for the Vin
 
 ## 🚦 THE STANDING ORDER — queue sessions (user Directive, 2026-09-21; extended to the UI queue 2026-09-24)
 For every session that works a queue — `tasks/PORT_QUEUE.md` (done) or `tasks/UI_QUEUE.md` — this section **replaces**: the Vinculum Protocol below, `/grill` as an authorization step and
-`/close-wave`. The rest of this file (OO principles, Shape
+the close-out of § 1.5. The rest of this file (OO principles, Shape
 table, coverage claims, tests before fixes) still governs the code that gets written.
 
 1. **"hi" runs the queue** — the user block at the top of `CLAUDE.md` outranks this order (a question or process talk
@@ -66,8 +66,16 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 ### 1. Re-plan
 * If something goes sideways, STOP and re-plan immediately — don't keep pushing.
 
-### 1.5. Waves
-* Close every wave (phase, HK item, WF item, docs session, one-line fix) with `/close-wave`, **at the tier the command selects from the diff** (Trivial / Light / Full, WF-008) — it finds what the wave made false, makes the recovery prompt true and runs `./terminal/vinc.sh --docs`; chronicle and retro belong to the Full tier or to a named add-on reason. **The words "closed" or "merged" appear in chat only as the output of `/close-wave`, under its table** (WF-007).
+### 1.5. Closing a wave (outside a queue)
+A wave — a backlog item, a docs session, a one-line fix — closes after its last action (the merge, the push, the live
+check), in one go under the directive that started it:
+1. **False facts:** write each fact the wave made false in the old state's own words; `grep -rn` them across `docs/`,
+   `tasks/`, every `CLAUDE.md`, `.claude/`, `README.md`; fix every live hit (`journals/` and `tasks/completed/` are history).
+2. **Handover true:** `tasks/RECOVERY_PROMPT.md` holds current state only; a backlog entry closes with a pointer to its record.
+3. **Lessons:** each user correction becomes a block line or a lesson (the Self-Improvement Loop below).
+4. **Gate:** `./.claude/docs-check.sh --agent` → `DOCS=PASS`; a Groovy wave adds the steps in `terminal/CLAUDE.md`.
+5. **One chain:** the edits `&& git add <paths> && git commit`, merge `--no-ff`, the merged branch deleted. A chronicle
+   or a retro only when the user asks.
 
 ### 2. Subagent Strategy
 * Use subagents (via the `Agent` tool) to keep the main context window clean.

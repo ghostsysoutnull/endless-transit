@@ -12,7 +12,7 @@
   - **The user's findings** from playing the web game, when they send them — each becomes a fix piece (queue section "Reported by the tester").
   - **CONCEPT-001** ships: concept `docs/analysis/SHIPS_CONCEPT.md`, every rule the mocks run on `docs/analysis/SHIPS_RULES.md`, two mocks (text v1, visual v13). **Open: the concept's §7 verdict column — eleven decisions, none judged.** No plan until then.
   - Ships will exist only in the web game; the visual mock stays their lab (study D5). A UI change is unverified until seen: `node docs/analysis/mocks/look.js`.
-  - **Workflow** (`docs/analysis/WORKFLOW_BACKLOG.md`): WF-010 Medium · WF-011 Low · WF-006 Low (moot — close at the next review) · WF-013 Low Actions on push (needs the user's `gh auth refresh -s workflow`).
+  - **Workflow** (`docs/analysis/WORKFLOW_BACKLOG.md`): WF-011 Low · WF-006 Low (moot — close at the next review) · WF-013 Low Actions on push (needs the user's `gh auth refresh -s workflow`).
   - **Chronicle:** none written for the port (user decision: lean records); one chronicle for the whole port if the user asks.
 
 ## 🚀 How to Resume
@@ -29,7 +29,7 @@ Initialize session for the Endless Transit substrate.
 3. **Audit:** `cd web && npm run check` → `STATUS=PASS`; `./.claude/docs-check.sh --agent` → `DOCS=PASS`.
 4. **"hi" runs `tasks/UI_QUEUE.md`** under the Standing Order; anything else waits for a Directive.
 5. **Every task outside a queue:** plan file (with its Shape table, CODEX § 4) → `/grill` → the user's go → branch →
-   the touched tree's gates after every commit → merge `--no-ff` → **`/close-wave`** before saying "closed". Push only
+   the touched tree's gates after every commit → merge `--no-ff` → the close-out (CODEX § 1.5) before saying "closed". Push only
    on the user's word; a commit/push directive covers the close-out.
 
 **END_PROMPT**
@@ -40,7 +40,7 @@ Initialize session for the Endless Transit substrate.
 | Resource | Path |
 | :--- | :--- |
 | History | `journals/CHRONICLE_INDEX.md` → `journals/LOG_*`; finished plans `tasks/completed/`; the port `tasks/port/` |
-| Law + commands | root `CLAUDE.md` (the user block first); `.claude/CODEX.md`; `web/CLAUDE.md`; `.claude/commands/{grill,chronicle,close-wave}.md`; `./.claude/docs-check.sh` |
-| Backlogs | `tasks/backlog/CONCEPTS.md` (OPEN: CONCEPT-001); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-010 Medium, WF-011, WF-006, WF-013 Low) |
+| Law + commands | root `CLAUDE.md` (the user block first); `.claude/CODEX.md`; `web/CLAUDE.md`; `.claude/commands/{grill,chronicle}.md`; `./.claude/docs-check.sh` |
+| Backlogs | `tasks/backlog/CONCEPTS.md` (OPEN: CONCEPT-001); `docs/analysis/WORKFLOW_BACKLOG.md` (OPEN: WF-011, WF-006, WF-013 Low) |
 | Lessons | `tasks/lessons/infrastructure.md` (process, every session); `tasks/lessons/web.md` (with `web/`) |
 | Player docs + site | `docs/web/` (web game guide + cheat sheet, numbers cited from `web/src`); live at `https://ghostsysoutnull.github.io/endless-transit/` — GitHub Pages from `master:/docs`, so **a push republishes the site**; branches are never published |

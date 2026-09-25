@@ -17,9 +17,8 @@ In Endless Transit, the code is the Lore. This command handles **Dual-Channel Sy
 
 ### 1. CONTEXT HARVEST
 - Run `git log -n 10 --oneline` to extract recent commits.
-- Read `tasks/todo.md` to identify the active task, then read that document if there is one.
+- Read `tasks/RECOVERY_PROMPT.md` and the active queue or plan to identify the wave.
 - Read `journals/CHRONICLE_INDEX.md` to understand the existing log history.
-- Retrieve the current `masterSeed` and `LIP` from the last session or `GameMemento` if available.
 
 ### 2. DUAL-CHANNEL SYNTHESIS
 Use `journals/CHRONICLE_TEMPLATE.md` to structure the entry:
@@ -27,8 +26,8 @@ Use `journals/CHRONICLE_TEMPLATE.md` to structure the entry:
 - **Tech:** List specific refactors, pattern implementations, and verification results.
 
 ### 3. SNAPSHOT INTEGRATION
-- Note the relevant seed and LIP for this session.
-- If a screenshot was captured (`terminal/screenshots/`), link its path in the journal entry.
+- Note the world seed when the wave is about a world (a play-session fixture or the save).
+- If a screenshot was captured (`web/test-results/`), link its path in the journal entry.
 
 ### 4. FRAGMENTATION & INDEXING
 - **Filename:** `journals/LOG_<YYYYMMDD_HHMMSS>_0x<SHORT_GIT_HASH>.md`
