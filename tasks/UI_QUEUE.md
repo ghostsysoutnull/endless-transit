@@ -6,7 +6,7 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 **Where the study and this file disagree, this file wins.** Each iteration leaves one short note, `tasks/ui/<id>.md`
 (plan, Shape table, choices made, gate lines, what the tester can try); the note and the merge commit are the record.
 
-**Estimate (2026-09-24):** 8 iterations. An iteration that proves too big is split here.
+**Estimate (2026-09-24):** 8 iterations; 9 since U01 split in two (2026-09-25). An iteration that proves too big is split here.
 
 ## Decisions (user, 2026-09-24) — nothing here is asked again
 1. **Picture first; the terminal's jargon goes.** Every place is drawn on a canvas and tapped in the picture; its list
@@ -63,7 +63,8 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 
 | ✓ | id | Iteration | The tester can |
 | :-- | :-- | :-- | :-- |
-| [ ] | U01 | **The stage**: the world screen rebuilt picture first — one scene host (a canvas, its hit areas, the zoom in and out between places, the motion clock, the pixel budget, the coherence effects, reduced motion), the new layout (the place drawn, a card with plain chips and the prose, the list as the picture's twin, the dock), the jargon out of the HUD, the depth rail kept; **the street drawn and tappable**. Places not yet redrawn keep today's view until their iteration | see the street drawn, tap a building and feel the zoom, watch the world tear as coherence falls (debug) |
+| [x] | U01a | **The frame** (U01 split, the phone had 72 px to spare): the HUD in plain words (Coherence, Steps, Buffer), the depth rail in place of the crumbs (a line of glyphs on a phone, a named column on a desktop), the card with plain chips and natural-case names; the locus hash, the seed and the readout fold off the world screen. Note `tasks/ui/U01.md` | walk any place on a phone and a desktop: a plain top, the rail lit at your level, chips on the card |
+| [ ] | U01b | **The stage and the street**: one scene host (a canvas, its hit areas, the zoom in and out between places, the motion clock, the pixel budget, the coherence effects, reduced motion), the list as the picture's twin, the street's jargon out; **the street drawn and tappable**. Places not yet redrawn keep today's view until their iteration. Outline in `tasks/ui/U01.md` | see the street drawn, tap a building and feel the zoom, watch the world tear as coherence falls (debug) |
 | [ ] | U02 | **The tower**: riding the shaft — the window of floors, the gauge slider, floors by tens, roof and bedrock, the car's motion | ride a hundred-floor tower by drag, gauge, list and keys |
 | [ ] | U03 | **The corridor**: walking it — every door in the perspective, the shape from the floor's words, the slider, walking to a picked door | walk a twenty-door gallery and a straight corridor, open a far door |
 | [ ] | U04 | **The apartment and the room**: the plan (its layout a pure function of the apartment, the fog and the scan, drag, pinch, minimap, glide in, pull back) and the room (drawn, relics tapped, the flight to the buffer) | explore a plan room by room, capture a relic |
