@@ -143,10 +143,11 @@ has no message); the previous scene's focused option gets the focus back on the 
 **Input.** `InputRouter` maps tap/click and, on desktop, a key to an option id and calls `engine.step`. Every action
 is a real `<button>` at least 44 × 44 CSS px; nothing depends on hover or a key.
 
-**Phone first.** Under 900 px the HUD folds behind a readout button (last two crumbs, steps, buffer and position
-stay), the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a disclosure holding scan, map,
+**Phone first.** The HUD is one small box (the name, steps, buffer, the Coherence meter), with the depth rail of level
+glyphs under it (U01a: the terminal's readouts, the address, its hash and the seed are gone from the world screen);
+the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a disclosure holding scan, map,
 buffer, trace, help, title, end session); every screen shows a move without scrolling at 360 × 640. Desktop shows the
-dock in one row and a right column (objects, telemetry, the pane map or spectrogram). `prefers-reduced-motion` stops
+rail as a left column with the names, the dock in one row and a right column (objects, telemetry, the pane map or spectrogram). `prefers-reduced-motion` stops
 the bar, the canvas pulse and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
 **Canvas.** `src/ui/canvas/` is the only hand-drawn code: a `Picture` (`MapPicture`, `TracePicture`) is a pure function
