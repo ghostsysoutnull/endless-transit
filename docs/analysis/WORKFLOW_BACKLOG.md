@@ -55,6 +55,7 @@ New lessons are rule + pointer (CODEX, Self-Improvement Loop); the older bullets
 > edits), then Phase 10. Next scheduled review: Phase 13, or the next phase after Phase 10 if the plan ends there.
 
 ### WF-010 — `/close-wave` runs before the merge and the push, so what they change is nobody's row
+**CLOSED 2026-09-25 (moot):** `/close-wave` is retired; the close-out (CODEX § 1.5) runs after the wave's last action by definition.
 **Priority:** Medium | **Found:** 2026-09-20 (GitHub Pages audit; user: "why the end wave did not take care of this all?")
 The command must finish before the merge Directive ("READY TO CLOSE"), but a wave that publishes keeps producing facts afterwards: the record said the live checks were "owed" after they had passed,
 the merged branch was left behind, a chronicle was only suggested, and three stale documents found by row 2 were "justified" and handed back as leftovers. **Decide:** a post-merge step in the command

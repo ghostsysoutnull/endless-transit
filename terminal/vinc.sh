@@ -98,7 +98,7 @@ case "$1" in
         exit $LINT_EXIT
         ;;
     "--docs")
-        # WF-007: mechanical half of /close-wave — suite count, latest chronicle, blueprint stamps. Read-only.
+        # WF-007: the Groovy docs audit — suite count, blueprint stamps. Read-only.
         #   --agent     single DOCS=PASS|FAIL line on stdout; stale facts go to stderr
         .agents/docs-check.sh "${@:2}"
         exit $?
