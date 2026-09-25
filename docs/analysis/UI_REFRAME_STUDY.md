@@ -47,7 +47,7 @@ Read today (all as strings inside `facts` / `readings` / trace `meta`):
   elevator's ATMOS_SHIFT (`ElevatorState.ts:73`); a rebel city only as an alert fact and a VOLATILE status
   (`City.ts:41-54`); a room's era as TEMPORAL_MARKER (`Room.ts:304-315`).
 
-**Missing, and needed** (U07 for the vibe, earlier where a scene needs a count):
+**Missing, and needed** (U05 for the vibe, earlier where a scene needs a count):
 - the **second culture and era** (`Vibe.ts:46,50` are read only inside the engine) and the **stability** as a number;
 - **rebel** as a boolean, not an alert string;
 - the **apartment's own culture, era and anomaly** (`Apartment.ts:80-85`; an apartment is never stood in —
@@ -72,7 +72,7 @@ Shape table. Facts stay for the words; the pictures read the typed fields.
   gets a summary label from its presenter.
 - **The first screen** (`e2e/fold.spec.ts`): on every screen kind, at the device size and at 360 × 640, the first
   `button[data-option]` outside the dock and the debug strip is fully in view above a sticky dock; every button is
-  ≥ 44 × 44; no sideways scroll. **A picture on top pushes the list down** — U01 must choose: a picture short enough on
+  ≥ 44 × 44; no sideways scroll. **A picture on top pushes the list down** — U01b must choose: a picture short enough on
   a phone, the place's first move in the card above the picture, or the move in the dock. The rule does not bend.
 - **Noise is seeded, never the clock** (web/CLAUDE.md): the mock seeds its effects from the frame counter; the game
   seeds them from `FrameEntropy`.
@@ -105,7 +105,7 @@ Shape table. Facts stay for the words; the pictures read the typed fields.
 
 ## 7. Order of work
 
-The queue's iterations: U01 the stage and the street → U02 the tower → U03 the corridor → U04 the apartment and the
-room → U05 above and below → U06 the trace column and the dive → U07 the pole and the vibe as data → U08 wrap-up.
-U01 carries the risk (the scene host, the clock, the hit-to-option path, the first-screen choice); later iterations
+The queue's iterations (re-cut 2026-09-25; the queue wins): U01a the frame → U01b the street, drawn → U02 inside the
+building (tower and corridor) → U03 the apartment and the room → U04 above, below and the trace → U05 the pole and the
+vibe → U06 plain words and wrap-up. U01b carries the risk (the scene host, the clock, the hit-to-option path, the first-screen choice); later iterations
 add pictures and interactions to a host that already works.
