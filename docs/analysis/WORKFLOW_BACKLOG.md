@@ -18,7 +18,7 @@ No workflow file exists; the site publishes from `master:/docs`. One Action runn
 
 ### WF-012 — Lessons diet: the old lesson bullets are stories, not rules
 **Priority:** Low | **Found:** 2026-09-20 (context diet `0xb629529`); logged 2026-09-21 — until then it lived only in the recovery prompt.
-New lessons are rule + pointer (CODEX, Self-Improvement Loop); the older bullets in `tasks/lessons/*.md` are paragraphs loaded every session. **Decide:** rewrite them as rule + pointer. Needs bullet-by-bullet user review, because a shortened lesson can lose the rule. User call, deferred.
+New lessons are rule + pointer (CODEX, Self-Improvement Loop); the older bullets in `tasks/lessons/*.md` are paragraphs loaded every session. **Decide:** rewrite them as rule + pointer. Needs bullet-by-bullet user review, because a shortened lesson can lose the rule. User call, deferred. **2026-09-25:** widened to every always-loaded rule and planned — `tasks/RULES_DIET_PLAN.md`.
 
 > **Phase 1 cadence review completed — 2026-03-18.** Backlog clean. No workflow session
 > required before Phase 2. Next scheduled review: Phase 4.
