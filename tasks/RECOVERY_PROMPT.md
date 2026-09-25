@@ -32,8 +32,8 @@ Initialize session for the Endless Transit substrate.
    `docs/analysis/WORKFLOW_BACKLOG.md`. Groovy-only recipes and records: `terminal/CLAUDE.md`.
 3. **Audit:** `./terminal/vinc.sh --test --agent 2>/dev/null` → `STATUS=PASS DISCOVERED=296 …`; `./terminal/vinc.sh --lint --agent 2>/dev/null` → `LINT=PASS`;
    `./terminal/vinc.sh --scan` → seed 0, 9 nodes; `./terminal/vinc.sh --docs --agent 2>/dev/null` → `DOCS=PASS`.
-4. **"hi" runs `tasks/UI_QUEUE.md`** under the Standing Order (it replaces steps 3 and 5 for queue sessions); anything else waits for a Directive. Questions: one per message, plain words (no symbols, no section numbers), lettered
-   options, a marked pick. Chat summaries short and plain. Recommend only inside what the user asked for.
+4. **"hi" runs `tasks/UI_QUEUE.md`** under the Standing Order (it replaces steps 3 and 5 for queue sessions); anything else waits for a Directive. How to talk to the user: the block at the top of
+   `CLAUDE.md`.
 5. **Every task:** plan file (with its Shape table, CODEX § 4) → `/grill` → authorization → branch → full suite + `--lint` after every commit →
    merge `--no-ff` → **`/close-wave`** (it prints its tier and table) **before saying "closed"**. Push only on the user's word.
 

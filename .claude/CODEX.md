@@ -103,7 +103,9 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 ---
 
 ## 🏺 Self-Improvement Loop
-* After ANY correction from the user: update the relevant `tasks/lessons/<domain>.md` file.
+* After ANY correction from the user: a correction about how to work with the user becomes a line in the block at the
+  top of `CLAUDE.md` (≤ 12 rules — merge or replace, never grow past); any other updates the relevant
+  `tasks/lessons/<domain>.md` file.
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.
 * **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave (`(HK-012)`) — the incident lives in that wave's chronicle and retro. The lessons files are loaded every session; every sentence in them is paid for each time. Existing long bullets are left as they are until a lessons diet is decided.

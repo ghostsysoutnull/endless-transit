@@ -53,8 +53,8 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 16. **Tests change on purpose.** A browser test or golden that pins an old label is changed in the iteration that
     retires the label, and the note names it. The first-screen rule stays: a move is visible without scrolling at
     360 × 640 on every screen.
-17. **How to ask** (if a question is ever unavoidable): one per message, lettered options, the pick marked first
-    (`(A) ★ …`), ambitious options, plain words. Build the pick; do not re-ask.
+17. **How to ask**: the user block at the top of `CLAUDE.md` is the one home (one question per message, lettered
+    options, the pick first, plain words; a pick is built, not re-asked).
 
 ## Reported by the tester
 *(the user's findings — each becomes a fix piece run before the next iteration)*
