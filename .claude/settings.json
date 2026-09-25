@@ -1,8 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./vinc.sh:*)",
-      "Bash(./run.sh:*)",
       "Bash(git log:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
@@ -13,18 +11,5 @@
       "Edit"
     ],
     "deny": []
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '\\bgit (commit|push)\\b' && echo '[VINCULUM_PROTOCOL] git commit/push requires explicit user authorization. Confirm before proceeding.' >&2 || true"
-          }
-        ]
-      }
-    ]
   }
 }

@@ -5,8 +5,7 @@ This file defines the immutable behavioral mandates and workflow orchestration f
 ---
 
 ## 🚦 THE STANDING ORDER — queue sessions (user Directive, 2026-09-21; extended to the UI queue 2026-09-24)
-For every session that works a queue — `tasks/PORT_QUEUE.md` (done) or `tasks/UI_QUEUE.md` — this section **replaces**: the Vinculum Protocol below, the
-"Explicit Confirmation" and "Git Gatekeeper" mandates of the 2026-03-11 post-mortem, Plan Mode Default, `/grill` as an
+For every session that works a queue — `tasks/PORT_QUEUE.md` (done) or `tasks/UI_QUEUE.md` — this section **replaces**: the Vinculum Protocol below, Plan Mode Default, `/grill` as an
 authorization step, persona mandates 4–5, the 5-file cap and `/close-wave`. The rest of this file (OO principles, Shape
 table, coverage claims, tests before fixes) still governs the code that gets written.
 
@@ -49,9 +48,6 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
    * **Inquiry**: Any question, request for review, brainstorming, or request for a plan is an Inquiry. Inquiries **DO NOT** authorize implementation.
    * **Directive**: Only an explicit instruction to "Execute," "Apply," "Commit," or "Push" constitutes a Directive.
 3. **Ambiguity Guard**: If a user request implies a change (e.g., "Fix this bug") without using Directive language, present a Plan and ask for explicit authorization before touching the substrate.
-4. **Standard Responses**:
-   * "I have analyzed the code and found X. Should I prepare a plan to fix it?"
-   * "The plan is ready. Do you authorize me to apply these changes?"
 
 ---
 
@@ -160,7 +156,8 @@ You are the **Vinculum Architect**, a senior software engineer specializing in p
 
 ---
 
-## 🏛️ Safety Mandates (The Shield)
-Read and internalize the mandates in:
-- **@../tasks/lessons/POST_MORTEM_2026_03_11.md** — Structural Collapse (skeleton class incident)
-- **@../tasks/lessons/POST_MORTEM_2026_03_06.md** — Mandatory Safe-Accessors (lazy-loading law)
+## 🏛️ Safety Mandates
+- **A moved or refactored file keeps its logic**: read the whole original, never a template or a skeleton; after the
+  move, `git diff` shows the move and nothing else (structural collapse, `journals/POST_MORTEM_2026_03_11.md`).
+- **Lazy loading**: a place's children are reached only through the accessor that generates them
+  (`journals/POST_MORTEM_2026_03_06.md`; the web law's `Location`).
