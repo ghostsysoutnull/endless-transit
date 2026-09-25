@@ -38,11 +38,11 @@ async function shoot(page: Page, name: string, fromTop = true): Promise<void> {
 async function expectMeter(page: Page, coherence: number, band: string, steps: number): Promise<void> {
   await expect(page.getByTestId('coherence')).toHaveText(`${String(coherence)}%`);
   await expect(page.getByTestId('meter')).toHaveAttribute('data-band', band);
-  await expect(page.getByRole('meter', { name: 'COHERENCE' })).toHaveAttribute(
+  await expect(page.getByRole('meter', { name: 'Coherence' })).toHaveAttribute(
     'aria-valuenow',
     String(coherence),
   );
-  await expect(page.locator('.stat', { hasText: 'PULSE_TRAVERSAL' }).locator('dd')).toHaveText(String(steps));
+  await expect(page.locator('.stat', { hasText: 'Steps' }).locator('dd')).toHaveText(String(steps));
 }
 
 test('the HUD shows Coherence and the step count: a move costs one and counts one, the title screen costs one and counts none', async ({
@@ -154,8 +154,14 @@ test('play until death and continue: the failure screen, REBUILD, the same seed 
 
   await press(page, /rebuild/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('BRIGHT BOULEVARD');
-  await expect(page.locator('.stat', { hasText: 'SEED' }).locator('dd')).toHaveText(SEED);
+  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
+  // The world screen no longer shows the seed (U01a): the save says which world this is.
+  expect(
+    await page.evaluate(
+      (slot) => (JSON.parse(window.localStorage.getItem(slot) ?? '{}') as { seed?: string }).seed,
+      SLOT,
+    ),
+  ).toBe(SEED);
   await expectMeter(page, 100, 'stable', 7);
   await expect(page.getByTestId('status')).toHaveText(/rebuilt/i);
   // The building was visited before the failure: its row keeps the [V]; the world's own state is undone.
@@ -184,7 +190,7 @@ test('close the tab and reopen: a new page with the same storage continues with 
   await tapOption(page, 'enter:0', hasTouch);
   await tapOption(page, 'enter:15', hasTouch);
   await press(page, /go up/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 1');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 1');
   await expectMeter(page, 97, 'stable', 3);
   expect(problems).toEqual([]);
 
@@ -204,7 +210,7 @@ test('close the tab and reopen: a new page with the same storage continues with 
   const again = await reopened.newPage();
   const moreProblems = watchForErrors(again);
   await again.goto('./');
-  await expect(again.getByTestId('place-name')).toHaveText('FLOOR 1');
+  await expect(again.getByTestId('place-name')).toHaveText('Floor 1');
   await expectMeter(again, 97, 'stable', 3);
   await press(again, /leave floor/i, hasTouch);
   await expectMeter(again, 96, 'stable', 4);
@@ -322,7 +328,7 @@ test('on a 360 px phone nothing scrolls sideways: the meter, the failure screen 
   await plant(page, saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }, { coherence: 1, steps: 3 }));
   await page.goto('./?debug');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(page.getByRole('meter', { name: 'COHERENCE' })).toBeInViewport({ ratio: 1 });
+  await expect(page.getByRole('meter', { name: 'Coherence' })).toBeInViewport({ ratio: 1 });
   await expectTouchable(page, '360 room with the meter');
   await shoot(page, '6a-360-room');
   await press(page, /go forward/i, hasTouch);

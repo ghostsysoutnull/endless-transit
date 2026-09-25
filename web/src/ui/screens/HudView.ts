@@ -14,8 +14,8 @@ import type { TravelRowVM } from './TravelRowVM.ts';
 type Slot = 'pane' | 'map' | 'trace';
 
 /**
- * Draws the world screen with lit-html: the HUD (path and stats), the narrative panel, the list of places
- * to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
+ * Draws the world screen with lit-html: the HUD (the meter and the readouts), the depth rail, the narrative
+ * panel, the list of places to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
  * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel. The coherence meter is a
@@ -26,9 +26,9 @@ type Slot = 'pane' | 'map' | 'trace';
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again. The
  * dock folds after `fold.after` buttons behind one MORE button on a phone — a disclosure of this view, not of
  * the game, folded again by the next step (I09); the stylesheet unfolds it on a desktop, so every button is
- * always in the markup and a key always works. The HUD folds the same way on a phone (the readout button):
- * the last crumbs and the readouts that matter stay, the rest opens on a tap and stays open. The moves a
- * place offers sit under its title, so the first screen of a phone shows one (I09). The debug strip (Decision 8)
+ * always in the markup and a key always works. The depth rail (U01a) is a list, not buttons: a glyph per
+ * level, its kind and name read out (a phone shows the glyphs, a desktop the names too). The moves a place
+ * offers sit under its title, so the first screen of a phone shows one (I09). The debug strip (Decision 8)
  * sits last, folded behind one DEBUG button, every one of its buttons out of the tab order. The drawn map and trace
  * are canvases mounted into host elements the template keeps alive (`CanvasSlots`); their words sit beside
  * them for a reader.
@@ -38,8 +38,6 @@ export class HudView implements View<HudVM> {
   #vm: HudVM | undefined;
   /** The dock's fold: open until the next step (I09), which folds it again. */
   #more = false;
-  /** The HUD's fold on a phone (I09): the whole readout, open until the player folds it — a step keeps it. */
-  #readout = false;
   /** The debug strip's fold (I09): closed until the tester opens it, then open until the screen goes. */
   #debugOpen = false;
   readonly #canvases = new CanvasSlots({
@@ -73,7 +71,6 @@ export class HudView implements View<HudVM> {
     this.#container = undefined;
     this.#vm = undefined;
     this.#more = false;
-    this.#readout = false;
     this.#debugOpen = false;
   }
 
@@ -86,11 +83,6 @@ export class HudView implements View<HudVM> {
     if (this.#vm !== undefined) this.#paint(this.#vm);
   }
 
-  #toggleReadout(): void {
-    this.#readout = !this.#readout;
-    if (this.#vm !== undefined) this.#paint(this.#vm);
-  }
-
   #toggleDebug(): void {
     this.#debugOpen = !this.#debugOpen;
     if (this.#vm !== undefined) this.#paint(this.#vm);
@@ -99,37 +91,8 @@ export class HudView implements View<HudVM> {
   #template(vm: HudVM): TemplateResult {
     return html`
       <div class="app world" data-frame=${vm.frame}>
-        <header class="bar"><h1>${vm.title}</h1></header>
-        <section class="hud" aria-label=${vm.regions.hud} data-open=${this.#readout ? 'true' : 'false'}>
-          <button
-            type="button"
-            class="pt"
-            data-testid="readout"
-            aria-label=${vm.readout.label}
-            aria-expanded=${this.#readout ? 'true' : 'false'}
-            @click=${() => {
-              this.#toggleReadout();
-            }}
-          >
-            <span aria-hidden="true">${this.#readout ? vm.readout.less : vm.readout.more}</span>
-          </button>
-          <nav aria-label=${vm.regions.path}>
-            <ol class="spark" data-testid="path">
-              ${vm.crumbs.map(
-                (crumb) => html`
-                  <li
-                    class=${['crumb', crumb.current ? 'you' : '', crumb.tail ? 'tail' : ''].join(' ').trim()}
-                  >
-                    <span class="vh">${crumb.kind}</span
-                    ><span class="ic" aria-hidden="true">${crumb.icon}</span
-                    ><span class="cn" aria-current=${crumb.current ? 'location' : nothing}
-                      >${crumb.name}</span
-                    >
-                  </li>
-                `,
-              )}
-            </ol>
-          </nav>
+        <section class="hud" aria-label=${vm.regions.hud}>
+          <h1 class="brand">${vm.title}</h1>
           <div class="meter" data-band=${vm.meter.band} data-testid="meter">
             <span class="ml">${vm.meter.label}</span
             ><span
@@ -148,7 +111,7 @@ export class HudView implements View<HudVM> {
           <dl class="stats">
             ${vm.stats.map(
               (stat) => html`
-                <div class=${stat.more ? 'stat more' : 'stat'}>
+                <div class="stat">
                   <dt>${stat.label}</dt>
                   <dd>${stat.value}</dd>
                 </div>
@@ -156,6 +119,18 @@ export class HudView implements View<HudVM> {
             )}
           </dl>
         </section>
+        <nav class="rail" aria-label=${vm.regions.path}>
+          <ol data-testid="path">
+            ${vm.rail.map(
+              (level) => html`
+                <li class=${level.current ? 'crumb you' : 'crumb'}>
+                  <span class="vh">${level.kind}</span><span class="ic" aria-hidden="true">${level.icon}</span
+                  ><span class="cn" aria-current=${level.current ? 'location' : nothing}>${level.name}</span>
+                </li>
+              `,
+            )}
+          </ol>
+        </nav>
         <section class="cap" aria-label=${vm.regions.place} tabindex="-1" data-rest>
           <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
           <h2>
@@ -163,6 +138,13 @@ export class HudView implements View<HudVM> {
             ><span data-testid="place-name">${vm.place.name}</span>
           </h2>
           <ul class="tags">
+            ${
+              vm.place.position === null
+                ? nothing
+                : html`<li class="chip pos">
+                    <span class="k">${vm.place.position.label}</span> ${vm.place.position.value}
+                  </li>`
+            }
             ${vm.place.tags.map(
               (tag) => html`
                 <li class="tag" data-fact=${tag.key}><span class="k">${tag.label}</span> ${tag.value}</li>

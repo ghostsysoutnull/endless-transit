@@ -52,7 +52,7 @@ test('walk from the title down to a street and back up to the universe, by tappi
   for (const [depth, kind] of LEVELS.entries()) {
     await expect(page.getByTestId('place-kind')).toHaveText(kind);
     await expect(page.getByTestId('place-name')).toHaveText(/\S/);
-    // The path's length is data; a phone folds all but the last two crumbs behind the readout button (I09).
+    // The path's length is data: one level of the depth rail per step from the universe (U01a).
     await expect(page.getByTestId('path').locator('li')).toHaveCount(depth + 1);
     await expectTouchable(page, kind);
     const shot = shots[kind];
@@ -65,7 +65,7 @@ test('walk from the title down to a street and back up to the universe, by tappi
     if (kind !== 'STREET') await tapOption(page, 'enter:0', hasTouch);
   }
 
-  await expect(page.getByTestId('place-name')).toHaveText('BRIGHT BOULEVARD');
+  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
   await expect(page.getByTestId('path')).toContainText('Rainhaven');
   await expect(page.getByTestId('status')).toHaveText('Entered Bright Boulevard.');
 
@@ -86,18 +86,18 @@ test('reload restores the place; the title screen is one tap away and the place 
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
   for (let level = 0; level < 3; level++) await press(page, /leave/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('AURAEA');
+  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
 
   await page.reload();
   await expect(page.getByTestId('place-kind')).toHaveText('PLANET');
-  await expect(page.getByTestId('place-name')).toHaveText('AURAEA');
+  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
   await expect(page.getByTestId('status')).toContainText(/restored/i);
 
   await press(page, /title screen/i, hasTouch);
   await expect(page.getByTestId('world-seed')).toHaveText(SEED);
   await expect(page.getByRole('button', { name: /re-roll/i })).toBeVisible();
   await press(page, /continue/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('AURAEA');
+  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
   expect(problems).toEqual([]);
 });
 
@@ -108,15 +108,15 @@ test('a long street: twenty buildings, every one a button, two of them landmarks
   const problems = watchForErrors(page);
   await plant(page, LONG_STREET);
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('GRAND WAY');
+  await expect(page.getByTestId('place-name')).toHaveText('Grand Way');
   await expect(page.locator('[data-sealed]')).toHaveCount(0);
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(20);
   await expect(page.getByTestId('sealed-note')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
   await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
-  // Twenty buildings and the dock: on a phone LEAVE, MORE and the HUD's readout button (I09), the rest folded;
-  // on a desktop every dock button — LEAVE, SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION.
-  await expect(page.getByRole('button')).toHaveCount(20 + (isMobile ? 3 : 8));
+  // Twenty buildings and the dock: on a phone LEAVE and MORE (I09), the rest folded — the HUD's readout button
+  // is gone (U01a); on a desktop every dock button — LEAVE, SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION.
+  await expect(page.getByRole('button')).toHaveCount(20 + (isMobile ? 2 : 8));
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);
@@ -129,7 +129,7 @@ test('a long list: the last street is reached by scrolling down, leave stays in 
   const problems = watchForErrors(page);
   await plant(page, LONG_CITY);
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('STEAMSPIRE');
+  await expect(page.getByTestId('place-name')).toHaveText('Steamspire');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(15);
   await expectTouchable(page, 'long city');
 
@@ -184,7 +184,7 @@ test('still fits at 360 px wide at every level, the narrowest phone we promise',
 test('the planet colours the frame, down to the street', async ({ page }) => {
   await plant(page, '0.0.0.0.0');
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('AURAEA');
+  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
   await expect(page.locator('.app')).toHaveAttribute('data-frame', 'yellow');
   const frame = await page.locator('.hud').evaluate((el) => getComputedStyle(el).borderTopColor);
   expect(frame).toBe('rgb(230, 195, 92)');
@@ -197,7 +197,7 @@ test('the keyboard is an extra: digits go down, L goes up, T is the title', asyn
   await page.keyboard.press('e');
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await page.keyboard.press('1');
-  await expect(page.getByTestId('place-name')).toHaveText('ORNATE SANCTUM');
+  await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
   await page.keyboard.press('l');
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await page.keyboard.press('t');

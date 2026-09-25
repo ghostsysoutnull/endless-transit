@@ -94,7 +94,7 @@ test('on a street the pane beside the list is the drawn map; MAP draws it larger
     'NEURAL_LATTICE_PROJECTION: 4 nodes plotted from Bright Boulevard.',
   );
   await expect(page.getByTestId('coherence')).toHaveText('99%');
-  await expect(stat(page, 'PULSE_TRAVERSAL')).toHaveText('0');
+  await expect(stat(page, 'Steps')).toHaveText('0');
   await expectDrawn(map.locator('.cv'), 'the MAP panel', 'bottom');
   await expectTouchable(page, 'street with the map');
   await shoot(page, '1-map-street');

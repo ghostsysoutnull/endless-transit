@@ -250,54 +250,42 @@ describe('HudPresenter — which snapshots it takes', () => {
 describe('HudPresenter.toViewModel — the header: what, which, where', () => {
   const vm = presenter.toViewModel(PLANET);
 
-  test('kind and name, in the terminal’s capitals; the planet colours the frame', () => {
+  test('the kind in capitals, the name as the world spells it (U01a); the planet colours the frame', () => {
     expect(vm.place.eyebrow).toBe('PLANET');
     expect(vm.place.icon).toBe('⊕');
-    expect(vm.place.name).toBe('AURAEA');
+    expect(vm.place.name).toBe('Auraea');
     expect(vm.frame).toBe('yellow');
   });
 
-  test('the path the player can read: one crumb per level from the universe, the last one is here', () => {
-    expect(vm.crumbs.map((crumb) => crumb.name)).toEqual([
+  test('the depth rail: one level per step from the universe, the last one is here, each with its glyph and its kind for a reader', () => {
+    expect(vm.rail.map((level) => level.name)).toEqual([
       'The Endless Universe',
       'Zeta-915-Link',
       'Outer Expanse 91',
       'Zeta Borealis',
       'Auraea',
     ]);
-    expect(vm.crumbs.map((crumb) => crumb.current)).toEqual([false, false, false, false, true]);
-    // A phone's folded readout keeps the last two crumbs (I09).
-    expect(vm.crumbs.map((crumb) => crumb.tail)).toEqual([false, false, false, true, true]);
-    expect(vm.crumbs.map((crumb) => crumb.icon).join('')).toBe('∞»○☼⊕');
-    expect(vm.crumbs[3]?.kind).toBe('Solar system');
+    expect(vm.rail.map((level) => level.current)).toEqual([false, false, false, false, true]);
+    expect(vm.rail.map((level) => level.icon).join('')).toBe('∞»○☼⊕');
+    expect(vm.rail[3]?.kind).toBe('Solar system');
   });
 
-  test('the stats line: the steps, depth, position among siblings under the kind’s own label, the locus, its hash, the seed; a phone’s fold keeps the steps, the buffer and the position (I09)', () => {
+  test('the readouts in plain words (U01a): the steps and the buffer — the depth is the rail; the locus, its hash, the seed and the readout fold are gone', () => {
     expect(vm.stats).toEqual([
-      { label: 'PULSE_TRAVERSAL', value: '12', more: false },
-      { label: 'TRACE_BUFFER', value: '00/16', more: false },
-      { label: 'HOP_DENSITY', value: '04', more: true },
-      { label: 'ORBIT', value: '02/05', more: false },
-      { label: 'LOCUS', value: '0.0.0.0.1', more: true },
-      { label: 'LOCUS_HASH', value: '43.210 / 07.654', more: true },
-      { label: 'SEED', value: '7F3A-91C2-0B4D-E6A8', more: true },
+      { label: 'Steps', value: '12' },
+      { label: 'Buffer', value: '0/16' },
     ]);
-    expect(vm.readout).toEqual({ label: 'The whole readout', more: '⋯', less: '×' });
+    expect(vm).not.toHaveProperty('readout');
+    expect(vm).not.toHaveProperty('crumbs');
   });
 
-  test('the universe has no position among siblings — that stat is simply absent', () => {
+  test('the position among its siblings is a plain chip under the kind’s own word — `Orbit 2 of 5`; the universe has none', () => {
+    expect(vm.place.position).toEqual({ label: 'Orbit', value: '2 of 5' });
     const universe = presenter.toViewModel({
       ...PLANET,
-      place: { ...(PLANET.place ?? ({} as never)), position: null, depth: 0, address: '0', frame: null },
+      place: { ...(PLANET.place ?? ({} as never)), position: null, address: '0', frame: null },
     });
-    expect(universe.stats.map((stat) => stat.label)).toEqual([
-      'PULSE_TRAVERSAL',
-      'TRACE_BUFFER',
-      'HOP_DENSITY',
-      'LOCUS',
-      'LOCUS_HASH',
-      'SEED',
-    ]);
+    expect(universe.place.position).toBeNull();
     expect(universe.frame).toBe('default');
   });
 });
@@ -305,11 +293,11 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
 describe('HudPresenter.toViewModel — the narrative panel', () => {
   const vm = presenter.toViewModel(PLANET);
 
-  test('description paragraphs pass through; facts become tags with their value in capitals; the diagnostic rides along', () => {
+  test('description paragraphs pass through; facts become chips, their value starting with a capital (U01a); the diagnostic rides along', () => {
     expect(vm.place.description).toEqual(PLANET.place?.description);
     expect(vm.place.tags).toEqual([
-      { key: 'culture', label: 'RESONANCE', value: 'BAROQUE' },
-      { key: 'era', label: 'TIMELINE', value: 'FUTURE' },
+      { key: 'culture', label: 'RESONANCE', value: 'Baroque' },
+      { key: 'era', label: 'TIMELINE', value: 'Future' },
     ]);
     expect(vm.place.diagnostic).toBe('RESONANCE: [BAROQUE]');
     expect(vm.status).toBe('Entered Auraea.');
@@ -345,7 +333,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
         },
       ],
     });
-    expect(vm.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '01/16', more: false });
+    expect(vm.stats[1]).toEqual({ label: 'Buffer', value: '1/16' });
     expect(vm.options.map((each) => each.id)).toEqual([
       'capture:0',
       'capture:1',
@@ -368,7 +356,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(full.aside.objects?.note).toBe('BUFFER FULL — merge or drop a fragment to take more.');
     expect(full.aside.objects?.tiles.map((tile) => tile.action)).toEqual([null, null]);
     expect(full.options.map((each) => each.id)).toEqual(['move:forward', 'leave', 'buffer', 'to-title']);
-    expect(full.stats[1]).toEqual({ label: 'TRACE_BUFFER', value: '16/16', more: false });
+    expect(full.stats[1]).toEqual({ label: 'Buffer', value: '16/16' });
   });
 
   test('an empty room says so in words and has no OBJECTS_DETECTED row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
@@ -569,19 +557,11 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
     expect(vm.regions.scan).toBe('Scan');
   });
 
-  test('below the bedrock: INTEGRITY for COHERENCE, ABYSSAL_DEPTH, VOID_LOCUS and VOID_HASH, the void trace, the void’s sync line and its voice in the decode log, and the abyssal frame whatever the planet’s (Guide:280; HUDHeaderComponent.groovy:34-88)', () => {
+  test('below the bedrock: Integrity for Coherence, the void trace, the void’s sync line and its voice in the decode log, and the abyssal frame whatever the planet’s (Guide:280; HUDHeaderComponent.groovy:34-88); the readouts are the same words', () => {
     const above = presenter.toViewModel(room);
     expect(above.frame).toBe('yellow');
-    expect(above.meter.label).toBe('COHERENCE');
-    expect(above.stats.map((stat) => stat.label)).toEqual([
-      'PULSE_TRAVERSAL',
-      'TRACE_BUFFER',
-      'HOP_DENSITY',
-      'ORBIT',
-      'LOCUS',
-      'LOCUS_HASH',
-      'SEED',
-    ]);
+    expect(above.meter.label).toBe('Coherence');
+    expect(above.stats.map((stat) => stat.label)).toEqual(['Steps', 'Buffer']);
     expect(above.regions.path).toBe('Path from the universe');
     expect(above.aside.telemetry?.sync).toBe('LATTICE_SYNC: [NOMINAL]');
     expect(above.aside.telemetry?.logs.lines).toHaveLength(2);
@@ -596,16 +576,8 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
       },
     });
     expect(below.frame).toBe('abyssal');
-    expect(below.meter.label).toBe('INTEGRITY');
-    expect(below.stats.map((stat) => stat.label)).toEqual([
-      'PULSE_TRAVERSAL',
-      'TRACE_BUFFER',
-      'ABYSSAL_DEPTH',
-      'ORBIT',
-      'VOID_LOCUS',
-      'VOID_HASH',
-      'SEED',
-    ]);
+    expect(below.meter.label).toBe('Integrity');
+    expect(below.stats.map((stat) => stat.label)).toEqual(['Steps', 'Buffer']);
     expect(below.regions.path).toBe('Void trace from the universe');
     expect(below.aside.telemetry?.sync).toBe('VOID_SYNC: [PRESSURE_HIGH]');
     expect(below.aside.telemetry?.logs.lines.at(-1)).toBe('[VOID] We see you.');
@@ -642,7 +614,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
 
   test('the coherence meter: the value, its band from the engine, the words a reader hears (Guide:151-156)', () => {
     expect(presenter.toViewModel(PLANET).meter).toEqual({
-      label: 'COHERENCE',
+      label: 'Coherence',
       min: 0,
       max: 100,
       value: 87,
@@ -655,7 +627,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
     expect(low.meter.value).toBe(12);
     expect(low.meter.band).toBe('critical');
     expect(low.meter.valueText).toBe('12 percent, critical');
-    expect(low.stats[0]).toEqual({ label: 'PULSE_TRAVERSAL', value: '3', more: false });
+    expect(low.stats[0]).toEqual({ label: 'Steps', value: '3' });
   });
 
   test('a visited row carries the [V] mark with words for a reader; an unvisited one none (Corridor.groovy:71-72)', () => {

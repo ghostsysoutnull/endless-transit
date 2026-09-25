@@ -16,13 +16,17 @@ function page(vm: HudVM): string {
   const lines: string[] = [];
   lines.push(`=== ${vm.place.eyebrow} ${vm.place.icon} ${vm.place.name}  [frame ${vm.frame}]`);
   lines.push(
-    `path: ${vm.crumbs.map((crumb) => `${crumb.icon} ${crumb.name}${crumb.current ? ' *' : ''}`).join(' > ')}`,
+    `path: ${vm.rail.map((level) => `${level.icon} ${level.name}${level.current ? ' *' : ''}`).join(' > ')}`,
   );
   lines.push(`${vm.meter.label}: ${vm.meter.text} ${vm.meter.bandLabel}`);
   lines.push(`stats: ${vm.stats.map((stat) => `${stat.label} ${stat.value}`).join(' | ')}`);
-  if (vm.place.tags.length > 0) {
-    lines.push(`tags: ${vm.place.tags.map((tag) => `${tag.label} ${tag.value} (${tag.key})`).join(' | ')}`);
-  }
+  const chips = [
+    ...(vm.place.position === null
+      ? []
+      : [`${vm.place.position.label} ${vm.place.position.value} (position)`]),
+    ...vm.place.tags.map((tag) => `${tag.label} ${tag.value} (${tag.key})`),
+  ];
+  if (chips.length > 0) lines.push(`tags: ${chips.join(' | ')}`);
   for (const paragraph of vm.place.description) lines.push(`  ${paragraph}`);
   for (const row of vm.place.rows) lines.push(`${row.label}: ${row.value}`);
   lines.push(`diag: ${vm.place.diagnostic}`);

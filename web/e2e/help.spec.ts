@@ -56,10 +56,10 @@ test('HELP opens the manual — every button explained, the survival rules — c
   await shoot(page, '1-help');
   await press(page, /back to the world/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('BRIGHT BOULEVARD');
+  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
   // One prompt: the help; the way back is free; no step.
   await expect(page.getByTestId('coherence')).toHaveText('99%');
-  await expect(stat(page, 'PULSE_TRAVERSAL')).toHaveText('0');
+  await expect(stat(page, 'Steps')).toHaveText('0');
   if (isMobile) {
     await expect(page.getByTestId('more')).toHaveAttribute('aria-expanded', 'false');
     await expect(page.getByRole('button', { name: /^help$/i })).toHaveCount(0);

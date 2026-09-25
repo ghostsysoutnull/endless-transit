@@ -32,14 +32,14 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('BRIGHT BOULEVARD');
+  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
   await expect(page.getByTestId('path').locator('li')).toHaveCount(8);
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(4);
   await expectTouchable(page, 'street');
 
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
-  await expect(page.getByTestId('place-name')).toHaveText('ORNATE SANCTUM');
+  await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
   const floors = page.locator('button[data-option^="enter:"]');
   await expect(floors).toHaveCount(16);
   await expect(floors.first().locator('.ord')).toHaveText('15');
@@ -63,7 +63,7 @@ test('from the title: a new world lands on a street; into a building, the elevat
 
   await tapOption(page, 'enter:15', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.locator('.moves button')).toHaveCount(2);
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /go down/i })).toHaveCount(0);
@@ -71,15 +71,15 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await shoot(page, '2-elevator');
 
   await press(page, /go up/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 1');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 1');
   await expect(page.getByTestId('status')).toHaveText('Entered Floor 1.');
   await press(page, /go up/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 2');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 2');
   await expect(page.locator('.moves button')).toHaveCount(3);
 
   await press(page, /enter corridor/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 2');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 2');
   await expect(page.getByTestId('status')).toHaveText('Enter Corridor.');
   const doors = page.locator('button[data-option^="enter:"]');
   await expect(doors).toHaveCount(9);
@@ -110,7 +110,7 @@ test('from the title: a new world lands on a street; into a building, the elevat
   }
   await press(page, /exit apartment/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 2');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 2');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
   await press(page, /leave floor/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
@@ -126,13 +126,13 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await shoot(page, '1b-building-elevator-at-2');
   // The floor left from the corridor is back at the elevator on the next visit (Guide:113).
   await tapOption(page, 'enter:13', hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 2');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 2');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(0);
   await expect(page.locator('.moves button')).toHaveCount(3);
   await press(page, /leave floor/i, hasTouch);
   await press(page, /leave building/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('BRIGHT BOULEVARD');
+  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
   expect(problems).toEqual([]);
 });
 
@@ -140,7 +140,7 @@ test('reload restores the room, and the way out still opens on the door list', a
   const problems = watchForErrors(page);
   await plant(page, LOBBY);
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await press(page, /enter corridor/i, hasTouch);
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
@@ -151,7 +151,7 @@ test('reload restores the room, and the way out still opens on the door list', a
   await expect(page.getByTestId('place-name')).toHaveText(room);
   await expect(page.getByTestId('status')).toContainText(/restored/i);
   await press(page, /exit apartment/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
   expect(problems).toEqual([]);
 });
@@ -190,7 +190,7 @@ test('a tall building: a hundred floors scroll, the lobby is reached at the bott
     await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport();
   }
   await (hasTouch ? lobby.tap() : lobby.click());
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
@@ -227,10 +227,10 @@ test('on a desktop a floor’s key is its number (Guide:111): 0 is the lobby, 9 
   await expect(page.locator('button[data-option="enter:6"] kbd')).toHaveText('9');
   await expect(page.locator('kbd:empty')).toHaveCount(0);
   await page.keyboard.press('0');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await page.keyboard.press('l');
   await page.keyboard.press('9');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 9');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 9');
 });
 
 test('the keyboard is an extra: U and D ride the elevator, C the corridor, B back, F forward', async ({
@@ -241,9 +241,9 @@ test('the keyboard is an extra: U and D ride the elevator, C the corridor, B bac
   await plant(page, LOBBY);
   await page.goto('./');
   await page.keyboard.press('u');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 1');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 1');
   await page.keyboard.press('d');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await page.keyboard.press('c');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
   await page.keyboard.press('1');

@@ -1,8 +1,8 @@
-=== STREET ═ BROAD ALLEY  [frame grey]
+=== STREET ═ Broad Alley  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley *
-COHERENCE: 100% stable
-stats: PULSE_TRAVERSAL 0 | TRACE_BUFFER 00/16 | HOP_DENSITY 07 | WAY 01/10 | LOCUS 0.0.0.0.0.0.0.0 | LOCUS_HASH 16.143 / 66.754 | SEED 0000-0000-0000-0000
-tags: TECH_ERA FUTURE (era) | RESONANCE VOID (culture)
+Coherence: 100% stable
+stats: Steps 0 | Buffer 0/16
+tags: Way 1 of 10 (position) | TECH_ERA Future (era) | RESONANCE Void (culture)
   Buildings stand in pairs along both sides of the way.
 diag: SYNC: [STABLE]
 status: Entered Broad Alley.
@@ -30,11 +30,11 @@ BUILDINGS ON THIS STREET
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Broad Alley | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited)
 dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== BUILDING ⌂ HORIZONWELL  [frame grey]
+=== BUILDING ⌂ HorizonWell  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
-COHERENCE: 99% stable
-stats: PULSE_TRAVERSAL 1 | TRACE_BUFFER 00/16 | HOP_DENSITY 08 | STRATA 02/20 | LOCUS 0.0.0.0.0.0.0.0.1 | LOCUS_HASH 1.921 / 98.281 | SEED 0000-0000-0000-0000
-tags: THEME VOID (culture)
+Coherence: 99% stable
+stats: Steps 1 | Buffer 0/16
+tags: Strata 2 of 20 (position) | THEME Void (culture)
   Analyzing vertical lattice structure...
 diag: STRUCTURAL_STABLE
 status: Entered HorizonWell.
@@ -114,11 +114,11 @@ BUILDING STRATA DIAGNOSTICS
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███ █ ███████ ██████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1 > Resonant traces: 0
 dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== FLOOR ▤ FLOOR 0  [frame grey]
+=== FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
-COHERENCE: 98% stable
-stats: PULSE_TRAVERSAL 2 | TRACE_BUFFER 00/16 | HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
-tags: TECH_ERA FUTURE (era) | RESONANCE VOID (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT RESEARCH (trait)
+Coherence: 98% stable
+stats: Steps 2 | Buffer 0/16
+tags: Z-axis 1 of 18 (position) | TECH_ERA Future (era) | RESONANCE Void (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT Research (trait)
   Floor 0. A landing of VOID design, silent except for the lift cables ticking overhead.
   Local signal is STABLE. Corridor access authorized.
 diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
@@ -127,11 +127,11 @@ moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ █ ██ ████████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== FLOOR ▤ FLOOR 0  [frame grey]
+=== FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
-COHERENCE: 97% stable
-stats: PULSE_TRAVERSAL 3 | TRACE_BUFFER 00/16 | HOP_DENSITY 09 | Z-AXIS 01/18 | LOCUS 0.0.0.0.0.0.0.0.1.0 | LOCUS_HASH 55.087 / 88.720 | SEED 0000-0000-0000-0000
-tags: THEME VOID (culture)
+Coherence: 97% stable
+stats: Steps 3 | Buffer 0/16
+tags: Z-axis 1 of 18 (position) | THEME Void (culture)
   A curved gallery of doors beneath a single strip of light.
 diag: TRAFFIC: [STABLE] | THEME: [VOID]
 status: Enter Corridor.
@@ -160,11 +160,11 @@ LOCAL ACCESS LIST
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ████████ █████████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== ROOM □ HOLLOW NEURAL LINK ARRAY  [frame grey]
+=== ROOM □ Hollow Neural Link Array  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Hollow Neural Link Array *
-COHERENCE: 96% stable
-stats: PULSE_TRAVERSAL 4 | TRACE_BUFFER 00/16 | HOP_DENSITY 12 | CELL 01/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.0 | LOCUS_HASH 26.526 / 29.341 | SEED 0000-0000-0000-0000
-tags: TEMPORAL_MARKER FUTURE (era) | TYPE NEURAL LINK ARRAY (reading) | OXY 20% (reading) | TEMP 23°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+Coherence: 96% stable
+stats: Steps 4 | Buffer 0/16
+tags: Cell 1 of 4 (position) | TEMPORAL_MARKER Future (era) | TYPE Neural Link Array (reading) | OXY 20% (reading) | TEMP 23°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
   You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
   The space is illuminated by a lattice of laser threads across the ceiling.
 FURNITURE: immaculate invisible support, dust-covered white light strip, sagging perfectly white tile
@@ -176,11 +176,11 @@ IN THIS ROOM: white light strip infused with smart glass <infused|white light st
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ██████ █████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0 > Resonant traces: 0
 dock: [L] ▲ EXIT APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== ROOM □ ABYSSAL BIO-SERVER  [frame grey]
+=== ROOM □ Abyssal Bio-Server  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Abyssal Bio-Server *
-COHERENCE: 95% stable
-stats: PULSE_TRAVERSAL 5 | TRACE_BUFFER 00/16 | HOP_DENSITY 12 | CELL 02/04 | LOCUS 0.0.0.0.0.0.0.0.1.0.0.1.1 | LOCUS_HASH 70.929 / 62.968 | SEED 0000-0000-0000-0000
-tags: TEMPORAL_MARKER FUTURE (era) | TYPE BIO-SERVER (reading) | OXY 16% (reading) | TEMP 15°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+Coherence: 95% stable
+stats: Steps 5 | Buffer 0/16
+tags: Cell 2 of 4 (position) | TEMPORAL_MARKER Future (era) | TYPE Bio-Server (reading) | OXY 16% (reading) | TEMP 15°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
   You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
   The space is illuminated by light bent around a gravity plate.
 FURNITURE: upended white light strip

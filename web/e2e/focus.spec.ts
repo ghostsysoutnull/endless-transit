@@ -137,17 +137,17 @@ test('keyboard: Enter on GO UP rides to the Peak and then rests — it never lan
   test.skip(hasTouch, 'a phone has no Enter key');
   await plantAt(page, LOBBY);
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await page.locator('button[data-option="move:up"]').focus();
   for (let floor = 1; floor <= 15; floor++) {
     await page.keyboard.press('Enter');
-    await expect(page.getByTestId('place-name')).toHaveText(`FLOOR ${String(floor)}`);
+    await expect(page.getByTestId('place-name')).toHaveText(`Floor ${String(floor)}`);
   }
   // The Peak: GO UP is gone. The focus rests on the screen, not on the body and never on the opposite move.
   await expect(page.locator('button[data-option="move:up"]')).toHaveCount(0);
   for (let again = 0; again < 5; again++) {
     await page.keyboard.press('Enter');
-    await expect(page.getByTestId('place-name')).toHaveText('FLOOR 15');
+    await expect(page.getByTestId('place-name')).toHaveText('Floor 15');
     // The resting place is the panel that says where you are.
     expect(await page.evaluate(FOCUSED)).toBe('SECTION[]');
   }

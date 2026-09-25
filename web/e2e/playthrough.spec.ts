@@ -22,7 +22,7 @@ function stat(page: Page, label: string) {
 }
 
 async function bufferSize(page: Page): Promise<number> {
-  return Number((await stat(page, 'TRACE_BUFFER').innerText()).split('/')[0]);
+  return Number((await stat(page, 'Buffer').innerText()).split('/')[0]);
 }
 
 test(
@@ -52,28 +52,28 @@ test(
 
     // The street, the building, the elevator up and down, the corridor, a door.
     await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-    await expect(page.getByTestId('place-name')).toHaveText('BRIGHT BOULEVARD');
+    await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
     await expect(page.getByTestId('coherence')).toHaveText('100%');
     await expectTouchable(page, 'street');
     await tapOption(page, 'enter:0', hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('ORNATE SANCTUM');
+    await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
     await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(16);
     await tapOption(page, `enter:${String(PEAK)}`, hasTouch); // the lobby is listed last
-    await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+    await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
     await press(page, /go up/i, hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('FLOOR 1');
+    await expect(page.getByTestId('place-name')).toHaveText('Floor 1');
     await press(page, /go down/i, hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+    await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
     await press(page, /enter corridor/i, hasTouch);
     await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
     await expectTouchable(page, 'corridor');
     await shoot(page, '2-corridor');
     await tapOption(page, 'enter:0', hasTouch);
     await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-    await expect(page.getByTestId('place-name')).toHaveText('GRAND POWER PLANT');
+    await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
     await expect(page.locator('button.tile')).toHaveCount(4);
     await expect(page.getByTestId('coherence')).toHaveText('94%');
-    await expect(stat(page, 'PULSE_TRAVERSAL')).toHaveText('6');
+    await expect(stat(page, 'Steps')).toHaveText('6');
 
     // Two takes, then the buffer: a merge gives fifteen back.
     await tapOption(page, 'capture:0', hasTouch);
@@ -109,13 +109,13 @@ test(
     await expect(page.getByTestId('map')).toBeVisible();
     await expect(page.getByTestId('status')).toHaveText(/^NEURAL_LATTICE_PROJECTION: 9 nodes plotted from /);
     await expect(page.getByTestId('coherence')).toHaveText('97%');
-    await expect(stat(page, 'PULSE_TRAVERSAL')).toHaveText('9');
+    await expect(stat(page, 'Steps')).toHaveText('9');
     await expectTouchable(page, 'corridor with the map');
     await shoot(page, '4-map-corridor');
 
     // The ritual under ?debug: PRIME stands in for a floor-by-floor run; the next merge inside forges the Keystone.
     await tapOption(page, 'enter:0', hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('GRAND POWER PLANT');
+    await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
     await tapOption(page, 'debug:prime', hasTouch);
     await expect(page.getByTestId('status')).toHaveText(
       'Building primed: every floor sampled, seven merges in.',
@@ -134,7 +134,7 @@ test(
     await press(page, /back to elevator/i, hasTouch);
     for (let floor = 1; floor <= PEAK; floor++) {
       await press(page, /go up/i, hasTouch);
-      await expect(page.getByTestId('place-name')).toHaveText(`FLOOR ${String(floor)}`);
+      await expect(page.getByTestId('place-name')).toHaveText(`Floor ${String(floor)}`);
     }
     await expect(page.getByTestId('coherence')).toHaveText('83%');
     await press(page, /breach the bedrock/i, hasTouch);
@@ -144,12 +144,12 @@ test(
     await expect(page.locator('.diag')).toHaveText('BEDROCK_BREACHED');
     await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(26);
     await tapOption(page, `enter:${String(PEAK)}`, hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+    await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
     await press(page, /descend into the substrate/i, hasTouch);
     await expect(page.getByTestId('place-kind')).toHaveText('LAYER');
-    await expect(page.getByTestId('place-name')).toHaveText('LAYER -0X1');
+    await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
     await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
-    await expect(page.locator('.meter .ml')).toHaveText('INTEGRITY');
+    await expect(page.locator('.meter .ml')).toHaveText('Integrity');
     await expect(page.getByTestId('coherence')).toHaveText('79%');
     await expectTouchable(page, 'Layer -1');
     await shoot(page, '5-layer');
@@ -164,11 +164,11 @@ test(
 
     // CONTINUE, then a reload: the same Layer, the same Integrity (a reload never stops at the title once a place is saved).
     await press(page, /continue/i, hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('LAYER -0X1');
+    await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
     await expect(page.getByTestId('coherence')).toHaveText('77%'); // the recap cost two, below the bedrock
     await page.reload();
     await expect(page.getByTestId('status')).toHaveText(`Restored world ${SEED} at Layer -0x1.`);
-    await expect(page.getByTestId('place-name')).toHaveText('LAYER -0X1');
+    await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
     await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
     await expect(page.getByTestId('coherence')).toHaveText('77%');
     expect(problems).toEqual([]);

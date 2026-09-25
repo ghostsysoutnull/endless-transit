@@ -38,7 +38,7 @@ test('a room reads like the old game: its interpretation, furniture, the object 
   await plant(page, FIRST_ROOM, { [LOBBY]: 'corridor' });
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(page.getByTestId('place-name')).toHaveText('GRAND POWER PLANT');
+  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
   await expect(page.locator('.desc p').nth(0)).toHaveText(
     'You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.',
   );
@@ -70,7 +70,7 @@ test('a room reads like the old game: its interpretation, furniture, the object 
 
   // The next room: its own furniture and objects, the way out gone.
   await press(page, /go forward/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('BAROQUE MAINTENANCE BAY');
+  await expect(page.getByTestId('place-name')).toHaveText('Baroque Maintenance Bay');
   await expect(page.locator('.prow').nth(0)).toContainText('bolted-down velvet kneeling-rug');
   await expect(tiles.first()).toContainText('velvet kneeling-rug fused to optic implant');
   expect(problems).toEqual([]);
@@ -105,7 +105,7 @@ test('on a desktop the right column is filled on the elevator and in a room: the
   const problems = watchForErrors(page);
   await plant(page, LOBBY);
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.getByTestId('telemetry')).toBeVisible();
   await expect(page.getByTestId('telemetry')).toBeInViewport({ ratio: 1 });
   expect(await rightOf(page, '.aside', '.cap')).toBe(true);
@@ -164,11 +164,11 @@ test('the elevator screen at the street’s first building: TECH_ERA, RESONANCE,
   await plant(page, STREET);
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TECH_ERA\s+FUTURE/);
-  await expect(page.locator('.tag[data-fact="culture"]')).toHaveText(/RESONANCE\s+BAROQUE/);
+  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TECH_ERA\s+Future/);
+  await expect(page.locator('.tag[data-fact="culture"]')).toHaveText(/RESONANCE\s+Baroque/);
   await tapOption(page, 'enter:0', false);
   await tapOption(page, 'enter:15', false);
-  await expect(page.getByTestId('place-name')).toHaveText('FLOOR 0');
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.locator('.tag')).toHaveCount(4);
   await expect(page.locator('.desc p').nth(0)).toHaveText(
     'Floor 0. BAROQUE geometry presses in from every wall; the elevator sighs shut behind you.',

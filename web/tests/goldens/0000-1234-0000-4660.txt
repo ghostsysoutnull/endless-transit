@@ -1,8 +1,8 @@
-=== STREET ═ GRAND AVENUE  [frame magenta]
+=== STREET ═ Grand Avenue  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue *
-COHERENCE: 100% stable
-stats: PULSE_TRAVERSAL 0 | TRACE_BUFFER 00/16 | HOP_DENSITY 07 | WAY 01/05 | LOCUS 0.0.0.0.0.0.0.0 | LOCUS_HASH 79.209 / 21.035 | SEED 0000-1234-0000-4660
-tags: TECH_ERA ANALOG (era) | RESONANCE SHOGUN (culture)
+Coherence: 100% stable
+stats: Steps 0 | Buffer 0/16
+tags: Way 1 of 5 (position) | TECH_ERA Analog (era) | RESONANCE Shogun (culture)
   Buildings stand in pairs along both sides of the way.
 diag: SYNC: [STABLE]
 status: Entered Grand Avenue.
@@ -20,11 +20,11 @@ BUILDINGS ON THIS STREET
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Grand Avenue | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited)
 dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== BUILDING ⌂ CEDAR LANTERN  [frame magenta]
+=== BUILDING ⌂ Cedar Lantern  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern *
-COHERENCE: 99% stable
-stats: PULSE_TRAVERSAL 1 | TRACE_BUFFER 00/16 | HOP_DENSITY 08 | STRATA 03/10 | LOCUS 0.0.0.0.0.0.0.0.2 | LOCUS_HASH 94.997 / 62.537 | SEED 0000-1234-0000-4660
-tags: THEME SHOGUN (culture)
+Coherence: 99% stable
+stats: Steps 1 | Buffer 0/16
+tags: Strata 3 of 10 (position) | THEME Shogun (culture)
   Analyzing vertical lattice structure...
 diag: STRUCTURAL_STABLE
 status: Entered Cedar Lantern.
@@ -60,11 +60,11 @@ BUILDING STRATA DIAGNOSTICS
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ███ ████████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2 > Resonant traces: 0
 dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== FLOOR ▤ FLOOR 0  [frame magenta]
+=== FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
-COHERENCE: 98% stable
-stats: PULSE_TRAVERSAL 2 | TRACE_BUFFER 00/16 | HOP_DENSITY 09 | Z-AXIS 01/07 | LOCUS 0.0.0.0.0.0.0.0.2.0 | LOCUS_HASH 80.858 / 87.719 | SEED 0000-1234-0000-4660
-tags: TECH_ERA ANALOG (era) | RESONANCE SHOGUN (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT MILITARY (trait)
+Coherence: 98% stable
+stats: Steps 2 | Buffer 0/16
+tags: Z-axis 1 of 7 (position) | TECH_ERA Analog (era) | RESONANCE Shogun (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT Military (trait)
   Floor 0. SHOGUN geometry presses in from every wall; the elevator sighs shut behind you.
   Local signal is STABLE. Corridor access authorized.
 diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
@@ -73,11 +73,11 @@ moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ████ ██████ ███ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== FLOOR ▤ FLOOR 0  [frame magenta]
+=== FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
-COHERENCE: 97% stable
-stats: PULSE_TRAVERSAL 3 | TRACE_BUFFER 00/16 | HOP_DENSITY 09 | Z-AXIS 01/07 | LOCUS 0.0.0.0.0.0.0.0.2.0 | LOCUS_HASH 80.858 / 87.719 | SEED 0000-1234-0000-4660
-tags: THEME SHOGUN (culture)
+Coherence: 97% stable
+stats: Steps 3 | Buffer 0/16
+tags: Z-axis 1 of 7 (position) | THEME Shogun (culture)
   A narrow service corridor, doors set flush into either wall.
 diag: TRAFFIC: [STABLE] | THEME: [SHOGUN]
 status: Enter Corridor.
@@ -90,11 +90,11 @@ LOCAL ACCESS LIST
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ █████ ████████ █████████ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== ROOM □ LACQUERED BARRACKS  [frame magenta]
+=== ROOM □ Lacquered Barracks  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 [HOLLOW] Bone-Lattice Aperture [COLD] > □ Lacquered Barracks *
-COHERENCE: 96% stable
-stats: PULSE_TRAVERSAL 4 | TRACE_BUFFER 00/16 | HOP_DENSITY 12 | CELL 01/09 | LOCUS 0.0.0.0.0.0.0.0.2.0.0.0.0 | LOCUS_HASH 67.853 / 33.507 | SEED 0000-1234-0000-4660
-tags: TEMPORAL_MARKER ANALOG (era) | TYPE BARRACKS (reading) | OXY 14% (reading) | TEMP 17°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+Coherence: 96% stable
+stats: Steps 4 | Buffer 0/16
+tags: Cell 1 of 9 (position) | TEMPORAL_MARKER Analog (era) | TYPE Barracks (reading) | OXY 14% (reading) | TEMP 17°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
   You are in a drill floor marked in faded lines. The walls are blue sliding panels painted with pines.
   The space is illuminated by buzzing neon signage leaking green light.
 FURNITURE: flickering iron tea kettle, sealed bonsai tree
@@ -106,11 +106,11 @@ IN THIS ROOM: answering machine grafted onto shoji screen <grafted|shoji screen|
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ █ ███████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.0 > Resonant traces: 0
 dock: [L] ▲ EXIT APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
-=== ROOM □ PAPER SECURITY STATION  [frame magenta]
+=== ROOM □ Paper Security Station  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 [HOLLOW] Bone-Lattice Aperture [COLD] > □ Paper Security Station *
-COHERENCE: 95% stable
-stats: PULSE_TRAVERSAL 5 | TRACE_BUFFER 00/16 | HOP_DENSITY 12 | CELL 02/09 | LOCUS 0.0.0.0.0.0.0.0.2.0.0.0.1 | LOCUS_HASH 31.914 / 57.106 | SEED 0000-1234-0000-4660
-tags: TEMPORAL_MARKER ANALOG (era) | TYPE SECURITY STATION (reading) | OXY 16% (reading) | TEMP 10°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+Coherence: 95% stable
+stats: Steps 5 | Buffer 0/16
+tags: Cell 2 of 9 (position) | TEMPORAL_MARKER Analog (era) | TYPE Security Station (reading) | OXY 16% (reading) | TEMP 10°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
   You are in a magazine of empty racks and chains. The walls are purple black lacquer inlaid with mother-of-pearl.
   The space is illuminated by the amber glow of a radio dial.
 FURNITURE: upended katana rack, flickering paper lantern, bolted-down folding fan
