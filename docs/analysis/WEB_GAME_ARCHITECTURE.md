@@ -147,14 +147,28 @@ is a real `<button>` at least 44 × 44 CSS px; nothing depends on hover or a key
 glyphs under it (U01a: the terminal's readouts, the address, its hash and the seed are gone from the world screen);
 the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a disclosure holding scan, map,
 buffer, trace, help, title, end session); every screen shows a move without scrolling at 360 × 640. Desktop shows the
-rail as a left column with the names, the dock in one row and a right column (objects, telemetry, the pane map or spectrogram). `prefers-reduced-motion` stops
-the bar, the canvas pulse and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
+rail as a left column with the names, the dock in one row and a right column (objects, telemetry, the pane map or spectrogram). A drawn
+place (U01b: the street) shows its picture above the card on a desktop; on a phone the name, then the picture, then
+the list, then the rest of the card, the picture sized so the first row stays above the dock at 360 × 640.
+`prefers-reduced-motion` stops the bar, the canvas pulse, the scene's motion and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
-**Canvas.** `src/ui/canvas/` is the only hand-drawn code: a `Picture` (`MapPicture`, `TracePicture`) is a pure function
+**Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`, `TracePicture`) is a pure function
 of a plain view-model into `Painter` calls, so a stub painter tests it in Node; `CanvasView` draws it into a host
 with the stylesheet's tokens (`Inks`) at device pixel ratio and stays still under reduced motion. The map's marks
 (dim/bright, the `X` glitch marks below 30, `☠` below the bedrock) and the spectrogram bars are seeded from
 `FrameEntropy` (place + step count), never the clock. Each canvas has a text alternative from the same data.
+Every canvas moves on the page's one `MotionClock` (behind a `FrameSource` the composition root builds from
+`requestAnimationFrame`; it runs only while something listens) and keeps the `PixelBudget` (≤ 2 device pixels per CSS
+pixel, ≤ 1.3 million pixels).
+
+**Scenes (U01b).** `src/ui/scene/` draws a place: the engine hands over a drawing key (`Location.drawing()`), each
+child's address and figure on its option, and the frame's seed; the presenter makes a `SceneVM` (with the tear's
+strength from `Coherence.decay()`); the `SceneRegistry` built in `main.ts` maps a key to a `ScenePicture` (today
+`street` → `StreetPicture`: a pure `layout` into hit areas and a pure `paint`), and a key with no entry leaves the
+screen as it was. `SceneView` hosts it: a tap zooms into the child and only then sends a bubbling `pick` the
+`InputRouter` turns into the option; a new frame of the game or a dispose drops a zoom in flight; the list lights its
+twin through `light` events and `data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no
+zoom.
 
 **Debug mode.** `?debug` on the address, read only in `main.ts`, puts the debug commands on offer (INTEGRITY ladder,
 PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `debug: true`.

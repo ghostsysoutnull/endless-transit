@@ -1,5 +1,6 @@
 import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
+import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { Screen } from '#ui/Screen.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
@@ -71,6 +72,8 @@ export interface HudVM extends Screen {
     readonly picture: TracePictureVM;
     readonly lines: readonly string[];
   } | null;
+  /** What the place's picture draws (U01b); a screen draws it only when a picture is registered for its key. */
+  readonly drawing: SceneVM;
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];

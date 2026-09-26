@@ -18,6 +18,8 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     opposite: '',
     current: false,
     visited: false,
+    address: '',
+    figure: null,
     ...facts,
   };
 }
@@ -49,6 +51,8 @@ const PLANET: GameSnapshot = {
     contents: null,
     telemetry: null,
     lattice: null,
+    drawing: 'planet',
+    noise: '0000-0000-0000-0000',
   },
   options: [
     option({
@@ -578,6 +582,84 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
     expect(below.aside.telemetry?.sync).toBe('VOID_SYNC: [PRESSURE_HIGH]');
     expect(below.aside.telemetry?.logs.lines.at(-1)).toBe('[VOID] We see you.');
     expect(below.place.eyebrow).toBe('SHARD');
+  });
+});
+
+describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws, as data', () => {
+  const DRAWN: GameSnapshot = {
+    ...STREET,
+    place: { ...(STREET.place ?? ({} as never)), drawing: 'street', noise: 'A1B2-C3D4-E5F6-0718' },
+    options: [
+      option({
+        id: 'enter:0',
+        key: '1',
+        label: 'Enter Building: Ornate Sanctum',
+        place: 'Ornate Sanctum',
+        ordinal: '1',
+        address: '0.0.0.0.1.0.0.0.0',
+        figure: { floors: 16, doors: 9 },
+        visited: true,
+      }),
+      option({
+        id: 'enter:1',
+        label: 'Enter Building: The Void-Watcher',
+        place: 'The Void-Watcher',
+        ordinal: '2',
+        sealed: true,
+        landmark: true,
+        address: '0.0.0.0.1.0.0.0.1',
+        figure: { floors: 60, doors: 4 },
+      }),
+      option({ id: 'leave', key: 'l', label: 'Leave Street', role: 'return' }),
+      option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
+    ],
+  };
+
+  test('one child per listed place, in the list’s order, with its figure, its address and its marks; the key, the noise and the place’s address pass through', () => {
+    const drawing = presenter.toViewModel(DRAWN).drawing;
+    expect(drawing.key).toBe('street');
+    expect(drawing.noise).toBe('A1B2-C3D4-E5F6-0718');
+    expect(drawing.address).toBe('0.0.0.0.1.0.0.0');
+    expect(drawing.children).toEqual([
+      {
+        id: 'enter:0',
+        ordinal: '1',
+        name: 'Ornate Sanctum',
+        floors: 16,
+        doors: 9,
+        landmark: false,
+        visited: true,
+        sealed: false,
+        address: '0.0.0.0.1.0.0.0.0',
+      },
+      {
+        id: 'enter:1',
+        ordinal: '2',
+        name: 'The Void-Watcher',
+        floors: 60,
+        doors: 4,
+        landmark: true,
+        visited: false,
+        sealed: true,
+        address: '0.0.0.0.1.0.0.0.1',
+      },
+    ]);
+    expect(drawing.label).not.toBe('');
+  });
+
+  test('the tear’s strength is the one Coherence gives: none while stable, half at 35', () => {
+    expect(presenter.toViewModel(DRAWN).drawing.decay).toBe(0);
+    const falling = { ...DRAWN, player: { coherence: 35, band: 'degraded', steps: 12 } };
+    expect(presenter.toViewModel(falling).drawing.decay).toBeCloseTo(0.5, 10);
+  });
+
+  test('a child with no figure is drawn with none: no floors, no doors', () => {
+    const plain = presenter.toViewModel(PLANET).drawing;
+    expect(plain.key).toBe('planet');
+    expect(plain.children.map((child) => [child.floors, child.doors])).toEqual([
+      [0, 0],
+      [0, 0],
+    ]);
   });
 });
 

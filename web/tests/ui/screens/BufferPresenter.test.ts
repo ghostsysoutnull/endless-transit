@@ -18,6 +18,8 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     opposite: '',
     current: false,
     visited: false,
+    address: '',
+    figure: null,
     ...facts,
   };
 }
@@ -41,6 +43,8 @@ const OPEN: GameSnapshot = {
     contents: { objects: [], furniture: [] },
     telemetry: { spectrogram: [1, 1, 1, 1, 1], voice: null },
     lattice: null,
+    drawing: 'room',
+    noise: '0000-0000-0000-0000',
   },
   player: { coherence: 54, band: 'degraded', steps: 6 },
   buffer: {

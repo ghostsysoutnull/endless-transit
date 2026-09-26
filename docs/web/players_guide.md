@@ -191,7 +191,7 @@ cannot take them. Only the tiles are objects. <!-- src/engine/procgen/RoomFactor
 
 **Every object has a frequency.** It is a number in hertz, computed from the object's *name*: add up the alphabet
 positions of the consonants (B is 2, Z is 26, vowels count nothing), double the sum if it is exactly 11, 22 or 33, then
-multiply by 12, because every room sits at depth 12. If the room's culture matches the `RESONANCE` shown on the street
+multiply by 12, because every room sits at depth 12. If the room's culture matches the `Culture` chip shown on the street
 header, which is true most of the time, the frequency is amplified by a tenth (whole hertz kept) and the resonance tally
 goes up by one. <!-- src/engine/model/Gematria.ts:5-6, 34-37; src/engine/model/Frequency.ts:1-4 -->
 
@@ -289,7 +289,7 @@ and each reach holds one free Spectral Echo. <!-- src/engine/procgen/FilamentFac
 special; the name is the prize. A street's building has a 4% chance (3% plus half a percent per level below depth 5),
 doubled under a Null Reach, never more than 25%. <!-- src/engine/procgen/BuildingNamer.ts:10-15 -->
 
-**Check the era.** The street's tags show `TECH_ERA`. If it is `ENTROPIC`, every prompt costs 2. There is no era that
+**Check the era.** The street's chips show its `Era`. If it is `ENTROPIC`, every prompt costs 2. There is no era that
 costs less. <!-- src/engine/rules/Drain.ts:10 -->
 
 **Rebel districts.** One city in ten is a rebel district. It swaps the planet's main and secondary culture, so the

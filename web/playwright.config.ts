@@ -19,11 +19,8 @@ export default defineConfig({
     baseURL: `http://localhost:${String(PORT)}${BASE_PATH}`,
     trace: 'retain-on-failure',
   },
-  // Decision 3: every browser test runs twice — a desktop and a phone held upright, touch only.
-  projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-    { name: 'phone', use: { ...devices['Pixel 7'] } },
-  ],
+  // The game is for phones only (user decision 2026-09-25): a phone held upright, touch only.
+  projects: [{ name: 'phone', use: { ...devices['Pixel 7'] } }],
   // The real thing: the production build, served by `vite preview` under the real base path.
   webServer: {
     command: 'npm run build && npm run preview',

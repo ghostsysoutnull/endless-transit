@@ -19,9 +19,13 @@ no `Math.random`. It receives what it needs through interfaces it owns (`Content
 Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture carry no index of their own;
 `names/rooms` is keyed by trait (`themes/traits.txt`) the same way.
 `src/platform/` browser adapters. `src/ui/` screens, input, styles — depends on the engine, never the reverse;
-`src/ui/canvas/` is the only hand-written canvas code (study D7): a `Picture` is a pure function of plain data, a
-`CanvasView` draws it into a host element with the stylesheet's tokens (`Inks` lists the ones it may paint text
-with) and stays still under `prefers-reduced-motion`.
+`src/ui/canvas/` and `src/ui/scene/` are the only hand-written canvas code (study D7): a `Picture` is a pure function
+of plain data, a `CanvasView` draws it into a host element with the stylesheet's tokens (`Inks` lists the ones it may
+paint text with) and stays still under `prefers-reduced-motion`. Every canvas moves on the page's one `MotionClock`
+(built in `main.ts` over a `FrameSource`) and keeps the `PixelBudget`. A drawn place (U01b) is a `SceneRegistry` entry
+(drawing key → `ScenePicture`: a pure `layout` into hit areas, a pure `paint`) hosted by `SceneView`: a tap zooms in,
+then sends a bubbling `pick` the `InputRouter` runs; a new view-model drops a zoom in flight; the list is its twin
+(`data-lit`); the coherence tear is planned by `CoherenceFx` from the frame's seed. A key with no entry keeps the screen as it was.
 `src/main.ts` the composition root: the only place adapters are built.
 
 The loop: tap/click/key → `InputRouter` → option id → `GameEngine.step(id)` → plain-data snapshot → the
@@ -43,7 +47,8 @@ address, the `Buffer`, the resonance tally) rides with the `Journey`; what the H
 page they are the last strip, folded behind one DEBUG button (`data-testid="debug-toggle"`, `aria-expanded`), every button
 `tabindex="-1"` — never on the first screen, never in the tab order; the e2e harness opens the fold as a tester would.
 
-**Phone first screen (I09, U01a):** the world screen's moves sit under the place's title; the HUD is one small box (the
+**Phone first screen (I09, U01a, U01b):** the world screen's moves sit under the place's title; on a drawn place (the
+street) the name comes first, then the picture, then the list, then the rest of the card; the HUD is one small box (the
 name, Steps, Buffer, the meter) and the depth rail a line of glyphs under it (a desktop gives the rail a left column with
 the names). Under 900 px the dock keeps the way out beside MORE — a disclosure the next step folds again — and a panel
 the player asked for (scan, map, trace) comes after the list; a desktop shows every dock button. `e2e/fold.spec.ts` asserts an action on the first screen of every
@@ -104,7 +109,8 @@ A new invariant ships with its rule in the same iteration.
 ## Tests first
 
 Test, RED, then code. `tests/` mirrors `src/`; doubles in `tests/support/`. Pins are literals: a diff is a finding.
-Playwright owns browser behaviour and runs **twice**: `desktop` and `phone` (portrait, touch). Look at the
+Playwright owns browser behaviour and runs in one profile, `phone` (portrait, touch — the game is for phones only,
+user decision 2026-09-25). Look at the
 screenshots in `test-results/` yourself before calling UI work done.
 
 **Play-session fixtures** (`tests/fixtures/*.json`, `{ "seed": "XXXX-XXXX-XXXX-XXXX", "history": [...optionIds] }`

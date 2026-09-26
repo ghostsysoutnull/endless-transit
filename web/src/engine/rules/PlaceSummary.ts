@@ -6,6 +6,13 @@ import type { TelemetrySummary } from './Telemetry.ts';
 export interface PlaceSummary {
   /** The kind's title (`Solar system`) — never its key: a screen has no business branching on it. */
   readonly kind: string;
+  /**
+   * Which picture draws the place (`street`) — a key the screen looks up in its registry of pictures, never
+   * one it branches on (U01b); a key with no picture keeps the screen as it was.
+   */
+  readonly drawing: string;
+  /** This frame's seed as text (`FrameEntropy`: the place and the step count): what a picture's noise is drawn from, never the clock. */
+  readonly noise: string;
   readonly icon: string;
   readonly name: string;
   /** The path as text, `0.2.1`. */

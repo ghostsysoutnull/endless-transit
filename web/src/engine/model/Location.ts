@@ -5,6 +5,7 @@ import type { Contents } from './Contents.ts';
 import type { Echo } from './Echo.ts';
 import type { Era } from './Era.ts';
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Fragment } from './Fragment.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
@@ -61,6 +62,16 @@ export abstract class Location {
 
   facts(): readonly Fact[] {
     return [];
+  }
+
+  /** Which picture draws this place: its kind's key, unless the kind is drawn by another's picture. */
+  drawing(): string {
+    return this.kind().key();
+  }
+
+  /** This place's shape on its parent's picture; nothing unless the kind has one (a building). */
+  figure(): Figure | null {
+    return null;
   }
 
   /** The readings shown beside this place on its parent's list; none unless the kind has some. */

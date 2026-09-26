@@ -30,13 +30,14 @@ export class Street extends Location {
     const vibe = this.vibe();
     if (vibe === undefined) return [];
     return [
-      { key: 'era', label: 'TECH_ERA', value: vibe.era().key() },
-      { key: 'culture', label: 'RESONANCE', value: vibe.culture().key() },
+      { key: 'era', label: 'Era', value: vibe.era().key() },
+      { key: 'culture', label: 'Culture', value: vibe.culture().key() },
     ];
   }
 
+  /** No diagnostic line: the street is drawn (U01b, Decision 1 — the terminal's jargon goes). */
   status(): string {
-    return 'SYNC: [STABLE]';
+    return '';
   }
 
   childrenHeading(): string {
