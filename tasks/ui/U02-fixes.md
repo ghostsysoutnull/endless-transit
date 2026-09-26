@@ -1,6 +1,6 @@
 # U02 — the design fixes (tracker)
 
-**What this is:** every break of the eight design principles (`.claude/CODEX.md`, the OO table) and of the queue's
+**What this is:** every break of the eight design principles then in force (now 1–8 of the ten in `CLAUDE.md`) and of the queue's
 Decision 14 ("the UI never re-derives a rule") in the code the UI rework wrote: U01a, U01b and U02 so far
 (`git diff cdff32d~1 e577e8f -- web/src`). Items 1–5 were found in U02 session 1. Items 6–19 come from the audit of
 all the rework's code on 2026-09-26. None of them was in a backlog or a lesson. This file is the one list; the U02 note

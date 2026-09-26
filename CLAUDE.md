@@ -33,6 +33,23 @@
     (U02: THEME, "Access:").
 14. No project jargon in chat (pin, re-pin, golden, grill): say what the thing is in plain words.
 
+## 🧱 OO Principles — every plan and every diff is checked against all ten
+1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
+2. **Behavior lives with its data.** No type that only holds fields. A static holds no rule and no state; it is only a
+   factory or an entry point, with its reason in a comment.
+3. **Tell, don't ask.** Never branch on an object's type or kind; call it and let it decide.
+4. **Depend on abstractions, injected.** Collaborators are built only in the composition root and handed in through
+   small interfaces owned by the code that uses them. No singletons; a class never builds its collaborators.
+5. **Open for extension, closed for modification.** A new kind is a new class or registry entry, never a new branch in
+   existing code.
+6. **Domain concepts are types, not bare numbers or strings.** A value is equal by its content and never changes; a
+   thing with identity is compared by a stable key, never by its display text.
+7. **State changes only through methods named for what they mean in the domain.** Immutable unless it has to change;
+   no setter bypasses a rule.
+8. **One reason to change per class, one job per method.**
+9. **Composition over inheritance.** Inherit only when the subclass works anywhere its parent is expected.
+10. **Don't reach through one object to command another.** A chain of builders, a fluent API or plain data is fine.
+
 The game is **`web/`** — TypeScript for the browser, phone first; its law is `web/CLAUDE.md`.
 
 Project records stay at the root: `docs/` (the player site, plus `docs/analysis/`), `journals/`, `tasks/`, `.claude/`.

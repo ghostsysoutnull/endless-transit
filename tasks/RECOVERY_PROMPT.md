@@ -22,8 +22,8 @@
 
 Initialize session for the Endless Transit substrate.
 
-1. **Rules:** the user block at the top of `CLAUDE.md` first; then `.claude/CODEX.md` (the Coverage Claim Protocol, the
-   OO table) and the process in force (`.claude/SOLO_LOOP.md`, or `.claude/STANDING_ORDER.md` when the user asks).
+1. **Rules:** the user block at the top of `CLAUDE.md` first; then its OO principles; then `.claude/CODEX.md` (the Coverage Claim
+   and Shape Claim Protocols) and the process in force (`.claude/SOLO_LOOP.md`, or `.claude/STANDING_ORDER.md` when the user asks).
 2. **Orient:** `git branch --show-current` = `master`; `git status -sb`; `git log --oneline -5`; this file's Active Work
    and open threads; the active queue. Records on demand: `journals/CHRONICLE_INDEX.md`, the backlogs.
 3. **Audit:** `cd web && npm run check` → `STATUS=PASS`; `./.claude/docs-check.sh --agent` → `DOCS=PASS`.
