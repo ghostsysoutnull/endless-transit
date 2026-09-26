@@ -28,7 +28,7 @@ the push, the live check), in one go under the directive that started it:
    history).
 2. **Handover true:** `tasks/RECOVERY_PROMPT.md` holds current state only — the branch, the work in progress and its
    next step, the open threads, each as a pointer; never a rule or a start-up prompt, which drift from their owners. A
-   backlog entry closes with a pointer to its record. (Handover cut, 2026-09-26)
+   backlog entry closes with a pointer to its record.
 3. **Lessons:** each user correction becomes a block line or a lesson (the Self-Improvement Loop below).
 4. **Gate:** `./.claude/docs-check.sh --agent` → `DOCS=PASS`.
 5. **One chain:** the edits `&& git add <paths> && git commit`, merged `--no-ff`. A branch is deleted when its work is
@@ -43,10 +43,9 @@ A chronicle or a retro only when the user asks.
 * **Coverage Claim Protocol**: a plan statement of the form "test X guards behavior Y" cites the assertion lines of an
   enabled test that prove it, read in the current session; a file name, a grep hit, a disabled test or a remembered
   purpose is not evidence. If no assertion exists, the plan marks the behavior **UNGUARDED** and adds a pre-check test
-  as step 0, committed before any production change. (Phase 6b, Phase 10)
+  as step 0, committed before any production change.
 * **OO Principles**: in `CLAUDE.md`. `/grill`'s Shape check asks each of them on the plan; the **design check** asks
-  each of them on the built code: before an iteration closes, they are run on its diff with the evidence named. (U02:
-  the plan passed them, the code broke them 19 times, `tasks/ui/U02-fixes.md`.)
+  each of them on the built code: before an iteration closes, they are run on its diff with the evidence named.
 * **Shape Claim Protocol**: every plan that adds a class, a method on a new class, or a static carries a
   **Shape table** — one row per new thing: `what | kind | owner | the one fact it owns | statics + why`
   (`kind` ∈ value object / entity / service / listener / command / factory). It is the evidence for one owner per fact,
@@ -61,13 +60,12 @@ A chronicle or a retro only when the user asks.
   top of `CLAUDE.md`; any other updates the relevant `tasks/lessons/<domain>.md` file.
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons
   written there survive across sessions and agents.
-* **A lesson is the rule plus a pointer, not the story**: state the rule in one or two sentences and cite the wave
-  (`(HK-012)`) — the incident lives in that wave's chronicle and retro. Every sentence is paid for each time its file
-  loads.
+* **A lesson is the rule, not the story**: one or two sentences, with no incident, pointer or date; the history lives
+  in the records and `git log`. Every sentence is paid for each time its file loads.
 * Lessons load with their domain: `infrastructure.md` (process) every session, each domain's file from its folder's
   `CLAUDE.md` (`tasks/lessons/web.md` from `web/CLAUDE.md`).
 
 ## 🏛️ Safety Mandates
 - **A moved or refactored file keeps its logic**: read the whole original, never a template or a skeleton; after the
-  move, `git diff` shows the move and nothing else (structural collapse, `journals/POST_MORTEM_2026_03_11.md`).
-- **Lazy loading**: stated once, in `web/CLAUDE.md`'s engine laws (`journals/POST_MORTEM_2026_03_06.md`).
+  move, `git diff` shows the move and nothing else.
+- **Lazy loading**: stated once, in `web/CLAUDE.md`'s engine laws.
