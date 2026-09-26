@@ -104,6 +104,24 @@ describe('the street picture: one row of buildings on a ground line, as the mock
   });
 });
 
+describe('the street picture’s variations, pinned before its hash and roofs move out (U02 step 0)', () => {
+  test('a fixed street at a fixed moment paints the same calls as before the move (a digest of them)', () => {
+    const vm: SceneVM = {
+      ...street(9),
+      children: street(9).children.map((child, index) => ({ ...child, sealed: index === 7 })),
+    };
+    const painter = new RecordingPainter();
+    picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, 'enter:2');
+    let hash = 0x811c9dc5;
+    const text = painter.calls.join('\n');
+    for (let at = 0; at < text.length; at++) {
+      hash ^= text.charCodeAt(at);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    expect([(hash >>> 0).toString(16), painter.calls.length]).toEqual(['ff77aeac', 530]);
+  });
+});
+
 describe('the street picture: painted with the stylesheet’s inks, text a phone can read', () => {
   test('the same moment paints the same calls; another moment moves the rain and the windows', () => {
     const one = new RecordingPainter();
