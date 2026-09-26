@@ -6,8 +6,8 @@ Current state only. The rules live in `CLAUDE.md` and the files it names; the hi
 - **Branch:** `ui/u02-inside-the-building`, where U02 continues; it is merged into `master` at each handover. A push of
   `master` republishes the site.
 - **Next session — law mode** (`.claude/LAW_MODE.md`), two targets in order:
-  1. **Review the rules not yet reviewed**, the two full reviews first, then the most often loaded:
-     - `.claude/CODEX.md`, the whole file — loaded every session;
+  1. **Review the rules not yet reviewed**, the full review of the grill first, then the most often loaded
+     (`.claude/CODEX.md` was reviewed whole on 2026-09-26):
      - `.claude/commands/grill.md`, the whole file — runs on every plan;
      - `tasks/lessons/infrastructure.md` — loaded every session;
      - `tasks/lessons/web.md` — loaded whenever work touches `web/`;

@@ -19,8 +19,6 @@ top of `CLAUDE.md`.
   (CONCEPT-001)
 - **Show a new pin RED against the old state and GREEN against the new** before trusting it, and read its logic for a
   self-contradiction. (HK-016)
-- **A coverage claim quotes the assertion lines of an enabled test, read this session**: a file name, a grep hit or a
-  disabled test guards nothing. (Phase 6b, Phase 10)
 - **A new gate ships green on its first commit**: baseline today's debt, then let the baseline only shrink. (O2)
 - **A docs edit is a pipeline**: `script && git add && git commit` in one chain; anchor inserts on a unique line (assert
   one match); read the edited region before committing; never write "the top commit is X" into a file the next commit
@@ -46,5 +44,3 @@ top of `CLAUDE.md`.
   form. (WF-009) A universal principle or a process (OO, testing, law mode) carries neither incident nor project
   example, and restates no rule another file owns: this codebase's map lives in `web/CLAUDE.md`. (OO, testing, law
   mode, 2026-09-26)
-- **The design check reads the built code, not only the plan**: before an iteration closes, the OO checks are run on
-  its diff with the evidence named. (U02: the plan passed them, the code broke them 19 times, `tasks/ui/U02-fixes.md`.)
