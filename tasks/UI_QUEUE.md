@@ -1,6 +1,6 @@
 # The UI Queue
-**What this is:** the web game's picture-first rework, cut into playable iterations. **"hi" starts the next iteration's
-scope** — the user accepts it before any plan or code; the rules are in `.claude/SOLO_LOOP.md` (or `.claude/STANDING_ORDER.md` when the user asks for it). **Spec: the mock** `docs/analysis/mocks/transit-reframed.html` (v5.3; the
+**What this is:** the web game's picture-first rework, cut into playable iterations. **"hi" names the next iteration** — a yes brings its
+scope, and the user accepts the scope before any plan or code; the rules are in `.claude/SOLO_LOOP.md` (or `.claude/STANDING_ORDER.md` when the user asks for it). **Spec: the mock** `docs/analysis/mocks/transit-reframed.html` (v5.3; the
 same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3NpWhAuZ`, version 8) and the wireframe
 `docs/analysis/mocks/pole-wireframe.html`; how the mock maps onto the web game: `docs/analysis/UI_REFRAME_STUDY.md`.
 **Where the study and this file disagree, this file wins.** Each iteration leaves one short note, `tasks/ui/<id>.md`
