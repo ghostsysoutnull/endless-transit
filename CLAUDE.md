@@ -29,6 +29,9 @@
 11. A commit/push directive covers the wave's close-out records. No second confirmation.
 12. A rule written in this session binds from the next one. Until then, state it in chat and put it in every agent's
     brief.
+13. A scope that names labels covers those labels only: a word it does not name is asked, never changed on my reading
+    (U02: THEME, "Access:").
+14. No project jargon in chat (pin, re-pin, golden, grill): say what the thing is in plain words.
 
 The game is **`web/`** — TypeScript for the browser, phone first; its law is `web/CLAUDE.md`.
 

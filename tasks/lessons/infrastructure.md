@@ -36,5 +36,9 @@ top of `CLAUDE.md`.
 - **A ritual costs less than the failure it prevents**: size it from the diff, judgment only adds steps with a named
   reason, one record per wave, a cap on any file every close-out appends to; question a habit before codifying it into a
   command. (WF-008)
+- **Read a mock once**: the first read of a mock picture writes its facts (sizes, constants, paces, gestures, its lines)
+  into a digest beside the mock; plans and agents read the digest, the source only for a line they need. (U02)
+- **Weigh a review against what it can find before running it**: a plan too big to review cheaply is cut, not
+  reviewed twice. (U02: 12.5 min of grill, 59 calls.)
 - **A law states the principle with its incident as the pointer**; the grill asks only questions with a verifiable
   form. (WF-009)

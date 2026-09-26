@@ -18,4 +18,8 @@ Rule plus pointer, one or two sentences each; the story lives in the iteration's
   on the first option that is not that undo. A label match in the view is not a rule. (I03 review, finding 1.)
 - **A citation is read from the file at HEAD, never remembered**: `sed -n 'a,bp' <file>` before writing `<file>:a-b`,
   and the lines printed must hold the claim; a line-number check over every citation in the tree is one script. (I04 review.)
+- **A look that varies by a content row is a key column of that list**, carried by the engine; a UI table keyed by
+  content names is a second owner and a lookup by display name. (U02: door states and materials.)
+- **A picture never branches on a string kind**: a shape or a roof is a drawer found by key, shared by every picture
+  that draws it. (U02: corridor shapes, roofs.)
 - **A UI change is unverified until it has been seen, and `command -v chromium` is not a search for a browser**: look in `~/.cache/ms-playwright` and `find / -name playwright-core` before saying there is none; drive it in real time (`docs/analysis/mocks/look.js`) — a headless `--virtual-time-budget` screenshot freezes animations and lies. (CONCEPT-001 visual mock: a day of blind publishing, one invisible-canvas bug the user had to report.)
