@@ -1,7 +1,7 @@
 # /grill — The Plan Interrogation Protocol
 
-Adversarial review of a draft plan before the user sees it: every UI-queue iteration plan (Standing Order item 2) and
-every non-trivial plan outside a queue. Read-only: this command never edits source, tests or the plan. It produces
+Adversarial review of a draft plan before the user sees it: every UI-queue iteration plan (the Solo loop's step 2; the Standing
+Order's item 2 when the user asks for it) and every non-trivial plan outside a queue. Read-only: this command never edits source, tests or the plan. It produces
 verdicts. Stance: **assume the plan is wrong and look for where** — the author is the worst person to find its weakest
 claim. Origin: WF-002 (a draft asserted coverage that did not exist); reshaped for the web game 2026-09-25.
 
