@@ -8,30 +8,28 @@
    directive gets a plan and one question. A message with a question and a directive: answer, then do only what the
    directive names.
 3. Read the verb. *Why / tell me / explain* → answer. *Your take* → a short take with a marked pick on what is still
-   open (a game idea starts at the concept, not the code). *Expand X* → read the code, bring options, each with its
+   open; a new idea starts at the concept, not the code. *Expand X* → read the code, bring options, each with its
    change, cost and edge. *Execute / do it / commit / push* → exactly that scope, then report.
-4. A short "go" takes the smaller, reversible reading and never reopens a decision already made (such as "in the next
-   session"). If unsure, ask in one line.
-5. A question or process talk during a queue run pauses the run until an explicit go.
-6. Chat is short and plain: an answer in 2–4 lines, a report in a few bullets, no tables or headers, no wall of text,
-   no §, no document shorthand. Options make sense without having read the document. "What is X" gets the content, not
-   the location. Detail goes in files.
+4. A short "go" takes the smaller, reversible reading and never reopens a decision already made. If unsure, ask in one
+   line.
+5. A question or process talk during a running task pauses it until an explicit go.
+6. Chat is short and plain: an answer in 2–4 lines, a report in a few bullets; no tables, headers, wall of text,
+   project jargon or document shorthand — say what the thing is in plain words. Options make sense without having read
+   the document. "What is X" gets the content, not the location. Detail goes in files.
 7. One question per message, lettered options, the pick first as `(A) ★ …` — never as prose ending "want me to…?". A
-   confirm option names its scope: the files, the kind of edit, and what is not touched. Design options are ambitious;
-   process options are lean — one that cannot name its cost, what it teaches that isn't already known and the failure
-   it prevents is not offered. A pick is built, not re-asked.
-8. Stay in scope: recommend only inside what was asked. No devices, tools or extra rounds the user didn't mention.
+   confirm option names its scope: the files, the kind of edit, and what is not touched. A pick is built, not re-asked.
+8. Stay in scope: recommend only inside what was asked, no tools or extra rounds the user didn't mention. A scope that
+   names items covers those items only: anything it does not name is asked, never changed on my reading. Design
+   options are ambitious; a process option is offered only if it names its cost, what it teaches that isn't already
+   known and the failure it prevents.
 9. All findings in one message, fixed in one go once authorized. A finished task ends with its result, never with "fix
-   this too?". A plan is judged before it is shown: what the tester sees new, what changes underneath, its tokens —
-   one whose cost dwarfs its result is re-cut first, never left for the user to catch.
-10. Every leftover fact carries its verdict: nothing to do, what was done, or one question. Tidy what is in scope
-   instead of reporting it.
-11. A commit/push directive covers the wave's close-out records. No second confirmation.
+   this too?"; every leftover fact carries its verdict: nothing to do, what was done, or one question. Tidy what is in
+   scope instead of reporting it.
+10. A plan is judged before it is shown: what the user sees new, what changes underneath, its tokens — one whose cost
+    dwarfs its result is re-cut first, never left for the user to catch.
+11. A commit/push directive covers the work's close-out records. No second confirmation.
 12. A rule written in this session binds from the next one. Until then, state it in chat and put it in every agent's
     brief.
-13. A scope that names labels covers those labels only: a word it does not name is asked, never changed on my reading
-    (U02: THEME, "Access:").
-14. No project jargon in chat (pin, re-pin, golden, grill): say what the thing is in plain words.
 
 ## 🧱 OO Principles — every plan and every diff is checked against all ten
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
