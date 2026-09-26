@@ -38,6 +38,12 @@ export class RecordingPainter implements Painter {
   arc(...args: number[]): void {
     this.#note('arc', args);
   }
+  rect(...args: number[]): void {
+    this.#note('rect', args);
+  }
+  clip(): void {
+    this.#note('clip', []);
+  }
   closePath(): void {
     this.#note('closePath', []);
   }

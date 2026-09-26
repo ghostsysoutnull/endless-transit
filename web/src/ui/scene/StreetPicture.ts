@@ -1,6 +1,8 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import { Roof } from './Roof.ts';
+import { SceneHash } from './SceneHash.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
@@ -48,6 +50,14 @@ interface Standing {
  * building's address — never the clock's randomness.
  */
 export class StreetPicture implements ScenePicture<SceneVM> {
+  readonly #noise = new SceneHash();
+  readonly #roofs = new Roof();
+
+  /** A street stands still: nothing to drag, no slider; going in zooms (U01b). */
+  camera(): null {
+    return null;
+  }
+
   layout(vm: SceneVM, size: PictureSize): readonly SceneHit[] {
     return this.#stand(vm, size).map((building) => {
       const top = building.base - building.height;
@@ -119,15 +129,15 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     painter.lineTo(left, top);
     painter.lineTo(left + width, top);
     painter.lineTo(left + width, base);
-    const shape = this.#hash(child.address, 0);
-    if (child.landmark) {
+    const kind = this.#roofs.of(child.address, child.landmark);
+    if (kind === 'peak') {
       painter.moveTo(left + width * 0.2, top);
       painter.lineTo(middle, top - roof);
       painter.lineTo(left + width * 0.8, top);
-    } else if (shape < 0.4) {
+    } else if (kind === 'mast') {
       painter.moveTo(left + width * 0.7, top);
       painter.lineTo(left + width * 0.7, top - roof * 0.7);
-    } else if (shape < 0.7) {
+    } else if (kind === 'box') {
       painter.moveTo(left + width * 0.25, top);
       painter.lineTo(left + width * 0.25, top - roof * 0.4);
       painter.lineTo(left + width * 0.75, top - roof * 0.4);
@@ -172,9 +182,9 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     for (let row = 0; row < rows; row++) {
       for (let column = 0; column < columns; column++) {
         const index = row * columns + column + 1;
-        const on = this.#hash(child.address, index);
+        const on = this.#noise.fraction(child.address, index);
         if (on < 0.35) continue;
-        const pace = this.#hash(child.address, -index);
+        const pace = this.#noise.fraction(child.address, -index);
         const flicker = 0.55 + 0.45 * Math.sin(seconds * pace * 3 + pace * 20);
         const warm = on > 0.85;
         painter.fillStyle = warm ? bright : text;
@@ -211,13 +221,13 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     const text = palette('text');
     const warm = palette('yl');
     for (let star = 0; star < STARS; star++) {
-      const x = this.#hash('star-x', star) * size.width;
-      const y = this.#hash('star-y', star) * size.height * STARRY;
-      const big = this.#hash('star-big', star) < 0.07;
-      const pace = 0.5 + this.#hash('star-pace', star) * 1.8;
-      const phase = this.#hash('star-phase', star) * 6;
-      const glow = this.#hash('star-glow', star);
-      painter.fillStyle = this.#hash('star-warm', star) < 0.14 ? warm : text;
+      const x = this.#noise.fraction('star-x', star) * size.width;
+      const y = this.#noise.fraction('star-y', star) * size.height * STARRY;
+      const big = this.#noise.fraction('star-big', star) < 0.07;
+      const pace = 0.5 + this.#noise.fraction('star-pace', star) * 1.8;
+      const phase = this.#noise.fraction('star-phase', star) * 6;
+      const glow = this.#noise.fraction('star-glow', star);
+      painter.fillStyle = this.#noise.fraction('star-warm', star) < 0.14 ? warm : text;
       painter.globalAlpha = 0.45 * (0.2 + 0.7 * glow * (0.55 + 0.45 * Math.sin(seconds * pace + phase)));
       painter.fillRect(x, y, big ? 1.8 : 1, big ? 1.8 : 1);
     }
@@ -230,25 +240,12 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     painter.lineWidth = 1;
     painter.beginPath();
     for (let drop = 0; drop < RAIN; drop++) {
-      const x = (this.#hash('rain', drop) * size.width + seconds * 30 * (1 + (drop % 3))) % size.width;
+      const x =
+        (this.#noise.fraction('rain', drop) * size.width + seconds * 30 * (1 + (drop % 3))) % size.width;
       const y = ((drop * 53 + seconds * 260) % (size.height * 1.1)) - size.height * 0.1;
       painter.moveTo(x, y);
       painter.lineTo(x - 2, y + 9);
     }
     painter.stroke();
-  }
-
-  /** A fraction in [0, 1) that belongs to a text and an index (FNV-1a): the same pair, the same fraction. */
-  #hash(text: string, index: number): number {
-    let hash = 0x811c9dc5;
-    const key = `${text}/${String(index)}`;
-    for (let at = 0; at < key.length; at++) {
-      hash ^= key.charCodeAt(at);
-      hash = Math.imul(hash, 0x01000193);
-    }
-    hash ^= hash >>> 15;
-    hash = Math.imul(hash, 0x2c1b3c6d);
-    hash ^= hash >>> 12;
-    return (hash >>> 0) / 0x100000000;
   }
 }

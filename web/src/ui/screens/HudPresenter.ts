@@ -16,6 +16,8 @@ import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
 const RETURN_MARK = '▲ ';
+/** Up to this many numbered places, the pad is one group; past it, groups of ten (Decision 7: floors by tens above 20). */
+const PAD_GROUP = 20;
 /** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
 const SCAN_MARK = { text: '>>', label: 'You are here' } as const;
 /**
@@ -153,6 +155,7 @@ export class HudPresenter implements Presenter<HudVM> {
       map: snapshot.map === null ? null : this.#mapPanel(snapshot.map, MAP_HEADING),
       trace: snapshot.trace === null ? null : this.#tracePanel(snapshot.trace),
       drawing: this.#drawing(place, travel, new Coherence(player.coherence).decay()),
+      pad: this.#pad(travel, rows),
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
       moves,
@@ -203,6 +206,8 @@ export class HudPresenter implements Presenter<HudVM> {
    */
   #drawing(place: PlaceSummary, travel: readonly GameOption[], decay: number): SceneVM {
     const open = travel.filter((option) => !option.sealed).length;
+    const figure = place.figure;
+    const tower = figure?.tower;
     return {
       key: place.drawing,
       label: `Picture of ${place.name}: ${String(travel.length)} places drawn, ${String(open)} open — the list below enters them too`,
@@ -217,10 +222,66 @@ export class HudPresenter implements Presenter<HudVM> {
         visited: option.visited,
         sealed: option.sealed,
         address: option.address,
+        door: option.figure?.door ?? null,
       })),
+      tower:
+        figure === null || tower === undefined
+          ? null
+          : {
+              floors: figure.floors,
+              doors: figure.doors,
+              address: tower.address,
+              landmark: tower.landmark,
+              car: tower.car,
+              below: tower.below,
+              rows: tower.rows.map((row) => ({ shape: row.shape ?? '', looks: row.looks ?? [] })),
+            },
+      shape: figure?.shape ?? '',
+      slider: travel.length === 0 ? '' : place.childrenHeading.replace(/:$/, ''),
       decay,
       noise: place.noise,
     };
+  }
+
+  /**
+   * A list whose every place goes by its own number (a building's floors) is laid out as a pad of numbers
+   * (U02, Decision 7): one group up to 20, else by tens — ascending, the Layers' group first — and the group
+   * shown first is the one holding the current row (where the elevator stands).
+   */
+  #pad(travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
+    if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
+    const numbered = rows
+      .map((row, index) => ({ row, number: Number(travel[index]?.ordinal ?? '0') }))
+      .sort((one, other) => one.number - other.number);
+    const tens = travel.length > PAD_GROUP;
+    const groups = new Map<number, { label: string; rows: TravelRowVM[] }>();
+    for (const { row, number } of numbered) {
+      const group = tens ? Math.floor(number / 10) : 0;
+      const entry = groups.get(group) ?? { label: '', rows: [] };
+      entry.rows.push(row);
+      groups.set(group, entry);
+    }
+    const list = [...groups.values()].map((group) => {
+      const first = group.rows[0]?.ordinal ?? '';
+      const last = group.rows.at(-1)?.ordinal ?? '';
+      return {
+        label: `${String(Number(first))}–${String(Number(last))}`,
+        keys: group.rows.map((row) => ({
+          id: row.id,
+          number: String(Number(row.ordinal)),
+          spoken: [
+            row.label,
+            ...(row.mark === null ? [] : [row.mark.label]),
+            ...(row.seen === null ? [] : [row.seen.label]),
+            ...row.readings.map((reading) => `${reading.label} ${reading.value}`),
+          ].join(', '),
+          current: row.mark !== null,
+          visited: row.seen !== null,
+        })),
+      };
+    });
+    const open = list.findIndex((group) => group.keys.some((key) => key.current));
+    return { label: 'Floors by tens', groups: list, open: Math.max(0, open) };
   }
 
   /**

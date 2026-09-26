@@ -65,6 +65,8 @@ export class HudView implements View<HudVM> {
   #lit = '';
   /** The address of the last place shown: the child it lies in is the one the picture zooms out of. */
   #last: string | undefined;
+  /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
+  #group: number | undefined;
 
   /** The page's one clock moves every canvas of the screen; the registry says which places are drawn (U01b). */
   constructor(clock: MotionClock, scenes: SceneRegistry) {
@@ -84,7 +86,10 @@ export class HudView implements View<HudVM> {
   /** A step's render: the dock folds again; the view's other toggles keep their state. */
   render(vm: HudVM): void {
     this.#more = false;
-    if (vm.scene !== this.#vm?.scene) this.#lit = '';
+    if (vm.scene !== this.#vm?.scene) {
+      this.#lit = '';
+      this.#group = undefined;
+    }
     this.#paint(vm);
     const last = this.#last;
     const from =
@@ -131,6 +136,9 @@ export class HudView implements View<HudVM> {
   #light(id: string): void {
     if (id === this.#lit || this.#scene === undefined) return;
     this.#lit = id;
+    // The pad follows what is lit: dragging the car past a ten shows that ten's floors (the mock's `S.group`).
+    const group = this.#vm?.pad?.groups.findIndex((each) => each.keys.some((key) => key.id === id)) ?? -1;
+    if (group >= 0) this.#group = group;
     this.#scene.view.light(id);
     if (this.#vm !== undefined && this.#container !== undefined)
       render(this.#template(this.#vm), this.#container);
@@ -155,6 +163,16 @@ export class HudView implements View<HudVM> {
   #toggleMore(): void {
     this.#more = !this.#more;
     if (this.#vm !== undefined) this.#paint(this.#vm);
+  }
+
+  #showGroup(index: number): void {
+    this.#group = index;
+    if (this.#vm !== undefined) this.#paint(this.#vm);
+  }
+
+  /** A row or key tapped on a drawn place whose picture travels: the picture rides there first, and picks it (U02). */
+  #through(event: Event, id: string): void {
+    if (this.#scene?.view.enter(id) === true) event.stopPropagation();
   }
 
   #toggleDebug(): void {
@@ -214,6 +232,19 @@ export class HudView implements View<HudVM> {
               ><span data-testid="place-name">${vm.place.name}</span>
             </h2>
           </div>
+          ${
+            vm.moves.length === 0
+              ? nothing
+              : html`
+                  <nav class="moves" aria-label=${vm.regions.moves}>
+                    ${repeat(
+                      vm.moves,
+                      (option) => option.id,
+                      (option) => this.#docked(option),
+                    )}
+                  </nav>
+                `
+          }
           <div class="body">
             <ul class="tags">
               ${
@@ -229,19 +260,6 @@ export class HudView implements View<HudVM> {
                 `,
               )}
             </ul>
-            ${
-              vm.moves.length === 0
-                ? nothing
-                : html`
-                    <nav class="moves" aria-label=${vm.regions.moves}>
-                      ${repeat(
-                        vm.moves,
-                        (option) => option.id,
-                        (option) => this.#docked(option),
-                      )}
-                    </nav>
-                  `
-            }
             <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
             ${
               vm.place.rows.length === 0
@@ -267,8 +285,6 @@ export class HudView implements View<HudVM> {
                 class="scene"
                 data-testid="scene"
                 data-canvas="scene"
-                role="img"
-                aria-label=${vm.drawing.label}
                 data-lit=${this.#lit}
                 @light=${(event: Event) => {
                   this.#light(this.#litOf(event));
@@ -286,13 +302,17 @@ export class HudView implements View<HudVM> {
                   <section class="travel" aria-label=${vm.regions.travel}>
                     <h3 class="heading">${vm.heading}</h3>
                     ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
-                    <ol class="rows">
-                      ${repeat(
-                        vm.rows,
-                        (row) => `${vm.scene}/${row.id}`,
-                        (row) => this.#row(row, vm.sealedTag, drawn),
-                      )}
-                    </ol>
+                    ${
+                      vm.pad === null
+                        ? html`<ol class="rows">
+                            ${repeat(
+                              vm.rows,
+                              (row) => `${vm.scene}/${row.id}`,
+                              (row) => this.#row(row, vm.sealedTag, drawn),
+                            )}
+                          </ol>`
+                        : this.#pad(vm, vm.pad, drawn)
+                    }
                   </section>
                 `
           }
@@ -515,6 +535,70 @@ export class HudView implements View<HudVM> {
     return typeof id === 'string' ? id : '';
   }
 
+  /**
+   * The pad (U02): the shown group's keys — a real button each, its number shown and its row's words for a
+   * reader, lighting its floor like a row — then, past twenty, a tab per ten; a tab only shows its group.
+   */
+  #pad(vm: HudVM, pad: NonNullable<HudVM['pad']>, drawn: boolean): TemplateResult {
+    const shown = Math.min(this.#group ?? pad.open, pad.groups.length - 1);
+    const group = pad.groups[shown];
+    return html`
+      <ol class="pad">
+        ${repeat(
+          group?.keys ?? [],
+          (key) => `${vm.scene}/${key.id}`,
+          (key) => html`
+            <li>
+              <button
+                type="button"
+                class=${['key', key.current ? 'you' : '', key.visited ? 'seen' : ''].join(' ').trim()}
+                data-option=${key.id}
+                ?data-lit=${drawn && this.#lit === key.id}
+                @click=${(event: Event) => {
+                  this.#through(event, key.id);
+                }}
+                @pointerenter=${() => {
+                  this.#light(key.id);
+                }}
+                @pointerleave=${() => {
+                  this.#light('');
+                }}
+                @focus=${() => {
+                  this.#light(key.id);
+                }}
+                @blur=${() => {
+                  this.#light('');
+                }}
+              >
+                <span class="num" aria-hidden="true">${key.number}</span><span class="vh">${key.spoken}</span>
+              </button>
+            </li>
+          `,
+        )}
+      </ol>
+      ${
+        pad.groups.length < 2
+          ? nothing
+          : html`<div class="tens" role="group" aria-label=${pad.label}>
+              ${pad.groups.map(
+                (each, index) => html`
+                  <button
+                    type="button"
+                    class="ten"
+                    aria-pressed=${index === shown ? 'true' : 'false'}
+                    @click=${() => {
+                      this.#showGroup(index);
+                    }}
+                  >
+                    ${each.label}
+                  </button>
+                `,
+              )}
+            </div>`
+      }
+    `;
+  }
+
   #row(row: TravelRowVM, sealedTag: string, drawn: boolean): TemplateResult {
     const name = row.landmark ? 'lb landmark' : 'lb';
     if (row.sealed) {
@@ -532,6 +616,9 @@ export class HudView implements View<HudVM> {
           class=${['row', row.mark === null ? '' : 'you', row.seen === null ? '' : 'seen'].join(' ').trim()}
           data-option=${row.id}
           ?data-lit=${drawn && this.#lit === row.id}
+          @click=${(event: Event) => {
+            this.#through(event, row.id);
+          }}
           @pointerenter=${() => {
             this.#light(row.id);
           }}

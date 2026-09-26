@@ -27,7 +27,11 @@ function street(
       visited: index === 0,
       sealed: false,
       address: `0.0.0.0.0.0.0.0.${String(index)}`,
+      door: null,
     })),
+    tower: null,
+    shape: '',
+    slider: '',
     decay: 0,
     noise: '7F3A-91C2-0B4D-E6A8',
   };
