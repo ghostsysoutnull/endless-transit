@@ -42,3 +42,5 @@ top of `CLAUDE.md`.
   reviewed twice. (U02: 12.5 min of grill, 59 calls.)
 - **A law states the principle with its incident as the pointer**; the grill asks only questions with a verifiable
   form. (WF-009)
+- **The design check reads the built code, not only the plan**: before an iteration closes, the OO checks are run on
+  its diff with the evidence named. (U02: the plan passed them, the code broke them 19 times, `tasks/ui/U02-fixes.md`.)
