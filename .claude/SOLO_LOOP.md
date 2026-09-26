@@ -6,8 +6,8 @@ instead only when the user asks for it.
 ## The loop
 1. **Scope.** On "hi" I name the active queue's first open item and ask to work on it; on a yes I state its scope in a
    few lines, and the user accepts it.
-2. **Plan, grill, build.** I plan, grill the plan myself and build it. I use no subagents. The plan is not shown to the
-   user; the scope was the go.
+2. **Plan, grill, build.** I plan; the grill reviews it in a subagent (the author is the worst judge of their own
+   plan); I build it. No other subagents. The plan is not shown to the user; the scope was the go.
 3. **Tests.** I test only the logic that isn't UI (unit tests, `npm run check`). I run no browser, Playwright or Chrome
    until the end.
 4. **The fast loop.** The user tests the UI. They report, I change it, they test again. Each round is quick.
