@@ -33,7 +33,7 @@
 12. A rule approved in this session binds at once. The file loads only when a session starts, so until the next one I
     state the rule in chat and put it in every agent's brief.
 
-## 🧱 OO Principles — every plan and every diff is checked against all ten
+## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
 2. **Behavior lives with its data.** No type that only holds fields. A static holds no rule and no state; it is only a
    factory or an entry point, with its reason in a comment.
@@ -44,11 +44,14 @@
    existing code.
 6. **Domain concepts are types, not bare numbers or strings.** A value is equal by its content and never changes; a
    thing with identity is compared by a stable key, never by its display text.
-7. **State changes only through methods named for what they mean in the domain.** Immutable unless it has to change;
-   no setter bypasses a rule.
-8. **One reason to change per class, one job per method.**
+7. **State changes only through methods named for what they mean in the domain.** A class guards its invariant: it is
+   never built or left in an invalid state. Immutable unless it has to change; no setter bypasses a rule.
+8. **Each class hides one decision likely to change; each method does one job.** A second reason to change is a second
+   class.
 9. **Composition over inheritance.** Inherit only when the subclass works anywhere its parent is expected.
 10. **Don't reach through one object to command another.** A chain of builders, a fluent API or plain data is fine.
+11. **A method either changes state or answers a question, never both.** Asking must not change the answer. A builder
+    that returns itself is the exception.
 
 The game is **`web/`** — TypeScript for the browser, phone first; its law is `web/CLAUDE.md`.
 

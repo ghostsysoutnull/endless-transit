@@ -36,7 +36,7 @@ check), in one go under the directive that started it:
   a remembered purpose is not evidence. If no assertion exists, the plan marks the behavior
   **UNGUARDED** and adds a pre-check test as step 0, committed before any production change.
 
-* **OO Principles**: the ten in `CLAUDE.md`; `/grill` check 3 asks each of them on the plan, and the design check
+* **OO Principles**: in `CLAUDE.md`; `/grill` check 3 asks each of them on the plan, and the design check
   on the built code.
 
 * **Shape Claim Protocol**: every plan that adds a class, a method on a new class, or a static carries a **Shape table** —
