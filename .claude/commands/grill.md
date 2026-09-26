@@ -28,5 +28,5 @@ hit the plan does not list is reported.
 
 ## 4. Report
 The six verdicts as a table, then one line per non-PASS with the exact amendment. End with **CLEARED** (present it),
-**AMEND** (amend, re-grill, then present) or **STOP** (the premise is wrong — re-plan). Keep the checks at six: a
+**AMEND** (amend, then build — never grilled again, user 2026-09-26) or **STOP** (the premise is wrong — re-plan). Keep the checks at six: a
 longer list becomes a ritual that gets skimmed.
