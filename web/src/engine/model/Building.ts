@@ -11,7 +11,7 @@ export const BUILDING_KIND = new LocationKind({
   key: 'building',
   title: 'Building',
   icon: '⌂',
-  indexLabel: 'STRATA',
+  indexLabel: 'Building',
 });
 
 /** Where the elevator stands before anyone rides it: the lobby (Building.groovy:24). */
@@ -239,7 +239,7 @@ export class Building extends Location {
   }
 
   description(): readonly string[] {
-    return ['Analyzing vertical lattice structure...'];
+    return ['An elevator runs the height of the building.'];
   }
 
   /**
@@ -265,22 +265,22 @@ export class Building extends Location {
     };
   }
 
-  /** The building's theme, and the landmark banner when it is one (Building.groovy:141, 146-149). */
+  /** The building's culture, its height, and a landmark said so (Building.groovy:141, 146-149; plain words, U02). */
   override facts(): readonly Fact[] {
     const culture = this.vibe()?.culture();
     return [
-      ...(culture === undefined ? [] : [{ key: 'culture', label: 'THEME', value: culture.key() } as const]),
-      ...(this.#landmark
-        ? [{ key: 'alert', label: 'UNIQUE_LOCUS_DETECTION', value: 'MAJOR_LANDMARK_DISCOVERED' } as const]
-        : []),
+      ...(culture === undefined ? [] : [{ key: 'culture', label: 'Culture', value: culture.key() } as const]),
+      { key: 'reading', label: 'Floors', value: String(this.#floors) },
+      ...(this.#landmark ? [{ key: 'alert', label: 'Landmark', value: '' } as const] : []),
     ];
   }
 
-  /** The ritual's status line (Building.groovy:112-117). */
+  /** The ritual's status line (Building.groovy:112-117), in plain words (U02): nothing until a merge is made inside. */
   status(): string {
-    if (this.#breached) return 'BEDROCK_BREACHED';
-    if (this.#merges > 0) return `INFUSION_ACTIVE: ${String(this.#merges)}`;
-    return 'STRUCTURAL_STABLE';
+    if (this.#breached) return 'The bedrock is breached';
+    if (this.#merges > 0)
+      return `${String(this.#merges)} ${this.#merges === 1 ? 'merge' : 'merges'} made inside`;
+    return '';
   }
 
   /** From the building down, the traveller is indoors. */
@@ -294,11 +294,11 @@ export class Building extends Location {
   }
 
   childrenHeading(): string {
-    return 'Building strata diagnostics:';
+    return 'Ride to a floor:';
   }
 
   approachVerb(): string {
-    return 'Access:';
+    return 'Ride to';
   }
 
   /** The held fragment that is this building's Keystone, if any (Building.groovy:37-40). */

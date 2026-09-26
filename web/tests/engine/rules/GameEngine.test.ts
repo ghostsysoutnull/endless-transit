@@ -328,7 +328,12 @@ describe('GameEngine — walking the big world', () => {
     const building = engine.step('enter:0');
     expect(building.place?.kind).toBe('Building');
     expect(building.message).toBe('Entered Ornate Sanctum.');
-    expect(building.place?.facts).toEqual([{ key: 'culture', label: 'THEME', value: 'baroque' }]);
+    expect(building.place?.facts).toEqual([
+      { key: 'culture', label: 'Culture', value: 'baroque' },
+      { key: 'reading', label: 'Floors', value: '16' },
+    ]);
+    expect(building.place?.position).toEqual({ label: 'Building', index: 1, total: 4 });
+    expect(building.place?.childrenHeading).toBe('Ride to a floor:');
     const floors = building.options.filter((option) => option.role === 'travel');
     expect(floors).toHaveLength(16);
     // The row the floor peeks is pinned by the peek's own test (Passages.test); here only that it has one.
@@ -336,17 +341,13 @@ describe('GameEngine — walking the big world', () => {
     expect({ ...floors[0], figure: null }).toEqual({
       id: 'enter:0',
       key: '',
-      label: 'Access: Peak',
+      label: 'Ride to Peak',
       place: 'Floor 15',
       role: 'travel',
       sealed: false,
       landmark: false,
       ordinal: '15',
-      readings: [
-        { key: 'zone', label: 'FUNCTION', value: 'PEAK_OBSERVATORY' },
-        { key: 'reading', label: 'ST', value: '100%' },
-        { key: 'reading', label: 'RES', value: '1582Hz' },
-      ],
+      readings: [{ key: 'zone', label: 'Zone', value: 'Peak observatory' }],
       opposite: '',
       current: false,
       visited: false,
@@ -359,8 +360,8 @@ describe('GameEngine — walking the big world', () => {
     );
     // A floor's key is its number (Guide:111) — so only floors 0–9 have one; a key never differs from the ordinal.
     expect(floors.map((option) => option.key).join(',')).toBe(',,,,,,9,8,7,6,5,4,3,2,1,0');
-    expect(floors.at(-1)?.label).toBe('Access: Lobby');
-    expect(floors.at(-1)?.readings[0]?.value).toBe('TRANSIT_LOBBY');
+    expect(floors.at(-1)?.label).toBe('Ride to Lobby');
+    expect(floors.at(-1)?.readings[0]?.value).toBe('Transit lobby');
     expect(building.options.filter((option) => option.role === 'move')).toEqual([]);
     // The elevator column's [>X<]: the lobby to begin with, then the floor last arrived at (Building.groovy:189).
     expect(floors.map((option) => option.current).indexOf(true)).toBe(15);
@@ -381,13 +382,9 @@ describe('GameEngine — walking the big world', () => {
     const lobby = engine.step('enter:15');
     expect(lobby.place?.kind).toBe('Floor');
     expect(lobby.place?.name).toBe('Floor 0');
-    expect(lobby.place?.position).toEqual({ label: 'Z-AXIS', index: 1, total: 16 });
-    expect(lobby.place?.facts.map((fact) => fact.label)).toEqual([
-      'TECH_ERA',
-      'RESONANCE',
-      'STABILITY',
-      'ATMOS_SHIFT',
-    ]);
+    // A floor has no position chip (U02): its name and the tower say its height.
+    expect(lobby.place?.position).toBeNull();
+    expect(lobby.place?.facts.map((fact) => fact.label)).toEqual(['Era', 'Culture', 'Stability', 'Trait']);
     expect(lobby.options).toEqual([
       move('up', 'u', 'Go Up', 'down'),
       move('corridor', 'c', 'Enter Corridor', 'elevator'),
@@ -427,14 +424,14 @@ describe('GameEngine — walking the big world', () => {
     const corridor = engine.step('move:corridor');
     expect(corridor.place?.kind).toBe('Floor');
     expect(corridor.message).toBe('Enter Corridor.');
-    expect(corridor.place?.childrenHeading).toBe('Local access list:');
-    expect(corridor.place?.status).toBe('TRAFFIC: [STABLE] | THEME: [BAROQUE]');
+    expect(corridor.place?.childrenHeading).toBe('Doors:');
+    expect(corridor.place?.status).toBe('');
     const doors = corridor.options.filter((option) => option.role === 'travel');
     expect(doors).toHaveLength(9);
     expect(doors[0]).toEqual({
       id: 'enter:0',
       key: '1',
-      label: 'Access: _void_sink_ Brutalist Slab [PITTED]',
+      label: 'Open _void_sink_ Brutalist Slab [PITTED]',
       place: '_void_sink_ Brutalist Slab [PITTED]',
       role: 'travel',
       sealed: false,

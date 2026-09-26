@@ -20,7 +20,7 @@ export interface PlaceSummary {
   readonly name: string;
   /** The path as text, `0.2.1`. */
   readonly address: string;
-  /** One-based position among the siblings; nothing for the universe. */
+  /** One-based position among the siblings; nothing for the universe, nor for a kind with no index label (a floor: its name and the tower say its height, U02). */
   readonly position: { readonly label: string; readonly index: number; readonly total: number } | null;
   /** From the universe down to here. */
   readonly trail: readonly { readonly icon: string; readonly kind: string; readonly name: string }[];

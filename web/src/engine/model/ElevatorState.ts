@@ -69,24 +69,24 @@ export class ElevatorState implements FloorState {
     return MOVES.make(floor, id);
   }
 
-  /** TECH_ERA, RESONANCE, STABILITY and ATMOS_SHIFT (Guide:351-354; ElevatorState.groovy:63-75). */
+  /** Era, culture, stability and trait (Guide:351-354; ElevatorState.groovy:63-75; plain words, U02). */
   facts(floor: Floor): readonly Fact[] {
     const vibe = floor.vibe();
     if (vibe === undefined) return [];
     return [
-      { key: 'era', label: 'TECH_ERA', value: vibe.era().key() },
-      { key: 'culture', label: 'RESONANCE', value: vibe.culture().key() },
+      { key: 'era', label: 'Era', value: vibe.era().key() },
+      { key: 'culture', label: 'Culture', value: vibe.culture().key() },
       {
         key: 'reading',
-        label: 'STABILITY',
+        label: 'Stability',
         value: `${(vibe.stability() * 100).toFixed(STABILITY_DECIMALS)}%`,
       },
-      { key: 'trait', label: 'ATMOS_SHIFT', value: vibe.mutation()?.key() ?? 'Standard' },
+      { key: 'trait', label: 'Trait', value: vibe.mutation()?.key() ?? 'Standard' },
     ];
   }
 
   description(floor: Floor): readonly string[] {
-    return [`${floor.name()}. ${floor.sentence()}`, 'Local signal is STABLE. Corridor access authorized.'];
+    return [`${floor.name()}. ${floor.sentence()}`];
   }
 
   status(floor: Floor): string {

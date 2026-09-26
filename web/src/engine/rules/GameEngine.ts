@@ -516,7 +516,7 @@ export class GameEngine {
       name: here.name(),
       address: here.address().toString(),
       position:
-        peers.length === 0
+        peers.length === 0 || here.kind().indexLabel() === ''
           ? null
           : { label: here.kind().indexLabel(), index: peers.indexOf(here) + 1, total: peers.length },
       trail: here.trail().map((step) => ({

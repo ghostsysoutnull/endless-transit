@@ -24,39 +24,25 @@ dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HE
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0/16
-tags: Strata 3 of 10 (position) | THEME Shogun (culture)
-  Analyzing vertical lattice structure...
-diag: STRUCTURAL_STABLE
+tags: Building 3 of 10 (position) | Culture Shogun (culture) | Floors 7 (reading)
+  An elevator runs the height of the building.
+diag: 
 status: Entered Cedar Lantern.
-BUILDING STRATA DIAGNOSTICS
-  06 [6] Access: Peak
-       FUNCTION: PEAK_OBSERVATORY
-       ST: 100%
-       RES: 2994Hz
-  05 [5] Access: Floor 5
-       FUNCTION: DATA_VAULT
-       ST: 100%
-       RES: 1335Hz
-  04 [4] Access: Floor 4
-       FUNCTION: STORAGE_CELL
-       ST: 100%
-       RES: 1999Hz
-  03 [3] Access: Floor 3
-       FUNCTION: STORAGE_CELL
-       ST: 100%
-       RES: 1024Hz
-  02 [2] Access: Floor 2
-       FUNCTION: POWER_RELAY
-       ST: 100%
-       RES: 1994Hz
-  01 [1] Access: Floor 1
-       FUNCTION: MECHANICAL_SUMP
-       ST: 100%
-       RES: 2508Hz
-  00 [0] Access: Lobby [>X<]
-       FUNCTION: TRANSIT_LOBBY
-       ST: 100%
-       RES: 1104Hz
+RIDE TO A FLOOR
+  06 [6] Ride to Peak
+       Zone: Peak observatory
+  05 [5] Ride to Floor 5
+       Zone: Data vault
+  04 [4] Ride to Floor 4
+       Zone: Storage cell
+  03 [3] Ride to Floor 3
+       Zone: Storage cell
+  02 [2] Ride to Floor 2
+       Zone: Power relay
+  01 [1] Ride to Floor 1
+       Zone: Mechanical sump
+  00 [0] Ride to Lobby [>X<]
+       Zone: Transit lobby
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ███ ████████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2 > Resonant traces: 0
 dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
@@ -64,10 +50,9 @@ dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] 
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0/16
-tags: Z-axis 1 of 7 (position) | TECH_ERA Analog (era) | RESONANCE Shogun (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT Military (trait)
-  Floor 0. SHOGUN geometry presses in from every wall; the elevator sighs shut behind you.
-  Local signal is STABLE. Corridor access authorized.
-diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
+tags: Era Analog (era) | Culture Shogun (culture) | Stability 90.00% (reading) | Trait Military (trait)
+  Floor 0. Shogun geometry presses in from every wall; the elevator sighs shut behind you.
+diag: 
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ████ ██████ ███ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
@@ -77,15 +62,15 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0/16
-tags: Z-axis 1 of 7 (position) | THEME Shogun (culture)
+tags: Culture Shogun (culture) | Doors 2 (reading)
   A narrow service corridor, doors set flush into either wall.
-diag: TRAFFIC: [STABLE] | THEME: [SHOGUN]
+diag: 
 status: Enter Corridor.
 moves: [B] BACK TO ELEVATOR
-LOCAL ACCESS LIST
-  01 [1] Access: [HOLLOW] Bone-Lattice Aperture [COLD]
+DOORS
+  01 [1] Open [HOLLOW] Bone-Lattice Aperture [COLD]
        APPEARANCE: An aperture of interlocking bone-white struts. The frame is ice-cold to the touch, pulling heat from your palm. The word 'HOLLOW' is stamped into the metal in block letters.
-  02 [2] Access: Lacquered Timber Gate [RUSTED]
+  02 [2] Open Lacquered Timber Gate [RUSTED]
        APPEARANCE: A timber gate under many coats of black lacquer. The metal hinges are fused by deep, flakey oxidation.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ █████ ████████ █████████ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION

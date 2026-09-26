@@ -233,7 +233,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       `"${BUILDING}":"{\\"elevator\\":15,\\"sampled\\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],\\"merges\\":8,\\"breached\\":true}"`,
     );
     const building = engine.step('leave');
-    expect(building.place?.status).toBe('BEDROCK_BREACHED');
+    expect(building.place?.status).toBe('The bedrock is breached');
     const listed = building.options.filter((option) => option.role === 'travel');
     expect(listed).toHaveLength(26);
     expect(listed.slice(16).map((option) => [option.id, option.ordinal, option.key, option.label])).toEqual(
@@ -241,7 +241,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
         `enter:${String(16 + k)}`,
         String(-1 - k),
         '',
-        `Access: Layer -0x${(k + 1).toString(16).toUpperCase()}`,
+        `Ride to Layer -0x${(k + 1).toString(16).toUpperCase()}`,
       ]),
     );
     expect(listed[16]?.readings.map((fact) => fact.value)).toEqual(['ABYSSAL_SUBSTRATE', 'P: 10%', '1138Hz']);
@@ -274,10 +274,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       abyssal: true,
       position: { label: 'STRATA', index: 1, total: 10 },
       status: 'SYSTEM_STATUS: [ABYSS_SYNC]',
-      description: [
-        'Layer -0x1. The air is thick with oily static and the hum of abyssal substrate.',
-        'Local signal is STABLE. Corridor access authorized.',
-      ],
+      description: ['Layer -0x1. The air is thick with oily static and the hum of abyssal substrate.'],
     });
     expect([
       null,
@@ -318,7 +315,10 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       name: 'Layer -0x1',
       abyssal: true,
       status: 'TRAFFIC: [PRESSURE_HIGH] | THEME: [ABYSSAL]',
-      facts: [{ key: 'culture', label: 'THEME', value: 'abyssal' }],
+      facts: [
+        { key: 'culture', label: 'Culture', value: 'abyssal' },
+        { key: 'reading', label: 'Doors', value: '9' },
+      ],
       description: ['A pulsing, organic artery of data.'],
     });
     expect(artery.options.filter((option) => option.role === 'travel')).toHaveLength(9);
@@ -384,7 +384,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       'Ornate Sanctum Keystone',
     ]);
     const building = engine.step('enter:0');
-    expect(building.place?.status).toBe('STRUCTURAL_STABLE');
+    expect(building.place?.status).toBe('');
     expect(building.options.filter((option) => option.role === 'travel')).toHaveLength(16);
     expect(moves(engine.step('enter:15'))).toEqual(['move:up', 'move:corridor']);
     // The Keystone still fits its building: primed again, the Peak offers the breach without a new forge.

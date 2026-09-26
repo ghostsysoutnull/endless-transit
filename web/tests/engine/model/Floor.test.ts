@@ -60,7 +60,7 @@ describe('Floor — one child, the corridor; a number that is its place on the b
     expect(floor(2).goesByNumber()).toBe(true);
   });
 
-  test('the list names the ground floor Lobby and the top floor Peak; the zone, integrity and resonance ride beside (Building.groovy:208-217)', () => {
+  test('the list names the ground floor Lobby and the top floor Peak; the zone rides beside, in plain words (Building.groovy:208-217; U02)', () => {
     expect(floor(0).callSign()).toBe('Lobby');
     expect(floor(3).callSign()).toBe('Peak');
     expect(floor(1).callSign()).toBe('Floor 1');
@@ -68,11 +68,7 @@ describe('Floor — one child, the corridor; a number that is its place on the b
       floor(1)
         .readings()
         .map((fact) => [fact.key, fact.label, fact.value]),
-    ).toEqual([
-      ['zone', 'FUNCTION', 'LIVING_UNIT'],
-      ['reading', 'ST', '100%'],
-      ['reading', 'RES', `${String(floor(1).resonance())}Hz`],
-    ]);
+    ).toEqual([['zone', 'Zone', 'Living unit']]);
   });
 
   test('a corridor is never stood in: arriving at it lands on its floor', () => {
@@ -165,11 +161,9 @@ describe('Floor — the elevator (FloorState, Phase 8: the floor asks its state,
 
   test('the diagnostic suite: what the elevator shows about the floor (ElevatorState.groovy:56-75)', () => {
     const middle = floor(1);
-    expect(middle.description()).toEqual([
-      'Floor 1. The air hums.',
-      'Local signal is STABLE. Corridor access authorized.',
-    ]);
-    expect(middle.status()).toBe('SYSTEM_DIAGNOSTIC: [NOMINAL]');
+    // Plain words (U02): the floor's sentence only, and no diagnostic line.
+    expect(middle.description()).toEqual(['Floor 1. The air hums.']);
+    expect(middle.status()).toBe('');
     // No planet above this test's street: the vibe readings are simply absent, the label rule is still there.
     expect(middle.facts()).toEqual([]);
   });

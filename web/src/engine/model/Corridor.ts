@@ -76,21 +76,25 @@ export class Corridor extends Location {
     return [`${this.#sentence}.`];
   }
 
+  /** Its culture and how many doors it has (plain words, U02). */
   override facts(): readonly Fact[] {
     const culture = this.vibe()?.culture();
-    return culture === undefined ? [] : [{ key: 'culture', label: 'THEME', value: culture.key() }];
+    return [
+      ...(culture === undefined ? [] : [{ key: 'culture', label: 'Culture', value: culture.key() } as const]),
+      { key: 'reading', label: 'Doors', value: String(this.#floor.building().doorsPerFloor()) },
+    ];
   }
 
+  /** No diagnostic line: the corridor is drawn (U02). */
   status(): string {
-    const culture = this.vibe()?.culture().key().toUpperCase() ?? 'UNKNOWN';
-    return `TRAFFIC: [STABLE] | THEME: [${culture}]`;
+    return '';
   }
 
   childrenHeading(): string {
-    return 'Local access list:';
+    return 'Doors:';
   }
 
   approachVerb(): string {
-    return 'Access:';
+    return 'Open';
   }
 }
