@@ -11,7 +11,7 @@ Current state only. The rules live in `CLAUDE.md` and the files it names; the hi
     - `.claude/brief.md` — every agent starts from it;
     - `tasks/UI_QUEUE.md`, its Decisions — they bind every iteration;
     - `.claude/STANDING_ORDER.md`, `.claude/commands/chronicle.md` — run only on the user's ask.
-  - Done 2026-09-26: "TypeScript and OO" in `web/CLAUDE.md`.
+  - Done 2026-09-26: "TypeScript and OO" in `CLAUDE.md`.
 - **In progress:** U02 of the UI rework (`tasks/UI_QUEUE.md`), under the Solo loop. Its next step is in
   `tasks/ui/U02.md` ("State at handover"): the design fixes in `tasks/ui/U02-fixes.md`, then the corridor, then the
   end-of-iteration browser tests. The browser suite is red on this branch until then, by plan.
