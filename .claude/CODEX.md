@@ -18,9 +18,9 @@ work on the rules themselves, only when the user says "law mode".
 * If something goes sideways, STOP and re-plan immediately — don't keep pushing.
 * **Surgical precision:** minimal, targeted changes; no "cleanup" of code outside the task.
 
-### 1.5. Closing a wave (outside a queue)
-A wave — a backlog item, a docs session, a one-line fix — closes after its last action (the merge, the push, the live
-check), in one go under the directive that started it:
+### 1.5. Closing a wave
+A wave — a queue iteration, a backlog item, a docs session, a one-line fix — closes after its last action (the merge,
+the push, the live check), in one go under the directive that started it:
 1. **False facts:** write each fact the wave made false in the old state's own words; `grep -rn` them across `docs/`,
    `tasks/`, every `CLAUDE.md`, `.claude/`, `README.md`; fix every live hit (`journals/` and `tasks/completed/` are history).
 2. **Handover true:** `tasks/RECOVERY_PROMPT.md` holds current state only; a backlog entry closes with a pointer to its record.
