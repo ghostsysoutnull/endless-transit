@@ -10,9 +10,9 @@ Current state only. The rules live in `CLAUDE.md` and the files it names; the hi
      what belongs in `web/CLAUDE.md`'s code rules.
   2. **Review the rules not yet reviewed**, most often loaded first:
      - `tasks/lessons/infrastructure.md` — loaded every session;
-     - `.claude/CODEX.md`, the unreviewed sections — loaded every session;
+     - `.claude/CODEX.md`, the whole file — loaded every session;
      - `tasks/lessons/web.md` — loaded whenever work touches `web/`;
-     - `.claude/commands/grill.md`, the unreviewed checks — runs on every plan;
+     - `.claude/commands/grill.md`, the whole file — runs on every plan;
      - `.claude/brief.md` — every agent starts from it;
      - `tasks/UI_QUEUE.md`, its Decisions — they bind every iteration;
      - `.claude/STANDING_ORDER.md`, `.claude/commands/chronicle.md` — run only on the user's ask.
