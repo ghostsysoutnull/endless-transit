@@ -6,8 +6,8 @@ Solo loop (`.claude/SOLO_LOOP.md`) is the default. The law both share is `.claud
 
 ## 🚦 THE STANDING ORDER — queue sessions (user Directive, 2026-09-21; extended to the UI queue 2026-09-24)
 For every session that works a queue — `tasks/PORT_QUEUE.md` (done) or `tasks/UI_QUEUE.md` — this section **replaces** `/grill` as an authorization step and the
-close-out of CODEX § 1.5. `.claude/CODEX.md` (OO principles, Shape
-table, coverage claims, tests before fixes) still governs the code that gets written.
+close-out of the Codex ("Closing a wave"). The OO principles in `CLAUDE.md` and `.claude/CODEX.md` (Shape
+table, coverage claims, tests before fixes) still govern the code that gets written.
 
 1. **"hi" runs the queue** — the user block at the top of `CLAUDE.md` outranks this order (a question or process talk
    pauses the run until an explicit go). Read `tasks/RECOVERY_PROMPT.md` and the active queue. Every "hi" opens with

@@ -91,7 +91,7 @@ HK and phase plans `tasks/completed/`. History — read on demand, never rewritt
 | Docs | `./terminal/vinc.sh --docs` | handover facts + blueprint stamps (at close-out) |
 
 ## 🧾 Closing a Groovy wave (from the retired `/close-wave`, 2026-09-25)
-The root close-out (`.claude/CODEX.md` § 1.5), plus:
+The root close-out (`.claude/CODEX.md`, "Closing a wave"), plus:
 - **Preconditions:** `./vinc.sh --test --agent`, `--lint --agent`, `--scan` if `model`/`procgen` changed.
 - **Blueprints:** for every touched class with a file in `docs/blueprints/logic/classes/<pkg>/`: read the blueprint
   against the class, correct it, re-stamp its last line `*Verified against: <Class>.groovy @ <hash>*`
