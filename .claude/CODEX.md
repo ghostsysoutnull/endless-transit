@@ -29,15 +29,15 @@ table, coverage claims, tests before fixes) still governs the code that gets wri
    done, one commit per module with its tests, a note `tasks/ui/<id>.md` (it records for the plan and the build the
    agent tool's figure — the final context — and the processed tokens from the transcript, beside the estimate);
    it runs `npm run check` and only the browser specs it touches, phone profile, and past 1.5× its token estimate it
-   stops and reports → the main session runs `npm run check` and the full `npm run e2e` once, looks at the fixed
-   screenshots (the new scene on the phone, and under reduced motion), fixes or sends back → merge
+   stops and reports → the main session runs `npm run check` (not the browser suite — the tester plays the build first and asks
+   for it; user decision 2026-09-25), fixes or sends back → merge
    `--no-ff` → tick the queue, make the handover true → commit → push → confirm the live build answers. No reviewer or
    fixer agent (user decision 2026-09-23: they cost ~900k tokens an iteration and half their findings were test
    tightness; the tester's findings are the review).
 3. **After the go, no questions.** What the plan and the Decisions do not cover, the build decides in their spirit and
    writes in the note.
-4. **Safety net.** Merge only when every gate of the touched tree is green (`web/**` → `npm run check`, browser tests in
-   the phone profile — the game is for phones only). **The only early stop:** a gate still red after honest
+4. **Safety net.** Merge only when every gate of the touched tree is green (`web/**` → `npm run check`; the browser suite in
+   the phone profile when the user asks for it — the game is for phones only). **The only early stop:** a gate still red after honest
    tries — that iteration stays unmerged and the run ends with a plain report.
 5. **Lean records.** No chronicle, no retro, no blueprint, no `todo.md` line, no workflow-backlog entry — the note and
    the merge commit are the record. A user correction still becomes a line: in the block at the top of `CLAUDE.md` when it is about working with the

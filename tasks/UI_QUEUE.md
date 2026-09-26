@@ -12,7 +12,8 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 1. **Picture first; the terminal's jargon goes.** Every place is drawn on a canvas and tapped in the picture; its list
    stays under it as the accessible twin, and what is pointed at in one lights in the other. Labels like
    `PULSE_TRAVERSAL`, `LOCUS_HASH`, `[STABLE]`, `[SYSTEM_TELEMETRY]` become plain chips or go; the room's prose stays.
-2. **The mock is the look and the feel; the game is the rules.** Where they disagree on a rule, a number or a name, the
+2. **The mock is the look and the feel; the game is the rules.** A plan that departs from the mock's look (a layout, a
+   motion, a drawing) says so and asks first — never decided quietly (the street's two rows, 2026-09-25). Where they disagree on a rule, a number or a name, the
    game wins (as port Decision 9). Mock-only data stays mock-only: its sample names, apartments beyond 10 rooms, the
    preview ship, the forced drift on the demo walk.
 3. **Phone first** — port Decisions 1–5 and 8 still bind (thumb-sized real buttons, portrait 360 px, nothing needs
