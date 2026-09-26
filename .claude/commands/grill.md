@@ -16,7 +16,7 @@ Each is answered from tool output produced in this session (Read, grep, a probe)
 | :-- | :-- | :-- | :-- |
 | 1 | **Coverage claims** — every "test X guards Y" | as the Codex's Coverage Claim Protocol asks | PASS / UNGUARDED |
 | 2 | **Decisions** — every queue Decision the plan touches, and every place it departs from one or from the mock's look | each named with the plan line that honours it; a departure carries its reason | PASS / DEVIATES |
-| 3 | **Shape** — each OO principle in `CLAUDE.md` and each rule of "TypeScript and OO" in `web/CLAUDE.md`, with the code or plan line that honours or breaks it | the Shape table, as the Codex's Shape Claim Protocol asks | PASS / UNDECLARED |
+| 3 | **Shape** — each OO principle and each rule of "TypeScript and OO" in `CLAUDE.md`, with the code or plan line that honours or breaks it | the Shape table, as the Codex's Shape Claim Protocol asks | PASS / UNDECLARED |
 | 4 | **Walls** — the walls in `web/CLAUDE.md` and its engine laws | for each the plan touches, the enforcing test named from that list; a wall with no test is UNGUARDED | PASS / UNGUARDED |
 | 5 | **Tests that move on purpose** (the queue's Decision "Tests change on purpose") | each new or changed test against the testing principles in `CLAUDE.md`, with the line that honours or breaks it; every snapshot and name lookup the change rewrites, by name | PASS / UNLISTED |
 | 6 | **Revert unit and cost** | one commit per module with its tests, each green alone; the token estimate present and plausible against the actual tokens in earlier iterations' notes | PASS / UNBOUNDED |
