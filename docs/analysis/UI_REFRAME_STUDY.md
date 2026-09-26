@@ -89,7 +89,7 @@ Shape table. Facts stay for the words; the pictures read the typed fields.
   test ids where the thing survives; retire them with the thing.
 - Specs by theme: `a11y`, `announce`, `focus`, `fold` (the rules above), `buildings`, `world`, `items`, `survival`,
   `map` (trace heading, `.vh li` lines, canvas painted), `richness`, `ritual`, `resilience`, `title`, `help`,
-  `playthrough`. 15 specs, 3,011 lines; both profiles, one worker.
+  `playthrough`. The phone profile, one worker.
 
 ## 6. How the mock was checked (reuse it)
 

@@ -135,8 +135,8 @@ Portrait at 360 px never scrolls sideways. `prefers-reduced-motion` is respected
 | Do                                                                   | Command                                   |
 | :------------------------------------------------------------------- | :---------------------------------------- |
 | Gate: typecheck + lint + format + unit tests                         | `npm run check` → one `STATUS=` line      |
-| Browser tests, both profiles, production build                       | `npm run e2e`                             |
-| The full playthrough alone (title → void → reload), both profiles    | `npx playwright test --grep @playthrough` |
+| Browser tests, the phone profile, production build                   | `npm run e2e`                             |
+| The full playthrough alone (title → void → reload), the phone        | `npx playwright test --grep @playthrough` |
 | Play while developing                                                | `npm run dev`                             |
 | Site → `dist/` (base `/endless-transit/play/`; `ET_BASE` overrides)  | `npm run build`                           |
 | Publish: check → build → `../docs/play/` + `build.txt` (then commit) | `npm run publish:site`                    |

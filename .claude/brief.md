@@ -11,7 +11,7 @@ rules written since the session began, which your loaded files do not show yet.
 - **Law:** `web/CLAUDE.md`, `tasks/lessons/web.md`, and in `.claude/CODEX.md` the OO table, the Shape Claim and the
   Coverage Claim Protocols. A claim that a test guards something quotes its assertion lines.
 - **Tests first:** RED, then green. While working run `npm run check` and only the browser specs you touch, phone profile
-  (`npx playwright test e2e/<spec> --project=phone`, from `web/`); the main session runs the full `npm run e2e`.
+  (`npx playwright test e2e/<spec> --project=phone`, from `web/`); the full `npm run e2e` runs only when the user asks.
 - **Token cap:** the brief or the approved plan gives an estimate; past 1.5× it, stop and report where you are.
 - **Return** exactly what the brief asks, tight. Facts come from tool output of this run (commands and their result
   lines), never from memory; say plainly what was not done or not verified.
