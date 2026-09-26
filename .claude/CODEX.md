@@ -59,5 +59,4 @@ check), in one go under the directive that started it:
 ## 🏛️ Safety Mandates
 - **A moved or refactored file keeps its logic**: read the whole original, never a template or a skeleton; after the
   move, `git diff` shows the move and nothing else (structural collapse, `journals/POST_MORTEM_2026_03_11.md`).
-- **Lazy loading**: a place's children are reached only through the accessor that generates them
-  (`journals/POST_MORTEM_2026_03_06.md`; the web law's `Location`).
+- **Lazy loading**: stated once, in `web/CLAUDE.md`'s engine laws (`journals/POST_MORTEM_2026_03_06.md`).

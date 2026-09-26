@@ -58,10 +58,11 @@ Each wall is shown RED on a scratch file when it is added; a new invariant ships
    `performance`, no `globalThis` / `window` / `self`; everywhere no `innerHTML`, no `unsafeHTML`, no barrels, no `..`
    segment in an import (use `#engine/ #ui/ #platform/ #content/ #tests/`).
 3. **Design** — a move is visible without scrolling at 360 × 640 on every screen (`e2e/fold.spec.ts`); picture text
-   ≥ 12 px (`tests/ui/canvas/Pictures.test.ts`); text contrast and no faded text (`tests/ui/styles/Contrast.test.ts`); a
-   view carries no words (`tests/ui/screens/ViewsCarryNoWords.test.ts`); every button and image is named, and reduced
-   motion is respected (`e2e/a11y.spec.ts`); every tappable thing is a real `button[data-option]` and a tap in a picture
-   resolves to an option id (no test names this wall yet).
+   ≥ 12 px (`tests/ui/canvas/Pictures.test.ts`); text contrast and no faded text (`tests/ui/styles/Contrast.test.ts`);
+   a view carries no literal text or aria-label — words live in the presenter
+   (`tests/ui/screens/ViewsCarryNoWords.test.ts`); every button and image is named, and reduced motion is respected
+   (`e2e/a11y.spec.ts`); every tappable thing is a real `button[data-option]` and a tap in a picture resolves to an
+   option id (no test names this wall yet).
 
 ## Code rules
 
@@ -69,7 +70,6 @@ Each wall is shown RED on a scratch file when it is added; a new invariant ships
 - `erasableSyntaxOnly`: no `enum`, no constructor parameter properties. `#private` fields.
 - Randomness: `seed.branch(key)` then one helper (`pick`, `range`, `probability`). Never a stream. Text keys never
   start with `#` (Seed's own); `branch(1)` ≠ `branch('1')`.
-- Words live in the presenter; a `*View.ts` has no literal text or aria-label.
 - Focus after a render: `Shell` owns it — an option names the option that undoes it, a screen marks its resting place
   (`data-rest`), and a panel that just opened marks itself `data-spot`: the shell scrolls it into view (instant under
   `prefers-reduced-motion`, clear of the dock by `scroll-padding`) and gives it the focus. Only a shown button takes
@@ -96,8 +96,8 @@ only grow.
 
 ## Touch first
 
-Every action is a real `<button>` ≥ 44×44 CSS px. Nothing depends on hover or a key. Portrait at 360 px never scrolls
-sideways. `prefers-reduced-motion` is respected. Saves: `localStorage` only.
+Every button is ≥ 44×44 CSS px. Nothing depends on hover or a key. Portrait at 360 px never scrolls sideways. Saves:
+`localStorage` only.
 
 ## Commands (from `web/`)
 
