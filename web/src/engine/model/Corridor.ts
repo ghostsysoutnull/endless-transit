@@ -1,4 +1,5 @@
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
@@ -20,11 +21,14 @@ export const CORRIDOR_KIND = new LocationKind({
 export class Corridor extends Location {
   readonly #floor: Floor;
   readonly #sentence: string;
+  readonly #shape: string;
 
-  constructor(origin: Origin<Floor>, facts: { sentence: string }) {
+  /** `shape` is the key its sentence carries (`long`, `service`, `curved`, `static`); none when made without one. */
+  constructor(origin: Origin<Floor>, facts: { sentence: string; shape?: string }) {
     super(origin);
     this.#floor = origin.parent;
     this.#sentence = facts.sentence;
+    this.#shape = facts.shape ?? '';
   }
 
   kind(): LocationKind {
@@ -41,6 +45,11 @@ export class Corridor extends Location {
 
   override arrival(): Location {
     return this.#floor;
+  }
+
+  /** How it runs and how many doors it has — the doors counted by the building, never by making them. */
+  override figure(): Figure {
+    return { floors: 0, doors: this.#floor.building().doorsPerFloor(), shape: this.#shape };
   }
 
   /**

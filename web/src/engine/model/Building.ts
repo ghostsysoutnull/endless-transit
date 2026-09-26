@@ -73,6 +73,25 @@ export class Building extends Location {
     return { floors: this.#floors, doors: this.#doorsPerFloor };
   }
 
+  /**
+   * Its own picture, the tower (U02): its size, what its roof is drawn from, where the car stands, how many
+   * Layers lie open below, and each floor's row — peeked by the floors, never a corridor made.
+   */
+  override portrait(): Figure {
+    return {
+      ...this.figure(),
+      tower: {
+        address: this.address().toString(),
+        landmark: this.#landmark,
+        car: this.#elevatorAt,
+        below: this.#breached ? SUBSTRATE_DEPTH : 0,
+        rows: this.children()
+          .slice(0, this.#floors)
+          .map((floor) => floor.figure() ?? { floors: 0, doors: 0 }),
+      },
+    };
+  }
+
   floors(): number {
     return this.#floors;
   }

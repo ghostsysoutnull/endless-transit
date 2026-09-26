@@ -20,4 +20,9 @@ export class Sentences {
   dealt(seed: Seed): string {
     return seed.branch(DEAL).pick(this.#library.list(`${LISTS}/${this.#kind}`));
   }
+
+  /** For a kind whose sentences carry a key (`sentence|key`, the corridor's shape, U02): the pair, on the same branch. */
+  dealtPair(seed: Seed): readonly [string, string] {
+    return seed.branch(DEAL).pick(this.#library.pairs(`${LISTS}/${this.#kind}`));
+  }
 }

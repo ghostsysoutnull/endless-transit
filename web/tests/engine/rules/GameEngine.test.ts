@@ -37,6 +37,7 @@ function system(id: string, key: string, label: string): GameOption {
     visited: false,
     address: '',
     figure: null,
+    numbered: false,
   };
 }
 
@@ -166,6 +167,7 @@ describe('GameEngine — walking the big world', () => {
       description: ['A neural web of infinite complexity.'],
       facts: [],
       drawing: 'universe',
+      figure: null,
       noise: 'D7F5-C533-B7FC-1498',
       frame: null,
       abyssal: false,
@@ -207,6 +209,7 @@ describe('GameEngine — walking the big world', () => {
       visited: true,
       address: '0.0',
       figure: null,
+      numbered: false,
     });
     expect(ids(snapshot)).not.toContain('leave');
     expect(snapshot.options.slice(-7)).toEqual([
@@ -246,6 +249,7 @@ describe('GameEngine — walking the big world', () => {
       visited: false,
       address: '',
       figure: null,
+      numbered: false,
     });
     expect(snapshot.message).toBe('Entered Zeta-915-Link.');
   });
@@ -296,10 +300,16 @@ describe('GameEngine — walking the big world', () => {
       address: '',
       figure: null,
     });
-    // A building answers with its drawing key too; its floors have no figure.
+    // A building answers with its drawing key too, and hands its own picture its tower (U02); its floors carry
+    // their peeked rows and go by their numbers, the street's buildings do not.
+    expect(buildings.every((option) => !option.numbered)).toBe(true);
+    expect(place.figure).toBeNull();
     const building = engine.step('enter:0');
     expect(building.place?.drawing).toBe('building');
-    expect(building.options.find((option) => option.role === 'travel')?.figure).toBeNull();
+    expect(building.place?.figure?.tower).toMatchObject({ car: 0, below: 0 });
+    expect(building.place?.figure?.tower?.rows).toHaveLength(16);
+    const floors = building.options.filter((option) => option.role === 'travel');
+    expect(floors.every((option) => option.numbered && option.figure?.looks?.length === 9)).toBe(true);
     // The noise is the frame's: the same place two steps later draws another frame.
     const back = engine.step('leave');
     expect(back.place?.address).toBe(place.address);
@@ -321,7 +331,9 @@ describe('GameEngine — walking the big world', () => {
     expect(building.place?.facts).toEqual([{ key: 'culture', label: 'THEME', value: 'baroque' }]);
     const floors = building.options.filter((option) => option.role === 'travel');
     expect(floors).toHaveLength(16);
-    expect(floors[0]).toEqual({
+    // The row the floor peeks is pinned by the peek's own test (Passages.test); here only that it has one.
+    expect(floors[0]?.figure).toMatchObject({ floors: 0, doors: 9 });
+    expect({ ...floors[0], figure: null }).toEqual({
       id: 'enter:0',
       key: '',
       label: 'Access: Peak',
@@ -340,6 +352,7 @@ describe('GameEngine — walking the big world', () => {
       visited: false,
       address: '0.0.0.0.0.0.0.0.0.15',
       figure: null,
+      numbered: true,
     });
     expect(floors.map((option) => option.ordinal)).toEqual(
       Array.from({ length: 16 }, (_, n) => String(15 - n)),
@@ -439,7 +452,12 @@ describe('GameEngine — walking the big world', () => {
       current: false,
       visited: false,
       address: '0.0.0.0.0.0.0.0.0.0.0.0',
-      figure: null,
+      figure: {
+        floors: 0,
+        doors: 0,
+        door: { look: { material: 'Brutalist Slab', state: 'Pitted' }, words: 'VOID_SINK' },
+      },
+      numbered: false,
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
       move('elevator', 'b', 'Back to Elevator', 'corridor'),

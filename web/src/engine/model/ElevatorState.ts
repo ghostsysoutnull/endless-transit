@@ -1,4 +1,6 @@
+import { BUILDING_KIND } from './Building.ts';
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
@@ -39,6 +41,15 @@ const STABILITY_DECIMALS = 2;
 export class ElevatorState implements FloorState {
   id(): string {
     return 'elevator';
+  }
+
+  /** At the elevator the floor is drawn as its building's tower, the car standing here (U02). */
+  drawing(): string {
+    return BUILDING_KIND.key();
+  }
+
+  portrait(floor: Floor): Figure | null {
+    return floor.building().portrait();
   }
 
   listing(): readonly Location[] {

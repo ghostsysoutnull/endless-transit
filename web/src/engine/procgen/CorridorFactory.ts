@@ -10,7 +10,7 @@ import type { LocationFactory } from './LocationFactory.ts';
 import { Progeny } from './Progeny.ts';
 import { Sentences } from './Sentences.ts';
 
-/** A corridor: one sentence dealt from the corridor descriptions; as many apartments as its building says doors per floor. */
+/** A corridor: one sentence dealt from the corridor descriptions, with its shape; as many apartments as its building says doors per floor. */
 export class CorridorFactory implements LocationFactory<Corridor, Floor> {
   readonly #sentences: Sentences;
   readonly #apartments: Progeny;
@@ -25,7 +25,8 @@ export class CorridorFactory implements LocationFactory<Corridor, Floor> {
   }
 
   create(origin: Origin<Floor>): Corridor {
-    return new Corridor(origin, { sentence: this.#sentences.dealt(origin.seed) });
+    const [sentence, shape] = this.#sentences.dealtPair(origin.seed);
+    return new Corridor(origin, { sentence, shape });
   }
 
   populate(parent: Corridor): readonly Location[] {

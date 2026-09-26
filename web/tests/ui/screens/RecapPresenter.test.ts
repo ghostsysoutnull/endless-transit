@@ -22,6 +22,7 @@ function option(id: string, key: string, label: string): GameOption {
     visited: false,
     address: '',
     figure: null,
+    numbered: false,
   };
 }
 
@@ -44,6 +45,7 @@ const RECAP: GameSnapshot = {
     telemetry: null,
     lattice: null,
     drawing: 'building',
+    figure: null,
     noise: '0000-0000-0000-0000',
   },
   player: { coherence: 61, band: 'degraded', steps: 33 },

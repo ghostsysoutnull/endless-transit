@@ -454,6 +454,7 @@ export class GameEngine {
       visited: player.visited(child),
       address: child.address().toString(),
       figure: child.figure(),
+      numbered: child.goesByNumber(),
     }));
   }
 
@@ -527,6 +528,7 @@ export class GameEngine {
       description: this.#corruption.read(here.description(), player.coherence(), frame),
       facts: here.facts(),
       drawing: here.drawing(),
+      figure: here.portrait(),
       noise: frame.toString(),
       frame: here.vibe()?.frame() ?? null,
       abyssal: here.abyssal(),
