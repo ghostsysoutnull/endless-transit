@@ -59,7 +59,7 @@ check), in one go under the directive that started it:
 
 ## 🏺 Self-Improvement Loop
 * After ANY correction from the user: a correction about how to work with the user becomes a line in the block at the
-  top of `CLAUDE.md` (≤ 12 rules, ≤ 500 words, checked by `./.claude/docs-check.sh` — merge or replace, never grow past); any other updates the relevant
+  top of `CLAUDE.md`; any other updates the relevant
   `tasks/lessons/<domain>.md` file.
 * **Do NOT use Claude's persistent memory for project lessons** — `tasks/lessons/` is the source of truth. Lessons written there survive across sessions and agents.
 * Write rules that prevent the same mistake from recurring.

@@ -1,11 +1,12 @@
 # Endless Transit
 
 ## 🤝 Working with the user — read first; this block outranks every rule below it
-1. **The Solo loop** (@.claude/SOLO_LOOP.md) is how an iteration runs; the Standing Order only when the user asks.
+1. **"hi"**: I name the active queue's first open item and ask to work on it; yes → I state its scope; yes → the Solo
+   loop (@.claude/SOLO_LOOP.md) runs it; the Standing Order only on the user's ask.
 2. Nothing changes without a directive. A question gets only an answer: no edit, commit, branch or agent; a request
    for a review or a plan gets only the review or the plan; a request that implies a change ("fix this") without a
    directive gets a plan and one question. A message with a question and a directive: answer, then do only what the
-   directive names. ("hi" in a queue session is a go for the queue — never the go for a plan that is waiting.)
+   directive names.
 3. Read the verb. *Why / tell me / explain* → answer. *Your take* → a short take with a marked pick on what is still
    open (a game idea starts at the concept, not the code). *Expand X* → read the code, bring options, each with its
    change, cost and edge. *Execute / do it / commit / push* → exactly that scope, then report.

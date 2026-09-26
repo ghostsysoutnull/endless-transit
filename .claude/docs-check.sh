@@ -3,8 +3,7 @@
 # Read-only — this script never writes a file.
 #   CHRONICLE  top LOG_ID of journals/CHRONICLE_INDEX.md == recovery prompt "Latest chronicle" == newest journals/LOG_* file
 #   HANDOVER   tasks/RECOVERY_PROMPT.md <= 1000 words — it holds current state only; history lives in the records (WF-008)
-#   BLOCK      the "Working with the user" block at the top of CLAUDE.md: <= 12 rules, <= 500 words — a new rule merges
-#              or replaces, it never grows the block (rules diet, 2026-09-25)
+#   BLOCK      the "Working with the user" block exists at the top of CLAUDE.md (its caps dropped by the user, 2026-09-26)
 # Env: DOCS_ROOT  repository root to read from (default: the parent of .claude/) — for negative checks on a scratch copy.
 # Usage: ./.claude/docs-check.sh [--agent]
 
@@ -29,19 +28,12 @@ HANDOVER=ok
 
 # --- BLOCK -----------------------------------------------------------------------------------------------------------
 BLOCK_TEXT=$(awk '/^## 🤝 Working with the user/{f=1} f&&/^$/{exit} f' "$ROOT/CLAUDE.md")
-UB_RULES=$(printf '%s\n' "$BLOCK_TEXT" | grep -cE '^[0-9]+\. ')
-UB_WORDS=$(printf '%s\n' "$BLOCK_TEXT" | wc -w | tr -d ' ')
 BLOCK=ok
-if [ -z "$BLOCK_TEXT" ]; then
-    BLOCK=FAIL; fail "BLOCK CLAUDE.md has no '## 🤝 Working with the user' block"
-else
-    [ "$UB_RULES" -le 12 ] || { BLOCK=FAIL; fail "BLOCK the user block in CLAUDE.md has $UB_RULES rules (cap 12) — merge or replace, do not raise the cap"; }
-    [ "$UB_WORDS" -le 500 ] || { BLOCK=FAIL; fail "BLOCK the user block in CLAUDE.md is $UB_WORDS words (cap 500) — tighten a rule, do not raise the cap"; }
-fi
+[ -n "$BLOCK_TEXT" ] || { BLOCK=FAIL; fail "BLOCK CLAUDE.md has no '## 🤝 Working with the user' block"; }
 
 # --- report ----------------------------------------------------------------------------------------------------------
 if [ ${#FAILS[@]} -eq 0 ]; then STATUS=PASS; EXIT=0; else STATUS=FAIL; EXIT=1; fi
-LINE="DOCS=$STATUS CHRONICLE=$CHRONICLE(${IDX_ID:-?}) HANDOVER=$HANDOVER(${RP_WORDS:-?}) BLOCK=$BLOCK(${UB_RULES:-?}/${UB_WORDS:-?})"
+LINE="DOCS=$STATUS CHRONICLE=$CHRONICLE(${IDX_ID:-?}) HANDOVER=$HANDOVER(${RP_WORDS:-?}) BLOCK=$BLOCK"
 if [ $AGENT -eq 1 ]; then
     for F in "${FAILS[@]}"; do echo "$F" >&2; done
 else
