@@ -1,3 +1,5 @@
+import type { MotionClock } from '#ui/scene/MotionClock.ts';
+import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import type { View } from '#ui/View.ts';
 import type { Palette } from './Palette.ts';
 import type { Picture } from './Picture.ts';
@@ -7,26 +9,28 @@ const CYCLE = 1800;
 /** The still frame's phase when nothing may move. */
 const STILL = 0.5;
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
-/** More than this is wasted on a phone's screen. */
-const MAX_DPR = 2;
 
 /**
  * The one canvas behind the `View` seam: mounts a `<canvas>` into its container, sizes it to the
  * container's width (device-pixel aware, so glyphs are crisp) and hands every frame to its picture. Colours
  * are read from the stylesheet's tokens where the canvas sits, so a frame below the bedrock is inked in
- * the void's colour without the picture knowing. The pulse runs on animation frames; with
- * `prefers-reduced-motion` the picture is painted once, still. The canvas is decoration for the eye — the
+ * the void's colour without the picture knowing. The pulse runs on the page's one clock (U01b), and the
+ * canvas keeps the pixel budget; with `prefers-reduced-motion` the picture is painted once, still. The canvas is decoration for the eye — the
  * text alternative lives beside it in the screen's markup.
  */
 export class CanvasView<VM> implements View<VM> {
   readonly #picture: Picture<VM>;
+  readonly #clock: MotionClock;
+  readonly #budget = new PixelBudget();
   #canvas: HTMLCanvasElement | undefined;
   #observer: ResizeObserver | undefined;
   #vm: VM | undefined;
-  #frame: number | undefined;
+  /** Stops listening to the clock; set while the pulse runs. */
+  #leave: (() => void) | undefined;
 
-  constructor(picture: Picture<VM>) {
+  constructor(picture: Picture<VM>, clock: MotionClock) {
     this.#picture = picture;
+    this.#clock = clock;
   }
 
   mount(container: HTMLElement): void {
@@ -47,7 +51,9 @@ export class CanvasView<VM> implements View<VM> {
       this.#paint(STILL);
       return;
     }
-    if (this.#frame === undefined) this.#tick();
+    this.#leave ??= this.#clock.subscribe((time) => {
+      this.#paint((time % CYCLE) / CYCLE);
+    });
   }
 
   dispose(): void {
@@ -64,19 +70,9 @@ export class CanvasView<VM> implements View<VM> {
     return view?.matchMedia(REDUCED_MOTION).matches ?? true;
   }
 
-  #tick(): void {
-    const view = this.#canvas?.ownerDocument.defaultView;
-    if (view === null || view === undefined) return;
-    this.#frame = view.requestAnimationFrame((time) => {
-      this.#paint((time % CYCLE) / CYCLE);
-      this.#tick();
-    });
-  }
-
   #stop(): void {
-    const view = this.#canvas?.ownerDocument.defaultView;
-    if (this.#frame !== undefined) view?.cancelAnimationFrame(this.#frame);
-    this.#frame = undefined;
+    this.#leave?.();
+    this.#leave = undefined;
   }
 
   #paint(phase: number): void {
@@ -88,7 +84,7 @@ export class CanvasView<VM> implements View<VM> {
     if (width === 0) return;
     const height = this.#picture.height(vm, width);
     const view = canvas.ownerDocument.defaultView;
-    const dpr = Math.min(view?.devicePixelRatio ?? 1, MAX_DPR);
+    const dpr = this.#budget.ratio(view?.devicePixelRatio ?? 1, width, height);
     const pixelWidth = Math.round(width * dpr);
     const pixelHeight = Math.round(height * dpr);
     if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {

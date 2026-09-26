@@ -4,7 +4,9 @@ import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import { CanvasView } from '#ui/canvas/CanvasView.ts';
 import { MapPicture } from '#ui/canvas/MapPicture.ts';
 import { TracePicture } from '#ui/canvas/TracePicture.ts';
+import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
+import type { MotionClock } from '#ui/scene/MotionClock.ts';
 import type { View } from '#ui/View.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
@@ -40,11 +42,20 @@ export class HudView implements View<HudVM> {
   #more = false;
   /** The debug strip's fold (I09): closed until the tester opens it, then open until the screen goes. */
   #debugOpen = false;
-  readonly #canvases = new CanvasSlots({
-    pane: () => new CanvasView(new MapPicture()),
-    map: () => new CanvasView(new MapPicture()),
-    trace: () => new CanvasView(new TracePicture()),
-  });
+  readonly #canvases: CanvasSlots<{
+    pane: MapPanelVM['picture'];
+    map: MapPanelVM['picture'];
+    trace: TracePictureVM;
+  }>;
+
+  /** The page's one clock moves every canvas of the screen (U01b). */
+  constructor(clock: MotionClock) {
+    this.#canvases = new CanvasSlots({
+      pane: () => new CanvasView(new MapPicture(), clock),
+      map: () => new CanvasView(new MapPicture(), clock),
+      trace: () => new CanvasView(new TracePicture(), clock),
+    });
+  }
 
   mount(container: HTMLElement): void {
     this.#container = container;
