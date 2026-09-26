@@ -14,6 +14,8 @@ import { BrowserFrameSource } from '#platform/BrowserFrameSource.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
+import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
+import { StreetPicture } from '#ui/scene/StreetPicture.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
@@ -45,11 +47,13 @@ const engine = new GameEngine({
 const masthead = new Masthead(__ET_BUILD__);
 // The page's one frame loop (Decision 4): every canvas that moves listens to it.
 const clock = new MotionClock(new BrowserFrameSource(window));
+// The places that are drawn (U01b): a drawing key the engine hands over, and its picture. A new scene is one entry.
+const scenes = new SceneRegistry({ street: new StreetPicture() });
 new Shell(engine, [
   new ScreenStage(new RebootPresenter(masthead), new RebootView()),
   new ScreenStage(new RecapPresenter(masthead), new RecapView()),
   new ScreenStage(new BufferPresenter(masthead), new BufferView()),
   new ScreenStage(new HelpPresenter(masthead), new HelpView()),
   new ScreenStage(new TitlePresenter(masthead), new TitleView()),
-  new ScreenStage(new HudPresenter(masthead), new HudView(clock)),
+  new ScreenStage(new HudPresenter(masthead), new HudView(clock, scenes)),
 ]).start(container);

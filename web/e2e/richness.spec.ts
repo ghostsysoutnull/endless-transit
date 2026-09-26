@@ -164,8 +164,9 @@ test('the elevator screen at the street’s first building: TECH_ERA, RESONANCE,
   await plant(page, STREET);
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TECH_ERA\s+Future/);
-  await expect(page.locator('.tag[data-fact="culture"]')).toHaveText(/RESONANCE\s+Baroque/);
+  // The street's own chips read in plain words since U01b (Decision 16); the floor keeps its own below.
+  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/Era\s+Future/);
+  await expect(page.locator('.tag[data-fact="culture"]')).toHaveText(/Culture\s+Baroque/);
   await tapOption(page, 'enter:0', false);
   await tapOption(page, 'enter:15', false);
   await expect(page.getByTestId('place-name')).toHaveText('Floor 0');

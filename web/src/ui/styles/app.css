@@ -589,6 +589,68 @@ body {
   gap: 10px;
 }
 
+/* The card's two parts (U01b): the name, and the rest — one column each, spaced as the card is. On a phone a
+   drawn place parts them around the picture and the list (the phone rule below). */
+.cap > .head,
+.cap > .body {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  min-width: 0;
+}
+
+/* The scene (U01b): the place drawn on a canvas the size of this box; the list under it is its twin. */
+.scene {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--rule-hi);
+  background: var(--ground);
+  overflow: hidden;
+}
+
+.scene canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Coherence is felt (Decision 5): below the stable band a drawn place's name tears now and then — only
+   where motion is welcome. */
+@media (prefers-reduced-motion: no-preference) {
+  .world[data-drawn][data-band='degraded'] .cap h2,
+  .world[data-drawn][data-band='critical'] .cap h2 {
+    animation: tear 3.2s steps(1) infinite;
+  }
+}
+
+@keyframes tear {
+  0%,
+  88%,
+  100% {
+    text-shadow: none;
+    transform: none;
+  }
+
+  90% {
+    text-shadow:
+      2px 0 var(--rd),
+      -2px 0 var(--cy);
+    transform: translateX(1px) skewX(-4deg);
+  }
+
+  94% {
+    text-shadow:
+      -3px 0 var(--rd),
+      3px 0 var(--cy);
+    transform: translateX(-2px);
+  }
+}
+
 .world .cap h2 .ic {
   flex: none;
   color: var(--yl);
@@ -839,6 +901,12 @@ body {
 /* The current row of a list — the floor the elevator stands at: the mock's "you" row, the old game's [>X<]. */
 .row.you {
   border-color: var(--yl);
+}
+
+/* The row whose building is pointed at in the picture, or that is pointed at itself (U01b). */
+.row[data-lit] {
+  border-color: var(--yl);
+  background: var(--panel2);
 }
 
 .row .mark {
@@ -1487,6 +1555,29 @@ body {
     grid-area: cap;
   }
 
+  /* A drawn place (U01b): the picture above the card in the middle column, about 4:3, never taller than 60vh. */
+  .app.world[data-drawn] {
+    grid-template-rows: auto auto auto auto auto auto auto auto 1fr auto;
+    grid-template-areas:
+      'rail hud hud'
+      'rail scene side'
+      'rail cap side'
+      'rail scan side'
+      'rail map side'
+      'rail trace side'
+      'rail dock side'
+      'rail debug side'
+      'rail . side'
+      'build build build';
+  }
+
+  .world .scene {
+    grid-area: scene;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    max-height: 60vh;
+  }
+
   .world .side {
     grid-area: side;
   }
@@ -1607,6 +1698,41 @@ body {
 
   .world .dock {
     order: 2;
+  }
+
+  /* A drawn place (U01b, amendment A): the name, then the picture, then the list, then the rest of the card —
+     the card and the side column give up their boxes so their parts can be ordered around the picture. */
+  .world[data-drawn] .cap,
+  .world[data-drawn] .side {
+    display: contents;
+  }
+
+  .world[data-drawn] > .hud,
+  .world[data-drawn] > .rail,
+  .world[data-drawn] .cap > .head {
+    order: -3;
+  }
+
+  /* The picture's height leaves the first row of the list above the dock at 360 × 640 with 8 px to spare
+     (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
+  .world[data-drawn] > .scene {
+    order: -2;
+    height: clamp(200px, calc(100dvh - 363px), 44dvh);
+  }
+
+  .world[data-drawn] .travel {
+    order: -1;
+  }
+
+  /* The name stands over the picture as its caption; the rest of the card keeps the card's box. */
+  .world[data-drawn] .cap > .head {
+    padding-inline: 2px;
+  }
+
+  .world[data-drawn] .cap > .body {
+    border: 1px solid var(--frame);
+    background: var(--panel);
+    padding: 10px 12px;
   }
 
   .world .debug {

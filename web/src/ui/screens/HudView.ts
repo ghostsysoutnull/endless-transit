@@ -7,6 +7,10 @@ import { TracePicture } from '#ui/canvas/TracePicture.ts';
 import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { MotionClock } from '#ui/scene/MotionClock.ts';
+import type { ScenePicture } from '#ui/scene/ScenePicture.ts';
+import type { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
+import { SceneView } from '#ui/scene/SceneView.ts';
+import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { View } from '#ui/View.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
@@ -33,7 +37,11 @@ type Slot = 'pane' | 'map' | 'trace';
  * offers sit under its title, so the first screen of a phone shows one (I09). The debug strip (Decision 8)
  * sits last, folded behind one DEBUG button, every one of its buttons out of the tab order. The drawn map and trace
  * are canvases mounted into host elements the template keeps alive (`CanvasSlots`); their words sit beside
- * them for a reader.
+ * them for a reader. A place whose drawing key has a registered picture is drawn (U01b): the scene host sits
+ * with the card (`data-drawn` lets the stylesheet put the picture and the list under the name on a phone),
+ * the list is its twin — a row pointed at or focused lights its building, a building pointed at lights its
+ * row (`data-lit`) — and coming back out of a child the picture zooms out of it: the view keeps the last
+ * address it showed for its lifetime. A key with no picture leaves the screen as it was.
  */
 export class HudView implements View<HudVM> {
   #container: HTMLElement | undefined;
@@ -47,9 +55,21 @@ export class HudView implements View<HudVM> {
     map: MapPanelVM['picture'];
     trace: TracePictureVM;
   }>;
+  readonly #clock: MotionClock;
+  readonly #scenes: SceneRegistry;
+  /** The scene drawn now: its host, its picture and the view drawing it. */
+  #scene:
+    | { readonly host: HTMLElement; readonly picture: ScenePicture<SceneVM>; readonly view: SceneView }
+    | undefined;
+  /** The child lit in the picture and the list, by its option id; empty when none. */
+  #lit = '';
+  /** The address of the last place shown: the child it lies in is the one the picture zooms out of. */
+  #last: string | undefined;
 
-  /** The page's one clock moves every canvas of the screen (U01b). */
-  constructor(clock: MotionClock) {
+  /** The page's one clock moves every canvas of the screen; the registry says which places are drawn (U01b). */
+  constructor(clock: MotionClock, scenes: SceneRegistry) {
+    this.#clock = clock;
+    this.#scenes = scenes;
     this.#canvases = new CanvasSlots({
       pane: () => new CanvasView(new MapPicture(), clock),
       map: () => new CanvasView(new MapPicture(), clock),
@@ -64,7 +84,18 @@ export class HudView implements View<HudVM> {
   /** A step's render: the dock folds again; the view's other toggles keep their state. */
   render(vm: HudVM): void {
     this.#more = false;
+    if (vm.scene !== this.#vm?.scene) this.#lit = '';
     this.#paint(vm);
+    const last = this.#last;
+    const from =
+      last === undefined || last === vm.drawing.address
+        ? undefined
+        : vm.drawing.children.find(
+            (child) =>
+              child.address !== '' && (last === child.address || last.startsWith(`${child.address}.`)),
+          );
+    if (from !== undefined) this.#scene?.view.arrive(from.id);
+    this.#last = vm.drawing.address;
   }
 
   #paint(vm: HudVM): void {
@@ -74,9 +105,41 @@ export class HudView implements View<HudVM> {
     this.#canvases.bind('pane', this.#host('pane'), vm.aside.map?.picture ?? null);
     this.#canvases.bind('map', this.#host('map'), vm.map?.picture ?? null);
     this.#canvases.bind('trace', this.#host('trace'), vm.trace?.picture ?? null);
+    this.#bindScene(vm.drawing);
+  }
+
+  /** The scene's view in its host: kept while the host and the picture stay, else made anew; gone with its host. */
+  #bindScene(drawing: SceneVM): void {
+    const host = this.#host('scene');
+    const picture = this.#scenes.picture(drawing.key);
+    if (host === null || picture === undefined) {
+      this.#scene?.view.dispose();
+      this.#scene = undefined;
+      return;
+    }
+    if (this.#scene?.host !== host || this.#scene.picture !== picture) {
+      this.#scene?.view.dispose();
+      const view = new SceneView(picture, this.#clock);
+      view.mount(host);
+      this.#scene = { host, picture, view };
+    }
+    this.#scene.view.render(drawing);
+    this.#scene.view.light(this.#lit);
+  }
+
+  /** A child pointed at in the picture or the list: both light it; nothing re-renders when nothing changed. */
+  #light(id: string): void {
+    if (id === this.#lit || this.#scene === undefined) return;
+    this.#lit = id;
+    this.#scene.view.light(id);
+    if (this.#vm !== undefined && this.#container !== undefined)
+      render(this.#template(this.#vm), this.#container);
   }
 
   dispose(): void {
+    this.#scene?.view.dispose();
+    this.#scene = undefined;
+    this.#lit = '';
     this.#canvases.dispose();
     if (this.#container !== undefined) render(nothing, this.#container);
     this.#container = undefined;
@@ -85,7 +148,7 @@ export class HudView implements View<HudVM> {
     this.#debugOpen = false;
   }
 
-  #host(slot: Slot): HTMLElement | null {
+  #host(slot: Slot | 'scene'): HTMLElement | null {
     return this.#container?.querySelector(`[data-canvas="${slot}"]`) ?? null;
   }
 
@@ -100,8 +163,9 @@ export class HudView implements View<HudVM> {
   }
 
   #template(vm: HudVM): TemplateResult {
+    const drawn = this.#scenes.picture(vm.drawing.key) !== undefined;
     return html`
-      <div class="app world" data-frame=${vm.frame}>
+      <div class="app world" data-frame=${vm.frame} data-band=${vm.meter.band} ?data-drawn=${drawn}>
         <section class="hud" aria-label=${vm.regions.hud}>
           <h1 class="brand">${vm.title}</h1>
           <div class="meter" data-band=${vm.meter.band} data-testid="meter">
@@ -143,56 +207,75 @@ export class HudView implements View<HudVM> {
           </ol>
         </nav>
         <section class="cap" aria-label=${vm.regions.place} tabindex="-1" data-rest>
-          <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
-          <h2>
-            <span class="ic" aria-hidden="true">${vm.place.icon}</span
-            ><span data-testid="place-name">${vm.place.name}</span>
-          </h2>
-          <ul class="tags">
+          <div class="head">
+            <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
+            <h2>
+              <span class="ic" aria-hidden="true">${vm.place.icon}</span
+              ><span data-testid="place-name">${vm.place.name}</span>
+            </h2>
+          </div>
+          <div class="body">
+            <ul class="tags">
+              ${
+                vm.place.position === null
+                  ? nothing
+                  : html`<li class="chip pos">
+                      <span class="k">${vm.place.position.label}</span> ${vm.place.position.value}
+                    </li>`
+              }
+              ${vm.place.tags.map(
+                (tag) => html`
+                  <li class="tag" data-fact=${tag.key}><span class="k">${tag.label}</span> ${tag.value}</li>
+                `,
+              )}
+            </ul>
             ${
-              vm.place.position === null
+              vm.moves.length === 0
                 ? nothing
-                : html`<li class="chip pos">
-                    <span class="k">${vm.place.position.label}</span> ${vm.place.position.value}
-                  </li>`
+                : html`
+                    <nav class="moves" aria-label=${vm.regions.moves}>
+                      ${repeat(
+                        vm.moves,
+                        (option) => option.id,
+                        (option) => this.#docked(option),
+                      )}
+                    </nav>
+                  `
             }
-            ${vm.place.tags.map(
-              (tag) => html`
-                <li class="tag" data-fact=${tag.key}><span class="k">${tag.label}</span> ${tag.value}</li>
-              `,
-            )}
-          </ul>
-          ${
-            vm.moves.length === 0
-              ? nothing
-              : html`
-                  <nav class="moves" aria-label=${vm.regions.moves}>
-                    ${repeat(
-                      vm.moves,
-                      (option) => option.id,
-                      (option) => this.#docked(option),
+            <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
+            ${
+              vm.place.rows.length === 0
+                ? nothing
+                : html`<dl class="prows">
+                    ${vm.place.rows.map(
+                      (row) => html`
+                        <div class="prow">
+                          <dt>${row.label}</dt>
+                          <dd>${row.value}</dd>
+                        </div>
+                      `,
                     )}
-                  </nav>
-                `
-          }
-          <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
-          ${
-            vm.place.rows.length === 0
-              ? nothing
-              : html`<dl class="prows">
-                  ${vm.place.rows.map(
-                    (row) => html`
-                      <div class="prow">
-                        <dt>${row.label}</dt>
-                        <dd>${row.value}</dd>
-                      </div>
-                    `,
-                  )}
-                </dl>`
-          }
-          <p class="diag">${vm.place.diagnostic}</p>
-          <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
+                  </dl>`
+            }
+            ${vm.place.diagnostic === '' ? nothing : html`<p class="diag">${vm.place.diagnostic}</p>`}
+            <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
+          </div>
         </section>
+        ${
+          drawn
+            ? html`<div
+                class="scene"
+                data-testid="scene"
+                data-canvas="scene"
+                role="img"
+                aria-label=${vm.drawing.label}
+                data-lit=${this.#lit}
+                @light=${(event: Event) => {
+                  this.#light(this.#litOf(event));
+                }}
+              ></div>`
+            : nothing
+        }
         ${this.#scan(vm)} ${vm.map === null ? nothing : this.#map(vm.map, 'map', 'map', vm.regions.map)}
         ${this.#trace(vm)}
         <div class="side">
@@ -207,7 +290,7 @@ export class HudView implements View<HudVM> {
                       ${repeat(
                         vm.rows,
                         (row) => `${vm.scene}/${row.id}`,
-                        (row) => this.#row(row, vm.sealedTag),
+                        (row) => this.#row(row, vm.sealedTag, drawn),
                       )}
                     </ol>
                   </section>
@@ -425,7 +508,14 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  #row(row: TravelRowVM, sealedTag: string): TemplateResult {
+  /** The id a scene's `light` event carries; empty when it carries none. */
+  #litOf(event: Event): string {
+    const detail: unknown = event instanceof CustomEvent ? event.detail : undefined;
+    const id = typeof detail === 'object' && detail !== null && 'id' in detail ? detail.id : '';
+    return typeof id === 'string' ? id : '';
+  }
+
+  #row(row: TravelRowVM, sealedTag: string, drawn: boolean): TemplateResult {
     const name = row.landmark ? 'lb landmark' : 'lb';
     if (row.sealed) {
       return html`
@@ -441,6 +531,19 @@ export class HudView implements View<HudVM> {
           type="button"
           class=${['row', row.mark === null ? '' : 'you', row.seen === null ? '' : 'seen'].join(' ').trim()}
           data-option=${row.id}
+          ?data-lit=${drawn && this.#lit === row.id}
+          @pointerenter=${() => {
+            this.#light(row.id);
+          }}
+          @pointerleave=${() => {
+            this.#light('');
+          }}
+          @focus=${() => {
+            this.#light(row.id);
+          }}
+          @blur=${() => {
+            this.#light('');
+          }}
         >
           <span class="ord">${row.ordinal}</span
           ><span class="mid"

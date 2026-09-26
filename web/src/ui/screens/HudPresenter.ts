@@ -9,6 +9,7 @@ import { frameOf } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
+import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
@@ -78,9 +79,8 @@ export class HudPresenter implements Presenter<HudVM> {
     const place = snapshot.place;
     const player = snapshot.player;
     if (place === null || player === null) throw new Error('HudPresenter needs a snapshot with a place');
-    const rows = snapshot.options
-      .filter((option) => option.role === 'travel')
-      .map((option) => this.#row(option));
+    const travel = snapshot.options.filter((option) => option.role === 'travel');
+    const rows = travel.map((option) => this.#row(option));
     const moves = snapshot.options
       .filter((option) => option.role === 'move')
       .map((option) => this.#docked(option));
@@ -152,6 +152,7 @@ export class HudPresenter implements Presenter<HudVM> {
             },
       map: snapshot.map === null ? null : this.#mapPanel(snapshot.map, MAP_HEADING),
       trace: snapshot.trace === null ? null : this.#tracePanel(snapshot.trace),
+      drawing: this.#drawing(place, travel, new Coherence(player.coherence).decay()),
       heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
       rows,
       moves,
@@ -193,6 +194,32 @@ export class HudPresenter implements Presenter<HudVM> {
         dock: 'Leave and game',
         debug: 'Debug tools',
       },
+    };
+  }
+
+  /**
+   * What the place's picture draws: a child per listed place, in the list's order, its shape from the
+   * option's figure (none: no floors, no doors), and the words a reader hears instead of the picture.
+   */
+  #drawing(place: PlaceSummary, travel: readonly GameOption[], decay: number): SceneVM {
+    const open = travel.filter((option) => !option.sealed).length;
+    return {
+      key: place.drawing,
+      label: `Picture of ${place.name}: ${String(travel.length)} places drawn, ${String(open)} open — the list below enters them too`,
+      address: place.address,
+      children: travel.map((option) => ({
+        id: option.id,
+        ordinal: option.ordinal,
+        name: option.place,
+        floors: option.figure?.floors ?? 0,
+        doors: option.figure?.doors ?? 0,
+        landmark: option.landmark,
+        visited: option.visited,
+        sealed: option.sealed,
+        address: option.address,
+      })),
+      decay,
+      noise: place.noise,
     };
   }
 

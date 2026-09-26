@@ -1,8 +1,8 @@
 import type { MotionClock } from '#ui/scene/MotionClock.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import type { View } from '#ui/View.ts';
-import type { Palette } from './Palette.ts';
 import type { Picture } from './Picture.ts';
+import { stylePalette } from './StylePalette.ts';
 
 /** One cycle of the pulse, in milliseconds. */
 const CYCLE = 1800;
@@ -97,21 +97,6 @@ export class CanvasView<VM> implements View<VM> {
     if (context === null) return;
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     context.setLineDash([]);
-    this.#picture.paint(context, vm, { width, height }, this.#palette(canvas), phase);
-  }
-
-  /** The stylesheet's tokens as they resolve on this canvas — `--frame` is the place's colour here. */
-  #palette(canvas: HTMLCanvasElement): Palette {
-    const view = canvas.ownerDocument.defaultView;
-    const style = view?.getComputedStyle(canvas);
-    const cache = new Map<string, string>();
-    return (token) => {
-      let colour = cache.get(token);
-      if (colour === undefined) {
-        colour = style?.getPropertyValue(`--${token}`).trim() ?? '';
-        cache.set(token, colour);
-      }
-      return colour;
-    };
+    this.#picture.paint(context, vm, { width, height }, stylePalette(canvas), phase);
   }
 }
