@@ -23,6 +23,14 @@ describe('Coherence — the one resource, as a value (Guide:43, 133-156)', () =>
     expect(new Coherence(0).restored(100).value()).toBe(100);
   });
 
+  test('decay, the strength of the tear a screen draws: none in the stable band, rising to full at zero', () => {
+    expect(new Coherence(100).decay()).toBe(0);
+    expect(new Coherence(70).decay()).toBe(0);
+    expect(new Coherence(69).decay()).toBeCloseTo(1 / 70, 10);
+    expect(new Coherence(35).decay()).toBeCloseTo(0.5, 10);
+    expect(new Coherence(0).decay()).toBe(1);
+  });
+
   test('exhausted at zero and only there (Guide:144, TurnProcessor.groovy:55)', () => {
     expect(new Coherence(0).exhausted()).toBe(true);
     expect(new Coherence(1).exhausted()).toBe(false);

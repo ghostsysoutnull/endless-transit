@@ -18,6 +18,8 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     opposite: '',
     current: false,
     visited: false,
+    address: '',
+    figure: null,
     ...facts,
   };
 }
@@ -49,6 +51,8 @@ const PLANET: GameSnapshot = {
     contents: null,
     telemetry: null,
     lattice: null,
+    drawing: 'planet',
+    noise: '0000-0000-0000-0000',
   },
   options: [
     option({

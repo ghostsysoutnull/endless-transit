@@ -2,9 +2,9 @@
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0/16
-tags: Way 1 of 10 (position) | TECH_ERA Future (era) | RESONANCE Void (culture)
+tags: Way 1 of 10 (position) | Era Future (era) | Culture Void (culture)
   Buildings stand in pairs along both sides of the way.
-diag: SYNC: [STABLE]
+diag: 
 status: Entered Broad Alley.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Drifting Field

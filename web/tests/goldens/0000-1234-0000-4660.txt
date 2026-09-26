@@ -2,9 +2,9 @@
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0/16
-tags: Way 1 of 5 (position) | TECH_ERA Analog (era) | RESONANCE Shogun (culture)
+tags: Way 1 of 5 (position) | Era Analog (era) | Culture Shogun (culture)
   Buildings stand in pairs along both sides of the way.
-diag: SYNC: [STABLE]
+diag: 
 status: Entered Grand Avenue.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Vermilion Shrine

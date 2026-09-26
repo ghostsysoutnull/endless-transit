@@ -2,9 +2,9 @@
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0/16
-tags: Way 1 of 8 (position) | TECH_ERA Future (era) | RESONANCE Baroque (culture)
+tags: Way 1 of 8 (position) | Era Future (era) | Culture Baroque (culture)
   Buildings stand in pairs along both sides of the way.
-diag: SYNC: [STABLE]
+diag: 
 status: Entered Bright Boulevard.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Ornate Sanctum

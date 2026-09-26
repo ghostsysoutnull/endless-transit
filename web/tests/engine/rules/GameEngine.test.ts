@@ -35,6 +35,8 @@ function system(id: string, key: string, label: string): GameOption {
     opposite: '',
     current: false,
     visited: false,
+    address: '',
+    figure: null,
   };
 }
 
@@ -163,6 +165,8 @@ describe('GameEngine — walking the big world', () => {
       status: 'UNIMATRIX_STABLE',
       description: ['A neural web of infinite complexity.'],
       facts: [],
+      drawing: 'universe',
+      noise: 'D7F5-C533-B7FC-1498',
       frame: null,
       abyssal: false,
       childrenHeading: 'Primary filaments radiating from root:',
@@ -201,6 +205,8 @@ describe('GameEngine — walking the big world', () => {
       current: false,
       // The first filament is on the way to the street a new world starts on, so it has been visited (Guide:430).
       visited: true,
+      address: '0.0',
+      figure: null,
     });
     expect(ids(snapshot)).not.toContain('leave');
     expect(snapshot.options.slice(-7)).toEqual([
@@ -238,6 +244,8 @@ describe('GameEngine — walking the big world', () => {
       opposite: '',
       current: false,
       visited: false,
+      address: '',
+      figure: null,
     });
     expect(snapshot.message).toBe('Entered Zeta-915-Link.');
   });
@@ -260,13 +268,43 @@ describe('GameEngine — walking the big world', () => {
     expect(street.place?.name).toBe('Bright Boulevard');
     expect(street.place?.frame).toBe('yellow');
     expect(street.place?.facts).toEqual([
-      { key: 'era', label: 'TECH_ERA', value: 'future' },
-      { key: 'culture', label: 'RESONANCE', value: 'baroque' },
+      { key: 'era', label: 'Era', value: 'future' },
+      { key: 'culture', label: 'Culture', value: 'baroque' },
     ]);
+    // U01b: the street's own words are plain — its SYNC line is gone.
+    expect(street.place?.status).toBe('');
     for (let level = 0; level < 7; level++) engine.step('leave');
     expect(engine.snapshot().place?.kind).toBe('Universe');
     expect(engine.snapshot().message).toBe('Returned to The Endless Universe.');
     expect(ids(engine.snapshot())).not.toContain('leave');
+  });
+
+  test("the street hands the screen what draws it (U01b): its drawing key, this frame's noise, each building's address and figure", () => {
+    const engine = engineOn(new MemorySaveStore());
+    const street = walkedDown(engine, 7);
+    const place = must(street.place ?? undefined);
+    expect(place.drawing).toBe('street');
+    expect(place.noise).not.toBe('');
+    const buildings = street.options.filter((option) => option.role === 'travel');
+    expect(buildings[0]?.address).toBe(`${place.address}.0`);
+    expect(buildings[0]?.figure).toEqual({ floors: 16, doors: 9 });
+    expect(buildings.map((option) => option.address)).toEqual(
+      buildings.map((_, index) => `${place.address}.${String(index)}`),
+    );
+    // The options that are not places carry no address and no figure.
+    expect(street.options.find((option) => option.id === 'leave')).toMatchObject({
+      address: '',
+      figure: null,
+    });
+    // A building answers with its drawing key too; its floors have no figure.
+    const building = engine.step('enter:0');
+    expect(building.place?.drawing).toBe('building');
+    expect(building.options.find((option) => option.role === 'travel')?.figure).toBeNull();
+    // The noise is the frame's: the same place two steps later draws another frame.
+    const back = engine.step('leave');
+    expect(back.place?.address).toBe(place.address);
+    expect(back.place?.noise).not.toBe('');
+    expect(back.place?.noise).not.toBe(place.noise);
   });
 
   test('the buildings of a street are open: tapping one enters it; its floors are listed top first, numbered by floor, with their readings', () => {
@@ -300,6 +338,8 @@ describe('GameEngine — walking the big world', () => {
       opposite: '',
       current: false,
       visited: false,
+      address: '0.0.0.0.0.0.0.0.0.15',
+      figure: null,
     });
     expect(floors.map((option) => option.ordinal)).toEqual(
       Array.from({ length: 16 }, (_, n) => String(15 - n)),
@@ -398,6 +438,8 @@ describe('GameEngine — walking the big world', () => {
       opposite: '',
       current: false,
       visited: false,
+      address: '0.0.0.0.0.0.0.0.0.0.0.0',
+      figure: null,
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
       move('elevator', 'b', 'Back to Elevator', 'corridor'),

@@ -1,4 +1,5 @@
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Fragment } from './Fragment.ts';
 import { Keystone } from './Keystone.ts';
 import { Location } from './Location.ts';
@@ -65,6 +66,11 @@ export class Building extends Location {
 
   override landmark(): boolean {
     return this.#landmark;
+  }
+
+  /** How it stands on the street's picture: its floors and the doors on each. */
+  override figure(): Figure {
+    return { floors: this.#floors, doors: this.#doorsPerFloor };
   }
 
   floors(): number {

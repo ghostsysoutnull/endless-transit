@@ -20,6 +20,8 @@ function option(id: string, key: string, label: string): GameOption {
     opposite: '',
     current: false,
     visited: false,
+    address: '',
+    figure: null,
   };
 }
 
@@ -41,6 +43,8 @@ const RECAP: GameSnapshot = {
     contents: null,
     telemetry: null,
     lattice: null,
+    drawing: 'building',
+    noise: '0000-0000-0000-0000',
   },
   player: { coherence: 61, band: 'degraded', steps: 33 },
   buffer: { size: 2, capacity: 16, resonant: 1, fragments: [] },

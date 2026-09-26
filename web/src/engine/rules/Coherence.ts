@@ -80,6 +80,15 @@ export class Coherence {
   }
 
   /**
+   * How strongly a screen tears the picture at this value, 0 to 1 (Decision 5): nothing from the stable
+   * band's floor up, then rising evenly to full at zero. The edge is the bands' own, never restated.
+   */
+  decay(): number {
+    const edge = BANDS[0]?.from ?? FULL;
+    return Math.min(1, Math.max(0, (edge - this.#value) / (edge - EMPTY)));
+  }
+
+  /**
    * How many glitch marks the map sprouts at this value (Guide:156; LatticeMapComponent.groovy:43-49): none
    * down to the critical band's edge, one more for every two points below it.
    */
