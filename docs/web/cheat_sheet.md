@@ -68,7 +68,7 @@ below 30 with an empty buffer.
 * Objects live in **apartments**: 5 to 19 of them, spread over 1 to 10 rooms. They never restock.
 * Every step inside an apartment is a 30% shot at a **Hidden Frequency** worth millions of hertz. Dock buttons roll
   nothing.
-* A room whose culture matches the street's `RESONANCE` gives +10% and a `[RESONANT]` badge when the hertz divide by 11.
+* A room whose culture matches the street's `Culture` chip gives +10% and a `[RESONANT]` badge when the hertz divide by 11.
 * The door list is free to read, but only **inscriptions** mean anything: `[DATA_VAULT]` is a Laboratory or Bio-Server,
   `!! DANGER !!` is a Security Station or Armory. Room types and traces show only in the scan.
 * The buffer holds **16**. Full means the tiles stop being buttons: merge or drop.
