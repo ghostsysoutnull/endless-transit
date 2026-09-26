@@ -53,6 +53,27 @@
 11. **A method either changes state or answers a question, never both.** Asking must not change the answer. A builder
     that returns itself is the exception.
 
+## 🧪 Testing principles — a test earns its place by the regression it would catch
+1. **Test behavior, not structure.** A test's result changes when behavior changes, and only then; a refactor that
+   keeps behavior leaves every test green.
+2. **Every test can catch a real regression.** A test that can only fail on an intended change is a change detector
+   and is not written.
+3. **Assert the outcome, not the incidentals.** Check the facts the test is about — not whole objects, exact wording,
+   markup or styling it does not name.
+4. **One behavior, one layer: the lowest that can see it.** A broad test checks the flow, not what a narrow test
+   already checks; duplicates across layers are merged down.
+5. **Test the way the software is used.** Find UI elements by role and accessible name or a stable id, never by
+   incidental text or structure.
+6. **Output reviewed as a whole lives in one approved snapshot.** Changing it means re-approving it and reading the
+   diff, never editing assertions one by one.
+7. **A characterization test is scaffolding.** A snapshot taken to protect a refactor is removed, or turned into
+   behavior tests, when the refactor lands.
+8. **Deterministic, isolated, fast.** Same code, same result; no clock, randomness or order dependence; a flaky test is
+   fixed or deleted, never retried.
+9. **A skipped test guards nothing.** It runs or it is deleted; what only it guarded is covered again first.
+10. **Readable over DRY.** Each test reads on its own; shared setup covers only what the test doesn't care about, and
+    test data comes from builders with defaults, so a new field is one edit.
+
 The game is **`web/`** — TypeScript for the browser, phone first; its law is `web/CLAUDE.md`.
 
 Project records stay at the root: `docs/` (the player site, plus `docs/analysis/`), `journals/`, `tasks/`, `.claude/`.

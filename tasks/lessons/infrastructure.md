@@ -41,7 +41,7 @@ top of `CLAUDE.md`.
 - **Weigh a review against what it can find before running it**: a plan too big to review cheaply is cut, not
   reviewed twice. (U02: 12.5 min of grill, 59 calls.)
 - **A law states the principle with its incident as the pointer**; the grill asks only questions with a verifiable
-  form. (WF-009) A universal principle (OO) carries neither incident nor project example: this codebase's map lives in
-  `web/CLAUDE.md`. (OO principles move, 2026-09-26)
+  form. (WF-009) A universal principle (OO, testing) carries neither incident nor project example: this codebase's map
+  lives in `web/CLAUDE.md`. (OO and testing principles, 2026-09-26)
 - **The design check reads the built code, not only the plan**: before an iteration closes, the OO checks are run on
   its diff with the evidence named. (U02: the plan passed them, the code broke them 19 times, `tasks/ui/U02-fixes.md`.)

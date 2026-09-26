@@ -30,7 +30,8 @@ check), in one go under the directive that started it:
 
 ### 4. Verification
 * Never mark a task complete without proving it works.
-* **AI-TDD**: reproduce every bug with a test before fixing it; when a UI bug's browser test runs is the process's call.
+* **AI-TDD**: reproduce every behavior bug with a test before fixing it; a change of wording or look is not a bug;
+  when a UI bug's browser test runs is the process's call.
 * **Coverage Claim Protocol**: Any plan statement of the form "test X guards behavior Y" MUST cite
   the assertion lines that prove it, read from the test file in the current session. A file name or
   a remembered purpose is not evidence. If no assertion exists, the plan marks the behavior

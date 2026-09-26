@@ -10,7 +10,7 @@ instead only when the user asks for it.
    plan) — an AMEND is fixed and built, never grilled again (user, 2026-09-26); I build it. No other subagents. The
    plan is not shown to the user; the scope was the go.
 3. **Tests.** I test only the logic that isn't UI (unit tests, `npm run check`). I run no browser, Playwright or Chrome
-   until the end. The screen's words are UI too: word pins and goldens wait for the end, not re-pinned as I go (user,
+   until the end. The screen's words are UI too: the goldens wait for the end, not re-pinned as I go (user,
    2026-09-26). After a push I do not poll the live site: the user checks it.
 4. **The fast loop.** The user tests the UI. They report, I change it, they test again. Each round is quick.
 5. **The end.** We decide together on the full browser suite and headless Chrome.

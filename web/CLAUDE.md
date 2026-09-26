@@ -108,7 +108,8 @@ A new invariant ships with its rule in the same iteration.
 
 ## Tests first
 
-Test, RED, then code. `tests/` mirrors `src/`; doubles in `tests/support/`. Pins are literals: a diff is a finding.
+Test, RED, then code. `tests/` mirrors `src/`; doubles in `tests/support/`. Expected values are literals; a diff is a
+finding. What to assert: the testing principles in `../CLAUDE.md`.
 Playwright owns browser behaviour and runs in one profile, `phone` (portrait, touch — the game is for phones only,
 user decision 2026-09-25). Look at the
 screenshots in `test-results/` yourself before calling UI work done.
@@ -121,8 +122,9 @@ new kind of turn gets a fixture that takes it.
 **Goldens** (`tests/goldens/*.txt`, written by `tests/content/Goldens.test.ts`): the full text of a fixed walk,
 street to room, for three seeds. Nothing else writes them: `npx vitest run tests/content/Goldens.test.ts -u` is the
 one writer, run only after an intended content or wording change; read `git diff tests/goldens` before committing —
-a changed line is a finding, never a chore. Every list has a size floor (`tests/content/ContentFloors.test.ts`): a
-list may only grow.
+a changed line is a finding, never a chore. They are this game's approved snapshot (testing principle 6): the one
+place the screen's words are checked. Every list has a size floor (`tests/content/ContentFloors.test.ts`): a list may
+only grow.
 
 ## Touch first (Decisions 1–5)
 
