@@ -90,7 +90,7 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     expect(building.floorNumbered(-1)).toBe(building.children()[16]);
     expect(building.floorNumbered(-10)).toBe(building.children()[25]);
     expect(building.floorNumbered(-11)).toBeUndefined();
-    expect(building.status()).toBe('BEDROCK_BREACHED');
+    expect(building.status()).toBe('The bedrock is breached');
   });
 
   test('descend: from floor 0 of a breached building `down` says Descend into the Substrate and leads to Layer −1; below, Go Down and Go Up walk the layers; the way up from −1 is floor 0 (Guide:277-278; ElevatorState.groovy:32-38)', () => {
@@ -141,9 +141,9 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
       ['RES', `${String(layer.resonance())}Hz`],
     ]);
     expect(floorOf(building, -10).readings()[1]?.value).toBe('P: 100%');
+    // The elevator's second line went with the floors' plain words (U02); a Layer shares the elevator's words.
     expect(layer.description()).toEqual([
       'Layer -0x1. The air is thick with oily static and the hum of abyssal substrate.',
-      'Local signal is STABLE. Corridor access authorized.',
     ]);
     expect(layer.status()).toBe('SYSTEM_STATUS: [ABYSS_SYNC]');
     expect(layer.abyssal()).toBe(true);
@@ -166,7 +166,11 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     expect(artery.name()).toBe('Artery');
     expect(artery.description()).toEqual(['A pulsing, organic artery of data.']);
     expect(artery.status()).toBe('TRAFFIC: [PRESSURE_HIGH] | THEME: [ABYSSAL]');
-    expect(artery.facts()).toEqual([{ key: 'culture', label: 'THEME', value: 'abyssal' }]);
+    // An Artery shares the corridor's facts (U02): its culture and how many ways lead off it.
+    expect(artery.facts()).toEqual([
+      { key: 'culture', label: 'Culture', value: 'abyssal' },
+      { key: 'reading', label: 'Doors', value: String(building.doorsPerFloor()) },
+    ]);
     expect(artery.arrival()).toBe(layer);
     expect(artery.abyssal()).toBe(true);
     const vibe = must(artery.vibe());

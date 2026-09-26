@@ -1,4 +1,4 @@
-A long corridor with multiple doors
-A narrow service corridor, doors set flush into either wall
-A curved gallery of doors beneath a single strip of light
-A dead-straight corridor whose far end dissolves into static
+A long corridor with multiple doors|long
+A narrow service corridor, doors set flush into either wall|service
+A curved gallery of doors beneath a single strip of light|curved
+A dead-straight corridor whose far end dissolves into static|static

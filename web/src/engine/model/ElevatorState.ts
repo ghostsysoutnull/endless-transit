@@ -1,4 +1,6 @@
+import { BUILDING_KIND } from './Building.ts';
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
@@ -41,6 +43,15 @@ export class ElevatorState implements FloorState {
     return 'elevator';
   }
 
+  /** At the elevator the floor is drawn as its building's tower, the car standing here (U02). */
+  drawing(): string {
+    return BUILDING_KIND.key();
+  }
+
+  portrait(floor: Floor): Figure | null {
+    return floor.building().portrait();
+  }
+
   listing(): readonly Location[] {
     return [];
   }
@@ -58,24 +69,24 @@ export class ElevatorState implements FloorState {
     return MOVES.make(floor, id);
   }
 
-  /** TECH_ERA, RESONANCE, STABILITY and ATMOS_SHIFT (Guide:351-354; ElevatorState.groovy:63-75). */
+  /** Era, culture, stability and trait (Guide:351-354; ElevatorState.groovy:63-75; plain words, U02). */
   facts(floor: Floor): readonly Fact[] {
     const vibe = floor.vibe();
     if (vibe === undefined) return [];
     return [
-      { key: 'era', label: 'TECH_ERA', value: vibe.era().key() },
-      { key: 'culture', label: 'RESONANCE', value: vibe.culture().key() },
+      { key: 'era', label: 'Era', value: vibe.era().key() },
+      { key: 'culture', label: 'Culture', value: vibe.culture().key() },
       {
         key: 'reading',
-        label: 'STABILITY',
+        label: 'Stability',
         value: `${(vibe.stability() * 100).toFixed(STABILITY_DECIMALS)}%`,
       },
-      { key: 'trait', label: 'ATMOS_SHIFT', value: vibe.mutation()?.key() ?? 'Standard' },
+      { key: 'trait', label: 'Trait', value: vibe.mutation()?.key() ?? 'Standard' },
     ];
   }
 
   description(floor: Floor): readonly string[] {
-    return [`${floor.name()}. ${floor.sentence()}`, 'Local signal is STABLE. Corridor access authorized.'];
+    return [`${floor.name()}. ${floor.sentence()}`];
   }
 
   status(floor: Floor): string {

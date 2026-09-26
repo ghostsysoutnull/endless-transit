@@ -18,75 +18,43 @@ dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HE
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0/16
-tags: Strata 1 of 4 (position) | THEME Baroque (culture)
-  Analyzing vertical lattice structure...
-diag: STRUCTURAL_STABLE
+tags: Building 1 of 4 (position) | Culture Baroque (culture) | Floors 16 (reading)
+  An elevator runs the height of the building.
+diag: 
 status: Entered Ornate Sanctum.
-BUILDING STRATA DIAGNOSTICS
-  15 [] Access: Peak
-       FUNCTION: PEAK_OBSERVATORY
-       ST: 100%
-       RES: 1582Hz
-  14 [] Access: Floor 14
-       FUNCTION: VIP_QUARTERS
-       ST: 100%
-       RES: 2588Hz
-  13 [] Access: Floor 13
-       FUNCTION: DATA_VAULT
-       ST: 100%
-       RES: 2993Hz
-  12 [] Access: Floor 12
-       FUNCTION: VIP_QUARTERS
-       ST: 100%
-       RES: 1457Hz
-  11 [] Access: Floor 11
-       FUNCTION: HYDROPONIC_BAY
-       ST: 100%
-       RES: 2323Hz
-  10 [] Access: Floor 10
-       FUNCTION: LIVING_UNIT
-       ST: 100%
-       RES: 2385Hz
-  09 [9] Access: Floor 9
-       FUNCTION: LIVING_UNIT
-       ST: 100%
-       RES: 1375Hz
-  08 [8] Access: Floor 8
-       FUNCTION: BIO_SERVER
-       ST: 100%
-       RES: 2047Hz
-  07 [7] Access: Floor 7
-       FUNCTION: HYDROPONIC_BAY
-       ST: 100%
-       RES: 2352Hz
-  06 [6] Access: Floor 6
-       FUNCTION: RESEARCH_LAB
-       ST: 100%
-       RES: 2047Hz
-  05 [5] Access: Floor 5
-       FUNCTION: RESEARCH_LAB
-       ST: 100%
-       RES: 2857Hz
-  04 [4] Access: Floor 4
-       FUNCTION: FILTRATION_INTAKE
-       ST: 100%
-       RES: 1198Hz
-  03 [3] Access: Floor 3
-       FUNCTION: FILTRATION_INTAKE
-       ST: 100%
-       RES: 2935Hz
-  02 [2] Access: Floor 2
-       FUNCTION: MECHANICAL_SUMP
-       ST: 100%
-       RES: 1564Hz
-  01 [1] Access: Floor 1
-       FUNCTION: POWER_RELAY
-       ST: 100%
-       RES: 1471Hz
-  00 [0] Access: Lobby [>X<]
-       FUNCTION: TRANSIT_LOBBY
-       ST: 100%
-       RES: 2152Hz
+RIDE TO A FLOOR
+  15 [] Ride to Peak
+       Zone: Peak observatory
+  14 [] Ride to Floor 14
+       Zone: Vip quarters
+  13 [] Ride to Floor 13
+       Zone: Data vault
+  12 [] Ride to Floor 12
+       Zone: Vip quarters
+  11 [] Ride to Floor 11
+       Zone: Hydroponic bay
+  10 [] Ride to Floor 10
+       Zone: Living unit
+  09 [9] Ride to Floor 9
+       Zone: Living unit
+  08 [8] Ride to Floor 8
+       Zone: Bio server
+  07 [7] Ride to Floor 7
+       Zone: Hydroponic bay
+  06 [6] Ride to Floor 6
+       Zone: Research lab
+  05 [5] Ride to Floor 5
+       Zone: Research lab
+  04 [4] Ride to Floor 4
+       Zone: Filtration intake
+  03 [3] Ride to Floor 3
+       Zone: Filtration intake
+  02 [2] Ride to Floor 2
+       Zone: Mechanical sump
+  01 [1] Ride to Floor 1
+       Zone: Power relay
+  00 [0] Ride to Lobby [>X<]
+       Zone: Transit lobby
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████ ██████ ████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
@@ -94,10 +62,9 @@ dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] 
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0/16
-tags: Z-axis 1 of 16 (position) | TECH_ERA Future (era) | RESONANCE Baroque (culture) | STABILITY 77.00% (reading) | ATMOS_SHIFT Industrial (trait)
-  Floor 0. BAROQUE geometry presses in from every wall; the elevator sighs shut behind you.
-  Local signal is STABLE. Corridor access authorized.
-diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
+tags: Era Future (era) | Culture Baroque (culture) | Stability 77.00% (reading) | Trait Industrial (trait)
+  Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.
+diag: 
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ ████ ██ ████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
@@ -107,29 +74,29 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0/16
-tags: Z-axis 1 of 16 (position) | THEME Baroque (culture)
+tags: Culture Baroque (culture) | Doors 9 (reading)
   A curved gallery of doors beneath a single strip of light.
-diag: TRAFFIC: [STABLE] | THEME: [BAROQUE]
+diag: 
 status: Enter Corridor.
 moves: [B] BACK TO ELEVATOR
-LOCAL ACCESS LIST
-  01 [1] Access: _void_sink_ Brutalist Slab [PITTED]
+DOORS
+  01 [1] Open _void_sink_ Brutalist Slab [PITTED]
        APPEARANCE: A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.
-  02 [2] Access: Lacquered Timber Gate [WEEPING]
+  02 [2] Open Lacquered Timber Gate [WEEPING]
        APPEARANCE: A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
-  03 [3] Access: ⟨RESONANCE⟩ Synth-Glass Slab [PITTED]
+  03 [3] Open ⟨RESONANCE⟩ Synth-Glass Slab [PITTED]
        APPEARANCE: A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay. The word 'RESONANCE' is finely etched into the frame, appearing almost as a structural glyph.
-  04 [4] Access: _quarantine_ Riveted Iron Hatch [FROZEN]
+  04 [4] Open _quarantine_ Riveted Iron Hatch [FROZEN]
        APPEARANCE: A hatch of riveted iron, its seams weeping orange. A rime of frost has sealed the edges shut. The word 'quarantine' is scrawled across the surface in jagged, desperate lines.
-  05 [5] Access: Industrial Barrier [SCORCHED]
+  05 [5] Open Industrial Barrier [SCORCHED]
        APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The surface is blackened in a fan shape, as if something burned its way out.
-  06 [6] Access: Synth-Glass Slab [PITTED]
+  06 [6] Open Synth-Glass Slab [PITTED]
        APPEARANCE: A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay.
-  07 [7] Access: Frosted Crystal Pane [WEEPING]
+  07 [7] Open Frosted Crystal Pane [WEEPING]
        APPEARANCE: A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
-  08 [8] Access: Synth-Glass Slab [SCORCHED]
+  08 [8] Open Synth-Glass Slab [SCORCHED]
        APPEARANCE: A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is blackened in a fan shape, as if something burned its way out.
-  09 [9] Access: Reinforced Polymer [RUSTED]
+  09 [9] Open Reinforced Polymer [RUSTED]
        APPEARANCE: A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ████ █████ ██ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION

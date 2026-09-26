@@ -1,4 +1,5 @@
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
@@ -13,6 +14,10 @@ import type { ScanReport } from './ScanReport.ts';
 export interface FloorState {
   /** The id a save keeps for this mode. */
   id(): string;
+  /** Which picture draws the floor in this mode (U02): a kind's key, looked up by the screen. */
+  drawing(): string;
+  /** What that picture is handed about the floor (U02). */
+  portrait(floor: Floor): Figure | null;
   listing(floor: Floor): readonly Location[];
   /** Whether a path may continue from the floor into this child (its corridor) in this mode. */
   admits(floor: Floor, child: Location): boolean;

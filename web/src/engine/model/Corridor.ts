@@ -1,4 +1,5 @@
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
@@ -20,11 +21,14 @@ export const CORRIDOR_KIND = new LocationKind({
 export class Corridor extends Location {
   readonly #floor: Floor;
   readonly #sentence: string;
+  readonly #shape: string;
 
-  constructor(origin: Origin<Floor>, facts: { sentence: string }) {
+  /** `shape` is the key its sentence carries (`long`, `service`, `curved`, `static`); none when made without one. */
+  constructor(origin: Origin<Floor>, facts: { sentence: string; shape?: string }) {
     super(origin);
     this.#floor = origin.parent;
     this.#sentence = facts.sentence;
+    this.#shape = facts.shape ?? '';
   }
 
   kind(): LocationKind {
@@ -41,6 +45,11 @@ export class Corridor extends Location {
 
   override arrival(): Location {
     return this.#floor;
+  }
+
+  /** How it runs and how many doors it has — the doors counted by the building, never by making them. */
+  override figure(): Figure {
+    return { floors: 0, doors: this.#floor.building().doorsPerFloor(), shape: this.#shape };
   }
 
   /**
@@ -67,21 +76,25 @@ export class Corridor extends Location {
     return [`${this.#sentence}.`];
   }
 
+  /** Its culture and how many doors it has (plain words, U02). */
   override facts(): readonly Fact[] {
     const culture = this.vibe()?.culture();
-    return culture === undefined ? [] : [{ key: 'culture', label: 'THEME', value: culture.key() }];
+    return [
+      ...(culture === undefined ? [] : [{ key: 'culture', label: 'Culture', value: culture.key() } as const]),
+      { key: 'reading', label: 'Doors', value: String(this.#floor.building().doorsPerFloor()) },
+    ];
   }
 
+  /** No diagnostic line: the corridor is drawn (U02). */
   status(): string {
-    const culture = this.vibe()?.culture().key().toUpperCase() ?? 'UNKNOWN';
-    return `TRAFFIC: [STABLE] | THEME: [${culture}]`;
+    return '';
   }
 
   childrenHeading(): string {
-    return 'Local access list:';
+    return 'Doors:';
   }
 
   approachVerb(): string {
-    return 'Access:';
+    return 'Open';
   }
 }

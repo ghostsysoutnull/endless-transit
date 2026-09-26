@@ -2,15 +2,17 @@ import type { Building } from './Building.ts';
 import { CorridorState } from './CorridorState.ts';
 import { ElevatorState } from './ElevatorState.ts';
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Fragment } from './Fragment.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
+import type { Passage } from './Passage.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤', indexLabel: 'Z-AXIS' });
+export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤', indexLabel: '' });
 
 /** The two modes, stateless, shared by every floor; a saved mode id finds its state here — a new mode is one more entry. */
 const ELEVATOR: FloorState = new ElevatorState();
@@ -21,7 +23,8 @@ const STATES_BY_ID: ReadonlyMap<string, FloorState> = new Map(
 
 /** The resonance a floor shows on the building's list, in hertz (Building.groovy:215-216). */
 const RESONANCE = { min: 1000, max: 2999 };
-const INTEGRITY = '100%';
+/** A floor made without a peek at its corridor (a Layer, whose child is an Artery): nothing to draw. */
+const NO_PASSAGE: Passage = { shape: '', looks: [] };
 
 /**
  * A floor of a building: child `n` of the building is floor `n`, and its one child is its corridor. The
@@ -34,14 +37,19 @@ export class Floor extends Location {
   readonly #number: number;
   readonly #zone: string;
   readonly #sentence: string;
+  readonly #passage: Passage;
   #state: FloorState = ELEVATOR;
 
-  constructor(origin: Origin<Building>, facts: { number: number; zone: string; sentence: string }) {
+  constructor(
+    origin: Origin<Building>,
+    facts: { number: number; zone: string; sentence: string; passage?: Passage },
+  ) {
     super(origin);
     this.#building = origin.parent;
     this.#number = facts.number;
     this.#zone = facts.zone;
     this.#sentence = facts.sentence;
+    this.#passage = facts.passage ?? NO_PASSAGE;
   }
 
   kind(): LocationKind {
@@ -78,6 +86,25 @@ export class Floor extends Location {
     return this;
   }
 
+  /** Its row on the tower's picture: how its corridor runs and how its doors look — peeked, not made (U02). */
+  override figure(): Figure {
+    return {
+      floors: 0,
+      doors: this.#passage.looks.length,
+      shape: this.#passage.shape,
+      looks: this.#passage.looks,
+    };
+  }
+
+  /** The mode decides what draws the floor: the tower at the elevator, the corridor in it (U02). */
+  override drawing(): string {
+    return this.#state.drawing();
+  }
+
+  override portrait(): Figure | null {
+    return this.#state.portrait(this);
+  }
+
   /** The elevator column's `[>X<]`: the floor the building's elevator stands at (Building.groovy:187-189, 198-201). */
   override current(): boolean {
     return this.#building.elevatorAt() === this.#number;
@@ -96,22 +123,19 @@ export class Floor extends Location {
     return this.seed().branch('resonance').range(RESONANCE.min, RESONANCE.max);
   }
 
-  /** The building's list beside the floor: its zone, its integrity and its resonance (Building.groovy:211-217). */
+  /** The building's list beside the floor: its zone in plain words (`Hydroponic bay`; U02 — integrity and resonance went). */
   override readings(): readonly Fact[] {
-    return [
-      { key: 'zone', label: 'FUNCTION', value: this.#zone },
-      { key: 'reading', label: 'ST', value: INTEGRITY },
-      { key: 'reading', label: 'RES', value: `${String(this.resonance())}Hz` },
-    ];
+    const plain = this.#zone.toLowerCase().replaceAll('_', ' ');
+    return [{ key: 'zone', label: 'Zone', value: plain.charAt(0).toUpperCase() + plain.slice(1) }];
   }
 
   building(): Building {
     return this.#building;
   }
 
-  /** The elevator's one-line diagnostic (ElevatorState.groovy status); a Layer answers otherwise. */
+  /** The elevator's one-line diagnostic: none on a floor (U02, plain words); a Layer answers otherwise. */
   diagnostic(): string {
-    return 'SYSTEM_DIAGNOSTIC: [NOMINAL]';
+    return '';
   }
 
   /** A floor stands among the building's floors, never its Layers. */

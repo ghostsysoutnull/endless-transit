@@ -72,7 +72,7 @@ export class ApartmentFactory implements LocationFactory<Apartment, Corridor> {
     // The first room's own draw (child 0's seed): the door is inscribed and traced for what it leads to.
     const behind = this.#categories.categoryOf(origin.seed.branch(0), trait);
     return this.#shape.make(origin, {
-      door: this.#doors.of(origin.seed.branch('door'), behind),
+      door: this.#doors.of(origin.seed, behind),
       behind,
       culture,
       era,

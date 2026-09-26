@@ -3,6 +3,11 @@ function easeInOut(progress: number): number {
   return progress < 0.5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
 }
 
+/** Fast away, slow in: how a released view coasts to rest (the mock's `easeOut`). */
+export function easeOut(progress: number): number {
+  return 1 - (1 - progress) ** 3;
+}
+
 /**
  * A number on its way from one value to another over a span of time, measured by elapsed time (Decision 4),
  * never by frames: the value at any moment is a pure function of the moment. Immutable.

@@ -20,6 +20,7 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     visited: false,
     address: '',
     figure: null,
+    numbered: false,
     ...facts,
   };
 }
@@ -44,6 +45,7 @@ const OPEN: GameSnapshot = {
     telemetry: { spectrogram: [1, 1, 1, 1, 1], voice: null },
     lattice: null,
     drawing: 'room',
+    figure: null,
     noise: '0000-0000-0000-0000',
   },
   player: { coherence: 54, band: 'degraded', steps: 6 },

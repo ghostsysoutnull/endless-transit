@@ -113,7 +113,7 @@ describe('floors of a building', () => {
     ]);
   });
 
-  test('resonance on the building’s list is 1000–2999 Hz and both ends are reached (Building.groovy:215-216)', () => {
+  test('a floor’s resonance is 1000–2999 Hz and both ends are reached (Building.groovy:215-216; a Layer’s list shows it, a floor’s only its zone since U02)', () => {
     const readings = sample.flatMap(({ floors }) => floors.map((floor) => floor.resonance()));
     expect(readings.length).toBeGreaterThan(5_000);
     expect(Math.min(...readings)).toBe(1000);
@@ -122,22 +122,22 @@ describe('floors of a building', () => {
       must(sample[3]?.floors[2])
         .readings()
         .map((fact) => fact.label),
-    ).toEqual(['FUNCTION', 'ST', 'RES']);
+    ).toEqual(['Zone']);
   });
 
   test('the elevator diagnostic suite of a real floor: era, culture, stability as a percentage, the country’s trait', () => {
     const { building, floors } = must(sample[7]);
     const vibe = must(building.vibe());
     expect(must(floors[1]).facts()).toEqual([
-      { key: 'era', label: 'TECH_ERA', value: vibe.era().key() },
-      { key: 'culture', label: 'RESONANCE', value: vibe.culture().key() },
-      { key: 'reading', label: 'STABILITY', value: `${(vibe.stability() * 100).toFixed(2)}%` },
-      { key: 'trait', label: 'ATMOS_SHIFT', value: must(vibe.mutation()).key() },
+      { key: 'era', label: 'Era', value: vibe.era().key() },
+      { key: 'culture', label: 'Culture', value: vibe.culture().key() },
+      { key: 'reading', label: 'Stability', value: `${(vibe.stability() * 100).toFixed(2)}%` },
+      { key: 'trait', label: 'Trait', value: must(vibe.mutation()).key() },
     ]);
     expect(must(floors[1]).description()[0]).toMatch(/^Floor 1\. .*[a-z.]$/);
-    expect(must(floors[1]).description()[0]).toContain(vibe.culture().key().toUpperCase());
-    expect(must(floors[1]).corridor().status()).toBe(
-      `TRAFFIC: [STABLE] | THEME: [${vibe.culture().key().toUpperCase()}]`,
-    );
+    // The culture is a word in the sentence, with a capital (U02): `Void`, not `VOID`.
+    const culture = vibe.culture().key();
+    expect(must(floors[1]).description()[0]).toContain(culture.charAt(0).toUpperCase() + culture.slice(1));
+    expect(must(floors[1]).corridor().status()).toBe('');
   });
 });

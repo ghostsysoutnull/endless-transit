@@ -1,4 +1,6 @@
+import { CORRIDOR_KIND } from './Corridor.ts';
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
@@ -24,6 +26,16 @@ const MOVES = new MoveTable<Floor>([
 export class CorridorState implements FloorState {
   id(): string {
     return 'corridor';
+  }
+
+  /** In the corridor the floor is drawn as the corridor, walked (U02). */
+  drawing(): string {
+    return CORRIDOR_KIND.key();
+  }
+
+  /** How it runs and its doors' looks: the floor's peek, the very ones the made corridor has. */
+  portrait(floor: Floor): Figure | null {
+    return floor.figure();
   }
 
   listing(floor: Floor): readonly Location[] {

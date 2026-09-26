@@ -31,6 +31,11 @@ export class Layer extends Floor {
     return LAYER_KIND;
   }
 
+  /** A Layer keeps its own screen until U04: drawn by its kind's picture, whatever its mode. */
+  override drawing(): string {
+    return LAYER_KIND.key();
+  }
+
   /** `Layer -0x1` … (Floor.groovy:110-112). */
   override name(): string {
     return `Layer -0x${Math.abs(this.number()).toString(16).toUpperCase()}`;

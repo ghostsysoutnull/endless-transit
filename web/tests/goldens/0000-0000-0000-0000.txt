@@ -34,83 +34,47 @@ dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HE
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0/16
-tags: Strata 2 of 20 (position) | THEME Void (culture)
-  Analyzing vertical lattice structure...
-diag: STRUCTURAL_STABLE
+tags: Building 2 of 20 (position) | Culture Void (culture) | Floors 18 (reading)
+  An elevator runs the height of the building.
+diag: 
 status: Entered HorizonWell.
-BUILDING STRATA DIAGNOSTICS
-  17 [] Access: Peak
-       FUNCTION: PEAK_OBSERVATORY
-       ST: 100%
-       RES: 1470Hz
-  16 [] Access: Floor 16
-       FUNCTION: VIP_QUARTERS
-       ST: 100%
-       RES: 1239Hz
-  15 [] Access: Floor 15
-       FUNCTION: EXECUTIVE_SUITE
-       ST: 100%
-       RES: 1590Hz
-  14 [] Access: Floor 14
-       FUNCTION: VIP_QUARTERS
-       ST: 100%
-       RES: 1206Hz
-  13 [] Access: Floor 13
-       FUNCTION: RESEARCH_LAB
-       ST: 100%
-       RES: 2608Hz
-  12 [] Access: Floor 12
-       FUNCTION: RESEARCH_LAB
-       ST: 100%
-       RES: 2411Hz
-  11 [] Access: Floor 11
-       FUNCTION: HYDROPONIC_BAY
-       ST: 100%
-       RES: 1468Hz
-  10 [] Access: Floor 10
-       FUNCTION: RESEARCH_LAB
-       ST: 100%
-       RES: 2339Hz
-  09 [9] Access: Floor 9
-       FUNCTION: HYDROPONIC_BAY
-       ST: 100%
-       RES: 2471Hz
-  08 [8] Access: Floor 8
-       FUNCTION: RESEARCH_LAB
-       ST: 100%
-       RES: 1578Hz
-  07 [7] Access: Floor 7
-       FUNCTION: HYDROPONIC_BAY
-       ST: 100%
-       RES: 1869Hz
-  06 [6] Access: Floor 6
-       FUNCTION: HYDROPONIC_BAY
-       ST: 100%
-       RES: 2676Hz
-  05 [5] Access: Floor 5
-       FUNCTION: RESEARCH_LAB
-       ST: 100%
-       RES: 2589Hz
-  04 [4] Access: Floor 4
-       FUNCTION: POWER_RELAY
-       ST: 100%
-       RES: 1251Hz
-  03 [3] Access: Floor 3
-       FUNCTION: FILTRATION_INTAKE
-       ST: 100%
-       RES: 1217Hz
-  02 [2] Access: Floor 2
-       FUNCTION: FILTRATION_INTAKE
-       ST: 100%
-       RES: 1865Hz
-  01 [1] Access: Floor 1
-       FUNCTION: POWER_RELAY
-       ST: 100%
-       RES: 2528Hz
-  00 [0] Access: Lobby [>X<]
-       FUNCTION: TRANSIT_LOBBY
-       ST: 100%
-       RES: 1146Hz
+RIDE TO A FLOOR
+  17 [] Ride to Peak
+       Zone: Peak observatory
+  16 [] Ride to Floor 16
+       Zone: Vip quarters
+  15 [] Ride to Floor 15
+       Zone: Executive suite
+  14 [] Ride to Floor 14
+       Zone: Vip quarters
+  13 [] Ride to Floor 13
+       Zone: Research lab
+  12 [] Ride to Floor 12
+       Zone: Research lab
+  11 [] Ride to Floor 11
+       Zone: Hydroponic bay
+  10 [] Ride to Floor 10
+       Zone: Research lab
+  09 [9] Ride to Floor 9
+       Zone: Hydroponic bay
+  08 [8] Ride to Floor 8
+       Zone: Research lab
+  07 [7] Ride to Floor 7
+       Zone: Hydroponic bay
+  06 [6] Ride to Floor 6
+       Zone: Hydroponic bay
+  05 [5] Ride to Floor 5
+       Zone: Research lab
+  04 [4] Ride to Floor 4
+       Zone: Power relay
+  03 [3] Ride to Floor 3
+       Zone: Filtration intake
+  02 [2] Ride to Floor 2
+       Zone: Filtration intake
+  01 [1] Ride to Floor 1
+       Zone: Power relay
+  00 [0] Ride to Lobby [>X<]
+       Zone: Transit lobby
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███ █ ███████ ██████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1 > Resonant traces: 0
 dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
@@ -118,10 +82,9 @@ dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] 
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0/16
-tags: Z-axis 1 of 18 (position) | TECH_ERA Future (era) | RESONANCE Void (culture) | STABILITY 90.00% (reading) | ATMOS_SHIFT Research (trait)
-  Floor 0. A landing of VOID design, silent except for the lift cables ticking overhead.
-  Local signal is STABLE. Corridor access authorized.
-diag: SYSTEM_DIAGNOSTIC: [NOMINAL]
+tags: Era Future (era) | Culture Void (culture) | Stability 90.00% (reading) | Trait Research (trait)
+  Floor 0. A landing of Void design, silent except for the lift cables ticking overhead.
+diag: 
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ █ ██ ████████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
@@ -131,31 +94,31 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0/16
-tags: Z-axis 1 of 18 (position) | THEME Void (culture)
+tags: Culture Void (culture) | Doors 10 (reading)
   A curved gallery of doors beneath a single strip of light.
-diag: TRAFFIC: [STABLE] | THEME: [VOID]
+diag: 
 status: Enter Corridor.
 moves: [B] BACK TO ELEVATOR
-LOCAL ACCESS LIST
-  01 [1] Access: Reinforced Polymer [WARPED]
+DOORS
+  01 [1] Open Reinforced Polymer [WARPED]
        APPEARANCE: A slab of reinforced polymer, dull and unscratched. The panel has bowed outward and no longer meets its frame.
-  02 [2] Access: _keep_walking_ Brutalist Slab [POLISHED]
+  02 [2] Open _keep_walking_ Brutalist Slab [POLISHED]
        APPEARANCE: A massive brutalist slab of pitted concrete. The surface is perfectly smooth and sterile. The word 'keep_walking' is scrawled across the surface in jagged, desperate lines.
-  03 [3] Access: Industrial Barrier [POLISHED]
+  03 [3] Open Industrial Barrier [POLISHED]
        APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The surface is perfectly smooth and sterile.
-  04 [4] Access: Oxidized Metal Hatch [VIBRATING]
+  04 [4] Open Oxidized Metal Hatch [VIBRATING]
        APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The surface is vibrating with a low-frequency thrum.
-  05 [5] Access: _signal_lost_ Reinforced Polymer [WEEPING]
+  05 [5] Open _signal_lost_ Reinforced Polymer [WEEPING]
        APPEARANCE: A slab of reinforced polymer, dull and unscratched. Moisture beads along the seams and runs in slow lines. The word 'signal_lost' is scrawled across the surface in jagged, desperate lines.
-  06 [6] Access: Industrial Barrier
+  06 [6] Open Industrial Barrier
        APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The structure appears stable.
-  07 [7] Access: [DATA_VAULT] Riveted Iron Hatch [WEEPING]
+  07 [7] Open [DATA_VAULT] Riveted Iron Hatch [WEEPING]
        APPEARANCE: A hatch of riveted iron, its seams weeping orange. Moisture beads along the seams and runs in slow lines. The word 'DATA_VAULT' is stamped into the metal in block letters.
-  08 [8] Access: Frosted Crystal Pane [WEEPING]
+  08 [8] Open Frosted Crystal Pane [WEEPING]
        APPEARANCE: A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
-  09 [9] Access: Lacquered Timber Gate [WEEPING]
+  09 [9] Open Lacquered Timber Gate [WEEPING]
        APPEARANCE: A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
-  10 [A] Access: Oxidized Metal Hatch [STATIC]
+  10 [A] Open Oxidized Metal Hatch [STATIC]
        APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ████████ █████████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION

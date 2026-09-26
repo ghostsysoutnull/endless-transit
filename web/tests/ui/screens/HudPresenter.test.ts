@@ -20,6 +20,7 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     visited: false,
     address: '',
     figure: null,
+    numbered: false,
     ...facts,
   };
 }
@@ -52,6 +53,7 @@ const PLANET: GameSnapshot = {
     telemetry: null,
     lattice: null,
     drawing: 'planet',
+    figure: null,
     noise: '0000-0000-0000-0000',
   },
   options: [
@@ -631,6 +633,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
         visited: true,
         sealed: false,
         address: '0.0.0.0.1.0.0.0.0',
+        door: null,
       },
       {
         id: 'enter:1',
@@ -642,6 +645,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
         visited: false,
         sealed: true,
         address: '0.0.0.0.1.0.0.0.1',
+        door: null,
       },
     ]);
     expect(drawing.label).not.toBe('');
@@ -660,6 +664,110 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
       [0, 0],
       [0, 0],
     ]);
+  });
+});
+
+/** A building of `floors` floors as the engine lists it (top first), the elevator at `car`, floor 3 visited. */
+function towerSnapshot(floors: number, car: number): GameSnapshot {
+  return {
+    ...STREET,
+    place: {
+      ...(STREET.place ?? ({} as never)),
+      kind: 'Building',
+      name: 'Ornate Sanctum',
+      drawing: 'building',
+      address: '0.0.0.0.1.0.0.0.0',
+      childrenHeading: 'Ride to a floor:',
+      figure: {
+        floors,
+        doors: 2,
+        tower: {
+          address: '0.0.0.0.1.0.0.0.0',
+          landmark: true,
+          car,
+          below: 0,
+          rows: Array.from({ length: floors }, () => ({
+            floors: 0,
+            doors: 2,
+            shape: 'curved',
+            looks: [
+              { material: 'Heavy Bulkhead', state: 'Frozen' },
+              { material: 'Pitted Concrete', state: 'Stable' },
+            ],
+          })),
+        },
+      },
+    },
+    options: [
+      ...Array.from({ length: floors }, (_, index) => {
+        const number = floors - 1 - index;
+        return option({
+          id: `enter:${String(index)}`,
+          label: `Ride to Floor ${String(number)}`,
+          place: `Floor ${String(number)}`,
+          ordinal: String(number),
+          current: number === car,
+          visited: number === 3,
+          numbered: true,
+          readings: [{ key: 'zone', label: 'Zone', value: 'Living unit' }],
+        });
+      }),
+      option({ id: 'leave', key: 'l', label: 'Leave Building', role: 'return' }),
+    ],
+  };
+}
+
+describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the floors as a pad', () => {
+  test('the tower passes through as data: its size, roof, car, the Layers below, each floor’s row; the slider is named by the list', () => {
+    const drawing = presenter.toViewModel(towerSnapshot(16, 5)).drawing;
+    expect(drawing.key).toBe('building');
+    expect(drawing.tower).toEqual({
+      floors: 16,
+      doors: 2,
+      address: '0.0.0.0.1.0.0.0.0',
+      landmark: true,
+      car: 5,
+      below: 0,
+      rows: Array.from({ length: 16 }, () => ({
+        shape: 'curved',
+        looks: [
+          { material: 'Heavy Bulkhead', state: 'Frozen' },
+          { material: 'Pitted Concrete', state: 'Stable' },
+        ],
+      })),
+    });
+    expect(drawing.slider).toBe('Ride to a floor');
+    expect(drawing.shape).toBe('');
+    expect(presenter.toViewModel(STREET).drawing.tower).toBeNull();
+  });
+
+  test('up to twenty floors: one group, ascending, each key its number and its words for a reader', () => {
+    const pad = presenter.toViewModel(towerSnapshot(16, 5)).pad;
+    expect(pad?.groups).toHaveLength(1);
+    expect(pad?.open).toBe(0);
+    const keys = pad?.groups[0]?.keys ?? [];
+    expect(keys.map((key) => key.number)).toEqual(Array.from({ length: 16 }, (_, n) => String(n)));
+    expect(keys[5]).toEqual({
+      id: 'enter:10',
+      number: '5',
+      spoken: 'Ride to Floor 5, Elevator here, Zone Living unit',
+      current: true,
+      visited: false,
+    });
+    expect(keys[3]?.visited).toBe(true);
+  });
+
+  test('past twenty, by tens: 0–9, 10–19 … the last one short; the group shown first holds the car', () => {
+    const pad = presenter.toViewModel(towerSnapshot(47, 23)).pad;
+    expect(pad?.groups.map((group) => group.label)).toEqual(['0–9', '10–19', '20–29', '30–39', '40–46']);
+    expect(pad?.groups.map((group) => group.keys.length)).toEqual([10, 10, 10, 10, 7]);
+    expect(pad?.open).toBe(2);
+    expect(pad?.label).toBe('Floors by tens');
+  });
+
+  test('a list that does not go by numbers is no pad', () => {
+    expect(presenter.toViewModel(STREET).pad).toBeNull();
+    expect(presenter.toViewModel(PLANET).pad).toBeNull();
   });
 });
 

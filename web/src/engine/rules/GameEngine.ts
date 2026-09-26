@@ -454,6 +454,7 @@ export class GameEngine {
       visited: player.visited(child),
       address: child.address().toString(),
       figure: child.figure(),
+      numbered: child.goesByNumber(),
     }));
   }
 
@@ -515,7 +516,7 @@ export class GameEngine {
       name: here.name(),
       address: here.address().toString(),
       position:
-        peers.length === 0
+        peers.length === 0 || here.kind().indexLabel() === ''
           ? null
           : { label: here.kind().indexLabel(), index: peers.indexOf(here) + 1, total: peers.length },
       trail: here.trail().map((step) => ({
@@ -527,6 +528,7 @@ export class GameEngine {
       description: this.#corruption.read(here.description(), player.coherence(), frame),
       facts: here.facts(),
       drawing: here.drawing(),
+      figure: here.portrait(),
       noise: frame.toString(),
       frame: here.vibe()?.frame() ?? null,
       abyssal: here.abyssal(),

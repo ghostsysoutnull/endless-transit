@@ -74,6 +74,11 @@ export abstract class Location {
     return null;
   }
 
+  /** What this place's own picture is handed (U02): its figure, unless the kind draws more of itself (a tower). */
+  portrait(): Figure | null {
+    return this.figure();
+  }
+
   /** The readings shown beside this place on its parent's list; none unless the kind has some. */
   readings(): readonly Fact[] {
     return [];

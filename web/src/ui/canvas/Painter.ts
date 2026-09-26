@@ -18,6 +18,9 @@ export interface Painter {
   moveTo(x: number, y: number): void;
   lineTo(x: number, y: number): void;
   arc(x: number, y: number, radius: number, start: number, end: number): void;
+  rect(x: number, y: number, width: number, height: number): void;
+  /** Clips what follows to the current path, until the `restore` that matches the last `save`. */
+  clip(): void;
   closePath(): void;
   stroke(): void;
   fill(): void;

@@ -70,7 +70,7 @@ describe('the ritual on the building (Guide:257-276; Building.groovy:19-35, Ritu
   test('a new building is not primed; a capture on a floor samples that floor, a merge inside counts; primed at every floor and seven merges', () => {
     const unit = buildingOf(street(), 0);
     expect(unit.primed()).toBe(false);
-    expect(unit.status()).toBe('STRUCTURAL_STABLE');
+    expect(unit.status()).toBe('');
     // A capture anywhere under the floor tells the floor, which tells the building (RitualTracker.groovy:26-33).
     must(floorOf(unit, 0).children()[0]).sample();
     floorOf(unit, 2).sample();
@@ -78,7 +78,7 @@ describe('the ritual on the building (Guide:257-276; Building.groovy:19-35, Ritu
     expect(unit.sampled()).toEqual([0, 2]);
     for (let merge = 0; merge < 7; merge++) must(floorOf(unit, 1).children()[0]).infuse();
     expect(unit.merges()).toBe(7);
-    expect(unit.status()).toBe('INFUSION_ACTIVE: 7');
+    expect(unit.status()).toBe('7 merges made inside');
     expect(unit.primed()).toBe(false);
     floorOf(unit, 1).sample();
     expect(unit.primed()).toBe(true);
@@ -148,7 +148,7 @@ describe('the ritual on the building (Guide:257-276; Building.groovy:19-35, Ritu
     expect(unit.breached()).toBe(false);
     expect(peak.breach([fragment('Chain', 100), key])).toBe(key);
     expect(unit.breached()).toBe(true);
-    expect(unit.status()).toBe('BEDROCK_BREACHED');
+    expect(unit.status()).toBe('The bedrock is breached');
     expect(peak.remember()).toBe('corridor');
     expect(peak.breachOffered([key])).toBe(false);
     expect(peak.breach([key])).toBeUndefined();

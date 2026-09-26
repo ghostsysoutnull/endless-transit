@@ -21,6 +21,7 @@ function option(id: string, key: string, label: string): GameOption {
     visited: false,
     address: '',
     figure: null,
+    numbered: false,
   };
 }
 
@@ -148,6 +149,7 @@ describe('TitlePresenter.toViewModel', () => {
       telemetry: null,
       lattice: null,
       drawing: 'universe',
+      figure: null,
       noise: '0000-0000-0000-0000',
       abyssal: false,
     };

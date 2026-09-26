@@ -781,6 +781,84 @@ body {
   font-size: 12.5px;
 }
 
+/* The pad (U02, Decision 7): a list of places that go by their numbers — a building's floors — as keys of
+   numbers, a thumb each; past twenty, the tens' tabs under the keys (the first screen keeps a key in view). */
+.pad {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 6px;
+}
+
+.pad .key,
+.tens .ten {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--tap);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--rule-hi);
+  background: var(--panel);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 15px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pad .key.seen {
+  color: var(--dim);
+}
+
+.pad .key.you {
+  border-color: var(--yl);
+  color: var(--yl);
+}
+
+.pad .key[data-lit],
+.pad .key:focus-visible,
+.tens .ten:focus-visible {
+  border-color: var(--frame);
+  outline: 2px solid var(--frame);
+  outline-offset: -2px;
+}
+
+.tens {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tens .ten {
+  font-size: 13px;
+  color: var(--dim);
+}
+
+.tens .ten[aria-pressed='true'] {
+  border-color: var(--frame);
+  color: var(--text);
+}
+
+/* The slider over a drawn place (U02): the picture draws it; this is the thumb-sized control a reader and a
+   finger use, clear until focused. */
+.scene .slider {
+  position: absolute;
+  touch-action: none;
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scene .slider:focus-visible {
+  outline: 2px solid var(--yl);
+  outline-offset: 2px;
+}
+
 .rows {
   list-style: none;
   margin: 0;
@@ -1721,6 +1799,12 @@ body {
   }
 
   .world[data-drawn] .travel {
+    order: -1;
+  }
+
+  /* The moves come right after the picture, before the list (U02: the elevator's Up and Down, the corridor's way
+     back) — the first screen shows one. */
+  .world[data-drawn] .cap > .moves {
     order: -1;
   }
 
