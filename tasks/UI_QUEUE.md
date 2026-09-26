@@ -6,18 +6,18 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 **Where the study and this file disagree, this file wins.** Each iteration leaves one short note, `tasks/ui/<id>.md`
 (plan, Shape table, choices made, gate lines, what the tester can try); the note and the merge commit are the record.
 
-**Estimate (re-cut 2026-09-25, sized from U01a's measured cost, `tasks/ui/U01-cost.md`):** U01a done, six to come, ≈ 1.7–2.8M tokens of final context (the agent tool's figure; inferred). That figure is not the spend: every step re-reads its whole context, so U01a's 390k processed 36.7M. **Every iteration puts something new on screen**, and each scene retires its own place's words with the pins that name them (Decision 16). An iteration that proves too big is split into slices that each show the tester something new.
+**Every iteration puts something new on screen**, and each scene retires its own place's words with the pins that name
+them; an iteration that proves too big is split into slices that each show the tester something new.
 
 ## Decisions (user, 2026-09-24) — nothing here is asked again
 1. **Picture first; the terminal's jargon goes.** Every place is drawn on a canvas and tapped in the picture; its list
    stays under it as the accessible twin, and what is pointed at in one lights in the other. Labels like
    `PULSE_TRAVERSAL`, `LOCUS_HASH`, `[STABLE]`, `[SYSTEM_TELEMETRY]` become plain chips or go; the room's prose stays.
 2. **The mock is the look and the feel; the game is the rules.** A plan that departs from the mock's look (a layout, a
-   motion, a drawing) says so and asks first — never decided quietly (the street's two rows, 2026-09-25). Where they disagree on a rule, a number or a name, the
-   game wins (as port Decision 9). Mock-only data stays mock-only: its sample names, apartments beyond 10 rooms, the
-   preview ship, the forced drift on the demo walk.
-3. **Phone first** — port Decisions 1–5 and 8 still bind (thumb-sized real buttons, portrait 360 px, nothing needs
-   hover or a key, browser saves only, debug tools behind `?debug`). Every iteration ends in a live build.
+   motion, a drawing) says so and asks first — never decided quietly. Where they disagree on a rule, a number or a name,
+   the game wins. Mock-only data stays mock-only: its sample names, apartments beyond 10 rooms, the preview ship, the
+   forced drift on the demo walk.
+3. **Phone first** — `web/CLAUDE.md`'s "Touch first" and its debug mode bind.
 4. **Motion is one clock, measured by elapsed time.** Drags follow the finger one to one and coast when let go; going in
    zooms in, going out zooms out; the elevator accelerates, cruises and brakes. Reduced motion: still pictures, no dive,
    instant moves. Smooth on a phone: the page's own work stays a few milliseconds a frame; canvases keep a pixel budget.
@@ -28,36 +28,31 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 8. **A corridor is walked**, first person, every door standing in the perspective: its shape comes from its floor's
    words (the curved gallery bends away, the service corridor runs to a blank wall); a slider along the bottom scrubs
    freely left and right; a door picked from the list is walked to, then opened.
-9. **An apartment is a plan** you drag and pinch: rooms numbered from the entrance, rooms not yet reached in fog until
-   a neighbour is visited or a scan resolves the plan, a minimap when it does not fit, a tapped room glided to and
-   zoomed into, the way out pulling back. The layout holds up to 48 rooms although the game deals 1 to 10 today.
+9. **An apartment is a plan** you drag and pinch: rooms numbered from the entrance, rooms not yet reached in fog until a
+   neighbour is visited or a scan resolves the plan, a minimap when it does not fit, a tapped room glided to and zoomed
+   into, the way out pulling back. The layout holds up to 48 rooms although the game deals 1 to 10 today.
 10. **A room** is drawn with its relics as things to tap; a captured relic flies into the buffer.
-11. **Trace opens the column** over everything, at your level: one band a level with its live drawing, its scale
-    (10²⁶ m … 5 m) and its facts; a thread through the spot where you went down, pulsing toward you and fraying at low
+11. **Trace opens the column** over everything, at your level: one band a level with its live drawing, its scale (10²⁶ m
+    … 5 m) and its facts; a thread through the spot where you went down, pulsing toward you and fraying at low
     coherence; only the band in focus animates; a tapped band opens larger in place. Read-only: memory, not a shortcut.
-    Closes by ✕, Esc, a tap outside (desktop) or a swipe down on its header (phone).
-12. **The dive stays**, behind a Dive button in the trace header: the zoom from the universe to you, landing back in
-    the column.
-13. **The pole** (option B): a Pole | Column switch in the trace header that remembers the last choice, and on a desktop
-    the rail expands into the pole pinned beside the game (it stays pinned). The pole: a spine with a pulse, a plate and
-    a live glyph a level, levels well apart (≈ 76 px, it scrolls and keeps you in view), era · culture · trait as
-    ribbons that break where a level changes them, state tags (curved, frozen, drift, rebel), the scale as a ruler.
+    Closes by ✕, Esc or a swipe down on its header.
+12. **The dive stays**, behind a Dive button in the trace header: the zoom from the universe to you, landing back in the
+    column.
+13. **The pole** (option B): a Pole | Column switch in the trace header that remembers the last choice. The pole: a
+    spine with a pulse, a plate and a live glyph a level, levels well apart (≈ 76 px, it scrolls and keeps you in view),
+    era · culture · trait as ribbons that break where a level changes them, state tags (curved, frozen, drift, rebel),
+    the scale as a ruler.
 14. **The vibe follows the game's rules exactly** (`web/src/engine/model/Vibe.ts` and the factories): the planet sets a
     main and a second culture and era; the country adds its trait and shifts the stability; one city in ten is a rebel
     district that swaps them; street to corridor only inherit; an apartment draws the main pair with the stability's
     chance, else the second (the drift); a room is its apartment's. The pole shows the second pair as a faint drift
     current, a drifted apartment hooking into it, a rebel city breaking both ribbons. Names come from the game's lists.
-    **The engine hands the UI these facts as data; the UI never re-derives a rule.**
 15. **Ships are not part of this run** (CONCEPT-001 decides them); the pole keeps their lane and their look — a hull
     diamond, a tow frame, a glowing tether, as the old mock drew them.
-16. **Tests change on purpose.** Only the approved snapshots and the lookups by accessible name hold the screen's
-    words; they change in the iteration that changes the word, and the note names each one. The first-screen rule
-    stays: a move is visible without scrolling at 360 × 640 on every screen.
-18. **Phones only** (user, 2026-09-25): the game is built, tested and judged on a phone held upright. No desktop
-    layout work and no desktop test profile; where a Decision above names a desktop (the pinned pole, a tap outside to
-    close, the rail's column) that part is dropped. The tester judges how it feels, smoothness included, by playing.
-17. **How to ask**: the user block at the top of `CLAUDE.md` is the one home (one question per message, lettered
-    options, the pick first, plain words; a pick is built, not re-asked).
+16. **Tests change on purpose.** Only the approved snapshots and the lookups by accessible name hold the screen's words;
+    they change in the iteration that changes the word, and the note names each one.
+18. **Phones only**: the game is built, tested and judged on a phone held upright. No desktop layout work and no desktop
+    test profile. The tester judges how it feels, smoothness included, by playing.
 
 ## Reported by the tester
 *(the user's findings — each becomes a fix piece run before the next iteration)*
