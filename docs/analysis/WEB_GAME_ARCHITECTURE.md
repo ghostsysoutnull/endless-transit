@@ -3,6 +3,7 @@
 developer or a fresh session that needs the picture without reading the ten iteration notes (`tasks/port/I01..I10.md`
 — the record of every class, choice and Guide-versus-code decision). The law the code lives by is `web/CLAUDE.md`;
 this page explains the shape that law produced. Player-facing rules and numbers: `docs/web/players_guide.md`.
+**Updated:** 2026-09-26 — the class tour moved here from `web/CLAUDE.md`; the desktop profile is gone (phones only).
 
 > **In one paragraph.** `web/` is one npm package: a strict-TypeScript single-page game on Vite, with a pure and
 > deterministic engine that knows nothing of the browser, a thin browser layer that hands it storage and entropy, and
@@ -20,7 +21,7 @@ this page explains the shape that law produced. Player-facing rules and numbers:
 | TypeScript | `~6.0.3` | strict, `erasableSyntaxOnly` (no enums, no constructor-parameter properties), project references: `tsconfig.engine.json` has **no DOM lib** |
 | Vite | `^8.3.0` | dev server, production build to `dist/`, base `/endless-transit/play/` (`ET_BASE` overrides) |
 | Vitest | `^5.0.1` | unit tests in Node, config inside `vite.config.ts` |
-| Playwright | `^1.63.0` | browser tests against the production build, two projects: `desktop` and `phone` (Pixel 7, portrait, touch), one worker |
+| Playwright | `^1.63.0` | browser tests against the production build, one project: `phone` (Pixel 7, portrait, touch), one worker |
 | ESLint `^10` + typescript-eslint `^8.70` | flat config | the lint walls (§3) and file naming; Prettier `^3.9` formats |
 | lit-html | `3.3.3` | the one render helper; the only runtime dependency besides two font packages |
 | Node | ≥ 24.12 | runs `.ts` scripts directly (`scripts/check.ts`, `scripts/publish.ts`) |
@@ -78,6 +79,9 @@ Walking one branch never generates siblings. Kinds are registry entries: `Locati
 `LocationFactory`; a new kind of place is one more entry, and the four abyssal kinds (Layer, Artery, Crypt, Shard)
 are the same factories registered again under other kinds. Nothing in `src/engine` checks a kind with `instanceof`
 or a switch; the place is asked (`listing()`, `moves()`, `arrival()`, `scan()`, `capture()`, `breachOffered()`, …).
+A kind answers for itself: its name, words and vibe, `sealed()`, and the journey's questions — `listing()`/`admits()`,
+`arrival()`/`arrive()`, `exit()`/`leave()`, `moves()`/`move(id)`, `remember()`/`recall()`, `current()`,
+`goesByNumber()`, `startOfJourney()`, `drainFactor()`.
 
 **Domain values are objects with stable keys**: `Address` (the path of indices, the save's and the visited set's
 key), `Culture`, `Era`, `Trait`, `LocationKind`, `Frequency` (whole hertz; resonant = a multiple of 11 that is not 0),
@@ -94,14 +98,34 @@ are moves the state offers when the building says the ritual allows them.
 mode, a building's elevator floor, its ritual (sampled floors, merges, breach), a room's taken keys and dropped
 fragments, a reach's echo hunt. Only visited places carry one; the save collects them by address.
 
+**The ritual and the abyss.** The ritual lives on the `Building`: a capture tells the trail `sample()`, a merge
+`infuse()`, and the building answers `primed()`, `forge(held)` (its `Keystone`, bound by address) and the breach (the
+Peak, in either mode). A building's children are its floors, then ten `Layer`s sealed until the breach, each with an
+`Artery` (the bedrock's vibe: abyssal culture, atomic era, the country's trait), `Crypt`s and `Shard`s.
+`Location.abyssal()` is the parent's answer; a Layer's is true, and it doubles the drain. A `NullReach` owns its `Echo`
+(the signal; the capture, once ever) and remembers it. The echo hunt (`echo`, `capture-echo`) and the breach
+(`breach`) are moves offered when the place says so.
+
+**Scans and panels.** A scan is `Location.scan(seen)`: the state decides what a floor scans; a kind answers
+`scanned(seen)`/`sensed()` for its row. SCAN, MAP and TRACE are global commands whose panels (`ScanSummary`,
+`MapSummary`, `TraceSummary`) ride on the snapshot until the next step. A map is the place's `mapNodes()` on a grid —
+a room has none, a floor maps its doors — with the marks of a low Coherence and the void's static drawn on the frame;
+outdoors, `place.lattice` is the pane's map. HELP opens the manual (`HelpPrompt`, its words in `HelpPresenter`).
+
+**Items and captures.** Objects live in apartments: an apartment deals its relics from the `ObjectDeck` of its culture
+and era and knows which room each lies in; a room asks. A capture is one transaction of the `Journey`: the room hands
+over only what the `Buffer` takes. A dropped fragment lies in the room as it was; 0 Hz never resonates.
+
 **The turn.** `GameEngine.step(optionId)` is the only way in. It resolves the id against the options on offer (a
 stale id changes nothing), drains Coherence *before* the command (`Drain`: 1, ×2 under an entropic street era — the
 street's, never the apartment's drift — ×2 below the bedrock, ×4 on a Layer's own screens), runs the command's
 `Turn` (`STEP` drains and counts a step, `GLOBAL` drains only, `FREE` neither), rolls the room's lottery after a
 counted step, saves, and returns a `GameSnapshot`: plain readonly data — `world`, `place`, `player`, `buffer`,
-`prompt`, `options` (`GameOption`: `{ id, key, label, role, opposite, sealed, visited, … }`), `message`, and the
+`prompt`, `options` (`GameOption`: `{ id, key, label, role, opposite, sealed, visited, … }`, `role` one of travel /
+move / return / system / debug / take / pick / drop), `message`, and the
 panels `scan` / `map` / `trace` that ride until the next step. Commands are registry entries (`GameCommand` with a
-key and a `Turn`); child keys come from a pool that excludes the letters commands claim.
+key and a `Turn`). A key is the ordinal when the place goes by its own number, else it comes from a pool that
+excludes the letters commands claim.
 
 **Prompts are states, never reads.** At zero Coherence the engine holds a `RebootPrompt`; END SESSION opens a
 `RecapPrompt`; BUFFER a `BufferPrompt` (select, merge, drop, back); HELP a `HelpPrompt`. A `Prompt` offers the only
@@ -118,7 +142,10 @@ place), `coherence`, `steps`, `visited`, `buffer` (fragment data with provenance
 stored. `restore` is strict: a save the journey could not have written — a state off the path, a path a floor's
 mode does not admit, a fragment no room dealt, a Keystone for no building — is refused whole and the title screen
 opens; `saved(restore(s)) === s` for every valid save; another version is no save (nobody to migrate for). Play-session
-fixtures `{ seed, history }` under `tests/fixtures/` replay with a reload after every tap.
+fixtures `{ seed, history }` under `tests/fixtures/` replay with a reload after every tap. On restore the states are
+recalled before any place is looked for, so a breach unseals the Layers a save stands on; the visited path is walked
+parents first and holds the trail, and may name a sealed place (the reboot keeps the path); every fragment is read
+back **through the world** by the `FragmentReader`, which refuses data the fragment would not write back.
 
 **Content.** The `.txt` lists were copied from `terminal/src/main/resources` (byte-identical, `cmp`-checked) and are
 owned by the web game from then on. Every directory has one `index.txt`; **order is the index's order**, never a
@@ -139,21 +166,21 @@ never its `opposite` move — the panel instead); a newly opened panel (scan, ma
 given the focus; one live region, mounted once, whose text changes (the status; a screen's headline when the engine
 has no message); the previous scene's focused option gets the focus back on the way back.
 
-**Input.** `InputRouter` maps tap/click and, on desktop, a key to an option id and calls `engine.step`. Every action
+**Input.** `InputRouter` maps a tap, a click or a key to an option id and calls `engine.step`. Every action
 is a real `<button>` at least 44 × 44 CSS px; nothing depends on hover or a key.
 
 **Phone first.** The HUD is one small box (the name, steps, buffer, the Coherence meter), with the depth rail of level
 glyphs under it (U01a: the terminal's readouts, the address, its hash and the seed are gone from the world screen);
 the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a disclosure holding scan, map,
-buffer, trace, help, title, end session); every screen shows a move without scrolling at 360 × 640. Desktop shows the
-rail as a left column with the names, the dock in one row and a right column (objects, telemetry, the pane map or spectrogram). A drawn
-place (U01b: the street) shows its picture above the card on a desktop; on a phone the name, then the picture, then
-the list, then the rest of the card, the picture sized so the first row stays above the dock at 360 × 640.
+buffer, trace, help, title, end session) that the next step folds again, and a panel the player asked for (scan,
+map, trace) comes after the list; every screen shows a move without scrolling at 360 × 640. A drawn place (U01b: the
+street) shows the name, then the picture, then the list, then the rest of the card, the picture sized so the first
+row stays above the dock at 360 × 640.
 `prefers-reduced-motion` stops the bar, the canvas pulse, the scene's motion and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
 **Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`, `TracePicture`) is a pure function
 of a plain view-model into `Painter` calls, so a stub painter tests it in Node; `CanvasView` draws it into a host
-with the stylesheet's tokens (`Inks`) at device pixel ratio and stays still under reduced motion. The map's marks
+with the stylesheet's tokens (`Inks`: the ones it may paint text with) at device pixel ratio and stays still under reduced motion. The map's marks
 (dim/bright, the `X` glitch marks below 30, `☠` below the bedrock) and the spectrogram bars are seeded from
 `FrameEntropy` (place + step count), never the clock. Each canvas has a text alternative from the same data.
 Every canvas moves on the page's one `MotionClock` (behind a `FrameSource` the composition root builds from
@@ -178,7 +205,7 @@ PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `
    determinism and laziness, strict restore, fixtures replayed, goldens, content floors, contrast of every text token
    against every surface (≥ 4.5:1, parsed from the stylesheet), views carrying no words.
 2. **Vitest, UI without a browser:** presenters → view-models, canvas pictures against a recording painter.
-3. **Playwright, production build, `desktop` + `phone`:** every flow (title, world walk, buildings, items, survival,
+3. **Playwright, production build, the `phone` profile:** every flow (title, world walk, buildings, items, survival,
    ritual, map, fold, focus, announce, a11y, resilience against corrupt saves and a throwing storage, help), and
    `@playthrough` — the whole game from the title to the void recap and a reload that continues
    (`npx playwright test --grep @playthrough`). Screenshots land in `test-results/` and are looked at before UI work
@@ -199,7 +226,7 @@ PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `
 | Content order | sorted `TreeMap` for cultures, file order for doors | the index file's order, asserted |
 | Known defects (12, study §2.4) | present | fixed, each pinned by a named test (`tasks/port/I09.md`) |
 | Not carried | `p`/`P` screenshots, `journal.txt`, `sync`/export, buffer destroy, auto-take, `[CLEARED]` floor progress, the endless Layer list (ten Layers instead), universe/filament pane variants | — |
-| Visual gate | 36 golden ANSI frames | 3 golden text dumps + Playwright screenshots on two profiles + a human look |
+| Visual gate | 36 golden ANSI frames | 3 golden text dumps + Playwright screenshots on the phone profile + a human look |
 
 The full player-facing list of the 27 differences is the last section of `docs/web/players_guide.md`.
 
