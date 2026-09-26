@@ -3,8 +3,8 @@
 Current state only. The rules live in `CLAUDE.md` and the files it names; the history lives in `journals/`.
 **Updated:** 2026-09-26.
 
-- **Branch:** `ui/u02-inside-the-building`. It carries U02 and this session's law commits; both reach `master` when U02
-  merges. A push of `master` republishes the site.
+- **Branch:** `ui/u02-inside-the-building`, where U02 continues; it is merged into `master` at each handover. A push of
+  `master` republishes the site.
 - **Next session — law mode** (`.claude/LAW_MODE.md`), two targets in order:
   1. **Review the rules not yet reviewed**, the two full reviews first, then the most often loaded:
      - `.claude/CODEX.md`, the whole file — loaded every session;
