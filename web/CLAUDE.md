@@ -109,7 +109,8 @@ A new invariant ships with its rule in the same iteration.
 ## Tests first
 
 Test, RED, then code. `tests/` mirrors `src/`; doubles in `tests/support/`. Pins are literals: a diff is a finding.
-Playwright owns browser behaviour and runs **twice**: `desktop` and `phone` (portrait, touch). Look at the
+Playwright owns browser behaviour and runs in one profile, `phone` (portrait, touch — the game is for phones only,
+user decision 2026-09-25). Look at the
 screenshots in `test-results/` yourself before calling UI work done.
 
 **Play-session fixtures** (`tests/fixtures/*.json`, `{ "seed": "XXXX-XXXX-XXXX-XXXX", "history": [...optionIds] }`
