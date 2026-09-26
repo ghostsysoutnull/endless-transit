@@ -20,6 +20,8 @@ Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work
 - **A new gate ships green on its first commit**: baseline today's debt, then let the baseline only shrink.
 - **A file never names the commit it sits under**: "the top commit is X" is false after the next commit.
 - **Never `git add -A` or `git add .`**: name the paths, `git status --short` first.
+- **Never type `git checkout <rev> --` without a path**: it detaches HEAD and hides the branch's files; restore single
+  files with `git restore --source=<rev> <path>`.
 - **Grep the backlog before presenting a finding as new.**
 - **An import is not a call**: grep the call before planning; a public method with no caller is a regression to log
   (`git log -S`), not a feature to wire.

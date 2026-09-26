@@ -7,8 +7,7 @@ Current state only. The rules live in `CLAUDE.md` and the files it names; the hi
   `master` republishes the site.
 - **Next session — law mode** (`.claude/LAW_MODE.md`):
   - **Review the rules not yet reviewed**, the most often loaded first (`.claude/CODEX.md`,
-    `.claude/commands/grill.md` and `tasks/lessons/infrastructure.md` were reviewed on 2026-09-26):
-    - `tasks/lessons/web.md` — loaded whenever work touches `web/`;
+    `.claude/commands/grill.md` and both lessons files were reviewed on 2026-09-26):
     - `.claude/brief.md` — every agent starts from it;
     - `tasks/UI_QUEUE.md`, its Decisions — they bind every iteration;
     - `.claude/STANDING_ORDER.md`, `.claude/commands/chronicle.md` — run only on the user's ask.
