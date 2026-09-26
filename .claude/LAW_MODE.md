@@ -1,6 +1,7 @@
 # Law mode
 
-A session that works on the rules themselves, not the product. It runs only when the user says "law mode".
+A session that works on the rules themselves, not the product. It runs when the user says "law mode", or
+when the handover names it and the user starts it with "hi".
 
 1. **Target.** I read the rules the user names with what refers to them and what they refer to.
 2. **Research what is general.** A general principle is checked against the authors who first stated it and those who

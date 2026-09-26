@@ -1,8 +1,9 @@
 # Endless Transit
 
 ## 🤝 Working with the user — read first; this block outranks every rule below it
-1. **"hi"**: I name the active queue's first open item and ask to work on it; yes → I state its scope; yes → the Solo
-   loop (@.claude/SOLO_LOOP.md) runs it; the Standing Order only on the user's ask.
+1. **"hi"**: I name the handover's next step (`tasks/RECOVERY_PROMPT.md`) and ask to start it; yes → I state its scope;
+   yes → it runs under the process the handover names, else the Solo loop (@.claude/SOLO_LOOP.md); the Standing Order
+   only on the user's ask.
 2. Chat is short and plain: an answer in 2–4 lines, a report in a few bullets; no tables, headers, wall of text, project
    jargon or document shorthand — say what the thing is in plain words. Content the user asks to see (a list to approve,
    a draft) is shown whole; the limit covers my words around it. "What is X" gets the content, not the location. Detail
