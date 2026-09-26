@@ -26,6 +26,8 @@ top of `CLAUDE.md`.
   one match); read the edited region before committing; never write "the top commit is X" into a file the next commit
   buries. (HK-013)
 - **Never `git add -A` or `git add .`**: name the paths, `git status --short` first. (GitHub Pages audit)
+- **A handover holds state, never rules**: the branch, the work in progress and its next step, the open threads, each
+  as a pointer; a start-up prompt or a rule copied into it drifts from its owner. (Handover cut, 2026-09-26)
 - **The close-out runs after the wave's last action** — the merge, the push, the live check. (WF-010)
 - **Grep the backlog before presenting a finding as new.** (HK-023)
 - **An import is not a call**: grep the call before planning; a public method with no caller is a regression to log
@@ -41,4 +43,8 @@ top of `CLAUDE.md`.
 - **Weigh a review against what it can find before running it**: a plan too big to review cheaply is cut, not
   reviewed twice. (U02: 12.5 min of grill, 59 calls.)
 - **A law states the principle with its incident as the pointer**; the grill asks only questions with a verifiable
-  form. (WF-009)
+  form. (WF-009) A universal principle or a process (OO, testing, law mode) carries neither incident nor project
+  example, and restates no rule another file owns: this codebase's map lives in `web/CLAUDE.md`. (OO, testing, law
+  mode, 2026-09-26)
+- **The design check reads the built code, not only the plan**: before an iteration closes, the OO checks are run on
+  its diff with the evidence named. (U02: the plan passed them, the code broke them 19 times, `tasks/ui/U02-fixes.md`.)

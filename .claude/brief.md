@@ -8,8 +8,9 @@ rules written since the session began, which your loaded files do not show yet.
   are deleted before you return.
 - **Read in full** every file the brief names before planning or changing it — never a template, a skeleton or a
   memory of it; a moved or refactored file keeps its logic (`git diff` shows the move and nothing else).
-- **Law:** `web/CLAUDE.md`, `tasks/lessons/web.md`, and in `.claude/CODEX.md` the OO table, the Shape Claim and the
-  Coverage Claim Protocols. A claim that a test guards something quotes its assertion lines.
+- **Law:** `web/CLAUDE.md`, `tasks/lessons/web.md`, the OO and testing principles in `CLAUDE.md`, and in
+  `.claude/CODEX.md` the Shape Claim and the Coverage Claim Protocols. A claim that a test guards something quotes its
+  assertion lines.
 - **Tests first:** RED, then green. While working run `npm run check` and only the browser specs you touch, phone profile
   (`npx playwright test e2e/<spec> --project=phone`, from `web/`); the full `npm run e2e` runs only when the user asks.
 - **Token cap:** the brief or the approved plan gives an estimate; past 1.5× it, stop and report where you are.

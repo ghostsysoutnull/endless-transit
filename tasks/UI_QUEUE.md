@@ -1,6 +1,6 @@
 # The UI Queue
-**What this is:** the web game's picture-first rework, cut into playable iterations. **"hi" names the next iteration** — a yes brings its
-scope, and the user accepts the scope before any plan or code; the rules are in `.claude/SOLO_LOOP.md` (or `.claude/STANDING_ORDER.md` when the user asks for it). **Spec: the mock** `docs/analysis/mocks/transit-reframed.html` (v5.3; the
+**What this is:** the web game's picture-first rework, cut into playable iterations. How an iteration runs: `.claude/SOLO_LOOP.md` (or
+`.claude/STANDING_ORDER.md` when the user asks for it). **Spec: the mock** `docs/analysis/mocks/transit-reframed.html` (v5.3; the
 same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3NpWhAuZ`, version 8) and the wireframe
 `docs/analysis/mocks/pole-wireframe.html`; how the mock maps onto the web game: `docs/analysis/UI_REFRAME_STUDY.md`.
 **Where the study and this file disagree, this file wins.** Each iteration leaves one short note, `tasks/ui/<id>.md`
@@ -50,9 +50,9 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
     **The engine hands the UI these facts as data; the UI never re-derives a rule.**
 15. **Ships are not part of this run** (CONCEPT-001 decides them); the pole keeps their lane and their look — a hull
     diamond, a tow frame, a glowing tether, as the old mock drew them.
-16. **Tests change on purpose.** A browser test or golden that pins an old label is changed in the iteration that
-    retires the label, and the note names it. The first-screen rule stays: a move is visible without scrolling at
-    360 × 640 on every screen.
+16. **Tests change on purpose.** Only the approved snapshots and the lookups by accessible name hold the screen's
+    words; they change in the iteration that changes the word, and the note names each one. The first-screen rule
+    stays: a move is visible without scrolling at 360 × 640 on every screen.
 18. **Phones only** (user, 2026-09-25): the game is built, tested and judged on a phone held upright. No desktop
     layout work and no desktop test profile; where a Decision above names a desktop (the pinned pole, a tap outside to
     close, the rail's column) that part is dropped. The tester judges how it feels, smoothness included, by playing.
