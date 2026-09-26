@@ -23,3 +23,5 @@ Rule plus pointer, one or two sentences each; the story lives in the iteration's
 - **A picture never branches on a string kind**: a shape or a roof is a drawer found by key, shared by every picture
   that draws it. (U02: corridor shapes, roofs.)
 - **A UI change is unverified until it has been seen, and `command -v chromium` is not a search for a browser**: look in `~/.cache/ms-playwright` and `find / -name playwright-core` before saying there is none; drive it in real time (`docs/analysis/mocks/look.js`) — a headless `--virtual-time-budget` screenshot freezes animations and lies. (CONCEPT-001 visual mock: a day of blind publishing, one invisible-canvas bug the user had to report.)
+- **Read a mock once**: the first read of a mock picture writes its facts (sizes, constants, paces, gestures, its lines)
+  into a digest beside the mock; plans and agents read the digest, the source only for a line they need. (U02)
