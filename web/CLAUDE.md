@@ -5,7 +5,7 @@ This file is the law and the map; how the code is built, class by class, is
 `../docs/analysis/WEB_GAME_ARCHITECTURE.md` (keep it true when a layer, a wall, a kind or the save format changes).
 OO and testing principles: `../CLAUDE.md`; the Shape table and coverage claims: `../.claude/CODEX.md`.
 **Player docs:** `../docs/web/players_guide.md` and `cheat_sheet.md` cite every number as `src/…:line` — a rule or
-number that changes re-reads its citation (`sed -n`) and the "How the web game differs" list.
+number that changes re-reads its citation and the "How the web game differs" list.
 Lessons: @../tasks/lessons/web.md
 
 ## Layers — who may import whom
