@@ -1,6 +1,6 @@
 # Infrastructure Lessons
-Rule plus pointer, one or two lines; the story lives in the wave's record. How to work with the user: the block at the
-top of `CLAUDE.md`.
+Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work with the user: the block at the top of
+`CLAUDE.md`.
 
 - **A test never reads, writes or deletes a file the player owns**: the path is injectable, the test uses a temp file
   and asserts the real one is untouched — never deletes it to unblock a prompt. (HK-012)
@@ -12,35 +12,22 @@ top of `CLAUDE.md`.
   (Phase 3b-ii)
 - **Move code by script**: lift the text, apply only the listed substitutions, assert the reverse gives back the
   original. (Phase 7)
-- **A scripted edit asserts after its last change and before it writes**, on the construct it removed, never on text it
-  inserts (a false positive then costs a rerun, not a revert); chain it with `&&` so a failed check never commits.
-  (HK-005)
-- **A scripted edit puts a comment on its own line**, and prints what lies between two anchors before a range replace.
-  (CONCEPT-001)
+- **A scripted edit checks itself and commits in one chain**: anchor on a unique line (assert one match), print what
+  lies between two anchors before a range replace, put a comment on its own line; after the last change and before it
+  writes, assert on the construct it removed, never on text it inserts; then `script && git add <paths> && git commit`,
+  the edited region read before the commit. (HK-005, HK-013, CONCEPT-001)
 - **Show a new pin RED against the old state and GREEN against the new** before trusting it, and read its logic for a
   self-contradiction. (HK-016)
 - **A new gate ships green on its first commit**: baseline today's debt, then let the baseline only shrink. (O2)
-- **A docs edit is a pipeline**: `script && git add && git commit` in one chain; anchor inserts on a unique line (assert
-  one match); read the edited region before committing; never write "the top commit is X" into a file the next commit
-  buries. (HK-013)
+- **A file never names the commit it sits under**: "the top commit is X" is false after the next commit. (HK-013)
 - **Never `git add -A` or `git add .`**: name the paths, `git status --short` first. (GitHub Pages audit)
-- **A handover holds state, never rules**: the branch, the work in progress and its next step, the open threads, each
-  as a pointer; a start-up prompt or a rule copied into it drifts from its owner. (Handover cut, 2026-09-26)
-- **The close-out runs after the wave's last action** — the merge, the push, the live check. (WF-010)
 - **Grep the backlog before presenting a finding as new.** (HK-023)
 - **An import is not a call**: grep the call before planning; a public method with no caller is a regression to log
   (`git log -S`), not a feature to wire. (Phase 10)
 - **Verify a tool against the tool, not the plan**: list what it holds and probe its flags and exit codes on a scratch
   run before designing around it. (O2)
 - **`git status --short` after a test run**: a dirty tree means a test leaks files.
-- **A ritual costs less than the failure it prevents**: size it from the diff, judgment only adds steps with a named
-  reason, one record per wave, a cap on any file every close-out appends to; question a habit before codifying it into a
-  command. (WF-008)
-- **Read a mock once**: the first read of a mock picture writes its facts (sizes, constants, paces, gestures, its lines)
-  into a digest beside the mock; plans and agents read the digest, the source only for a line they need. (U02)
+- **A ritual costs less than the failure it prevents**: size it from the diff, add a step only with a named reason, and
+  question a habit before codifying it into a command. (WF-008)
 - **Weigh a review against what it can find before running it**: a plan too big to review cheaply is cut, not
-  reviewed twice. (U02: 12.5 min of grill, 59 calls.)
-- **A law states the principle with its incident as the pointer**; the grill asks only questions with a verifiable
-  form. (WF-009) A universal principle or a process (OO, testing, law mode) carries neither incident nor project
-  example, and restates no rule another file owns: this codebase's map lives in `web/CLAUDE.md`. (OO, testing, law
-  mode, 2026-09-26)
+  reviewed twice. (U02)

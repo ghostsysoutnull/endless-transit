@@ -26,8 +26,9 @@ the push, the live check), in one go under the directive that started it:
 1. **False facts:** write each fact the wave made false in the old state's own words; `grep -rn` them across `docs/`,
    `tasks/`, every `CLAUDE.md`, `.claude/`, `README.md`; fix every live hit (`journals/` and `tasks/completed/` are
    history).
-2. **Handover true:** `tasks/RECOVERY_PROMPT.md` holds current state only; a backlog entry closes with a pointer to its
-   record.
+2. **Handover true:** `tasks/RECOVERY_PROMPT.md` holds current state only — the branch, the work in progress and its
+   next step, the open threads, each as a pointer; never a rule or a start-up prompt, which drift from their owners. A
+   backlog entry closes with a pointer to its record. (Handover cut, 2026-09-26)
 3. **Lessons:** each user correction becomes a block line or a lesson (the Self-Improvement Loop below).
 4. **Gate:** `./.claude/docs-check.sh --agent` → `DOCS=PASS`.
 5. **One chain:** the edits `&& git add <paths> && git commit`, merged `--no-ff`. A branch is deleted when its work is
