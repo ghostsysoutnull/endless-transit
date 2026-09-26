@@ -8,23 +8,20 @@ import type { SceneVM } from './SceneVM.ts';
 const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
 /** No number on the picture is smaller than this (touch first: it must read on a phone). */
 const TEXT = 12;
-/** The strip under a row's feet its numbers are written in. */
+/** The strip under the ground line the numbers are written in. */
 const LABEL = 16;
-/** A number is written under a building only when its slot is this wide. */
-const NUMBERED = 22;
-const PAD = 4;
-/** Where the far kerb and the near kerb run, as a share of the height; the way lies between. */
-const FAR_KERB = 0.42;
-const NEAR_KERB = 0.58;
-/** The sky left over the tallest roof of the far row, as a share of the height. */
-const SKY = 0.04;
+/** The mock's street: the ground at four fifths of the height, the sky's first tenth left over the tallest roof. */
+const GROUND = 0.8;
+const SKY = 0.1;
+/** The dashed line of the way, near the bottom. */
+const LINE = 0.95;
+/** The stars fill the upper part of the sky only. */
+const STARRY = 0.55;
+const STARS = 50;
 /** Floors past this add no height: a hundred-floor tower already touches the top. */
 const TALLEST = 100;
-/** A building's width in its slot: the far row is further away, so narrower. */
-const FAR_WIDTH = 0.64;
-const NEAR_WIDTH = 0.74;
-/** No building is wider than this share of the height its row can reach. */
-const TOWER = 0.5;
+/** A building's width in its slot. */
+const WIDTH = 0.62;
 /** Windows: at most this many rows and columns, however many floors and doors. */
 const WINDOW_ROWS = 14;
 const WINDOW_COLUMNS = 4;
@@ -43,18 +40,18 @@ interface Standing {
 }
 
 /**
- * Draws a street (U01b; the mock's `street`): its buildings in two facing rows along the way — the odd ones
- * on the far side, the even ones on the near side, each pair across the way from each other — each as tall
- * as its floors say, windows by its doors and floors that flicker, a landmark ringed, a visited one with a
- * yellow dot, the lit one outlined in yellow, its number under its feet; rain falls and the centre line of
- * the way runs. A pure function of its view-model, size, time and lit child: every ink is a token of the
- * stylesheet, every variation a hash of the building's address — never the clock's randomness.
+ * Draws a street as the mock does (U01b; the mock's `street`, `transit-reframed.html:740-766`): one row of
+ * buildings standing on the ground line, each as tall as its floors say, windows by its doors and floors that
+ * flicker, a landmark ringed, a visited one with a yellow dot, the lit one outlined in yellow, its number under its
+ * feet; stars twinkle over them, rain falls and the dashed line of the way runs below. A pure function of its
+ * view-model, size, time and lit child: every ink is a token of the stylesheet, every variation a hash of the
+ * building's address — never the clock's randomness.
  */
 export class StreetPicture implements ScenePicture<SceneVM> {
   layout(vm: SceneVM, size: PictureSize): readonly SceneHit[] {
     return this.#stand(vm, size).map((building) => {
       const top = building.base - building.height;
-      const y = top - building.roof - 2;
+      const y = Math.max(0, top - building.roof - 2);
       return {
         id: building.child.id,
         x: building.middle - building.slot / 2 + 1,
@@ -74,39 +71,29 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     painter.setLineDash([]);
     painter.fillStyle = palette('ground');
     painter.fillRect(0, 0, width, height);
-    const standing = this.#stand(vm, size);
-    const far = standing.filter((_, index) => index % 2 === 0);
-    const near = standing.filter((_, index) => index % 2 === 1);
-    for (const building of far) this.#building(painter, building, palette, seconds, lit);
-    this.#way(painter, size, palette, seconds);
-    for (const building of near) this.#building(painter, building, palette, seconds, lit);
+    this.#stars(painter, size, palette, seconds);
     this.#rain(painter, size, palette, seconds);
+    for (const building of this.#stand(vm, size)) this.#building(painter, building, palette, seconds, lit);
+    this.#way(painter, size, palette, seconds);
     painter.globalAlpha = 1;
   }
 
-  /** Where each building stands: pairs along the way, the first of a pair on the far side. */
+  /** Where each building stands: one row along the ground line, slots the mock's width apart. */
   #stand(vm: SceneVM, size: PictureSize): Standing[] {
-    const columns = Math.max(1, Math.ceil(vm.children.length / 2));
-    const slot = (size.width - 2 * PAD) / columns;
-    const farBase = size.height * FAR_KERB;
-    const nearBase = size.height - LABEL - 2;
-    const nearTop = size.height * NEAR_KERB + 4;
+    const slot = size.width / (vm.children.length + 0.6);
+    const base = size.height * GROUND;
+    const reach = base - size.height * SKY;
     return vm.children.map((child, index) => {
-      const farSide = index % 2 === 0;
-      const base = farSide ? farBase : nearBase;
-      const reach = farSide ? farBase - size.height * SKY : nearBase - nearTop;
-      // A building is a tower, never a slab: a short street's wide slots do not widen it past half its reach.
-      const width = Math.min(slot * (farSide ? FAR_WIDTH : NEAR_WIDTH), reach * TOWER);
+      const width = slot * WIDTH;
       const roof = Math.min(width * 0.45, 12);
-      const room = reach - roof;
       const floors = Math.min(Math.max(child.floors, 0), TALLEST);
       return {
         child,
         slot,
-        middle: PAD + slot * (Math.floor(index / 2) + 0.5),
+        middle: slot * (0.8 + index),
         base,
         width,
-        height: room * (0.3 + 0.68 * Math.sqrt(floors / TALLEST)),
+        height: (reach - roof) * (0.3 + 0.68 * Math.sqrt(floors / TALLEST)),
         roof,
       };
     });
@@ -163,14 +150,12 @@ export class StreetPicture implements ScenePicture<SceneVM> {
       painter.arc(left + width - 4, top + 4, 2.5, 0, Math.PI * 2);
       painter.fill();
     }
-    if (building.slot >= NUMBERED) {
-      painter.font = `${isLit ? '700' : '400'} ${String(TEXT)}px ${MONO}`;
-      painter.textAlign = 'center';
-      painter.textBaseline = 'top';
-      painter.fillStyle = palette(isLit ? 'yl' : child.sealed ? 'dim' : 'text');
-      painter.globalAlpha = 1;
-      painter.fillText(child.ordinal, middle, base + 2);
-    }
+    painter.font = `${isLit ? '700' : '400'} ${String(TEXT)}px ${MONO}`;
+    painter.textAlign = 'center';
+    painter.textBaseline = 'top';
+    painter.fillStyle = palette(isLit ? 'yl' : child.sealed ? 'dim' : 'text');
+    painter.globalAlpha = 1;
+    painter.fillText(child.ordinal, middle, base + 2);
   }
 
   /** The windows: a grid by its doors and floors, some dark, some lit, each flickering at its own pace. */
@@ -199,23 +184,17 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     }
   }
 
-  /** The way between the rows: its surface, its kerbs and a centre line that runs. */
+  /** The ground line under the row, and the dashed line of the way running below it. */
   #way(painter: Painter, size: PictureSize, palette: Palette, seconds: number): void {
-    const far = size.height * FAR_KERB;
-    const near = size.height * NEAR_KERB;
-    painter.fillStyle = palette('rule');
-    painter.globalAlpha = 0.3;
-    painter.fillRect(0, far, size.width, near - far);
-    painter.strokeStyle = palette('rule-hi');
-    painter.globalAlpha = 1;
+    const ground = size.height * GROUND;
+    painter.strokeStyle = palette('frame');
+    painter.globalAlpha = 0.5;
     painter.lineWidth = 1;
     painter.beginPath();
-    painter.moveTo(0, far + 0.5);
-    painter.lineTo(size.width, far + 0.5);
-    painter.moveTo(0, near + 0.5);
-    painter.lineTo(size.width, near + 0.5);
+    painter.moveTo(0, ground + 0.5);
+    painter.lineTo(size.width, ground + 0.5);
     painter.stroke();
-    const line = near - (near - far) * 0.25;
+    const line = size.height * LINE;
     const offset = (seconds * 20) % 26;
     painter.strokeStyle = palette('yl');
     painter.globalAlpha = 0.35;
@@ -225,6 +204,23 @@ export class StreetPicture implements ScenePicture<SceneVM> {
       painter.lineTo(x + 14, line);
     }
     painter.stroke();
+  }
+
+  /** The stars over the street: small points, a few warm, each twinkling at its own pace. */
+  #stars(painter: Painter, size: PictureSize, palette: Palette, seconds: number): void {
+    const text = palette('text');
+    const warm = palette('yl');
+    for (let star = 0; star < STARS; star++) {
+      const x = this.#hash('star-x', star) * size.width;
+      const y = this.#hash('star-y', star) * size.height * STARRY;
+      const big = this.#hash('star-big', star) < 0.07;
+      const pace = 0.5 + this.#hash('star-pace', star) * 1.8;
+      const phase = this.#hash('star-phase', star) * 6;
+      const glow = this.#hash('star-glow', star);
+      painter.fillStyle = this.#hash('star-warm', star) < 0.14 ? warm : text;
+      painter.globalAlpha = 0.45 * (0.2 + 0.7 * glow * (0.55 + 0.45 * Math.sin(seconds * pace + phase)));
+      painter.fillRect(x, y, big ? 1.8 : 1, big ? 1.8 : 1);
+    }
   }
 
   /** The rain: short slanted strokes falling at three paces. */

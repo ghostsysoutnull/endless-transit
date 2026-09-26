@@ -46,7 +46,7 @@ function overlap(a: SceneHit, b: SceneHit): boolean {
 
 const picture = new StreetPicture();
 
-describe('the street picture: buildings in two facing rows along the way, laid out as hit areas', () => {
+describe('the street picture: one row of buildings on a ground line, as the mock draws it, laid out as hit areas', () => {
   for (const size of [PHONE, DESKTOP]) {
     test(`4 to 20 buildings at ${String(size.width)} × ${String(size.height)}: one hit each, inside the picture, none overlapping, each anchor inside its hit`, () => {
       for (let count = 4; count <= 20; count++) {
@@ -62,7 +62,8 @@ describe('the street picture: buildings in two facing rows along the way, laid o
           expect(hit.anchor.x, where).toBeLessThan(hit.x + hit.width);
           expect(hit.anchor.y, where).toBeGreaterThan(hit.y);
           expect(hit.anchor.y, where).toBeLessThan(hit.y + hit.height);
-          if (size === PHONE) expect(hit.width, where).toBeGreaterThanOrEqual(28);
+          // One row across the phone: twenty buildings still leave each a slot of its own (the list is the thumb's way in).
+          if (size === PHONE) expect(hit.width, where).toBeGreaterThanOrEqual(13);
         }
         for (const [index, hit] of hits.entries()) {
           for (const other of hits.slice(index + 1)) {
@@ -73,16 +74,16 @@ describe('the street picture: buildings in two facing rows along the way, laid o
     });
   }
 
-  test('the rows face each other in pairs: building 1 across the way from building 2, and so on down the street', () => {
-    const hits = picture.layout(street(8), PHONE);
-    const [first, second, third] = hits;
-    expect(first && second && third).toBeTruthy();
-    if (first === undefined || second === undefined || third === undefined) return;
-    // The pair shares a place along the way; the next pair stands further on.
-    expect(Math.abs(first.anchor.x - second.anchor.x)).toBeLessThan(first.width / 2);
-    expect(third.anchor.x).toBeGreaterThan(first.anchor.x + first.width / 2);
-    // One stands on the far side of the way, one on the near side.
-    expect(first.y + first.height).toBeLessThanOrEqual(second.y);
+  test('one row, like the mock: every building stands on the same ground line, left to right in the list’s order', () => {
+    for (const count of [4, 8, 20]) {
+      const hits = picture.layout(street(count), PHONE);
+      const feet = new Set(hits.map((hit) => hit.y + hit.height));
+      expect(feet.size, `${String(count)} buildings`).toBe(1);
+      for (const [index, hit] of hits.entries()) {
+        const next = hits[index + 1];
+        if (next !== undefined) expect(next.anchor.x).toBeGreaterThan(hit.anchor.x);
+      }
+    }
   });
 
   test('a building with more floors stands taller', () => {
@@ -131,16 +132,13 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
     }
   });
 
-  test('each building is numbered under its feet by the number its row goes by', () => {
+  test('each building is numbered under its feet by the number its row goes by, twenty too', () => {
     const painter = new RecordingPainter();
-    picture.paint(painter, street(12), PHONE, palette(painter.asked), 0, '');
+    picture.paint(painter, street(20), PHONE, palette(painter.asked), 0, '');
     const numbers = painter.calls
       .filter((call) => call.startsWith('fillText('))
       .map((call) => call.slice(9).split(',')[0]);
-    // The far row is painted before the way, the near row after it: the order is the painter's, the set is the list's.
-    expect([...numbers].sort((a, b) => Number(a) - Number(b))).toEqual(
-      street(12).children.map((child) => child.ordinal),
-    );
+    expect(numbers).toEqual(street(20).children.map((child) => child.ordinal));
   });
 
   test('the lit building is outlined in yellow; none is when nothing is lit', () => {
