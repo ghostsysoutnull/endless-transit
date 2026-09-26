@@ -61,7 +61,8 @@ same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3N
 
 ## Reported by the tester
 *(the user's findings — each becomes a fix piece run before the next iteration)*
-- none
+- ✓ 2026-09-25: the street drew two rows of buildings; the mock draws one — redrawn as the mock, live as `9fc27e3`
+  (`tasks/ui/U01b.md`, "After the merge").
 
 ## Iterations
 

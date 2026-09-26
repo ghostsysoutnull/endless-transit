@@ -46,8 +46,7 @@ src/
 └─ main.ts        the composition root: the only place adapters are built and injected
 ```
 
-Sizes: engine 130 files / 7,500 lines (model 3,600, rules 1,900, procgen 1,500); ui 39 files / 2,800 lines;
-platform 57 lines. Tests: 476 unit (`tests/` mirrors `src/`), 233 browser (`e2e/`), run on both profiles.
+Tests: unit tests in `tests/` (mirroring `src/`), browser tests in `e2e/`, run in the phone profile.
 
 **Who may import whom.** The engine imports only itself (`./…` and `#engine/…`). `content/`, `platform/` and `ui/`
 import the engine; nothing imports `ui/` but `main.ts`. Package-level specifiers (`#engine/*`, `#ui/*`, …) come
