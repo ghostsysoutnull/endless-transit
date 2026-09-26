@@ -58,26 +58,22 @@
 1. **Shape is not identity.** TypeScript matches types by their members, so any object with the same public shape
    passes as a class's type; a domain type keeps its state in `#private` fields, which only its own instances have.
 2. **Objects are equal by reference.** `===`, `Map` and `Set` compare objects by identity: a value object answers
-   `equals()`, and a map is keyed by a stable key, never by the object or its display text.
+   `equals()`, and a map is keyed by a stable key, never by the object.
 3. **Parse at the edge, then trust the type.** Data from outside the program is `unknown` until one place turns it into
    objects or refuses it whole; nothing past that place checks it again.
-4. **A kind tag is looked up, not switched on.** Where outside data names its kind, a table maps the tag to the class
-   that builds it; a `switch` on a tag or an `instanceof` is asking.
-5. **Types hold only valid states.** A union of the valid shapes over optional fields that must be set together; `null`
-   and `undefined` stay at the edges of a type, not inside it.
-6. **A cast is a promise the compiler never checks.** `as`, `!` and a hand-written type guard (`x is T`) each live
+4. **A union of valid shapes, not optional fields.** Fields that must be set together are one member of a union, never
+   optional fields side by side; `null` and `undefined` stay at the edges of a type, not inside it.
+5. **A cast is a promise the compiler never checks.** `as`, `!` and a hand-written type guard (`x is T`) each live
    inside one small function whose own signature is checked, never inline in logic.
-7. **An override accepts what its parent accepts.** TypeScript checks method parameters in both directions, so an
+6. **An override accepts what its parent accepts.** TypeScript checks method parameters in both directions, so an
    override that narrows a parameter compiles and breaks at run time; it never narrows a parameter nor widens a return.
-8. **`implements` checks, it does not type.** A class names the interfaces it serves and still types every parameter
-   itself; the interface lives with the code that uses it.
-9. **`readonly` is one level deep.** Immutable means `readonly` fields and `readonly T[]` or `ReadonlyMap` in every
+7. **`implements` checks, it does not type.** A class names the interfaces it serves and still types every parameter
+   itself.
+8. **`readonly` is one level deep.** Immutable means `readonly` fields and `readonly T[]` or `ReadonlyMap` in every
    signature; nothing hands out its live array or map.
-10. **A getter only answers.** A `get` accessor changes nothing and gives the same answer until a command changes the
-    state.
-11. **Behavior is methods, not arrow-function fields.** A function held in a field lives on each instance, outside the
-    prototype, where no subclass can override it or reach it with `super`; bind at the one place a method is handed out
-    as a callback.
+9. **Behavior is methods, not arrow-function fields.** A function held in a field lives on each instance, outside the
+   prototype, where no subclass can override it or reach it with `super`; bind at the one place a method is handed out
+   as a callback.
 
 ## 🧪 Testing principles — a test earns its place by the regression it would catch
 1. **Test behavior, not structure.** A test's result changes when behavior changes, and only then; a refactor that
