@@ -95,7 +95,7 @@
 10. **Readable over DRY.** Each test reads on its own; shared setup covers only what the test doesn't care about, and
     test data comes from builders with defaults, so a new field is one edit.
 
-The game is **`web/`** — TypeScript for the browser, phone first; its law is `web/CLAUDE.md`.
+The game is **`web/`** — TypeScript for the browser, phones only; its law is `web/CLAUDE.md`.
 
 Project records stay at the root: `docs/` (the player site, plus `docs/analysis/`), `journals/`, `tasks/`, `.claude/`.
 

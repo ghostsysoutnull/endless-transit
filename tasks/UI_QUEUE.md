@@ -18,7 +18,7 @@ them; an iteration that proves too big is split into slices that each show the t
    motion, a drawing) says so and asks first — never decided quietly. Where they disagree on a rule, a number or a name,
    the game wins. Mock-only data stays mock-only: its sample names, apartments beyond 10 rooms, the preview ship, the
    forced drift on the demo walk.
-3. **Phone first** — `web/CLAUDE.md`'s "Touch first" and its debug mode bind.
+3. **Phones only** (the whole of it in Decision 18) — `web/CLAUDE.md`'s "Touch first" and its debug mode bind.
 4. **Motion is one clock, measured by elapsed time.** Drags follow the finger one to one and coast when let go; going in
    zooms in, going out zooms out; the elevator accelerates, cruises and brakes. Reduced motion: still pictures, no dive,
    instant moves. Smooth on a phone: the page's own work stays a few milliseconds a frame; canvases keep a pixel budget.
