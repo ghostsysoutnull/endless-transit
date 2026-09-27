@@ -44,9 +44,10 @@ A chronicle or a retro only when the user asks.
   enabled test that prove it, read in the current session; a file name, a grep hit, a disabled test or a remembered
   purpose is not evidence. If no assertion exists, the plan marks the behavior **UNGUARDED** and adds a pre-check test
   as step 0, committed before any production change.
-* **OO Principles**: in `CLAUDE.md`. `/grill`'s Shape check asks each of them on the plan; the **design check** asks
-  each of them on the built code: they are run on each commit's diff, with the evidence named, before the next commit
-  begins.
+* **OO Principles**: in `CLAUDE.md`. `/grill`'s Shape check asks each of them on the plan. The **design check** asks
+  them, the TypeScript and OO rules and the testing principles on the built code: the `design-check` agent
+  (`.claude/agents/design-check.md`) runs them on each commit's diff with the evidence named, and its breaks are fixed
+  before the next commit begins.
 * **Shape Claim Protocol**: every plan that adds a class, a method on a new class, or a static carries a
   **Shape table** — one row per new thing: `what | kind | owner | the one fact it owns | statics + why`
   (`kind` ∈ value object / entity / service / listener / command / factory). It is the evidence for one owner per fact,
