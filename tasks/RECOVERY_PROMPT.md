@@ -5,7 +5,9 @@ Current state only. The rules live in `CLAUDE.md` and the files it names; the hi
 
 - **Branch:** `ui/u02-inside-the-building`, where U02 continues; it is merged into `master` at each handover. A push of
   `master` republishes the site.
-- **Next session:** U02 of the UI rework (`tasks/UI_QUEUE.md`), under the Solo loop. Its next step is in
+- **Next session — law mode** (`.claude/LAW_MODE.md`): harden the Solo loop (`.claude/SOLO_LOOP.md`) and make it the
+  implicit process of every session and every effort that spans iterations.
+- **In progress:** U02 of the UI rework (`tasks/UI_QUEUE.md`), under the Solo loop. Its next step is in
   `tasks/ui/U02.md` ("State at handover"): the design fixes in `tasks/ui/U02-fixes.md`, then the corridor, then the
   end-of-iteration browser tests. The browser suite is red on this branch until then, by plan.
 - **Open threads** (none has a plan):
