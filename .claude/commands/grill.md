@@ -21,8 +21,9 @@ Each is answered from tool output produced in this session (Read, grep, a probe)
 | 6 | **Revert unit and cost** | one commit per module with its tests, each green alone; the token estimate present and plausible against the actual tokens in earlier iterations' notes | PASS / UNBOUNDED |
 
 ## 3. Blast radius
-grep `web/src`, `web/tests` and `web/e2e` for every type, field, method, test id and CSS class the plan touches; any
-hit the plan does not list is reported.
+Every type, field and method the plan touches: its references from the `LSP` tool (`findReferences`), backed by a
+grep of the tests (the lesson "Blast radius includes the tests"). Every test id, CSS class and word: grep `web/src`,
+`web/tests` and `web/e2e`. Any hit the plan does not list is reported.
 
 ## 4. Report
 The six verdicts as a table, then one line per non-PASS with the exact amendment. End with **CLEARED** (present it),
