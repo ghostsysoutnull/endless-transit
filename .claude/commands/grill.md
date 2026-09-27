@@ -1,8 +1,7 @@
 # /grill — The Plan Interrogation Protocol
 
 Adversarial review of a draft plan before the user sees it: every UI-queue iteration plan (the Solo loop's "Plan,
-review, show"; the Standing Order's plan step when the user asks for it) and every plan outside a queue that changes
-code. Read-only: this command never edits source, tests or the plan; it produces verdicts. Stance: **assume the plan is
+review, show") and every plan outside a queue that changes code. Read-only: this command never edits source, tests or the plan; it produces verdicts. Stance: **assume the plan is
 wrong and look for where** — the author is the worst person to find its weakest claim.
 
 ## 1. Locate

@@ -1,6 +1,6 @@
 # The Solo loop
 
-How a queue iteration runs by default.
+How a queue iteration runs.
 
 ## The loop
 1. **Scope.** The iteration starts from the scope the user accepted (the first rule of the block at the top of

@@ -14,5 +14,4 @@ Current state only. The rules live in `CLAUDE.md` and the files it names; the hi
   - `docs/analysis/WORKFLOW_BACKLOG.md`: WF-011, WF-006 (moot — close at the next review), WF-013 (needs the user's
     `gh auth refresh -s workflow`);
   - the tester's findings, when they come: each becomes a fix under the queue's "Reported by the tester";
-  - the rule reviews are closed; not reviewed: `.claude/STANDING_ORDER.md` (likely to be removed, and it still names the
-    deleted agent brief) and `.claude/commands/chronicle.md`.
+  - the rule reviews are closed; not reviewed: `.claude/commands/chronicle.md`.
