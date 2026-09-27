@@ -19,11 +19,25 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
    on purpose. A wave with a note records there the tokens spent beside the estimate. Then the Codex's close-out
    ("Closing a wave"), the queue's own where it names one, and a publish on the user's word.
 
-## A wave that spans sessions
-- **Stopping partway:** the wave's note — its queue iteration's, or a new one under `tasks/` — gets a "State at
-  handover": what is done, with its commits; what is left, in order; the questions asked and not answered. The
-  handover points to it; the next session starts there, the open questions first.
-- **A queue** lists its iterations and holds their decisions; what the user reports broken runs before the next one.
+## Ending a session
+Every session ends with a handover, so the next one starts from "hi" alone. It runs in one chain:
+1. **When.** The session ends on the user's word, whether its wave is closed or open. When a wave closes, I say so.
+2. **Nothing loose.** All work is committed on its branch. A gate red by plan is named red, with why, in the state.
+3. **An open wave's state.** Its note — the queue iteration's, else `tasks/<branch name>.md` — gets "State at
+   handover", rewritten whole: what is done, with its commits; what is left, in order; the decisions made this
+   session; the questions asked and not answered.
+4. **The handover.** `tasks/RECOVERY_PROMPT.md` is rewritten whole, in three fields and nothing else:
+   - **Branch:** the branch the next session works on.
+   - **Next:** one step — what it is, the file that holds its state, and "law mode" when it is work on the rules. An
+     open wave is next. Else, in order: what the user reported broken, the queue's first unticked iteration, or the
+     user's pick, asked before the handover is written.
+   - **Open threads:** one pointer each to the file that holds it.
+5. **Close.** The Codex's close-out; the branch merged into `master`; a push only on the user's word, since a push of
+   `master` republishes the site.
+
+## Starting from "hi"
+The block's first rule reads **Next**. For an open wave, the scope stated is its note's, and the open questions are
+asked first.
 
 ## What it sets that other rules leave open
 - **A bug the user sees on screen:** their report is the reproduction; its browser test waits for the end. A logic bug
