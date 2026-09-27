@@ -1,10 +1,11 @@
 # The UI Queue
-**What this is:** the web game's picture-first rework, cut into playable iterations. How an iteration runs: `.claude/SOLO_LOOP.md`.
+**What this is:** the web game's picture-first rework, cut into playable iterations.
 **Spec: the mock** `docs/analysis/mocks/transit-reframed.html` (v5.3; the
 same page is published privately at `https://claude.ai/artifact/AadEUrRcBytwcf3NpWhAuZ`, version 8) and the wireframe
 `docs/analysis/mocks/pole-wireframe.html`; how the mock maps onto the web game: `docs/analysis/UI_REFRAME_STUDY.md`.
 **Where the study and this file disagree, this file wins.** Each iteration leaves one short note, `tasks/ui/<id>.md`
 (plan, Shape table, choices made, gate lines, what the tester can try); the note and the merge commit are the record.
+An iteration closes with its note as built and its row ticked.
 
 **Every iteration puts something new on screen**, and each scene retires its own place's words with the pins that name
 them; an iteration that proves too big is split into slices that each show the tester something new.

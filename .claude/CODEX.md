@@ -5,10 +5,10 @@ and how to talk to the user: the block at the top of `CLAUDE.md`, which outranks
 
 ---
 
-## 🚦 How an iteration runs
-Two processes, each whole in its own file: **the Solo loop** (`.claude/SOLO_LOOP.md`), how every iteration runs; and
-**law mode** (`.claude/LAW_MODE.md`), for work on the rules themselves, when the user says "law mode" or starts with
-"hi" a handover that names it.
+## 🚦 How work runs
+One process: **the Solo loop** (`.claude/SOLO_LOOP.md`), how every wave runs. **Law mode** (`.claude/LAW_MODE.md`)
+adds to it for work on the rules themselves, when the user says "law mode" or starts with "hi" a handover that names
+it.
 
 ---
 
@@ -45,7 +45,8 @@ A chronicle or a retro only when the user asks.
   purpose is not evidence. If no assertion exists, the plan marks the behavior **UNGUARDED** and adds a pre-check test
   as step 0, committed before any production change.
 * **OO Principles**: in `CLAUDE.md`. `/grill`'s Shape check asks each of them on the plan; the **design check** asks
-  each of them on the built code: before an iteration closes, they are run on its diff with the evidence named.
+  each of them on the built code: they are run on each commit's diff, with the evidence named, before the next commit
+  begins.
 * **Shape Claim Protocol**: every plan that adds a class, a method on a new class, or a static carries a
   **Shape table** — one row per new thing: `what | kind | owner | the one fact it owns | statics + why`
   (`kind` ∈ value object / entity / service / listener / command / factory). It is the evidence for one owner per fact,
