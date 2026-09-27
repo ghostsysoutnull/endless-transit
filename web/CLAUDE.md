@@ -98,7 +98,8 @@ only grow.
 ## Touch first
 
 Every button is ≥ 44×44 CSS px. Nothing depends on hover or a key. Portrait at 360 px never scrolls sideways. Saves:
-`localStorage` only.
+`localStorage` only, with no compatibility: the game has no users yet, so old saves, journals and seeds need no
+migration.
 
 ## Commands (from `web/`)
 
