@@ -6,9 +6,9 @@ and how to talk to the user: the block at the top of `CLAUDE.md`, which outranks
 ---
 
 ## 🚦 How an iteration runs
-Three processes, each whole in its own file: **the Solo loop** (`.claude/SOLO_LOOP.md`), the default; **the Standing
-Order** (`.claude/STANDING_ORDER.md`), only when the user asks for it; and **law mode** (`.claude/LAW_MODE.md`), for
-work on the rules themselves, when the user says "law mode" or starts with "hi" a handover that names it.
+Two processes, each whole in its own file: **the Solo loop** (`.claude/SOLO_LOOP.md`), how every iteration runs; and
+**law mode** (`.claude/LAW_MODE.md`), for work on the rules themselves, when the user says "law mode" or starts with
+"hi" a handover that names it.
 
 ---
 
