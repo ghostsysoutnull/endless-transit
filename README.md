@@ -35,7 +35,7 @@ cd web
 npm install
 npm run dev            # play while developing (http://localhost:5173/)
 npm run check          # the gate: typecheck + lint + format + unit tests → one STATUS= line
-npm run e2e            # browser tests against the production build, twice: desktop and phone
+npm run e2e            # browser tests against the production build, in the phone profile
 npm run publish:site   # check → build → ../docs/play/ (commit it; a push publishes)
 ```
 
