@@ -128,15 +128,6 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   leaves its anchor. The older `CanvasView` (`#canvas`, `#observer`) shares it. Fix: one `#mounted` record or
   `undefined`, one trip-with-its-anchor or `undefined`. (TS: a union of valid shapes.)
   Done: —
-- [ ] **kinds-not-optionals — missing parts as optional fields, nulls and empty strings.** `Figure` is a bag of
-  optional parts for four kinds (`tower?`, `shape?`, `looks?`, `door?`), paid for in `HudPresenter` (`?? 0`, `?? ''`,
-  `?? []`) and `Building` (`?? { floors: 0, doors: 0 }`); `SceneVM` flattens the same kinds onto every child; empty
-  strings as flags (a floor's `indexLabel ''`, `Corridor`'s `shape ?? ''`, `SceneVM`'s `shape` and `slider`); `null`
-  inside types (`SceneVM`'s `door` and `tower`, `SceneCamera`'s `track`, `HudVM`'s `position` and `pad`,
-  `GameOption`'s and `PlaceSummary`'s `figure`; the older `HudVM` `map`/`trace`/`sealedNote` share it). Fix: one
-  member per kind, and an empty member that answers for itself where a part is missing (with `still-camera`).
-  (TS: a union of valid shapes.)
-  Done: —
 - [ ] **frame-key — "is this the same frame" by object identity.** `SceneView.render` returns early on
   `vm === this.#vm`, true only because `HudView` passes the same object again on its own toggles. Fix: compare a
   stable key the view-model carries. (TS: objects are equal by reference; OO 6.)
@@ -153,6 +144,16 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 
 ## After the corridor
 
+- [ ] **kinds-not-optionals — missing parts as optional fields, nulls and empty strings.** `Figure` is a bag of
+  optional parts for four kinds (`tower?`, `shape?`, `looks?`, `door?`), paid for in `HudPresenter` (`?? 0`, `?? ''`,
+  `?? []`) and `Building` (`?? { floors: 0, doors: 0 }`); `SceneVM` flattens the same kinds onto every child; empty
+  strings as flags (a floor's `indexLabel ''`, `Corridor`'s `shape ?? ''`, `SceneVM`'s `shape` and `slider`); `null`
+  inside types (`SceneVM`'s `door` and `tower`, `SceneCamera`'s `track`, `HudVM`'s `position` and `pad`,
+  `GameOption`'s and `PlaceSummary`'s `figure`; the older `HudVM` `map`/`trace`/`sealedNote` share it). Fix: one
+  member per kind, and an empty member that answers for itself where a part is missing (with `still-camera`).
+  (TS: a union of valid shapes.) After the corridor with `one-job` (the user's pick, 2026-09-28): its split needs
+  `one-job`'s view model mapped per picture, and its `passage?`/`shape?` part touches the Layer screens (U04).
+  Done: —
 - [ ] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
   `SceneView` (`CoherenceFx`, `PixelBudget`), `CanvasView` (`PixelBudget`), `StreetPicture` and `TowerPicture`
   (`SceneHash`, `Roof`, `DoorLooks`), `Roof` (`SceneHash`), `Passages` (`Sentences`, `Doors`), `HudView`
@@ -206,8 +207,8 @@ split at the tier boundary. Nothing on screen changes.
   writes them without it (step 3).
 - **`kinds-not-optionals` is tied to `one-job`.** Splitting `Figure` and `SceneVM` by kind needs a view model mapped
   per picture, which is `HudPresenter.#drawing`, `one-job`'s work. Its other parts (`Floor`'s `passage?`, `Corridor`'s
-  `shape?`, the Layer's and the Artery's missing shapes) touch the Layer screens (U04). **Asked with the plan: move it
-  after the corridor, with `one-job`.** `layer-portrait` keeps only its bug fix here. Step 16 adds a floor row's
+  `shape?`, the Layer's and the Artery's missing shapes) touch the Layer screens (U04). **Moved after the corridor, with
+  `one-job`** (the user's pick). `layer-portrait` keeps only its bug fix here. Step 16 adds a floor row's
   number to `Figure`'s bag of optional parts: that extends the logged smell, said here per the Known smells rule.
 - **The new services are built inside their users** (the roof and row tables, `CanvasFont`, `StylePalette`,
   `SceneEvents`, `Frame`, the easings). That extends `built-collaborators`, which follows the corridor and takes them

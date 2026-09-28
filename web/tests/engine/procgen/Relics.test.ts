@@ -163,7 +163,11 @@ describe('objects live in apartments, not rooms (Guide:167-170; ApartmentFactory
     expect(rooms.some((room) => room.objects().length === 0)).toBe(true);
     expect(rooms.some((room) => room.objects().length >= 8)).toBe(true);
     const single = must(apartments.find((apartment) => apartment.children().length === 1));
-    expect(as(single.children()[0], Room).objects()).toEqual(single.relics());
+    expect(
+      as(single.children()[0], Room)
+        .objects()
+        .map((relic) => relic.key()),
+    ).toEqual(single.relics().map((relic) => relic.key()));
   });
 
   test('a room holds what its apartment dealt it, by index — the same answer from a fresh world', () => {
