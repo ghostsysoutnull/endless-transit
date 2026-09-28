@@ -791,9 +791,18 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
     expect(one?.groups[0]?.keys.slice(0, 2).map((key) => key.number)).toEqual(['-0xA', '-0x9']);
     const tens = presenter.toViewModel(towerSnapshot(16, 0, 10)).pad;
     expect(tens?.groups.map((group) => group.label)).toEqual(['-0xA–-0x1', '0–9', '10–15']);
-    expect(tens?.groups[0]?.keys.map((key) => key.number)).toEqual(
-      Array.from({ length: 10 }, (_, k) => `-0x${(10 - k).toString(16).toUpperCase()}`),
-    );
+    expect(tens?.groups[0]?.keys.map((key) => key.number)).toEqual([
+      '-0xA',
+      '-0x9',
+      '-0x8',
+      '-0x7',
+      '-0x6',
+      '-0x5',
+      '-0x4',
+      '-0x3',
+      '-0x2',
+      '-0x1',
+    ]);
   });
 
   test('a list that does not go by numbers is no pad', () => {
