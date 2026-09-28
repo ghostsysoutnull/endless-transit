@@ -1,6 +1,7 @@
 import type { Building } from './Building.ts';
 import type { Fact } from './Fact.ts';
 import type { Figure } from './Figure.ts';
+import type { LevelKind } from './LevelKind.ts';
 import { Floor } from './Floor.ts';
 import type { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
@@ -37,9 +38,8 @@ export class Layer extends Floor {
     return LAYER_KIND.key();
   }
 
-  /** Its row on the tower's picture: a floor's, at a Layer's level. */
-  override figure(): Figure {
-    return { ...super.figure(), level: { number: this.number(), layer: true } };
+  override levelKind(): LevelKind {
+    return 'layer';
   }
 
   /** What its own picture is handed: its own row, whatever its mode — never the tower the floors hand theirs. */

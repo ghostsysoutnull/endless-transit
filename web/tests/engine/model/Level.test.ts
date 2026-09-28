@@ -1,0 +1,16 @@
+import { describe, expect, test } from 'vitest';
+import { Level } from '#engine/model/Level.ts';
+
+describe('a level is a value: its number and what stands there', () => {
+  test('two levels of the same number and kind are the same level; either differing makes another', () => {
+    expect(new Level(3, 'floor')).toEqual(new Level(3, 'floor'));
+    expect(new Level(3, 'floor')).not.toEqual(new Level(4, 'floor'));
+    expect(new Level(-1, 'layer')).not.toEqual(new Level(-1, 'floor'));
+  });
+
+  test('its label is its number, a Layer’s too', () => {
+    expect(new Level(0, 'floor').label()).toBe('0');
+    expect(new Level(12, 'floor').label()).toBe('12');
+    expect(new Level(-1, 'layer').label()).toBe('-1');
+  });
+});

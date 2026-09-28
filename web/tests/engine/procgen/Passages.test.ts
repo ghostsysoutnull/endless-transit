@@ -5,6 +5,7 @@ import { Apartment } from '#engine/model/Apartment.ts';
 import type { Building } from '#engine/model/Building.ts';
 import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { Floor } from '#engine/model/Floor.ts';
+import { Level } from '#engine/model/Level.ts';
 import { every, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
@@ -109,15 +110,15 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
     });
   });
 
-  test('the building’s portrait has a row per level, lowest first, each with its number and whether it is a Layer: the Layers’ rows only once breached', () => {
+  test('the building’s portrait has a row per level, lowest first, each with its level (a floor’s or a Layer’s): the Layers’ rows only once breached', () => {
     const building = buildingOf(2);
-    const floors = Array.from({ length: building.floors() }, (_, n) => ({ number: n, layer: false }));
+    const floors = Array.from({ length: building.floors() }, (_, n) => new Level(n, 'floor'));
     expect(building.portrait().tower?.rows.map((row) => row.level)).toEqual(floors);
     expect(building.recall(JSON.stringify({ breached: true }))).toBe(true);
-    const layers = Array.from({ length: building.layers() }, (_, k) => ({
-      number: k - building.layers(),
-      layer: true,
-    }));
+    const layers = Array.from(
+      { length: building.layers() },
+      (_, k) => new Level(k - building.layers(), 'layer'),
+    );
     expect(building.portrait().tower?.rows.map((row) => row.level)).toEqual([...layers, ...floors]);
   });
 

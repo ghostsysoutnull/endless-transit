@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import { DoorLook } from '#engine/model/DoorLook.ts';
+import { Level } from '#engine/model/Level.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
@@ -674,8 +675,8 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
   });
 });
 
-/** A building of `floors` floors as the engine lists it (top first), the elevator at `car`, floor 3 visited. */
-function towerSnapshot(floors: number, car: number): GameSnapshot {
+/** A building of `floors` floors as the engine lists it (top first, `layers` Layers open after the lobby), the elevator at `car`, floor 3 visited. */
+function towerSnapshot(floors: number, car: number, layers = 0): GameSnapshot {
   return {
     ...STREET,
     place: {
@@ -695,7 +696,7 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
           rows: Array.from({ length: floors }, (_, number) => ({
             floors: 0,
             doors: 2,
-            level: { number, layer: false },
+            level: new Level(number, 'floor'),
             shape: 'curved',
             looks: [
               doorLook({ state: 'Frozen', stateLook: 'frost' }),
@@ -716,8 +717,19 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
           current: number === car,
           visited: number === 3,
           numbered: true,
-          figure: { floors: 0, doors: 2, level: { number, layer: false } },
+          figure: { floors: 0, doors: 2, level: new Level(number, 'floor') },
           readings: [{ key: 'zone', label: 'Zone', value: 'Living unit' }],
+        });
+      }),
+      ...Array.from({ length: layers }, (_, index) => {
+        const number = -1 - index;
+        return option({
+          id: `enter:${String(floors + index)}`,
+          label: `Ride to Layer ${String(number)}`,
+          place: `Layer ${String(number)}`,
+          ordinal: String(number),
+          numbered: true,
+          figure: { floors: 0, doors: 0, level: new Level(number, 'layer') },
         });
       }),
       option({ id: 'leave', key: 'l', label: 'Leave Building', role: 'return' }),
@@ -736,7 +748,7 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
       landmark: true,
       car: 5,
       rows: Array.from({ length: 16 }, (_, number) => ({
-        level: { number, layer: false },
+        level: new Level(number, 'floor'),
         shape: 'curved',
         looks: [
           new DoorLook({ material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' }),
@@ -771,6 +783,17 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
     expect(pad?.groups.map((group) => group.keys.length)).toEqual([10, 10, 10, 10, 7]);
     expect(pad?.open).toBe(2);
     expect(pad?.label).toBe('Floors by tens');
+  });
+
+  test('a breached building: the Layers lead the pad, deepest first — in the one group up to twenty, their own group past it', () => {
+    const one = presenter.toViewModel(towerSnapshot(8, 0, 10)).pad;
+    expect(one?.groups.map((group) => group.label)).toEqual(['-10–7']);
+    expect(one?.groups[0]?.keys.slice(0, 2).map((key) => key.number)).toEqual(['-10', '-9']);
+    const tens = presenter.toViewModel(towerSnapshot(16, 0, 10)).pad;
+    expect(tens?.groups.map((group) => group.label)).toEqual(['-10–-1', '0–9', '10–15']);
+    expect(tens?.groups[0]?.keys.map((key) => key.number)).toEqual(
+      Array.from({ length: 10 }, (_, k) => String(k - 10)),
+    );
   });
 
   test('a list that does not go by numbers is no pad', () => {

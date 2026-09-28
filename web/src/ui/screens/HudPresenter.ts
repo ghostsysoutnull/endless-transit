@@ -1,4 +1,5 @@
 import { Phrase } from '#engine/model/Phrase.ts';
+import type { LevelKind } from '#engine/model/LevelKind.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -19,6 +20,11 @@ import type { TravelRowVM } from './TravelRowVM.ts';
 const RETURN_MARK = '▲ ';
 /** Up to this many numbered places, the pad is one group; past it, groups of ten (Decision 7: floors by tens above 20). */
 const PAD_GROUP = 20;
+/** Past twenty, the pad's group of a level: the Layers all in one, below every floor's; a floor in its ten. */
+const PAD_TENS: Readonly<Record<LevelKind, (number: number) => number>> = {
+  layer: () => -1,
+  floor: (number) => Math.floor(number / 10),
+};
 /** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
 const SCAN_MARK = { text: '>>', label: 'You are here' } as const;
 /**
@@ -257,34 +263,34 @@ export class HudPresenter implements Presenter<HudVM> {
   #pad(travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
     if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
     const numbered = rows
-      .map((row, index) => ({
-        row,
-        option: travel[index],
-        number: travel[index]?.figure?.level?.number ?? 0,
-      }))
-      .sort((one, other) => one.number - other.number);
+      .flatMap((row, index) => {
+        const option = travel[index];
+        const level = option?.figure?.level;
+        return option === undefined || level === undefined ? [] : [{ row, option, level }];
+      })
+      .sort((one, other) => one.level.number() - other.level.number());
     const tens = travel.length > PAD_GROUP;
     const groups = new Map<number, (typeof numbered)[number][]>();
     for (const entry of numbered) {
-      const group = tens ? Math.floor(entry.number / 10) : 0;
+      const group = tens ? PAD_TENS[entry.level.kind()](entry.level.number()) : 0;
       groups.set(group, [...(groups.get(group) ?? []), entry]);
     }
     const list = [...groups.values()].map((group) => {
-      const first = group[0]?.number ?? 0;
-      const last = group.at(-1)?.number ?? 0;
+      const first = group[0]?.level.label() ?? '';
+      const last = group.at(-1)?.level.label() ?? '';
       return {
-        label: `${String(first)}–${String(last)}`,
-        keys: group.map(({ row, option, number }) => ({
+        label: `${first}–${last}`,
+        keys: group.map(({ row, option, level }) => ({
           id: row.id,
-          number: String(number),
+          number: level.label(),
           spoken: [
             row.label,
             ...(row.mark === null ? [] : [row.mark.label]),
             ...(row.seen === null ? [] : [row.seen.label]),
             ...row.readings.map((reading) => `${reading.label} ${reading.value}`),
           ].join(', '),
-          current: option?.current ?? false,
-          visited: option?.visited ?? false,
+          current: option.current,
+          visited: option.visited,
         })),
       };
     });

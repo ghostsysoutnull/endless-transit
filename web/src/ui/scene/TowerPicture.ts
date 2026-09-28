@@ -2,6 +2,7 @@ import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import type { LevelKind } from '#engine/model/LevelKind.ts';
 import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import { BoxRoof } from './BoxRoof.ts';
 import { CurvedRow } from './CurvedRow.ts';
@@ -43,6 +44,16 @@ const COAST = 0.22;
 
 /** A level's row on the tower. */
 type Row = NonNullable<SceneVM['tower']>['rows'][number];
+
+/** How a kind of level is drawn: its row's alpha on even and odd levels, its row's ink, its number's, its gauge tick's, and whether it lies below the bedrock. */
+interface LevelLook {
+  readonly even: number;
+  readonly odd: number;
+  readonly ground: string;
+  readonly number: string;
+  readonly tick: string;
+  readonly below: boolean;
+}
 
 /** Where the window stands at a view: its box, its rows, and which levels it shows. */
 interface Frame {
@@ -86,6 +97,11 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     static: new StaticRow(),
     none: new LongRow(),
   };
+  /** Each kind of level's look: a floor in the rule's ink, a Layer faint in the void's red, below the bedrock. */
+  readonly #levelLooks: Readonly<Record<LevelKind, LevelLook>> = {
+    floor: { even: 0.5, odd: 0.35, ground: 'rule', number: 'text', tick: 'dim', below: false },
+    layer: { even: 0.1, odd: 0.1, ground: 'rd', number: 'rd', tick: 'rd', below: true },
+  };
   /** Each roof at the tower's proportions (the mock's, `transit-reframed.html:775`), the peak kept below the top. */
   readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
     peak: new PeakRoof({ from: -0.18, to: 0.18, lift: 1.6, ceiling: 4 }),
@@ -98,7 +114,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
     if (frame === undefined) return new StillCamera();
     const stops = vm.children.flatMap((child) =>
-      child.level === null ? [] : [{ id: child.id, at: child.level.number }],
+      child.level === null ? [] : [{ id: child.id, at: child.level.number() }],
     );
     return new TravelCamera({
       rest: frame.tower.car,
@@ -191,7 +207,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   #frame(vm: SceneVM, size: PictureSize, view: number): Frame | undefined {
     const tower = vm.tower;
     if (tower === null || tower.rows.length === 0) return undefined;
-    const rows = new Map(tower.rows.map((row) => [row.level.number, row]));
+    const rows = new Map(tower.rows.map((row) => [row.level.number(), row]));
     const min = Math.min(...rows.keys());
     const max = Math.max(...rows.keys());
     const levels = max - min + 1;
@@ -237,7 +253,17 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   }
 
   #childAt(vm: SceneVM, level: number): SceneVM['children'][number] | undefined {
-    return vm.children.find((child) => child.level?.number === level);
+    return vm.children.find((child) => child.level?.number() === level);
+  }
+
+  /** How the level is drawn, by what stands there; a level with no row (none today: every level has one) as a floor. */
+  #lookAt(frame: Frame, level: number): LevelLook {
+    return this.#levelLooks[frame.rows.get(level)?.level.kind() ?? 'floor'];
+  }
+
+  /** The level's label as its row carries it; nothing written where it has none. */
+  #labelAt(frame: Frame, level: number): string {
+    return frame.rows.get(level)?.level.label() ?? '';
   }
 
   /** The roof when the top floor is in view, else how many floors are above the window. */
@@ -324,9 +350,9 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const y = this.#y(frame, level);
     const child = this.#childAt(vm, level);
     const isLit = child?.id === lit;
-    const abyss = frame.rows.get(level)?.level.layer === true;
-    painter.globalAlpha = isLit ? 1 : abyss ? 0.1 : level % 2 === 0 ? 0.5 : 0.35;
-    painter.fillStyle = palette(isLit ? 'rule-hi' : abyss ? 'rd' : 'rule');
+    const look = this.#lookAt(frame, level);
+    painter.globalAlpha = isLit ? 1 : level % 2 === 0 ? look.even : look.odd;
+    painter.fillStyle = palette(isLit ? 'rule-hi' : look.ground);
     painter.fillRect(inner, y, width - shaft, row);
     painter.globalAlpha = 0.35;
     painter.strokeStyle = palette('cy');
@@ -347,8 +373,8 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     painter.font = this.#font.of(isLit ? 'bold' : 'regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
-    painter.fillStyle = palette(isLit || child?.visited === true ? 'yl' : abyss ? 'rd' : 'text');
-    painter.fillText(String(level), left - 8, y + row / 2);
+    painter.fillStyle = palette(isLit || child?.visited === true ? 'yl' : look.number);
+    painter.fillText(this.#labelAt(frame, level), left - 8, y + row / 2);
   }
 
   /** A row of windows, some lit, each breathing at its own pace. */
@@ -420,9 +446,9 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   /** Once breached, a broken red line between the lowest floor and the first Layer: the bedrock, open. */
   #bedrockLine(painter: Painter, frame: Frame, palette: Palette): void {
-    const floors = [...frame.rows.values()].filter((row) => !row.level.layer);
-    if (floors.length === frame.rows.size) return;
-    const y = this.#y(frame, Math.min(...floors.map((row) => row.level.number))) + frame.row;
+    const above = [...frame.rows.values()].filter((row) => !this.#levelLooks[row.level.kind()].below);
+    if (above.length === frame.rows.size) return;
+    const y = this.#y(frame, Math.min(...above.map((row) => row.level.number()))) + frame.row;
     if (y < frame.top || y > frame.bottom) return;
     painter.globalAlpha = 0.7;
     painter.strokeStyle = palette('rd');
@@ -496,13 +522,13 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       painter.fillStyle = palette('rule-hi');
       painter.fillRect(x - 4, at(level), 10, 1);
       if (!labelled) continue;
-      painter.fillStyle = palette(frame.rows.get(level)?.level.layer === true ? 'rd' : 'dim');
-      painter.fillText(String(level), x - 8, at(level));
+      painter.fillStyle = palette(this.#lookAt(frame, level).tick);
+      painter.fillText(this.#labelAt(frame, level), x - 8, at(level));
     }
     painter.fillStyle = palette('yl');
     painter.globalAlpha = 0.85;
     for (const child of vm.children) {
-      if (child.visited && child.level !== null) painter.fillRect(x - 6, at(child.level.number) - 1, 14, 2);
+      if (child.visited && child.level !== null) painter.fillRect(x - 6, at(child.level.number()) - 1, 14, 2);
     }
     const high = at(Math.min(max, frame.base + frame.visible - 1));
     const low = at(frame.base);

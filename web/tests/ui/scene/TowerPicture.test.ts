@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { Level } from '#engine/model/Level.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
@@ -47,7 +48,7 @@ function tower(
             visited: ordinal % 7 === 0,
             sealed: false,
             address: `0.0.0.0.0.0.0.0.2.${String(index)}`,
-            level: { number: ordinal, layer: ordinal < 0 },
+            level: new Level(ordinal, ordinal < 0 ? 'layer' : 'floor'),
             door: null,
           })),
     tower: {
@@ -58,12 +59,12 @@ function tower(
       car: options.car ?? 0,
       rows: [
         ...Array.from({ length: below }, (_, k) => ({
-          level: { number: k - below, layer: true },
+          level: new Level(k - below, 'layer'),
           shape: 'none' as const,
           looks: [],
         })),
         ...Array.from({ length: floors }, (_, n) => ({
-          level: { number: n, layer: false },
+          level: new Level(n, 'floor'),
           shape: SHAPES[n % 4] ?? 'long',
           looks: Array.from({ length: 6 }, (_, k) => doorLook(STATES[(n + k) % 5])),
         })),

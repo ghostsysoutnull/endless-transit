@@ -6,6 +6,8 @@ import type { Figure } from './Figure.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Fragment } from './Fragment.ts';
 import { Location } from './Location.ts';
+import { Level } from './Level.ts';
+import type { LevelKind } from './LevelKind.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
@@ -91,11 +93,16 @@ export class Floor extends Location {
   override figure(): Figure {
     return {
       floors: 0,
-      level: { number: this.#number, layer: false },
+      level: new Level(this.#number, this.levelKind()),
       doors: this.#passage.doors(),
       shape: this.#passage.shape(),
       looks: this.#passage.looks(),
     };
+  }
+
+  /** What stands at its level: a floor; a Layer answers otherwise. */
+  levelKind(): LevelKind {
+    return 'floor';
   }
 
   /** The mode decides what draws the floor: the tower at the elevator, the corridor in it (U02). */
