@@ -31,10 +31,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   (`level < 0`, `#frame`'s `min = -below`) and positions floors by `Number(child.ordinal)`. Fix: the engine hands each
   level its number and whether it is a Layer.
   Done: —
-- [ ] **came-out-of — which place you came out of, from address text.** `HudView` finds it with
+- [x] **came-out-of — which place you came out of, from address text.** `HudView` finds it with
   ``last.startsWith(`${child.address}.`)``, which re-derives the address rule the engine owns. Fix: the engine says
   which child the traveller came out of. (OO 6.)
-  Done: —
+  Done: `9a6408c`
 - [x] **tear-decay — the tear strength is computed by the presenter.** `HudPresenter` builds
   `new Coherence(player.coherence)` to call `decay()`. Fix: the snapshot's player carries the decay.
   Done: `8155cf8`
@@ -145,9 +145,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 ## After the corridor
 
 - [ ] **kinds-not-optionals — missing parts as optional fields, nulls and empty strings.** `Figure` is a bag of
-  optional parts for four kinds (`tower?`, `shape?`, `looks?`, `door?`), paid for in `HudPresenter` (`?? 0`, `?? ''`,
-  `?? []`) and `Building` (`?? { floors: 0, doors: 0 }`); `SceneVM` flattens the same kinds onto every child; empty
-  strings as flags (a floor's `indexLabel ''`, `Corridor`'s `shape ?? ''`, `SceneVM`'s `shape` and `slider`); `null`
+  optional parts for four kinds (`tower?`, `level?` — added by step 16 — `shape?`, `looks?`, `door?`), paid for in
+  `HudPresenter` (`?? 0`, `?? ''`, `?? []`, and the pad's `level?.number ?? 0`) and `Building`
+  (`?? { floors: 0, doors: 0 }`); `SceneVM` flattens the same kinds onto every child; empty strings as flags (a
+  floor's `indexLabel ''`, `Corridor`'s `shape ?? ''`, `SceneVM`'s `shape` and `slider`); `null`
   inside types (`SceneVM`'s `door` and `tower`, `SceneCamera`'s `track`, `HudVM`'s `position` and `pad`,
   `GameOption`'s and `PlaceSummary`'s `figure`; the older `HudVM` `map`/`trace`/`sealedNote` share it). Fix: one
   member per kind, and an empty member that answers for itself where a part is missing (with `still-camera`).
@@ -341,6 +342,9 @@ a pad key rides the car and then enters that floor; a drag on the tower lights a
       its own portrait.
     - Changed on purpose: `HudPresenter.test`'s pad and drawing fixtures, `TowerPicture.test`'s fixtures, and the
       tower digests from 2a only if a row's number moves a call (read, then re-pinned).
+    - Found in the build: the tower's `below` went — the rows hold the open Layers, so it would have been a second
+      owner; the level is one `Level` (`number`, `layer`), one optional field on `Figure` that extends the known
+      smell `kinds-not-optionals` (named there). The digests from 2a did not move.
 
 ### Shape table
 | what | kind | owner | the one fact it owns | statics + why |

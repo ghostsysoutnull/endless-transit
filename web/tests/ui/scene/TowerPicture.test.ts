@@ -20,7 +20,7 @@ const STATES = [
 ] as const;
 const SHAPES = ['long', 'service', 'curved', 'static'] as const;
 
-/** A tower of `floors` floors, `doors` a floor; listed top first as the engine lists them (Layers after the lobby); none listed at the elevator. */
+/** A tower of `floors` floors, `doors` a floor, `below` Layers open; listed top first as the engine lists them (Layers after the lobby); none listed at the elevator. */
 function tower(
   floors: number,
   options: { car?: number; below?: number; listed?: boolean; address?: string; landmark?: boolean } = {},
@@ -47,6 +47,7 @@ function tower(
             visited: ordinal % 7 === 0,
             sealed: false,
             address: `0.0.0.0.0.0.0.0.2.${String(index)}`,
+            level: { number: ordinal, layer: ordinal < 0 },
             door: null,
           })),
     tower: {
@@ -55,11 +56,18 @@ function tower(
       address: options.address ?? '0.0.0.0.0.0.0.0.2',
       landmark: options.landmark ?? false,
       car: options.car ?? 0,
-      below,
-      rows: Array.from({ length: floors }, (_, n) => ({
-        shape: SHAPES[n % 4] ?? 'long',
-        looks: Array.from({ length: 6 }, (_, k) => doorLook(STATES[(n + k) % 5])),
-      })),
+      rows: [
+        ...Array.from({ length: below }, (_, k) => ({
+          level: { number: k - below, layer: true },
+          shape: 'none' as const,
+          looks: [],
+        })),
+        ...Array.from({ length: floors }, (_, n) => ({
+          level: { number: n, layer: false },
+          shape: SHAPES[n % 4] ?? 'long',
+          looks: Array.from({ length: 6 }, (_, k) => doorLook(STATES[(n + k) % 5])),
+        })),
+      ],
     },
     shape: 'none',
     slider: 'Ride to a floor',

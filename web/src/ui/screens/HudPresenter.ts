@@ -224,6 +224,7 @@ export class HudPresenter implements Presenter<HudVM> {
         visited: option.visited,
         sealed: option.sealed,
         address: option.address,
+        level: option.figure?.level ?? null,
         door: option.figure?.door ?? null,
       })),
       tower:
@@ -235,8 +236,11 @@ export class HudPresenter implements Presenter<HudVM> {
               address: tower.address,
               landmark: tower.landmark,
               car: tower.car,
-              below: tower.below,
-              rows: tower.rows.map((row) => ({ shape: row.shape ?? 'none', looks: row.looks ?? [] })),
+              rows: tower.rows.flatMap((row) =>
+                row.level === undefined
+                  ? []
+                  : [{ level: row.level, shape: row.shape ?? 'none', looks: row.looks ?? [] }],
+              ),
             },
       shape: figure?.shape ?? 'none',
       slider: travel.length === 0 ? '' : place.childrenHeading,
@@ -253,7 +257,11 @@ export class HudPresenter implements Presenter<HudVM> {
   #pad(travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
     if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
     const numbered = rows
-      .map((row, index) => ({ row, option: travel[index], number: Number(travel[index]?.ordinal ?? '0') }))
+      .map((row, index) => ({
+        row,
+        option: travel[index],
+        number: travel[index]?.figure?.level?.number ?? 0,
+      }))
       .sort((one, other) => one.number - other.number);
     const tens = travel.length > PAD_GROUP;
     const groups = new Map<number, (typeof numbered)[number][]>();
@@ -262,13 +270,13 @@ export class HudPresenter implements Presenter<HudVM> {
       groups.set(group, [...(groups.get(group) ?? []), entry]);
     }
     const list = [...groups.values()].map((group) => {
-      const first = group[0]?.row.ordinal ?? '';
-      const last = group.at(-1)?.row.ordinal ?? '';
+      const first = group[0]?.number ?? 0;
+      const last = group.at(-1)?.number ?? 0;
       return {
-        label: `${String(Number(first))}–${String(Number(last))}`,
-        keys: group.map(({ row, option }) => ({
+        label: `${String(first)}–${String(last)}`,
+        keys: group.map(({ row, option, number }) => ({
           id: row.id,
-          number: String(Number(row.ordinal)),
+          number: String(number),
           spoken: [
             row.label,
             ...(row.mark === null ? [] : [row.mark.label]),

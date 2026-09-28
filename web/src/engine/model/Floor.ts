@@ -87,10 +87,11 @@ export class Floor extends Location {
     return this;
   }
 
-  /** Its row on the tower's picture: how its corridor runs and how its doors look — peeked, not made (U02). */
+  /** Its row on the tower's picture: its level, how its corridor runs and how its doors look — peeked, not made (U02). */
   override figure(): Figure {
     return {
       floors: 0,
+      level: { number: this.#number, layer: false },
       doors: this.#passage.doors(),
       shape: this.#passage.shape(),
       looks: this.#passage.looks(),

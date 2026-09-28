@@ -639,6 +639,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
         visited: true,
         sealed: false,
         address: '0.0.0.0.1.0.0.0.0',
+        level: null,
         door: null,
       },
       {
@@ -651,6 +652,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
         visited: false,
         sealed: true,
         address: '0.0.0.0.1.0.0.0.1',
+        level: null,
         door: null,
       },
     ]);
@@ -690,10 +692,10 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
           address: '0.0.0.0.1.0.0.0.0',
           landmark: true,
           car,
-          below: 0,
-          rows: Array.from({ length: floors }, () => ({
+          rows: Array.from({ length: floors }, (_, number) => ({
             floors: 0,
             doors: 2,
+            level: { number, layer: false },
             shape: 'curved',
             looks: [
               doorLook({ state: 'Frozen', stateLook: 'frost' }),
@@ -714,6 +716,7 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
           current: number === car,
           visited: number === 3,
           numbered: true,
+          figure: { floors: 0, doors: 2, level: { number, layer: false } },
           readings: [{ key: 'zone', label: 'Zone', value: 'Living unit' }],
         });
       }),
@@ -723,7 +726,7 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
 }
 
 describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the floors as a pad', () => {
-  test('the tower passes through as data: its size, roof, car, the Layers below, each floor’s row; the slider is named by the list', () => {
+  test('the tower passes through as data: its size, roof, car, a row per level with its level; the slider is named by the list', () => {
     const drawing = presenter.toViewModel(towerSnapshot(16, 5)).drawing;
     expect(drawing.key).toBe('building');
     expect(drawing.tower).toEqual({
@@ -732,8 +735,8 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
       address: '0.0.0.0.1.0.0.0.0',
       landmark: true,
       car: 5,
-      below: 0,
-      rows: Array.from({ length: 16 }, () => ({
+      rows: Array.from({ length: 16 }, (_, number) => ({
+        level: { number, layer: false },
         shape: 'curved',
         looks: [
           new DoorLook({ material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' }),

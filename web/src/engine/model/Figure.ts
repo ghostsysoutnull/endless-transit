@@ -1,16 +1,19 @@
 import type { CorridorShape } from './CorridorShape.ts';
 import type { DoorLook } from './DoorLook.ts';
+import type { Level } from './Level.ts';
 import type { Tower } from './Tower.ts';
 
 /**
  * A place's shape as a picture draws it: how many floors it stands, how many doors each has, and — for the
- * kinds that have them (U02) — the tower it is (a building's own picture), how its corridor runs and how its
- * doors look (a floor, a corridor), the door it is behind (an apartment). Plain data around the engine's value objects.
+ * kinds that have them (U02) — the tower it is (a building's own picture), the level it stands at, how its
+ * corridor runs and how its doors look (a floor, a corridor), the door it is behind (an apartment). Plain data around the engine's value objects.
  */
 export interface Figure {
   readonly floors: number;
   readonly doors: number;
   readonly tower?: Tower;
+  /** The level a floor stands at. */
+  readonly level?: Level;
   /** How the corridor runs: its words' key (`long`, `service`, `curved`, `static`; `none` for a corridor without one). */
   readonly shape?: CorridorShape;
   /** Each door's look, in the corridor's order. */

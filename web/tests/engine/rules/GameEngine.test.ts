@@ -317,7 +317,7 @@ describe('GameEngine — walking the big world', () => {
     expect(place.figure).toBeNull();
     const building = engine.step('enter:0');
     expect(building.place?.drawing).toBe('building');
-    expect(building.place?.figure?.tower).toMatchObject({ car: 0, below: 0 });
+    expect(building.place?.figure?.tower).toMatchObject({ car: 0 });
     expect(building.place?.figure?.tower?.rows).toHaveLength(16);
     const floors = building.options.filter((option) => option.role === 'travel');
     expect(floors.every((option) => option.numbered && option.figure?.looks?.length === 9)).toBe(true);

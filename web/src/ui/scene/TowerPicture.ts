@@ -41,9 +41,14 @@ const PACE = { base: 320, per: 230, most: 2400 };
 const SETTLE = { base: 380, per: 40 };
 const COAST = 0.22;
 
+/** A level's row on the tower. */
+type Row = NonNullable<SceneVM['tower']>['rows'][number];
+
 /** Where the window stands at a view: its box, its rows, and which levels it shows. */
 interface Frame {
   readonly tower: NonNullable<SceneVM['tower']>;
+  /** Each level's row by its number. */
+  readonly rows: ReadonlyMap<number, Row>;
   readonly top: number;
   readonly bottom: number;
   readonly visible: number;
@@ -92,7 +97,9 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   camera(vm: SceneVM, size: PictureSize): SceneCamera {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
     if (frame === undefined) return new StillCamera();
-    const stops = vm.children.map((child) => ({ id: child.id, at: Number(child.ordinal) }));
+    const stops = vm.children.flatMap((child) =>
+      child.level === null ? [] : [{ id: child.id, at: child.level.number }],
+    );
     return new TravelCamera({
       rest: frame.tower.car,
       min: frame.min,
@@ -183,10 +190,10 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   #frame(vm: SceneVM, size: PictureSize, view: number): Frame | undefined {
     const tower = vm.tower;
-    if (tower === null) return undefined;
-    // Never −0: the lowest level is the lobby until the bedrock is open.
-    const min = tower.below === 0 ? 0 : -tower.below;
-    const max = Math.max(tower.floors - 1, 0);
+    if (tower === null || tower.rows.length === 0) return undefined;
+    const rows = new Map(tower.rows.map((row) => [row.level.number, row]));
+    const min = Math.min(...rows.keys());
+    const max = Math.max(...rows.keys());
     const levels = max - min + 1;
     const top = Math.max(size.height * 0.1, 52);
     const bottom = size.height - Math.max(size.height * 0.09, 38);
@@ -200,6 +207,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const base = Math.min(Math.max(clamped - (visible - 1) / 2, min), max - visible + 1);
     return {
       tower,
+      rows,
       top,
       bottom,
       visible,
@@ -229,7 +237,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   }
 
   #childAt(vm: SceneVM, level: number): SceneVM['children'][number] | undefined {
-    return vm.children.find((child) => Number(child.ordinal) === level);
+    return vm.children.find((child) => child.level?.number === level);
   }
 
   /** The roof when the top floor is in view, else how many floors are above the window. */
@@ -316,7 +324,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const y = this.#y(frame, level);
     const child = this.#childAt(vm, level);
     const isLit = child?.id === lit;
-    const abyss = level < 0;
+    const abyss = frame.rows.get(level)?.level.layer === true;
     painter.globalAlpha = isLit ? 1 : abyss ? 0.1 : level % 2 === 0 ? 0.5 : 0.35;
     painter.fillStyle = palette(isLit ? 'rule-hi' : abyss ? 'rd' : 'rule');
     painter.fillRect(inner, y, width - shaft, row);
@@ -377,7 +385,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
    * breaking into static when it dissolves — with a tick per door in its state's ink, the doors in pairs.
    */
   #corridor(painter: Painter, frame: Frame, level: number, y: number, palette: Palette): void {
-    const passage = level >= 0 ? frame.tower.rows[level] : undefined;
+    const passage = frame.rows.get(level);
     const shape = this.#rows[passage?.shape ?? 'none'];
     const looks = passage?.looks ?? [];
     const line = y + frame.row * 0.76;
@@ -410,10 +418,11 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     }
   }
 
-  /** Once breached, a broken red line between the lobby and the first Layer: the bedrock, open. */
+  /** Once breached, a broken red line between the lowest floor and the first Layer: the bedrock, open. */
   #bedrockLine(painter: Painter, frame: Frame, palette: Palette): void {
-    if (frame.min === 0) return;
-    const y = this.#y(frame, 0) + frame.row;
+    const floors = [...frame.rows.values()].filter((row) => !row.level.layer);
+    if (floors.length === frame.rows.size) return;
+    const y = this.#y(frame, Math.min(...floors.map((row) => row.level.number))) + frame.row;
     if (y < frame.top || y > frame.bottom) return;
     painter.globalAlpha = 0.7;
     painter.strokeStyle = palette('rd');
@@ -487,13 +496,13 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       painter.fillStyle = palette('rule-hi');
       painter.fillRect(x - 4, at(level), 10, 1);
       if (!labelled) continue;
-      painter.fillStyle = palette(level < 0 ? 'rd' : 'dim');
+      painter.fillStyle = palette(frame.rows.get(level)?.level.layer === true ? 'rd' : 'dim');
       painter.fillText(String(level), x - 8, at(level));
     }
     painter.fillStyle = palette('yl');
     painter.globalAlpha = 0.85;
     for (const child of vm.children) {
-      if (child.visited) painter.fillRect(x - 6, at(Number(child.ordinal)) - 1, 14, 2);
+      if (child.visited && child.level !== null) painter.fillRect(x - 6, at(child.level.number) - 1, 14, 2);
     }
     const high = at(Math.min(max, frame.base + frame.visible - 1));
     const low = at(frame.base);

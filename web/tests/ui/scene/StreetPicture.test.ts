@@ -28,6 +28,7 @@ function street(
       visited: index === 0,
       sealed: false,
       address: `0.0.0.0.0.0.0.0.${String(index)}`,
+      level: null,
       door: null,
     })),
     tower: null,
