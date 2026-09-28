@@ -24,10 +24,15 @@ import { MapPicture } from '#ui/canvas/MapPicture.ts';
 import { TracePicture } from '#ui/canvas/TracePicture.ts';
 import { Frame } from '#ui/Frame.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
+import { CoherenceFx } from '#ui/scene/CoherenceFx.ts';
+import { EaseInOut } from '#ui/scene/EaseInOut.ts';
+import { EaseOut } from '#ui/scene/EaseOut.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
+import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
+import { TearPass } from '#ui/scene/TearPass.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
@@ -98,7 +103,19 @@ new Shell(
         new SceneDrawing(),
         new FloorPad({ floor: new FloorsByTen(), layer: new LayersTogether() }),
       ),
-      new HudView(scenes, new SceneViewMaker(clock, motion, canvasMaker), canvases),
+      new HudView(
+        scenes,
+        new SceneViewMaker({
+          clock,
+          motion,
+          canvases: canvasMaker,
+          tear: new TearPass(new CoherenceFx()),
+          picks: new SceneEvents(),
+          ride: new EaseInOut(),
+          coast: new EaseOut(),
+        }),
+        canvases,
+      ),
     ),
   ],
   motion,

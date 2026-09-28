@@ -1,31 +1,21 @@
-import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import type { Canvases } from '#ui/canvas/Canvases.ts';
-import type { PixelCanvas } from '#ui/canvas/PixelCanvas.ts';
-import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
-import { CoherenceFx, FX_FRAMES } from './CoherenceFx.ts';
-import type { FxPlan } from './FxPlan.ts';
 import { Gesture } from './Gesture.ts';
-import type { Clock } from './Clock.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import { StillCamera } from './StillCamera.ts';
-import { SceneEvents } from './SceneEvents.ts';
 import { SceneMount } from './SceneMount.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import { SceneTrip } from './SceneTrip.ts';
+import type { SceneViewParts } from './SceneViewParts.ts';
 import type { SceneVM } from './SceneVM.ts';
-import { EaseInOut } from './EaseInOut.ts';
-import { EaseOut } from './EaseOut.ts';
 import { Tween } from './Tween.ts';
+import { Zoom } from './Zoom.ts';
 
 /** Going in, the picture grows this many times around the child before the next place shows. */
 const ZOOM = 6;
 /** How long a zoom takes, in milliseconds. */
 const ZOOM_TIME = 450;
-/** The tear steps this many frames a second (the mock's `postFx`). */
-const FX_RATE = 12;
 /** A still is painted at this moment of the clock, and on the tear's first frame. */
 const STILL = 0;
 /** A tap on the slider's track glides the view there in this long. */
@@ -47,16 +37,9 @@ const GLIDE = 320;
  */
 export class SceneView implements DrawnScene {
   readonly #picture: ScenePicture<SceneVM>;
-  readonly #clock: Clock;
-  readonly #preference: ReducedMotion;
+  readonly #parts: SceneViewParts;
   /** Told which child the picture points at (or none, empty): the list lights its twin. */
   readonly #onLight: (id: string) => void;
-  readonly #events = new SceneEvents();
-  /** How a ride between floors and a zoom back out ease, and how a released view coasts to rest. */
-  readonly #ride = new EaseInOut();
-  readonly #coast = new EaseOut();
-  readonly #fx = new CoherenceFx();
-  readonly #canvases: Canvases;
   #mounted: SceneMount | undefined;
   #vm: SceneVM | undefined;
   #size: PictureSize = { width: 0, height: 0 };
@@ -79,22 +62,14 @@ export class SceneView implements DrawnScene {
   /** Stops listening to the clock; set while the picture moves. */
   #leave: (() => void) | undefined;
 
-  constructor(
-    picture: ScenePicture<SceneVM>,
-    clock: Clock,
-    motion: ReducedMotion,
-    canvases: Canvases,
-    onLight: (id: string) => void,
-  ) {
+  constructor(picture: ScenePicture<SceneVM>, parts: SceneViewParts, onLight: (id: string) => void) {
     this.#picture = picture;
-    this.#clock = clock;
-    this.#preference = motion;
-    this.#canvases = canvases;
+    this.#parts = parts;
     this.#onLight = onLight;
   }
 
   mount(host: HTMLElement): void {
-    const canvas = this.#canvases.mount(host, () => {
+    const canvas = this.#parts.canvases.mount(host, () => {
       this.#fit();
       if (this.#leave === undefined) this.#paint(STILL);
     });
@@ -200,16 +175,16 @@ export class SceneView implements DrawnScene {
     if (before?.address !== vm.address) this.#here = '';
     if (before?.address === vm.address) {
       this.#view = camera.clamp(this.#view);
-    } else if (before !== undefined && !this.#preference.reduced()) {
+    } else if (before !== undefined && !this.#parts.motion.reduced()) {
       // Another place in the same picture (floor to floor): ride from where the view stood to the new rest.
       const distance = Math.abs(camera.rest() - this.#view);
       if (distance > 0.01) {
         this.#motion = new Tween(
           this.#view,
           camera.rest(),
-          this.#clock.now(),
+          this.#parts.clock.now(),
           camera.pace(distance),
-          this.#ride,
+          this.#parts.ride,
         );
       } else {
         this.#view = camera.rest();
@@ -234,12 +209,12 @@ export class SceneView implements DrawnScene {
       this.#layout();
     }
     const hit = this.#hits.find((each) => each.id === id);
-    if (hit === undefined || this.#preference.reduced() || !this.#camera.zooms()) {
+    if (hit === undefined || this.#parts.motion.reduced() || !this.#camera.zooms()) {
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
     this.#zoomOut = {
-      scale: new Tween(ZOOM, 1, this.#clock.now(), ZOOM_TIME, this.#ride),
+      scale: new Tween(ZOOM, 1, this.#parts.clock.now(), ZOOM_TIME, this.#parts.ride),
       anchor: hit.anchor,
     };
     this.#run();
@@ -280,13 +255,13 @@ export class SceneView implements DrawnScene {
 
   /** Moving: listen to the clock. Still: one frame now, and nothing more until something changes. */
   #run(): void {
-    if (this.#preference.reduced()) {
+    if (this.#parts.motion.reduced()) {
       this.#stop();
       this.#motion = undefined;
       this.#paint(STILL);
       return;
     }
-    this.#leave ??= this.#clock.subscribe((time) => {
+    this.#leave ??= this.#parts.clock.subscribe((time) => {
       this.#frame(time);
     });
   }
@@ -371,83 +346,38 @@ export class SceneView implements DrawnScene {
     const vm = this.#vm;
     const { width, height } = this.#size;
     if (canvas === undefined || vm === undefined || width === 0 || height === 0) return;
-    const context = canvas.context();
-    if (context === null) return;
     const palette = canvas.palette();
-    const ratio = canvas.ratio();
-    context.globalAlpha = 1;
-    context.setLineDash([]);
-    const zoom = this.#zoomAt(time);
-    // How far the zoom has gone, 0 (the whole picture) to 1 (inside the child, faded to the ground).
-    let depth = 0;
-    if (zoom === undefined) {
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    } else {
-      depth = (zoom.scale - 1) / (ZOOM - 1);
-      // The child's anchor drifts to the middle as the picture grows around it.
-      const x = zoom.anchor.x + (width / 2 - zoom.anchor.x) * depth;
-      const y = zoom.anchor.y + (height / 2 - zoom.anchor.y) * depth;
-      context.setTransform(
-        ratio * zoom.scale,
-        0,
-        0,
-        ratio * zoom.scale,
-        ratio * (x - zoom.anchor.x * zoom.scale),
-        ratio * (y - zoom.anchor.y * zoom.scale),
-      );
-    }
-    this.#picture.paint(context, vm, this.#size, palette, time, this.#lit, this.#view, this.#here);
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    if (depth > 0) {
-      context.globalAlpha = depth;
-      context.fillStyle = palette('ground');
-      context.fillRect(0, 0, width, height);
+    canvas.paint((context) => {
       context.globalAlpha = 1;
-    }
-    // A still tears on the cycle's first frame and holds it.
-    const k = time === STILL ? 0 : Math.floor((time / 1000) * FX_RATE) % FX_FRAMES;
-    this.#tear(context, canvas, this.#fx.plan(vm.noise, vm.decay, k), palette);
-  }
-
-  /** The zoom at this moment: a trip's once its ride is over (anchored where the child then stands), or the way back out. */
-  #zoomAt(
-    time: number,
-  ): { readonly scale: number; readonly anchor: { readonly x: number; readonly y: number } } | undefined {
-    const trip = this.#trip;
-    if (trip !== undefined) {
-      const scale = trip.scale(time);
-      return scale <= 1 ? undefined : { scale, anchor: trip.anchor() };
-    }
-    const out = this.#zoomOut;
-    return out === undefined ? undefined : { scale: out.scale.at(time), anchor: out.anchor };
-  }
-
-  /** The tear over the finished frame: bands of the canvas copied sideways, grain, the red cast, a dark flash. */
-  #tear(context: CanvasRenderingContext2D, canvas: PixelCanvas, plan: FxPlan, palette: Palette): void {
-    const { width, height } = this.#size;
-    for (const tear of plan.tears) {
-      canvas.shift(context, { y: tear.y * height, height: tear.height, by: tear.shift }, width);
-    }
-    if (plan.grain.length > 0) {
-      context.globalAlpha = plan.tint * 5;
-      const text = palette('text');
-      const red = palette('rd');
-      for (const speck of plan.grain) {
-        context.fillStyle = speck.red ? red : text;
-        context.fillRect(speck.x * width, speck.y * height, 1, 1);
+      const zoom = this.#zoomAt(time);
+      context.save();
+      zoom.apply(context, this.#size);
+      this.#picture.paint(context, vm, this.#size, palette, time, this.#lit, this.#view, this.#here);
+      context.restore();
+      const depth = zoom.depth();
+      if (depth > 0) {
+        context.globalAlpha = depth;
+        context.fillStyle = palette('ground');
+        context.fillRect(0, 0, width, height);
+        context.globalAlpha = 1;
       }
-    }
-    if (plan.tint > 0) {
-      context.globalAlpha = plan.tint;
-      context.fillStyle = palette('rd');
-      context.fillRect(0, 0, width, height);
-    }
-    if (plan.dark) {
-      context.globalAlpha = 0.5;
-      context.fillStyle = palette('ground');
-      context.fillRect(0, 0, width, height);
-    }
-    context.globalAlpha = 1;
+      this.#parts.tear.draw(context, canvas, {
+        size: this.#size,
+        palette,
+        noise: vm.noise,
+        decay: vm.decay,
+        time,
+      });
+    });
+  }
+
+  /** The zoom at this moment: a trip's once its ride is over (anchored where the child then stands), the way back out, or none (scale 1). */
+  #zoomAt(time: number): Zoom {
+    const trip = this.#trip;
+    if (trip !== undefined) return new Zoom({ scale: trip.scale(time), anchor: trip.anchor(), full: ZOOM });
+    const out = this.#zoomOut;
+    if (out !== undefined) return new Zoom({ scale: out.scale.at(time), anchor: out.anchor, full: ZOOM });
+    return new Zoom({ scale: 1, anchor: { x: 0, y: 0 }, full: ZOOM });
   }
 
   #hitAt(event: MouseEvent): SceneHit | undefined {
@@ -516,7 +446,7 @@ export class SceneView implements DrawnScene {
   /** The view under the finger, one to one; the child it comes to lights in the list. */
   #follow(value: number, gesture: Gesture): void {
     this.#view = this.#camera.clamp(value);
-    gesture.sample(this.#clock.now(), this.#view);
+    gesture.sample(this.#parts.clock.now(), this.#view);
     this.#layout();
     const nearest = this.#camera.nearest(this.#view);
     if (nearest !== undefined) this.#pointAt(nearest.id);
@@ -531,7 +461,7 @@ export class SceneView implements DrawnScene {
     this.#gesture = undefined;
     if (!gesture.moved()) return;
     if (!gesture.onSlider()) this.#dragged = true;
-    const speed = this.#preference.reduced() ? 0 : gesture.speed(this.#clock.now());
+    const speed = this.#parts.motion.reduced() ? 0 : gesture.speed(this.#parts.clock.now());
     const target = camera.landing(this.#view, speed);
     this.#glide(target, camera.settle(Math.abs(target - this.#view)));
   }
@@ -550,14 +480,14 @@ export class SceneView implements DrawnScene {
   /** The view on its way to a value (at once under reduced motion). */
   #glide(value: number, duration: number): void {
     const target = this.#camera.clamp(value);
-    if (this.#preference.reduced() || Math.abs(target - this.#view) < 0.001) {
+    if (this.#parts.motion.reduced() || Math.abs(target - this.#view) < 0.001) {
       this.#motion = undefined;
       this.#view = target;
       this.#layout();
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
-    this.#motion = new Tween(this.#view, target, this.#clock.now(), duration, this.#coast);
+    this.#motion = new Tween(this.#view, target, this.#parts.clock.now(), duration, this.#parts.coast);
     this.#run();
   }
 
@@ -583,7 +513,7 @@ export class SceneView implements DrawnScene {
 
   /** Ride to the child's stop (a picture with a camera), zoom in when the picture zooms, then pick it; at once under reduced motion. */
   #go(id: string): void {
-    if (this.#preference.reduced()) {
+    if (this.#parts.motion.reduced()) {
       this.#pick(id);
       return;
     }
@@ -601,11 +531,11 @@ export class SceneView implements DrawnScene {
     this.#trip = new SceneTrip({
       from: this.#view,
       to,
-      start: this.#clock.now(),
+      start: this.#parts.clock.now(),
       ride: distance < 0.01 ? 0 : camera.pace(distance),
       zoom: camera.zooms() ? { scale: ZOOM, time: ZOOM_TIME } : null,
       pick: id,
-      easing: this.#ride,
+      easing: this.#parts.ride,
       anchor,
     });
     this.#run();
@@ -613,6 +543,6 @@ export class SceneView implements DrawnScene {
 
   #pick(id: string): void {
     const host = this.#mounted?.host();
-    if (host !== undefined) this.#events.pick(host, id);
+    if (host !== undefined) this.#parts.picks.pick(host, id);
   }
 }

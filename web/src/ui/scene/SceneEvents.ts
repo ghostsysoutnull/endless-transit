@@ -1,3 +1,5 @@
+import type { ScenePick } from './ScenePick.ts';
+
 /** The bubbling event a scene asks by for its child to be entered; its detail is `{ id }`, the option's id. */
 const PICK = 'pick';
 
@@ -6,7 +8,7 @@ const PICK = 'pick';
  * back, once, where it is heard (the input router). The picture never presses a button: the list stays the one set
  * of buttons, and the router still checks the id is on offer.
  */
-export class SceneEvents {
+export class SceneEvents implements ScenePick {
   /** Asks, from the scene's host, for the child with this option id to be entered. */
   pick(host: EventTarget, id: string): void {
     host.dispatchEvent(new CustomEvent(PICK, { bubbles: true, detail: { id } }));

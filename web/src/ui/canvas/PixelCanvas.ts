@@ -56,13 +56,13 @@ export class PixelCanvas {
     if (this.#canvas.style.height !== height) this.#canvas.style.height = height;
   }
 
-  /** Device pixels per CSS pixel, as last fitted. */
-  ratio(): number {
-    return this.#ratio;
-  }
-
-  context(): CanvasRenderingContext2D | null {
-    return this.#canvas.getContext('2d');
+  /** Draws on it in CSS pixels, from a clean line: its device pixels are its own business. */
+  paint(draw: (context: CanvasRenderingContext2D) => void): void {
+    const context = this.#canvas.getContext('2d');
+    if (context === null) return;
+    context.setTransform(this.#ratio, 0, 0, this.#ratio, 0, 0);
+    context.setLineDash([]);
+    draw(context);
   }
 
   palette(): Palette {

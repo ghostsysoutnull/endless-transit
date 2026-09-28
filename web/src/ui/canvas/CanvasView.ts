@@ -76,11 +76,8 @@ export class CanvasView<VM> implements View<VM> {
     const size = { width, height: this.#picture.height(vm, width) };
     canvas.fit(size);
     canvas.hold(size);
-    const context = canvas.context();
-    if (context === null) return;
-    const dpr = canvas.ratio();
-    context.setTransform(dpr, 0, 0, dpr, 0, 0);
-    context.setLineDash([]);
-    this.#picture.paint(context, vm, size, canvas.palette(), phase);
+    canvas.paint((context) => {
+      this.#picture.paint(context, vm, size, canvas.palette(), phase);
+    });
   }
 }
