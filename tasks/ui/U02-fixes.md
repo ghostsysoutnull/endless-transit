@@ -90,10 +90,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   `InputRouter.#pick` and `HudView.#litOf`; `SceneEvents` owns only the names. Fix: `SceneEvents` makes and reads
   them, the event's `unknown` detail checked there once. (TS: parse at the edge.)
   Done: —
-- [ ] **canvas-font — the canvas font and the 12 px text floor restated.** `MONO` in `StreetPicture`,
+- [x] **canvas-font — the canvas font and the 12 px text floor restated.** `MONO` in `StreetPicture`,
   `TowerPicture`, and the older `MapPicture`, `TracePicture`; `TEXT = 12` in both scenes. Fix: one owner for all four
   pictures.
-  Done: —
+  Done: `275e50f`
 - [x] **heading-colon — the list heading's colon stripped twice.** `HudPresenter` strips `:` for the heading and for
   the slider's name. Fix: with `text-shaping`'s one owner of text shaping.
   Done: `6cbce0c`
@@ -348,7 +348,7 @@ a pad key rides the car and then enters that floor; a drag on the tower lights a
 | `RoofDrawer` + `PeakRoof`, `MastRoof`, `BoxRoof`, `NoRoof`, `ParapetRoof` | service | each picture's table | how a roof is traced | none |
 | `RoofProportions` | value object | each picture | a roof's size at that picture's proportions | none |
 | `Phrase` | value object | engine | how text is capitalised for the screen | none |
-| `CanvasFont` | value object | `src/ui/canvas/` | the pictures' font and the 12 px floor | none |
+| `CanvasFont` | service | `src/ui/canvas/` | the pictures' font and the 12 px floor | none |
 | `ReducedMotion` / `BrowserReducedMotion` | interface / adapter | `src/ui/` / `src/platform/`, built in `main.ts` | whether motion is reduced | none |
 | `SceneEvents` | service | `src/ui/scene/` | what a scene event is and how its id is read | none |
 | `StylePalette` / `StyleSource` | service / interface | the canvas views | a token's colour where the canvas sits | none |

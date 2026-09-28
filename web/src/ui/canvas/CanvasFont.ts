@@ -5,8 +5,8 @@ const FLOOR = 12;
 const WEIGHTS = { regular: '400', bold: '700' } as const;
 
 /**
- * Owns one fact: the font every picture writes in — one family, two weights, never under the 12 px floor. Value
- * object; the four pictures ask it rather than restate the family and the floor.
+ * Owns one fact: the font every picture writes in — one family, two weights, never under the 12 px floor. A
+ * stateless service; the four pictures ask it rather than restate the family and the floor.
  */
 export class CanvasFont {
   /** The CSS font for this weight and size (the floor when none is named); a size under the floor is refused. */
