@@ -1,21 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
-import { saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { plant, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
-const SLOT = 'endless-transit.save';
 /** A fixed world: its street is Bright Boulevard; its first building is entered from the street's list. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
-
-async function plant(page: Page, text: string): Promise<void> {
-  await page.addInitScript(
-    ([slot, value]) => {
-      if (window.sessionStorage.getItem('planted') !== null) return;
-      window.sessionStorage.setItem('planted', 'yes');
-      window.localStorage.setItem(slot, value);
-    },
-    [SLOT, text] as const,
-  );
-}
 
 /** Inside the fixed world's first building: the tower is drawn, its floors are the pad. */
 async function building(page: Page, hasTouch: boolean): Promise<void> {
@@ -47,12 +35,11 @@ test('a floor tapped on the pad: the car rides there first, then the floor is en
 }) => {
   const problems = watchForErrors(page);
   await building(page, hasTouch);
-  const number = (await page.locator('button[data-option="enter:5"] .num').textContent()) ?? '';
-  await tapOption(page, 'enter:5', hasTouch);
+  await press(page, /^Ride to Floor 7,/, hasTouch);
   // The ride runs first: the building is still on show right after the tap.
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
-  await expect(page.getByTestId('place-name')).toHaveText(`Floor ${number}`);
+  await expect(page.getByTestId('place-name')).toHaveText('Floor 7');
   expect(problems).toEqual([]);
 });
 

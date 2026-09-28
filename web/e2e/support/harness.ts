@@ -1,5 +1,20 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
+/** Where the game keeps its save (`LocalStorageSaveStore`): a test plants one here before the page loads. */
+const SAVE_SLOT = 'endless-transit.save';
+
+/** The page opens on this save — planted once, so a reload inside the test keeps what the game wrote since. */
+export async function plant(page: Page, text: string): Promise<void> {
+  await page.addInitScript(
+    ([slot, value]) => {
+      if (window.sessionStorage.getItem('planted') !== null) return;
+      window.sessionStorage.setItem('planted', 'yes');
+      window.localStorage.setItem(slot, value);
+    },
+    [SAVE_SLOT, text] as const,
+  );
+}
+
 /** Collects everything the page complains about; a test ends by asserting it stayed empty. */
 export function watchForErrors(page: Page): string[] {
   const problems: string[] = [];
