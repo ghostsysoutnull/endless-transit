@@ -27,7 +27,7 @@ export class InputRouter {
       { signal },
     );
     this.#scenes.onPick(container, signal, (id) => {
-      if (this.#options.some((option) => option.id === id)) this.#onOption(id);
+      this.#choose(id);
     });
     container.ownerDocument.addEventListener(
       'keydown',
@@ -50,7 +50,12 @@ export class InputRouter {
   #click(event: MouseEvent): void {
     if (!(event.target instanceof Element)) return;
     const id = event.target.closest<HTMLElement>('button[data-option]')?.dataset.option;
-    if (id !== undefined && this.#options.some((option) => option.id === id)) this.#onOption(id);
+    if (id !== undefined) this.#choose(id);
+  }
+
+  /** An option id from a tap or a pick runs only when it is on offer right now. */
+  #choose(id: string): void {
+    if (this.#options.some((option) => option.id === id)) this.#onOption(id);
   }
 
   #key(event: KeyboardEvent): void {

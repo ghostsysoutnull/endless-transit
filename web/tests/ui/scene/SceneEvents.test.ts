@@ -20,6 +20,8 @@ describe('a scene’s pick: made and read in one place', () => {
     host.dispatchEvent(new CustomEvent('pick', { detail: { id: 7 } }));
     host.dispatchEvent(new CustomEvent('pick', { detail: 'enter:3' }));
     expect(heard).toEqual([]);
+    host.dispatchEvent(new CustomEvent('pick', { detail: { id: 'enter:3' } }));
+    expect(heard).toEqual(['enter:3']);
   });
 
   test('no pick is heard once the listener is let go', () => {

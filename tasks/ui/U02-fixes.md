@@ -86,10 +86,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   `CanvasView:70` and `Shell:152`. Fix: one reduced-motion adapter built in `main.ts` and handed in, behind a small
   interface owned by the code that asks. (OO 4 too.)
   Done: `2911ea1`
-- [ ] **scene-events — the picture events read in two places.** The `{ id }` of `pick`/`light` is parsed in
+- [x] **scene-events — the picture events read in two places.** The `{ id }` of `pick`/`light` is parsed in
   `InputRouter.#pick` and `HudView.#litOf`; `SceneEvents` owns only the names. Fix: `SceneEvents` makes and reads
   them, the event's `unknown` detail checked there once. (TS: parse at the edge.)
-  Done: —
+  Done: `4af720c`
 - [x] **canvas-font — the canvas font and the 12 px text floor restated.** `MONO` in `StreetPicture`,
   `TowerPicture`, and the older `MapPicture`, `TracePicture`; `TEXT = 12` in both scenes. Fix: one owner for all four
   pictures.
