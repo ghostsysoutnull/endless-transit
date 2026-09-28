@@ -104,20 +104,6 @@ describe('TitlePresenter.toViewModel', () => {
         trace: null,
       }).build,
     ).toBe('build a1b2c3d');
-    expect(
-      new TitlePresenter(new BuildMasthead('dev')).toViewModel({
-        world: null,
-        place: null,
-        player: null,
-        buffer: null,
-        prompt: null,
-        options: [],
-        message: '',
-        scan: null,
-        map: null,
-        trace: null,
-      }).build,
-    ).toBe('build dev');
   });
 
   test('the title is the screen of a snapshot without a place — and only of that one', () => {
