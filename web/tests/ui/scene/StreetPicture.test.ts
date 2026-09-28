@@ -5,9 +5,9 @@ import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import { StreetPicture } from '#ui/scene/StreetPicture.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
-/** The phone's picture at 360 × 640 (measured, tasks/ui/U01b.md), and a desktop's middle column. */
+/** The phone's picture at 360 × 640 (measured, tasks/ui/U01b.md), and a wider one: the layout scales. */
 const PHONE = { width: 328, height: 277 };
-const DESKTOP = { width: 680, height: 510 };
+const WIDE = { width: 680, height: 510 };
 
 function street(
   count: number,
@@ -51,7 +51,7 @@ function overlap(a: SceneHit, b: SceneHit): boolean {
 const picture = new StreetPicture();
 
 describe('the street picture: one row of buildings on a ground line, as the mock draws it, laid out as hit areas', () => {
-  for (const size of [PHONE, DESKTOP]) {
+  for (const size of [PHONE, WIDE]) {
     test(`4 to 20 buildings at ${String(size.width)} × ${String(size.height)}: one hit each, inside the picture, none overlapping, each anchor inside its hit`, () => {
       for (let count = 4; count <= 20; count++) {
         const hits = picture.layout(street(count), size);
@@ -139,7 +139,7 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
   });
 
   test('every ink is one of the listed tokens; every word or number is 12 px or more', () => {
-    for (const size of [PHONE, DESKTOP]) {
+    for (const size of [PHONE, WIDE]) {
       const painter = new RecordingPainter();
       picture.paint(painter, street(20), size, palette(painter.asked), 800, 'enter:3');
       expect(

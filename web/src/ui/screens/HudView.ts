@@ -30,10 +30,9 @@ type Slot = 'pane' | 'map' | 'trace';
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again. The
- * dock folds after `fold.after` buttons behind one MORE button on a phone — a disclosure of this view, not of
- * the game, folded again by the next step (I09); the stylesheet unfolds it on a desktop, so every button is
- * always in the markup and a key always works. The depth rail (U01a) is a list, not buttons: a glyph per
- * level, its kind and name read out (a phone shows the glyphs, a desktop the names too). The moves a place
+ * dock folds after `fold.after` buttons behind one MORE button — a disclosure of this view, not of the game,
+ * folded again by the next step (I09); every button is always in the markup, so a key always works. The depth rail (U01a) is a list, not buttons: a glyph per
+ * level, its kind and name read out (the glyphs are shown). The moves a place
  * offers sit under its title, so the first screen of a phone shows one (I09). The debug strip (Decision 8)
  * sits last, folded behind one DEBUG button, every one of its buttons out of the tab order. The drawn map and trace
  * are canvases mounted into host elements the template keeps alive (`CanvasSlots`); their words sit beside
