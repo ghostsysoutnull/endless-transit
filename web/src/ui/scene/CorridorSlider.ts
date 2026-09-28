@@ -108,11 +108,11 @@ export class CorridorSlider {
   }
 
   #trackLeft(): number {
-    return INSET + TRACK_LEFT;
+    return this.#band().x + TRACK_LEFT;
   }
 
   #trackWidth(): number {
-    return Math.max(1, this.#size.width - 2 * INSET - TRACK_LEFT - TRACK_RIGHT);
+    return Math.max(1, this.#band().width - TRACK_LEFT - TRACK_RIGHT);
   }
 
   /** Where a view along the hall falls on the track. */

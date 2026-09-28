@@ -10,6 +10,7 @@ import { CurvedHall } from '#ui/scene/CurvedHall.ts';
 import { DoorLooks } from '#ui/scene/DoorLooks.ts';
 import { EndingReach } from '#ui/scene/EndingReach.ts';
 import { EndWall } from '#ui/scene/EndWall.ts';
+import type { HallEnd } from '#ui/scene/HallEnd.ts';
 import { FrostMark } from '#ui/scene/FrostMark.ts';
 import { GlassPanel } from '#ui/scene/GlassPanel.ts';
 import { LongHall } from '#ui/scene/LongHall.ts';
@@ -25,6 +26,7 @@ import { StaticMark } from '#ui/scene/StaticMark.ts';
 import { StonePanel } from '#ui/scene/StonePanel.ts';
 import { TimberPanel } from '#ui/scene/TimberPanel.ts';
 import { doorLook } from '#tests/support/doorLook.ts';
+import { RecordingHallEnd } from '#tests/support/RecordingHallEnd.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 import { ShadowNotingPainter } from '#tests/support/ShadowNotingPainter.ts';
 
@@ -90,11 +92,11 @@ function palette(record: Set<string>): (token: string) => string {
   };
 }
 
-/** The corridor with the parts `main.ts` hands it. */
-function picture(): CorridorPicture {
+/** The corridor with the parts `main.ts` hands it; a test may hand the halls that end their own end. */
+function picture(end: HallEnd = new EndWall()): CorridorPicture {
   const noise = new SceneHash();
   const glow = new ShadowGlow();
-  const wall = new EndWall();
+  const wall = end;
   const reach = new EndingReach();
   const long = new LongHall();
   return new CorridorPicture({
@@ -283,6 +285,17 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
     expect(words.some((call) => call.includes('2 · Hatch 2,') && call.includes('<yl>'))).toBe(true);
     expect(words.some((call) => call.includes('3 · Hatch 3,') && call.includes('<wh>'))).toBe(true);
     expect(words.some((call) => call.startsWith('fillText(1,'))).toBe(true);
+  });
+
+  test('the hall’s end is drawn once it is in sight, and not while it is lost in the fog', () => {
+    const drawn = (doors: number, view: number): number => {
+      const end = new RecordingHallEnd();
+      const painter = new RecordingPainter();
+      picture(end).paint(painter, corridor(doors), PHONE, palette(painter.asked), 0, '', view, '');
+      return end.drawn;
+    };
+    expect(drawn(4, 2)).toBe(1);
+    expect(drawn(40, 0)).toBe(0);
   });
 
   test('entering from the elevator you stand by the first door', () => {

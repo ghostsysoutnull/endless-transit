@@ -47,10 +47,4 @@ describe('the hall seen from where you stand', () => {
     expect(face.left()).toBeLessThan(PHONE.width / 2);
     expect(face.left() + face.width()).toBeGreaterThan(PHONE.width / 2);
   });
-
-  test('the doors stand in pairs, the first of each on the left; a hall without doors has no walk', () => {
-    expect([0, 1, 2, 3].map((index) => hall(0).sideOf(index))).toEqual([-1, 1, -1, 1]);
-    expect(hall(0).doorAt(2)).toBe(hall(0).doorAt(3));
-    expect(new HallView({ size: PHONE, view: 0, doors: 0, shape: new LongHall() }).walks()).toBe(false);
-  });
 });

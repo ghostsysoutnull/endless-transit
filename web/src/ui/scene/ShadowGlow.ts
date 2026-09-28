@@ -1,5 +1,6 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Glow } from './Glow.ts';
+import type { Point } from './Point.ts';
 
 /** Where the disc that casts a glow is drawn: this far to the left, out of sight; only its shadow lands. */
 const ASIDE = 10000;
@@ -11,13 +12,7 @@ const ASIDE = 10000;
  * The shadow's blur and throw are in the canvas's own pixels, so both are scaled by the transform.
  */
 export class ShadowGlow implements Glow {
-  at(
-    painter: Painter,
-    point: { readonly x: number; readonly y: number },
-    radius: number,
-    colour: string,
-    alpha: number,
-  ): void {
+  at(painter: Painter, point: Point, radius: number, colour: string, alpha: number): void {
     if (radius <= 0 || alpha <= 0) return;
     const scale = painter.getTransform().a;
     painter.globalAlpha = Math.min(1, alpha);
