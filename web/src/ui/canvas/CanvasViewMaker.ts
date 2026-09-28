@@ -2,6 +2,7 @@ import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { Clock } from '#ui/scene/Clock.ts';
 import type { CanvasViews } from '#ui/screens/CanvasViews.ts';
 import type { View } from '#ui/View.ts';
+import type { Canvases } from './Canvases.ts';
 import { CanvasView } from './CanvasView.ts';
 import type { MapPictureVM } from './MapPictureVM.ts';
 import type { Picture } from './Picture.ts';
@@ -15,22 +16,24 @@ export class CanvasViewMaker implements CanvasViews {
   readonly #pictures: CanvasPictures;
   readonly #clock: Clock;
   readonly #motion: ReducedMotion;
+  readonly #canvases: Canvases;
 
-  constructor(pictures: CanvasPictures, clock: Clock, motion: ReducedMotion) {
+  constructor(pictures: CanvasPictures, clock: Clock, motion: ReducedMotion, canvases: Canvases) {
     this.#pictures = pictures;
     this.#clock = clock;
     this.#motion = motion;
+    this.#canvases = canvases;
   }
 
   pane(): View<MapPictureVM> {
-    return new CanvasView(this.#pictures.map, this.#clock, this.#motion);
+    return new CanvasView(this.#pictures.map, this.#clock, this.#motion, this.#canvases);
   }
 
   map(): View<MapPictureVM> {
-    return new CanvasView(this.#pictures.map, this.#clock, this.#motion);
+    return new CanvasView(this.#pictures.map, this.#clock, this.#motion, this.#canvases);
   }
 
   trace(): View<TracePictureVM> {
-    return new CanvasView(this.#pictures.trace, this.#clock, this.#motion);
+    return new CanvasView(this.#pictures.trace, this.#clock, this.#motion, this.#canvases);
   }
 }

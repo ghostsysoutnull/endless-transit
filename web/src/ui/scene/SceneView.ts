@@ -1,14 +1,13 @@
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import { ElementStyle } from '#ui/canvas/ElementStyle.ts';
-import { StylePalette } from '#ui/canvas/StylePalette.ts';
+import type { Canvases } from '#ui/canvas/Canvases.ts';
+import type { PixelCanvas } from '#ui/canvas/PixelCanvas.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
 import { CoherenceFx, FX_FRAMES } from './CoherenceFx.ts';
 import type { FxPlan } from './FxPlan.ts';
 import { Gesture } from './Gesture.ts';
 import type { Clock } from './Clock.ts';
-import { PixelBudget } from './PixelBudget.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import { StillCamera } from './StillCamera.ts';
 import { SceneEvents } from './SceneEvents.ts';
@@ -57,11 +56,10 @@ export class SceneView implements DrawnScene {
   readonly #ride = new EaseInOut();
   readonly #coast = new EaseOut();
   readonly #fx = new CoherenceFx();
-  readonly #budget = new PixelBudget();
+  readonly #canvases: Canvases;
   #mounted: SceneMount | undefined;
   #vm: SceneVM | undefined;
   #size: PictureSize = { width: 0, height: 0 };
-  #ratio = 1;
   #hits: readonly SceneHit[] = [];
   #lit = '';
   /** The child you stand by: the one you came back out of, until the picture shows another place. */
@@ -85,67 +83,70 @@ export class SceneView implements DrawnScene {
     picture: ScenePicture<SceneVM>,
     clock: Clock,
     motion: ReducedMotion,
+    canvases: Canvases,
     onLight: (id: string) => void,
   ) {
     this.#picture = picture;
     this.#clock = clock;
     this.#preference = motion;
+    this.#canvases = canvases;
     this.#onLight = onLight;
   }
 
   mount(host: HTMLElement): void {
-    const document = host.ownerDocument;
-    const canvas = document.createElement('canvas');
-    canvas.setAttribute('role', 'img');
-    const slider = document.createElement('div');
+    const canvas = this.#canvases.mount(host, () => {
+      this.#fit();
+      if (this.#leave === undefined) this.#paint(STILL);
+    });
+    const slider = host.ownerDocument.createElement('div');
     slider.className = 'slider';
     slider.setAttribute('role', 'slider');
     slider.tabIndex = 0;
     slider.hidden = true;
-    host.replaceChildren(canvas, slider);
+    host.append(slider);
     const listeners = new AbortController();
     const signal = listeners.signal;
-    canvas.addEventListener(
+    canvas.listen(
       'pointerdown',
       (event) => {
         this.#down(event, false);
       },
-      { signal },
+      signal,
     );
-    canvas.addEventListener(
+    canvas.listen(
       'pointermove',
       (event) => {
         this.#move(event);
       },
-      { signal },
+      signal,
     );
-    canvas.addEventListener(
+    canvas.listen(
       'pointerup',
       (event) => {
         this.#up(event);
       },
-      { signal },
+      signal,
     );
-    canvas.addEventListener(
+    canvas.listen(
       'pointercancel',
       (event) => {
         this.#up(event);
       },
-      { signal },
+      signal,
     );
-    canvas.addEventListener(
+    canvas.listen(
       'pointerleave',
       () => {
         if (this.#gesture === undefined) this.#pointAt('');
       },
-      { signal },
+      signal,
     );
-    canvas.addEventListener(
+    canvas.listen(
       'click',
       (event) => {
         this.#tap(event);
       },
-      { signal },
+      signal,
     );
     slider.addEventListener(
       'pointerdown',
@@ -182,19 +183,7 @@ export class SceneView implements DrawnScene {
       },
       { signal },
     );
-    const observer = new ResizeObserver(() => {
-      this.#fit();
-      if (this.#leave === undefined) this.#paint(STILL);
-    });
-    observer.observe(host);
-    this.#mounted = new SceneMount({
-      host,
-      canvas,
-      slider,
-      observer,
-      listeners,
-      colours: new StylePalette(new ElementStyle(canvas)),
-    });
+    this.#mounted = new SceneMount({ host, canvas, slider, listeners });
   }
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
@@ -205,7 +194,7 @@ export class SceneView implements DrawnScene {
     this.#motion = undefined;
     this.#gesture = undefined;
     this.#vm = vm;
-    this.#mounted?.colours().frameChanged();
+    this.#mounted?.canvas().frameChanged();
     this.#fit();
     const camera = this.#camera;
     if (before?.address !== vm.address) this.#here = '';
@@ -229,8 +218,8 @@ export class SceneView implements DrawnScene {
       this.#view = camera.rest();
     }
     const canvas = this.#mounted?.canvas();
-    canvas?.setAttribute('aria-label', vm.label);
-    if (canvas !== undefined) canvas.style.touchAction = camera.drags() ? 'none' : 'manipulation';
+    canvas?.name(vm.label);
+    canvas?.touch(camera.drags());
     this.#layout();
     this.#run();
   }
@@ -330,22 +319,10 @@ export class SceneView implements DrawnScene {
     const mounted = this.#mounted;
     const vm = this.#vm;
     if (mounted === undefined || vm === undefined) return;
-    const host = mounted.host();
     const canvas = mounted.canvas();
-    const size = { width: host.clientWidth, height: host.clientHeight };
-    const ratio = this.#budget.ratio(
-      host.ownerDocument.defaultView?.devicePixelRatio ?? 1,
-      size.width,
-      size.height,
-    );
-    const width = Math.round(size.width * ratio);
-    const height = Math.round(size.height * ratio);
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-    }
+    const size = canvas.hostSize();
+    canvas.fit(size);
     this.#size = size;
-    this.#ratio = ratio;
     this.#camera = this.#picture.camera(vm, size);
     this.#view = this.#camera.clamp(this.#view);
     this.#place();
@@ -394,11 +371,10 @@ export class SceneView implements DrawnScene {
     const vm = this.#vm;
     const { width, height } = this.#size;
     if (canvas === undefined || vm === undefined || width === 0 || height === 0) return;
-    const context = canvas.getContext('2d');
+    const context = canvas.context();
     if (context === null) return;
-    const palette = this.#mounted?.colours().palette;
-    if (palette === undefined) return;
-    const ratio = this.#ratio;
+    const palette = canvas.palette();
+    const ratio = canvas.ratio();
     context.globalAlpha = 1;
     context.setLineDash([]);
     const zoom = this.#zoomAt(time);
@@ -447,22 +423,10 @@ export class SceneView implements DrawnScene {
   }
 
   /** The tear over the finished frame: bands of the canvas copied sideways, grain, the red cast, a dark flash. */
-  #tear(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, plan: FxPlan, palette: Palette): void {
+  #tear(context: CanvasRenderingContext2D, canvas: PixelCanvas, plan: FxPlan, palette: Palette): void {
     const { width, height } = this.#size;
-    const ratio = this.#ratio;
     for (const tear of plan.tears) {
-      const y = tear.y * height;
-      context.drawImage(
-        canvas,
-        0,
-        y * ratio,
-        canvas.width,
-        tear.height * ratio,
-        tear.shift,
-        y,
-        width,
-        tear.height,
-      );
+      canvas.shift(context, { y: tear.y * height, height: tear.height, by: tear.shift }, width);
     }
     if (plan.grain.length > 0) {
       context.globalAlpha = plan.tint * 5;
@@ -487,10 +451,9 @@ export class SceneView implements DrawnScene {
   }
 
   #hitAt(event: MouseEvent): SceneHit | undefined {
-    const box = this.#mounted?.canvas().getBoundingClientRect();
-    if (box === undefined) return undefined;
-    const x = event.clientX - box.left;
-    const y = event.clientY - box.top;
+    const point = this.#mounted?.canvas().pointAt(event);
+    if (point === undefined) return undefined;
+    const { x, y } = point;
     return this.#hits.find(
       (hit) => x >= hit.x && x <= hit.x + hit.width && y >= hit.y && y <= hit.y + hit.height,
     );
@@ -546,7 +509,7 @@ export class SceneView implements DrawnScene {
     gesture.move(position);
     if (!gesture.moved()) return;
     // The drag begins: the canvas keeps the finger even when it leaves the picture.
-    if (!wasMoved) this.#mounted?.canvas().setPointerCapture(event.pointerId);
+    if (!wasMoved) this.#mounted?.canvas().capture(event.pointerId);
     this.#follow(gesture.viewAt(position, camera.dragRate()), gesture);
   }
 

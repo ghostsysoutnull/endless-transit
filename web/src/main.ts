@@ -18,11 +18,13 @@ import { BrowserReducedMotion } from '#platform/BrowserReducedMotion.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
+import { CanvasMaker } from '#ui/canvas/CanvasMaker.ts';
 import { CanvasViewMaker } from '#ui/canvas/CanvasViewMaker.ts';
 import { MapPicture } from '#ui/canvas/MapPicture.ts';
 import { TracePicture } from '#ui/canvas/TracePicture.ts';
 import { Frame } from '#ui/Frame.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
+import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
@@ -73,10 +75,13 @@ const scenes = new SceneRegistry({
 });
 // The world screen's canvases: the map and the trace, drawn in the pictures' one font (U02).
 const font = new CanvasFont();
+// Every canvas on the page's one pixel budget (Decision 4).
+const canvasMaker = new CanvasMaker(new PixelBudget());
 const canvases = new CanvasViewMaker(
   { map: new MapPicture(font), trace: new TracePicture(font) },
   clock,
   motion,
+  canvasMaker,
 );
 new Shell(
   engine,
@@ -93,7 +98,7 @@ new Shell(
         new SceneDrawing(),
         new FloorPad({ floor: new FloorsByTen(), layer: new LayersTogether() }),
       ),
-      new HudView(scenes, new SceneViewMaker(clock, motion), canvases),
+      new HudView(scenes, new SceneViewMaker(clock, motion, canvasMaker), canvases),
     ),
   ],
   motion,

@@ -1,3 +1,5 @@
+import type { RatioLimit } from '#ui/canvas/RatioLimit.ts';
+
 /** More than two device pixels per CSS pixel is wasted on a phone's screen. */
 const MAX_RATIO = 2;
 /** About this many pixels a canvas: sharp enough, cheap enough to hold the frame (the mock's budget). */
@@ -7,7 +9,7 @@ const MAX_PIXELS = 1.3e6;
  * Owns one fact: how many device pixels a canvas may have per CSS pixel (Decision 4) — the device's own
  * ratio, capped at two, and lowered until the canvas holds no more than its budget of pixels.
  */
-export class PixelBudget {
+export class PixelBudget implements RatioLimit {
   readonly #maxRatio: number;
   readonly #maxPixels: number;
 
