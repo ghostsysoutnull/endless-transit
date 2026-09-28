@@ -165,7 +165,9 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 - [ ] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
   `reduced-motion` and `scene-events`, `SceneView` still holds the canvas sizing and mounting, the pointer gestures,
   the slider control (it still branches on `Gesture.onSlider()`: a picture gesture and a slider gesture
-  go behind one interface with it), the trip and zoom, and the tear's painting; `HudPresenter` also maps figures into the `SceneVM`
+  go behind one interface with it), the trip and zoom, and the tear's painting (and it reaches through `SceneMount` to command the canvas
+  and the slider; `CanvasView` likewise through `CanvasMount`: the mount gives its parts their orders when the
+  canvas and the slider become their own objects); `HudPresenter` also maps figures into the `SceneVM`
   (`#drawing`) and holds the pad's grouping rule (`#pad`). Fix: each its own object, handed in. (OO 8.)
   Done: —
 

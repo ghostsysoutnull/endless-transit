@@ -157,18 +157,25 @@ export class TravelCamera implements SceneCamera {
       this.#pace.per,
       this.#pace.most,
       this.#zoom,
-      this.#stops.map((stop) => [stop.id, stop.at]),
-      this.#track === null
-        ? null
-        : [
-            this.#track.x,
-            this.#track.y,
-            this.#track.width,
-            this.#track.height,
-            this.#track.axis,
-            this.#track.from,
-            this.#track.to,
-          ],
+      this.#stops.map((stop) => {
+        // Typed, so a field added to a stop must be added here too.
+        const facts: Required<CameraStop> = { id: stop.id, at: stop.at };
+        return [facts.id, facts.at];
+      }),
+      this.#track === null ? null : Object.values(this.#trackFacts(this.#track)),
     ]);
+  }
+
+  /** The track's facts in a fixed order; typed, so a field added to the track must be added here too. */
+  #trackFacts(track: CameraTrack): Required<CameraTrack> {
+    return {
+      x: track.x,
+      y: track.y,
+      width: track.width,
+      height: track.height,
+      axis: track.axis,
+      from: track.from,
+      to: track.to,
+    };
   }
 }
