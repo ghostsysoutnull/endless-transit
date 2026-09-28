@@ -17,7 +17,8 @@ When one fix reaches an older file because it shares the pattern, that file is f
 are fixed together) and is named in the item.
 
 **Open decision:** `floor-numbers` changes what the tower draws. It could write a Layer as the game names it (`-0x1`,
-from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _not yet made_.
+from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _not yet made_; it is one line,
+`Level.label()`.
 
 ## The UI works out rules the game should hand it (the engine law)
 
@@ -27,10 +28,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   the keys as a closed set made where the content loads, an unknown key refused there (today it draws plain), and the
   UI maps only that set. (OO 1, 6; TS: parse at the edge.)
   Done: `148af00`
-- [ ] **levels — the tower works out levels itself.** `TowerPicture` reads "below the bedrock" from a negative number
+- [x] **levels — the tower works out levels itself.** `TowerPicture` reads "below the bedrock" from a negative number
   (`level < 0`, `#frame`'s `min = -below`) and positions floors by `Number(child.ordinal)`. Fix: the engine hands each
   level its number and whether it is a Layer.
-  Done: —
+  Done: `370745b`, its design check's fixes `56696c0`, `9c2903b`, `81646bc`
 - [x] **came-out-of — which place you came out of, from address text.** `HudView` finds it with
   ``last.startsWith(`${child.address}.`)``, which re-derives the address rule the engine owns. Fix: the engine says
   which child the traveller came out of. (OO 6.)
@@ -38,11 +39,11 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 - [x] **tear-decay — the tear strength is computed by the presenter.** `HudPresenter` builds
   `new Coherence(player.coherence)` to call `decay()`. Fix: the snapshot's player carries the decay.
   Done: `8155cf8`
-- [ ] **floor-numbers — floor numbers read back from their display text.** `HudPresenter.#pad` (`Number(ordinal)`
+- [x] **floor-numbers — floor numbers read back from their display text.** `HudPresenter.#pad` (`Number(ordinal)`
   four times) and `TowerPicture:69, 207, 486`. The tower also writes a Layer as `-1` where the game names it
   `Layer -0x1` (Decision 2). Fix: read the level number from `levels`; the Layer label per the open decision above.
   **The tester sees this one** if the label changes.
-  Done: —
+  Done: `370745b`, its design check's fixes `56696c0`, `9c2903b`, `81646bc`
 - [x] **noise-value — the frame's seed goes over as text and is parsed back.** `PlaceSummary.noise` is
   `frame.toString()`; `CoherenceFx` rebuilds it with the engine's `Seed.parse` and quietly falls back to
   `new Seed(0, 0)` when that fails. Fix: the snapshot carries a noise value, not a string to parse. (OO 6; TS: parse
@@ -112,12 +113,12 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 
 ## Rules added since the audit (OO 7, 9, 11; TypeScript and OO)
 
-- [ ] **layer-portrait — a Layer inherits the floor's picture data.** `Layer` overrides `drawing()` to its own key
+- [x] **layer-portrait — a Layer inherits the floor's picture data.** `Layer` overrides `drawing()` to its own key
   but inherits `Floor.portrait()`, so at the elevator it hands the tower's figure to the Layer's picture — harmless
   only while no Layer picture is registered (U04). `Floor`'s `passage?` and `Corridor`'s `shape?` are optional only
   because `Layer` and `Artery` inherit those constructors without them. Fix: the Layer answers `portrait()` for
   itself; `passage` and `shape` required, `Layer` and `Artery` passing their empty value. (OO 9.)
-  Done: —
+  Done: `370745b`, its design check's fixes `56696c0`, `9c2903b`, `81646bc`
 - [x] **command-or-query — two `SceneView` methods both change state and answer.** `enter(id): boolean` starts a
   ride and says whether it took the pick (`HudView` reads the answer); `#zoomAt`, a question, writes
   `#tripAnchor ??=`. Fix: `leads(id)` answers, `enter(id)` acts; the anchor set when the ride starts, `#zoomAt` pure.
