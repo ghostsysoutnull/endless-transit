@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { RebootPresenter } from '#ui/screens/RebootPresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
 
-const presenter = new RebootPresenter(new Masthead('a1b2c3d'));
+const presenter = new RebootPresenter(new BuildMasthead('a1b2c3d'));
 
 const DEAD: GameSnapshot = {
   world: { seed: '7F3A-91C2-0B4D-E6A8', name: 'The Endless Universe' },

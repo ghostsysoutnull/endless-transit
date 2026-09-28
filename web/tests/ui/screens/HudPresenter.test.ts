@@ -4,12 +4,13 @@ import { DoorLook } from '#engine/model/DoorLook.ts';
 import { Level } from '#engine/model/Level.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
+import { Frame } from '#ui/Frame.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { doorLook } from '#tests/support/doorLook.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
 
-const presenter = new HudPresenter(new Masthead('a1b2c3d'));
+const presenter = new HudPresenter(new BuildMasthead('a1b2c3d'), new Frame());
 
 function option(facts: Partial<GameOption> & { id: string; label: string }): GameOption {
   return {

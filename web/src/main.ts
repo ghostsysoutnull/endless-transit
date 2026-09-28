@@ -16,7 +16,8 @@ import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { BrowserFrameSource } from '#platform/BrowserFrameSource.ts';
 import { BrowserReducedMotion } from '#platform/BrowserReducedMotion.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
+import { Frame } from '#ui/Frame.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
@@ -48,7 +49,8 @@ const engine = new GameEngine({
   debug,
 });
 
-const masthead = new Masthead(__ET_BUILD__);
+const masthead = new BuildMasthead(__ET_BUILD__);
+const frame = new Frame();
 // The page's one frame loop (Decision 4): every canvas that moves listens to it.
 const clock = new MotionClock(new BrowserFrameSource(window));
 // Whether the player asked for reduced motion: asked by every moving thing, read only here.
@@ -64,11 +66,11 @@ new Shell(
   engine,
   [
     new ScreenStage(new RebootPresenter(masthead), new RebootView()),
-    new ScreenStage(new RecapPresenter(masthead), new RecapView()),
-    new ScreenStage(new BufferPresenter(masthead), new BufferView()),
-    new ScreenStage(new HelpPresenter(masthead), new HelpView()),
+    new ScreenStage(new RecapPresenter(masthead, frame), new RecapView()),
+    new ScreenStage(new BufferPresenter(masthead, frame), new BufferView()),
+    new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
     new ScreenStage(new TitlePresenter(masthead), new TitleView()),
-    new ScreenStage(new HudPresenter(masthead), new HudView(clock, scenes, motion)),
+    new ScreenStage(new HudPresenter(masthead, frame), new HudView(clock, scenes, motion)),
   ],
   motion,
 ).start(container);

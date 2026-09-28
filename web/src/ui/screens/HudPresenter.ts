@@ -7,7 +7,7 @@ import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { TraceSummary } from '#engine/rules/TraceSummary.ts';
 import type { LegendTone, NodeTone } from '#ui/canvas/MapPictureVM.ts';
-import { Frame } from '#ui/Frame.ts';
+import type { FrameOf } from '#ui/FrameOf.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
@@ -71,7 +71,7 @@ const TRACE_MARK = '>> ';
  * snapshot becomes a panel of rows.
  */
 export class HudPresenter implements Presenter<HudVM> {
-  readonly #frame = new Frame();
+  readonly #frame: FrameOf;
   /** Past twenty, the pad's group of a level by what stands there: the Layers all in one, a floor in its ten. */
   readonly #padGroups: Readonly<Record<LevelKind, PadGroup>> = {
     floor: new FloorsByTen(),
@@ -79,8 +79,9 @@ export class HudPresenter implements Presenter<HudVM> {
   };
   readonly #masthead: Masthead;
 
-  constructor(masthead: Masthead) {
+  constructor(masthead: Masthead, frame: FrameOf) {
     this.#masthead = masthead;
+    this.#frame = frame;
   }
 
   /** The world screen: a place, and no prompt in the way. */

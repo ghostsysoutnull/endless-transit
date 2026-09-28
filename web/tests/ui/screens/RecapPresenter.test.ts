@@ -2,11 +2,12 @@ import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
+import { Frame } from '#ui/Frame.ts';
 import { RecapPresenter } from '#ui/screens/RecapPresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
 
-const presenter = new RecapPresenter(new Masthead('a1b2c3d'));
+const presenter = new RecapPresenter(new BuildMasthead('a1b2c3d'), new Frame());
 
 function option(id: string, key: string, label: string): GameOption {
   return {

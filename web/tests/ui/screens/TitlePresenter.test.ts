@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
 
-const presenter = new TitlePresenter(new Masthead('a1b2c3d'));
+const presenter = new TitlePresenter(new BuildMasthead('a1b2c3d'));
 
 function option(id: string, key: string, label: string): GameOption {
   return {
@@ -105,7 +105,7 @@ describe('TitlePresenter.toViewModel', () => {
       }).build,
     ).toBe('build a1b2c3d');
     expect(
-      new TitlePresenter(new Masthead('dev')).toViewModel({
+      new TitlePresenter(new BuildMasthead('dev')).toViewModel({
         world: null,
         place: null,
         player: null,
