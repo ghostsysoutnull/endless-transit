@@ -5,8 +5,8 @@ import { StylePalette } from '#ui/canvas/StylePalette.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { View } from '#ui/View.ts';
 import { CoherenceFx, FX_FRAMES } from './CoherenceFx.ts';
-import { Fling } from './Fling.ts';
 import type { FxPlan } from './FxPlan.ts';
+import { Gesture } from './Gesture.ts';
 import type { MotionClock } from './MotionClock.ts';
 import { PixelBudget } from './PixelBudget.ts';
 import type { SceneCamera } from './SceneCamera.ts';
@@ -27,20 +27,8 @@ const ZOOM_TIME = 450;
 const FX_RATE = 12;
 /** A still is painted at this moment of the clock, and on the tear's first frame. */
 const STILL = 0;
-/** A finger that moves less than this is a tap, not a drag (the mock's 6 px). */
-const SLOP = 6;
 /** A tap on the slider's track glides the view there in this long. */
 const GLIDE = 320;
-
-/** A finger on the picture or the slider: where it went down, the view then, and how fast it moves it. */
-interface Gesture {
-  readonly pointer: number;
-  readonly start: number;
-  readonly view: number;
-  readonly fling: Fling;
-  readonly slider: boolean;
-  moved: boolean;
-}
 
 /**
  * The scene host (U01b, U02): a canvas the size of its host element, drawn by a registered picture on the page's
@@ -551,14 +539,12 @@ export class SceneView implements View<SceneVM> {
     if (!slider) this.#pointAt(this.#hitAt(event)?.id ?? '');
     if (camera === null || (!slider && camera.drag === 0)) return;
     this.#motion = undefined;
-    this.#gesture = {
+    this.#gesture = new Gesture({
       pointer: event.pointerId,
       start: camera.axis === 'y' ? event.clientY : event.clientX,
       view: this.#view,
-      fling: new Fling(),
       slider,
-      moved: slider,
-    };
+    });
     if (!slider) return;
     event.preventDefault();
     this.#slider?.setPointerCapture(event.pointerId);
@@ -571,31 +557,31 @@ export class SceneView implements View<SceneVM> {
   #move(event: PointerEvent): void {
     const gesture = this.#gesture;
     const camera = this.#camera;
-    if (gesture === undefined || camera === null || gesture.pointer !== event.pointerId) {
+    if (gesture === undefined || camera === null || !gesture.is(event.pointerId)) {
       if (this.#gesture === undefined && this.#trip === undefined)
         this.#pointAt(this.#hitAt(event)?.id ?? '');
       return;
     }
-    if (gesture.slider) {
+    if (gesture.onSlider()) {
       const at = this.#trackValue(event);
       if (at === undefined) return;
       this.#motion = undefined;
       this.#follow(at, gesture);
       return;
     }
-    const along = (camera.axis === 'y' ? event.clientY : event.clientX) - gesture.start;
-    if (!gesture.moved && Math.abs(along) <= SLOP) return;
-    if (!gesture.moved) {
-      gesture.moved = true;
-      this.#canvas?.setPointerCapture(event.pointerId);
-    }
-    this.#follow(gesture.view + along * camera.drag, gesture);
+    const position = camera.axis === 'y' ? event.clientY : event.clientX;
+    const wasMoved = gesture.moved();
+    gesture.move(position);
+    if (!gesture.moved()) return;
+    // The drag begins: the canvas keeps the finger even when it leaves the picture.
+    if (!wasMoved) this.#canvas?.setPointerCapture(event.pointerId);
+    this.#follow(gesture.viewAt(position, camera.drag), gesture);
   }
 
   /** The view under the finger, one to one; the child it comes to lights in the list. */
   #follow(value: number, gesture: Gesture): void {
     this.#view = this.#clamp(value);
-    gesture.fling.sample(this.#clock.now(), this.#view);
+    gesture.sample(this.#clock.now(), this.#view);
     this.#layout();
     const nearest = this.#nearest();
     if (nearest !== undefined) this.#pointAt(nearest.id);
@@ -606,12 +592,12 @@ export class SceneView implements View<SceneVM> {
   #up(event: PointerEvent): void {
     const gesture = this.#gesture;
     const camera = this.#camera;
-    if (gesture === undefined || camera === null || gesture.pointer !== event.pointerId) return;
+    if (gesture === undefined || camera === null || !gesture.is(event.pointerId)) return;
     this.#gesture = undefined;
-    if (!gesture.moved) return;
-    if (!gesture.slider) this.#dragged = true;
+    if (!gesture.moved()) return;
+    if (!gesture.onSlider()) this.#dragged = true;
     const reduced = this.#preference.reduced();
-    const thrown = reduced ? this.#view : this.#view + gesture.fling.speed(this.#clock.now()) * camera.coast;
+    const thrown = reduced ? this.#view : this.#view + gesture.speed(this.#clock.now()) * camera.coast;
     const target = this.#clamp(camera.snap ? Math.round(thrown) : thrown);
     const distance = Math.abs(target - this.#view);
     this.#glide(target, camera.settle.base + camera.settle.per * Math.sqrt(distance));
