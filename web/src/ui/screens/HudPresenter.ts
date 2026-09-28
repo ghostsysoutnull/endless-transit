@@ -6,7 +6,7 @@ import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { TraceSummary } from '#engine/rules/TraceSummary.ts';
 import type { LegendTone, NodeTone } from '#ui/canvas/MapPictureVM.ts';
-import { frameOf } from '#ui/Frame.ts';
+import { Frame } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
@@ -67,6 +67,7 @@ const TRACE_MARK = '>> ';
  * snapshot becomes a panel of rows.
  */
 export class HudPresenter implements Presenter<HudVM> {
+  readonly #frame = new Frame();
   readonly #masthead: Masthead;
 
   constructor(masthead: Masthead) {
@@ -98,7 +99,7 @@ export class HudPresenter implements Presenter<HudVM> {
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
-      frame: frameOf(place),
+      frame: this.#frame.of(place),
       rail: place.trail.map((step, index) => ({ ...step, current: index === place.trail.length - 1 })),
       meter: {
         label: labels.meter,

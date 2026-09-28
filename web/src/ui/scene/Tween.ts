@@ -1,12 +1,4 @@
-/** Slow out, fast through the middle, slow in: the one easing a scene moves by. */
-function easeInOut(progress: number): number {
-  return progress < 0.5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
-}
-
-/** Fast away, slow in: how a released view coasts to rest (the mock's `easeOut`). */
-export function easeOut(progress: number): number {
-  return 1 - (1 - progress) ** 3;
-}
+import type { Easing } from './Easing.ts';
 
 /**
  * A number on its way from one value to another over a span of time, measured by elapsed time (Decision 4),
@@ -17,15 +9,9 @@ export class Tween {
   readonly #to: number;
   readonly #start: number;
   readonly #duration: number;
-  readonly #easing: (progress: number) => number;
+  readonly #easing: Easing;
 
-  constructor(
-    from: number,
-    to: number,
-    start: number,
-    duration: number,
-    easing: (progress: number) => number = easeInOut,
-  ) {
+  constructor(from: number, to: number, start: number, duration: number, easing: Easing) {
     this.#from = from;
     this.#to = to;
     this.#start = start;
@@ -42,7 +28,7 @@ export class Tween {
   at(time: number): number {
     const progress = this.progress(time);
     if (progress >= 1) return this.#to;
-    return this.#from + (this.#to - this.#from) * this.#easing(progress);
+    return this.#from + (this.#to - this.#from) * this.#easing.ease(progress);
   }
 
   done(time: number): boolean {

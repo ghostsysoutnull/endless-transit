@@ -1,6 +1,7 @@
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import { stylePalette } from '#ui/canvas/StylePalette.ts';
+import { ElementStyle } from '#ui/canvas/ElementStyle.ts';
+import { StylePalette } from '#ui/canvas/StylePalette.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { View } from '#ui/View.ts';
 import { CoherenceFx, FX_FRAMES } from './CoherenceFx.ts';
@@ -14,7 +15,9 @@ import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import { SceneTrip } from './SceneTrip.ts';
 import type { SceneVM } from './SceneVM.ts';
-import { easeOut, Tween } from './Tween.ts';
+import { EaseInOut } from './EaseInOut.ts';
+import { EaseOut } from './EaseOut.ts';
+import { Tween } from './Tween.ts';
 
 /** Going in, the picture grows this many times around the child before the next place shows. */
 const ZOOM = 6;
@@ -60,6 +63,11 @@ export class SceneView implements View<SceneVM> {
   /** Told which child the picture points at (or none, empty): the list lights its twin. */
   readonly #onLight: (id: string) => void;
   readonly #events = new SceneEvents();
+  /** How a ride between floors and a zoom back out ease, and how a released view coasts to rest. */
+  readonly #ride = new EaseInOut();
+  readonly #coast = new EaseOut();
+  /** The canvas's colours, read from the stylesheet where it sits; made at mount. */
+  #colours: StylePalette | undefined;
   readonly #fx = new CoherenceFx();
   readonly #budget = new PixelBudget();
   #host: HTMLElement | undefined;
@@ -113,6 +121,7 @@ export class SceneView implements View<SceneVM> {
     this.#host = host;
     this.#canvas = canvas;
     this.#slider = slider;
+    this.#colours = new StylePalette(new ElementStyle(canvas));
     const listeners = new AbortController();
     const signal = listeners.signal;
     this.#listeners = listeners;
@@ -211,6 +220,7 @@ export class SceneView implements View<SceneVM> {
     this.#motion = undefined;
     this.#gesture = undefined;
     this.#vm = vm;
+    this.#colours?.forget();
     this.#fit();
     const camera = this.#camera;
     if (camera === null) {
@@ -221,7 +231,13 @@ export class SceneView implements View<SceneVM> {
       // Another place in the same picture (floor to floor): ride from where the view stood to the new rest.
       const distance = Math.abs(camera.rest - this.#view);
       if (distance > 0.01) {
-        this.#motion = new Tween(this.#view, camera.rest, this.#clock.now(), this.#pace(camera, distance));
+        this.#motion = new Tween(
+          this.#view,
+          camera.rest,
+          this.#clock.now(),
+          this.#pace(camera, distance),
+          this.#ride,
+        );
       } else {
         this.#view = camera.rest;
       }
@@ -250,7 +266,10 @@ export class SceneView implements View<SceneVM> {
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
-    this.#zoomOut = { scale: new Tween(ZOOM, 1, this.#clock.now(), ZOOM_TIME), anchor: hit.anchor };
+    this.#zoomOut = {
+      scale: new Tween(ZOOM, 1, this.#clock.now(), ZOOM_TIME, this.#ride),
+      anchor: hit.anchor,
+    };
     this.#run();
   }
 
@@ -289,6 +308,7 @@ export class SceneView implements View<SceneVM> {
     this.#slider?.remove();
     this.#canvas = undefined;
     this.#slider = undefined;
+    this.#colours = undefined;
     this.#host = undefined;
     this.#vm = undefined;
     this.#camera = null;
@@ -411,7 +431,8 @@ export class SceneView implements View<SceneVM> {
     if (canvas === undefined || vm === undefined || width === 0 || height === 0) return;
     const context = canvas.getContext('2d');
     if (context === null) return;
-    const palette = stylePalette(canvas);
+    const palette = this.#colours?.palette;
+    if (palette === undefined) return;
     const ratio = this.#ratio;
     context.globalAlpha = 1;
     context.setLineDash([]);
@@ -621,7 +642,7 @@ export class SceneView implements View<SceneVM> {
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
-    this.#motion = new Tween(this.#view, target, this.#clock.now(), duration, easeOut);
+    this.#motion = new Tween(this.#view, target, this.#clock.now(), duration, this.#coast);
     this.#run();
   }
 

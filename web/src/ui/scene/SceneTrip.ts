@@ -1,3 +1,4 @@
+import { EaseInOut } from './EaseInOut.ts';
 import { Tween } from './Tween.ts';
 
 /**
@@ -20,11 +21,12 @@ export class SceneTrip {
     zoom: { scale: number; time: number } | null;
     pick: string;
   }) {
-    this.#ride = new Tween(facts.from, facts.to, facts.start, facts.ride);
+    const easing = new EaseInOut();
+    this.#ride = new Tween(facts.from, facts.to, facts.start, facts.ride, easing);
     this.#zoom =
       facts.zoom === null
         ? undefined
-        : new Tween(1, facts.zoom.scale, facts.start + facts.ride, facts.zoom.time);
+        : new Tween(1, facts.zoom.scale, facts.start + facts.ride, facts.zoom.time, easing);
     this.#pick = facts.pick;
   }
 

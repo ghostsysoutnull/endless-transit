@@ -3,7 +3,8 @@ import type { MotionClock } from '#ui/scene/MotionClock.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import type { View } from '#ui/View.ts';
 import type { Picture } from './Picture.ts';
-import { stylePalette } from './StylePalette.ts';
+import { ElementStyle } from './ElementStyle.ts';
+import { StylePalette } from './StylePalette.ts';
 
 /** One cycle of the pulse, in milliseconds. */
 const CYCLE = 1800;
@@ -24,6 +25,8 @@ export class CanvasView<VM> implements View<VM> {
   readonly #motion: ReducedMotion;
   readonly #budget = new PixelBudget();
   #canvas: HTMLCanvasElement | undefined;
+  /** The canvas's colours, read from the stylesheet where it sits; made at mount. */
+  #colours: StylePalette | undefined;
   #observer: ResizeObserver | undefined;
   #vm: VM | undefined;
   /** Stops listening to the clock; set while the pulse runs. */
@@ -40,6 +43,7 @@ export class CanvasView<VM> implements View<VM> {
     canvas.setAttribute('aria-hidden', 'true');
     container.replaceChildren(canvas);
     this.#canvas = canvas;
+    this.#colours = new StylePalette(new ElementStyle(canvas));
     this.#observer = new ResizeObserver(() => {
       this.#paint(STILL);
     });
@@ -48,6 +52,7 @@ export class CanvasView<VM> implements View<VM> {
 
   render(vm: VM): void {
     this.#vm = vm;
+    this.#colours?.forget();
     if (this.#motion.reduced()) {
       this.#stop();
       this.#paint(STILL);
@@ -64,6 +69,7 @@ export class CanvasView<VM> implements View<VM> {
     this.#observer = undefined;
     this.#canvas?.remove();
     this.#canvas = undefined;
+    this.#colours = undefined;
     this.#vm = undefined;
   }
 
@@ -94,6 +100,8 @@ export class CanvasView<VM> implements View<VM> {
     if (context === null) return;
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     context.setLineDash([]);
-    this.#picture.paint(context, vm, { width, height }, stylePalette(canvas), phase);
+    const palette = this.#colours?.palette;
+    if (palette === undefined) return;
+    this.#picture.paint(context, vm, { width, height }, palette, phase);
   }
 }
