@@ -10,7 +10,16 @@ backlog between phases" in `tasks/lessons/infrastructure.md`). Not workflow item
 
 ## 🔴 OPEN
 
-*(none — 2026-09-24)*
+### HK-025 — keyboard shortcuts in a phones-only game
+**Found:** 2026-09-28, the desktop code review (the wide layout and hover styles went in `0de9b4b`). **Needs the
+user's decision:** remove the keys, or keep them.
+**What they are:** the engine deals each option a letter (`GameOption.key`, no two alike on a screen); five views draw
+it as a `<kbd>` (`HudView`, `BufferView`, `RecapView`, `RebootView`, `HelpView`), which the stylesheet's
+`(pointer: coarse)` block hides on a touch screen; `InputRouter` and `SceneView`'s slider listen for keys; about ten
+test files pin the letters.
+**Skipped on the one profile, so guarding nothing:** 16 `test.skip(hasTouch, …)` tests in `web/e2e/` (`focus` 6,
+`buildings` 2, `a11y`, `help`, `items`, `map`, `ritual`, `survival`, `title`, `world` 1 each) — keys, Tab and Enter;
+they go with the keys, or are covered another way.
 
 ## 🟢 CLOSED
 

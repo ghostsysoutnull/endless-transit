@@ -11,3 +11,4 @@
     `gh auth refresh -s workflow`);
   - the tester's findings, when they come: each becomes a fix under the queue's "Reported by the tester";
   - the rule reviews are closed; not reviewed: `.claude/commands/chronicle.md`.
+  - the keyboard shortcuts in a phones-only game, keep or remove: `tasks/backlog/HOUSEKEEPING.md`, HK-025.
