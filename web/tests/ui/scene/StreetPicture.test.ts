@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import type { SceneHit } from '#ui/scene/SceneHit.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
@@ -33,7 +34,7 @@ function street(
     shape: 'none',
     slider: '',
     decay: 0,
-    noise: '7F3A-91C2-0B4D-E6A8',
+    noise: new Seed(0x7f3a91c2, 0x0b4de6a8),
   };
 }
 

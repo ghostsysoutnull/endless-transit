@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
@@ -151,7 +152,7 @@ describe('TitlePresenter.toViewModel', () => {
       lattice: null,
       drawing: 'universe',
       figure: null,
-      noise: '0000-0000-0000-0000',
+      noise: new Seed(0, 0),
       abyssal: false,
     };
     expect(

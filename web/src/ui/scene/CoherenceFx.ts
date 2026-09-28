@@ -15,16 +15,16 @@ const NOTHING: FxPlan = { tears: [], grain: [], tint: 0, dark: false };
  * Owns one fact: what the coherence tear draws for a frame (Decision 5; the mock's `postFx`) — torn bands,
  * grain, a red cast and a dark flash, growing with the decay — drawn from the frame's seed (`noise`) and the
  * frame of the cycle `k`, never the clock or `Math.random`. The same noise, decay and `k` always plan the
- * same frame; the plans of the current noise are kept, the rest forgotten.
+ * same frame; the plans of the current noise — any seed equal to it — are kept, the rest forgotten.
  */
 export class CoherenceFx {
-  #noise = '';
+  #noise = new Seed(0, 0);
   #decay = 0;
   #plans: (FxPlan | undefined)[] = [];
 
-  plan(noise: string, decay: number, k: number): FxPlan {
+  plan(noise: Seed, decay: number, k: number): FxPlan {
     if (decay <= 0) return NOTHING;
-    if (noise !== this.#noise || decay !== this.#decay) {
+    if (!noise.equals(this.#noise) || decay !== this.#decay) {
       this.#noise = noise;
       this.#decay = decay;
       this.#plans = [];
@@ -32,7 +32,7 @@ export class CoherenceFx {
     const frame = ((k % FX_FRAMES) + FX_FRAMES) % FX_FRAMES;
     const known = this.#plans[frame];
     if (known !== undefined) return known;
-    const made = this.#draw((Seed.parse(noise) ?? new Seed(0, 0)).branch(frame), decay);
+    const made = this.#draw(noise.branch(frame), decay);
     this.#plans[frame] = made;
     return made;
   }

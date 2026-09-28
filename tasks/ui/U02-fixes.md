@@ -100,11 +100,11 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 - [x] **pad-marks — the pad keys' marks read off the display.** A key's `current`/`visited` come from whether its
   row got a mark (`row.mark !== null`, `row.seen !== null`). Fix: from the option's own `current`/`visited`.
   Done: `8155cf8`
-- [ ] **door-look-type — the door look's shape restated.** `SceneVM` declares its own `Look` beside the engine's
+- [x] **door-look-type — the door look's shape restated.** `SceneVM` declares its own `Look` beside the engine's
   `DoorLook`, accepted where a `DoorLook` is expected only because it has the same shape. Fix: one type, carrying
   `door-keys`' keys, a small class with `#private` fields; `Passage` likewise (today any `{ shape, looks }` literal
   passes, as `NO_PASSAGE` and `Passages.of` build them). (TS: shape is not identity.)
-  Done: —
+  Done: `d881b45`
 - [x] **picture-keys — picture names typed twice.** `main.ts` registers `street` and `building` as literals; the
   engine's kinds own those keys (`STREET_KIND`, `BUILDING_KIND`). Fix: key the registry by the kinds' keys (the
   corridor would add a third copy).
@@ -322,7 +322,9 @@ a pad key rides the car and then enters that floor; a drag on the tower lights a
 14. **noise-value.** `PlaceSummary.noise` is the frame's `Seed`, and so is `SceneVM.noise`; `CoherenceFx` keeps its
     plans for the seed it was given (`equals`). Changed on purpose: `GameEngine.test:171, 291, 313-317` (by `equals`,
     else vacuous), `HudPresenter.test:623`, `StreetPicture.test:36`, `TowerPicture.test:57`, the presenters' fixtures
-    (`noise: '0000-…'`), `CoherenceFx.test`.
+    (`noise: '0000-…'`), `CoherenceFx.test`. Found in the build: the two JSON round trips (`GameEngine.test`'s "step
+    returns plain data", `HudPresenter.test`'s "the view-model is plain data") pinned the "JSON-safe" rule step 14a
+    gave up; their JSON halves went, and `snapshot()` repeating `step` stays pinned.
 15. **came-out-of.** Each trail step carries its address. `Retrace`, a small UI class unit-tested in node, finds the
     child whose address equals a step of the previous screen's trail (a floor in the corridor mode lists the
     apartments, a level down). `HudView` keeps the previous trail and asks it. No prefix rule, and no new saved state.

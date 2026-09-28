@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { Seed } from '#engine/rng/Seed.ts';
 import { DoorLook } from '#engine/model/DoorLook.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -57,7 +58,7 @@ const PLANET: GameSnapshot = {
     lattice: null,
     drawing: 'planet',
     figure: null,
-    noise: '0000-0000-0000-0000',
+    noise: new Seed(0, 0),
   },
   options: [
     option({
@@ -593,7 +594,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
 describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws, as data', () => {
   const DRAWN: GameSnapshot = {
     ...STREET,
-    place: { ...(STREET.place ?? ({} as never)), drawing: 'street', noise: 'A1B2-C3D4-E5F6-0718' },
+    place: { ...(STREET.place ?? ({} as never)), drawing: 'street', noise: new Seed(0xa1b2c3d4, 0xe5f60718) },
     options: [
       option({
         id: 'enter:0',
@@ -623,7 +624,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
   test('one child per listed place, in the list’s order, with its figure, its address and its marks; the key, the noise and the place’s address pass through', () => {
     const drawing = presenter.toViewModel(DRAWN).drawing;
     expect(drawing.key).toBe('street');
-    expect(drawing.noise).toBe('A1B2-C3D4-E5F6-0718');
+    expect(drawing.noise).toEqual(new Seed(0xa1b2c3d4, 0xe5f60718));
     expect(drawing.address).toBe('0.0.0.0.1.0.0.0');
     expect(drawing.children).toEqual([
       {
@@ -845,11 +846,6 @@ describe('HudPresenter.toViewModel — the rest', () => {
     expect(vm.options.at(-1)?.id).toBe('debug:integrity:39');
     expect(vm.dock.map((option) => option.id)).toEqual(['leave', 'to-title']);
     expect(presenter.toViewModel(PLANET).debug).toEqual([]);
-  });
-
-  test('the view-model is plain data', () => {
-    const vm = presenter.toViewModel(STREET);
-    expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
   });
 });
 

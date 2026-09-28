@@ -1,5 +1,6 @@
 import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { DoorLook } from '#engine/model/DoorLook.ts';
+import type { Seed } from '#engine/rng/Seed.ts';
 
 /**
  * What a scene draws, as readonly data — plain data and the engine's value objects (U01b, U02): which picture (a key the registry looks up, never one a view
@@ -43,6 +44,6 @@ export interface SceneVM {
   readonly slider: string;
   /** How strongly the picture tears, 0 to 1 (`Coherence.decay`). */
   readonly decay: number;
-  /** This frame's seed as text: what the tear and the grain are drawn from. */
-  readonly noise: string;
+  /** This frame's seed: what the tear and the grain are drawn from. */
+  readonly noise: Seed;
 }

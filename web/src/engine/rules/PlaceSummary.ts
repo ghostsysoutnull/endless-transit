@@ -1,9 +1,10 @@
 import type { Fact } from '#engine/model/Fact.ts';
 import type { Figure } from '#engine/model/Figure.ts';
+import type { Seed } from '#engine/rng/Seed.ts';
 import type { MapSummary } from './MapSummary.ts';
 import type { TelemetrySummary } from './Telemetry.ts';
 
-/** What the screen may know about the place the traveller stands in: plain text and numbers only. */
+/** What the screen may know about the place the traveller stands in: plain data and the engine's value objects. */
 export interface PlaceSummary {
   /** The kind's title (`Solar system`) — never its key: a screen has no business branching on it. */
   readonly kind: string;
@@ -14,8 +15,8 @@ export interface PlaceSummary {
   readonly drawing: string;
   /** What the place's own picture is handed (U02): a building's tower, a corridor's shape; nothing for most kinds. */
   readonly figure: Figure | null;
-  /** This frame's seed as text (`FrameEntropy`: the place and the step count): what a picture's noise is drawn from, never the clock. */
-  readonly noise: string;
+  /** This frame's seed (`FrameEntropy`: the place and the step count): what a picture's noise is drawn from, never the clock. */
+  readonly noise: Seed;
   readonly icon: string;
   readonly name: string;
   /** The path as text, `0.2.1`. */

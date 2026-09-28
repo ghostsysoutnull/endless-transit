@@ -179,7 +179,7 @@ describe('GameEngine — walking the big world', () => {
       facts: [],
       drawing: 'universe',
       figure: null,
-      noise: 'D7F5-C533-B7FC-1498',
+      noise: new Seed(0xd7f5c533, 0xb7fc1498),
       frame: null,
       abyssal: false,
       childrenHeading: 'Primary filaments radiating from root',
@@ -299,7 +299,6 @@ describe('GameEngine — walking the big world', () => {
     const street = walkedDown(engine, 7);
     const place = must(street.place ?? undefined);
     expect(place.drawing).toBe('street');
-    expect(place.noise).not.toBe('');
     const buildings = street.options.filter((option) => option.role === 'travel');
     expect(buildings[0]?.address).toBe(`${place.address}.0`);
     expect(buildings[0]?.figure).toEqual({ floors: 16, doors: 9 });
@@ -324,8 +323,7 @@ describe('GameEngine — walking the big world', () => {
     // The noise is the frame's: the same place two steps later draws another frame.
     const back = engine.step('leave');
     expect(back.place?.address).toBe(place.address);
-    expect(back.place?.noise).not.toBe('');
-    expect(back.place?.noise).not.toBe(place.noise);
+    expect(back.place?.noise).not.toEqual(place.noise);
   });
 
   test('the buildings of a street are open: tapping one enters it; its floors are listed top first, numbered by floor, with their readings', () => {
@@ -666,10 +664,9 @@ describe('GameEngine — walking the big world', () => {
     );
   });
 
-  test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
+  test('snapshot() repeats what step returned', () => {
     const engine = engineOn(new MemorySaveStore());
     const snapshot = walkedDown(engine, 5);
-    expect(JSON.parse(JSON.stringify(snapshot))).toEqual(snapshot);
     expect(engine.snapshot()).toEqual(snapshot);
   });
 });

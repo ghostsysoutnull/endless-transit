@@ -534,7 +534,7 @@ export class GameEngine {
       facts: here.facts(),
       drawing: here.drawing(),
       figure: here.portrait(),
-      noise: frame.toString(),
+      noise: frame,
       frame: here.vibe()?.frame() ?? null,
       abyssal: here.abyssal(),
       childrenHeading: here.childrenHeading(),
