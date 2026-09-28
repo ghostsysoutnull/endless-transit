@@ -4,7 +4,8 @@ import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import { Roof, type RoofKind } from '#ui/scene/Roof.ts';
-import { TowerPicture } from '#ui/scene/TowerPicture.ts';
+import { SceneHash } from '#ui/scene/SceneHash.ts';
+import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { doorLook } from '#tests/support/doorLook.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
@@ -84,7 +85,7 @@ function palette(record: Set<string>): (token: string) => string {
   };
 }
 
-const picture = new TowerPicture();
+const picture = new ScenePictures().tower();
 
 describe('the tower’s camera: the car’s floor is the view', () => {
   test('it rests at the car, runs from the lowest level open to the top floor, stops at every listed floor by its number, and settles on a floor', () => {
@@ -216,7 +217,7 @@ function digest(painter: RecordingPainter): readonly [string, number] {
 
 /** The first tower address on the street whose roof is `kind` (a landmark's is always the peak). */
 function addressWith(kind: RoofKind): string {
-  const roofs = new Roof();
+  const roofs = new Roof(new SceneHash());
   for (let n = 0; ; n++) {
     const address = `0.0.0.0.0.0.0.0.${String(n)}`;
     if (roofs.of(address, false) === kind) return address;

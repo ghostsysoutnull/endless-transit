@@ -3,7 +3,7 @@ import type { SceneVM } from './SceneVM.ts';
 
 /**
  * Owns one fact: which picture draws which place, by the drawing key the engine hands over (Decision 1). A new
- * scene is one entry here, built in `main.ts`; a key with no entry keeps the screen as it was.
+ * scene is one entry here, built by `ScenePictures` and registered in `main.ts`; a key with no entry keeps the screen as it was.
  */
 export class SceneRegistry {
   readonly #pictures: ReadonlyMap<string, ScenePicture<SceneVM>>;

@@ -17,31 +17,9 @@ import { BrowserFrameSource } from '#platform/BrowserFrameSource.ts';
 import { BrowserReducedMotion } from '#platform/BrowserReducedMotion.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { Masthead } from '#ui/Masthead.ts';
-import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
-import { BonePanel } from '#ui/scene/BonePanel.ts';
-import { ColdMark } from '#ui/scene/ColdMark.ts';
-import { CorridorPicture } from '#ui/scene/CorridorPicture.ts';
-import { CurvedHall } from '#ui/scene/CurvedHall.ts';
-import { DoorLooks } from '#ui/scene/DoorLooks.ts';
-import { EndingReach } from '#ui/scene/EndingReach.ts';
-import { EndWall } from '#ui/scene/EndWall.ts';
-import { FrostMark } from '#ui/scene/FrostMark.ts';
-import { GlassPanel } from '#ui/scene/GlassPanel.ts';
-import { LongHall } from '#ui/scene/LongHall.ts';
-import { MetalPanel } from '#ui/scene/MetalPanel.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
-import { PlainMark } from '#ui/scene/PlainMark.ts';
-import { PlainPanel } from '#ui/scene/PlainPanel.ts';
-import { SceneHash } from '#ui/scene/SceneHash.ts';
-import { ServiceHall } from '#ui/scene/ServiceHall.ts';
-import { ShadowGlow } from '#ui/scene/ShadowGlow.ts';
-import { StaticHall } from '#ui/scene/StaticHall.ts';
-import { StaticMark } from '#ui/scene/StaticMark.ts';
-import { StonePanel } from '#ui/scene/StonePanel.ts';
-import { TimberPanel } from '#ui/scene/TimberPanel.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
-import { StreetPicture } from '#ui/scene/StreetPicture.ts';
-import { TowerPicture } from '#ui/scene/TowerPicture.ts';
+import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
@@ -76,41 +54,11 @@ const clock = new MotionClock(new BrowserFrameSource(window));
 // Whether the player asked for reduced motion: asked by every moving thing, read only here.
 const motion = new BrowserReducedMotion(window);
 // The places that are drawn (U01b): a drawing key the engine hands over, and its picture. A new scene is one entry.
-// The corridor is handed every part it draws with (U02): a hall per shape, a panel per material, a mark per state.
-const noise = new SceneHash();
-const glow = new ShadowGlow();
-const wall = new EndWall();
-const reach = new EndingReach();
-const long = new LongHall();
+const pictures = new ScenePictures();
 const scenes = new SceneRegistry({
-  [STREET_KIND.key()]: new StreetPicture(),
-  [BUILDING_KIND.key()]: new TowerPicture(),
-  [CORRIDOR_KIND.key()]: new CorridorPicture({
-    font: new CanvasFont(),
-    inks: new DoorLooks(),
-    glow,
-    halls: {
-      long,
-      service: new ServiceHall(wall, reach),
-      curved: new CurvedHall(wall, reach),
-      static: new StaticHall(noise, reach),
-      none: long,
-    },
-    panels: {
-      glass: new GlassPanel(),
-      metal: new MetalPanel(),
-      stone: new StonePanel(),
-      timber: new TimberPanel(),
-      bone: new BonePanel(),
-      plain: new PlainPanel(),
-    },
-    marks: {
-      frost: new FrostMark(noise),
-      cold: new ColdMark(glow),
-      static: new StaticMark(),
-      plain: new PlainMark(),
-    },
-  }),
+  [STREET_KIND.key()]: pictures.street(),
+  [BUILDING_KIND.key()]: pictures.tower(),
+  [CORRIDOR_KIND.key()]: pictures.corridor(),
 });
 new Shell(
   engine,

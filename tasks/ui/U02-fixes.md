@@ -158,7 +158,7 @@ are fixed together) and is named in the item.
   `one-job` (the user's pick, 2026-09-28): its split needs
   `one-job`'s view model mapped per picture, and its `passage?`/`shape?` part touches the Layer screens (U04).
   Done: —
-- [ ] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
+- [~] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
   `SceneView` (`CoherenceFx`, `PixelBudget`), `CanvasView` (`PixelBudget`), `StreetPicture` and `TowerPicture`
   (`SceneHash`, `Roof`, `DoorLooks`), `Roof` (`SceneHash`), `Passages` (`Sentences`, `Doors`), `HudView`
   (`SceneView`, and the older `CanvasView` with its `MapPicture`). Taken as concrete classes: `MotionClock`,
@@ -166,7 +166,7 @@ are fixed together) and is named in the item.
   handed in through small interfaces owned by the code that uses them (a clock, the pictures, a child seed); `HudView`
   gets a scene-view factory. (OO 4.)
   Done: —
-- [ ] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
+- [~] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
   `reduced-motion` and `scene-events`, `SceneView` still holds the canvas sizing and mounting, the pointer gestures,
   the slider control (it still branches on `Gesture.onSlider()`: a picture gesture and a slider gesture
   go behind one interface with it), the trip and zoom, and the tear's painting (and it reaches through `SceneMount` to command the canvas

@@ -1,28 +1,14 @@
-import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { LevelKind } from '#engine/model/LevelKind.ts';
-import type { CorridorShape } from '#engine/model/CorridorShape.ts';
-import { BoxRoof } from './BoxRoof.ts';
-import { CurvedRow } from './CurvedRow.ts';
-import { DoorLooks } from './DoorLooks.ts';
 import { LevelLook } from './LevelLook.ts';
-import { LongRow } from './LongRow.ts';
-import { MastRoof } from './MastRoof.ts';
-import { ParapetRoof } from './ParapetRoof.ts';
-import { PeakRoof } from './PeakRoof.ts';
-import { Roof, type RoofKind } from './Roof.ts';
-import type { RoofDrawer } from './RoofDrawer.ts';
-import type { RowShape } from './RowShape.ts';
 import type { SceneCamera } from './SceneCamera.ts';
-import { SceneHash } from './SceneHash.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
-import { ServiceRow } from './ServiceRow.ts';
 import { StillCamera } from './StillCamera.ts';
-import { StaticRow } from './StaticRow.ts';
+import type { TowerParts } from './TowerParts.ts';
 import { TravelCamera } from './TravelCamera.ts';
 
 /** A floor's row is at least this tall where it fits (a thumb), and the window shows 4 to 11 of them. */
@@ -76,30 +62,16 @@ interface Frame {
  * the car's floor, owned by the scene host. A pure function of its view-model, size, time, lit child and view.
  */
 export class TowerPicture implements ScenePicture<SceneVM> {
-  readonly #noise = new SceneHash();
-  readonly #font = new CanvasFont();
-  readonly #roofs = new Roof();
-  readonly #looks = new DoorLooks();
-  /** How each corridor shape runs on a floor's row; a row without a shape (a Layer's) is the plain line. */
-  readonly #rows: Readonly<Record<CorridorShape, RowShape>> = {
-    long: new LongRow(),
-    service: new ServiceRow(),
-    curved: new CurvedRow(),
-    static: new StaticRow(),
-    none: new LongRow(),
-  };
+  readonly #parts: TowerParts;
   /** Each kind of level's look: a floor in the rule's ink, a Layer faint in the void's red. */
   readonly #levelLooks: Readonly<Record<LevelKind, LevelLook>> = {
     floor: new LevelLook({ even: 0.5, odd: 0.35, ground: 'rule', number: 'text', tick: 'dim' }),
     layer: new LevelLook({ even: 0.1, odd: 0.1, ground: 'rd', number: 'rd', tick: 'rd' }),
   };
-  /** Each roof at the tower's proportions (the mock's, `transit-reframed.html:775`), the peak kept below the top. */
-  readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
-    peak: new PeakRoof({ from: -0.18, to: 0.18, lift: 1.6, ceiling: 4 }),
-    mast: new MastRoof({ at: 0.2, lift: 1 }),
-    box: new BoxRoof({ from: -0.15, to: 0.15, lift: 0.5 }),
-    flat: new ParapetRoof(),
-  };
+
+  constructor(parts: TowerParts) {
+    this.#parts = parts;
+  }
 
   camera(vm: SceneVM, size: PictureSize): SceneCamera {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
@@ -277,7 +249,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     painter.strokeStyle = palette('cy');
     painter.lineWidth = 1.2;
     painter.beginPath();
-    this.#roofDrawers[this.#roofs.of(frame.tower.address, frame.tower.landmark)].trace(painter, {
+    this.#parts.roofDrawers[this.#parts.roofs.of(frame.tower.address, frame.tower.landmark)].trace(painter, {
       base: roof,
       rise,
       origin: middle,
@@ -320,7 +292,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   #count(painter: Painter, text: string, x: number, y: number, palette: Palette): void {
     painter.globalAlpha = 1;
-    painter.font = this.#font.of('regular');
+    painter.font = this.#parts.font.of('regular');
     painter.textAlign = 'center';
     painter.textBaseline = 'middle';
     painter.fillStyle = palette('dim');
@@ -361,7 +333,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       painter.strokeRect(inner + 0.5, y + 0.5, width - shaft - 1, row);
     }
     painter.globalAlpha = 1;
-    painter.font = this.#font.of(isLit ? 'bold' : 'regular');
+    painter.font = this.#parts.font.of(isLit ? 'bold' : 'regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
     painter.fillStyle = palette(isLit || child?.visited === true ? 'yl' : look.number());
@@ -384,7 +356,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const tall = frame.row * 0.4;
     const key = `${frame.tower.address}/${String(level)}`;
     for (let k = 0; k < cells; k++) {
-      const on = this.#noise.fraction(key, k);
+      const on = this.#parts.noise.fraction(key, k);
       const x = frame.inner + cell * k;
       painter.globalAlpha = 0.13;
       painter.strokeStyle = palette('cy');
@@ -403,7 +375,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
    */
   #corridor(painter: Painter, frame: Frame, level: number, y: number, palette: Palette): void {
     const passage = frame.rows.get(level);
-    const shape = this.#rows[passage?.shape ?? 'none'];
+    const shape = this.#parts.rows[passage?.shape ?? 'none'];
     const looks = passage?.looks ?? [];
     const line = y + frame.row * 0.76;
     const bow = shape.bow(frame.row);
@@ -430,7 +402,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     for (const [index, look] of looks.entries()) {
       const point = along((Math.floor(index / 2) + 0.5) / pairs);
       painter.globalAlpha = 0.8;
-      painter.fillStyle = palette(this.#looks.ink(look.stateLook()));
+      painter.fillStyle = palette(this.#parts.inks.ink(look.stateLook()));
       painter.fillRect(point.x - 1, index % 2 === 1 ? point.y + 1 : point.y - 5, 2, 4);
     }
   }
@@ -505,7 +477,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const ticks = new Set<number>([max]);
     for (let level = min === 0 ? 0 : Math.ceil(min / step) * step; level <= max; level += step)
       ticks.add(level);
-    painter.font = this.#font.of('regular');
+    painter.font = this.#parts.font.of('regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
     for (const level of ticks) {

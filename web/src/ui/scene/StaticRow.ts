@@ -1,11 +1,15 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { RowShape } from './RowShape.ts';
-import { ShortReach } from './ShortReach.ts';
+import type { RowReach } from './RowReach.ts';
 
 /** A corridor that dissolves into static, on the tower: the line stops short and breaks into three magenta dots. */
 export class StaticRow implements RowShape {
-  readonly #end = new ShortReach();
+  readonly #end: RowReach;
+
+  constructor(end: RowReach) {
+    this.#end = end;
+  }
 
   bow(): number {
     return 0;

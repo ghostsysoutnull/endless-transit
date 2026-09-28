@@ -1,19 +1,12 @@
-import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import { BoxRoof } from './BoxRoof.ts';
-import { MastRoof } from './MastRoof.ts';
-import { NoRoof } from './NoRoof.ts';
-import { PeakRoof } from './PeakRoof.ts';
-import { Roof, type RoofKind } from './Roof.ts';
-import type { RoofDrawer } from './RoofDrawer.ts';
-import { SceneHash } from './SceneHash.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
 import { StillCamera } from './StillCamera.ts';
+import type { StreetParts } from './StreetParts.ts';
 
 /** The strip under the ground line the numbers are written in. */
 const LABEL = 16;
@@ -55,16 +48,11 @@ interface Standing {
  * building's address — never the clock's randomness.
  */
 export class StreetPicture implements ScenePicture<SceneVM> {
-  readonly #noise = new SceneHash();
-  readonly #font = new CanvasFont();
-  readonly #roofs = new Roof();
-  /** Each roof at the street's proportions (the mock's, `transit-reframed.html:749`); a flat roof draws nothing. */
-  readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
-    peak: new PeakRoof({ from: 0.2, to: 0.8, lift: 1, ceiling: -Infinity }),
-    mast: new MastRoof({ at: 0.7, lift: 0.7 }),
-    box: new BoxRoof({ from: 0.25, to: 0.75, lift: 0.4 }),
-    flat: new NoRoof(),
-  };
+  readonly #parts: StreetParts;
+
+  constructor(parts: StreetParts) {
+    this.#parts = parts;
+  }
 
   /** A street stands still: nothing to drag, no slider; going in zooms (U01b). */
   camera(): SceneCamera {
@@ -142,7 +130,7 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     painter.lineTo(left, top);
     painter.lineTo(left + width, top);
     painter.lineTo(left + width, base);
-    this.#roofDrawers[this.#roofs.of(child.address, child.landmark)].trace(painter, {
+    this.#parts.roofDrawers[this.#parts.roofs.of(child.address, child.landmark)].trace(painter, {
       base: top,
       rise: roof,
       origin: left,
@@ -168,7 +156,7 @@ export class StreetPicture implements ScenePicture<SceneVM> {
       painter.arc(left + width - 4, top + 4, 2.5, 0, Math.PI * 2);
       painter.fill();
     }
-    painter.font = this.#font.of(isLit ? 'bold' : 'regular');
+    painter.font = this.#parts.font.of(isLit ? 'bold' : 'regular');
     painter.textAlign = 'center';
     painter.textBaseline = 'top';
     painter.fillStyle = palette(isLit ? 'yl' : child.sealed ? 'dim' : 'text');
@@ -190,9 +178,9 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     for (let row = 0; row < rows; row++) {
       for (let column = 0; column < columns; column++) {
         const index = row * columns + column + 1;
-        const on = this.#noise.fraction(child.address, index);
+        const on = this.#parts.noise.fraction(child.address, index);
         if (on < 0.35) continue;
-        const pace = this.#noise.fraction(child.address, -index);
+        const pace = this.#parts.noise.fraction(child.address, -index);
         const flicker = 0.55 + 0.45 * Math.sin(seconds * pace * 3 + pace * 20);
         const warm = on > 0.85;
         painter.fillStyle = warm ? bright : text;
@@ -229,13 +217,13 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     const text = palette('text');
     const warm = palette('yl');
     for (let star = 0; star < STARS; star++) {
-      const x = this.#noise.fraction('star-x', star) * size.width;
-      const y = this.#noise.fraction('star-y', star) * size.height * STARRY;
-      const big = this.#noise.fraction('star-big', star) < 0.07;
-      const pace = 0.5 + this.#noise.fraction('star-pace', star) * 1.8;
-      const phase = this.#noise.fraction('star-phase', star) * 6;
-      const glow = this.#noise.fraction('star-glow', star);
-      painter.fillStyle = this.#noise.fraction('star-warm', star) < 0.14 ? warm : text;
+      const x = this.#parts.noise.fraction('star-x', star) * size.width;
+      const y = this.#parts.noise.fraction('star-y', star) * size.height * STARRY;
+      const big = this.#parts.noise.fraction('star-big', star) < 0.07;
+      const pace = 0.5 + this.#parts.noise.fraction('star-pace', star) * 1.8;
+      const phase = this.#parts.noise.fraction('star-phase', star) * 6;
+      const glow = this.#parts.noise.fraction('star-glow', star);
+      painter.fillStyle = this.#parts.noise.fraction('star-warm', star) < 0.14 ? warm : text;
       painter.globalAlpha = 0.45 * (0.2 + 0.7 * glow * (0.55 + 0.45 * Math.sin(seconds * pace + phase)));
       painter.fillRect(x, y, big ? 1.8 : 1, big ? 1.8 : 1);
     }
@@ -249,7 +237,8 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     painter.beginPath();
     for (let drop = 0; drop < RAIN; drop++) {
       const x =
-        (this.#noise.fraction('rain', drop) * size.width + seconds * 30 * (1 + (drop % 3))) % size.width;
+        (this.#parts.noise.fraction('rain', drop) * size.width + seconds * 30 * (1 + (drop % 3))) %
+        size.width;
       const y = ((drop * 53 + seconds * 260) % (size.height * 1.1)) - size.height * 0.1;
       painter.moveTo(x, y);
       painter.lineTo(x - 2, y + 9);
