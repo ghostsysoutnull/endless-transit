@@ -21,6 +21,8 @@ export class TravelCamera implements SceneCamera {
   readonly #pace: { readonly base: number; readonly per: number; readonly most: number };
   readonly #zoom: boolean;
   readonly #stops: readonly CameraStop[];
+  /** The slider's places: one per view, the first stop there standing for its twins (a corridor's pair of doors). */
+  readonly #places: readonly CameraStop[];
   readonly #track: CameraTrack | null;
 
   constructor(facts: {
@@ -57,6 +59,7 @@ export class TravelCamera implements SceneCamera {
     this.#zoom = facts.zoom;
     // The slider's order is the stops' order along the view.
     this.#stops = [...facts.stops].sort((one, other) => one.at - other.at || one.id.localeCompare(other.id));
+    this.#places = this.#stops.filter((stop, index) => this.#stops[index - 1]?.at !== stop.at);
     this.#track = facts.track;
   }
 
@@ -102,12 +105,12 @@ export class TravelCamera implements SceneCamera {
   }
 
   stopCount(): number {
-    return this.#stops.length;
+    return this.#places.length;
   }
 
   nearest(view: number): { readonly id: string; readonly index: number } | undefined {
     let best: { id: string; index: number; distance: number } | undefined;
-    for (const [index, stop] of this.#stops.entries()) {
+    for (const [index, stop] of this.#places.entries()) {
       const distance = Math.abs(stop.at - view);
       if (best === undefined || distance < best.distance) best = { id: stop.id, index, distance };
     }
@@ -115,13 +118,9 @@ export class TravelCamera implements SceneCamera {
   }
 
   stepFrom(view: number, step: number): CameraStop | undefined {
-    const nearest = this.#stops[this.nearest(view)?.index ?? -1];
+    const nearest = this.nearest(view);
     if (nearest === undefined) return undefined;
-    // Stops that share a view (a corridor's pair of doors) are one step: each view's first stop stands for it.
-    const views = [...new Set(this.#stops.map((stop) => stop.at))];
-    const from = views.indexOf(nearest.at);
-    const at = views[Math.min(views.length - 1, Math.max(0, from + step))];
-    return this.#stops.find((stop) => stop.at === at);
+    return this.#places[Math.min(this.#places.length - 1, Math.max(0, nearest.index + step))];
   }
 
   track(): CameraTrack | null {

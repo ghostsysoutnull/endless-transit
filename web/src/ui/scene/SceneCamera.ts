@@ -28,11 +28,11 @@ export interface SceneCamera {
   zooms(): boolean;
   /** The view at a child's stop, by its option id; nothing for a child without one. */
   stopOf(id: string): number | undefined;
-  /** How many stops the slider has. */
+  /** How many places the slider has: one per view, stops that share a view (a pair of doors) counted once. */
   stopCount(): number;
-  /** The stop nearest the view and its place in the slider's order; nothing when there are no stops. */
+  /** The slider's place nearest the view (its first stop) and its index in the slider's order; nothing when there are no stops. */
   nearest(view: number): { readonly id: string; readonly index: number } | undefined;
-  /** The first stop `step` views on from the one nearest the view (stops at one view are one step), held at the ends. */
+  /** The slider's place `step` places from the one nearest the view, held at the ends. */
   stepFrom(view: number, step: number): CameraStop | undefined;
   /** The slider's box on the picture; nothing when there is no slider. */
   track(): CameraTrack | null;
