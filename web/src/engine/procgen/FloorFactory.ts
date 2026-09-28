@@ -1,5 +1,4 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
-import { APARTMENT_KIND } from '#engine/model/Apartment.ts';
 import type { Building } from '#engine/model/Building.ts';
 import { CORRIDOR_KIND } from '#engine/model/Corridor.ts';
 import { Floor, FLOOR_KIND } from '#engine/model/Floor.ts';
@@ -25,11 +24,7 @@ export class FloorFactory implements LocationFactory<Floor, Building> {
     this.#zones = new FloorZones(library);
     this.#sentences = new Sentences(library, 'floor');
     this.#corridor = new Progeny(world, undefined, () => world.factoryFor(CORRIDOR_KIND));
-    this.#passages = new Passages(
-      library,
-      this.#corridor,
-      new Progeny(world, undefined, () => world.factoryFor(APARTMENT_KIND)),
-    );
+    this.#passages = new Passages(library);
   }
 
   kind(): LocationKind {
