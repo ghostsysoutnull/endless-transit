@@ -227,7 +227,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     for (const id of ['new-world', 'enter-world']) engine.step(id);
     expect(engine.snapshot().map).toBeNull();
     const shown = engine.step('map');
-    expect(shown.player).toEqual({ coherence: 99, band: 'stable', steps: 0 });
+    expect(shown.player).toMatchObject({ coherence: 99, band: 'stable', steps: 0 });
     expect(shown.message).toBe('NEURAL_LATTICE_PROJECTION: 4 nodes plotted from Bright Boulevard.');
     expect(shown.map).toEqual(shown.place?.lattice);
     expect(engine.snapshot().map).toEqual(shown.map);
@@ -246,7 +246,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     );
     expect(engine.snapshot().trace).toBeNull();
     const shown = engine.step('trace');
-    expect(shown.player).toEqual({ coherence: 99, band: 'stable', steps: 0 });
+    expect(shown.player).toMatchObject({ coherence: 99, band: 'stable', steps: 0 });
     expect(shown.message).toBe('NEURAL_LATTICE_TRACE_INITIATED: 10 levels from the universe.');
     expect(
       shown.trace?.steps.map(

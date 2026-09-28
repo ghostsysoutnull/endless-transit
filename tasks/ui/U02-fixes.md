@@ -105,10 +105,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   `door-keys`' keys, a small class with `#private` fields; `Passage` likewise (today any `{ shape, looks }` literal
   passes, as `NO_PASSAGE` and `Passages.of` build them). (TS: shape is not identity.)
   Done: —
-- [ ] **picture-keys — picture names typed twice.** `main.ts` registers `street` and `building` as literals; the
+- [x] **picture-keys — picture names typed twice.** `main.ts` registers `street` and `building` as literals; the
   engine's kinds own those keys (`STREET_KIND`, `BUILDING_KIND`). Fix: key the registry by the kinds' keys (the
   corridor would add a third copy).
-  Done: —
+  Done: `6dbb3c1`
 
 ## Rules added since the audit (OO 7, 9, 11; TypeScript and OO)
 
@@ -137,10 +137,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   and its `ratio()` is then NaN. Fix: a gesture class whose `move(along)` owns `moved`; `PixelBudget` refuses a limit
   that is not positive. (OO 7.)
   Done: —
-- [ ] **host-query — an unchecked narrowing.** `HudView.#host` returns `querySelector(...)` as `HTMLElement | null`,
+- [x] **host-query — an unchecked narrowing.** `HudView.#host` returns `querySelector(...)` as `HTMLElement | null`,
   the element type taken on trust from the return type (an older line, widened by the rework). Fix: an
   `instanceof HTMLElement` check inside `#host`. (TS: a cast is a promise.)
-  Done: —
+  Done: `6dbb3c1`
 
 ## After the corridor
 

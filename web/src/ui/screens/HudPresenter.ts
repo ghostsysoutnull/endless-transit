@@ -155,7 +155,7 @@ export class HudPresenter implements Presenter<HudVM> {
             },
       map: snapshot.map === null ? null : this.#mapPanel(snapshot.map, MAP_HEADING),
       trace: snapshot.trace === null ? null : this.#tracePanel(snapshot.trace),
-      drawing: this.#drawing(place, travel, new Coherence(player.coherence).decay()),
+      drawing: this.#drawing(place, travel, player.decay),
       pad: this.#pad(travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows,
@@ -252,22 +252,20 @@ export class HudPresenter implements Presenter<HudVM> {
   #pad(travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
     if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
     const numbered = rows
-      .map((row, index) => ({ row, number: Number(travel[index]?.ordinal ?? '0') }))
+      .map((row, index) => ({ row, option: travel[index], number: Number(travel[index]?.ordinal ?? '0') }))
       .sort((one, other) => one.number - other.number);
     const tens = travel.length > PAD_GROUP;
-    const groups = new Map<number, { label: string; rows: TravelRowVM[] }>();
-    for (const { row, number } of numbered) {
-      const group = tens ? Math.floor(number / 10) : 0;
-      const entry = groups.get(group) ?? { label: '', rows: [] };
-      entry.rows.push(row);
-      groups.set(group, entry);
+    const groups = new Map<number, (typeof numbered)[number][]>();
+    for (const entry of numbered) {
+      const group = tens ? Math.floor(entry.number / 10) : 0;
+      groups.set(group, [...(groups.get(group) ?? []), entry]);
     }
     const list = [...groups.values()].map((group) => {
-      const first = group.rows[0]?.ordinal ?? '';
-      const last = group.rows.at(-1)?.ordinal ?? '';
+      const first = group[0]?.row.ordinal ?? '';
+      const last = group.at(-1)?.row.ordinal ?? '';
       return {
         label: `${String(Number(first))}–${String(Number(last))}`,
-        keys: group.rows.map((row) => ({
+        keys: group.map(({ row, option }) => ({
           id: row.id,
           number: String(Number(row.ordinal)),
           spoken: [
@@ -276,8 +274,8 @@ export class HudPresenter implements Presenter<HudVM> {
             ...(row.seen === null ? [] : [row.seen.label]),
             ...row.readings.map((reading) => `${reading.label} ${reading.value}`),
           ].join(', '),
-          current: row.mark !== null,
-          visited: row.seen !== null,
+          current: option?.current ?? false,
+          visited: option?.visited ?? false,
         })),
       };
     });

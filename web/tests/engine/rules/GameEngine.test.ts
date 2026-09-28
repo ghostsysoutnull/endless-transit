@@ -96,6 +96,16 @@ function inTheFirstRoom(engine: GameEngine): GameSnapshot {
   return engine.step('enter:0');
 }
 
+describe('GameEngine — the traveller the screen is shown', () => {
+  test('the player carries the tear’s strength the coherence gives: none while stable, half at 35', () => {
+    expect(engineOn(new MemorySaveStore(saveText('0.0.0.0.0.0.0.0'))).snapshot().player?.decay).toBe(0);
+    const falling = engineOn(
+      new MemorySaveStore(saveText('0.0.0.0.0.0.0.0', {}, undefined, { coherence: 35 })),
+    );
+    expect(falling.snapshot().player?.decay).toBeCloseTo(0.5, 10);
+  });
+});
+
 describe('GameEngine — the title screen', () => {
   test('a fresh game has no world, no place, and offers exactly one option: new world', () => {
     const snapshot = engineOn(new MemorySaveStore()).snapshot();
@@ -589,7 +599,7 @@ describe('GameEngine — walking the big world', () => {
     expect(street.options.find((option) => option.id === 'help')).toEqual(system('help', 'h', 'Help'));
     const open = engine.step('help');
     expect(open.prompt).toEqual({ id: 'help', outcome: '', figures: {} });
-    expect(open.player).toEqual({ coherence: 85, band: 'stable', steps: 14 });
+    expect(open.player).toMatchObject({ coherence: 85, band: 'stable', steps: 14 });
     expect(open.place?.name).toBe('Bright Boulevard');
     expect(open.options).toEqual([{ ...system('close', 'b', 'Back to the world'), role: 'return' }]);
     expect(open.message).toBe('');
@@ -597,7 +607,7 @@ describe('GameEngine — walking the big world', () => {
     expect(engine.step('scan').prompt?.id).toBe('help');
     const back = engine.step('close');
     expect(back.prompt).toBeNull();
-    expect(back.player).toEqual({ coherence: 85, band: 'stable', steps: 14 });
+    expect(back.player).toMatchObject({ coherence: 85, band: 'stable', steps: 14 });
     expect(back.place?.name).toBe('Bright Boulevard');
     expect(back.scan).toBeNull();
     // A reload lands in the world: the prompt is not saved.
@@ -750,7 +760,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     const engine = engineOn(new MemorySaveStore());
     expect(engine.step('new-world').player).toBeNull();
     const street = engine.step('enter-world');
-    expect(street.player).toEqual({ coherence: 100, band: 'stable', steps: 0 });
+    expect(street.player).toMatchObject({ coherence: 100, band: 'stable', steps: 0 });
   });
 
   test('a move costs one and counts one; the drain runs before the command, so the place moved into is the one shown at the new value', () => {
@@ -759,14 +769,14 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     engine.step('enter-world');
     const building = engine.step('enter:0');
     expect(building.place?.kind).toBe('Building');
-    expect(building.player).toEqual({ coherence: 99, band: 'stable', steps: 1 });
+    expect(building.player).toMatchObject({ coherence: 99, band: 'stable', steps: 1 });
     const lobby = engine.step('enter:15');
-    expect(lobby.player).toEqual({ coherence: 98, band: 'stable', steps: 2 });
+    expect(lobby.player).toMatchObject({ coherence: 98, band: 'stable', steps: 2 });
     const corridor = engine.step('move:corridor');
-    expect(corridor.player).toEqual({ coherence: 97, band: 'stable', steps: 3 });
+    expect(corridor.player).toMatchObject({ coherence: 97, band: 'stable', steps: 3 });
     const floor = engine.step('leave');
     expect(floor.place?.kind).toBe('Building');
-    expect(floor.player).toEqual({ coherence: 96, band: 'stable', steps: 4 });
+    expect(floor.player).toMatchObject({ coherence: 96, band: 'stable', steps: 4 });
   });
 
   test('the title screen is a global command: it costs one and counts no step; continuing is free; a stale tap costs nothing', () => {
@@ -777,9 +787,13 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     const title = engine.step('to-title');
     expect(title.player).toBeNull();
     const back = engine.step('enter-world');
-    expect(back.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
-    expect(engine.step('open-pod-bay-doors').player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
-    expect(engine.step('move:up').player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    expect(back.player).toMatchObject({ coherence: 98, band: 'stable', steps: 1 });
+    expect(engine.step('open-pod-bay-doors').player).toMatchObject({
+      coherence: 98,
+      band: 'stable',
+      steps: 1,
+    });
+    expect(engine.step('move:up').player).toMatchObject({ coherence: 98, band: 'stable', steps: 1 });
   });
 
   test("the drain follows the street's era: two per prompt where it is entropic (Guide:137, 304-305), on every screen below it", () => {
@@ -872,7 +886,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     engine.step('debug:integrity:1');
     const dead = engine.step('move:forward');
     expect(dead.place?.address).toBe(room.place?.address);
-    expect(dead.player).toEqual({ coherence: 0, band: 'critical', steps: 4 });
+    expect(dead.player).toMatchObject({ coherence: 0, band: 'critical', steps: 4 });
     expect(dead.prompt).toEqual({ id: 'reboot', outcome: 'rebooting', figures: {} });
     expect(dead.options).toEqual([system('reboot', '', 'Rebuild')]);
     expect(dead.message).toBe('');
@@ -886,7 +900,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     expect(reborn.place?.kind).toBe('Street');
     expect(reborn.place?.address).toBe('0.0.0.0.0.0.0.0');
     expect(reborn.world?.seed).toBe('7F3A-91C2-0B4D-E6A8');
-    expect(reborn.player).toEqual({ coherence: 100, band: 'stable', steps: 4 });
+    expect(reborn.player).toMatchObject({ coherence: 100, band: 'stable', steps: 4 });
     expect(reborn.message).toBe('Substrate rebuilt. Coherence 100.');
     // Visited places are kept: the building and its lobby are marked; the world's own state is undone: the lobby is at its elevator again.
     const buildings = reborn.options.filter((option) => option.role === 'travel');
@@ -959,7 +973,7 @@ describe('GameEngine — the recap: the endings of `quit`, by places visited (Gu
     );
     engine.step('enter:0');
     const recap = engine.step('recap');
-    expect(recap.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    expect(recap.player).toMatchObject({ coherence: 98, band: 'stable', steps: 1 });
     expect(recap.place?.kind).toBe('Building');
     expect(recap.prompt).toEqual({
       id: 'recap',
@@ -993,7 +1007,7 @@ describe('GameEngine — the recap: the endings of `quit`, by places visited (Gu
     expect(title.options[0]?.label).toBe('Continue');
     const back = engine.step('enter-world');
     expect(back.place).toEqual(building.place);
-    expect(back.player).toEqual({ coherence: 98, band: 'stable', steps: 1 });
+    expect(back.player).toMatchObject({ coherence: 98, band: 'stable', steps: 1 });
     // The recap is not a saved state: a reload after opening it lands in the world.
     engine.step('recap');
     expect(engineOn(saves).snapshot().prompt).toBeNull();
@@ -1072,7 +1086,7 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     expect(taken.message).toBe(
       'Captured brass censer fused to laser cutter. Frequency: 3577 Hz. Harmonic resonance: +10%.',
     );
-    expect(taken.player).toEqual({ coherence: 95, band: 'stable', steps: 5 });
+    expect(taken.player).toMatchObject({ coherence: 95, band: 'stable', steps: 5 });
     expect(taken.buffer).toEqual({
       size: 2,
       capacity: 16,
@@ -1110,7 +1124,7 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     engine.step('capture:0');
     engine.step('capture:0'); // step 6 wins the lottery too: four fragments now
     const opened = engine.step('buffer');
-    expect(opened.player).toEqual({ coherence: 93, band: 'stable', steps: 6 });
+    expect(opened.player).toMatchObject({ coherence: 93, band: 'stable', steps: 6 });
     expect(opened.prompt).toEqual({ id: 'buffer', outcome: '', figures: { selected: '' } });
     expect(opened.place?.kind).toBe('Room');
     expect(opened.options).toEqual([
@@ -1129,7 +1143,7 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     expect(engine.step('capture:0').prompt?.id).toBe('buffer');
     const closed = engine.step('close');
     expect(closed.prompt).toBeNull();
-    expect(closed.player).toEqual({ coherence: 93, band: 'stable', steps: 6 });
+    expect(closed.player).toMatchObject({ coherence: 93, band: 'stable', steps: 6 });
     expect(closed.message).toBe('');
   });
 

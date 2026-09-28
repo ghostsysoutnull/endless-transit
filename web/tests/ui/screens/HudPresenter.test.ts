@@ -75,7 +75,7 @@ const PLANET: GameSnapshot = {
     option({ id: 'leave', key: 'l', label: 'Leave Planet', role: 'return' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
-  player: { coherence: 87, band: 'stable', steps: 12 },
+  player: { coherence: 87, band: 'stable', steps: 12, decay: 0 },
   buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: null,
   message: 'Entered Auraea.',
@@ -652,10 +652,9 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
     expect(drawing.label).not.toBe('');
   });
 
-  test('the tear’s strength is the one Coherence gives: none while stable, half at 35', () => {
-    expect(presenter.toViewModel(DRAWN).drawing.decay).toBe(0);
-    const falling = { ...DRAWN, player: { coherence: 35, band: 'degraded', steps: 12 } };
-    expect(presenter.toViewModel(falling).drawing.decay).toBeCloseTo(0.5, 10);
+  test('the tear’s strength is the one the engine hands over with the player', () => {
+    const falling = { ...DRAWN, player: { coherence: 35, band: 'degraded', steps: 12, decay: 0.5 } };
+    expect(presenter.toViewModel(falling).drawing.decay).toBe(0.5);
   });
 
   test('a child with no figure is drawn with none: no floors, no doors', () => {
@@ -810,7 +809,10 @@ describe('HudPresenter.toViewModel — the rest', () => {
       bandLabel: 'stable',
       valueText: '87 percent, stable',
     });
-    const low = presenter.toViewModel({ ...PLANET, player: { coherence: 12, band: 'critical', steps: 3 } });
+    const low = presenter.toViewModel({
+      ...PLANET,
+      player: { coherence: 12, band: 'critical', steps: 3, decay: 0.8 },
+    });
     expect(low.meter.value).toBe(12);
     expect(low.meter.band).toBe('critical');
     expect(low.meter.valueText).toBe('12 percent, critical');

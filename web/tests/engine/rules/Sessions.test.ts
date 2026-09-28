@@ -116,17 +116,17 @@ describe('Sessions — a save is the whole state, on every tap of a play session
     const engine = engineOn(seed, saves);
     let snapshot = engine.snapshot();
     for (const id of session.history.slice(0, 4)) snapshot = engine.step(id);
-    expect(snapshot.player).toEqual({ coherence: 96, band: 'stable', steps: 2 });
+    expect(snapshot.player).toMatchObject({ coherence: 96, band: 'stable', steps: 2 });
     expect(snapshot.place?.name).toMatch(/^Floor \d+$/);
     for (const id of session.history.slice(4, 51)) snapshot = engine.step(id);
-    expect(snapshot.player).toEqual({ coherence: 2, band: 'critical', steps: 49 });
+    expect(snapshot.player).toMatchObject({ coherence: 2, band: 'critical', steps: 49 });
     expect(snapshot.prompt).toBeNull();
     snapshot = engine.step(must(session.history[51]));
-    expect(snapshot.player).toEqual({ coherence: 0, band: 'critical', steps: 49 });
+    expect(snapshot.player).toMatchObject({ coherence: 0, band: 'critical', steps: 49 });
     expect(snapshot.prompt?.id).toBe('reboot');
     const last = replay(seed, session.history);
     expect(last.place?.kind).toBe('Street');
-    expect(last.player).toEqual({ coherence: 90, band: 'stable', steps: 54 });
+    expect(last.player).toMatchObject({ coherence: 90, band: 'stable', steps: 54 });
   });
 
   test('capture-merge-drop.json takes, merges, drops, takes back and dies with a full buffer: the buffer, the tally and the rooms survive every reload and the reboot', () => {

@@ -27,7 +27,7 @@ const HELP: GameSnapshot = {
     figure: null,
     noise: '0000-0000-0000-0000',
   },
-  player: { coherence: 85, band: 'stable', steps: 14 },
+  player: { coherence: 85, band: 'stable', steps: 14, decay: 0 },
   buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: { id: 'help', outcome: '', figures: {} },
   options: [

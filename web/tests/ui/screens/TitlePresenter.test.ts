@@ -154,7 +154,11 @@ describe('TitlePresenter.toViewModel', () => {
       abyssal: false,
     };
     expect(
-      presenter.accepts({ ...atTitle, place, player: { coherence: 100, band: 'stable', steps: 0 } }),
+      presenter.accepts({
+        ...atTitle,
+        place,
+        player: { coherence: 100, band: 'stable', steps: 0, decay: 0 },
+      }),
     ).toBe(false);
   });
 

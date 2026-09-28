@@ -48,7 +48,7 @@ const OPEN: GameSnapshot = {
     figure: null,
     noise: '0000-0000-0000-0000',
   },
-  player: { coherence: 54, band: 'degraded', steps: 6 },
+  player: { coherence: 54, band: 'degraded', steps: 6, decay: 0.2 },
   buffer: {
     size: 2,
     capacity: 16,
