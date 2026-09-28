@@ -19,7 +19,8 @@ it as a `<kbd>` (`HudView`, `BufferView`, `RecapView`, `RebootView`, `HelpView`)
 test files pin the letters.
 **Skipped on the one profile, so guarding nothing:** 16 `test.skip(hasTouch, …)` tests in `web/e2e/` (`focus` 6,
 `buildings` 2, `a11y`, `help`, `items`, `map`, `ritual`, `survival`, `title`, `world` 1 each) — keys, Tab and Enter;
-they go with the keys, or are covered another way.
+they go with the keys, or are covered another way. One of them, `focus.spec.ts`'s Enter round trip, also asserts the dock
+unfolded (`more` hidden), which is false since the wide layout went.
 
 ## 🟢 CLOSED
 

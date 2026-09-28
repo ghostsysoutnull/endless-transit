@@ -23,13 +23,6 @@ async function shoot(page: Page, name: string): Promise<void> {
   await page.screenshot({ path: test.info().outputPath(`${test.info().project.name}-${name}.png`) });
 }
 
-/** Whether `inner` sits to the right of `outer` — in the desktop grid's second column. */
-async function rightOf(page: Page, inner: string, outer: string): Promise<boolean> {
-  const a = await page.locator(inner).boundingBox();
-  const b = await page.locator(outer).boundingBox();
-  return a !== null && b !== null && a.x >= b.x + b.width;
-}
-
 test('a room reads like the old game: its interpretation, furniture, the object count, the RESONANCE line, and its objects as tiles', async ({
   page,
   hasTouch,
@@ -97,44 +90,9 @@ test('a door tells its full appearance under its name on the corridor list; one 
   expect(problems).toEqual([]);
 });
 
-test('on a desktop the right column is filled on the elevator and in a room: the telemetry pane, and the room’s objects; the map outdoors', async ({
-  page,
-  isMobile,
-}) => {
-  test.skip(isMobile, 'the two-column layout is the desktop’s');
-  const problems = watchForErrors(page);
-  await plant(page, LOBBY);
-  await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
-  await expect(page.getByTestId('telemetry')).toBeVisible();
-  await expect(page.getByTestId('telemetry')).toBeInViewport({ ratio: 1 });
-  expect(await rightOf(page, '.aside', '.cap')).toBe(true);
-  await expect(page.locator('.travel')).toHaveCount(0);
-  await shoot(page, '7-elevator-column');
-
-  await press(page, /enter corridor/i, false);
-  await tapOption(page, 'enter:0', false);
-  await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(page.getByTestId('objects')).toBeInViewport({ ratio: 1 });
-  expect(await rightOf(page, '.aside', '.cap')).toBe(true);
-  expect(await rightOf(page, '.aside', '.moves')).toBe(true);
-
-  // Exit the apartment (onto the floor), leave the floor, leave the building: the street.
-  for (let level = 0; level < 3; level++) await press(page, /leave|exit/i, false);
-  await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('telemetry')).toHaveCount(0);
-  await expect(page.getByTestId('objects')).toHaveCount(0);
-  // Outdoors the pane is the drawn map (I08; Guide:339), still to the right of the narrative.
-  await expect(page.getByTestId('pane-map')).toBeVisible();
-  expect(await rightOf(page, '.aside', '.cap')).toBe(true);
-  expect(problems).toEqual([]);
-});
-
 test('on a phone the objects sit under the moves, before the way out, and every tile reads at 360 px', async ({
   page,
-  isMobile,
 }) => {
-  test.skip(!isMobile, 'the one-column layout is the phone’s');
   const problems = watchForErrors(page);
   await page.setViewportSize({ width: 360, height: 640 });
   await plant(page, FIRST_ROOM, { [LOBBY]: 'corridor' });

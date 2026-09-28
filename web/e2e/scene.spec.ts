@@ -205,17 +205,14 @@ test('coherence is felt: at a low value the picture tears and the name flickers'
   await shoot(page, 'street-29');
 });
 
-test('the first screen of a drawn street: on a phone the name, then the picture, then the list, then the rest of the card; on a desktop the picture above the card', async ({
+test('the first screen of a drawn street: the name, then the picture, then the list, then the rest of the card', async ({
   page,
-  isMobile,
 }) => {
   await plant(page, saveText(SEED, STREET));
-  const sizes = isMobile
-    ? [
-        { width: 360, height: 640 },
-        { width: 412, height: 915 },
-      ]
-    : [page.viewportSize() ?? { width: 1280, height: 720 }];
+  const sizes = [
+    { width: 360, height: 640 },
+    { width: 412, height: 915 },
+  ];
   for (const size of sizes) {
     await page.setViewportSize(size);
     await page.goto('./');
@@ -231,16 +228,10 @@ test('the first screen of a drawn street: on a phone the name, then the picture,
     console.log(
       `[scene] ${test.info().project.name} ${String(size.width)}x${String(size.height)}: picture ${String(Math.round(scene.width))}x${String(Math.round(scene.height))} at y=${String(Math.round(scene.y))}, first row bottom=${String(Math.round(row.y + row.height))}`,
     );
-    if (isMobile) {
-      expect(name.y + name.height).toBeLessThanOrEqual(scene.y);
-      expect(scene.y + scene.height).toBeLessThanOrEqual(row.y);
-      expect(row.y + row.height).toBeLessThanOrEqual(tags.y);
-      await expect(page.locator('.rows button[data-option]').first()).toBeInViewport({ ratio: 1 });
-    } else {
-      expect(scene.y + scene.height).toBeLessThanOrEqual(name.y);
-      expect(Math.abs(scene.x - name.x)).toBeLessThan(24);
-      expect(scene.height).toBeLessThanOrEqual(size.height * 0.6 + 1);
-    }
+    expect(name.y + name.height).toBeLessThanOrEqual(scene.y);
+    expect(scene.y + scene.height).toBeLessThanOrEqual(row.y);
+    expect(row.y + row.height).toBeLessThanOrEqual(tags.y);
+    await expect(page.locator('.rows button[data-option]').first()).toBeInViewport({ ratio: 1 });
     await shoot(page, `street-first-screen-${String(size.width)}x${String(size.height)}`);
   }
 });
