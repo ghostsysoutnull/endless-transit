@@ -2,7 +2,7 @@ import { type CorridorShape, corridorShape } from '#engine/model/CorridorShape.t
 import type { Seed } from '#engine/rng/Seed.ts';
 import type { CorridorDeal } from './CorridorDeal.ts';
 import type { LineDecks } from './LineDecks.ts';
-import type { Lines } from './Lines.ts';
+import type { LineDeal } from './LineDeal.ts';
 
 /**
  * Owns one fact: a corridor's sentence and the shape it carries, dealt together (U02) — the corridor list read whole
@@ -10,7 +10,7 @@ import type { Lines } from './Lines.ts';
  * as it is made and the floor's peek at it.
  */
 export class CorridorWords implements CorridorDeal {
-  readonly #sentences: Lines;
+  readonly #sentences: LineDeal;
   readonly #lines: readonly (readonly [string, CorridorShape])[];
 
   constructor(decks: LineDecks) {

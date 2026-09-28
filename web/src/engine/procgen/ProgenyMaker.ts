@@ -1,5 +1,6 @@
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { ChildCount } from './ChildCount.ts';
 import type { Children } from './Children.ts';
 import type { FactoryLookup } from './FactoryLookup.ts';
 import type { Offspring } from './Offspring.ts';
@@ -13,10 +14,7 @@ export class ProgenyMaker implements Offspring {
     this.#world = world;
   }
 
-  of(
-    count: { min: number; max: number; unit?: number } | undefined,
-    kindOf: (childSeed: Seed) => LocationKind,
-  ): Children {
+  of(count: ChildCount, kindOf: (childSeed: Seed) => LocationKind): Children {
     return new Progeny(this.#world, count, (childSeed) => this.#world.factoryFor(kindOf(childSeed)));
   }
 }

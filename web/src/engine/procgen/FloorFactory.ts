@@ -8,7 +8,7 @@ import { Phrase } from '#engine/model/Phrase.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import type { Children } from './Children.ts';
 import type { LineDecks } from './LineDecks.ts';
-import type { Lines } from './Lines.ts';
+import type { SentenceDeal } from './SentenceDeal.ts';
 import type { Offspring } from './Offspring.ts';
 import type { PassagePeek } from './PassagePeek.ts';
 import type { Zones } from './Zones.ts';
@@ -16,7 +16,7 @@ import type { Zones } from './Zones.ts';
 /** A floor: its zone by height, one sentence dealt from the floor descriptions, a peek at its corridor-to-be; one child, the corridor. */
 export class FloorFactory implements LocationFactory<Floor, Building> {
   readonly #zones: Zones;
-  readonly #sentences: Lines;
+  readonly #sentences: SentenceDeal;
   readonly #corridor: Children;
   readonly #passages: PassagePeek;
 

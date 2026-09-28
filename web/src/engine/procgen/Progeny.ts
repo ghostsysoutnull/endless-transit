@@ -1,5 +1,6 @@
 import type { Location } from '#engine/model/Location.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { ChildCount } from './ChildCount.ts';
 import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import type { Children } from './Children.ts';
@@ -17,11 +18,7 @@ export class Progeny implements Children {
   readonly #count: { min: number; max: number; unit: number } | undefined;
   readonly #factoryOf: (childSeed: Seed) => LocationFactory;
 
-  constructor(
-    world: FactoryLookup,
-    count: { min: number; max: number; unit?: number } | undefined,
-    factoryOf: (childSeed: Seed) => LocationFactory,
-  ) {
+  constructor(world: FactoryLookup, count: ChildCount, factoryOf: (childSeed: Seed) => LocationFactory) {
     this.#world = world;
     this.#count = count === undefined ? undefined : { ...count, unit: count.unit ?? 1 };
     this.#factoryOf = factoryOf;
