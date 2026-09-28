@@ -738,7 +738,7 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
       })),
     });
     expect(drawing.slider).toBe('Ride to a floor');
-    expect(drawing.shape).toBe('');
+    expect(drawing.shape).toBe('none');
     expect(presenter.toViewModel(STREET).drawing.tower).toBeNull();
   });
 

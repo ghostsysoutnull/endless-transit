@@ -30,7 +30,7 @@ function street(
       door: null,
     })),
     tower: null,
-    shape: '',
+    shape: 'none',
     slider: '',
     decay: 0,
     noise: '7F3A-91C2-0B4D-E6A8',

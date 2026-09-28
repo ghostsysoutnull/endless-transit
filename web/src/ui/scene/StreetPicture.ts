@@ -1,7 +1,12 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import { Roof } from './Roof.ts';
+import { BoxRoof } from './BoxRoof.ts';
+import { MastRoof } from './MastRoof.ts';
+import { NoRoof } from './NoRoof.ts';
+import { PeakRoof } from './PeakRoof.ts';
+import { Roof, type RoofKind } from './Roof.ts';
+import type { RoofDrawer } from './RoofDrawer.ts';
 import { SceneHash } from './SceneHash.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
@@ -52,6 +57,13 @@ interface Standing {
 export class StreetPicture implements ScenePicture<SceneVM> {
   readonly #noise = new SceneHash();
   readonly #roofs = new Roof();
+  /** Each roof at the street's proportions (the mock's, `transit-reframed.html:749`); a flat roof draws nothing. */
+  readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
+    peak: new PeakRoof({ from: 0.2, to: 0.8, lift: 1, ceiling: -Infinity }),
+    mast: new MastRoof({ at: 0.7, lift: 0.7 }),
+    box: new BoxRoof({ from: 0.25, to: 0.75, lift: 0.4 }),
+    flat: new NoRoof(),
+  };
 
   /** A street stands still: nothing to drag, no slider; going in zooms (U01b). */
   camera(): null {
@@ -129,20 +141,15 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     painter.lineTo(left, top);
     painter.lineTo(left + width, top);
     painter.lineTo(left + width, base);
-    const kind = this.#roofs.of(child.address, child.landmark);
-    if (kind === 'peak') {
-      painter.moveTo(left + width * 0.2, top);
-      painter.lineTo(middle, top - roof);
-      painter.lineTo(left + width * 0.8, top);
-    } else if (kind === 'mast') {
-      painter.moveTo(left + width * 0.7, top);
-      painter.lineTo(left + width * 0.7, top - roof * 0.7);
-    } else if (kind === 'box') {
-      painter.moveTo(left + width * 0.25, top);
-      painter.lineTo(left + width * 0.25, top - roof * 0.4);
-      painter.lineTo(left + width * 0.75, top - roof * 0.4);
-      painter.lineTo(left + width * 0.75, top);
-    }
+    this.#roofDrawers[this.#roofs.of(child.address, child.landmark)].trace(painter, {
+      base: top,
+      rise: roof,
+      origin: left,
+      span: width,
+      middle,
+      left,
+      right: left + width,
+    });
     painter.stroke();
 
     if (child.landmark) {

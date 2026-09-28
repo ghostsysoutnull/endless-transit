@@ -1,3 +1,4 @@
+import type { CorridorShape } from './CorridorShape.ts';
 import type { DoorLook } from './DoorLook.ts';
 import type { Tower } from './Tower.ts';
 
@@ -10,8 +11,8 @@ export interface Figure {
   readonly floors: number;
   readonly doors: number;
   readonly tower?: Tower;
-  /** How the corridor runs: its words' key (`long`, `service`, `curved`, `static`). */
-  readonly shape?: string;
+  /** How the corridor runs: its words' key (`long`, `service`, `curved`, `static`; `none` for a corridor without one). */
+  readonly shape?: CorridorShape;
   /** Each door's look, in the corridor's order. */
   readonly looks?: readonly DoorLook[];
   /** The door an apartment is behind: its look and the word written on it (empty when none). */

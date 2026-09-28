@@ -8,15 +8,15 @@ import type { Origin } from '#engine/model/Origin.ts';
 import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import { Progeny } from './Progeny.ts';
-import { Sentences } from './Sentences.ts';
+import { CorridorWords } from './CorridorWords.ts';
 
 /** A corridor: one sentence dealt from the corridor descriptions, with its shape; as many apartments as its building says doors per floor. */
 export class CorridorFactory implements LocationFactory<Corridor, Floor> {
-  readonly #sentences: Sentences;
+  readonly #words: CorridorWords;
   readonly #apartments: Progeny;
 
   constructor(world: FactoryLookup, library: ContentLibrary) {
-    this.#sentences = new Sentences(library, 'corridor');
+    this.#words = new CorridorWords(library);
     this.#apartments = new Progeny(world, undefined, () => world.factoryFor(APARTMENT_KIND));
   }
 
@@ -25,7 +25,7 @@ export class CorridorFactory implements LocationFactory<Corridor, Floor> {
   }
 
   create(origin: Origin<Floor>): Corridor {
-    const [sentence, shape] = this.#sentences.dealtPair(origin.seed);
+    const [sentence, shape] = this.#words.dealt(origin.seed);
     return new Corridor(origin, { sentence, shape });
   }
 

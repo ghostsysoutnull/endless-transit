@@ -1,3 +1,4 @@
+import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { DoorLook } from '#engine/model/DoorLook.ts';
 
 /**
@@ -34,10 +35,10 @@ export interface SceneVM {
     readonly car: number;
     readonly below: number;
     /** Floor `n`'s row at `n`: how its corridor runs and how its doors look. */
-    readonly rows: readonly { readonly shape: string; readonly looks: readonly DoorLook[] }[];
+    readonly rows: readonly { readonly shape: CorridorShape; readonly looks: readonly DoorLook[] }[];
   } | null;
-  /** How the place's corridor runs (`long`, `service`, `curved`, `static`); empty when it is none. */
-  readonly shape: string;
+  /** How the place's corridor runs (`long`, `service`, `curved`, `static`); `none` when it has none. */
+  readonly shape: CorridorShape;
   /** The name a reader hears for the picture's slider (the list's heading); empty when there is none. */
   readonly slider: string;
   /** How strongly the picture tears, 0 to 1 (`Coherence.decay`). */

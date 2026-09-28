@@ -24,7 +24,7 @@ const STATES_BY_ID: ReadonlyMap<string, FloorState> = new Map(
 /** The resonance a floor shows on the building's list, in hertz (Building.groovy:215-216). */
 const RESONANCE = { min: 1000, max: 2999 };
 /** A floor made without a peek at its corridor (a Layer, whose child is an Artery): nothing to draw. */
-const NO_PASSAGE: Passage = { shape: '', looks: [] };
+const NO_PASSAGE: Passage = { shape: 'none', looks: [] };
 
 /**
  * A floor of a building: child `n` of the building is floor `n`, and its one child is its corridor. The

@@ -1,3 +1,4 @@
+import type { CorridorShape } from './CorridorShape.ts';
 import type { Fact } from './Fact.ts';
 import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
@@ -21,14 +22,14 @@ export const CORRIDOR_KIND = new LocationKind({
 export class Corridor extends Location {
   readonly #floor: Floor;
   readonly #sentence: string;
-  readonly #shape: string;
+  readonly #shape: CorridorShape;
 
-  /** `shape` is the key its sentence carries (`long`, `service`, `curved`, `static`); none when made without one. */
-  constructor(origin: Origin<Floor>, facts: { sentence: string; shape?: string }) {
+  /** `shape` is the key its sentence carries (`long`, `service`, `curved`, `static`); `none` when made without one. */
+  constructor(origin: Origin<Floor>, facts: { sentence: string; shape?: CorridorShape }) {
     super(origin);
     this.#floor = origin.parent;
     this.#sentence = facts.sentence;
-    this.#shape = facts.shape ?? '';
+    this.#shape = facts.shape ?? 'none';
   }
 
   kind(): LocationKind {

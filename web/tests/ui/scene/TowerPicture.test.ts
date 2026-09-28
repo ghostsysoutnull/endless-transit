@@ -17,7 +17,7 @@ const STATES = [
   { state: 'Static', stateLook: 'static' },
   { state: 'Humming', stateLook: 'plain' },
 ] as const;
-const SHAPES = ['long', 'service', 'curved', 'static'];
+const SHAPES = ['long', 'service', 'curved', 'static'] as const;
 
 /** A tower of `floors` floors, `doors` a floor; listed top first as the engine lists them (Layers after the lobby); none listed at the elevator. */
 function tower(
@@ -60,7 +60,7 @@ function tower(
         looks: Array.from({ length: 6 }, (_, k) => doorLook(STATES[(n + k) % 5])),
       })),
     },
-    shape: '',
+    shape: 'none',
     slider: 'Ride to a floor',
     decay: 0,
     noise: '7F3A-91C2-0B4D-E6A8',

@@ -21,8 +21,18 @@ export class Sentences {
     return seed.branch(DEAL).pick(this.#library.list(`${LISTS}/${this.#kind}`));
   }
 
-  /** For a kind whose sentences carry a key (`sentence|key`, the corridor's shape, U02): the pair, on the same branch. */
-  dealtPair(seed: Seed): readonly [string, string] {
-    return seed.branch(DEAL).pick(this.#library.pairs(`${LISTS}/${this.#kind}`));
+  /**
+   * For a kind whose sentences carry a key (`sentence|key`, the corridor's shape, U02): every line, its key read by
+   * `read`, in file order — the whole list, so one key `read` refuses refuses it.
+   */
+  lines<K>(read: (key: string) => K): readonly (readonly [string, K])[] {
+    return this.#library
+      .pairs(`${LISTS}/${this.#kind}`)
+      .map(([sentence, key]) => [sentence, read(key)] as const);
+  }
+
+  /** The line of `lines` a location with this seed is dealt: the same branch as `dealt`, so the same line. */
+  dealtFrom<T>(seed: Seed, lines: readonly T[]): T {
+    return seed.branch(DEAL).pick(lines);
   }
 }

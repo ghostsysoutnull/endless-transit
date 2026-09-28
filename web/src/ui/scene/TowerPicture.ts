@@ -1,13 +1,24 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import type { CorridorShape } from '#engine/model/CorridorShape.ts';
+import { BoxRoof } from './BoxRoof.ts';
+import { CurvedRow } from './CurvedRow.ts';
 import { DoorLooks } from './DoorLooks.ts';
-import { Roof } from './Roof.ts';
+import { LongRow } from './LongRow.ts';
+import { MastRoof } from './MastRoof.ts';
+import { ParapetRoof } from './ParapetRoof.ts';
+import { PeakRoof } from './PeakRoof.ts';
+import { Roof, type RoofKind } from './Roof.ts';
+import type { RoofDrawer } from './RoofDrawer.ts';
+import type { RowShape } from './RowShape.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import { SceneHash } from './SceneHash.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
+import { ServiceRow } from './ServiceRow.ts';
+import { StaticRow } from './StaticRow.ts';
 
 const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
 /** No number on the picture is smaller than this (touch first: it must read on a phone). */
@@ -61,6 +72,21 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   readonly #noise = new SceneHash();
   readonly #roofs = new Roof();
   readonly #looks = new DoorLooks();
+  /** How each corridor shape runs on a floor's row; a row without a shape (a Layer's) is the plain line. */
+  readonly #rows: Readonly<Record<CorridorShape, RowShape>> = {
+    long: new LongRow(),
+    service: new ServiceRow(),
+    curved: new CurvedRow(),
+    static: new StaticRow(),
+    none: new LongRow(),
+  };
+  /** Each roof at the tower's proportions (the mock's, `transit-reframed.html:775`), the peak kept below the top. */
+  readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
+    peak: new PeakRoof({ from: -0.18, to: 0.18, lift: 1.6, ceiling: 4 }),
+    mast: new MastRoof({ at: 0.2, lift: 1 }),
+    box: new BoxRoof({ from: -0.15, to: 0.15, lift: 0.5 }),
+    flat: new ParapetRoof(),
+  };
 
   camera(vm: SceneVM, size: PictureSize): SceneCamera | null {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
@@ -227,23 +253,15 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     painter.strokeStyle = palette('cy');
     painter.lineWidth = 1.2;
     painter.beginPath();
-    const kind = this.#roofs.of(frame.tower.address, frame.tower.landmark);
-    if (kind === 'peak') {
-      painter.moveTo(middle - width * 0.18, roof);
-      painter.lineTo(middle, Math.max(4, roof - rise * 1.6));
-      painter.lineTo(middle + width * 0.18, roof);
-    } else if (kind === 'mast') {
-      painter.moveTo(middle + width * 0.2, roof);
-      painter.lineTo(middle + width * 0.2, roof - rise);
-    } else if (kind === 'box') {
-      painter.moveTo(middle - width * 0.15, roof);
-      painter.lineTo(middle - width * 0.15, roof - rise * 0.5);
-      painter.lineTo(middle + width * 0.15, roof - rise * 0.5);
-      painter.lineTo(middle + width * 0.15, roof);
-    } else {
-      painter.moveTo(frame.inner, roof - 3);
-      painter.lineTo(frame.left + width, roof - 3);
-    }
+    this.#roofDrawers[this.#roofs.of(frame.tower.address, frame.tower.landmark)].trace(painter, {
+      base: roof,
+      rise,
+      origin: middle,
+      span: width,
+      middle,
+      left: frame.inner,
+      right: frame.left + width,
+    });
     painter.stroke();
     painter.globalAlpha = 1;
   }
@@ -361,13 +379,13 @@ export class TowerPicture implements ScenePicture<SceneVM> {
    */
   #corridor(painter: Painter, frame: Frame, level: number, y: number, palette: Palette): void {
     const passage = level >= 0 ? frame.tower.rows[level] : undefined;
-    const shape = passage?.shape ?? '';
+    const shape = this.#rows[passage?.shape ?? 'none'];
     const looks = passage?.looks ?? [];
     const line = y + frame.row * 0.76;
-    const bow = shape === 'curved' ? frame.row * 0.16 : 0;
+    const bow = shape.bow(frame.row);
     const from = frame.inner + 10;
     const full = frame.left + frame.width - 12;
-    const to = shape === 'service' || shape === 'static' ? full - (full - from) * 0.08 : full;
+    const to = shape.reach(from, full);
     const along = (p: number): { x: number; y: number } => ({
       x: from + (to - from) * p,
       y: line - bow * 4 * p * (1 - p),
@@ -381,16 +399,9 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       if (step === 0) painter.moveTo(point.x, point.y);
       else painter.lineTo(point.x, point.y);
     }
-    if (shape === 'service') {
-      painter.moveTo(to, line - 5);
-      painter.lineTo(to, line + 5);
-    }
+    shape.wall(painter, to, line);
     painter.stroke();
-    if (shape === 'static') {
-      painter.fillStyle = palette('mg');
-      painter.globalAlpha = 0.6;
-      for (let dot = 1; dot <= 3; dot++) painter.fillRect(to + dot * 3, line - 0.5, 1.5, 1.5);
-    }
+    shape.tail(painter, palette, to, line);
     const pairs = Math.ceil(looks.length / 2);
     for (const [index, look] of looks.entries()) {
       const point = along((Math.floor(index / 2) + 0.5) / pairs);
