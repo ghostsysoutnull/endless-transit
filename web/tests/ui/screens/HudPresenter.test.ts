@@ -787,12 +787,12 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
 
   test('a breached building: the Layers lead the pad, deepest first — in the one group up to twenty, their own group past it', () => {
     const one = presenter.toViewModel(towerSnapshot(8, 0, 10)).pad;
-    expect(one?.groups.map((group) => group.label)).toEqual(['-10–7']);
-    expect(one?.groups[0]?.keys.slice(0, 2).map((key) => key.number)).toEqual(['-10', '-9']);
+    expect(one?.groups.map((group) => group.label)).toEqual(['-0xA–7']);
+    expect(one?.groups[0]?.keys.slice(0, 2).map((key) => key.number)).toEqual(['-0xA', '-0x9']);
     const tens = presenter.toViewModel(towerSnapshot(16, 0, 10)).pad;
-    expect(tens?.groups.map((group) => group.label)).toEqual(['-10–-1', '0–9', '10–15']);
+    expect(tens?.groups.map((group) => group.label)).toEqual(['-0xA–-0x1', '0–9', '10–15']);
     expect(tens?.groups[0]?.keys.map((key) => key.number)).toEqual(
-      Array.from({ length: 10 }, (_, k) => String(k - 10)),
+      Array.from({ length: 10 }, (_, k) => `-0x${(10 - k).toString(16).toUpperCase()}`),
     );
   });
 

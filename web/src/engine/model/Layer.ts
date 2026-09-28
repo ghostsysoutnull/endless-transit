@@ -49,7 +49,7 @@ export class Layer extends Floor {
 
   /** `Layer -0x1` … (Floor.groovy:110-112). */
   override name(): string {
-    return `Layer -0x${Math.abs(this.number()).toString(16).toUpperCase()}`;
+    return `Layer ${this.level().label()}`;
   }
 
   /** The zone, the pressure in place of integrity, the resonance. */

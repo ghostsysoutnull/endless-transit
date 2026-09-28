@@ -16,9 +16,8 @@ from `main.ts`, never builds them.
 When one fix reaches an older file because it shares the pattern, that file is fixed too (two places sharing a pattern
 are fixed together) and is named in the item.
 
-**Open decision:** `floor-numbers` changes what the tower draws. It could write a Layer as the game names it (`-0x1`,
-from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _not yet made_; it is one line,
-`Level.label()`.
+**Decision (the user's pick, 2026-09-28):** the tower and the pad write a Layer as the game names it, `-0x1`
+(`Level.label()`, which `Layer.name()` now asks too). Nothing else here changes the screen.
 
 ## The UI works out rules the game should hand it (the engine law)
 

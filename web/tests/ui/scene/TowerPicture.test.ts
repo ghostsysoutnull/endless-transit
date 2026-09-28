@@ -252,6 +252,6 @@ describe('the tower paints the same calls as before its drawers move (a digest o
   test('a breached tower, the Layers’ rows in view', () => {
     const painter = new RecordingPainter();
     picture.paint(painter, tower(12, { below: 10 }), PHONE, (token) => `<${token}>`, 1234, 'enter:14', -3);
-    expect(digest(painter)).toEqual(['5b8f64ee', 214]);
+    expect(digest(painter)).toEqual(['312684dc', 214]);
   });
 });

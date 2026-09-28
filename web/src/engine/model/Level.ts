@@ -31,9 +31,11 @@ export class Level {
     return this.#number < 0;
   }
 
-  /** How the level is written on the tower and the pad: its number, a Layer's too (`-1`). */
+  /** How the level is written on the tower, the pad and a Layer's name: a floor's number, a Layer's in hex (`-0x1`). */
   label(): string {
-    return String(this.#number);
+    return this.belowBedrock()
+      ? `-0x${Math.abs(this.#number).toString(16).toUpperCase()}`
+      : String(this.#number);
   }
 
   equals(other: Level): boolean {
