@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { DoorLook } from '#engine/model/DoorLook.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Doors } from '#engine/procgen/Doors.ts';
 import { Seed } from '#engine/rng/Seed.ts';
@@ -21,12 +22,9 @@ describe('a door’s look: its material and state by name, and the keys their li
     const look = doors('Synth-Glass Slab|A glass slab.|glass\n', 'Frozen|Frost seals it.|frost\n').look(
       new Seed(1, 2),
     );
-    expect(look).toEqual({
-      material: 'Synth-Glass Slab',
-      state: 'Frozen',
-      family: 'glass',
-      stateLook: 'frost',
-    });
+    expect(look).toEqual(
+      new DoorLook({ material: 'Synth-Glass Slab', state: 'Frozen', family: 'glass', stateLook: 'frost' }),
+    );
   });
 
   test('a list with an unknown key is refused whole, before any door is dealt', () => {

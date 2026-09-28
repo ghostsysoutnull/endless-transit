@@ -5,7 +5,7 @@ import type { Tower } from './Tower.ts';
 /**
  * A place's shape as a picture draws it: how many floors it stands, how many doors each has, and — for the
  * kinds that have them (U02) — the tower it is (a building's own picture), how its corridor runs and how its
- * doors look (a floor, a corridor), the door it is behind (an apartment). Plain data.
+ * doors look (a floor, a corridor), the door it is behind (an apartment). Plain data around the engine's value objects.
  */
 export interface Figure {
   readonly floors: number;

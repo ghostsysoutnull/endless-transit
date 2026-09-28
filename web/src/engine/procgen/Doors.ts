@@ -1,7 +1,7 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Door } from '#engine/model/Door.ts';
 import { DoorInscription } from '#engine/model/DoorInscription.ts';
-import type { DoorLook } from '#engine/model/DoorLook.ts';
+import { DoorLook } from '#engine/model/DoorLook.ts';
 import { type DoorStateLook, doorStateLook } from '#engine/model/DoorStateLook.ts';
 import { type MaterialFamily, materialFamily } from '#engine/model/MaterialFamily.ts';
 import { INSCRIPTION_STYLES } from '#engine/model/InscriptionStyle.ts';
@@ -59,7 +59,12 @@ export class Doors {
     const seed = apartmentSeed.branch(DOOR);
     const material = this.#material(seed);
     const state = this.#state(seed);
-    return { material: material.name, state: state.name, family: material.key, stateLook: state.key };
+    return new DoorLook({
+      material: material.name,
+      state: state.name,
+      family: material.key,
+      stateLook: state.key,
+    });
   }
 
   #material(seed: Seed): Line<MaterialFamily> {

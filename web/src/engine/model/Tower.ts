@@ -3,7 +3,7 @@ import type { Figure } from './Figure.ts';
 /**
  * A building as its own picture draws it (U02): its address and landmark (what its roof is drawn from, the same
  * on the street and inside), the floor its car stands at, how many Layers lie open below the bedrock (0 until the
- * breach), and each floor's figure, floor `n` at `n`. Plain data.
+ * breach), and each floor's figure, floor `n` at `n`. Plain data around the engine's value objects.
  */
 export interface Tower {
   readonly address: string;

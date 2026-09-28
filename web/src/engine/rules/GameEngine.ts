@@ -64,7 +64,7 @@ const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
 
 /**
- * The game, seen from outside: `step(optionId)` in, a plain-data snapshot out. Synchronous, instant, no
+ * The game, seen from outside: `step(optionId)` in, a snapshot of readonly data out. Synchronous, instant, no
  * output device, nothing blocks on input. Owns the registry of commands — a new thing the player can do
  * is a new registry entry, not a new branch in `step` — and the turn: every prompt in the world costs
  * coherence before the command runs (Guide:133-135), a step counts, and zero coherence is a pending prompt

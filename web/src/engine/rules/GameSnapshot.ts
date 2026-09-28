@@ -8,7 +8,7 @@ import type { ScanSummary } from './ScanSummary.ts';
 import type { TraceSummary } from './TraceSummary.ts';
 import type { WorldSummary } from './WorldSummary.ts';
 
-/** What `GameEngine.step` returns: plain readonly data — JSON-safe, no objects with behaviour. */
+/** What `GameEngine.step` returns: readonly data — plain data and the engine's value objects, nothing that acts. */
 export interface GameSnapshot {
   readonly world: WorldSummary | null;
   /** Where the traveller stands; `null` while at the title screen. */

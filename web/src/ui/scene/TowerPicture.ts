@@ -405,7 +405,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     for (const [index, look] of looks.entries()) {
       const point = along((Math.floor(index / 2) + 0.5) / pairs);
       painter.globalAlpha = 0.8;
-      painter.fillStyle = palette(this.#looks.ink(look.stateLook));
+      painter.fillStyle = palette(this.#looks.ink(look.stateLook()));
       painter.fillRect(point.x - 1, index % 2 === 1 ? point.y + 1 : point.y - 5, 2, 4);
     }
   }

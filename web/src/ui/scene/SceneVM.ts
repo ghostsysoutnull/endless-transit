@@ -2,7 +2,7 @@ import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { DoorLook } from '#engine/model/DoorLook.ts';
 
 /**
- * What a scene draws, as plain data (U01b, U02): which picture (a key the registry looks up, never one a view
+ * What a scene draws, as readonly data — plain data and the engine's value objects (U01b, U02): which picture (a key the registry looks up, never one a view
  * branches on), the words a reader hears for it, where it stands, one child per listed place in the list's
  * order — its option id is the pick — the coherence tear's strength and seed, and what the building's pictures
  * need: the tower (its size, roof, car, the Layers open below and each floor's row), the corridor's shape, and

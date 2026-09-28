@@ -1,5 +1,5 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
-import type { Passage } from '#engine/model/Passage.ts';
+import { Passage } from '#engine/model/Passage.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Doors } from './Doors.ts';
 import { CorridorWords } from './CorridorWords.ts';
@@ -22,9 +22,9 @@ export class Passages {
   /** The corridor under a floor born from this seed, with this many doors. */
   of(floorSeed: Seed, doors: number): Passage {
     const corridor = floorSeed.child(0);
-    return {
-      shape: this.#words.dealt(corridor)[1],
-      looks: Array.from({ length: doors }, (_, index) => this.#doors.look(corridor.child(index))),
-    };
+    return new Passage(
+      this.#words.dealt(corridor)[1],
+      Array.from({ length: doors }, (_, index) => this.#doors.look(corridor.child(index))),
+    );
   }
 }

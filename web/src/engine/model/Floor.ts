@@ -9,7 +9,7 @@ import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
-import type { Passage } from './Passage.ts';
+import { Passage } from './Passage.ts';
 import { Phrase } from './Phrase.ts';
 import type { ScanReport } from './ScanReport.ts';
 
@@ -25,7 +25,7 @@ const STATES_BY_ID: ReadonlyMap<string, FloorState> = new Map(
 /** The resonance a floor shows on the building's list, in hertz (Building.groovy:215-216). */
 const RESONANCE = { min: 1000, max: 2999 };
 /** A floor made without a peek at its corridor (a Layer, whose child is an Artery): nothing to draw. */
-const NO_PASSAGE: Passage = { shape: 'none', looks: [] };
+const NO_PASSAGE = new Passage('none', []);
 
 /**
  * A floor of a building: child `n` of the building is floor `n`, and its one child is its corridor. The
@@ -91,9 +91,9 @@ export class Floor extends Location {
   override figure(): Figure {
     return {
       floors: 0,
-      doors: this.#passage.looks.length,
-      shape: this.#passage.shape,
-      looks: this.#passage.looks,
+      doors: this.#passage.doors(),
+      shape: this.#passage.shape(),
+      looks: this.#passage.looks(),
     };
   }
 

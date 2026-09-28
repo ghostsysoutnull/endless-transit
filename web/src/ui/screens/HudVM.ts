@@ -6,7 +6,7 @@ import type { AsideVM } from './AsideVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
-/** The world screen as plain readonly data — framework-free. */
+/** The world screen as readonly data — plain data and the engine's value objects, framework-free. */
 export interface HudVM extends Screen {
   readonly title: string;
   /** The colour name of the frame (`yellow`), `default` above planet level; the stylesheet owns the hue. */

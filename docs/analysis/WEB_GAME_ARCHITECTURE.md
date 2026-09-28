@@ -7,7 +7,7 @@ this page explains the shape that law produced. Player-facing rules and numbers:
 
 > **In one paragraph.** `web/` is one npm package: a strict-TypeScript single-page game on Vite, with a pure and
 > deterministic engine that knows nothing of the browser, a thin browser layer that hands it storage and entropy, and
-> a screen layer that turns the engine's plain-data snapshot into HTML with `lit-html` and into two hand-drawn canvases.
+> a screen layer that turns the engine's readonly snapshot into HTML with `lit-html` and into two hand-drawn canvases.
 > One seed builds one world lazily; every tap goes through one method, `GameEngine.step(optionId)`; the save is seed +
 > path + what visited places remember + the traveller. The Groovy game in `terminal/` is frozen and was the source of
 > the rules, never of the code.
@@ -120,7 +120,7 @@ over only what the `Buffer` takes. A dropped fragment lies in the room as it was
 stale id changes nothing), drains Coherence *before* the command (`Drain`: 1, ×2 under an entropic street era — the
 street's, never the apartment's drift — ×2 below the bedrock, ×4 on a Layer's own screens), runs the command's
 `Turn` (`STEP` drains and counts a step, `GLOBAL` drains only, `FREE` neither), rolls the room's lottery after a
-counted step, saves, and returns a `GameSnapshot`: plain readonly data — `world`, `place`, `player`, `buffer`,
+counted step, saves, and returns a `GameSnapshot`: readonly data, plain data and the engine's value objects — `world`, `place`, `player`, `buffer`,
 `prompt`, `options` (`GameOption`: `{ id, key, label, role, opposite, sealed, visited, … }`, `role` one of travel /
 move / return / system / debug / take / pick / drop), `message`, and the
 panels `scan` / `map` / `trace` that ride until the next step. Commands are registry entries (`GameCommand` with a

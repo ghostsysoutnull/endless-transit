@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { DoorLook } from '#engine/model/DoorLook.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
@@ -732,8 +733,8 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
       rows: Array.from({ length: 16 }, () => ({
         shape: 'curved',
         looks: [
-          { material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' },
-          { material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' },
+          new DoorLook({ material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' }),
+          new DoorLook({ material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' }),
         ],
       })),
     });

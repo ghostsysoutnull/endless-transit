@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { DoorLook } from '#engine/model/DoorLook.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
@@ -463,7 +464,12 @@ describe('GameEngine — walking the big world', () => {
         floors: 0,
         doors: 0,
         door: {
-          look: { material: 'Brutalist Slab', state: 'Pitted', family: 'stone', stateLook: 'plain' },
+          look: new DoorLook({
+            material: 'Brutalist Slab',
+            state: 'Pitted',
+            family: 'stone',
+            stateLook: 'plain',
+          }),
           words: 'VOID_SINK',
         },
       },
