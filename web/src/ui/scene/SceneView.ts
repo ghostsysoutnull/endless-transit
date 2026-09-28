@@ -16,7 +16,7 @@ import { Zoom } from './Zoom.ts';
 const ZOOM = 6;
 /** How long a zoom takes, in milliseconds. */
 const ZOOM_TIME = 450;
-/** A still is painted at this moment of the clock, and on the tear's first frame. */
+/** A still is painted at this moment of the clock. */
 const STILL = 0;
 /** A tap on the slider's track glides the view there in this long. */
 const GLIDE = 320;
@@ -354,13 +354,7 @@ export class SceneView implements DrawnScene {
       zoom.apply(context, this.#size);
       this.#picture.paint(context, vm, this.#size, palette, time, this.#lit, this.#view, this.#here);
       context.restore();
-      const depth = zoom.depth();
-      if (depth > 0) {
-        context.globalAlpha = depth;
-        context.fillStyle = palette('ground');
-        context.fillRect(0, 0, width, height);
-        context.globalAlpha = 1;
-      }
+      zoom.fade(context, this.#size, palette('ground'));
       this.#parts.tear.draw(context, canvas, {
         size: this.#size,
         palette,

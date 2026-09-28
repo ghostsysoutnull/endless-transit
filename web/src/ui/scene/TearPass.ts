@@ -1,16 +1,12 @@
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import type { PixelCanvas } from '#ui/canvas/PixelCanvas.ts';
-import type { Seed } from '#engine/rng/Seed.ts';
-import { FX_FRAMES } from './CoherenceFx.ts';
+import type { BandCopy } from './BandCopy.ts';
 import type { FxPlan } from './FxPlan.ts';
 import type { FxPlans } from './FxPlans.ts';
-import type { Tear } from './Tear.ts';
+import type { Tear, TearFrame } from './Tear.ts';
 
-/** The tear steps this many frames a second (the mock's `postFx`). */
+/** The tear steps this many frames a second (the mock's `postFx`); a still, painted at time 0, holds its first frame. */
 const FX_RATE = 12;
-/** A still is painted at this moment of the clock: it tears on the cycle's first frame and holds it. */
-const STILL = 0;
 
 /**
  * Owns one fact: how the coherence tear is drawn over a finished frame (Decision 5) — its frame of the cycle from the
@@ -23,19 +19,15 @@ export class TearPass implements Tear {
     this.#plans = plans;
   }
 
-  draw(
-    context: CanvasRenderingContext2D,
-    canvas: PixelCanvas,
-    frame: { size: PictureSize; palette: Palette; noise: Seed; decay: number; time: number },
-  ): void {
-    const k = frame.time === STILL ? 0 : Math.floor((frame.time / 1000) * FX_RATE) % FX_FRAMES;
+  draw(context: CanvasRenderingContext2D, canvas: BandCopy, frame: TearFrame): void {
+    const k = Math.floor((frame.time / 1000) * FX_RATE);
     this.#draw(context, canvas, frame.size, this.#plans.plan(frame.noise, frame.decay, k), frame.palette);
   }
 
   /** The tear over the finished frame: bands of the canvas copied sideways, grain, the red cast, a dark flash. */
   #draw(
     context: CanvasRenderingContext2D,
-    canvas: PixelCanvas,
+    canvas: BandCopy,
     size: PictureSize,
     plan: FxPlan,
     palette: Palette,

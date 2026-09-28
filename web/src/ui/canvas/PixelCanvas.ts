@@ -1,3 +1,4 @@
+import type { BandCopy } from '#ui/scene/BandCopy.ts';
 import type { Palette } from './Palette.ts';
 import type { PictureSize } from './Picture.ts';
 import type { RatioLimit } from './RatioLimit.ts';
@@ -9,7 +10,7 @@ import type { StylePalette } from './StylePalette.ts';
  * its canvas goes through here, by what it means: named or decorative, dragged or scrolled, a point on it, a band of
  * its frame copied sideways.
  */
-export class PixelCanvas {
+export class PixelCanvas implements BandCopy {
   readonly #host: HTMLElement;
   readonly #canvas: HTMLCanvasElement;
   readonly #observer: ResizeObserver;
@@ -112,7 +113,7 @@ export class PixelCanvas {
   /** A band of the finished frame, `y` and `height` in CSS pixels, copied `by` pixels sideways over itself. */
   shift(
     context: CanvasRenderingContext2D,
-    band: { y: number; height: number; by: number },
+    band: { readonly y: number; readonly height: number; readonly by: number },
     width: number,
   ): void {
     context.drawImage(
