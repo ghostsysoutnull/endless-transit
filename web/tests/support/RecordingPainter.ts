@@ -13,6 +13,7 @@ export class RecordingPainter implements Painter {
   textBaseline: CanvasTextBaseline = 'alphabetic';
   shadowColor = '';
   shadowBlur = 0;
+  shadowOffsetX = 0;
 
   #note(name: string, args: readonly unknown[]): void {
     this.calls.push(
@@ -67,5 +68,8 @@ export class RecordingPainter implements Painter {
   }
   restore(): void {
     this.#note('restore', []);
+  }
+  getTransform(): { a: number } {
+    return { a: 1 };
   }
 }
