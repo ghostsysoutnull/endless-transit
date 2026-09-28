@@ -92,7 +92,7 @@ export class Corridor extends Location {
   }
 
   childrenHeading(): string {
-    return 'Doors:';
+    return 'Doors';
   }
 
   approachVerb(): string {

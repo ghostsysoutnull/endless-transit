@@ -55,7 +55,7 @@ export class Planet extends Location {
   }
 
   childrenHeading(): string {
-    return 'Planetary landmasses scanned:';
+    return 'Planetary landmasses scanned';
   }
 
   approachVerb(): string {

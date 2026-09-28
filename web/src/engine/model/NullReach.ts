@@ -74,7 +74,7 @@ export class NullReach extends Location {
   }
 
   childrenHeading(): string {
-    return 'Faint gravitational anomalies detected:';
+    return 'Faint gravitational anomalies detected';
   }
 
   approachVerb(): string {

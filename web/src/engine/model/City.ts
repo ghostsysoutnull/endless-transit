@@ -54,7 +54,7 @@ export class City extends Location {
   }
 
   childrenHeading(): string {
-    return 'Streets detected in this city:';
+    return 'Streets detected in this city';
   }
 
   approachVerb(): string {

@@ -10,6 +10,7 @@ import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
 import type { Passage } from './Passage.ts';
+import { Phrase } from './Phrase.ts';
 import type { ScanReport } from './ScanReport.ts';
 
 export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤', indexLabel: '' });
@@ -126,7 +127,7 @@ export class Floor extends Location {
   /** The building's list beside the floor: its zone in plain words (`Hydroponic bay`; U02 — integrity and resonance went). */
   override readings(): readonly Fact[] {
     const plain = this.#zone.toLowerCase().replaceAll('_', ' ');
-    return [{ key: 'zone', label: 'Zone', value: plain.charAt(0).toUpperCase() + plain.slice(1) }];
+    return [{ key: 'zone', label: 'Zone', value: new Phrase(plain).capitalised() }];
   }
 
   building(): Building {

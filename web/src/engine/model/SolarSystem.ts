@@ -34,7 +34,7 @@ export class SolarSystem extends Location {
   }
 
   childrenHeading(): string {
-    return 'Orbital bodies within range:';
+    return 'Orbital bodies within range';
   }
 
   approachVerb(): string {

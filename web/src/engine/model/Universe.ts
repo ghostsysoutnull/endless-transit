@@ -27,7 +27,7 @@ export class Universe extends Location {
   }
 
   childrenHeading(): string {
-    return 'Primary filaments radiating from root:';
+    return 'Primary filaments radiating from root';
   }
 
   approachVerb(): string {

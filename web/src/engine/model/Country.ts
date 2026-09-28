@@ -55,7 +55,7 @@ export class Country extends Location {
   }
 
   childrenHeading(): string {
-    return 'Regional cities identified:';
+    return 'Regional cities identified';
   }
 
   approachVerb(): string {

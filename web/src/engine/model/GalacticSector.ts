@@ -38,7 +38,7 @@ export class GalacticSector extends Location {
   }
 
   childrenHeading(): string {
-    return 'Solar systems within proximity:';
+    return 'Solar systems within proximity';
   }
 
   approachVerb(): string {

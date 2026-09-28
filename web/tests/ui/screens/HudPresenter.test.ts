@@ -49,7 +49,7 @@ const PLANET: GameSnapshot = {
     ],
     frame: 'yellow',
     abyssal: false,
-    childrenHeading: 'Planetary landmasses scanned:',
+    childrenHeading: 'Planetary landmasses scanned',
     contents: null,
     telemetry: null,
     lattice: null,
@@ -123,7 +123,7 @@ const FLOOR: GameSnapshot = {
     name: 'Floor 0',
     address: '0.0.0.0.1.0.0.0.0.0',
     position: { label: 'Z-AXIS', index: 1, total: 16 },
-    childrenHeading: 'Local access list:',
+    childrenHeading: 'Local access list',
   },
   options: [
     option({
@@ -678,7 +678,7 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
       name: 'Ornate Sanctum',
       drawing: 'building',
       address: '0.0.0.0.1.0.0.0.0',
-      childrenHeading: 'Ride to a floor:',
+      childrenHeading: 'Ride to a floor',
       figure: {
         floors,
         doors: 2,

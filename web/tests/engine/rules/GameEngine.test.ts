@@ -171,7 +171,7 @@ describe('GameEngine — walking the big world', () => {
       noise: 'D7F5-C533-B7FC-1498',
       frame: null,
       abyssal: false,
-      childrenHeading: 'Primary filaments radiating from root:',
+      childrenHeading: 'Primary filaments radiating from root',
       contents: null,
       telemetry: null,
       lattice: {
@@ -333,7 +333,7 @@ describe('GameEngine — walking the big world', () => {
       { key: 'reading', label: 'Floors', value: '16' },
     ]);
     expect(building.place?.position).toEqual({ label: 'Building', index: 1, total: 4 });
-    expect(building.place?.childrenHeading).toBe('Ride to a floor:');
+    expect(building.place?.childrenHeading).toBe('Ride to a floor');
     const floors = building.options.filter((option) => option.role === 'travel');
     expect(floors).toHaveLength(16);
     // The row the floor peeks is pinned by the peek's own test (Passages.test); here only that it has one.
@@ -424,7 +424,7 @@ describe('GameEngine — walking the big world', () => {
     const corridor = engine.step('move:corridor');
     expect(corridor.place?.kind).toBe('Floor');
     expect(corridor.message).toBe('Enter Corridor.');
-    expect(corridor.place?.childrenHeading).toBe('Doors:');
+    expect(corridor.place?.childrenHeading).toBe('Doors');
     expect(corridor.place?.status).toBe('');
     const doors = corridor.options.filter((option) => option.role === 'travel');
     expect(doors).toHaveLength(9);

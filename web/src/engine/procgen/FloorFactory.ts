@@ -6,6 +6,7 @@ import { Floor, FLOOR_KIND } from '#engine/model/Floor.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
+import { Phrase } from '#engine/model/Phrase.ts';
 import type { FactoryLookup } from './FactoryLookup.ts';
 import { FloorZones } from './FloorZones.ts';
 import type { LocationFactory } from './LocationFactory.ts';
@@ -39,7 +40,7 @@ export class FloorFactory implements LocationFactory<Floor, Building> {
     const building = origin.parent;
     const key = building.vibe()?.culture().key() ?? 'unknown';
     // The culture in the sentence is a word, not a label: `Void`, not `VOID` (U02).
-    const culture = key.charAt(0).toUpperCase() + key.slice(1);
+    const culture = new Phrase(key).capitalised();
     return new Floor(origin, {
       number: origin.index,
       zone: this.#zones.zoneOf(origin.seed, origin.index, building.floors()),

@@ -19,7 +19,7 @@ const HELP: GameSnapshot = {
     facts: [],
     frame: 'yellow',
     abyssal: false,
-    childrenHeading: 'Buildings on this street:',
+    childrenHeading: 'Buildings on this street',
     contents: null,
     telemetry: null,
     lattice: null,

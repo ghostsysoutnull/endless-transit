@@ -182,7 +182,7 @@ export class Apartment extends Location {
   }
 
   childrenHeading(): string {
-    return 'Internal cells detected:';
+    return 'Internal cells detected';
   }
 
   approachVerb(): string {

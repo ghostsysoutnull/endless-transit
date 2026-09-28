@@ -1,3 +1,4 @@
+import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -123,13 +124,13 @@ export class HudPresenter implements Presenter<HudVM> {
           place.position === null
             ? null
             : {
-                label: this.#capitalised(place.position.label.toLowerCase()),
+                label: new Phrase(place.position.label.toLowerCase()).capitalised(),
                 value: `${String(place.position.index)} of ${String(place.position.total)}`,
               },
         tags: place.facts.map((fact) => ({
           key: fact.key,
           label: fact.label,
-          value: this.#capitalised(fact.value),
+          value: new Phrase(fact.value).capitalised(),
         })),
         description: place.description,
         rows: this.#rows(place),
@@ -156,7 +157,7 @@ export class HudPresenter implements Presenter<HudVM> {
       trace: snapshot.trace === null ? null : this.#tracePanel(snapshot.trace),
       drawing: this.#drawing(place, travel, new Coherence(player.coherence).decay()),
       pad: this.#pad(travel, rows),
-      heading: place.childrenHeading.replace(/:$/, '').toUpperCase(),
+      heading: place.childrenHeading.toUpperCase(),
       rows,
       moves,
       sealedNote: rows.some((row) => row.sealed)
@@ -237,7 +238,7 @@ export class HudPresenter implements Presenter<HudVM> {
               rows: tower.rows.map((row) => ({ shape: row.shape ?? 'none', looks: row.looks ?? [] })),
             },
       shape: figure?.shape ?? 'none',
-      slider: travel.length === 0 ? '' : place.childrenHeading.replace(/:$/, ''),
+      slider: travel.length === 0 ? '' : place.childrenHeading,
       decay,
       noise: place.noise,
     };
@@ -433,11 +434,6 @@ export class HudPresenter implements Presenter<HudVM> {
   /** A take keeps the engine's words: the tile shows the object's name, the button is the take. */
   #take(option: GameOption): OptionVM {
     return { id: option.id, key: option.key.toUpperCase(), label: option.label, opposite: '' };
-  }
-
-  /** The text with its first letter a capital, the rest as it is: `baroque` → `Baroque`; `[STABLE]` stays. */
-  #capitalised(text: string): string {
-    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
   #docked(option: GameOption): OptionVM {
