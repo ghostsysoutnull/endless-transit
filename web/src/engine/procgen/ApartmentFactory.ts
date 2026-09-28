@@ -70,7 +70,7 @@ export class ApartmentFactory implements LocationFactory<Apartment, Corridor> {
     const era = anomaly ? vibe.era() : vibe.pickEra(origin.seed.branch('era'));
     const hoard = origin.seed.branch(HOARD);
     // The first room's own draw (child 0's seed): the door is inscribed and traced for what it leads to.
-    const behind = this.#categories.categoryOf(origin.seed.branch(0), trait);
+    const behind = this.#categories.categoryOf(origin.seed.child(0), trait);
     return this.#shape.make(origin, {
       door: this.#doors.of(origin.seed, behind),
       behind,

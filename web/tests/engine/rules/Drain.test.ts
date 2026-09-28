@@ -23,7 +23,7 @@ function world(): Universe {
   const source: CountingChildSource = new CountingChildSource((parent: Location) => {
     const origin = (index: number) => ({
       parent,
-      seed: parent.seed().branch(index),
+      seed: parent.seed().child(index),
       index,
       children: source,
     });

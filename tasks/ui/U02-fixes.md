@@ -63,9 +63,9 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 
 ## Behaviour kept away from its data (OO 2)
 
-- [ ] **child-seed — a seed helper that uses no state.** `Progeny.childSeed` uses nothing of its `Progeny`, and
+- [x] **child-seed — a seed helper that uses no state.** `Progeny.childSeed` uses nothing of its `Progeny`, and
   `Passages` builds a `Progeny` only to call it. Fix: the child-seed rule in one honest place.
-  Done: —
+  Done: `444a8f3`
 - [ ] **camera-rules — the camera's rules live in the scene host.** `SceneCamera` is plain data; `SceneView` computes
   the trip pace (`#pace`), the settle time (`#up`), the clamp, the nearest stop and the slider track's value. Fix: a
   camera object owns them (with `still-camera`, this takes two jobs out of `SceneView`); the tower's tuning numbers
