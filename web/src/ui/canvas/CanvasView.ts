@@ -52,7 +52,7 @@ export class CanvasView<VM> implements View<VM> {
 
   render(vm: VM): void {
     this.#vm = vm;
-    this.#colours?.forget();
+    this.#colours?.frameChanged();
     if (this.#motion.reduced()) {
       this.#stop();
       this.#paint(STILL);

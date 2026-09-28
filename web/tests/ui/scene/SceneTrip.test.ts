@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'vitest';
+import { EaseInOut } from '#ui/scene/EaseInOut.ts';
 import { SceneTrip } from '#ui/scene/SceneTrip.ts';
+
+const EASE = new EaseInOut();
 
 describe('a trip in: the view rides to the child, then (if the picture zooms) the picture grows, then the child is entered', () => {
   test('a ride then a zoom: the view moves first, the scale only after; over when both are', () => {
@@ -10,6 +13,7 @@ describe('a trip in: the view rides to the child, then (if the picture zooms) th
       ride: 600,
       zoom: { scale: 6, time: 400 },
       pick: 'enter:3',
+      easing: EASE,
     });
     expect(trip.view(1000)).toBe(2);
     expect(trip.scale(1300)).toBe(1);
@@ -25,7 +29,15 @@ describe('a trip in: the view rides to the child, then (if the picture zooms) th
   });
 
   test('no zoom (the tower: the next screen is the same picture): over when the ride is, the scale stays 1', () => {
-    const trip = new SceneTrip({ from: 0, to: 40, start: 0, ride: 1000, zoom: null, pick: 'enter:7' });
+    const trip = new SceneTrip({
+      from: 0,
+      to: 40,
+      start: 0,
+      ride: 1000,
+      zoom: null,
+      pick: 'enter:7',
+      easing: EASE,
+    });
     expect(trip.scale(500)).toBe(1);
     expect(trip.over(999)).toBe(false);
     expect(trip.over(1000)).toBe(true);
@@ -33,7 +45,15 @@ describe('a trip in: the view rides to the child, then (if the picture zooms) th
   });
 
   test('the elevator speeds up, cruises and brakes: slow at both ends, fast in the middle', () => {
-    const trip = new SceneTrip({ from: 0, to: 100, start: 0, ride: 1000, zoom: null, pick: '' });
+    const trip = new SceneTrip({
+      from: 0,
+      to: 100,
+      start: 0,
+      ride: 1000,
+      zoom: null,
+      pick: '',
+      easing: EASE,
+    });
     const early = trip.view(100) - trip.view(0);
     const middle = trip.view(550) - trip.view(450);
     const late = trip.view(1000) - trip.view(900);

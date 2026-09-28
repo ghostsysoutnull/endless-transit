@@ -8,7 +8,7 @@ describe('the stylesheet’s colours as a canvas reads them', () => {
     const palette = new StylePalette(style);
     expect([palette.ink('cy'), palette.ink('cy'), palette.ink('yl')]).toEqual(['CY', 'CY', 'YL']);
     expect(style.asked).toBe(2);
-    palette.forget();
+    palette.frameChanged();
     expect(palette.ink('cy')).toBe('CY');
     expect(style.asked).toBe(3);
   });

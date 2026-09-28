@@ -26,7 +26,7 @@ export class StylePalette {
   }
 
   /** A new frame of the game: every token is read afresh. */
-  forget(): void {
+  frameChanged(): void {
     this.#colours.clear();
   }
 }

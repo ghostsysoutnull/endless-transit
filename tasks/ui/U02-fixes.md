@@ -71,11 +71,11 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   camera object owns them (with `still-camera`, this takes two jobs out of `SceneView`); the tower's tuning numbers
   (`PACE`/`SETTLE`/`COAST`) stay in `TowerPicture`, whose facts they are.
   Done: —
-- [ ] **loose-functions — loose functions holding logic.** `stylePalette` (`src/ui/canvas/StylePalette.ts`: a cache
+- [x] **loose-functions — loose functions holding logic.** `stylePalette` (`src/ui/canvas/StylePalette.ts`: a cache
   in a closure, rebuilt every frame by `SceneView.#paint`), the easings `easeOut`/`easeInOut` (`src/ui/scene/Tween.ts`,
   held by `Tween` as a function in its `#easing` field), and the older `frameOf` (`src/ui/Frame.ts`) of the same
   pattern. Fix: objects. `systemOption` stays: it is a factory, a named reason. (TS: behavior is methods.)
-  Done: —
+  Done: `182dd50`
 
 ## One fact, several owners (OO 1)
 

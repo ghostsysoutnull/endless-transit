@@ -1,4 +1,4 @@
-import { EaseInOut } from './EaseInOut.ts';
+import type { Easing } from './Easing.ts';
 import { Tween } from './Tween.ts';
 
 /**
@@ -20,13 +20,14 @@ export class SceneTrip {
     /** How far the picture grows and for how long, once the ride is over; nothing when it does not zoom. */
     zoom: { scale: number; time: number } | null;
     pick: string;
+    /** How the ride and the zoom ease. */
+    easing: Easing;
   }) {
-    const easing = new EaseInOut();
-    this.#ride = new Tween(facts.from, facts.to, facts.start, facts.ride, easing);
+    this.#ride = new Tween(facts.from, facts.to, facts.start, facts.ride, facts.easing);
     this.#zoom =
       facts.zoom === null
         ? undefined
-        : new Tween(1, facts.zoom.scale, facts.start + facts.ride, facts.zoom.time, easing);
+        : new Tween(1, facts.zoom.scale, facts.start + facts.ride, facts.zoom.time, facts.easing);
     this.#pick = facts.pick;
   }
 

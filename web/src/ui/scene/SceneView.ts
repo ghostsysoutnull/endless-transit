@@ -220,7 +220,7 @@ export class SceneView implements View<SceneVM> {
     this.#motion = undefined;
     this.#gesture = undefined;
     this.#vm = vm;
-    this.#colours?.forget();
+    this.#colours?.frameChanged();
     this.#fit();
     const camera = this.#camera;
     if (camera === null) {
@@ -689,6 +689,7 @@ export class SceneView implements View<SceneVM> {
       ride: camera === null || distance < 0.01 ? 0 : this.#pace(camera, distance),
       zoom: camera === null || camera.zoom ? { scale: ZOOM, time: ZOOM_TIME } : null,
       pick: id,
+      easing: this.#ride,
     });
     this.#run();
   }
