@@ -3,16 +3,16 @@ import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
 import { Universe, UNIVERSE_KIND } from '#engine/model/Universe.ts';
-import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
-import { Progeny } from './Progeny.ts';
+import type { Children } from './Children.ts';
+import type { Offspring } from './Offspring.ts';
 
 /** The universe: 3 to 7 cosmic filaments. */
 export class UniverseFactory implements LocationFactory {
-  readonly #filaments: Progeny;
+  readonly #filaments: Children;
 
-  constructor(world: FactoryLookup) {
-    this.#filaments = new Progeny(world, { min: 3, max: 7 }, () => world.factoryFor(FILAMENT_KIND));
+  constructor(offspring: Offspring) {
+    this.#filaments = offspring.of({ min: 3, max: 7 }, () => FILAMENT_KIND);
   }
 
   kind(): LocationKind {

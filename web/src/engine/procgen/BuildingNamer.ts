@@ -1,6 +1,7 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { Culture } from '#engine/model/Culture.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { BuildingNames } from './BuildingNames.ts';
 
 const WORDS = 'names/buildings';
 /**
@@ -28,7 +29,7 @@ const SIZE_WORD_LIMITS = [10, 20] as const;
  * street's culture. The landmark chance is 3%, plus half a point per level below depth 5, times whatever
  * factor the places above ask for, never more than 25%.
  */
-export class BuildingNamer {
+export class BuildingNamer implements BuildingNames {
   readonly #library: ContentLibrary;
 
   constructor(library: ContentLibrary) {

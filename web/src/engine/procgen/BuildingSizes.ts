@@ -1,5 +1,6 @@
 import type { Seed } from '#engine/rng/Seed.ts';
 import type { SizeBand } from './SizeBand.ts';
+import type { Sizes } from './Sizes.ts';
 
 const ROLL = { min: 0, max: 99 };
 /** The first row whose `upTo` the roll does not exceed wins: 41 rolls, then 30, 20 and 9. */
@@ -16,7 +17,7 @@ const TABLE: readonly { readonly upTo: number; readonly size: SizeBand }[] = [
  * and one more draw each picks the floors and the doors inside it. The table answers for a roll directly,
  * so its edges are tested without a sample.
  */
-export class BuildingSizes {
+export class BuildingSizes implements Sizes {
   /** The size a building of this roll has. A roll that is not one of the hundred is an error. */
   bandFor(roll: number): SizeBand {
     const row =

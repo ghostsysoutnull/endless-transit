@@ -7,6 +7,7 @@ import { type MaterialFamily, materialFamily } from '#engine/model/MaterialFamil
 import { INSCRIPTION_STYLES } from '#engine/model/InscriptionStyle.ts';
 import type { RoomCategory } from '#engine/model/RoomCategory.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { DoorDeal } from './DoorDeal.ts';
 
 const LISTS = 'themes/doors';
 /** The branch of an apartment's seed its door is dealt on. */
@@ -28,7 +29,7 @@ interface Line<K> {
  * styles (CorridorFactory.groovy:47-53, 64-89). Its look alone can be read without the apartment (`look`, the
  * peek, U02). Both lists are read whole and typed when it is made: a line with an unknown key refuses its list.
  */
-export class Doors {
+export class Doors implements DoorDeal {
   readonly #library: ContentLibrary;
   readonly #materials: readonly Line<MaterialFamily>[];
   readonly #states: readonly Line<DoorStateLook>[];

@@ -15,6 +15,7 @@ import { MemoryContentSource } from '#tests/support/MemoryContentSource.ts';
 import { MemoryWarningSink } from '#tests/support/MemoryWarningSink.ts';
 import { ThrowingWarningSink } from '#tests/support/ThrowingWarningSink.ts';
 import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
+import { Deal } from '#engine/procgen/Deal.ts';
 
 const warnings = new MemoryWarningSink();
 const registry = realRegistry(warnings);
@@ -79,6 +80,7 @@ describe('furniture is not loot (Guide:171-173; ThemeService.groovy:173-194)', (
           'themes/cultures/rust.txt': 'sagging cot\nsealed drum\n',
         }),
       ),
+      new Deal(),
     );
     for (let n = 0; n < 40; n++) {
       for (const piece of furnishings.of(new Seed(n, n), new Culture('rust', 'red'), 2)) {

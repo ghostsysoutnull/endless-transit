@@ -4,19 +4,19 @@ import { Layer, LAYER_KIND } from '#engine/model/Layer.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
-import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
-import { Progeny } from './Progeny.ts';
+import type { Children } from './Children.ts';
+import type { Offspring } from './Offspring.ts';
 
 /** Every Layer is told in the same sentence (Floor.groovy:118-120). */
 const SENTENCE = 'The air is thick with oily static and the hum of abyssal substrate.';
 
 /** A Layer of a building's substrate: child `floors + k − 1` is Layer −k (Building.groovy:252-261); one child, its Artery. */
 export class LayerFactory implements LocationFactory<Layer, Building> {
-  readonly #artery: Progeny;
+  readonly #artery: Children;
 
-  constructor(world: FactoryLookup) {
-    this.#artery = new Progeny(world, undefined, () => world.factoryFor(ARTERY_KIND));
+  constructor(offspring: Offspring) {
+    this.#artery = offspring.of(undefined, () => ARTERY_KIND);
   }
 
   kind(): LocationKind {

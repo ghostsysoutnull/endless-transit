@@ -1,14 +1,14 @@
-import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { CosmicFilament, FILAMENT_KIND } from '#engine/model/CosmicFilament.ts';
 import { SECTOR_KIND } from '#engine/model/GalacticSector.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import { NULL_REACH_KIND } from '#engine/model/NullReach.ts';
 import type { Origin } from '#engine/model/Origin.ts';
-import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
-import { NameParts } from './NameParts.ts';
-import { Progeny } from './Progeny.ts';
+import type { Children } from './Children.ts';
+import type { NameLists } from './NameLists.ts';
+import type { Names } from './Names.ts';
+import type { Offspring } from './Offspring.ts';
 
 const NULL_REACH_CHANCE = 0.3;
 
@@ -17,15 +17,13 @@ const NULL_REACH_CHANCE = 0.3;
  * on its own seed — a 30% chance of being a Null Reach instead of a galactic sector.
  */
 export class FilamentFactory implements LocationFactory {
-  readonly #names: NameParts;
-  readonly #nodes: Progeny;
+  readonly #names: Names;
+  readonly #nodes: Children;
 
-  constructor(world: FactoryLookup, library: ContentLibrary) {
-    this.#names = new NameParts(library, 'names/filament');
-    this.#nodes = new Progeny(world, { min: 4, max: 8 }, (nodeSeed) =>
-      world.factoryFor(
-        nodeSeed.branch('null-roll').probability(NULL_REACH_CHANCE) ? NULL_REACH_KIND : SECTOR_KIND,
-      ),
+  constructor(offspring: Offspring, names: NameLists) {
+    this.#names = names.at('names/filament');
+    this.#nodes = offspring.of({ min: 4, max: 8 }, (nodeSeed) =>
+      nodeSeed.branch('null-roll').probability(NULL_REACH_CHANCE) ? NULL_REACH_KIND : SECTOR_KIND,
     );
   }
 

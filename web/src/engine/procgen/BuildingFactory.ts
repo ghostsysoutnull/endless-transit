@@ -1,27 +1,27 @@
-import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Building, BUILDING_KIND } from '#engine/model/Building.ts';
 import { FLOOR_KIND } from '#engine/model/Floor.ts';
 import { LAYER_KIND } from '#engine/model/Layer.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
-import { BuildingNamer } from './BuildingNamer.ts';
-import { BuildingSizes } from './BuildingSizes.ts';
-import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
-import { Progeny } from './Progeny.ts';
+import type { BuildingNames } from './BuildingNames.ts';
+import type { Children } from './Children.ts';
+import type { Offspring } from './Offspring.ts';
+import type { Sizes } from './Sizes.ts';
 
 /** A building: a size, then a name that depends on it; as many floors as the size said, floor `n` from `branch(n)`, then its Layers past them. */
 export class BuildingFactory implements LocationFactory<Building> {
-  readonly #namer: BuildingNamer;
-  readonly #sizes = new BuildingSizes();
-  readonly #floors: Progeny;
-  readonly #layers: Progeny;
+  readonly #namer: BuildingNames;
+  readonly #sizes: Sizes;
+  readonly #floors: Children;
+  readonly #layers: Children;
 
-  constructor(world: FactoryLookup, library: ContentLibrary) {
-    this.#namer = new BuildingNamer(library);
-    this.#floors = new Progeny(world, undefined, () => world.factoryFor(FLOOR_KIND));
-    this.#layers = new Progeny(world, undefined, () => world.factoryFor(LAYER_KIND));
+  constructor(offspring: Offspring, parts: { namer: BuildingNames; sizes: Sizes }) {
+    this.#namer = parts.namer;
+    this.#sizes = parts.sizes;
+    this.#floors = offspring.of(undefined, () => FLOOR_KIND);
+    this.#layers = offspring.of(undefined, () => LAYER_KIND);
   }
 
   kind(): LocationKind {

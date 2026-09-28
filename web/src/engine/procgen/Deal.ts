@@ -1,11 +1,12 @@
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { Dealer } from './Dealer.ts';
 
 /**
  * Owns one fact: how items are dealt without replacement — the `n`-th item of a deal is the `n`-th pick
  * from what the earlier picks left, each pick on its own branch, so any position can be asked alone and
  * the answer never depends on who asked first. Past the list's end the deal starts over.
  */
-export class Deal {
+export class Deal implements Dealer {
   nth<T>(seed: Seed, items: readonly T[], n: number): T {
     const dealt = this.take(seed, items, n + 1).at(-1);
     if (dealt === undefined) throw new RangeError('a deal always deals');

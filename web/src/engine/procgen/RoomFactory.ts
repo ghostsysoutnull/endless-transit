@@ -1,16 +1,15 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
-import type { WarningSink } from '#engine/content/WarningSink.ts';
 import type { Apartment } from '#engine/model/Apartment.ts';
 import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
 import { Room, ROOM_KIND } from '#engine/model/Room.ts';
-import { Atmospheres } from './Atmospheres.ts';
-import { Deal } from './Deal.ts';
-import { Furnishings } from './Furnishings.ts';
 import type { LocationFactory } from './LocationFactory.ts';
 import type { RoomCategories } from './RoomCategories.ts';
 import type { RoomShape } from './RoomShape.ts';
+import type { AtmosphereDeal } from './AtmosphereDeal.ts';
+import type { Dealer } from './Dealer.ts';
+import type { FurnitureDeal } from './FurnitureDeal.ts';
 
 const ADJECTIVES = 'names/buildings/adj';
 const OXYGEN = { min: 12, max: 21 };
@@ -32,21 +31,22 @@ export class RoomFactory implements LocationFactory<Room, Apartment> {
   readonly #shape: RoomShape;
   readonly #library: ContentLibrary;
   readonly #categories: RoomCategories;
-  readonly #atmospheres: Atmospheres;
-  readonly #furnishings: Furnishings;
-  readonly #deal = new Deal();
+  readonly #atmospheres: AtmosphereDeal;
+  readonly #furnishings: FurnitureDeal;
+  readonly #deal: Dealer;
 
   constructor(
     library: ContentLibrary,
     categories: RoomCategories,
-    warnings: WarningSink,
+    parts: { atmospheres: AtmosphereDeal; furnishings: FurnitureDeal; deal: Dealer },
     shape: RoomShape = ROOM,
   ) {
     this.#shape = shape;
     this.#library = library;
     this.#categories = categories;
-    this.#atmospheres = new Atmospheres(library, warnings);
-    this.#furnishings = new Furnishings(library);
+    this.#atmospheres = parts.atmospheres;
+    this.#furnishings = parts.furnishings;
+    this.#deal = parts.deal;
   }
 
   kind(): LocationKind {

@@ -2,6 +2,7 @@ import type { Location } from '#engine/model/Location.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
+import type { Children } from './Children.ts';
 
 const COUNT = 'children';
 
@@ -11,7 +12,7 @@ const COUNT = 'children';
  * `parentSeed.child(i)` (`Seed` owns that rule) and nothing else. Which factory makes a child is asked per child seed, so a level
  * can mix kinds.
  */
-export class Progeny {
+export class Progeny implements Children {
   readonly #world: FactoryLookup;
   readonly #count: { min: number; max: number; unit: number } | undefined;
   readonly #factoryOf: (childSeed: Seed) => LocationFactory;

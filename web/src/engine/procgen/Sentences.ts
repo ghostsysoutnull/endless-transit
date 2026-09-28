@@ -1,5 +1,6 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { Lines } from './Lines.ts';
 
 const LISTS = 'themes/descriptions';
 const DEAL = 'sentence';
@@ -8,7 +9,7 @@ const DEAL = 'sentence';
  * Owns one fact: how a location is dealt its description sentence — one line of the kind's list in
  * `themes/descriptions`, chosen by the location's own seed at creation (ThemeService.groovy:201-208).
  */
-export class Sentences {
+export class Sentences implements Lines {
   readonly #library: ContentLibrary;
   readonly #kind: string;
 

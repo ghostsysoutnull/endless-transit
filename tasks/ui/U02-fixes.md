@@ -458,6 +458,9 @@ slider's name comes from `vm.slider`); a tap in a picture resolves to an option 
    children, the sentences, the doors, the deal …). `LocationRegistry` — the engine's composition root, built in
    `main.ts` — builds each helper once and hands it in. Guards: the goldens (`Goldens.test`: any change to what the
    world generates shows there) and the engine tests, unchanged; no test builds a factory directly.
+   - Found in the build: handing in `Progeny`, `NameParts` and `Sentences` ready-made would move each factory's own
+     facts (how many children and of which kind, which name list, which sentences) into the registry. So those three
+     come through makers (`Offspring`, `NameLists`, `LineDecks`), and each factory asks with its own facts.
 
 Then the user checks the tower and the corridor on the phone (no corridor scene test exists in `e2e/`): drag,
 slider, pad ride, zoom in and out.

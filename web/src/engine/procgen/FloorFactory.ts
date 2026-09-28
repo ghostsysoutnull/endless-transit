@@ -1,4 +1,3 @@
-import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { Building } from '#engine/model/Building.ts';
 import { CORRIDOR_KIND } from '#engine/model/Corridor.ts';
 import { Floor, FLOOR_KIND } from '#engine/model/Floor.ts';
@@ -6,25 +5,26 @@ import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
-import type { FactoryLookup } from './FactoryLookup.ts';
-import { FloorZones } from './FloorZones.ts';
 import type { LocationFactory } from './LocationFactory.ts';
-import { Passages } from './Passages.ts';
-import { Progeny } from './Progeny.ts';
-import { Sentences } from './Sentences.ts';
+import type { Children } from './Children.ts';
+import type { LineDecks } from './LineDecks.ts';
+import type { Lines } from './Lines.ts';
+import type { Offspring } from './Offspring.ts';
+import type { PassagePeek } from './PassagePeek.ts';
+import type { Zones } from './Zones.ts';
 
 /** A floor: its zone by height, one sentence dealt from the floor descriptions, a peek at its corridor-to-be; one child, the corridor. */
 export class FloorFactory implements LocationFactory<Floor, Building> {
-  readonly #zones: FloorZones;
-  readonly #sentences: Sentences;
-  readonly #corridor: Progeny;
-  readonly #passages: Passages;
+  readonly #zones: Zones;
+  readonly #sentences: Lines;
+  readonly #corridor: Children;
+  readonly #passages: PassagePeek;
 
-  constructor(world: FactoryLookup, library: ContentLibrary) {
-    this.#zones = new FloorZones(library);
-    this.#sentences = new Sentences(library, 'floor');
-    this.#corridor = new Progeny(world, undefined, () => world.factoryFor(CORRIDOR_KIND));
-    this.#passages = new Passages(library);
+  constructor(offspring: Offspring, parts: { zones: Zones; decks: LineDecks; passages: PassagePeek }) {
+    this.#zones = parts.zones;
+    this.#sentences = parts.decks.of('floor');
+    this.#corridor = offspring.of(undefined, () => CORRIDOR_KIND);
+    this.#passages = parts.passages;
   }
 
   kind(): LocationKind {

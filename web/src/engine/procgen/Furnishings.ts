@@ -1,7 +1,8 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { Culture } from '#engine/model/Culture.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
-import { Deal } from './Deal.ts';
+import type { FurnitureDeal } from './FurnitureDeal.ts';
+import type { Dealer } from './Dealer.ts';
 
 const CONDITIONS = 'themes/conditions';
 const CULTURE_LISTS = 'themes/cultures';
@@ -14,12 +15,13 @@ const CONDITION = 'condition';
  * pieces are dealt without replacement; a condition that would double the item's first word is passed
  * over for the next one (`flickering flickering light tube`, HK-016 F2).
  */
-export class Furnishings {
+export class Furnishings implements FurnitureDeal {
   readonly #library: ContentLibrary;
-  readonly #deal = new Deal();
+  readonly #deal: Dealer;
 
-  constructor(library: ContentLibrary) {
+  constructor(library: ContentLibrary, deal: Dealer) {
     this.#library = library;
+    this.#deal = deal;
   }
 
   of(seed: Seed, culture: Culture, count: number): readonly string[] {

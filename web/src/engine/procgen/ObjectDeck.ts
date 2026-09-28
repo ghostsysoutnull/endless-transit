@@ -2,6 +2,7 @@ import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { Culture } from '#engine/model/Culture.ts';
 import type { Era } from '#engine/model/Era.ts';
 import { Relic } from '#engine/model/Relic.ts';
+import type { RelicDeck } from './RelicDeck.ts';
 
 const CULTURE_LISTS = 'themes/cultures';
 const ERA_LISTS = 'themes/timelines';
@@ -18,7 +19,7 @@ const FORMS: readonly { readonly key: string; readonly join: (c: string, t: stri
  * culture item × each era item in the four forms, then every item alone (ThemeService.groovy:140-171,
  * HK-016 step 2). Built once per pair; an apartment deals from it and never holds a card twice.
  */
-export class ObjectDeck {
+export class ObjectDeck implements RelicDeck {
   readonly #library: ContentLibrary;
   readonly #decks = new Map<string, readonly Relic[]>();
 
