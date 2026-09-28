@@ -21,12 +21,12 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 
 ## The UI works out rules the game should hand it (the engine law)
 
-- [ ] **door-keys — door looks by their display name.** `DoorLooks.INKS` is keyed by `Frozen`/`Cold`/`Static`, the
+- [x] **door-keys — door looks by their display name.** `DoorLooks.INKS` is keyed by `Frozen`/`Cold`/`Static`, the
   words shown to the player. Fix: `themes/doors/states.txt` and `materials.txt` get a key column (a state's look
   `frost`/`cold`/`static`/`plain`; a material's family `glass`/`metal`/`stone`/`timber`/`bone`), `DoorLook` carries
   the keys as a closed set made where the content loads, an unknown key refused there (today it draws plain), and the
   UI maps only that set. (OO 1, 6; TS: parse at the edge.)
-  Done: —
+  Done: `148af00`
 - [ ] **levels — the tower works out levels itself.** `TowerPicture` reads "below the bedrock" from a negative number
   (`level < 0`, `#frame`'s `min = -below`) and positions floors by `Number(child.ordinal)`. Fix: the engine hands each
   level its number and whether it is a Layer.

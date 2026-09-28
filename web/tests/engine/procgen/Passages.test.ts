@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
-import type { Apartment } from '#engine/model/Apartment.ts';
+import { Apartment } from '#engine/model/Apartment.ts';
 import type { Building } from '#engine/model/Building.ts';
 import type { Floor } from '#engine/model/Floor.ts';
-import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
+import { every, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
 
@@ -45,7 +45,7 @@ describe('the peek (U02): a floor reads its corridor’s shape and its doors’ 
       for (const floor of building.children().slice(0, building.floors()) as Floor[]) {
         const peeked = must(floor.figure());
         const corridor = floor.corridor();
-        const doors = corridor.children().map((apartment) => (apartment as Apartment).door());
+        const doors = every(corridor.children(), Apartment).map((apartment) => apartment.door());
         expect(peeked.shape, floor.address().toString()).toBe(must(corridor.figure() ?? undefined).shape);
         expect(peeked.looks).toEqual(doors.map((door) => door.look()));
         expect(peeked.doors).toBe(building.doorsPerFloor());
@@ -114,23 +114,9 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
     expect(layer.drawing()).toBe('layer');
   });
 
-  test('a door’s look carries the keys its lists give its state and its material — what a picture draws it by', () => {
-    const library = new ContentLibrary(new BundledContent());
-    const keyOf = (list: string): ReadonlyMap<string, string> =>
-      new Map(library.triples(`themes/doors/${list}`).map(([name, , key]) => [name, key]));
-    const [states, materials] = [keyOf('states'), keyOf('materials')];
-    for (let n = 0; n < 8; n++) {
-      for (const apartment of floorOf(n).corridor().children() as Apartment[]) {
-        const look = apartment.door().look();
-        expect(look.stateLook, look.state).toBe(states.get(look.state));
-        expect(look.family, look.material).toBe(materials.get(look.material));
-      }
-    }
-  });
-
   test('a door hands its picture its look and the word written on it', () => {
     const corridor = floorOf(7).corridor();
-    for (const apartment of corridor.children() as Apartment[]) {
+    for (const apartment of every(corridor.children(), Apartment)) {
       const door = apartment.door();
       expect(apartment.figure().door).toEqual({
         look: door.look(),

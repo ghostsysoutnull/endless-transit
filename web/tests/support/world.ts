@@ -55,3 +55,11 @@ export function must<T>(value: T | undefined, what = 'a value'): T {
   if (value === undefined) throw new Error(`expected ${what}, got undefined`);
   return value;
 }
+
+/** Every value as a `type`, or a failed test when one is not — so a test never casts a list of children. */
+export function every<T>(values: readonly unknown[], type: new (...args: never[]) => T): readonly T[] {
+  return values.map((value) => {
+    if (!(value instanceof type)) throw new Error(`expected a ${type.name}`);
+    return value;
+  });
+}

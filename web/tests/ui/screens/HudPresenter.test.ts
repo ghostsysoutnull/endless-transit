@@ -3,6 +3,7 @@ import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
+import { doorLook } from '#tests/support/doorLook.ts';
 
 const presenter = new HudPresenter(new Masthead('a1b2c3d'));
 
@@ -691,8 +692,8 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
             doors: 2,
             shape: 'curved',
             looks: [
-              { material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' },
-              { material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' },
+              doorLook({ state: 'Frozen', stateLook: 'frost' }),
+              doorLook({ material: 'Pitted Concrete', family: 'stone' }),
             ],
           })),
         },
