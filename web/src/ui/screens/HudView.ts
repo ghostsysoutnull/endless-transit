@@ -156,7 +156,8 @@ export class HudView implements View<HudVM> {
   }
 
   #host(slot: Slot | 'scene'): HTMLElement | null {
-    return this.#container?.querySelector(`[data-canvas="${slot}"]`) ?? null;
+    const host = this.#container?.querySelector(`[data-canvas="${slot}"]`);
+    return host instanceof HTMLElement ? host : null;
   }
 
   #toggleMore(): void {
