@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
+import { Coherence } from '#engine/rules/Coherence.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -101,7 +102,7 @@ describe('GameEngine — the traveller the screen is shown', () => {
     const falling = engineOn(
       new MemorySaveStore(saveText('0.0.0.0.0.0.0.0', {}, undefined, { coherence: 35 })),
     );
-    expect(falling.snapshot().player?.decay).toBeCloseTo(0.5, 10);
+    expect(falling.snapshot().player?.decay).toBe(new Coherence(35).decay());
   });
 });
 

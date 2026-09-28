@@ -82,10 +82,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 - [x] **text-shaping — capitalising in three places.** `HudPresenter.#capitalised`, `Floor.readings` (the zone),
   `FloorFactory.create` (the culture in the sentence). Fix: one owner.
   Done: `6cbce0c`
-- [ ] **reduced-motion — "is motion reduced?" asked of the browser in three places.** `SceneView:287`, and the older
+- [x] **reduced-motion — "is motion reduced?" asked of the browser in three places.** `SceneView:287`, and the older
   `CanvasView:70` and `Shell:152`. Fix: one reduced-motion adapter built in `main.ts` and handed in, behind a small
   interface owned by the code that asks. (OO 4 too.)
-  Done: —
+  Done: `2911ea1`
 - [ ] **scene-events — the picture events read in two places.** The `{ id }` of `pick`/`light` is parsed in
   `InputRouter.#pick` and `HudView.#litOf`; `SceneEvents` owns only the names. Fix: `SceneEvents` makes and reads
   them, the event's `unknown` detail checked there once. (TS: parse at the edge.)
