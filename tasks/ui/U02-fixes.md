@@ -345,8 +345,9 @@ a pad key rides the car and then enters that floor; a drag on the tower lights a
     - Found in the build: the tower's `below` went — the rows hold the open Layers, so it would have been a second
       owner; the level is one optional field on `Figure` that extends the known smell `kinds-not-optionals` (named
       there). After its design check the level is a value object, `Level`: its number, its kind (`floor`/`layer`,
-      the tower's looks by kind in a table) and its label, so the open decision on the Layer label changes one
-      place; the pad groups the Layers by kind, pinned for a breached building. The digests from 2a did not move.
+      the tower's looks by kind in a table of `LevelLook`s) and its label, so the open decision on the Layer label
+      changes one place; it refuses a floor below 0 or a Layer at or above it; the pad groups the Layers by kind
+      (`PadGroup`s), pinned for a breached building. The digests from 2a did not move.
 
 ### Shape table
 | what | kind | owner | the one fact it owns | statics + why |
@@ -372,7 +373,9 @@ a pad key rides the car and then enters that floor; a drag on the tower lights a
 | `Retrace` | service | `HudView` | which child the traveller came out of | none |
 | `PlayerSummary.decay` | field | `GameEngine` | the tear's strength | none |
 | trail step `address` | field | `GameEngine` (`#summaryOf`) | where each step stands | none |
-| `Level` | value object | `Floor.figure` (its kind from `levelKind()`, a Layer's own) | a level's number, kind and label | none |
+| `Level` | value object | `Floor.figure` (its kind from `levelKind()`, a Layer's own) | a level's number, kind and label; never a floor below 0 nor a Layer at or above it | none |
+| `LevelLook` | value object | `TowerPicture`'s table by `LevelKind` | how a kind of level is drawn | none |
+| `PadGroup` + `FloorsByTen`, `LayersTogether` | service | `HudPresenter`'s table by `LevelKind` | where a level falls on a pad by tens | none |
 
 **Estimate** (final context of the building session, the unit the notes measure: the tokens actually processed run
 32–72× it, `U01-cost.md:8-10`). The measured builds: U01a 390k (`U01.md:150`), U01b 320k (`U01b.md:147`). The first

@@ -16,15 +16,13 @@ import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+import { FloorsByTen } from './FloorsByTen.ts';
+import { LayersTogether } from './LayersTogether.ts';
+import type { PadGroup } from './PadGroup.ts';
 
 const RETURN_MARK = '▲ ';
 /** Up to this many numbered places, the pad is one group; past it, groups of ten (Decision 7: floors by tens above 20). */
 const PAD_GROUP = 20;
-/** Past twenty, the pad's group of a level: the Layers all in one, below every floor's; a floor in its ten. */
-const PAD_TENS: Readonly<Record<LevelKind, (number: number) => number>> = {
-  layer: () => -1,
-  floor: (number) => Math.floor(number / 10),
-};
 /** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
 const SCAN_MARK = { text: '>>', label: 'You are here' } as const;
 /**
@@ -74,6 +72,11 @@ const TRACE_MARK = '>> ';
  */
 export class HudPresenter implements Presenter<HudVM> {
   readonly #frame = new Frame();
+  /** Past twenty, the pad's group of a level by what stands there: the Layers all in one, a floor in its ten. */
+  readonly #padGroups: Readonly<Record<LevelKind, PadGroup>> = {
+    floor: new FloorsByTen(),
+    layer: new LayersTogether(),
+  };
   readonly #masthead: Masthead;
 
   constructor(masthead: Masthead) {
@@ -272,7 +275,7 @@ export class HudPresenter implements Presenter<HudVM> {
     const tens = travel.length > PAD_GROUP;
     const groups = new Map<number, (typeof numbered)[number][]>();
     for (const entry of numbered) {
-      const group = tens ? PAD_TENS[entry.level.kind()](entry.level.number()) : 0;
+      const group = tens ? this.#padGroups[entry.level.kind()].of(entry.level) : 0;
       groups.set(group, [...(groups.get(group) ?? []), entry]);
     }
     const list = [...groups.values()].map((group) => {
