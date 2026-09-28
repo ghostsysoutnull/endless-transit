@@ -8,4 +8,14 @@ describe('a phrase shaped for the screen', () => {
     expect(new Phrase('[STABLE]').capitalised()).toBe('[STABLE]');
     expect(new Phrase('').capitalised()).toBe('');
   });
+
+  test('plain: lower case with a capital first letter, whatever case it came in', () => {
+    expect(new Phrase('HYDROPONIC BAY').plain()).toBe('Hydroponic bay');
+    expect(new Phrase('sTRATA').plain()).toBe('Strata');
+  });
+
+  test('two phrases of the same text are the same phrase', () => {
+    expect(new Phrase('Void')).toEqual(new Phrase('Void'));
+    expect(new Phrase('Void')).not.toEqual(new Phrase('void'));
+  });
 });

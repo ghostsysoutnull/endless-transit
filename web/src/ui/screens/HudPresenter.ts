@@ -124,7 +124,7 @@ export class HudPresenter implements Presenter<HudVM> {
           place.position === null
             ? null
             : {
-                label: new Phrase(place.position.label.toLowerCase()).capitalised(),
+                label: new Phrase(place.position.label).plain(),
                 value: `${String(place.position.index)} of ${String(place.position.total)}`,
               },
         tags: place.facts.map((fact) => ({

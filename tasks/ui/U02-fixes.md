@@ -79,9 +79,9 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 
 ## One fact, several owners (OO 1)
 
-- [ ] **text-shaping — capitalising in three places.** `HudPresenter.#capitalised`, `Floor.readings` (the zone),
+- [x] **text-shaping — capitalising in three places.** `HudPresenter.#capitalised`, `Floor.readings` (the zone),
   `FloorFactory.create` (the culture in the sentence). Fix: one owner.
-  Done: —
+  Done: `6cbce0c`
 - [ ] **reduced-motion — "is motion reduced?" asked of the browser in three places.** `SceneView:287`, and the older
   `CanvasView:70` and `Shell:152`. Fix: one reduced-motion adapter built in `main.ts` and handed in, behind a small
   interface owned by the code that asks. (OO 4 too.)
@@ -94,9 +94,9 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   `TowerPicture`, and the older `MapPicture`, `TracePicture`; `TEXT = 12` in both scenes. Fix: one owner for all four
   pictures.
   Done: —
-- [ ] **heading-colon — the list heading's colon stripped twice.** `HudPresenter` strips `:` for the heading and for
+- [x] **heading-colon — the list heading's colon stripped twice.** `HudPresenter` strips `:` for the heading and for
   the slider's name. Fix: with `text-shaping`'s one owner of text shaping.
-  Done: —
+  Done: `6cbce0c`
 - [ ] **pad-marks — the pad keys' marks read off the display.** A key's `current`/`visited` come from whether its
   row got a mark (`row.mark !== null`, `row.seen !== null`). Fix: from the option's own `current`/`visited`.
   Done: —

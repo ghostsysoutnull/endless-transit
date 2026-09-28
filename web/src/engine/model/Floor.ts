@@ -126,8 +126,7 @@ export class Floor extends Location {
 
   /** The building's list beside the floor: its zone in plain words (`Hydroponic bay`; U02 — integrity and resonance went). */
   override readings(): readonly Fact[] {
-    const plain = this.#zone.toLowerCase().replaceAll('_', ' ');
-    return [{ key: 'zone', label: 'Zone', value: new Phrase(plain).capitalised() }];
+    return [{ key: 'zone', label: 'Zone', value: new Phrase(this.#zone.replaceAll('_', ' ')).plain() }];
   }
 
   building(): Building {
