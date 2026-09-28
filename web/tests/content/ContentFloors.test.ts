@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
+import { doorStateLook } from '#engine/model/DoorStateLook.ts';
+import { materialFamily } from '#engine/model/MaterialFamily.ts';
 
 const library = new ContentLibrary(new BundledContent());
 const CULTURES = library.index('themes/cultures');
@@ -97,8 +99,8 @@ describe('list floors (HK-016 step 3; a list may only grow)', () => {
   });
 
   test('12 door materials and 12 states, each with a narrative; 12 inscription words', () => {
-    const materials = library.pairs('themes/doors/materials');
-    const states = library.pairs('themes/doors/states');
+    const materials = library.triples('themes/doors/materials');
+    const states = library.triples('themes/doors/states');
     atLeast(
       'doors/materials',
       materials.map(([name]) => name),
@@ -112,6 +114,20 @@ describe('list floors (HK-016 step 3; a list may only grow)', () => {
     atLeast('doors/inscriptions', library.list('themes/doors/inscriptions'), 12);
     for (const [name, narrative] of [...materials, ...states]) expect(narrative, name).not.toBe('');
     expect(states.map(([name]) => name)).toContain('Stable');
+  });
+
+  test('every door state and material carries a look key the pictures know; frozen, cold and static doors look so', () => {
+    const states = library.triples('themes/doors/states');
+    for (const [name, , key] of states) expect(() => doorStateLook(key), name).not.toThrow();
+    for (const [name, , key] of library.triples('themes/doors/materials'))
+      expect(() => materialFamily(key), name).not.toThrow();
+    const looks = new Map(states.map(([name, , key]) => [name, key]));
+    expect([looks.get('Frozen'), looks.get('Cold'), looks.get('Static'), looks.get('Stable')]).toEqual([
+      'frost',
+      'cold',
+      'static',
+      'plain',
+    ]);
   });
 
   test('4 sentence variants per described kind, 8 colours', () => {

@@ -7,7 +7,14 @@ import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 /** The phone's picture at 360 × 640 (tasks/ui/U01b.md) and a taller phone's. */
 const PHONE = { width: 328, height: 277 };
 const TALL = { width: 380, height: 403 };
-const STATES = ['Stable', 'Frozen', 'Cold', 'Static', 'Humming'];
+/** Door states by name and the look their list gives them. */
+const STATES = [
+  { state: 'Stable', stateLook: 'plain' },
+  { state: 'Frozen', stateLook: 'frost' },
+  { state: 'Cold', stateLook: 'cold' },
+  { state: 'Static', stateLook: 'static' },
+  { state: 'Humming', stateLook: 'plain' },
+] as const;
 const SHAPES = ['long', 'service', 'curved', 'static'];
 
 /** A tower of `floors` floors, `doors` a floor; listed top first as the engine lists them (Layers after the lobby); none listed at the elevator. */
@@ -47,7 +54,8 @@ function tower(floors: number, options: { car?: number; below?: number; listed?:
         shape: SHAPES[n % 4] ?? 'long',
         looks: Array.from({ length: 6 }, (_, k) => ({
           material: 'Heavy Bulkhead',
-          state: STATES[(n + k) % 5] ?? 'Stable',
+          family: 'metal' as const,
+          ...(STATES[(n + k) % 5] ?? STATES[0]),
         })),
       })),
     },

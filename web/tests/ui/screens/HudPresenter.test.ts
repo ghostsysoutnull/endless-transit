@@ -691,8 +691,8 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
             doors: 2,
             shape: 'curved',
             looks: [
-              { material: 'Heavy Bulkhead', state: 'Frozen' },
-              { material: 'Pitted Concrete', state: 'Stable' },
+              { material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' },
+              { material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' },
             ],
           })),
         },
@@ -731,8 +731,8 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
       rows: Array.from({ length: 16 }, () => ({
         shape: 'curved',
         looks: [
-          { material: 'Heavy Bulkhead', state: 'Frozen' },
-          { material: 'Pitted Concrete', state: 'Stable' },
+          { material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' },
+          { material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' },
         ],
       })),
     });

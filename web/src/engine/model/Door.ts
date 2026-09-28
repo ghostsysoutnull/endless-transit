@@ -1,4 +1,5 @@
 import type { DoorInscription } from './DoorInscription.ts';
+import type { DoorLook } from './DoorLook.ts';
 import type { Trace } from './Trace.ts';
 
 const STABLE = 'Stable';
@@ -9,33 +10,36 @@ const STABLE = 'Stable';
  * material and state are decoration; the trace shows only to a scan (Guide:203-204).
  */
 export class Door {
-  readonly #material: string;
-  readonly #state: string;
+  readonly #look: DoorLook;
   readonly #inscription: DoorInscription | undefined;
   readonly #trace: Trace;
   readonly #told: { readonly material: string; readonly state: string };
 
   constructor(facts: {
-    material: string;
-    state: string;
+    /** Its material and state, by name and by the keys a picture draws them by. */
+    look: DoorLook;
     inscription: DoorInscription | undefined;
     trace: Trace;
-    /** The sentence each of the material and the state is told in (themes/doors, `name|narrative`). */
+    /** The sentence each of the material and the state is told in (themes/doors, `name|narrative|key`). */
     told: { material: string; state: string };
   }) {
-    this.#material = facts.material;
-    this.#state = facts.state;
+    this.#look = facts.look;
     this.#inscription = facts.inscription;
     this.#trace = facts.trace;
     this.#told = facts.told;
   }
 
   material(): string {
-    return this.#material;
+    return this.#look.material;
   }
 
   state(): string {
-    return this.#state;
+    return this.#look.state;
+  }
+
+  /** How it looks on a picture (U02). */
+  look(): DoorLook {
+    return this.#look;
   }
 
   inscription(): DoorInscription | undefined {
@@ -49,7 +53,7 @@ export class Door {
 
   /** `Heavy Bulkhead [COLD]`; a stable door is just its material (DoorAppearance.groovy:22-27). */
   brief(): string {
-    return this.#state === STABLE ? this.#material : `${this.#material} [${this.#state.toUpperCase()}]`;
+    return this.state() === STABLE ? this.material() : `${this.material()} [${this.state().toUpperCase()}]`;
   }
 
   /** The full appearance: the material's sentence, the state's, and how the words were applied (Door.groovy:79-92). */

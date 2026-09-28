@@ -1,8 +1,4 @@
-/** How a door looks, by its lists' names (`Heavy Bulkhead`, `Frozen`): what a picture draws it by. */
-interface Look {
-  readonly material: string;
-  readonly state: string;
-}
+import type { DoorLook } from '#engine/model/DoorLook.ts';
 
 /**
  * What a scene draws, as plain data (U01b, U02): which picture (a key the registry looks up, never one a view
@@ -27,7 +23,7 @@ export interface SceneVM {
     readonly sealed: boolean;
     readonly address: string;
     /** A door's look and the word written on it; nothing for any other child. */
-    readonly door: { readonly look: Look; readonly words: string } | null;
+    readonly door: { readonly look: DoorLook; readonly words: string } | null;
   }[];
   /** The tower the place is drawn as (a building, a floor at its elevator); nothing for the rest. */
   readonly tower: {
@@ -38,7 +34,7 @@ export interface SceneVM {
     readonly car: number;
     readonly below: number;
     /** Floor `n`'s row at `n`: how its corridor runs and how its doors look. */
-    readonly rows: readonly { readonly shape: string; readonly looks: readonly Look[] }[];
+    readonly rows: readonly { readonly shape: string; readonly looks: readonly DoorLook[] }[];
   } | null;
   /** How the place's corridor runs (`long`, `service`, `curved`, `static`); empty when it is none. */
   readonly shape: string;

@@ -452,7 +452,10 @@ describe('GameEngine — walking the big world', () => {
       figure: {
         floors: 0,
         doors: 0,
-        door: { look: { material: 'Brutalist Slab', state: 'Pitted' }, words: 'VOID_SINK' },
+        door: {
+          look: { material: 'Brutalist Slab', state: 'Pitted', family: 'stone', stateLook: 'plain' },
+          words: 'VOID_SINK',
+        },
       },
       numbered: false,
     });

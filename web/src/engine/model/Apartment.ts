@@ -79,7 +79,7 @@ export class Apartment extends Location {
       floors: 0,
       doors: 0,
       door: {
-        look: { material: this.#door.material(), state: this.#door.state() },
+        look: this.#door.look(),
         words: this.#door.inscription()?.word() ?? '',
       },
     };

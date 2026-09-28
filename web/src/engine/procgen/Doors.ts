@@ -2,6 +2,8 @@ import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Door } from '#engine/model/Door.ts';
 import { DoorInscription } from '#engine/model/DoorInscription.ts';
 import type { DoorLook } from '#engine/model/DoorLook.ts';
+import { doorStateLook } from '#engine/model/DoorStateLook.ts';
+import { materialFamily } from '#engine/model/MaterialFamily.ts';
 import { INSCRIPTION_STYLES } from '#engine/model/InscriptionStyle.ts';
 import type { RoomCategory } from '#engine/model/RoomCategory.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
@@ -14,7 +16,7 @@ const INSCRIBED = 0.2;
 
 /**
  * Owns one fact: how a door comes to be — on the `door` branch of its apartment's seed, a material and a
- * state from the door lists, each on its own branch, and one roll in five for words: the ones the room behind
+ * state from the door lists (each with the key a picture draws it by), each on its own branch, and one roll in five for words: the ones the room behind
  * guarantees, else a word of the inscription list in one of the four styles (CorridorFactory.groovy:47-53,
  * 64-89). Its look alone can be read without the apartment (`look`, the peek, U02).
  */
@@ -28,11 +30,10 @@ export class Doors {
   /** The door of the apartment born from this seed. */
   of(apartmentSeed: Seed, behind: RoomCategory): Door {
     const seed = apartmentSeed.branch(DOOR);
-    const [material, materialTold] = this.#material(seed);
-    const [state, stateTold] = this.#state(seed);
+    const [material, materialTold, family] = this.#material(seed);
+    const [state, stateTold, stateLook] = this.#state(seed);
     return new Door({
-      material,
-      state,
+      look: { material, state, family: materialFamily(family), stateLook: doorStateLook(stateLook) },
       inscription: seed.branch('inscribed').probability(INSCRIBED) ? this.#words(seed, behind) : undefined,
       trace: behind.trace(),
       told: { material: materialTold, state: stateTold },
@@ -42,15 +43,19 @@ export class Doors {
   /** How the door of the apartment born from this seed looks — the same deal as `of`, nothing else made. */
   look(apartmentSeed: Seed): DoorLook {
     const seed = apartmentSeed.branch(DOOR);
-    return { material: this.#material(seed)[0], state: this.#state(seed)[0] };
+    const [material, , family] = this.#material(seed);
+    const [state, , stateLook] = this.#state(seed);
+    return { material, state, family: materialFamily(family), stateLook: doorStateLook(stateLook) };
   }
 
-  #material(seed: Seed): readonly [string, string] {
-    return seed.branch('material').pick(this.#library.pairs(`${LISTS}/materials`));
+  /** A material: its name, the sentence it is told in, its family's key. */
+  #material(seed: Seed): readonly [string, string, string] {
+    return seed.branch('material').pick(this.#library.triples(`${LISTS}/materials`));
   }
 
-  #state(seed: Seed): readonly [string, string] {
-    return seed.branch('state').pick(this.#library.pairs(`${LISTS}/states`));
+  /** A state: its name, the sentence it is told in, its look's key. */
+  #state(seed: Seed): readonly [string, string, string] {
+    return seed.branch('state').pick(this.#library.triples(`${LISTS}/states`));
   }
 
   #words(seed: Seed, behind: RoomCategory): DoorInscription {
