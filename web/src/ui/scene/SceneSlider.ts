@@ -1,4 +1,5 @@
 import type { SceneCamera } from './SceneCamera.ts';
+import type { TrackReader } from './TrackReader.ts';
 
 /** The slider's arrow keys (a desktop extra): up and right to the next stop, down and left to the one before. */
 const STEPS: Readonly<Record<string, number>> = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1 };
@@ -8,7 +9,7 @@ const STEPS: Readonly<Record<string, number>> = { ArrowUp: 1, ArrowRight: 1, Arr
  * hidden where the picture has none, named by the list's heading, its value the stop nearest the view and that
  * child's name. It reads a finger along its track, and its arrow keys as steps.
  */
-export class SceneSlider {
+export class SceneSlider implements TrackReader {
   readonly #element: HTMLElement;
 
   constructor(host: HTMLElement) {

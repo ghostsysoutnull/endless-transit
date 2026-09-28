@@ -5,7 +5,7 @@ import type { Drag } from './Drag.ts';
 import { PictureDrag } from './PictureDrag.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import { StillCamera } from './StillCamera.ts';
-import { SceneSlider } from './SceneSlider.ts';
+import type { SceneSlider } from './SceneSlider.ts';
 import { SliderDrag } from './SliderDrag.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
@@ -84,7 +84,7 @@ export class SceneView implements DrawnScene {
       this.#fit();
       if (this.#leave === undefined) this.#paint(STILL);
     });
-    const slider = new SceneSlider(host);
+    const slider = this.#parts.sliders.mount(host);
     const listeners = new AbortController();
     const signal = listeners.signal;
     canvas.listen(
@@ -388,11 +388,13 @@ export class SceneView implements DrawnScene {
     if (this.#trip !== undefined || this.#zoomOut !== undefined) return;
     this.#dragged = false;
     this.#pointAt(this.#hitAt(event)?.id ?? '');
-    if (!this.#camera.drags()) return;
+    const canvas = this.#mounted?.canvas;
+    if (!this.#camera.drags() || canvas === undefined) return;
     this.#motion = undefined;
     this.#drag = new PictureDrag({
       pointer: event.pointerId,
       camera: this.#camera,
+      hold: canvas,
       point: { x: event.clientX, y: event.clientY },
       view: this.#view,
     });
@@ -422,12 +424,9 @@ export class SceneView implements DrawnScene {
       if (this.#drag === undefined && this.#trip === undefined) this.#pointAt(this.#hitAt(event)?.id ?? '');
       return;
     }
-    const wasMoved = drag.moved();
     drag.move({ x: event.clientX, y: event.clientY });
     const view = drag.view();
     if (view === undefined) return;
-    // A drag of the picture begins: the canvas keeps the finger even when it leaves the picture.
-    if (!wasMoved) this.#mounted?.canvas.capture(event.pointerId);
     this.#motion = undefined;
     this.#follow(view, drag);
   }

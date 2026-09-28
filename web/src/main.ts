@@ -32,6 +32,7 @@ import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
+import { SliderMaker } from '#ui/scene/SliderMaker.ts';
 import { TearPass } from '#ui/scene/TearPass.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
@@ -109,6 +110,7 @@ new Shell(
           clock,
           motion,
           canvases: canvasMaker,
+          sliders: new SliderMaker(),
           tear: new TearPass(new CoherenceFx()),
           picks: new SceneEvents(),
           ride: new EaseInOut(),

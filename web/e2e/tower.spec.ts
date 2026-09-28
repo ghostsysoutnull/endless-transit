@@ -43,11 +43,13 @@ test('the gauge is a slider named by the list, its value a floor: a finger on it
   const start = await slider.getAttribute('aria-valuenow');
   await page.mouse.move(x, box.y + 2);
   await page.mouse.down();
-  await expect(slider).not.toHaveAttribute('aria-valuenow', start ?? '');
-  const tapped = await slider.getAttribute('aria-valuenow');
+  // The tap at the top of the track lands on the top floor, the slider's last place.
+  const top = (await slider.getAttribute('aria-valuemax')) ?? '';
+  expect(start).not.toBe(top);
+  await expect(slider).toHaveAttribute('aria-valuenow', top);
   await page.mouse.move(x, box.y + box.height - 2, { steps: 12 });
   await page.mouse.up();
-  await expect(slider).not.toHaveAttribute('aria-valuenow', tapped ?? '');
+  await expect(slider).not.toHaveAttribute('aria-valuenow', top);
   expect(problems).toEqual([]);
 });
 

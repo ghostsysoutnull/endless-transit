@@ -1,26 +1,19 @@
 import { describe, expect, test } from 'vitest';
 import { PictureDrag } from '#ui/scene/PictureDrag.ts';
-import { TravelCamera } from '#ui/scene/TravelCamera.ts';
+import { travelCamera } from '#tests/support/travelCamera.ts';
 
-/** A camera that drags along y at 0.02 view units a pixel; the rest of its tuning does not matter here. */
-const CAMERA = new TravelCamera({
-  rest: 0,
-  min: 0,
-  max: 9,
-  drag: 0.02,
-  axis: 'y',
-  coast: 0.22,
-  snap: true,
-  settle: { base: 380, per: 40 },
-  pace: { base: 320, per: 230, most: 2400 },
-  zoom: false,
-  stops: [],
-  track: null,
-});
+/** A camera that drags along y at 0.02 view units a pixel. */
+const CAMERA = travelCamera({ drag: 0.02, axis: 'y' });
 
 /** A finger gone down at y = 100 with the view at 3. */
 function finger(): PictureDrag {
-  return new PictureDrag({ pointer: 1, camera: CAMERA, point: { x: 0, y: 100 }, view: 3 });
+  return new PictureDrag({
+    pointer: 1,
+    camera: CAMERA,
+    hold: { capture: () => undefined },
+    point: { x: 0, y: 100 },
+    view: 3,
+  });
 }
 
 describe('a finger on a picture: a tap until it moves past the slop, then a drag', () => {

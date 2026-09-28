@@ -1,4 +1,5 @@
 import type { BandCopy } from '#ui/scene/BandCopy.ts';
+import type { PointerHold } from '#ui/scene/PointerHold.ts';
 import type { Palette } from './Palette.ts';
 import type { PictureSize } from './Picture.ts';
 import type { RatioLimit } from './RatioLimit.ts';
@@ -10,7 +11,7 @@ import type { StylePalette } from './StylePalette.ts';
  * its canvas goes through here, by what it means: named or decorative, dragged or scrolled, a point on it, a band of
  * its frame copied sideways.
  */
-export class PixelCanvas implements BandCopy {
+export class PixelCanvas implements BandCopy, PointerHold {
   readonly #host: HTMLElement;
   readonly #canvas: HTMLCanvasElement;
   readonly #observer: ResizeObserver;

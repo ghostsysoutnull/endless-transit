@@ -1,7 +1,7 @@
 import type { Drag } from './Drag.ts';
 import { Fling } from './Fling.ts';
 import type { SceneCamera } from './SceneCamera.ts';
-import type { SceneSlider } from './SceneSlider.ts';
+import type { TrackReader } from './TrackReader.ts';
 
 /**
  * A finger on the slider (U02): a drag from the start, the view wherever the finger is along the track. Made per
@@ -9,14 +9,14 @@ import type { SceneSlider } from './SceneSlider.ts';
  */
 export class SliderDrag implements Drag {
   readonly #pointer: number;
-  readonly #slider: SceneSlider;
+  readonly #slider: TrackReader;
   readonly #camera: SceneCamera;
   readonly #fling = new Fling();
   #view: number | undefined;
 
   constructor(facts: {
     pointer: number;
-    slider: SceneSlider;
+    slider: TrackReader;
     camera: SceneCamera;
     point: { readonly x: number; readonly y: number };
   }) {

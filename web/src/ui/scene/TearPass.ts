@@ -3,7 +3,8 @@ import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { BandCopy } from './BandCopy.ts';
 import type { FxPlan } from './FxPlan.ts';
 import type { FxPlans } from './FxPlans.ts';
-import type { Tear, TearFrame } from './Tear.ts';
+import type { Tear } from './Tear.ts';
+import type { TearFrame } from './TearFrame.ts';
 
 /** The tear steps this many frames a second (the mock's `postFx`); a still, painted at time 0, holds its first frame. */
 const FX_RATE = 12;
