@@ -34,3 +34,5 @@ Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work
   question a habit before codifying it into a command.
 - **Weigh a review against what it can find before running it**: a plan too big to review cheaply is cut, not reviewed
   twice.
+- **A record never restates the size of a list it points to**: a count beside the list's owner goes stale with
+  every edit; the owner's check boxes are the progress.
