@@ -1,3 +1,4 @@
+import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
@@ -20,9 +21,6 @@ import type { SceneVM } from './SceneVM.ts';
 import { ServiceRow } from './ServiceRow.ts';
 import { StaticRow } from './StaticRow.ts';
 
-const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
-/** No number on the picture is smaller than this (touch first: it must read on a phone). */
-const TEXT = 12;
 /** A floor's row is at least this tall where it fits (a thumb), and the window shows 4 to 11 of them. */
 const ROW = 50;
 const FEWEST = 4;
@@ -70,6 +68,7 @@ interface Frame {
  */
 export class TowerPicture implements ScenePicture<SceneVM> {
   readonly #noise = new SceneHash();
+  readonly #font = new CanvasFont();
   readonly #roofs = new Roof();
   readonly #looks = new DoorLooks();
   /** How each corridor shape runs on a floor's row; a row without a shape (a Layer's) is the plain line. */
@@ -296,7 +295,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   #count(painter: Painter, text: string, x: number, y: number, palette: Palette): void {
     painter.globalAlpha = 1;
-    painter.font = `400 ${String(TEXT)}px ${MONO}`;
+    painter.font = this.#font.of('regular');
     painter.textAlign = 'center';
     painter.textBaseline = 'middle';
     painter.fillStyle = palette('dim');
@@ -337,7 +336,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       painter.strokeRect(inner + 0.5, y + 0.5, width - shaft - 1, row);
     }
     painter.globalAlpha = 1;
-    painter.font = `${isLit ? '700' : '400'} ${String(TEXT)}px ${MONO}`;
+    painter.font = this.#font.of(isLit ? 'bold' : 'regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
     painter.fillStyle = palette(isLit || child?.visited === true ? 'yl' : abyss ? 'rd' : 'text');
@@ -480,7 +479,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const ticks = new Set<number>([max]);
     for (let level = min === 0 ? 0 : Math.ceil(min / step) * step; level <= max; level += step)
       ticks.add(level);
-    painter.font = `400 ${String(TEXT)}px ${MONO}`;
+    painter.font = this.#font.of('regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
     for (const level of ticks) {

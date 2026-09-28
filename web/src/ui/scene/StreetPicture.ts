@@ -1,3 +1,4 @@
+import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
@@ -12,9 +13,6 @@ import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
 
-const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
-/** No number on the picture is smaller than this (touch first: it must read on a phone). */
-const TEXT = 12;
 /** The strip under the ground line the numbers are written in. */
 const LABEL = 16;
 /** The mock's street: the ground at four fifths of the height, the sky's first tenth left over the tallest roof. */
@@ -56,6 +54,7 @@ interface Standing {
  */
 export class StreetPicture implements ScenePicture<SceneVM> {
   readonly #noise = new SceneHash();
+  readonly #font = new CanvasFont();
   readonly #roofs = new Roof();
   /** Each roof at the street's proportions (the mock's, `transit-reframed.html:749`); a flat roof draws nothing. */
   readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
@@ -167,7 +166,7 @@ export class StreetPicture implements ScenePicture<SceneVM> {
       painter.arc(left + width - 4, top + 4, 2.5, 0, Math.PI * 2);
       painter.fill();
     }
-    painter.font = `${isLit ? '700' : '400'} ${String(TEXT)}px ${MONO}`;
+    painter.font = this.#font.of(isLit ? 'bold' : 'regular');
     painter.textAlign = 'center';
     painter.textBaseline = 'top';
     painter.fillStyle = palette(isLit ? 'yl' : child.sealed ? 'dim' : 'text');
