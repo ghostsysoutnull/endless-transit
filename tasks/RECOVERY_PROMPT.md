@@ -1,8 +1,7 @@
 # Handover
 
 - **Branch:** `ui/u02-inside-the-building`.
-- **Next:** U02 of the UI rework, open: the design fixes' second stage is built; the user checks it on the phone
-  (the zoom out of the place just left, the tower's rows and pad), then the corridor. The wave's state and what
+- **Next:** U02 of the UI rework, open: the corridor picture, on the fixed door looks. The wave's state and what
   follows are in `tasks/ui/U02.md` ("State at handover"). The browser suite is red on this branch until U02's step 5,
   by plan.
 - **Open threads:**
