@@ -126,7 +126,9 @@ export class HudView implements View<HudVM> {
     }
     if (this.#scene?.host !== host || this.#scene.picture !== picture) {
       this.#scene?.view.dispose();
-      const view = new SceneView(picture, this.#clock, this.#motion);
+      const view = new SceneView(picture, this.#clock, this.#motion, (id) => {
+        this.#light(id);
+      });
       view.mount(host);
       this.#scene = { host, picture, view };
     }
@@ -284,15 +286,7 @@ export class HudView implements View<HudVM> {
         </section>
         ${
           drawn
-            ? html`<div
-                class="scene"
-                data-testid="scene"
-                data-canvas="scene"
-                data-lit=${this.#lit}
-                @light=${(event: Event) => {
-                  this.#light(this.#litOf(event));
-                }}
-              ></div>`
+            ? html`<div class="scene" data-testid="scene" data-canvas="scene" data-lit=${this.#lit}></div>`
             : nothing
         }
         ${this.#scan(vm)} ${vm.map === null ? nothing : this.#map(vm.map, 'map', 'map', vm.regions.map)}
@@ -529,13 +523,6 @@ export class HudView implements View<HudVM> {
         ${map === null ? nothing : this.#map(map, 'pane', 'pane-map', map.label)}
       </aside>
     `;
-  }
-
-  /** The id a scene's `light` event carries; empty when it carries none. */
-  #litOf(event: Event): string {
-    const detail: unknown = event instanceof CustomEvent ? event.detail : undefined;
-    const id = typeof detail === 'object' && detail !== null && 'id' in detail ? detail.id : '';
-    return typeof id === 'string' ? id : '';
   }
 
   /**

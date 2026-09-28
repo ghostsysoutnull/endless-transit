@@ -9,7 +9,7 @@ import type { FxPlan } from './FxPlan.ts';
 import type { MotionClock } from './MotionClock.ts';
 import { PixelBudget } from './PixelBudget.ts';
 import type { SceneCamera } from './SceneCamera.ts';
-import { LIGHT, PICK } from './SceneEvents.ts';
+import { SceneEvents } from './SceneEvents.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import { SceneTrip } from './SceneTrip.ts';
@@ -46,7 +46,7 @@ interface Gesture {
  * picture (a real `role=slider` beside the image, drawn by the picture) moves it too; a tap on a child, or a pick
  * from the list (`enter`), rides the view to the child's stop, zooms in when the picture zooms, and only then asks
  * for the child to be entered (a bubbling `pick` carrying its id); a child pointed at — or the one the view comes
- * to while dragged — is announced (`light`) so the list lights its twin. Any new view-model or a dispose drops a
+ * to while dragged — is told to the screen (`onLight`) so the list lights its twin. Any new view-model or a dispose drops a
  * ride, zoom or coast in flight and its pick (ids are positional: a late pick could ride another place's option);
  * a new view-model of the same picture keeps the view on the same place and rides from the old one to the new rest
  * on another (floor to floor). Taps are ignored while a trip runs. Under `prefers-reduced-motion` the picture is a
@@ -57,6 +57,9 @@ export class SceneView implements View<SceneVM> {
   readonly #picture: ScenePicture<SceneVM>;
   readonly #clock: MotionClock;
   readonly #preference: ReducedMotion;
+  /** Told which child the picture points at (or none, empty): the list lights its twin. */
+  readonly #onLight: (id: string) => void;
+  readonly #events = new SceneEvents();
   readonly #fx = new CoherenceFx();
   readonly #budget = new PixelBudget();
   #host: HTMLElement | undefined;
@@ -85,10 +88,16 @@ export class SceneView implements View<SceneVM> {
   /** Stops listening to the clock; set while the picture moves. */
   #leave: (() => void) | undefined;
 
-  constructor(picture: ScenePicture<SceneVM>, clock: MotionClock, motion: ReducedMotion) {
+  constructor(
+    picture: ScenePicture<SceneVM>,
+    clock: MotionClock,
+    motion: ReducedMotion,
+    onLight: (id: string) => void,
+  ) {
     this.#picture = picture;
     this.#clock = clock;
     this.#preference = motion;
+    this.#onLight = onLight;
   }
 
   mount(host: HTMLElement): void {
@@ -319,7 +328,7 @@ export class SceneView implements View<SceneVM> {
     if (!trip?.over(time)) return;
     this.#trip = undefined;
     this.#tripAnchor = undefined;
-    this.#announce(PICK, trip.pick());
+    this.#pick(trip.pick());
   }
 
   /** The canvas takes its host's size, in device pixels within the budget; the picture says how its view moves there. */
@@ -506,11 +515,11 @@ export class SceneView implements View<SceneVM> {
     );
   }
 
-  /** Pointed at in the picture: drawn lit here, and announced so the list lights its twin. */
+  /** Pointed at in the picture: drawn lit here, and told to the screen so the list lights its twin. */
   #pointAt(id: string): void {
     if (id === this.#lit) return;
     this.light(id);
-    this.#announce(LIGHT, id);
+    this.#onLight(id);
   }
 
   /** A finger down on the picture or the slider: a drag may begin (the view stops where it is). */
@@ -644,7 +653,7 @@ export class SceneView implements View<SceneVM> {
   /** Ride to the child's stop (a picture with a camera), zoom in when the picture zooms, then pick it; at once under reduced motion. */
   #go(id: string): void {
     if (this.#preference.reduced()) {
-      this.#announce(PICK, id);
+      this.#pick(id);
       return;
     }
     const camera = this.#camera;
@@ -672,7 +681,7 @@ export class SceneView implements View<SceneVM> {
     return camera === null ? 0 : Math.min(camera.max, Math.max(camera.min, value));
   }
 
-  #announce(type: string, id: string): void {
-    this.#host?.dispatchEvent(new CustomEvent(type, { bubbles: true, detail: { id } }));
+  #pick(id: string): void {
+    if (this.#host !== undefined) this.#events.pick(this.#host, id);
   }
 }

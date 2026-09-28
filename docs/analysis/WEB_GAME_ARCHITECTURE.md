@@ -191,9 +191,10 @@ pixel, ≤ 1.3 million pixels).
 child's address and figure on its option, and the frame's seed; the presenter makes a `SceneVM` (with the tear's
 strength from `Coherence.decay()`); the `SceneRegistry` built in `main.ts` maps a key to a `ScenePicture` (today
 `street` → `StreetPicture`: a pure `layout` into hit areas and a pure `paint`), and a key with no entry leaves the
-screen as it was. `SceneView` hosts it: a tap zooms into the child and only then sends a bubbling `pick` the
-`InputRouter` turns into the option; a new frame of the game or a dispose drops a zoom in flight; the list lights its
-twin through `light` events and `data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no
+screen as it was. `SceneView` hosts it: a tap zooms into the child and only then sends a bubbling `pick`
+(`SceneEvents` makes it and reads its id back) the `InputRouter` turns into the option; a new frame of the game or a
+dispose drops a zoom in flight; the child pointed at is told to `HudView`, which lights the list's twin through
+`data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no
 zoom.
 
 **Debug mode.** `?debug` on the address, read only in `main.ts`, puts the debug commands on offer (INTEGRITY ladder,
