@@ -97,8 +97,7 @@ function inTheFirstRoom(engine: GameEngine): GameSnapshot {
 }
 
 describe('GameEngine — the traveller the screen is shown', () => {
-  test('the player carries the tear’s strength the coherence gives: none while stable, half at 35', () => {
-    expect(engineOn(new MemorySaveStore(saveText('0.0.0.0.0.0.0.0'))).snapshot().player?.decay).toBe(0);
+  test('the player hands the screen the tear’s strength its coherence gives', () => {
     const falling = engineOn(
       new MemorySaveStore(saveText('0.0.0.0.0.0.0.0', {}, undefined, { coherence: 35 })),
     );

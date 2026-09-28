@@ -35,9 +35,9 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   ``last.startsWith(`${child.address}.`)``, which re-derives the address rule the engine owns. Fix: the engine says
   which child the traveller came out of. (OO 6.)
   Done: —
-- [ ] **tear-decay — the tear strength is computed by the presenter.** `HudPresenter` builds
+- [x] **tear-decay — the tear strength is computed by the presenter.** `HudPresenter` builds
   `new Coherence(player.coherence)` to call `decay()`. Fix: the snapshot's player carries the decay.
-  Done: —
+  Done: `8155cf8`
 - [ ] **floor-numbers — floor numbers read back from their display text.** `HudPresenter.#pad` (`Number(ordinal)`
   four times) and `TowerPicture:69, 207, 486`. The tower also writes a Layer as `-1` where the game names it
   `Layer -0x1` (Decision 2). Fix: read the level number from `levels`; the Layer label per the open decision above.
@@ -97,9 +97,9 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 - [x] **heading-colon — the list heading's colon stripped twice.** `HudPresenter` strips `:` for the heading and for
   the slider's name. Fix: with `text-shaping`'s one owner of text shaping.
   Done: `6cbce0c`
-- [ ] **pad-marks — the pad keys' marks read off the display.** A key's `current`/`visited` come from whether its
+- [x] **pad-marks — the pad keys' marks read off the display.** A key's `current`/`visited` come from whether its
   row got a mark (`row.mark !== null`, `row.seen !== null`). Fix: from the option's own `current`/`visited`.
-  Done: —
+  Done: `8155cf8`
 - [ ] **door-look-type — the door look's shape restated.** `SceneVM` declares its own `Look` beside the engine's
   `DoorLook`, accepted where a `DoorLook` is expected only because it has the same shape. Fix: one type, carrying
   `door-keys`' keys, a small class with `#private` fields; `Passage` likewise (today any `{ shape, looks }` literal

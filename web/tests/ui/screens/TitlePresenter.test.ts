@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
+import { playerSummary } from '#tests/support/playerSummary.ts';
 
 const presenter = new TitlePresenter(new Masthead('a1b2c3d'));
 
@@ -157,7 +158,7 @@ describe('TitlePresenter.toViewModel', () => {
       presenter.accepts({
         ...atTitle,
         place,
-        player: { coherence: 100, band: 'stable', steps: 0, decay: 0 },
+        player: playerSummary(),
       }),
     ).toBe(false);
   });

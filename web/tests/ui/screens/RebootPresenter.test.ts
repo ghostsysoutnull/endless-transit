@@ -2,13 +2,14 @@ import { describe, expect, test } from 'vitest';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { RebootPresenter } from '#ui/screens/RebootPresenter.ts';
+import { playerSummary } from '#tests/support/playerSummary.ts';
 
 const presenter = new RebootPresenter(new Masthead('a1b2c3d'));
 
 const DEAD: GameSnapshot = {
   world: { seed: '7F3A-91C2-0B4D-E6A8', name: 'The Endless Universe' },
   place: null,
-  player: { coherence: 0, band: 'critical', steps: 12, decay: 1 },
+  player: playerSummary({ coherence: 0, band: 'critical', steps: 12, decay: 1 }),
   buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: { id: 'reboot', outcome: 'rebooting', figures: {} },
   options: [

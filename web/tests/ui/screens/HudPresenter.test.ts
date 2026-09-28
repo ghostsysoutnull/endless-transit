@@ -4,6 +4,7 @@ import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { doorLook } from '#tests/support/doorLook.ts';
+import { playerSummary } from '#tests/support/playerSummary.ts';
 
 const presenter = new HudPresenter(new Masthead('a1b2c3d'));
 
@@ -75,7 +76,7 @@ const PLANET: GameSnapshot = {
     option({ id: 'leave', key: 'l', label: 'Leave Planet', role: 'return' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
-  player: { coherence: 87, band: 'stable', steps: 12, decay: 0 },
+  player: playerSummary({ coherence: 87, steps: 12 }),
   buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: null,
   message: 'Entered Auraea.',
@@ -653,7 +654,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
   });
 
   test('the tear’s strength is the one the engine hands over with the player', () => {
-    const falling = { ...DRAWN, player: { coherence: 35, band: 'degraded', steps: 12, decay: 0.5 } };
+    const falling = { ...DRAWN, player: playerSummary({ coherence: 35, band: 'degraded', decay: 0.5 }) };
     expect(presenter.toViewModel(falling).drawing.decay).toBe(0.5);
   });
 
@@ -811,7 +812,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
     });
     const low = presenter.toViewModel({
       ...PLANET,
-      player: { coherence: 12, band: 'critical', steps: 3, decay: 0.8 },
+      player: playerSummary({ coherence: 12, band: 'critical', steps: 3, decay: 0.8 }),
     });
     expect(low.meter.value).toBe(12);
     expect(low.meter.band).toBe('critical');

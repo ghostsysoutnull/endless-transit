@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
+import { playerSummary } from '#tests/support/playerSummary.ts';
 
 const presenter = new HelpPresenter(new Masthead('a1b2c3d'));
 
@@ -27,7 +28,7 @@ const HELP: GameSnapshot = {
     figure: null,
     noise: '0000-0000-0000-0000',
   },
-  player: { coherence: 85, band: 'stable', steps: 14, decay: 0 },
+  player: playerSummary({ coherence: 85, steps: 14 }),
   buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: { id: 'help', outcome: '', figures: {} },
   options: [
