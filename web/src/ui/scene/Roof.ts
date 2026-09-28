@@ -1,4 +1,5 @@
 import type { Fractions } from './Fractions.ts';
+import type { Roofs } from './Roofs.ts';
 
 /** The four roofs a building may have: a landmark's peak, a mast, a box on top, or flat. */
 export type RoofKind = 'peak' | 'mast' | 'box' | 'flat';
@@ -7,7 +8,7 @@ export type RoofKind = 'peak' | 'mast' | 'box' | 'flat';
  * Owns one fact: which roof a building has — a landmark's peak, else one of three by its address — so the
  * street and the tower draw the same building the same way (U02).
  */
-export class Roof {
+export class Roof implements Roofs {
   readonly #hash: Fractions;
 
   constructor(hash: Fractions) {

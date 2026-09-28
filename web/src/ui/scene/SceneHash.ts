@@ -1,9 +1,11 @@
+import type { Fractions } from './Fractions.ts';
+
 /**
  * Owns one fact: the fraction in [0, 1) that belongs to a text and an index (FNV-1a, mixed) — what a picture
  * varies by (a window lit, a star's pace, a roof), so the same place always looks the same and nothing is
  * drawn from the clock's randomness. Shared by every scene picture (U02; it was the street's own).
  */
-export class SceneHash {
+export class SceneHash implements Fractions {
   fraction(text: string, index: number): number {
     let hash = 0x811c9dc5;
     const key = `${text}/${String(index)}`;
