@@ -3,11 +3,11 @@ import type { PictureSize } from '#ui/canvas/Picture.ts';
 import { ElementStyle } from '#ui/canvas/ElementStyle.ts';
 import { StylePalette } from '#ui/canvas/StylePalette.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
-import type { View } from '#ui/View.ts';
+import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
 import { CoherenceFx, FX_FRAMES } from './CoherenceFx.ts';
 import type { FxPlan } from './FxPlan.ts';
 import { Gesture } from './Gesture.ts';
-import type { MotionClock } from './MotionClock.ts';
+import type { Clock } from './Clock.ts';
 import { PixelBudget } from './PixelBudget.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import { StillCamera } from './StillCamera.ts';
@@ -46,9 +46,9 @@ const GLIDE = 320;
  * still, the view jumps, a tap enters at once and nothing zooms; the tear is drawn but does not move. The canvas is
  * the image a reader hears named; the slider is its own control beside it.
  */
-export class SceneView implements View<SceneVM> {
+export class SceneView implements DrawnScene {
   readonly #picture: ScenePicture<SceneVM>;
-  readonly #clock: MotionClock;
+  readonly #clock: Clock;
   readonly #preference: ReducedMotion;
   /** Told which child the picture points at (or none, empty): the list lights its twin. */
   readonly #onLight: (id: string) => void;
@@ -83,7 +83,7 @@ export class SceneView implements View<SceneVM> {
 
   constructor(
     picture: ScenePicture<SceneVM>,
-    clock: MotionClock,
+    clock: Clock,
     motion: ReducedMotion,
     onLight: (id: string) => void,
   ) {

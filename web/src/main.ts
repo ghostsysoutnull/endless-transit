@@ -17,10 +17,15 @@ import { BrowserFrameSource } from '#platform/BrowserFrameSource.ts';
 import { BrowserReducedMotion } from '#platform/BrowserReducedMotion.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { BuildMasthead } from '#ui/BuildMasthead.ts';
+import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
+import { CanvasViewMaker } from '#ui/canvas/CanvasViewMaker.ts';
+import { MapPicture } from '#ui/canvas/MapPicture.ts';
+import { TracePicture } from '#ui/canvas/TracePicture.ts';
 import { Frame } from '#ui/Frame.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
+import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
@@ -62,6 +67,13 @@ const scenes = new SceneRegistry({
   [BUILDING_KIND.key()]: pictures.tower(),
   [CORRIDOR_KIND.key()]: pictures.corridor(),
 });
+// The world screen's canvases: the map and the trace, drawn in the pictures' one font (U02).
+const font = new CanvasFont();
+const canvases = new CanvasViewMaker(
+  { map: new MapPicture(font), trace: new TracePicture(font) },
+  clock,
+  motion,
+);
 new Shell(
   engine,
   [
@@ -70,7 +82,10 @@ new Shell(
     new ScreenStage(new BufferPresenter(masthead, frame), new BufferView()),
     new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
     new ScreenStage(new TitlePresenter(masthead), new TitleView()),
-    new ScreenStage(new HudPresenter(masthead, frame), new HudView(clock, scenes, motion)),
+    new ScreenStage(
+      new HudPresenter(masthead, frame),
+      new HudView(scenes, new SceneViewMaker(clock, motion), canvases),
+    ),
   ],
   motion,
 ).start(container);

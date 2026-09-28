@@ -1,4 +1,5 @@
 import type { PictureFont } from '#ui/scene/PictureFont.ts';
+import type { GlyphFont } from './GlyphFont.ts';
 
 /** The pictures' one family: the mono face the stylesheet loads, then the system's. */
 const FAMILY = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
@@ -10,7 +11,7 @@ const WEIGHTS = { regular: '400', bold: '700' } as const;
  * Owns one fact: the font every picture writes in — one family, two weights, never under the 12 px floor. A
  * stateless service; the four pictures ask it rather than restate the family and the floor.
  */
-export class CanvasFont implements PictureFont {
+export class CanvasFont implements PictureFont, GlyphFont {
   /** The CSS font for this weight and size (the floor when none is named); a size under the floor is refused. */
   of(weight: keyof typeof WEIGHTS, px: number = FLOOR): string {
     if (px < FLOOR)

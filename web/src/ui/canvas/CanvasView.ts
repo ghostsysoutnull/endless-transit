@@ -1,5 +1,5 @@
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
-import type { MotionClock } from '#ui/scene/MotionClock.ts';
+import type { Clock } from '#ui/scene/Clock.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import type { View } from '#ui/View.ts';
 import type { Picture } from './Picture.ts';
@@ -22,7 +22,7 @@ const STILL = 0.5;
  */
 export class CanvasView<VM> implements View<VM> {
   readonly #picture: Picture<VM>;
-  readonly #clock: MotionClock;
+  readonly #clock: Clock;
   readonly #motion: ReducedMotion;
   readonly #budget = new PixelBudget();
   #mounted: CanvasMount | undefined;
@@ -30,7 +30,7 @@ export class CanvasView<VM> implements View<VM> {
   /** Stops listening to the clock; set while the pulse runs. */
   #leave: (() => void) | undefined;
 
-  constructor(picture: Picture<VM>, clock: MotionClock, motion: ReducedMotion) {
+  constructor(picture: Picture<VM>, clock: Clock, motion: ReducedMotion) {
     this.#picture = picture;
     this.#clock = clock;
     this.#motion = motion;

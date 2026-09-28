@@ -1,3 +1,4 @@
+import type { Clock } from './Clock.ts';
 import type { FrameSource } from './FrameSource.ts';
 
 /**
@@ -6,7 +7,7 @@ import type { FrameSource } from './FrameSource.ts';
  * a listener that leaves in its own frame (a pick that ends the scene) stops the loop cleanly; the listeners
  * of a frame are the ones listening when it began, less any that left during it.
  */
-export class MotionClock {
+export class MotionClock implements Clock {
   readonly #source: FrameSource;
   readonly #listeners = new Set<(time: number) => void>();
   #pending: number | undefined;

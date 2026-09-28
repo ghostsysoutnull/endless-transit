@@ -1,5 +1,5 @@
 import type { LegendTone, MapPictureVM } from './MapPictureVM.ts';
-import { CanvasFont } from './CanvasFont.ts';
+import type { GlyphFont } from './GlyphFont.ts';
 import type { Painter } from './Painter.ts';
 import type { Palette } from './Palette.ts';
 import type { Picture, PictureSize } from './Picture.ts';
@@ -34,7 +34,11 @@ const ALPHA: Readonly<Record<LegendTone, number>> = {
  * and the legend drawn with the same glyphs (HK-023: the old legend described glyphs never drawn).
  */
 export class MapPicture implements Picture<MapPictureVM> {
-  readonly #font = new CanvasFont();
+  readonly #font: GlyphFont;
+
+  constructor(font: GlyphFont) {
+    this.#font = font;
+  }
 
   height(vm: MapPictureVM, width: number): number {
     return Math.round((width * vm.height) / vm.width) + LEGEND_HEIGHT;

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
+import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import { MapPicture } from '#ui/canvas/MapPicture.ts';
 import type { MapPictureVM } from '#ui/canvas/MapPictureVM.ts';
 import { TracePicture } from '#ui/canvas/TracePicture.ts';
@@ -74,7 +75,7 @@ describe('the map picture: a pure function of its view-model — the same calls 
   test('the draw calls are deterministic and complete', () => {
     const one = new RecordingPainter();
     const two = new RecordingPainter();
-    const picture = new MapPicture();
+    const picture = new MapPicture(new CanvasFont());
     const size = { width: 300, height: picture.height(MAP, 300) };
     picture.paint(one, MAP, size, palette(one.asked), 0.5);
     picture.paint(two, MAP, size, palette(two.asked), 0.5);
@@ -96,7 +97,7 @@ describe('the map picture: a pure function of its view-model — the same calls 
 
   test('a visited node is painted in the frame ink, an unvisited one dim, the static red, the mark magenta, the origin yellow', () => {
     const painter = new RecordingPainter();
-    const picture = new MapPicture();
+    const picture = new MapPicture(new CanvasFont());
     picture.paint(
       painter,
       MAP,
@@ -118,7 +119,7 @@ describe('the map picture: a pure function of its view-model — the same calls 
   });
 
   test('the picture is as wide as its panel and half as tall plus the legend; a phase moves only the pulse', () => {
-    const picture = new MapPicture();
+    const picture = new MapPicture(new CanvasFont());
     expect(picture.height(MAP, 300)).toBe(174);
     expect(picture.height(MAP, 660)).toBe(354);
     const still = new RecordingPainter();
@@ -137,7 +138,7 @@ describe('the trace picture: one plate per level on a thread, the current one ma
   test('the draw calls are deterministic; every depth, kind and name is written at 12 px or more', () => {
     const one = new RecordingPainter();
     const two = new RecordingPainter();
-    const picture = new TracePicture();
+    const picture = new TracePicture(new CanvasFont());
     const size = { width: 336, height: picture.height(TRACE, 336) };
     picture.paint(one, TRACE, size, palette(one.asked), 0.5);
     picture.paint(two, TRACE, size, palette(two.asked), 0.5);
@@ -168,7 +169,7 @@ describe('the trace picture: one plate per level on a thread, the current one ma
 
   test('the current level is written in yellow, a void level in the void’s ink — the void wins when both (LatticeTraceComponent.groovy:84) — the rest in the text ink; a long name is cut to the width', () => {
     const painter = new RecordingPainter();
-    const picture = new TracePicture();
+    const picture = new TracePicture(new CanvasFont());
     const long: TracePictureVM = {
       rows: [
         { depth: '[00]', glyph: '∞', kind: 'UNIVERSE', name: 'A'.repeat(80), current: false, abyssal: false },
