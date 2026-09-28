@@ -29,15 +29,10 @@ describe('a door’s look: its material and state by name, and the keys their li
     });
   });
 
-  test('a list with an unknown key is refused whole, whichever of its lines a door is dealt', () => {
-    const materials = doors(
-      'Synth-Glass Slab|A glass slab.|glass\nOdd Door|An odd door.|velvet\n',
-      'Frozen|Frost.|frost\n',
-    );
-    const states = doors('Slab|A slab.|stone\n', 'Stable|It holds.|plain\nOdd|Odd.|shiny\n');
-    for (let n = 0; n < 16; n++) {
-      expect(() => materials.look(new Seed(n, n))).toThrow(/velvet/);
-      expect(() => states.look(new Seed(n, n))).toThrow(/shiny/);
-    }
+  test('a list with an unknown key is refused whole, before any door is dealt', () => {
+    expect(() =>
+      doors('Synth-Glass Slab|A glass slab.|glass\nOdd Door|An odd door.|velvet\n', 'Frozen|Frost.|frost\n'),
+    ).toThrow(/velvet/);
+    expect(() => doors('Slab|A slab.|stone\n', 'Stable|It holds.|plain\nOdd|Odd.|shiny\n')).toThrow(/shiny/);
   });
 });

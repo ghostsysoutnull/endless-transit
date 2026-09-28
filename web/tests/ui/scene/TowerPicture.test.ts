@@ -20,7 +20,10 @@ const STATES = [
 const SHAPES = ['long', 'service', 'curved', 'static'];
 
 /** A tower of `floors` floors, `doors` a floor; listed top first as the engine lists them (Layers after the lobby); none listed at the elevator. */
-function tower(floors: number, options: { car?: number; below?: number; listed?: boolean } = {}): SceneVM {
+function tower(
+  floors: number,
+  options: { car?: number; below?: number; listed?: boolean; address?: string; landmark?: boolean } = {},
+): SceneVM {
   const below = options.below ?? 0;
   const ordinals = [
     ...Array.from({ length: floors }, (_, n) => floors - 1 - n),
@@ -48,8 +51,8 @@ function tower(floors: number, options: { car?: number; below?: number; listed?:
     tower: {
       floors,
       doors: 6,
-      address: '0.0.0.0.0.0.0.0.2',
-      landmark: false,
+      address: options.address ?? '0.0.0.0.0.0.0.0.2',
+      landmark: options.landmark ?? false,
       car: options.car ?? 0,
       below,
       rows: Array.from({ length: floors }, (_, n) => ({
@@ -214,10 +217,7 @@ function addressWith(kind: RoofKind): string {
  * found by key (U02 fixes, step 2a) — removed, with the street's digest, at U02's close-out.
  */
 describe('the tower paints the same calls as before its drawers move (a digest of them)', () => {
-  const top = (address: string, landmark: boolean): SceneVM => {
-    const vm = tower(5, { car: 4 });
-    return { ...vm, tower: { ...(vm.tower ?? ({} as never)), address, landmark } };
-  };
+  const top = (address: string, landmark: boolean): SceneVM => tower(5, { car: 4, address, landmark });
 
   test('each roof, the top in view', () => {
     const digests = [

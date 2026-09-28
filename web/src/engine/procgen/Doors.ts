@@ -26,15 +26,21 @@ interface Line<K> {
  * state from the door lists (each with the key a picture draws it by), each on its own branch, and one roll in
  * five for words: the ones the room behind guarantees, else a word of the inscription list in one of the four
  * styles (CorridorFactory.groovy:47-53, 64-89). Its look alone can be read without the apartment (`look`, the
- * peek, U02). Each list is read whole the first time it is dealt from: a line with an unknown key refuses it all.
+ * peek, U02). Both lists are read whole and typed when it is made: a line with an unknown key refuses its list.
  */
 export class Doors {
   readonly #library: ContentLibrary;
-  #materials: readonly Line<MaterialFamily>[] | undefined;
-  #states: readonly Line<DoorStateLook>[] | undefined;
+  readonly #materials: readonly Line<MaterialFamily>[];
+  readonly #states: readonly Line<DoorStateLook>[];
 
   constructor(library: ContentLibrary) {
     this.#library = library;
+    this.#materials = library
+      .triples(`${LISTS}/materials`)
+      .map(([name, told, key]) => ({ name, told, key: materialFamily(key) }));
+    this.#states = library
+      .triples(`${LISTS}/states`)
+      .map(([name, told, key]) => ({ name, told, key: doorStateLook(key) }));
   }
 
   /** The door of the apartment born from this seed. */
@@ -57,16 +63,10 @@ export class Doors {
   }
 
   #material(seed: Seed): Line<MaterialFamily> {
-    this.#materials ??= this.#library
-      .triples(`${LISTS}/materials`)
-      .map(([name, told, key]) => ({ name, told, key: materialFamily(key) }));
     return seed.branch('material').pick(this.#materials);
   }
 
   #state(seed: Seed): Line<DoorStateLook> {
-    this.#states ??= this.#library
-      .triples(`${LISTS}/states`)
-      .map(([name, told, key]) => ({ name, told, key: doorStateLook(key) }));
     return seed.branch('state').pick(this.#states);
   }
 
