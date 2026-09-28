@@ -3,6 +3,7 @@ import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Apartment } from '#engine/model/Apartment.ts';
 import type { Building } from '#engine/model/Building.ts';
+import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { Floor } from '#engine/model/Floor.ts';
 import { every, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
@@ -36,7 +37,7 @@ function buildingOf(n: number): Building {
   return must(street.children()[n % street.children().length]) as Building;
 }
 
-const SHAPES = ['long', 'service', 'curved', 'static'];
+const SHAPES: readonly CorridorShape[] = ['long', 'service', 'curved', 'static'];
 
 describe('the peek (U02): a floor reads its corridor’s shape and its doors’ looks from the seeds, making neither', () => {
   test('what a floor peeks is what its corridor and doors are once made, for every floor of forty buildings', () => {
@@ -56,7 +57,7 @@ describe('the peek (U02): a floor reads its corridor’s shape and its doors’ 
   test('a corridor’s shape is the key its sentence carries: one of four, and the curved gallery is curved', () => {
     for (let n = 0; n < 8; n++) {
       const corridor = floorOf(n).corridor();
-      const shape = must(corridor.figure() ?? undefined).shape ?? '';
+      const shape = must(corridor.figure() ?? undefined).shape ?? 'none';
       expect(SHAPES).toContain(shape);
       if (must(corridor.description()[0]).startsWith('A curved gallery')) expect(shape).toBe('curved');
       if (must(corridor.description()[0]).startsWith('A narrow service')) expect(shape).toBe('service');

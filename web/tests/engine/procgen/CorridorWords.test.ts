@@ -17,5 +17,6 @@ describe('a corridor’s words: its sentence and the shape it carries, dealt tog
 
   test('a list with a shape the pictures do not know is refused whole, before anything is dealt', () => {
     expect(() => words('A long corridor|long\nA spiral stair|spiral\n')).toThrow(/spiral/);
+    expect(() => words('A long corridor|long\nA corridor of nothing|none\n')).toThrow(/none/);
   });
 });

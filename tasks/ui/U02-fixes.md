@@ -51,12 +51,12 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
 
 ## Choosing what to draw by comparing text (OO 3, 5)
 
-- [ ] **shape-drawers — corridor shapes and roofs picked by if/else on text.** `TowerPicture.#corridor`
+- [x] **shape-drawers — corridor shapes and roofs picked by if/else on text.** `TowerPicture.#corridor`
   (`shape === 'curved'/'service'/'static'`) and the roof chains in `StreetPicture` and `TowerPicture`
   (`kind === 'peak'/'mast'/'box'`, two copies). Fix: one drawer per shape and per roof, found by key, shared by the
   pictures that draw them; the shape keys a closed set made where the content loads, an unknown one refused there
   (today it draws as a long corridor). (TS: parse at the edge.)
-  Done: —
+  Done: `59aeef9`
 - [ ] **still-camera — the street's missing camera is `null`, checked about ten times.** `SceneView` branches on
   `camera === null`, `camera.zoom === false`, `camera.drag === 0`. Fix: a still camera that answers for itself.
   Done: —
