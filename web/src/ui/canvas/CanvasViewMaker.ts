@@ -1,36 +1,32 @@
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { Clock } from '#ui/scene/Clock.ts';
 import type { CanvasViews } from '#ui/screens/CanvasViews.ts';
-import type { MapPanelVM } from '#ui/screens/MapPanelVM.ts';
 import type { View } from '#ui/View.ts';
 import { CanvasView } from './CanvasView.ts';
+import type { MapPictureVM } from './MapPictureVM.ts';
 import type { Picture } from './Picture.ts';
 import type { TracePictureVM } from './TracePictureVM.ts';
 
+/** The pictures the world screen's canvases draw: the map (in the pane and under the narrative) and the trace. */
+type CanvasPictures = Readonly<{ map: Picture<MapPictureVM>; trace: Picture<TracePictureVM> }>;
+
 /** Makes the world screen's canvas views (U02): the map and the trace, each on the page's clock. A factory, built in `main.ts`. */
 export class CanvasViewMaker implements CanvasViews {
-  readonly #pictures: {
-    readonly map: Picture<MapPanelVM['picture']>;
-    readonly trace: Picture<TracePictureVM>;
-  };
+  readonly #pictures: CanvasPictures;
   readonly #clock: Clock;
   readonly #motion: ReducedMotion;
 
-  constructor(
-    pictures: { map: Picture<MapPanelVM['picture']>; trace: Picture<TracePictureVM> },
-    clock: Clock,
-    motion: ReducedMotion,
-  ) {
+  constructor(pictures: CanvasPictures, clock: Clock, motion: ReducedMotion) {
     this.#pictures = pictures;
     this.#clock = clock;
     this.#motion = motion;
   }
 
-  pane(): View<MapPanelVM['picture']> {
+  pane(): View<MapPictureVM> {
     return new CanvasView(this.#pictures.map, this.#clock, this.#motion);
   }
 
-  map(): View<MapPanelVM['picture']> {
+  map(): View<MapPictureVM> {
     return new CanvasView(this.#pictures.map, this.#clock, this.#motion);
   }
 
