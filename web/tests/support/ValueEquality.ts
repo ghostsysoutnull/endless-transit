@@ -5,13 +5,18 @@ interface Value {
   equals(other: unknown): boolean;
 }
 
-/** The one type check of this file: an object with an `equals` method. */
-function isValue(candidate: unknown): candidate is Value {
+/** Whether an object has an `equals` method: a value object. */
+function hasEquals(candidate: unknown): boolean {
   return (
     typeof candidate === 'object' &&
     candidate !== null &&
     typeof (candidate as { equals?: unknown }).equals === 'function'
   );
+}
+
+/** The one type check of this file: `one` is a value that can be asked about `other`, a value of its own class. */
+function comparable(one: unknown, other: unknown): one is Value {
+  return hasEquals(one) && hasEquals(other) && Object.getPrototypeOf(one) === Object.getPrototypeOf(other);
 }
 
 /**
@@ -21,10 +26,8 @@ function isValue(candidate: unknown): candidate is Value {
  * `expect.addEqualityTesters` takes functions — the framework's entry point.
  */
 function valueEquality(one: unknown, other: unknown): boolean | undefined {
-  if (!isValue(one) && !isValue(other)) return undefined;
-  if (!isValue(one) || !isValue(other)) return false;
-  if (Object.getPrototypeOf(one) !== Object.getPrototypeOf(other)) return false;
-  return one.equals(other);
+  if (!hasEquals(one) && !hasEquals(other)) return undefined;
+  return comparable(one, other) && one.equals(other);
 }
 
 expect.addEqualityTesters([valueEquality]);
