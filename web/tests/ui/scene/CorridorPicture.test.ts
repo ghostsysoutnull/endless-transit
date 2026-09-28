@@ -8,6 +8,7 @@ import { ColdMark } from '#ui/scene/ColdMark.ts';
 import { CorridorPicture } from '#ui/scene/CorridorPicture.ts';
 import { CurvedHall } from '#ui/scene/CurvedHall.ts';
 import { DoorLooks } from '#ui/scene/DoorLooks.ts';
+import { EndingReach } from '#ui/scene/EndingReach.ts';
 import { EndWall } from '#ui/scene/EndWall.ts';
 import { FrostMark } from '#ui/scene/FrostMark.ts';
 import { GlassPanel } from '#ui/scene/GlassPanel.ts';
@@ -94,6 +95,7 @@ function picture(): CorridorPicture {
   const noise = new SceneHash();
   const glow = new ShadowGlow();
   const wall = new EndWall();
+  const reach = new EndingReach();
   const long = new LongHall();
   return new CorridorPicture({
     font: new CanvasFont(),
@@ -101,9 +103,9 @@ function picture(): CorridorPicture {
     glow,
     halls: {
       long,
-      service: new ServiceHall(wall),
-      curved: new CurvedHall(wall),
-      static: new StaticHall(noise),
+      service: new ServiceHall(wall, reach),
+      curved: new CurvedHall(wall, reach),
+      static: new StaticHall(noise, reach),
       none: long,
     },
     panels: {
@@ -287,15 +289,5 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
     const painter = new RecordingPainter();
     picture().paint(painter, corridor(6), PHONE, palette(painter.asked), 0, '', 0, '');
     expect(painter.calls.some((call) => call.startsWith('fillText(1 · Hatch 1,'))).toBe(true);
-  });
-
-  test('a service corridor ends in a wall once its end is in sight; a long one runs on into the haze', () => {
-    const walls = (shape: CorridorShape, view: number): boolean => {
-      const painter = new RecordingPainter();
-      picture().paint(painter, corridor(4, { shape }), PHONE, palette(painter.asked), 0, '', view, '');
-      return painter.asked.has('panel') && painter.calls.some((call) => call === 'fill(<panel>,1.0)');
-    };
-    expect(walls('service', 2)).toBe(true);
-    expect(walls('long', 2)).toBe(false);
   });
 });

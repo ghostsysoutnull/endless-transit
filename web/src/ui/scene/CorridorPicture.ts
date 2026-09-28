@@ -4,12 +4,16 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { CorridorParts } from './CorridorParts.ts';
-import { DoorQuad } from './DoorQuad.ts';
+import { CorridorSlider } from './CorridorSlider.ts';
 import { HallView } from './HallView.ts';
+import { PlacedDoor } from './PlacedDoor.ts';
+import type { Point } from './Point.ts';
+import { Quad } from './Quad.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
+import { StillCamera } from './StillCamera.ts';
 import { TravelCamera } from './TravelCamera.ts';
 
 /**
@@ -21,36 +25,8 @@ const DRAG = -1 / 40;
 const COAST = 0.3;
 const SETTLE = { base: 560, per: 0 };
 const PACE = { base: 260, per: 220, most: 1500 };
-/** The slider (the mock's `.scrub`, `:74-84`): a band this far in from the sides and the foot, this tall, round. */
-const BAND_INSET = 10;
-const BAND = 52;
-/** The track inside the band: in from its left for the elevator's mark, in from its right for the hall's end. */
-const TRACK_LEFT = 34;
-const TRACK_RIGHT = 76;
-/** The slider's window spans this much of the hall, a finger holding it by its middle; at least this wide. */
-const WINDOW = 9;
-const GRIP = 4.5;
-const WINDOW_LEAST = 26;
-/**
- * A door's number shows while it is this near, its word nearer still (only the nearest pair: at the 12 px floor the
- * mock's 4.5 lets the next pair's words run into each other); it can be tapped while this near.
- */
-const NUMBER_NEAR = 7;
-const WORD_NEAR = 3;
-const REACH = 11;
 /** A door stands this deep in the wall on either side of its place, and is drawn no nearer than just past `near`. */
 const HALF_DOOR = 0.45;
-/** The fog past which a door's number is written in the dim ink. */
-const FAINT = 0.5;
-
-/** A door where the view puts it: the child it draws, its place in the hall and its outline on the picture. */
-interface Placed {
-  readonly child: SceneVM['children'][number];
-  readonly index: number;
-  readonly depth: number;
-  readonly fog: number;
-  readonly quad: DoorQuad;
-}
 
 /**
  * Draws a floor's corridor as the mock walks it (U02; the mock's `corridor`, `transit-reframed.html:828-866`):
@@ -69,16 +45,15 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     this.#parts = parts;
   }
 
+  /** The walk along the hall; a hall without doors stands still. */
   camera(vm: SceneVM, size: PictureSize): SceneCamera {
     const hall = this.#hall(vm, size, 0);
-    const band = this.#band(size);
-    const track = this.#track(size);
-    const valueAt = (x: number): number => ((x - track.left) / track.width) * hall.length() - GRIP;
+    if (!hall.walks()) return new StillCamera();
     return new TravelCamera({
       rest: 0,
       min: 0,
       max: hall.lastStop(),
-      drag: hall.doors() === 0 ? 0 : DRAG,
+      drag: DRAG,
       axis: 'y',
       coast: COAST,
       snap: false,
@@ -86,24 +61,14 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
       pace: PACE,
       zoom: true,
       stops: vm.children.map((child, index) => ({ id: child.id, at: hall.stopOf(index) })),
-      track:
-        hall.doors() === 0
-          ? null
-          : { ...band, axis: 'x', from: valueAt(band.x), to: valueAt(band.x + band.width) },
+      track: new CorridorSlider({ size, hall }).track(),
     });
   }
 
   layout(vm: SceneVM, size: PictureSize, view: number): readonly SceneHit[] {
     return this.#place(vm, size, view)
-      .filter((door) => door.depth < REACH && door.quad.width() > 6)
-      .map((door) => ({
-        id: door.child.id,
-        x: door.quad.left() - 4,
-        y: door.quad.top() - 18,
-        width: door.quad.width() + 8,
-        height: door.quad.height() + 22,
-        anchor: door.quad.middle(),
-      }))
+      .filter((door) => door.inReach())
+      .map((door) => door.hit())
       .reverse();
   }
 
@@ -127,7 +92,8 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     this.#floor(painter, palette, hall);
     this.#edges(painter, palette, hall);
     this.#lamps(painter, palette, hall, seconds);
-    this.#parts.halls[vm.shape].end(painter, palette, hall, seconds);
+    const shape = this.#parts.halls[vm.shape];
+    if (hall.endInSight()) shape.end(painter, palette, hall.endFace(), hall.fog(hall.endAhead()), seconds);
     this.#parts.glow.at(
       painter,
       hall.project(0, 0, Math.min(hall.far(), 9)),
@@ -138,7 +104,13 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     const standing = here === '' ? (vm.children[0]?.id ?? '') : here;
     for (const door of this.#place(vm, size, view))
       this.#door(painter, palette, size, door, seconds, lit, standing);
-    this.#slider(painter, vm, size, palette, hall);
+    new CorridorSlider({ size, hall }).draw(
+      painter,
+      palette,
+      vm.children.map((child) => ({ ink: this.#inkOf(child), visited: child.visited })),
+      this.#parts.glow,
+      shape,
+    );
     painter.globalAlpha = 1;
   }
 
@@ -147,29 +119,30 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
   }
 
   /** The doors in sight where the view puts them, far to near (the order they are drawn in). */
-  #place(vm: SceneVM, size: PictureSize, view: number): Placed[] {
+  #place(vm: SceneVM, size: PictureSize, view: number): PlacedDoor[] {
     const hall = this.#hall(vm, size, view);
-    const placed: Placed[] = [];
+    const placed: PlacedDoor[] = [];
     for (const [index, child] of vm.children.entries()) {
       const far = hall.doorAt(index) - view + HALF_DOOR;
       const near = far - 2 * HALF_DOOR;
       if (far < hall.near() + 0.1 || near > hall.far()) continue;
       const depth = Math.max(near, hall.near() + 0.05);
-      const side = index % 2 === 1 ? 1 : -1;
-      placed.push({
-        child,
-        index,
-        depth,
-        fog: hall.fog(depth),
-        quad: new DoorQuad([
-          hall.project(side, hall.floor(), depth),
-          hall.project(side, hall.floor(), far),
-          hall.project(side, hall.doorTop(), far),
-          hall.project(side, hall.doorTop(), depth),
-        ]),
-      });
+      const side = hall.sideOf(index);
+      placed.push(
+        new PlacedDoor({
+          child,
+          depth,
+          fog: hall.fog(depth),
+          quad: new Quad([
+            hall.project(side, hall.floor(), depth),
+            hall.project(side, hall.floor(), far),
+            hall.project(side, hall.doorTop(), far),
+            hall.project(side, hall.doorTop(), depth),
+          ]),
+        }),
+      );
     }
-    return placed.sort((one, other) => other.depth - one.depth);
+    return placed.sort((one, other) => one.fartherFirst(other));
   }
 
   /** The floor, filled between the two walls' feet as far as the hall is drawn. */
@@ -258,16 +231,18 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     painter: Painter,
     palette: Palette,
     size: PictureSize,
-    door: Placed,
+    door: PlacedDoor,
     seconds: number,
     lit: string,
     here: string,
   ): void {
-    const { child, quad, fog } = door;
+    const child = door.child();
+    const quad = door.quad();
+    const fog = door.fog();
     const isLit = child.id === lit;
     const isHere = child.id === here;
     const look = this.#lookOf(child);
-    const ink = child.sealed ? 'dim' : this.#parts.inks.ink(look.state);
+    const ink = this.#inkOf(child);
     painter.beginPath();
     quad.trace(painter);
     painter.globalAlpha = (isLit ? 0.24 : 0.1) * (0.4 + 0.6 * fog);
@@ -288,14 +263,13 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     this.#parts.marks[look.state].draw(painter, palette, { quad, ink, fog, key: child.address }, seconds);
     painter.restore();
     const middle = quad.middle();
-    if (door.depth < NUMBER_NEAR || isLit || isHere) {
-      const text = isLit || isHere ? `${child.ordinal} · ${look.name}` : child.ordinal;
-      const tone = isHere ? 'yl' : isLit ? 'wh' : fog < FAINT ? 'dim' : 'text';
-      this.#tag(painter, palette, size, text, { x: middle.x, y: quad.top() - 11 }, tone, isHere || isLit);
+    const named = isLit || isHere;
+    if (door.showsNumber(named)) {
+      const text = named ? `${child.ordinal} · ${look.name}` : child.ordinal;
+      const tone = isHere ? 'yl' : isLit ? 'wh' : door.faint() ? 'dim' : 'text';
+      this.#tag(painter, palette, size, text, { x: middle.x, y: quad.top() - 11 }, tone, named);
     }
-    const words = child.door?.words ?? '';
-    if (words !== '' && door.depth < WORD_NEAR)
-      this.#tag(painter, palette, size, `‹${words}›`, middle, 'dim', false);
+    if (door.showsWord()) this.#tag(painter, palette, size, `‹${door.word()}›`, middle, 'dim', false);
     if (child.visited && !isHere) {
       painter.globalAlpha = 1;
       painter.fillStyle = palette('yl');
@@ -303,6 +277,11 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
       painter.arc(middle.x, quad.top() + 8, 2.5, 0, Math.PI * 2);
       painter.fill();
     }
+  }
+
+  /** The ink a door is drawn in: its state's, dim when sealed. */
+  #inkOf(child: SceneVM['children'][number]): string {
+    return child.sealed ? 'dim' : this.#parts.inks.ink(this.#lookOf(child).state);
   }
 
   /**
@@ -327,7 +306,7 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     palette: Palette,
     size: PictureSize,
     text: string,
-    at: { readonly x: number; readonly y: number },
+    at: Point,
     tone: string,
     bold: boolean,
   ): void {
@@ -343,99 +322,5 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     painter.globalAlpha = 1;
     painter.fillStyle = palette(tone);
     painter.fillText(text, x, y);
-  }
-
-  /** The slider's band along the picture's foot: the box the scene host lays the real slider over. */
-  #band(size: PictureSize): {
-    readonly x: number;
-    readonly y: number;
-    readonly width: number;
-    readonly height: number;
-  } {
-    return {
-      x: BAND_INSET,
-      y: size.height - BAND_INSET - BAND,
-      width: size.width - 2 * BAND_INSET,
-      height: BAND,
-    };
-  }
-
-  /** The track inside the band: where the hall runs from its entrance to its end. */
-  #track(size: PictureSize): { readonly left: number; readonly width: number; readonly y: number } {
-    const band = this.#band(size);
-    return {
-      left: band.x + TRACK_LEFT,
-      width: Math.max(1, band.width - TRACK_LEFT - TRACK_RIGHT),
-      y: band.y + band.height / 2,
-    };
-  }
-
-  /** The slider (the mock's `.scrub`): the band, the track, a tick per door, the window you see, you, the two ends. */
-  #slider(painter: Painter, vm: SceneVM, size: PictureSize, palette: Palette, hall: HallView): void {
-    if (hall.doors() === 0) return;
-    const band = this.#band(size);
-    const track = this.#track(size);
-    const along = (value: number): number => track.left + (value / hall.length()) * track.width;
-    this.#round(painter, band.x, band.y, band.width, band.height);
-    painter.globalAlpha = 0.88;
-    painter.fillStyle = palette('ground');
-    painter.fill();
-    painter.globalAlpha = 1;
-    painter.strokeStyle = palette('rule-hi');
-    painter.lineWidth = 1;
-    painter.stroke();
-    painter.globalAlpha = 0.35;
-    painter.fillStyle = palette('cy');
-    painter.fillRect(track.left, track.y - 1, track.width, 2);
-    for (const [index, child] of vm.children.entries()) {
-      const left = index % 2 === 0;
-      painter.globalAlpha = child.visited ? 1 : 0.8;
-      painter.fillStyle = palette(
-        child.visited ? 'yl' : child.sealed ? 'dim' : this.#parts.inks.ink(this.#lookOf(child).state),
-      );
-      painter.fillRect(along(hall.doorAt(index)) - 1, left ? track.y - 14 : track.y + 5, 2, 9);
-    }
-    const view = hall.view();
-    const from = along(view);
-    const span = Math.max(WINDOW_LEAST, along(view + Math.min(WINDOW, hall.length() - view)) - from);
-    this.#round(painter, from, track.y - 16, span, 32);
-    painter.globalAlpha = 0.14;
-    painter.fillStyle = palette('cy');
-    painter.fill();
-    painter.globalAlpha = 1;
-    painter.strokeStyle = palette('cy');
-    painter.stroke();
-    this.#parts.glow.at(painter, { x: from, y: track.y }, 14, palette('yl'), 0.8);
-    painter.globalAlpha = 1;
-    painter.fillStyle = palette('yl');
-    painter.beginPath();
-    painter.arc(from, track.y, 6, 0, Math.PI * 2);
-    painter.fill();
-    this.#elevator(painter, palette, { x: band.x + 17, y: track.y });
-    this.#parts.halls[vm.shape].mark(painter, palette, { x: band.x + band.width - 38, y: track.y });
-  }
-
-  /** The slider's near end: the elevator you came in by, a small car. */
-  #elevator(painter: Painter, palette: Palette, at: { readonly x: number; readonly y: number }): void {
-    painter.globalAlpha = 0.9;
-    painter.strokeStyle = palette('dim');
-    painter.lineWidth = 1.5;
-    painter.strokeRect(at.x - 5, at.y - 7, 10, 14);
-    painter.beginPath();
-    painter.moveTo(at.x, at.y - 7);
-    painter.lineTo(at.x, at.y + 7);
-    painter.stroke();
-  }
-
-  /** A box with fully rounded ends, as a closed path. */
-  #round(painter: Painter, x: number, y: number, width: number, height: number): void {
-    const radius = Math.min(height / 2, width / 2);
-    painter.beginPath();
-    painter.moveTo(x + radius, y);
-    painter.lineTo(x + width - radius, y);
-    painter.arc(x + width - radius, y + radius, radius, -Math.PI / 2, Math.PI / 2);
-    painter.lineTo(x + radius, y + height);
-    painter.arc(x + radius, y + radius, radius, Math.PI / 2, (Math.PI * 3) / 2);
-    painter.closePath();
   }
 }

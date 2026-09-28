@@ -1,8 +1,8 @@
-import type { DoorQuad } from './DoorQuad.ts';
+import type { Quad } from './Quad.ts';
 
 /** A door as its state's mark is drawn on it: its outline, the ink its state is drawn in, the fog on it, its key. */
 export interface MarkedDoor {
-  readonly quad: DoorQuad;
+  readonly quad: Quad;
   /** The stylesheet token its state is drawn in (`DoorLooks` owns it). */
   readonly ink: string;
   readonly fog: number;

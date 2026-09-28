@@ -1,10 +1,12 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { Fractions } from './Fractions.ts';
+import type { HallReach } from './HallReach.ts';
 import type { HallShape } from './HallShape.ts';
-import type { HallView } from './HallView.ts';
+import type { Point } from './Point.ts';
+import type { Quad } from './Quad.ts';
 
-/** How many specks of static fill the hall's end, and how fast they are dealt again (a new field this many times a second). */
+/** How many specks of static fill the hall's end, and how often they are dealt again (a new field this many times a second). */
 const SPECKS = 90;
 const RATE = 12;
 
@@ -15,9 +17,11 @@ const RATE = 12;
  */
 export class StaticHall implements HallShape {
   readonly #noise: Fractions;
+  readonly #reach: HallReach;
 
-  constructor(noise: Fractions) {
+  constructor(noise: Fractions, reach: HallReach) {
     this.#noise = noise;
+    this.#reach = reach;
   }
 
   bend(): number {
@@ -25,30 +29,24 @@ export class StaticHall implements HallShape {
   }
 
   reach(ahead: number, sight: number): number {
-    return Math.min(ahead, sight);
+    return this.#reach.of(ahead, sight);
   }
 
-  end(painter: Painter, palette: Palette, hall: HallView, seconds: number): void {
-    if (!hall.endInSight()) return;
-    const z = hall.endAhead();
-    const low = hall.project(-1, hall.floor(), z);
-    const high = hall.project(1, hall.ceiling(), z);
-    const width = high.x - low.x;
-    const height = low.y - high.y;
+  end(painter: Painter, palette: Palette, face: Quad, fog: number, seconds: number): void {
     const field = `static/${String(Math.floor(seconds * RATE))}`;
     painter.fillStyle = palette('mg');
     for (let speck = 0; speck < SPECKS; speck++) {
-      painter.globalAlpha = (0.25 + 0.6 * this.#noise.fraction(field, speck * 3 + 2)) * hall.fog(z);
+      painter.globalAlpha = (0.25 + 0.6 * this.#noise.fraction(field, speck * 3 + 2)) * fog;
       painter.fillRect(
-        low.x + this.#noise.fraction(field, speck * 3) * width,
-        high.y + this.#noise.fraction(field, speck * 3 + 1) * height,
+        face.left() + this.#noise.fraction(field, speck * 3) * face.width(),
+        face.top() + this.#noise.fraction(field, speck * 3 + 1) * face.height(),
         2,
         2,
       );
     }
   }
 
-  mark(painter: Painter, palette: Palette, point: { readonly x: number; readonly y: number }): void {
+  mark(painter: Painter, palette: Palette, point: Point): void {
     painter.fillStyle = palette('mg');
     painter.globalAlpha = 0.9;
     for (let speck = 0; speck < 7; speck++) {

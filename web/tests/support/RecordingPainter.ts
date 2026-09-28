@@ -14,6 +14,12 @@ export class RecordingPainter implements Painter {
   shadowColor = '';
   shadowBlur = 0;
   shadowOffsetX = 0;
+  /** How many canvas pixels a unit spans: the transform it reports (a phone's pixel ratio, a zoom). */
+  readonly #scale: number;
+
+  constructor(scale = 1) {
+    this.#scale = scale;
+  }
 
   #note(name: string, args: readonly unknown[]): void {
     this.calls.push(
@@ -70,6 +76,6 @@ export class RecordingPainter implements Painter {
     this.#note('restore', []);
   }
   getTransform(): { a: number } {
-    return { a: 1 };
+    return { a: this.#scale };
   }
 }

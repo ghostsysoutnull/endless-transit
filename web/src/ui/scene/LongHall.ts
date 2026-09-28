@@ -1,6 +1,7 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { HallShape } from './HallShape.ts';
+import type { Point } from './Point.ts';
 
 /**
  * A long corridor (designed for U02; the mock has none): straight, with no end in sight — it runs on into the haze.
@@ -20,7 +21,7 @@ export class LongHall implements HallShape {
     // No end wall: the hall runs on past the fog.
   }
 
-  mark(painter: Painter, palette: Palette, point: { readonly x: number; readonly y: number }): void {
+  mark(painter: Painter, palette: Palette, point: Point): void {
     painter.fillStyle = palette('cy');
     for (let dot = 0; dot < 3; dot++) {
       painter.globalAlpha = 0.9 - dot * 0.3;

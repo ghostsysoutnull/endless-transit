@@ -23,6 +23,7 @@ import { ColdMark } from '#ui/scene/ColdMark.ts';
 import { CorridorPicture } from '#ui/scene/CorridorPicture.ts';
 import { CurvedHall } from '#ui/scene/CurvedHall.ts';
 import { DoorLooks } from '#ui/scene/DoorLooks.ts';
+import { EndingReach } from '#ui/scene/EndingReach.ts';
 import { EndWall } from '#ui/scene/EndWall.ts';
 import { FrostMark } from '#ui/scene/FrostMark.ts';
 import { GlassPanel } from '#ui/scene/GlassPanel.ts';
@@ -79,6 +80,7 @@ const motion = new BrowserReducedMotion(window);
 const noise = new SceneHash();
 const glow = new ShadowGlow();
 const wall = new EndWall();
+const reach = new EndingReach();
 const long = new LongHall();
 const scenes = new SceneRegistry({
   [STREET_KIND.key()]: new StreetPicture(),
@@ -89,9 +91,9 @@ const scenes = new SceneRegistry({
     glow,
     halls: {
       long,
-      service: new ServiceHall(wall),
-      curved: new CurvedHall(wall),
-      static: new StaticHall(noise),
+      service: new ServiceHall(wall, reach),
+      curved: new CurvedHall(wall, reach),
+      static: new StaticHall(noise, reach),
       none: long,
     },
     panels: {

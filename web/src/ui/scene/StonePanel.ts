@@ -1,10 +1,10 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { DoorPanel } from './DoorPanel.ts';
-import type { DoorQuad } from './DoorQuad.ts';
+import type { Quad } from './Quad.ts';
 
 /** Stone: coarse blocks, the joints of each course set between the ones below. */
 export class StonePanel implements DoorPanel {
-  trace(painter: Painter, door: DoorQuad): void {
+  trace(painter: Painter, door: Quad): void {
     for (const v of [0.25, 0.5, 0.75]) door.line(painter, [0, v], [1, v]);
     for (const [course, joints] of [
       [0, [0.5]],

@@ -1,17 +1,13 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
-
-/** A point on the picture. */
-interface Point {
-  readonly x: number;
-  readonly y: number;
-}
+import type { Point } from './Point.ts';
 
 /**
- * A door as the corridor draws it (U02): its four corners on the picture — near foot, far foot, far top, near top —
- * its box, and a point across it (`u` from its near edge to its far one, `v` from its foot to its top), so a panel
- * is traced in the door's own perspective. Value object.
+ * A face of the corridor as it falls on the picture (U02): a door, or the hall's end — its four corners, near foot,
+ * far foot, far top, near top (for the end: left foot, right foot, right top, left top); its box; and a point across
+ * it (`u` from its first edge to its second, `v` from its foot to its top), so a panel is traced in the face's own
+ * perspective. Value object.
  */
-export class DoorQuad {
+export class Quad {
   readonly #corners: readonly [Point, Point, Point, Point];
 
   constructor(corners: readonly [Point, Point, Point, Point]) {

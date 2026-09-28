@@ -1,5 +1,5 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
-import type { DoorQuad } from './DoorQuad.ts';
+import type { Quad } from './Quad.ts';
 
 /**
  * How one family of door materials is patterned in the corridor (designed for U02; the mock draws none): lines
@@ -7,5 +7,5 @@ import type { DoorQuad } from './DoorQuad.ts';
  * door's ink. One class a family, found by the family's key.
  */
 export interface DoorPanel {
-  trace(painter: Painter, door: DoorQuad): void;
+  trace(painter: Painter, door: Quad): void;
 }

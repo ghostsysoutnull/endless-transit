@@ -1,5 +1,7 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { HallShape } from './HallShape.ts';
+import { Quad } from './Quad.ts';
+import type { Point } from './Point.ts';
 
 /** The mock's corridor (`transit-reframed.html:523-526, 832-834`): a pair of doors every 2.2 units, the first at 2.2. */
 const SPACING = 2.2;
@@ -38,7 +40,7 @@ export class HallView {
   }
 
   /** Where a point of the hall falls on the picture: `x` across (walls at ±1), `y` up, `z` ahead of you. */
-  project(x: number, y: number, z: number): { readonly x: number; readonly y: number } {
+  project(x: number, y: number, z: number): Point {
     const depth = Math.max(z, NEAR);
     return {
       x: this.#size.width / 2 + ((x + this.#shape.bend(depth)) / depth) * this.#focal,
@@ -65,13 +67,25 @@ export class HallView {
     return this.#shape.reach(this.endAhead(), DEEPEST);
   }
 
-  /** How far ahead the hall's end stands, and whether it is within sight. */
+  /** How far ahead the hall's end stands. */
   endAhead(): number {
     return this.length() - this.#view;
   }
 
+  /** Whether the hall's end is near enough to show through the fog. */
   endInSight(): boolean {
     return this.endAhead() <= DEEPEST;
+  }
+
+  /** The hall's end, wall to wall and floor to ceiling, as it falls on the picture. */
+  endFace(): Quad {
+    const z = this.endAhead();
+    return new Quad([
+      this.project(-1, FLOOR, z),
+      this.project(1, FLOOR, z),
+      this.project(1, CEILING, z),
+      this.project(-1, CEILING, z),
+    ]);
   }
 
   floor(): number {
@@ -105,9 +119,14 @@ export class HallView {
     return (Math.ceil(this.#doors / 2) + 1) * SPACING;
   }
 
-  /** How far along the hall the door with this index stands (doors in pairs, the even ones on the left). */
+  /** How far along the hall the door with this index stands (doors in pairs). */
   doorAt(index: number): number {
     return (Math.floor(index / 2) + 1) * SPACING;
+  }
+
+  /** Which wall the door with this index stands on: −1 the left (the first of a pair), 1 the right. */
+  sideOf(index: number): number {
+    return index % 2 === 1 ? 1 : -1;
   }
 
   /** Where you stand to open the door with this index. */
@@ -120,8 +139,8 @@ export class HallView {
     return this.#doors === 0 ? 0 : this.stopOf(this.#doors - 1);
   }
 
-  /** How many doors the hall has. */
-  doors(): number {
-    return this.#doors;
+  /** Whether there is a walk at all: a hall without doors has nowhere to walk to and no slider. */
+  walks(): boolean {
+    return this.#doors > 0;
   }
 }
