@@ -29,10 +29,9 @@ async function replant(page: Page): Promise<void> {
   });
 }
 
-/** The sizes a phone is judged at: the device's own, and the narrowest we promise; a desktop at its own. */
-function sizes(page: Page, hasTouch: boolean): readonly { width: number; height: number }[] {
-  const own = page.viewportSize() ?? NARROW;
-  return hasTouch ? [own, NARROW] : [own];
+/** The sizes a phone is judged at: the device's own, and the narrowest we promise. */
+function sizes(page: Page): readonly { width: number; height: number }[] {
+  return [page.viewportSize() ?? NARROW, NARROW];
 }
 
 async function shoot(page: Page, name: string): Promise<void> {
@@ -144,7 +143,7 @@ for (const each of KINDS) {
   }) => {
     const problems = watchForErrors(page);
     await plant(page, each.save);
-    for (const size of sizes(page, hasTouch)) {
+    for (const size of sizes(page)) {
       await page.setViewportSize(size);
       await page.goto('./');
       await expect(page.getByTestId('place-kind')).toHaveText(each.expectKind);
@@ -169,7 +168,7 @@ test('first screen: the buffer, the link failure and the recap show their action
   const problems = watchForErrors(page);
   const relic = { kind: 'relic', from: FIRST_ROOM, key: 'with|reliquary box|plasma coil' };
   await plant(page, saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }, { buffer: [relic, relic] }));
-  for (const size of sizes(page, hasTouch)) {
+  for (const size of sizes(page)) {
     await page.setViewportSize(size);
     await page.goto('./?debug');
     await expect(page.getByTestId('place-kind')).toHaveText('ROOM');

@@ -103,9 +103,9 @@ export interface HudVM extends Screen {
   readonly sealedNote: string | null;
   /** The word on a closed row. */
   readonly sealedTag: string;
-  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button on a phone; all of them on a desktop. */
+  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button. */
   readonly dock: readonly OptionVM[];
-  /** How the dock folds on a phone: how many stay out (the way out), and the words of the button that opens and closes the rest. */
+  /** How the dock folds: how many stay out (the way out), and the words of the button that opens and closes the rest. */
   readonly fold: {
     readonly after: number;
     readonly more: string;

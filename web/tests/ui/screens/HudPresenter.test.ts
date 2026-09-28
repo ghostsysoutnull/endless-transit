@@ -1012,7 +1012,7 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
     expect(shown.regions.trace).toBe('Trace');
   });
 
-  test('the dock folds after the way out (I09): on a phone LEAVE stays in reach and every other option opens behind MORE; a desktop shows them all; the fold is empty of LEAVE at the universe', () => {
+  test('the dock folds after the way out (I09): on a phone LEAVE stays in reach and every other option opens behind MORE; the fold is empty of LEAVE at the universe', () => {
     const vm = presenter.toViewModel({
       ...OUTDOORS,
       options: [

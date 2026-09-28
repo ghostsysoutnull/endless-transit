@@ -36,9 +36,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* A panel taller than the window is brought in with its top a little clear of the edge (the spotlight rule);
-     a phone's rule below adds the dock's height at the bottom. */
-  scroll-padding-top: 8px;
+  /* What `scrollIntoView` keeps clear: the top edge and the sticky dock (the shell's spotlight rule, I09). */
+  scroll-padding-block: 8px 96px;
 }
 
 body {
@@ -413,7 +412,7 @@ body {
 }
 
 /* The top of the world screen (U01a): the game's name, the steps and the buffer on one line, the meter under
-   them on a phone; one line on a desktop. */
+   them. */
 .hud {
   border: 1px solid var(--frame);
   background: var(--panel);
@@ -443,7 +442,7 @@ body {
 }
 
 /* The depth rail (U01a, Decision 6): a glyph per level from the universe down, joined by a thread; where you
-   stand is ringed in the frame's colour. A phone reads the names out; a desktop shows them in its own column. */
+   stand is ringed in the frame's colour. The names are read out, not shown. */
 .rail {
   min-width: 0;
 }
@@ -463,7 +462,7 @@ body {
 .crumb {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -1019,7 +1018,7 @@ body {
   line-height: 1.4;
 }
 
-/* The right column: the list, then the pane beside it — a room's objects as tiles, the telemetry block. */
+/* The list, then its pane — a room's objects as tiles, the telemetry block. */
 .side {
   display: flex;
   flex-direction: column;
@@ -1492,9 +1491,7 @@ body {
   font-size: 13px;
 }
 
-/* The dock's fold: one button opens the rest (I08); it looks like the others, dashed to say it is not a move.
-   The folded group is a box only on a phone (the rule under the phone media query); elsewhere its buttons sit
-   in the dock's own row and the MORE button is gone. */
+/* The dock's fold: one button opens the rest (I08); it looks like the others, dashed to say it is not a move. */
 .dock .pb.more {
   border-style: dashed;
   border-color: var(--rule-hi);
@@ -1556,139 +1553,6 @@ body {
   letter-spacing: 0.08em;
 }
 
-@media (min-width: 900px) {
-  .app.world {
-    max-width: 1080px;
-    display: grid;
-    max-width: 1280px;
-    grid-template-columns: minmax(0, 160px) minmax(0, 1fr) minmax(0, 400px);
-    /* The list may be far taller than the panel beside it: the panel and the dock keep their own height
-       and one filler row takes the rest — otherwise the grid pushes the way out below the fold. */
-    grid-template-rows: auto auto auto auto auto auto auto 1fr auto;
-    grid-template-areas:
-      'rail hud hud'
-      'rail cap side'
-      'rail scan side'
-      'rail map side'
-      'rail trace side'
-      'rail dock side'
-      'rail debug side'
-      'rail . side'
-      'build build build';
-    align-items: start;
-  }
-
-  /* The rail runs down the left, a level a line, its names shown. */
-  .world .rail {
-    grid-area: rail;
-    position: sticky;
-    top: 12px;
-  }
-
-  .rail ol {
-    flex-direction: column;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    gap: 0;
-  }
-
-  .crumb + .crumb::before {
-    display: none;
-  }
-
-  .crumb + .crumb {
-    border-top: 1px solid var(--rule);
-  }
-
-  .crumb {
-    padding-block: 3px;
-  }
-
-  /* A desktop has room for every dock button: no fold, no MORE. */
-  .world .dock .pb.more {
-    display: none;
-  }
-
-  .world .scan {
-    grid-area: scan;
-  }
-
-  .world > .map {
-    grid-area: map;
-  }
-
-  .world .tracep {
-    grid-area: trace;
-  }
-
-  .world .hud {
-    grid-area: hud;
-  }
-
-  .hud .meter {
-    flex: 1 1 260px;
-  }
-
-  .world .cap {
-    grid-area: cap;
-  }
-
-  /* A drawn place (U01b): the picture above the card in the middle column, about 4:3, never taller than 60vh. */
-  .app.world[data-drawn] {
-    grid-template-rows: auto auto auto auto auto auto auto auto 1fr auto;
-    grid-template-areas:
-      'rail hud hud'
-      'rail scene side'
-      'rail cap side'
-      'rail scan side'
-      'rail map side'
-      'rail trace side'
-      'rail dock side'
-      'rail debug side'
-      'rail . side'
-      'build build build';
-  }
-
-  .world .scene {
-    grid-area: scene;
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    max-height: 60vh;
-  }
-
-  .world .side {
-    grid-area: side;
-  }
-
-  .world .dock {
-    grid-area: dock;
-    position: static;
-    background: none;
-  }
-
-  .world .debug {
-    grid-area: debug;
-  }
-
-  .world .build {
-    grid-area: build;
-    justify-self: end;
-  }
-}
-
-/* Hover is decoration for devices that have it — nothing depends on it. */
-@media (hover: hover) and (pointer: fine) {
-  .pb:hover {
-    background: #1a2829;
-    box-shadow: 0 0 14px rgba(230, 195, 92, 0.18);
-  }
-
-  .row:not(.sealed):hover {
-    background: var(--panel2);
-    border-color: var(--frame);
-  }
-}
-
 /* Key hints are for keyboards; a thumb does not need them. */
 @media (pointer: coarse) {
   .pb kbd {
@@ -1725,107 +1589,96 @@ body {
   }
 }
 
-/* The one-column layout (a phone, or a narrow window): the folds are real, the panels come after the list. */
-@media (max-width: 899px) {
-  /* What `scrollIntoView` keeps clear of the sticky dock and the top edge (the shell's spotlight rule, I09). */
-  html {
-    scroll-padding-block: 8px 96px;
-  }
+/* The one column: the folds are real, the panels come after the list. */
+/* A phone's rail shows the glyphs; every level's name is still read out. */
+.rail .cn {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
-  /* A phone's rail shows the glyphs; every level's name is still read out. */
-  .rail .cn {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
+/* The dock's row: the way out takes the wider share, MORE the rest; the fold is hidden until MORE, then its
+   buttons rise above that row, sharing rows by their width. */
+.dock > .pb:first-child {
+  flex: 2 1 160px;
+}
 
-  .crumb {
-    gap: 0;
-  }
+.dock .pb.more {
+  flex: 1 1 96px;
+}
 
-  /* The dock's row: the way out takes the wider share, MORE the rest; the fold is hidden until MORE, then its
-     buttons rise above that row, sharing rows by their width. */
-  .dock > .pb:first-child {
-    flex: 2 1 160px;
-  }
+.dock[data-open='false'] .fold {
+  display: none;
+}
 
-  .dock .pb.more {
-    flex: 1 1 96px;
-  }
+.dock .fold .pb {
+  order: -1;
+  flex: 1 1 auto;
+}
 
-  .dock[data-open='false'] .fold {
-    display: none;
-  }
+/* A panel the player asked for (scan, map, trace) comes after the list and is scrolled into view — the
+   first screen stays the place's own. */
+.world .scan,
+.world > .map,
+.world .tracep {
+  order: 1;
+}
 
-  .dock .fold .pb {
-    order: -1;
-    flex: 1 1 auto;
-  }
+.world .dock {
+  order: 2;
+}
 
-  /* A panel the player asked for (scan, map, trace) comes after the list and is scrolled into view — the
-     first screen stays the place's own. */
-  .world .scan,
-  .world > .map,
-  .world .tracep {
-    order: 1;
-  }
+/* A drawn place (U01b, amendment A): the name, then the picture, then the list, then the rest of the card —
+   the card and the side column give up their boxes so their parts can be ordered around the picture. */
+.world[data-drawn] .cap,
+.world[data-drawn] .side {
+  display: contents;
+}
 
-  .world .dock {
-    order: 2;
-  }
+.world[data-drawn] > .hud,
+.world[data-drawn] > .rail,
+.world[data-drawn] .cap > .head {
+  order: -3;
+}
 
-  /* A drawn place (U01b, amendment A): the name, then the picture, then the list, then the rest of the card —
-     the card and the side column give up their boxes so their parts can be ordered around the picture. */
-  .world[data-drawn] .cap,
-  .world[data-drawn] .side {
-    display: contents;
-  }
+/* The picture's height leaves the first row of the list above the dock at 360 × 640 with 8 px to spare
+   (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
+.world[data-drawn] > .scene {
+  order: -2;
+  height: clamp(200px, calc(100dvh - 363px), 44dvh);
+}
 
-  .world[data-drawn] > .hud,
-  .world[data-drawn] > .rail,
-  .world[data-drawn] .cap > .head {
-    order: -3;
-  }
+.world[data-drawn] .travel {
+  order: -1;
+}
 
-  /* The picture's height leaves the first row of the list above the dock at 360 × 640 with 8 px to spare
-     (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
-  .world[data-drawn] > .scene {
-    order: -2;
-    height: clamp(200px, calc(100dvh - 363px), 44dvh);
-  }
+/* The moves come right after the picture, before the list (U02: the elevator's Up and Down, the corridor's way
+   back) — the first screen shows one. */
+.world[data-drawn] .cap > .moves {
+  order: -1;
+}
 
-  .world[data-drawn] .travel {
-    order: -1;
-  }
+/* The name stands over the picture as its caption; the rest of the card keeps the card's box. */
+.world[data-drawn] .cap > .head {
+  padding-inline: 2px;
+}
 
-  /* The moves come right after the picture, before the list (U02: the elevator's Up and Down, the corridor's way
-     back) — the first screen shows one. */
-  .world[data-drawn] .cap > .moves {
-    order: -1;
-  }
+.world[data-drawn] .cap > .body {
+  border: 1px solid var(--frame);
+  background: var(--panel);
+  padding: 10px 12px;
+}
 
-  /* The name stands over the picture as its caption; the rest of the card keeps the card's box. */
-  .world[data-drawn] .cap > .head {
-    padding-inline: 2px;
-  }
+.world .debug {
+  order: 3;
+}
 
-  .world[data-drawn] .cap > .body {
-    border: 1px solid var(--frame);
-    background: var(--panel);
-    padding: 10px 12px;
-  }
-
-  .world .debug {
-    order: 3;
-  }
-
-  .world .build {
-    order: 4;
-  }
+.world .build {
+  order: 4;
 }
 
 @media (max-width: 520px) {
