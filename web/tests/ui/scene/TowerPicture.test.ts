@@ -1,7 +1,9 @@
 import { describe, expect, test } from 'vitest';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import { Roof, type RoofKind } from '#ui/scene/Roof.ts';
 import { TowerPicture } from '#ui/scene/TowerPicture.ts';
+import { doorLook } from '#tests/support/doorLook.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
 /** The phone's picture at 360 × 640 (tasks/ui/U01b.md) and a taller phone's. */
@@ -52,11 +54,7 @@ function tower(floors: number, options: { car?: number; below?: number; listed?:
       below,
       rows: Array.from({ length: floors }, (_, n) => ({
         shape: SHAPES[n % 4] ?? 'long',
-        looks: Array.from({ length: 6 }, (_, k) => ({
-          material: 'Heavy Bulkhead',
-          family: 'metal' as const,
-          ...(STATES[(n + k) % 5] ?? STATES[0]),
-        })),
+        looks: Array.from({ length: 6 }, (_, k) => doorLook(STATES[(n + k) % 5])),
       })),
     },
     shape: '',
@@ -188,5 +186,61 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
     picture.paint(middle, tower(100), PHONE, palette(middle.asked), 0, '', 50);
     expect(middle.asked.has('rd')).toBe(false);
     expect(middle.asked.has('bl')).toBe(true);
+  });
+});
+
+/** A digest of every call a painter was told, and how many: a picture's whole output in two values. */
+function digest(painter: RecordingPainter): readonly [string, number] {
+  let hash = 0x811c9dc5;
+  const text = painter.calls.join('\n');
+  for (let at = 0; at < text.length; at++) {
+    hash ^= text.charCodeAt(at);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return [(hash >>> 0).toString(16), painter.calls.length];
+}
+
+/** The first tower address on the street whose roof is `kind` (a landmark's is always the peak). */
+function addressWith(kind: RoofKind): string {
+  const roofs = new Roof();
+  for (let n = 0; ; n++) {
+    const address = `0.0.0.0.0.0.0.0.${String(n)}`;
+    if (roofs.of(address, false) === kind) return address;
+  }
+}
+
+/**
+ * Scaffolding (testing principle 7): the tower's calls pinned before its roofs and corridor rows move behind drawers
+ * found by key (U02 fixes, step 2a) — removed, with the street's digest, at U02's close-out.
+ */
+describe('the tower paints the same calls as before its drawers move (a digest of them)', () => {
+  const top = (address: string, landmark: boolean): SceneVM => {
+    const vm = tower(5, { car: 4 });
+    return { ...vm, tower: { ...(vm.tower ?? ({} as never)), address, landmark } };
+  };
+
+  test('each roof, the top in view', () => {
+    const digests = [
+      top('0.0.0.0.0.0.0.0.2', true),
+      top(addressWith('mast'), false),
+      top(addressWith('box'), false),
+      top(addressWith('flat'), false),
+    ].map((vm) => {
+      const painter = new RecordingPainter();
+      picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, '', 4);
+      return digest(painter);
+    });
+    expect(digests).toEqual([
+      ['9576b233', 207],
+      ['40ceb987', 202],
+      ['a2fb1b96', 208],
+      ['9465138f', 206],
+    ]);
+  });
+
+  test('a breached tower, the Layers’ rows in view', () => {
+    const painter = new RecordingPainter();
+    picture.paint(painter, tower(12, { below: 10 }), PHONE, (token) => `<${token}>`, 1234, 'enter:14', -3);
+    expect(digest(painter)).toEqual(['5b8f64ee', 214]);
   });
 });
