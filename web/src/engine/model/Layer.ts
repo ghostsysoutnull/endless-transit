@@ -1,5 +1,7 @@
 import type { Building } from './Building.ts';
 import type { Fact } from './Fact.ts';
+import type { Figure } from './Figure.ts';
+import type { LevelKind } from './LevelKind.ts';
 import { Floor } from './Floor.ts';
 import type { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
@@ -34,6 +36,15 @@ export class Layer extends Floor {
   /** A Layer keeps its own screen until U04: drawn by its kind's picture, whatever its mode. */
   override drawing(): string {
     return LAYER_KIND.key();
+  }
+
+  override levelKind(): LevelKind {
+    return 'layer';
+  }
+
+  /** What its own picture is handed: its own row, whatever its mode — never the tower the floors hand theirs. */
+  override portrait(): Figure | null {
+    return this.figure();
   }
 
   /** `Layer -0x1` … (Floor.groovy:110-112). */

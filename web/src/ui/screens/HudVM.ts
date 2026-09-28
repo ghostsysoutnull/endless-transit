@@ -6,19 +6,21 @@ import type { AsideVM } from './AsideVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
-/** The world screen as plain readonly data — framework-free. */
+/** The world screen as readonly data — plain data and the engine's value objects, framework-free. */
 export interface HudVM extends Screen {
   readonly title: string;
   /** The colour name of the frame (`yellow`), `default` above planet level; the stylesheet owns the hue. */
   readonly frame: string;
   /**
    * The depth rail (U01a, Decision 6): the path from the universe, one level per step; the last one is where
-   * the player stands. Its glyph is shown; `kind` and `name` are read out, not hovered for.
+   * the player stands. Its glyph is shown; `kind` and `name` are read out, not hovered for; its address finds the
+   * place the next screen zooms out of.
    */
   readonly rail: readonly {
     readonly icon: string;
     readonly kind: string;
     readonly name: string;
+    readonly address: string;
     readonly current: boolean;
   }[];
   /** The coherence bar: the scale, the value, its band (a colour a screen picks by it), and what a reader hears. */

@@ -2,10 +2,12 @@ import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import type { LevelKind } from '#engine/model/LevelKind.ts';
 import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import { BoxRoof } from './BoxRoof.ts';
 import { CurvedRow } from './CurvedRow.ts';
 import { DoorLooks } from './DoorLooks.ts';
+import { LevelLook } from './LevelLook.ts';
 import { LongRow } from './LongRow.ts';
 import { MastRoof } from './MastRoof.ts';
 import { ParapetRoof } from './ParapetRoof.ts';
@@ -41,9 +43,14 @@ const PACE = { base: 320, per: 230, most: 2400 };
 const SETTLE = { base: 380, per: 40 };
 const COAST = 0.22;
 
+/** A level's row on the tower. */
+type Row = NonNullable<SceneVM['tower']>['rows'][number];
+
 /** Where the window stands at a view: its box, its rows, and which levels it shows. */
 interface Frame {
   readonly tower: NonNullable<SceneVM['tower']>;
+  /** Each level's row by its number. */
+  readonly rows: ReadonlyMap<number, Row>;
   readonly top: number;
   readonly bottom: number;
   readonly visible: number;
@@ -81,6 +88,11 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     static: new StaticRow(),
     none: new LongRow(),
   };
+  /** Each kind of level's look: a floor in the rule's ink, a Layer faint in the void's red. */
+  readonly #levelLooks: Readonly<Record<LevelKind, LevelLook>> = {
+    floor: new LevelLook({ even: 0.5, odd: 0.35, ground: 'rule', number: 'text', tick: 'dim' }),
+    layer: new LevelLook({ even: 0.1, odd: 0.1, ground: 'rd', number: 'rd', tick: 'rd' }),
+  };
   /** Each roof at the tower's proportions (the mock's, `transit-reframed.html:775`), the peak kept below the top. */
   readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
     peak: new PeakRoof({ from: -0.18, to: 0.18, lift: 1.6, ceiling: 4 }),
@@ -92,7 +104,9 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   camera(vm: SceneVM, size: PictureSize): SceneCamera {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
     if (frame === undefined) return new StillCamera();
-    const stops = vm.children.map((child) => ({ id: child.id, at: Number(child.ordinal) }));
+    const stops = vm.children.flatMap((child) =>
+      child.level === null ? [] : [{ id: child.id, at: child.level.number() }],
+    );
     return new TravelCamera({
       rest: frame.tower.car,
       min: frame.min,
@@ -183,10 +197,10 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   #frame(vm: SceneVM, size: PictureSize, view: number): Frame | undefined {
     const tower = vm.tower;
-    if (tower === null) return undefined;
-    // Never −0: the lowest level is the lobby until the bedrock is open.
-    const min = tower.below === 0 ? 0 : -tower.below;
-    const max = Math.max(tower.floors - 1, 0);
+    if (tower === null || tower.rows.length === 0) return undefined;
+    const rows = new Map(tower.rows.map((row) => [row.level.number(), row]));
+    const min = Math.min(...rows.keys());
+    const max = Math.max(...rows.keys());
     const levels = max - min + 1;
     const top = Math.max(size.height * 0.1, 52);
     const bottom = size.height - Math.max(size.height * 0.09, 38);
@@ -200,6 +214,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const base = Math.min(Math.max(clamped - (visible - 1) / 2, min), max - visible + 1);
     return {
       tower,
+      rows,
       top,
       bottom,
       visible,
@@ -229,7 +244,17 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   }
 
   #childAt(vm: SceneVM, level: number): SceneVM['children'][number] | undefined {
-    return vm.children.find((child) => Number(child.ordinal) === level);
+    return vm.children.find((child) => child.level?.number() === level);
+  }
+
+  /** How the level is drawn, by what stands there; a level with no row (none today: every level has one) as a floor. */
+  #lookAt(frame: Frame, level: number): LevelLook {
+    return this.#levelLooks[frame.rows.get(level)?.level.kind() ?? 'floor'];
+  }
+
+  /** The level's label as its row carries it; nothing written where it has none. */
+  #labelAt(frame: Frame, level: number): string {
+    return frame.rows.get(level)?.level.label() ?? '';
   }
 
   /** The roof when the top floor is in view, else how many floors are above the window. */
@@ -316,9 +341,9 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const y = this.#y(frame, level);
     const child = this.#childAt(vm, level);
     const isLit = child?.id === lit;
-    const abyss = level < 0;
-    painter.globalAlpha = isLit ? 1 : abyss ? 0.1 : level % 2 === 0 ? 0.5 : 0.35;
-    painter.fillStyle = palette(isLit ? 'rule-hi' : abyss ? 'rd' : 'rule');
+    const look = this.#lookAt(frame, level);
+    painter.globalAlpha = isLit ? 1 : look.alpha(level);
+    painter.fillStyle = palette(isLit ? 'rule-hi' : look.ground());
     painter.fillRect(inner, y, width - shaft, row);
     painter.globalAlpha = 0.35;
     painter.strokeStyle = palette('cy');
@@ -339,8 +364,8 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     painter.font = this.#font.of(isLit ? 'bold' : 'regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
-    painter.fillStyle = palette(isLit || child?.visited === true ? 'yl' : abyss ? 'rd' : 'text');
-    painter.fillText(String(level), left - 8, y + row / 2);
+    painter.fillStyle = palette(isLit || child?.visited === true ? 'yl' : look.number());
+    painter.fillText(this.#labelAt(frame, level), left - 8, y + row / 2);
   }
 
   /** A row of windows, some lit, each breathing at its own pace. */
@@ -377,7 +402,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
    * breaking into static when it dissolves — with a tick per door in its state's ink, the doors in pairs.
    */
   #corridor(painter: Painter, frame: Frame, level: number, y: number, palette: Palette): void {
-    const passage = level >= 0 ? frame.tower.rows[level] : undefined;
+    const passage = frame.rows.get(level);
     const shape = this.#rows[passage?.shape ?? 'none'];
     const looks = passage?.looks ?? [];
     const line = y + frame.row * 0.76;
@@ -405,15 +430,16 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     for (const [index, look] of looks.entries()) {
       const point = along((Math.floor(index / 2) + 0.5) / pairs);
       painter.globalAlpha = 0.8;
-      painter.fillStyle = palette(this.#looks.ink(look.stateLook));
+      painter.fillStyle = palette(this.#looks.ink(look.stateLook()));
       painter.fillRect(point.x - 1, index % 2 === 1 ? point.y + 1 : point.y - 5, 2, 4);
     }
   }
 
-  /** Once breached, a broken red line between the lobby and the first Layer: the bedrock, open. */
+  /** Once breached, a broken red line between the lowest floor and the first Layer: the bedrock, open. */
   #bedrockLine(painter: Painter, frame: Frame, palette: Palette): void {
-    if (frame.min === 0) return;
-    const y = this.#y(frame, 0) + frame.row;
+    const above = [...frame.rows.values()].filter((row) => !row.level.belowBedrock());
+    if (above.length === frame.rows.size) return;
+    const y = this.#y(frame, Math.min(...above.map((row) => row.level.number()))) + frame.row;
     if (y < frame.top || y > frame.bottom) return;
     painter.globalAlpha = 0.7;
     painter.strokeStyle = palette('rd');
@@ -487,13 +513,13 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       painter.fillStyle = palette('rule-hi');
       painter.fillRect(x - 4, at(level), 10, 1);
       if (!labelled) continue;
-      painter.fillStyle = palette(level < 0 ? 'rd' : 'dim');
-      painter.fillText(String(level), x - 8, at(level));
+      painter.fillStyle = palette(this.#lookAt(frame, level).tick());
+      painter.fillText(this.#labelAt(frame, level), x - 8, at(level));
     }
     painter.fillStyle = palette('yl');
     painter.globalAlpha = 0.85;
     for (const child of vm.children) {
-      if (child.visited) painter.fillRect(x - 6, at(Number(child.ordinal)) - 1, 14, 2);
+      if (child.visited && child.level !== null) painter.fillRect(x - 6, at(child.level.number()) - 1, 14, 2);
     }
     const high = at(Math.min(max, frame.base + frame.visible - 1));
     const low = at(frame.base);

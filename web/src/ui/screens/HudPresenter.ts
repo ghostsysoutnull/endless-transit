@@ -1,4 +1,5 @@
 import { Phrase } from '#engine/model/Phrase.ts';
+import type { LevelKind } from '#engine/model/LevelKind.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -15,6 +16,9 @@ import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+import { FloorsByTen } from './FloorsByTen.ts';
+import { LayersTogether } from './LayersTogether.ts';
+import type { PadGroup } from './PadGroup.ts';
 
 const RETURN_MARK = '▲ ';
 /** Up to this many numbered places, the pad is one group; past it, groups of ten (Decision 7: floors by tens above 20). */
@@ -68,6 +72,11 @@ const TRACE_MARK = '>> ';
  */
 export class HudPresenter implements Presenter<HudVM> {
   readonly #frame = new Frame();
+  /** Past twenty, the pad's group of a level by what stands there: the Layers all in one, a floor in its ten. */
+  readonly #padGroups: Readonly<Record<LevelKind, PadGroup>> = {
+    floor: new FloorsByTen(),
+    layer: new LayersTogether(),
+  };
   readonly #masthead: Masthead;
 
   constructor(masthead: Masthead) {
@@ -224,6 +233,7 @@ export class HudPresenter implements Presenter<HudVM> {
         visited: option.visited,
         sealed: option.sealed,
         address: option.address,
+        level: option.figure?.level ?? null,
         door: option.figure?.door ?? null,
       })),
       tower:
@@ -235,8 +245,11 @@ export class HudPresenter implements Presenter<HudVM> {
               address: tower.address,
               landmark: tower.landmark,
               car: tower.car,
-              below: tower.below,
-              rows: tower.rows.map((row) => ({ shape: row.shape ?? 'none', looks: row.looks ?? [] })),
+              rows: tower.rows.flatMap((row) =>
+                row.level === undefined
+                  ? []
+                  : [{ level: row.level, shape: row.shape ?? 'none', looks: row.looks ?? [] }],
+              ),
             },
       shape: figure?.shape ?? 'none',
       slider: travel.length === 0 ? '' : place.childrenHeading,
@@ -253,30 +266,34 @@ export class HudPresenter implements Presenter<HudVM> {
   #pad(travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
     if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
     const numbered = rows
-      .map((row, index) => ({ row, option: travel[index], number: Number(travel[index]?.ordinal ?? '0') }))
-      .sort((one, other) => one.number - other.number);
+      .flatMap((row, index) => {
+        const option = travel[index];
+        const level = option?.figure?.level;
+        return option === undefined || level === undefined ? [] : [{ row, option, level }];
+      })
+      .sort((one, other) => one.level.number() - other.level.number());
     const tens = travel.length > PAD_GROUP;
     const groups = new Map<number, (typeof numbered)[number][]>();
     for (const entry of numbered) {
-      const group = tens ? Math.floor(entry.number / 10) : 0;
+      const group = tens ? this.#padGroups[entry.level.kind()].of(entry.level) : 0;
       groups.set(group, [...(groups.get(group) ?? []), entry]);
     }
     const list = [...groups.values()].map((group) => {
-      const first = group[0]?.row.ordinal ?? '';
-      const last = group.at(-1)?.row.ordinal ?? '';
+      const first = group[0]?.level.label() ?? '';
+      const last = group.at(-1)?.level.label() ?? '';
       return {
-        label: `${String(Number(first))}–${String(Number(last))}`,
-        keys: group.map(({ row, option }) => ({
+        label: `${first}–${last}`,
+        keys: group.map(({ row, option, level }) => ({
           id: row.id,
-          number: String(Number(row.ordinal)),
+          number: level.label(),
           spoken: [
             row.label,
             ...(row.mark === null ? [] : [row.mark.label]),
             ...(row.seen === null ? [] : [row.seen.label]),
             ...row.readings.map((reading) => `${reading.label} ${reading.value}`),
           ].join(', '),
-          current: option?.current ?? false,
-          visited: option?.visited ?? false,
+          current: option.current,
+          visited: option.visited,
         })),
       };
     });

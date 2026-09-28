@@ -1,17 +1,19 @@
 import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { DoorLook } from '#engine/model/DoorLook.ts';
+import type { Level } from '#engine/model/Level.ts';
+import type { Seed } from '#engine/rng/Seed.ts';
 
 /**
- * What a scene draws, as plain data (U01b, U02): which picture (a key the registry looks up, never one a view
- * branches on), the words a reader hears for it, where it stands, one child per listed place in the list's
- * order — its option id is the pick — the coherence tear's strength and seed, and what the building's pictures
- * need: the tower (its size, roof, car, the Layers open below and each floor's row), the corridor's shape, and
- * the slider's name.
+ * What a scene draws, as readonly data — plain data and the engine's value objects (U01b, U02): which picture (a
+ * key the registry looks up, never one a view branches on), the words a reader hears for it, where it stands, one
+ * child per listed place in the list's order — its option id is the pick — the coherence tear's strength and
+ * seed, and what the building's pictures need: the tower (its size, roof, car and a row per level), the
+ * corridor's shape, and the slider's name.
  */
 export interface SceneVM {
   readonly key: string;
   readonly label: string;
-  /** The place's own address: a later scene zooms back out of the child it came from. */
+  /** The place's own address: it tells a new place from the same one drawn again. */
   readonly address: string;
   readonly children: readonly {
     readonly id: string;
@@ -23,6 +25,8 @@ export interface SceneVM {
     readonly visited: boolean;
     readonly sealed: boolean;
     readonly address: string;
+    /** The level a floor stands at; nothing for any other child. */
+    readonly level: Level | null;
     /** A door's look and the word written on it; nothing for any other child. */
     readonly door: { readonly look: DoorLook; readonly words: string } | null;
   }[];
@@ -33,9 +37,12 @@ export interface SceneVM {
     readonly address: string;
     readonly landmark: boolean;
     readonly car: number;
-    readonly below: number;
-    /** Floor `n`'s row at `n`: how its corridor runs and how its doors look. */
-    readonly rows: readonly { readonly shape: CorridorShape; readonly looks: readonly DoorLook[] }[];
+    /** A row per level, lowest first: its level, how its corridor runs and how its doors look. */
+    readonly rows: readonly {
+      readonly level: Level;
+      readonly shape: CorridorShape;
+      readonly looks: readonly DoorLook[];
+    }[];
   } | null;
   /** How the place's corridor runs (`long`, `service`, `curved`, `static`); `none` when it has none. */
   readonly shape: CorridorShape;
@@ -43,6 +50,6 @@ export interface SceneVM {
   readonly slider: string;
   /** How strongly the picture tears, 0 to 1 (`Coherence.decay`). */
   readonly decay: number;
-  /** This frame's seed as text: what the tear and the grain are drawn from. */
-  readonly noise: string;
+  /** This frame's seed: what the tear and the grain are drawn from. */
+  readonly noise: Seed;
 }

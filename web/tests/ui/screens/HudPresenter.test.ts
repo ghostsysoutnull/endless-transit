@@ -1,4 +1,7 @@
 import { describe, expect, test } from 'vitest';
+import { Seed } from '#engine/rng/Seed.ts';
+import { DoorLook } from '#engine/model/DoorLook.ts';
+import { Level } from '#engine/model/Level.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
@@ -36,11 +39,11 @@ const PLANET: GameSnapshot = {
     address: '0.0.0.0.1',
     position: { label: 'ORBIT', index: 2, total: 5 },
     trail: [
-      { icon: '∞', kind: 'Universe', name: 'The Endless Universe' },
-      { icon: '»', kind: 'Cosmic filament', name: 'Zeta-915-Link' },
-      { icon: '○', kind: 'Galactic sector', name: 'Outer Expanse 91' },
-      { icon: '☼', kind: 'Solar system', name: 'Zeta Borealis' },
-      { icon: '⊕', kind: 'Planet', name: 'Auraea' },
+      { icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' },
+      { icon: '»', kind: 'Cosmic filament', name: 'Zeta-915-Link', address: '0.0' },
+      { icon: '○', kind: 'Galactic sector', name: 'Outer Expanse 91', address: '0.0.0' },
+      { icon: '☼', kind: 'Solar system', name: 'Zeta Borealis', address: '0.0.0.0' },
+      { icon: '⊕', kind: 'Planet', name: 'Auraea', address: '0.0.0.0.1' },
     ],
     status: 'RESONANCE: [BAROQUE]',
     description: ['A world on the surface layer of the lattice, tuned to one culture and one era.'],
@@ -56,7 +59,7 @@ const PLANET: GameSnapshot = {
     lattice: null,
     drawing: 'planet',
     figure: null,
-    noise: '0000-0000-0000-0000',
+    noise: new Seed(0, 0),
   },
   options: [
     option({
@@ -272,6 +275,8 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
     expect(vm.rail.map((level) => level.current)).toEqual([false, false, false, false, true]);
     expect(vm.rail.map((level) => level.icon).join('')).toBe('∞»○☼⊕');
     expect(vm.rail[3]?.kind).toBe('Solar system');
+    // Each level keeps its address: the screen after this one finds by it the place it zooms out of.
+    expect(vm.rail.map((level) => level.address)).toEqual(['0', '0.0', '0.0.0', '0.0.0.0', '0.0.0.0.1']);
   });
 
   test('the readouts in plain words (U01a): the steps and the buffer — the depth is the rail; the locus, its hash, the seed and the readout fold are gone', () => {
@@ -592,7 +597,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
 describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws, as data', () => {
   const DRAWN: GameSnapshot = {
     ...STREET,
-    place: { ...(STREET.place ?? ({} as never)), drawing: 'street', noise: 'A1B2-C3D4-E5F6-0718' },
+    place: { ...(STREET.place ?? ({} as never)), drawing: 'street', noise: new Seed(0xa1b2c3d4, 0xe5f60718) },
     options: [
       option({
         id: 'enter:0',
@@ -622,7 +627,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
   test('one child per listed place, in the list’s order, with its figure, its address and its marks; the key, the noise and the place’s address pass through', () => {
     const drawing = presenter.toViewModel(DRAWN).drawing;
     expect(drawing.key).toBe('street');
-    expect(drawing.noise).toBe('A1B2-C3D4-E5F6-0718');
+    expect(drawing.noise).toEqual(new Seed(0xa1b2c3d4, 0xe5f60718));
     expect(drawing.address).toBe('0.0.0.0.1.0.0.0');
     expect(drawing.children).toEqual([
       {
@@ -635,6 +640,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
         visited: true,
         sealed: false,
         address: '0.0.0.0.1.0.0.0.0',
+        level: null,
         door: null,
       },
       {
@@ -647,6 +653,7 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
         visited: false,
         sealed: true,
         address: '0.0.0.0.1.0.0.0.1',
+        level: null,
         door: null,
       },
     ]);
@@ -668,8 +675,8 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
   });
 });
 
-/** A building of `floors` floors as the engine lists it (top first), the elevator at `car`, floor 3 visited. */
-function towerSnapshot(floors: number, car: number): GameSnapshot {
+/** A building of `floors` floors as the engine lists it (top first, `layers` Layers open after the lobby), the elevator at `car`, floor 3 visited. */
+function towerSnapshot(floors: number, car: number, layers = 0): GameSnapshot {
   return {
     ...STREET,
     place: {
@@ -686,10 +693,10 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
           address: '0.0.0.0.1.0.0.0.0',
           landmark: true,
           car,
-          below: 0,
-          rows: Array.from({ length: floors }, () => ({
+          rows: Array.from({ length: floors }, (_, number) => ({
             floors: 0,
             doors: 2,
+            level: new Level(number, 'floor'),
             shape: 'curved',
             looks: [
               doorLook({ state: 'Frozen', stateLook: 'frost' }),
@@ -710,7 +717,19 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
           current: number === car,
           visited: number === 3,
           numbered: true,
+          figure: { floors: 0, doors: 2, level: new Level(number, 'floor') },
           readings: [{ key: 'zone', label: 'Zone', value: 'Living unit' }],
+        });
+      }),
+      ...Array.from({ length: layers }, (_, index) => {
+        const number = -1 - index;
+        return option({
+          id: `enter:${String(floors + index)}`,
+          label: `Ride to Layer ${String(number)}`,
+          place: `Layer ${String(number)}`,
+          ordinal: String(number),
+          numbered: true,
+          figure: { floors: 0, doors: 0, level: new Level(number, 'layer') },
         });
       }),
       option({ id: 'leave', key: 'l', label: 'Leave Building', role: 'return' }),
@@ -719,7 +738,7 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
 }
 
 describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the floors as a pad', () => {
-  test('the tower passes through as data: its size, roof, car, the Layers below, each floor’s row; the slider is named by the list', () => {
+  test('the tower passes through as data: its size, roof, car, a row per level with its level; the slider is named by the list', () => {
     const drawing = presenter.toViewModel(towerSnapshot(16, 5)).drawing;
     expect(drawing.key).toBe('building');
     expect(drawing.tower).toEqual({
@@ -728,12 +747,12 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
       address: '0.0.0.0.1.0.0.0.0',
       landmark: true,
       car: 5,
-      below: 0,
-      rows: Array.from({ length: 16 }, () => ({
+      rows: Array.from({ length: 16 }, (_, number) => ({
+        level: new Level(number, 'floor'),
         shape: 'curved',
         looks: [
-          { material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' },
-          { material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' },
+          new DoorLook({ material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' }),
+          new DoorLook({ material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' }),
         ],
       })),
     });
@@ -764,6 +783,17 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
     expect(pad?.groups.map((group) => group.keys.length)).toEqual([10, 10, 10, 10, 7]);
     expect(pad?.open).toBe(2);
     expect(pad?.label).toBe('Floors by tens');
+  });
+
+  test('a breached building: the Layers lead the pad, deepest first — in the one group up to twenty, their own group past it', () => {
+    const one = presenter.toViewModel(towerSnapshot(8, 0, 10)).pad;
+    expect(one?.groups.map((group) => group.label)).toEqual(['-10–7']);
+    expect(one?.groups[0]?.keys.slice(0, 2).map((key) => key.number)).toEqual(['-10', '-9']);
+    const tens = presenter.toViewModel(towerSnapshot(16, 0, 10)).pad;
+    expect(tens?.groups.map((group) => group.label)).toEqual(['-10–-1', '0–9', '10–15']);
+    expect(tens?.groups[0]?.keys.map((key) => key.number)).toEqual(
+      Array.from({ length: 10 }, (_, k) => String(k - 10)),
+    );
   });
 
   test('a list that does not go by numbers is no pad', () => {
@@ -844,11 +874,6 @@ describe('HudPresenter.toViewModel — the rest', () => {
     expect(vm.options.at(-1)?.id).toBe('debug:integrity:39');
     expect(vm.dock.map((option) => option.id)).toEqual(['leave', 'to-title']);
     expect(presenter.toViewModel(PLANET).debug).toEqual([]);
-  });
-
-  test('the view-model is plain data', () => {
-    const vm = presenter.toViewModel(STREET);
-    expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
   });
 });
 

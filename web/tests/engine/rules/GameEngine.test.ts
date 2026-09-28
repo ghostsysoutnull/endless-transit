@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { DoorLook } from '#engine/model/DoorLook.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
@@ -172,13 +173,13 @@ describe('GameEngine — walking the big world', () => {
       name: 'The Endless Universe',
       address: '0',
       position: null,
-      trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe' }],
+      trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' }],
       status: 'UNIMATRIX_STABLE',
       description: ['A neural web of infinite complexity.'],
       facts: [],
       drawing: 'universe',
       figure: null,
-      noise: 'D7F5-C533-B7FC-1498',
+      noise: new Seed(0xd7f5c533, 0xb7fc1498),
       frame: null,
       abyssal: false,
       childrenHeading: 'Primary filaments radiating from root',
@@ -244,6 +245,7 @@ describe('GameEngine — walking the big world', () => {
     expect(place.position?.label).toBe('CONDUIT');
     expect(place.position?.index).toBe(1);
     expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Zeta-915-Link']);
+    expect(place.trail.map((step) => step.address)).toEqual(['0', '0.0']);
     expect(snapshot.options.find((option) => option.id === 'leave')).toEqual({
       id: 'leave',
       key: 'l',
@@ -298,7 +300,6 @@ describe('GameEngine — walking the big world', () => {
     const street = walkedDown(engine, 7);
     const place = must(street.place ?? undefined);
     expect(place.drawing).toBe('street');
-    expect(place.noise).not.toBe('');
     const buildings = street.options.filter((option) => option.role === 'travel');
     expect(buildings[0]?.address).toBe(`${place.address}.0`);
     expect(buildings[0]?.figure).toEqual({ floors: 16, doors: 9 });
@@ -316,15 +317,14 @@ describe('GameEngine — walking the big world', () => {
     expect(place.figure).toBeNull();
     const building = engine.step('enter:0');
     expect(building.place?.drawing).toBe('building');
-    expect(building.place?.figure?.tower).toMatchObject({ car: 0, below: 0 });
+    expect(building.place?.figure?.tower).toMatchObject({ car: 0 });
     expect(building.place?.figure?.tower?.rows).toHaveLength(16);
     const floors = building.options.filter((option) => option.role === 'travel');
     expect(floors.every((option) => option.numbered && option.figure?.looks?.length === 9)).toBe(true);
     // The noise is the frame's: the same place two steps later draws another frame.
     const back = engine.step('leave');
     expect(back.place?.address).toBe(place.address);
-    expect(back.place?.noise).not.toBe('');
-    expect(back.place?.noise).not.toBe(place.noise);
+    expect(back.place?.noise).not.toEqual(place.noise);
   });
 
   test('the buildings of a street are open: tapping one enters it; its floors are listed top first, numbered by floor, with their readings', () => {
@@ -463,7 +463,12 @@ describe('GameEngine — walking the big world', () => {
         floors: 0,
         doors: 0,
         door: {
-          look: { material: 'Brutalist Slab', state: 'Pitted', family: 'stone', stateLook: 'plain' },
+          look: new DoorLook({
+            material: 'Brutalist Slab',
+            state: 'Pitted',
+            family: 'stone',
+            stateLook: 'plain',
+          }),
           words: 'VOID_SINK',
         },
       },
@@ -660,10 +665,9 @@ describe('GameEngine — walking the big world', () => {
     );
   });
 
-  test('step returns plain data: it survives JSON unchanged, and snapshot() repeats it', () => {
+  test('snapshot() repeats what step returned', () => {
     const engine = engineOn(new MemorySaveStore());
     const snapshot = walkedDown(engine, 5);
-    expect(JSON.parse(JSON.stringify(snapshot))).toEqual(snapshot);
     expect(engine.snapshot()).toEqual(snapshot);
   });
 });

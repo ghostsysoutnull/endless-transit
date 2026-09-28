@@ -74,20 +74,22 @@ export class Building extends Location {
   }
 
   /**
-   * Its own picture, the tower (U02): its size, what its roof is drawn from, where the car stands, how many
-   * Layers lie open below, and each floor's row — peeked by the floors, never a corridor made.
+   * Its own picture, the tower (U02): its size, what its roof is drawn from, where the car stands, and a row
+   * per level, lowest first — the Layers open below once breached, deepest first, then the floors — each peeked
+   * by its floor, never a corridor made.
    */
   override portrait(): Figure {
+    const children = this.children();
+    const layers = this.#breached ? children.slice(this.#floors).reverse() : [];
     return {
       ...this.figure(),
       tower: {
         address: this.address().toString(),
         landmark: this.#landmark,
         car: this.#elevatorAt,
-        below: this.#breached ? SUBSTRATE_DEPTH : 0,
-        rows: this.children()
-          .slice(0, this.#floors)
-          .map((floor) => floor.figure() ?? { floors: 0, doors: 0 }),
+        rows: [...layers, ...children.slice(0, this.#floors)].map(
+          (level) => level.figure() ?? { floors: 0, doors: 0 },
+        ),
       },
     };
   }

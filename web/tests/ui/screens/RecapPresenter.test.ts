@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
@@ -47,7 +48,7 @@ const RECAP: GameSnapshot = {
     lattice: null,
     drawing: 'building',
     figure: null,
-    noise: '0000-0000-0000-0000',
+    noise: new Seed(0, 0),
   },
   player: playerSummary({ coherence: 61, band: 'degraded', steps: 33, decay: 0.1 }),
   buffer: { size: 2, capacity: 16, resonant: 1, fragments: [] },

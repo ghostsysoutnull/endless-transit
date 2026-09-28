@@ -5,6 +5,7 @@ import { Apartment } from '#engine/model/Apartment.ts';
 import type { Building } from '#engine/model/Building.ts';
 import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { Floor } from '#engine/model/Floor.ts';
+import { Level } from '#engine/model/Level.ts';
 import { every, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
@@ -97,7 +98,7 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
     expect(floor.portrait()?.tower).toBeUndefined();
   });
 
-  test('the building’s portrait: its size, its address and landmark (what the roof is drawn from), the car, and nothing open below until the breach', () => {
+  test('the building’s portrait: its size, its address and landmark (what the roof is drawn from), the car', () => {
     const building = buildingOf(2);
     const portrait = must(building.portrait());
     expect(portrait.floors).toBe(building.floors());
@@ -106,13 +107,29 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
       address: building.address().toString(),
       landmark: building.landmark(),
       car: 0,
-      below: 0,
     });
+  });
+
+  test('the building’s portrait has a row per level, lowest first, each with its level (a floor’s or a Layer’s): the Layers’ rows only once breached', () => {
+    const building = buildingOf(2);
+    const floors = Array.from({ length: building.floors() }, (_, n) => new Level(n, 'floor'));
+    expect(building.portrait().tower?.rows.map((row) => row.level)).toEqual(floors);
     expect(building.recall(JSON.stringify({ breached: true }))).toBe(true);
-    expect(building.portrait().tower?.below).toBe(building.layers());
-    // A Layer keeps its own screen until U04: its drawing key is its kind's.
-    const layer = must(building.children()[building.floors()]);
+    const layers = Array.from(
+      { length: building.layers() },
+      (_, k) => new Level(k - building.layers(), 'layer'),
+    );
+    expect(building.portrait().tower?.rows.map((row) => row.level)).toEqual([...layers, ...floors]);
+  });
+
+  test('a Layer keeps its own screen until U04: drawn by its kind’s key, and at its elevator it hands its own portrait, not the tower', () => {
+    const building = buildingOf(2);
+    expect(building.recall(JSON.stringify({ breached: true }))).toBe(true);
+    const layer = must(building.floorNumbered(-1));
+    layer.arrive();
     expect(layer.drawing()).toBe('layer');
+    expect(layer.portrait()).toEqual(layer.figure());
+    expect(layer.portrait()?.tower).toBeUndefined();
   });
 
   test('a door hands its picture its look and the word written on it', () => {

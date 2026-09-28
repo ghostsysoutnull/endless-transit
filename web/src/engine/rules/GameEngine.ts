@@ -64,7 +64,7 @@ const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
 const LETTERS = Array.from({ length: 26 }, (_, n) => String.fromCharCode('a'.charCodeAt(0) + n));
 
 /**
- * The game, seen from outside: `step(optionId)` in, a plain-data snapshot out. Synchronous, instant, no
+ * The game, seen from outside: `step(optionId)` in, a snapshot of readonly data out. Synchronous, instant, no
  * output device, nothing blocks on input. Owns the registry of commands — a new thing the player can do
  * is a new registry entry, not a new branch in `step` — and the turn: every prompt in the world costs
  * coherence before the command runs (Guide:133-135), a step counts, and zero coherence is a pending prompt
@@ -528,13 +528,14 @@ export class GameEngine {
         icon: step.kind().icon(),
         kind: step.kind().title(),
         name: step.name(),
+        address: step.address().toString(),
       })),
       status: here.status(),
       description: this.#corruption.read(here.description(), player.coherence(), frame),
       facts: here.facts(),
       drawing: here.drawing(),
       figure: here.portrait(),
-      noise: frame.toString(),
+      noise: frame,
       frame: here.vibe()?.frame() ?? null,
       abyssal: here.abyssal(),
       childrenHeading: here.childrenHeading(),

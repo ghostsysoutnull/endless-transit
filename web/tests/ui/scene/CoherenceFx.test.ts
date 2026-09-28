@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'vitest';
+import { Seed } from '#engine/rng/Seed.ts';
 import { CoherenceFx, FX_FRAMES } from '#ui/scene/CoherenceFx.ts';
 
-const NOISE = '7F3A-91C2-0B4D-E6A8';
-const OTHER = '0000-1234-0000-4660';
+const NOISE = new Seed(0x7f3a91c2, 0x0b4de6a8);
+const OTHER = new Seed(0x1234, 0x4660);
 
 describe('the coherence tear: what a frame tears, as data drawn from the frame’s seed (Decision 5)', () => {
   test('no decay plans nothing', () => {
@@ -17,6 +18,12 @@ describe('the coherence tear: what a frame tears, as data drawn from the frame�
     expect(new CoherenceFx().plan(NOISE, 0.6, 2 + FX_FRAMES)).toEqual(one);
     expect(new CoherenceFx().plan(OTHER, 0.6, 2)).not.toEqual(one);
     expect(new CoherenceFx().plan(NOISE, 0.6, 3)).not.toEqual(one);
+  });
+
+  test('a frame’s plan is kept for the seed it was drawn from, whichever copy of that seed a later frame hands it', () => {
+    const fx = new CoherenceFx();
+    const one = fx.plan(new Seed(0x7f3a91c2, 0x0b4de6a8), 0.6, 2);
+    expect(fx.plan(new Seed(0x7f3a91c2, 0x0b4de6a8), 0.6, 2)).toBe(one);
   });
 
   test('the tear grows with the decay: more bands, taller and further shifted, more grain, a deeper cast', () => {

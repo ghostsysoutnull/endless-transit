@@ -30,11 +30,11 @@ export class Door {
   }
 
   material(): string {
-    return this.#look.material;
+    return this.#look.material();
   }
 
   state(): string {
-    return this.#look.state;
+    return this.#look.state();
   }
 
   /** How it looks on a picture (U02). */
