@@ -1,6 +1,7 @@
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import { stylePalette } from '#ui/canvas/StylePalette.ts';
+import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { View } from '#ui/View.ts';
 import { CoherenceFx, FX_FRAMES } from './CoherenceFx.ts';
 import { Fling } from './Fling.ts';
@@ -15,7 +16,6 @@ import { SceneTrip } from './SceneTrip.ts';
 import type { SceneVM } from './SceneVM.ts';
 import { easeOut, Tween } from './Tween.ts';
 
-const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 /** Going in, the picture grows this many times around the child before the next place shows. */
 const ZOOM = 6;
 /** How long a zoom takes, in milliseconds. */
@@ -56,6 +56,7 @@ interface Gesture {
 export class SceneView implements View<SceneVM> {
   readonly #picture: ScenePicture<SceneVM>;
   readonly #clock: MotionClock;
+  readonly #preference: ReducedMotion;
   readonly #fx = new CoherenceFx();
   readonly #budget = new PixelBudget();
   #host: HTMLElement | undefined;
@@ -84,9 +85,10 @@ export class SceneView implements View<SceneVM> {
   /** Stops listening to the clock; set while the picture moves. */
   #leave: (() => void) | undefined;
 
-  constructor(picture: ScenePicture<SceneVM>, clock: MotionClock) {
+  constructor(picture: ScenePicture<SceneVM>, clock: MotionClock, motion: ReducedMotion) {
     this.#picture = picture;
     this.#clock = clock;
+    this.#preference = motion;
   }
 
   mount(host: HTMLElement): void {
@@ -206,7 +208,7 @@ export class SceneView implements View<SceneVM> {
       this.#view = 0;
     } else if (before?.address === vm.address && hadCamera) {
       this.#view = this.#clamp(this.#view);
-    } else if (before !== undefined && hadCamera && !this.#reducedMotion()) {
+    } else if (before !== undefined && hadCamera && !this.#preference.reduced()) {
       // Another place in the same picture (floor to floor): ride from where the view stood to the new rest.
       const distance = Math.abs(camera.rest - this.#view);
       if (distance > 0.01) {
@@ -235,7 +237,7 @@ export class SceneView implements View<SceneVM> {
       this.#layout();
     }
     const hit = this.#hits.find((each) => each.id === id);
-    if (hit === undefined || this.#reducedMotion() || camera?.zoom === false) {
+    if (hit === undefined || this.#preference.reduced() || camera?.zoom === false) {
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
@@ -283,13 +285,9 @@ export class SceneView implements View<SceneVM> {
     this.#camera = null;
   }
 
-  #reducedMotion(): boolean {
-    return this.#host?.ownerDocument.defaultView?.matchMedia(REDUCED_MOTION).matches ?? true;
-  }
-
   /** Moving: listen to the clock. Still: one frame now, and nothing more until something changes. */
   #run(): void {
-    if (this.#reducedMotion()) {
+    if (this.#preference.reduced()) {
       this.#stop();
       this.#motion = undefined;
       this.#paint(STILL);
@@ -582,7 +580,7 @@ export class SceneView implements View<SceneVM> {
     this.#gesture = undefined;
     if (!gesture.moved) return;
     if (!gesture.slider) this.#dragged = true;
-    const reduced = this.#reducedMotion();
+    const reduced = this.#preference.reduced();
     const thrown = reduced ? this.#view : this.#view + gesture.fling.speed(this.#clock.now()) * camera.coast;
     const target = this.#clamp(camera.snap ? Math.round(thrown) : thrown);
     const distance = Math.abs(target - this.#view);
@@ -607,7 +605,7 @@ export class SceneView implements View<SceneVM> {
   /** The view on its way to a value (at once under reduced motion). */
   #glide(value: number, duration: number): void {
     const target = this.#clamp(value);
-    if (this.#reducedMotion() || Math.abs(target - this.#view) < 0.001) {
+    if (this.#preference.reduced() || Math.abs(target - this.#view) < 0.001) {
       this.#motion = undefined;
       this.#view = target;
       this.#layout();
@@ -645,7 +643,7 @@ export class SceneView implements View<SceneVM> {
 
   /** Ride to the child's stop (a picture with a camera), zoom in when the picture zooms, then pick it; at once under reduced motion. */
   #go(id: string): void {
-    if (this.#reducedMotion()) {
+    if (this.#preference.reduced()) {
       this.#announce(PICK, id);
       return;
     }

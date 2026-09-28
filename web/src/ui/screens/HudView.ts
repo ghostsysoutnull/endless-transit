@@ -15,6 +15,7 @@ import type { View } from '#ui/View.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
 type Slot = 'pane' | 'map' | 'trace';
@@ -56,6 +57,7 @@ export class HudView implements View<HudVM> {
   }>;
   readonly #clock: MotionClock;
   readonly #scenes: SceneRegistry;
+  readonly #motion: ReducedMotion;
   /** The scene drawn now: its host, its picture and the view drawing it. */
   #scene:
     | { readonly host: HTMLElement; readonly picture: ScenePicture<SceneVM>; readonly view: SceneView }
@@ -67,14 +69,15 @@ export class HudView implements View<HudVM> {
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
   #group: number | undefined;
 
-  /** The page's one clock moves every canvas of the screen; the registry says which places are drawn (U01b). */
-  constructor(clock: MotionClock, scenes: SceneRegistry) {
+  /** The page's one clock moves every canvas of the screen, unless motion is reduced; the registry says which places are drawn (U01b). */
+  constructor(clock: MotionClock, scenes: SceneRegistry, motion: ReducedMotion) {
     this.#clock = clock;
     this.#scenes = scenes;
+    this.#motion = motion;
     this.#canvases = new CanvasSlots({
-      pane: () => new CanvasView(new MapPicture(), clock),
-      map: () => new CanvasView(new MapPicture(), clock),
-      trace: () => new CanvasView(new TracePicture(), clock),
+      pane: () => new CanvasView(new MapPicture(), clock, motion),
+      map: () => new CanvasView(new MapPicture(), clock, motion),
+      trace: () => new CanvasView(new TracePicture(), clock, motion),
     });
   }
 
@@ -123,7 +126,7 @@ export class HudView implements View<HudVM> {
     }
     if (this.#scene?.host !== host || this.#scene.picture !== picture) {
       this.#scene?.view.dispose();
-      const view = new SceneView(picture, this.#clock);
+      const view = new SceneView(picture, this.#clock, this.#motion);
       view.mount(host);
       this.#scene = { host, picture, view };
     }

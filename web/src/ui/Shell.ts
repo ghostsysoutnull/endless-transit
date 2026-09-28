@@ -4,6 +4,7 @@ import { InputRouter } from './input/InputRouter.ts';
 import type { OptionVM } from './OptionVM.ts';
 import type { Screen } from './Screen.ts';
 import type { ScreenStage } from './ScreenStage.ts';
+import type { ReducedMotion } from './ReducedMotion.ts';
 
 /**
  * The loop of the page: input → `engine.step` → the screen that accepts the snapshot → its view. The
@@ -26,11 +27,13 @@ export class Shell {
   /** The options of the screen on show, and the one the player just ran (nothing at the first paint). */
   #offered: readonly OptionVM[] = [];
   #pressed: OptionVM | undefined;
+  readonly #motion: ReducedMotion;
 
   /** The first stage that accepts a snapshot shows it — a new screen is one more entry in this list. */
-  constructor(engine: GameEngine, stages: readonly ScreenStage<Screen>[]) {
+  constructor(engine: GameEngine, stages: readonly ScreenStage<Screen>[], motion: ReducedMotion) {
     this.#engine = engine;
     this.#stages = stages;
+    this.#motion = motion;
     this.#router = new InputRouter((optionId) => {
       this.#pressed = this.#offered.find((option) => option.id === optionId);
       this.#show(this.#engine.step(optionId));
@@ -148,10 +151,8 @@ export class Shell {
    * dock. Only while the scene stays: a new scene starts from the top instead.
    */
   #spotlight(panel: HTMLElement): void {
-    const view = panel.ownerDocument.defaultView;
-    const reduced = view?.matchMedia('(prefers-reduced-motion: reduce)').matches ?? true;
     panel.focus({ preventScroll: true });
-    panel.scrollIntoView({ block: 'nearest', behavior: reduced ? 'instant' : 'smooth' });
+    panel.scrollIntoView({ block: 'nearest', behavior: this.#motion.reduced() ? 'instant' : 'smooth' });
   }
 
   /**

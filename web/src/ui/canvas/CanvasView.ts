@@ -1,3 +1,4 @@
+import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { MotionClock } from '#ui/scene/MotionClock.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import type { View } from '#ui/View.ts';
@@ -8,7 +9,6 @@ import { stylePalette } from './StylePalette.ts';
 const CYCLE = 1800;
 /** The still frame's phase when nothing may move. */
 const STILL = 0.5;
-const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
 /**
  * The one canvas behind the `View` seam: mounts a `<canvas>` into its container, sizes it to the
@@ -21,6 +21,7 @@ const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 export class CanvasView<VM> implements View<VM> {
   readonly #picture: Picture<VM>;
   readonly #clock: MotionClock;
+  readonly #motion: ReducedMotion;
   readonly #budget = new PixelBudget();
   #canvas: HTMLCanvasElement | undefined;
   #observer: ResizeObserver | undefined;
@@ -28,9 +29,10 @@ export class CanvasView<VM> implements View<VM> {
   /** Stops listening to the clock; set while the pulse runs. */
   #leave: (() => void) | undefined;
 
-  constructor(picture: Picture<VM>, clock: MotionClock) {
+  constructor(picture: Picture<VM>, clock: MotionClock, motion: ReducedMotion) {
     this.#picture = picture;
     this.#clock = clock;
+    this.#motion = motion;
   }
 
   mount(container: HTMLElement): void {
@@ -46,7 +48,7 @@ export class CanvasView<VM> implements View<VM> {
 
   render(vm: VM): void {
     this.#vm = vm;
-    if (this.#reducedMotion()) {
+    if (this.#motion.reduced()) {
       this.#stop();
       this.#paint(STILL);
       return;
@@ -63,11 +65,6 @@ export class CanvasView<VM> implements View<VM> {
     this.#canvas?.remove();
     this.#canvas = undefined;
     this.#vm = undefined;
-  }
-
-  #reducedMotion(): boolean {
-    const view = this.#canvas?.ownerDocument.defaultView;
-    return view?.matchMedia(REDUCED_MOTION).matches ?? true;
   }
 
   #stop(): void {
