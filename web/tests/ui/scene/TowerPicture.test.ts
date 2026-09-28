@@ -80,7 +80,7 @@ describe('the tower’s camera: the car’s floor is the view', () => {
   test('it rests at the car, runs from the lowest level open to the top floor, stops at every listed floor by its number, and settles on a floor', () => {
     const camera = picture.camera(tower(100, { car: 37 }), PHONE);
     expect([camera.rest(), camera.clamp(-5), camera.clamp(200)]).toEqual([37, 0, 99]);
-    expect([camera.axis(), camera.zooms(), camera.landing(3.4, 0)]).toEqual(['y', false, 3]);
+    expect([camera.along({ x: 1, y: 2 }), camera.zooms(), camera.landing(3.4, 0)]).toEqual([2, false, 3]);
     expect(Array.from({ length: 100 }, (_, n) => camera.stopOf(`enter:${String(99 - n)}`))).toEqual(
       Array.from({ length: 100 }, (_, n) => n),
     );

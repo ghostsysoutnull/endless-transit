@@ -92,9 +92,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   camera(vm: SceneVM, size: PictureSize): SceneCamera {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
     if (frame === undefined) return new StillCamera();
-    const stops = vm.children
-      .map((child) => ({ id: child.id, at: Number(child.ordinal) }))
-      .sort((one, other) => one.at - other.at);
+    const stops = vm.children.map((child) => ({ id: child.id, at: Number(child.ordinal) }));
     return new TravelCamera({
       rest: frame.tower.car,
       min: frame.min,

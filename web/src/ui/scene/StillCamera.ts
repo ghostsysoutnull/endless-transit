@@ -32,8 +32,8 @@ export class StillCamera implements SceneCamera {
     return 0;
   }
 
-  axis(): 'x' | 'y' {
-    return 'y';
+  along(): number {
+    return 0;
   }
 
   zooms(): boolean {
@@ -62,5 +62,10 @@ export class StillCamera implements SceneCamera {
 
   alongTrack(): number {
     return 0;
+  }
+
+  /** Every still camera moves by the same rules: not at all. */
+  equals(other: SceneCamera): boolean {
+    return other instanceof StillCamera;
   }
 }

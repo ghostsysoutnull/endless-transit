@@ -57,20 +57,20 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   pictures that draw them; the shape keys a closed set made where the content loads, an unknown one refused there
   (today it draws as a long corridor). (TS: parse at the edge.)
   Done: `59aeef9`
-- [ ] **still-camera — the street's missing camera is `null`, checked about ten times.** `SceneView` branches on
+- [x] **still-camera — the street's missing camera is `null`, checked about ten times.** `SceneView` branches on
   `camera === null`, `camera.zoom === false`, `camera.drag === 0`. Fix: a still camera that answers for itself.
-  Done: —
+  Done: `1a4ff54`
 
 ## Behaviour kept away from its data (OO 2)
 
 - [x] **child-seed — a seed helper that uses no state.** `Progeny.childSeed` uses nothing of its `Progeny`, and
   `Passages` builds a `Progeny` only to call it. Fix: the child-seed rule in one honest place.
   Done: `444a8f3`
-- [ ] **camera-rules — the camera's rules live in the scene host.** `SceneCamera` is plain data; `SceneView` computes
+- [x] **camera-rules — the camera's rules live in the scene host.** `SceneCamera` is plain data; `SceneView` computes
   the trip pace (`#pace`), the settle time (`#up`), the clamp, the nearest stop and the slider track's value. Fix: a
   camera object owns them (with `still-camera`, this takes two jobs out of `SceneView`); the tower's tuning numbers
   (`PACE`/`SETTLE`/`COAST`) stay in `TowerPicture`, whose facts they are.
-  Done: —
+  Done: `1a4ff54`
 - [x] **loose-functions — loose functions holding logic.** `stylePalette` (`src/ui/canvas/StylePalette.ts`: a cache
   in a closure, rebuilt every frame by `SceneView.#paint`), the easings `easeOut`/`easeInOut` (`src/ui/scene/Tween.ts`,
   held by `Tween` as a function in its `#easing` field), and the older `frameOf` (`src/ui/Frame.ts`) of the same

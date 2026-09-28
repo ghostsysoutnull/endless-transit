@@ -524,7 +524,7 @@ export class SceneView implements View<SceneVM> {
     this.#motion = undefined;
     this.#gesture = new Gesture({
       pointer: event.pointerId,
-      start: camera.axis() === 'y' ? event.clientY : event.clientX,
+      start: camera.along({ x: event.clientX, y: event.clientY }),
       view: this.#view,
       slider,
     });
@@ -552,7 +552,7 @@ export class SceneView implements View<SceneVM> {
       this.#follow(at, gesture);
       return;
     }
-    const position = camera.axis() === 'y' ? event.clientY : event.clientX;
+    const position = camera.along({ x: event.clientX, y: event.clientY });
     const wasMoved = gesture.moved();
     gesture.move(position);
     if (!gesture.moved()) return;
@@ -611,14 +611,9 @@ export class SceneView implements View<SceneVM> {
 
   /** The view a finger on the slider's track points at. */
   #trackValue(event: PointerEvent): number | undefined {
-    const track = this.#camera.track();
     const box = this.#slider?.getBoundingClientRect();
-    if (track === null || box === undefined) return undefined;
-    const fraction =
-      track.axis === 'y'
-        ? (event.clientY - box.top) / Math.max(1, box.height)
-        : (event.clientX - box.left) / Math.max(1, box.width);
-    return this.#camera.alongTrack(fraction);
+    if (this.#camera.track() === null || box === undefined) return undefined;
+    return this.#camera.alongTrack({ x: event.clientX, y: event.clientY }, box);
   }
 
   /** A tap on an open child: the trip in. Ignored while a trip runs, and when it ends a drag. */

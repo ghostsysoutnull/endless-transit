@@ -22,8 +22,8 @@ export interface SceneCamera {
   drags(): boolean;
   /** View units a finger moves the view by for one CSS pixel along the axis. */
   dragRate(): number;
-  /** The axis a finger drags along. */
-  axis(): 'x' | 'y';
+  /** Where a point on the page lies along the axis a finger drags on, in CSS pixels. */
+  along(point: { readonly x: number; readonly y: number }): number;
   /** Whether going into a child zooms into it, or only rides there. */
   zooms(): boolean;
   /** The view at a child's stop, by its option id; nothing for a child without one. */
@@ -36,6 +36,11 @@ export interface SceneCamera {
   stepFrom(view: number, step: number): CameraStop | undefined;
   /** The slider's box on the picture; nothing when there is no slider. */
   track(): CameraTrack | null;
-  /** The view at this share (0 to 1, held) of the way along the track. */
-  alongTrack(fraction: number): number;
+  /** The view under a point on the slider, whose box on the page this is: its share of the way along the track, held. */
+  alongTrack(
+    point: { readonly x: number; readonly y: number },
+    box: { readonly left: number; readonly top: number; readonly width: number; readonly height: number },
+  ): number;
+  /** Whether it moves the view by the same rules as another camera. */
+  equals(other: SceneCamera): boolean;
 }
