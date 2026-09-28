@@ -3,6 +3,7 @@ import type { MotionClock } from '#ui/scene/MotionClock.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import type { View } from '#ui/View.ts';
 import type { Picture } from './Picture.ts';
+import { CanvasMount } from './CanvasMount.ts';
 import { ElementStyle } from './ElementStyle.ts';
 import { StylePalette } from './StylePalette.ts';
 
@@ -24,10 +25,7 @@ export class CanvasView<VM> implements View<VM> {
   readonly #clock: MotionClock;
   readonly #motion: ReducedMotion;
   readonly #budget = new PixelBudget();
-  #canvas: HTMLCanvasElement | undefined;
-  /** The canvas's colours, read from the stylesheet where it sits; made at mount. */
-  #colours: StylePalette | undefined;
-  #observer: ResizeObserver | undefined;
+  #mounted: CanvasMount | undefined;
   #vm: VM | undefined;
   /** Stops listening to the clock; set while the pulse runs. */
   #leave: (() => void) | undefined;
@@ -42,17 +40,20 @@ export class CanvasView<VM> implements View<VM> {
     const canvas = container.ownerDocument.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     container.replaceChildren(canvas);
-    this.#canvas = canvas;
-    this.#colours = new StylePalette(new ElementStyle(canvas));
-    this.#observer = new ResizeObserver(() => {
+    const observer = new ResizeObserver(() => {
       this.#paint(STILL);
     });
-    this.#observer.observe(container);
+    observer.observe(container);
+    this.#mounted = new CanvasMount({
+      canvas,
+      observer,
+      colours: new StylePalette(new ElementStyle(canvas)),
+    });
   }
 
   render(vm: VM): void {
     this.#vm = vm;
-    this.#colours?.frameChanged();
+    this.#mounted?.colours().frameChanged();
     if (this.#motion.reduced()) {
       this.#stop();
       this.#paint(STILL);
@@ -65,11 +66,8 @@ export class CanvasView<VM> implements View<VM> {
 
   dispose(): void {
     this.#stop();
-    this.#observer?.disconnect();
-    this.#observer = undefined;
-    this.#canvas?.remove();
-    this.#canvas = undefined;
-    this.#colours = undefined;
+    this.#mounted?.unmount();
+    this.#mounted = undefined;
     this.#vm = undefined;
   }
 
@@ -79,7 +77,7 @@ export class CanvasView<VM> implements View<VM> {
   }
 
   #paint(phase: number): void {
-    const canvas = this.#canvas;
+    const canvas = this.#mounted?.canvas();
     const vm = this.#vm;
     const host = canvas?.parentElement;
     if (canvas === undefined || vm === undefined || host == null) return;
@@ -100,7 +98,7 @@ export class CanvasView<VM> implements View<VM> {
     if (context === null) return;
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     context.setLineDash([]);
-    const palette = this.#colours?.palette;
+    const palette = this.#mounted?.colours().palette;
     if (palette === undefined) return;
     this.#picture.paint(context, vm, { width, height }, palette, phase);
   }

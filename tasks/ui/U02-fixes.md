@@ -118,20 +118,20 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   because `Layer` and `Artery` inherit those constructors without them. Fix: the Layer answers `portrait()` for
   itself; `passage` and `shape` required, `Layer` and `Artery` passing their empty value. (OO 9.)
   Done: —
-- [ ] **command-or-query — two `SceneView` methods both change state and answer.** `enter(id): boolean` starts a
+- [x] **command-or-query — two `SceneView` methods both change state and answer.** `enter(id): boolean` starts a
   ride and says whether it took the pick (`HudView` reads the answer); `#zoomAt`, a question, writes
   `#tripAnchor ??=`. Fix: `leads(id)` answers, `enter(id)` acts; the anchor set when the ride starts, `#zoomAt` pure.
   (OO 11.)
-  Done: —
-- [ ] **mounted-state — fields set together kept side by side.** `SceneView`'s `#host`, `#canvas`, `#slider`,
+  Done: `218be90`
+- [x] **mounted-state — fields set together kept side by side.** `SceneView`'s `#host`, `#canvas`, `#slider`,
   `#observer`, `#listeners` (each `| undefined`) and `#trip` beside `#tripAnchor`; `dispose` clears the trip and
   leaves its anchor. The older `CanvasView` (`#canvas`, `#observer`) shares it. Fix: one `#mounted` record or
   `undefined`, one trip-with-its-anchor or `undefined`. (TS: a union of valid shapes.)
-  Done: —
-- [ ] **frame-key — "is this the same frame" by object identity.** `SceneView.render` returns early on
+  Done: `218be90`
+- [x] **frame-key — "is this the same frame" by object identity.** `SceneView.render` returns early on
   `vm === this.#vm`, true only because `HudView` passes the same object again on its own toggles. Fix: compare a
   stable key the view-model carries. (TS: objects are equal by reference; OO 6.)
-  Done: —
+  Done: `218be90`
 - [x] **invariants — objects left or built invalid.** `SceneView` writes `gesture.moved = true` on a plain record
   whose rule ("moved means the pointer is captured") it keeps itself; `PixelBudget` accepts a limit of zero or less,
   and its `ratio()` is then NaN. Fix: a gesture class whose `move(along)` owns `moved`; `PixelBudget` refuses a limit
@@ -310,7 +310,8 @@ a pad key rides the car and then enters that floor; a drag on the tower lights a
       nothing.
     - `SceneView.render` drops its `vm === this.#vm` check. `HudView`'s toggles repaint without rendering the scene
       again; a new host still gets a fresh view, rendered.
-    - Guards: `scene.spec`, `tower.spec`; then the user's phone check of the tower.
+    - Guards: `scene.spec`, `tower.spec`; then the user's phone check of the tower. Where the zoom centres (the
+      trip's anchor) is **UNGUARDED**: no assertion reads it; the phone check shows it.
 
 ### Second tier (after step 0; its own session)
 14a. **door-look-type.** `DoorLook` and `Passage` become classes with `#private` fields and `equals`.

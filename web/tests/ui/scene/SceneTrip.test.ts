@@ -47,8 +47,4 @@ describe('a trip in: the view rides to the child, then (if the picture zooms) th
     expect(ride.over(1000)).toBe(true);
     expect(ride.view(1000)).toBe(40);
   });
-
-  test('the zoom centres on the anchor it was given', () => {
-    expect(trip({ anchor: { x: 120, y: 80 } }).anchor()).toEqual({ x: 120, y: 80 });
-  });
 });

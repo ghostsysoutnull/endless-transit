@@ -56,7 +56,7 @@ export class TravelCamera implements SceneCamera {
     this.#pace = facts.pace;
     this.#zoom = facts.zoom;
     // The slider's order is the stops' order along the view.
-    this.#stops = [...facts.stops].sort((one, other) => one.at - other.at);
+    this.#stops = [...facts.stops].sort((one, other) => one.at - other.at || one.id.localeCompare(other.id));
     this.#track = facts.track;
   }
 
@@ -151,11 +151,24 @@ export class TravelCamera implements SceneCamera {
       this.#axis,
       this.#coast,
       this.#snap,
-      this.#settle,
-      this.#pace,
+      this.#settle.base,
+      this.#settle.per,
+      this.#pace.base,
+      this.#pace.per,
+      this.#pace.most,
       this.#zoom,
-      this.#stops,
-      this.#track,
+      this.#stops.map((stop) => [stop.id, stop.at]),
+      this.#track === null
+        ? null
+        : [
+            this.#track.x,
+            this.#track.y,
+            this.#track.width,
+            this.#track.height,
+            this.#track.axis,
+            this.#track.from,
+            this.#track.to,
+          ],
     ]);
   }
 }
