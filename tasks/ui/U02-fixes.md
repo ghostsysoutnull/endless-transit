@@ -132,11 +132,11 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   `vm === this.#vm`, true only because `HudView` passes the same object again on its own toggles. Fix: compare a
   stable key the view-model carries. (TS: objects are equal by reference; OO 6.)
   Done: —
-- [ ] **invariants — objects left or built invalid.** `SceneView` writes `gesture.moved = true` on a plain record
+- [x] **invariants — objects left or built invalid.** `SceneView` writes `gesture.moved = true` on a plain record
   whose rule ("moved means the pointer is captured") it keeps itself; `PixelBudget` accepts a limit of zero or less,
   and its `ratio()` is then NaN. Fix: a gesture class whose `move(along)` owns `moved`; `PixelBudget` refuses a limit
   that is not positive. (OO 7.)
-  Done: —
+  Done: `8632f56`
 - [x] **host-query — an unchecked narrowing.** `HudView.#host` returns `querySelector(...)` as `HTMLElement | null`,
   the element type taken on trust from the return type (an older line, widened by the rework). Fix: an
   `instanceof HTMLElement` check inside `#host`. (TS: a cast is a promise.)
@@ -164,7 +164,8 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   Done: —
 - [ ] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
   `reduced-motion` and `scene-events`, `SceneView` still holds the canvas sizing and mounting, the pointer gestures,
-  the slider control, the trip and zoom, and the tear's painting; `HudPresenter` also maps figures into the `SceneVM`
+  the slider control (it still branches on `Gesture.onSlider()`: a picture gesture and a slider gesture
+  go behind one interface with it), the trip and zoom, and the tear's painting; `HudPresenter` also maps figures into the `SceneVM`
   (`#drawing`) and holds the pad's grouping rule (`#pad`). Fix: each its own object, handed in. (OO 8.)
   Done: —
 

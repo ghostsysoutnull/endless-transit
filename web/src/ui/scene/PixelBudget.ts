@@ -12,7 +12,7 @@ export class PixelBudget {
   readonly #maxPixels: number;
 
   constructor(maxRatio: number = MAX_RATIO, maxPixels: number = MAX_PIXELS) {
-    if (maxRatio <= 0 || maxPixels <= 0)
+    if (!(maxRatio > 0 && maxPixels > 0))
       throw new RangeError(`a pixel budget is positive, got ${String(maxRatio)} and ${String(maxPixels)}`);
     this.#maxRatio = maxRatio;
     this.#maxPixels = maxPixels;

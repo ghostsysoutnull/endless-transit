@@ -24,7 +24,10 @@ describe('a finger on a picture: a tap until it moves past the slop, then a drag
   test('the view follows the finger one to one from where it was when the finger went down', () => {
     const gesture = new Gesture({ pointer: 1, start: 100, view: 3, slider: false });
     expect(gesture.viewAt(140, 0.02)).toBeCloseTo(3.8, 10);
-    expect(gesture.is(1)).toBe(true);
-    expect(gesture.is(2)).toBe(false);
+  });
+
+  test('it is the finger with its own pointer id, no other', () => {
+    const gesture = new Gesture({ pointer: 1, start: 100, view: 3, slider: false });
+    expect([gesture.is(1), gesture.is(2)]).toEqual([true, false]);
   });
 });

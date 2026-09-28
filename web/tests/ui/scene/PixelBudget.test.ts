@@ -34,5 +34,6 @@ describe('the pixel budget: sharp enough, cheap enough to hold the frame (Decisi
     expect(() => new PixelBudget(0)).toThrow(RangeError);
     expect(() => new PixelBudget(2, 0)).toThrow(RangeError);
     expect(() => new PixelBudget(2, -1)).toThrow(RangeError);
+    expect(() => new PixelBudget(Number.NaN)).toThrow(RangeError);
   });
 });

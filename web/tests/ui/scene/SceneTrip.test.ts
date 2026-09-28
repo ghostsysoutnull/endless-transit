@@ -40,7 +40,7 @@ describe('a trip in: the view rides to the child, then (if the picture zooms) th
   });
 
   test('no zoom (the tower: the next screen is the same picture): over when the ride is, the scale stays 1', () => {
-    const ride = trip();
+    const ride = trip({ to: 40, ride: 1000, zoom: null });
     expect(ride.scale(500)).toBe(1);
     expect(ride.over(999)).toBe(false);
     expect(ride.over(1000)).toBe(true);
