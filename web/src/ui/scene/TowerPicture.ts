@@ -19,7 +19,9 @@ import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
 import { ServiceRow } from './ServiceRow.ts';
+import { StillCamera } from './StillCamera.ts';
 import { StaticRow } from './StaticRow.ts';
+import { TravelCamera } from './TravelCamera.ts';
 
 /** A floor's row is at least this tall where it fits (a thumb), and the window shows 4 to 11 of them. */
 const ROW = 50;
@@ -87,13 +89,13 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     flat: new ParapetRoof(),
   };
 
-  camera(vm: SceneVM, size: PictureSize): SceneCamera | null {
+  camera(vm: SceneVM, size: PictureSize): SceneCamera {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
-    if (frame === undefined) return null;
+    if (frame === undefined) return new StillCamera();
     const stops = vm.children
       .map((child) => ({ id: child.id, at: Number(child.ordinal) }))
       .sort((one, other) => one.at - other.at);
-    return {
+    return new TravelCamera({
       rest: frame.tower.car,
       min: frame.min,
       max: frame.max,
@@ -116,7 +118,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
             to: frame.min,
           }
         : null,
-    };
+    });
   }
 
   layout(vm: SceneVM, size: PictureSize, view: number): readonly SceneHit[] {

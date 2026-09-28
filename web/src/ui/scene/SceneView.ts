@@ -10,6 +10,7 @@ import { Gesture } from './Gesture.ts';
 import type { MotionClock } from './MotionClock.ts';
 import { PixelBudget } from './PixelBudget.ts';
 import type { SceneCamera } from './SceneCamera.ts';
+import { StillCamera } from './StillCamera.ts';
 import { SceneEvents } from './SceneEvents.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
@@ -68,7 +69,7 @@ export class SceneView implements View<SceneVM> {
   #ratio = 1;
   #hits: readonly SceneHit[] = [];
   #lit = '';
-  #camera: SceneCamera | null = null;
+  #camera: SceneCamera = new StillCamera();
   #view = 0;
   /** A view on its way without a pick: a coast, a glide, a ride between floors. */
   #motion: Tween | undefined;
@@ -201,7 +202,6 @@ export class SceneView implements View<SceneVM> {
   render(vm: SceneVM): void {
     if (vm === this.#vm) return;
     const before = this.#vm;
-    const hadCamera = this.#camera !== null;
     this.#trip = undefined;
     this.#tripAnchor = undefined;
     this.#zoomOut = undefined;
@@ -211,46 +211,41 @@ export class SceneView implements View<SceneVM> {
     this.#colours?.frameChanged();
     this.#fit();
     const camera = this.#camera;
-    if (camera === null) {
-      this.#view = 0;
-    } else if (before?.address === vm.address && hadCamera) {
-      this.#view = this.#clamp(this.#view);
-    } else if (before !== undefined && hadCamera && !this.#preference.reduced()) {
+    if (before?.address === vm.address) {
+      this.#view = camera.clamp(this.#view);
+    } else if (before !== undefined && !this.#preference.reduced()) {
       // Another place in the same picture (floor to floor): ride from where the view stood to the new rest.
-      const distance = Math.abs(camera.rest - this.#view);
+      const distance = Math.abs(camera.rest() - this.#view);
       if (distance > 0.01) {
         this.#motion = new Tween(
           this.#view,
-          camera.rest,
+          camera.rest(),
           this.#clock.now(),
-          this.#pace(camera, distance),
+          camera.pace(distance),
           this.#ride,
         );
       } else {
-        this.#view = camera.rest;
+        this.#view = camera.rest();
       }
     } else {
-      this.#view = camera.rest;
+      this.#view = camera.rest();
     }
     this.#canvas?.setAttribute('aria-label', vm.label);
-    if (this.#canvas !== undefined) {
-      this.#canvas.style.touchAction = camera !== null && camera.drag !== 0 ? 'none' : 'manipulation';
-    }
+    if (this.#canvas !== undefined) this.#canvas.style.touchAction = camera.drags() ? 'none' : 'manipulation';
     this.#layout();
     this.#run();
   }
 
   /** Back out of the child with this id: the view stands at its stop, and the picture zooms out of it when it zooms. */
   arrive(id: string): void {
-    const camera = this.#camera;
-    const stop = camera?.stops.find((each) => each.id === id);
+    const stop = this.#camera.stopOf(id);
     if (stop !== undefined) {
       this.#motion = undefined;
-      this.#view = this.#clamp(stop.at);
+      this.#view = this.#camera.clamp(stop);
       this.#layout();
     }
     const hit = this.#hits.find((each) => each.id === id);
-    if (hit === undefined || this.#preference.reduced() || camera?.zoom === false) {
+    if (hit === undefined || this.#preference.reduced() || !this.#camera.zooms()) {
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
@@ -264,13 +259,11 @@ export class SceneView implements View<SceneVM> {
   /**
    * A child picked from the list (U02, Decision 8: a door picked from the list is walked to, then opened): when
    * the picture has a stop for it, the view rides there first and the pick follows — true, the scene took it;
-   * false when the picture has no camera (the street's list enters at once) or no such child.
+   * false when the picture's camera has no stop for it (the street's list enters at once) or no such child.
    */
   enter(id: string): boolean {
-    const camera = this.#camera;
     const child = this.#vm?.children.find((each) => each.id === id);
-    if (camera === null || child === undefined || child.sealed) return false;
-    if (camera.stops.every((stop) => stop.id !== id)) return false;
+    if (child === undefined || child.sealed || this.#camera.stopOf(id) === undefined) return false;
     if (this.#trip === undefined) this.#go(id);
     return true;
   }
@@ -299,7 +292,7 @@ export class SceneView implements View<SceneVM> {
     this.#colours = undefined;
     this.#host = undefined;
     this.#vm = undefined;
-    this.#camera = null;
+    this.#camera = new StillCamera();
   }
 
   /** Moving: listen to the clock. Still: one frame now, and nothing more until something changes. */
@@ -360,7 +353,7 @@ export class SceneView implements View<SceneVM> {
     this.#size = size;
     this.#ratio = ratio;
     this.#camera = this.#picture.camera(vm, size);
-    this.#view = this.#clamp(this.#view);
+    this.#view = this.#camera.clamp(this.#view);
     this.#place();
     this.#layout();
   }
@@ -377,7 +370,7 @@ export class SceneView implements View<SceneVM> {
   #place(): void {
     const slider = this.#slider;
     if (slider === undefined) return;
-    const track = this.#camera?.track ?? null;
+    const track = this.#camera.track();
     slider.hidden = track === null;
     if (track === null) return;
     slider.style.left = `${String(track.x)}px`;
@@ -387,29 +380,19 @@ export class SceneView implements View<SceneVM> {
     slider.setAttribute('aria-orientation', track.axis === 'y' ? 'vertical' : 'horizontal');
     slider.setAttribute('aria-label', this.#vm?.slider ?? '');
     slider.setAttribute('aria-valuemin', '1');
-    slider.setAttribute('aria-valuemax', String(this.#camera?.stops.length ?? 0));
+    slider.setAttribute('aria-valuemax', String(this.#camera.stopCount()));
   }
 
   /** The slider's value: the stop nearest the view, by its place in the slider's order, and its child's name. */
   #value(): void {
     const slider = this.#slider;
-    const nearest = this.#nearest();
+    const nearest = this.#camera.nearest(this.#view);
     if (slider === undefined || slider.hidden || nearest === undefined) return;
     const now = String(nearest.index + 1);
     if (slider.getAttribute('aria-valuenow') === now) return;
     slider.setAttribute('aria-valuenow', now);
     const name = this.#vm?.children.find((child) => child.id === nearest.id)?.name ?? '';
     slider.setAttribute('aria-valuetext', name);
-  }
-
-  #nearest(): { readonly id: string; readonly index: number } | undefined {
-    const stops = this.#camera?.stops ?? [];
-    let best: { id: string; index: number; distance: number } | undefined;
-    for (const [index, stop] of stops.entries()) {
-      const distance = Math.abs(stop.at - this.#view);
-      if (best === undefined || distance < best.distance) best = { id: stop.id, index, distance };
-    }
-    return best;
   }
 
   #paint(time: number): void {
@@ -537,11 +520,11 @@ export class SceneView implements View<SceneVM> {
     this.#dragged = false;
     const camera = this.#camera;
     if (!slider) this.#pointAt(this.#hitAt(event)?.id ?? '');
-    if (camera === null || (!slider && camera.drag === 0)) return;
+    if (!slider && !camera.drags()) return;
     this.#motion = undefined;
     this.#gesture = new Gesture({
       pointer: event.pointerId,
-      start: camera.axis === 'y' ? event.clientY : event.clientX,
+      start: camera.axis() === 'y' ? event.clientY : event.clientX,
       view: this.#view,
       slider,
     });
@@ -557,7 +540,7 @@ export class SceneView implements View<SceneVM> {
   #move(event: PointerEvent): void {
     const gesture = this.#gesture;
     const camera = this.#camera;
-    if (gesture === undefined || camera === null || !gesture.is(event.pointerId)) {
+    if (!gesture?.is(event.pointerId)) {
       if (this.#gesture === undefined && this.#trip === undefined)
         this.#pointAt(this.#hitAt(event)?.id ?? '');
       return;
@@ -569,21 +552,21 @@ export class SceneView implements View<SceneVM> {
       this.#follow(at, gesture);
       return;
     }
-    const position = camera.axis === 'y' ? event.clientY : event.clientX;
+    const position = camera.axis() === 'y' ? event.clientY : event.clientX;
     const wasMoved = gesture.moved();
     gesture.move(position);
     if (!gesture.moved()) return;
     // The drag begins: the canvas keeps the finger even when it leaves the picture.
     if (!wasMoved) this.#canvas?.setPointerCapture(event.pointerId);
-    this.#follow(gesture.viewAt(position, camera.drag), gesture);
+    this.#follow(gesture.viewAt(position, camera.dragRate()), gesture);
   }
 
   /** The view under the finger, one to one; the child it comes to lights in the list. */
   #follow(value: number, gesture: Gesture): void {
-    this.#view = this.#clamp(value);
+    this.#view = this.#camera.clamp(value);
     gesture.sample(this.#clock.now(), this.#view);
     this.#layout();
-    const nearest = this.#nearest();
+    const nearest = this.#camera.nearest(this.#view);
     if (nearest !== undefined) this.#pointAt(nearest.id);
     if (this.#leave === undefined) this.#paint(STILL);
   }
@@ -592,35 +575,29 @@ export class SceneView implements View<SceneVM> {
   #up(event: PointerEvent): void {
     const gesture = this.#gesture;
     const camera = this.#camera;
-    if (gesture === undefined || camera === null || !gesture.is(event.pointerId)) return;
+    if (!gesture?.is(event.pointerId)) return;
     this.#gesture = undefined;
     if (!gesture.moved()) return;
     if (!gesture.onSlider()) this.#dragged = true;
-    const reduced = this.#preference.reduced();
-    const thrown = reduced ? this.#view : this.#view + gesture.speed(this.#clock.now()) * camera.coast;
-    const target = this.#clamp(camera.snap ? Math.round(thrown) : thrown);
-    const distance = Math.abs(target - this.#view);
-    this.#glide(target, camera.settle.base + camera.settle.per * Math.sqrt(distance));
+    const speed = this.#preference.reduced() ? 0 : gesture.speed(this.#clock.now());
+    const target = camera.landing(this.#view, speed);
+    this.#glide(target, camera.settle(Math.abs(target - this.#view)));
   }
 
   /** The slider's keys (a desktop extra): an arrow moves to the next stop or the one before. */
   #key(event: KeyboardEvent): void {
-    const camera = this.#camera;
-    const stops = camera?.stops ?? [];
-    const nearest = this.#nearest();
-    if (camera === null || nearest === undefined) return;
     const step = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1 }[event.key];
     if (step === undefined) return;
-    event.preventDefault();
-    const next = stops[Math.min(stops.length - 1, Math.max(0, nearest.index + step))];
+    const next = this.#camera.stepFrom(this.#view, step);
     if (next === undefined) return;
-    this.#glide(next.at, this.#pace(camera, Math.abs(next.at - this.#view)));
+    event.preventDefault();
+    this.#glide(next.at, this.#camera.pace(Math.abs(next.at - this.#view)));
     this.#pointAt(next.id);
   }
 
   /** The view on its way to a value (at once under reduced motion). */
   #glide(value: number, duration: number): void {
-    const target = this.#clamp(value);
+    const target = this.#camera.clamp(value);
     if (this.#preference.reduced() || Math.abs(target - this.#view) < 0.001) {
       this.#motion = undefined;
       this.#view = target;
@@ -634,14 +611,14 @@ export class SceneView implements View<SceneVM> {
 
   /** The view a finger on the slider's track points at. */
   #trackValue(event: PointerEvent): number | undefined {
-    const track = this.#camera?.track ?? null;
+    const track = this.#camera.track();
     const box = this.#slider?.getBoundingClientRect();
     if (track === null || box === undefined) return undefined;
     const fraction =
       track.axis === 'y'
         ? (event.clientY - box.top) / Math.max(1, box.height)
         : (event.clientX - box.left) / Math.max(1, box.width);
-    return track.from + (track.to - track.from) * Math.min(1, Math.max(0, fraction));
+    return this.#camera.alongTrack(fraction);
   }
 
   /** A tap on an open child: the trip in. Ignored while a trip runs, and when it ends a drag. */
@@ -664,29 +641,20 @@ export class SceneView implements View<SceneVM> {
       return;
     }
     const camera = this.#camera;
-    const stop = camera?.stops.find((each) => each.id === id);
-    const to = stop === undefined ? this.#view : this.#clamp(stop.at);
+    const stop = camera.stopOf(id);
+    const to = stop === undefined ? this.#view : camera.clamp(stop);
     const distance = Math.abs(to - this.#view);
     this.#motion = undefined;
     this.#trip = new SceneTrip({
       from: this.#view,
       to,
       start: this.#clock.now(),
-      ride: camera === null || distance < 0.01 ? 0 : this.#pace(camera, distance),
-      zoom: camera === null || camera.zoom ? { scale: ZOOM, time: ZOOM_TIME } : null,
+      ride: distance < 0.01 ? 0 : camera.pace(distance),
+      zoom: camera.zooms() ? { scale: ZOOM, time: ZOOM_TIME } : null,
       pick: id,
       easing: this.#ride,
     });
     this.#run();
-  }
-
-  #pace(camera: SceneCamera, distance: number): number {
-    return Math.min(camera.pace.most, camera.pace.base + camera.pace.per * Math.sqrt(distance));
-  }
-
-  #clamp(value: number): number {
-    const camera = this.#camera;
-    return camera === null ? 0 : Math.min(camera.max, Math.max(camera.min, value));
   }
 
   #pick(id: string): void {

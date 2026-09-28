@@ -9,9 +9,11 @@ import { PeakRoof } from './PeakRoof.ts';
 import { Roof, type RoofKind } from './Roof.ts';
 import type { RoofDrawer } from './RoofDrawer.ts';
 import { SceneHash } from './SceneHash.ts';
+import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
+import { StillCamera } from './StillCamera.ts';
 
 /** The strip under the ground line the numbers are written in. */
 const LABEL = 16;
@@ -65,8 +67,8 @@ export class StreetPicture implements ScenePicture<SceneVM> {
   };
 
   /** A street stands still: nothing to drag, no slider; going in zooms (U01b). */
-  camera(): null {
-    return null;
+  camera(): SceneCamera {
+    return new StillCamera();
   }
 
   layout(vm: SceneVM, size: PictureSize): readonly SceneHit[] {

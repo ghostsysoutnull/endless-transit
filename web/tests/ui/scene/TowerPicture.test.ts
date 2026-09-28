@@ -79,32 +79,33 @@ const picture = new TowerPicture();
 describe('the tower’s camera: the car’s floor is the view', () => {
   test('it rests at the car, runs from the lowest level open to the top floor, stops at every listed floor by its number, and settles on a floor', () => {
     const camera = picture.camera(tower(100, { car: 37 }), PHONE);
-    expect(camera).toMatchObject({ rest: 37, min: 0, max: 99, axis: 'y', snap: true, zoom: false });
-    expect(camera?.stops.map((stop) => stop.at)).toEqual(Array.from({ length: 100 }, (_, n) => n));
-    expect(camera?.stops[0]?.id).toBe('enter:99');
-    expect(picture.camera(tower(12, { below: 10 }), PHONE)?.min).toBe(-10);
+    expect([camera.rest(), camera.clamp(-5), camera.clamp(200)]).toEqual([37, 0, 99]);
+    expect([camera.axis(), camera.zooms(), camera.landing(3.4, 0)]).toEqual(['y', false, 3]);
+    expect(Array.from({ length: 100 }, (_, n) => camera.stopOf(`enter:${String(99 - n)}`))).toEqual(
+      Array.from({ length: 100 }, (_, n) => n),
+    );
+    expect(picture.camera(tower(12, { below: 10 }), PHONE).clamp(-100)).toBe(-10);
   });
 
   test('the gauge is a slider a thumb can hold, inside the picture, the top floor at its top; the elevator’s own screen has none and does not drag', () => {
     for (const size of [PHONE, TALL]) {
-      const track = picture.camera(tower(100), size)?.track;
+      const track = picture.camera(tower(100), size).track();
       expect(track?.width).toBeGreaterThanOrEqual(44);
       expect(track?.x).toBeGreaterThanOrEqual(0);
       expect((track?.x ?? 0) + (track?.width ?? 0)).toBeLessThanOrEqual(size.width);
       expect((track?.y ?? 0) + (track?.height ?? 0)).toBeLessThanOrEqual(size.height);
       expect(track).toMatchObject({ axis: 'y', from: 99, to: 0 });
     }
-    const still = picture.camera(tower(100, { car: 40, listed: false }), PHONE);
-    expect(still?.track).toBeNull();
-    expect(still?.drag).toBe(0);
-    expect(picture.camera({ ...tower(5), tower: null }, PHONE)).toBeNull();
+    const elevator = picture.camera(tower(100, { car: 40, listed: false }), PHONE);
+    expect([elevator.track(), elevator.drags()]).toEqual([null, false]);
+    const nothing = picture.camera({ ...tower(5), tower: null }, PHONE);
+    expect([nothing.track(), nothing.drags(), nothing.stopCount()]).toEqual([null, false, 0]);
   });
 
   test('the elevator speeds up, cruises and brakes: a long ride takes longer, never past 2.4 s', () => {
-    const pace = picture.camera(tower(100), PHONE)?.pace ?? { base: 0, per: 0, most: 0 };
-    const time = (d: number): number => Math.min(pace.most, pace.base + pace.per * Math.sqrt(d));
-    expect(time(1)).toBeLessThan(time(10));
-    expect(time(99)).toBeLessThanOrEqual(2400);
+    const camera = picture.camera(tower(100), PHONE);
+    expect(camera.pace(1)).toBeLessThan(camera.pace(10));
+    expect(camera.pace(99)).toBeLessThanOrEqual(2400);
   });
 });
 

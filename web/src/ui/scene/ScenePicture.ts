@@ -22,6 +22,6 @@ export interface ScenePicture<VM> {
     lit: string,
     view: number,
   ): void;
-  /** How the picture's view moves at this size; nothing for a picture that stands still (the street). */
-  camera(vm: VM, size: PictureSize): SceneCamera | null;
+  /** How the picture's view moves at this size; a camera that never moves for a picture that stands still (the street). */
+  camera(vm: VM, size: PictureSize): SceneCamera;
 }
