@@ -30,7 +30,11 @@ import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
 import { HelpView } from '#ui/screens/HelpView.ts';
+import { FloorPad } from '#ui/screens/FloorPad.ts';
+import { FloorsByTen } from '#ui/screens/FloorsByTen.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
+import { LayersTogether } from '#ui/screens/LayersTogether.ts';
+import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
 import { HudView } from '#ui/screens/HudView.ts';
 import { RebootPresenter } from '#ui/screens/RebootPresenter.ts';
 import { RebootView } from '#ui/screens/RebootView.ts';
@@ -83,7 +87,12 @@ new Shell(
     new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
     new ScreenStage(new TitlePresenter(masthead), new TitleView()),
     new ScreenStage(
-      new HudPresenter(masthead, frame),
+      new HudPresenter(
+        masthead,
+        frame,
+        new SceneDrawing(),
+        new FloorPad({ floor: new FloorsByTen(), layer: new LayersTogether() }),
+      ),
       new HudView(scenes, new SceneViewMaker(clock, motion), canvases),
     ),
   ],
