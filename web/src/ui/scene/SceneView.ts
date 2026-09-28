@@ -1,9 +1,12 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import type { PixelCanvas } from '#ui/canvas/PixelCanvas.ts';
 import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
-import { Gesture } from './Gesture.ts';
+import type { Drag } from './Drag.ts';
+import { PictureDrag } from './PictureDrag.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import { StillCamera } from './StillCamera.ts';
-import { SceneMount } from './SceneMount.ts';
+import { SceneSlider } from './SceneSlider.ts';
+import { SliderDrag } from './SliderDrag.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import { SceneTrip } from './SceneTrip.ts';
@@ -40,7 +43,15 @@ export class SceneView implements DrawnScene {
   readonly #parts: SceneViewParts;
   /** Told which child the picture points at (or none, empty): the list lights its twin. */
   readonly #onLight: (id: string) => void;
-  #mounted: SceneMount | undefined;
+  /** What a mount puts in the host, made together and torn down together: the canvas, the slider, the listeners. */
+  #mounted:
+    | {
+        readonly host: HTMLElement;
+        readonly canvas: PixelCanvas;
+        readonly slider: SceneSlider;
+        readonly listeners: AbortController;
+      }
+    | undefined;
   #vm: SceneVM | undefined;
   #size: PictureSize = { width: 0, height: 0 };
   #hits: readonly SceneHit[] = [];
@@ -56,7 +67,7 @@ export class SceneView implements DrawnScene {
   /** A zoom back out of the child just left, and the point it centres on. */
   #zoomOut:
     { readonly scale: Tween; readonly anchor: { readonly x: number; readonly y: number } } | undefined;
-  #gesture: Gesture | undefined;
+  #drag: Drag | undefined;
   /** The click that ends a drag is not a tap. */
   #dragged = false;
   /** Stops listening to the clock; set while the picture moves. */
@@ -73,18 +84,13 @@ export class SceneView implements DrawnScene {
       this.#fit();
       if (this.#leave === undefined) this.#paint(STILL);
     });
-    const slider = host.ownerDocument.createElement('div');
-    slider.className = 'slider';
-    slider.setAttribute('role', 'slider');
-    slider.tabIndex = 0;
-    slider.hidden = true;
-    host.append(slider);
+    const slider = new SceneSlider(host);
     const listeners = new AbortController();
     const signal = listeners.signal;
     canvas.listen(
       'pointerdown',
       (event) => {
-        this.#down(event, false);
+        this.#downOnPicture(event);
       },
       signal,
     );
@@ -112,7 +118,7 @@ export class SceneView implements DrawnScene {
     canvas.listen(
       'pointerleave',
       () => {
-        if (this.#gesture === undefined) this.#pointAt('');
+        if (this.#drag === undefined) this.#pointAt('');
       },
       signal,
     );
@@ -123,42 +129,42 @@ export class SceneView implements DrawnScene {
       },
       signal,
     );
-    slider.addEventListener(
+    slider.listen(
       'pointerdown',
       (event) => {
-        this.#down(event, true);
+        this.#downOnSlider(event);
       },
-      { signal },
+      signal,
     );
-    slider.addEventListener(
+    slider.listen(
       'pointermove',
       (event) => {
         this.#move(event);
       },
-      { signal },
+      signal,
     );
-    slider.addEventListener(
+    slider.listen(
       'pointerup',
       (event) => {
         this.#up(event);
       },
-      { signal },
+      signal,
     );
-    slider.addEventListener(
+    slider.listen(
       'pointercancel',
       (event) => {
         this.#up(event);
       },
-      { signal },
+      signal,
     );
-    slider.addEventListener(
+    slider.listen(
       'keydown',
       (event) => {
         this.#key(event);
       },
-      { signal },
+      signal,
     );
-    this.#mounted = new SceneMount({ host, canvas, slider, listeners });
+    this.#mounted = { host, canvas, slider, listeners };
   }
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
@@ -167,9 +173,9 @@ export class SceneView implements DrawnScene {
     this.#trip = undefined;
     this.#zoomOut = undefined;
     this.#motion = undefined;
-    this.#gesture = undefined;
+    this.#drag = undefined;
     this.#vm = vm;
-    this.#mounted?.canvas().frameChanged();
+    this.#mounted?.canvas.frameChanged();
     this.#fit();
     const camera = this.#camera;
     if (before?.address !== vm.address) this.#here = '';
@@ -192,7 +198,7 @@ export class SceneView implements DrawnScene {
     } else {
       this.#view = camera.rest();
     }
-    const canvas = this.#mounted?.canvas();
+    const canvas = this.#mounted?.canvas;
     canvas?.name(vm.label);
     canvas?.touch(camera.drags());
     this.#layout();
@@ -245,9 +251,12 @@ export class SceneView implements DrawnScene {
     this.#trip = undefined;
     this.#zoomOut = undefined;
     this.#motion = undefined;
-    this.#gesture = undefined;
+    this.#drag = undefined;
     this.#stop();
-    this.#mounted?.unmount();
+    const mounted = this.#mounted;
+    mounted?.listeners.abort();
+    mounted?.canvas.remove();
+    mounted?.slider.remove();
     this.#mounted = undefined;
     this.#vm = undefined;
     this.#camera = new StillCamera();
@@ -294,7 +303,7 @@ export class SceneView implements DrawnScene {
     const mounted = this.#mounted;
     const vm = this.#vm;
     if (mounted === undefined || vm === undefined) return;
-    const canvas = mounted.canvas();
+    const canvas = mounted.canvas;
     const size = canvas.hostSize();
     canvas.fit(size);
     this.#size = size;
@@ -312,37 +321,21 @@ export class SceneView implements DrawnScene {
     this.#value();
   }
 
-  /** The slider over the picture at the camera's box; hidden when the picture has none. */
+  /** The slider over the picture at the camera's box, named by the list's heading; hidden when the picture has none. */
   #place(): void {
-    const slider = this.#mounted?.slider();
-    if (slider === undefined) return;
-    const track = this.#camera.track();
-    slider.hidden = track === null;
-    if (track === null) return;
-    slider.style.left = `${String(track.x)}px`;
-    slider.style.top = `${String(track.y)}px`;
-    slider.style.width = `${String(track.width)}px`;
-    slider.style.height = `${String(track.height)}px`;
-    slider.setAttribute('aria-orientation', track.axis === 'y' ? 'vertical' : 'horizontal');
-    slider.setAttribute('aria-label', this.#vm?.slider ?? '');
-    slider.setAttribute('aria-valuemin', '1');
-    slider.setAttribute('aria-valuemax', String(this.#camera.stopCount()));
+    this.#mounted?.slider.place(this.#camera, this.#vm?.slider ?? '');
   }
 
   /** The slider's value: the stop nearest the view, by its place in the slider's order, and its child's name. */
   #value(): void {
-    const slider = this.#mounted?.slider();
     const nearest = this.#camera.nearest(this.#view);
-    if (slider === undefined || slider.hidden || nearest === undefined) return;
-    const now = String(nearest.index + 1);
-    if (slider.getAttribute('aria-valuenow') === now) return;
-    slider.setAttribute('aria-valuenow', now);
+    if (nearest === undefined) return;
     const name = this.#vm?.children.find((child) => child.id === nearest.id)?.name ?? '';
-    slider.setAttribute('aria-valuetext', name);
+    this.#mounted?.slider.show(nearest.index, name);
   }
 
   #paint(time: number): void {
-    const canvas = this.#mounted?.canvas();
+    const canvas = this.#mounted?.canvas;
     const vm = this.#vm;
     const { width, height } = this.#size;
     if (canvas === undefined || vm === undefined || width === 0 || height === 0) return;
@@ -375,7 +368,7 @@ export class SceneView implements DrawnScene {
   }
 
   #hitAt(event: MouseEvent): SceneHit | undefined {
-    const point = this.#mounted?.canvas().pointAt(event);
+    const point = this.#mounted?.canvas.pointAt(event);
     if (point === undefined) return undefined;
     const { x, y } = point;
     return this.#hits.find(
@@ -390,57 +383,59 @@ export class SceneView implements DrawnScene {
     this.#onLight(id);
   }
 
-  /** A finger down on the picture or the slider: a drag may begin (the view stops where it is). */
-  #down(event: PointerEvent, slider: boolean): void {
+  /** A finger down on the picture: it points at a child, and a drag may begin when the picture drags (the view stops where it is). */
+  #downOnPicture(event: PointerEvent): void {
     if (this.#trip !== undefined || this.#zoomOut !== undefined) return;
     this.#dragged = false;
-    const camera = this.#camera;
-    if (!slider) this.#pointAt(this.#hitAt(event)?.id ?? '');
-    if (!slider && !camera.drags()) return;
+    this.#pointAt(this.#hitAt(event)?.id ?? '');
+    if (!this.#camera.drags()) return;
     this.#motion = undefined;
-    this.#gesture = new Gesture({
+    this.#drag = new PictureDrag({
       pointer: event.pointerId,
-      start: camera.along({ x: event.clientX, y: event.clientY }),
+      camera: this.#camera,
+      point: { x: event.clientX, y: event.clientY },
       view: this.#view,
-      slider,
     });
-    if (!slider) return;
-    event.preventDefault();
-    this.#mounted?.slider().setPointerCapture(event.pointerId);
-    this.#mounted?.slider().focus({ preventScroll: true });
-    // A tap on the track glides the view there; the thumb then follows the finger.
-    const at = this.#trackValue(event);
+  }
+
+  /** A finger down on the slider: a drag from the start; a tap on the track glides the view there, and the thumb then follows the finger. */
+  #downOnSlider(event: PointerEvent): void {
+    const slider = this.#mounted?.slider;
+    if (this.#trip !== undefined || this.#zoomOut !== undefined || slider === undefined) return;
+    this.#dragged = false;
+    this.#motion = undefined;
+    const drag = new SliderDrag({
+      pointer: event.pointerId,
+      slider,
+      camera: this.#camera,
+      point: { x: event.clientX, y: event.clientY },
+    });
+    this.#drag = drag;
+    slider.grab(event);
+    const at = drag.view();
     if (at !== undefined) this.#glide(at, GLIDE);
   }
 
   #move(event: PointerEvent): void {
-    const gesture = this.#gesture;
-    const camera = this.#camera;
-    if (!gesture?.is(event.pointerId)) {
-      if (this.#gesture === undefined && this.#trip === undefined)
-        this.#pointAt(this.#hitAt(event)?.id ?? '');
+    const drag = this.#drag;
+    if (!drag?.is(event.pointerId)) {
+      if (this.#drag === undefined && this.#trip === undefined) this.#pointAt(this.#hitAt(event)?.id ?? '');
       return;
     }
-    if (gesture.onSlider()) {
-      const at = this.#trackValue(event);
-      if (at === undefined) return;
-      this.#motion = undefined;
-      this.#follow(at, gesture);
-      return;
-    }
-    const position = camera.along({ x: event.clientX, y: event.clientY });
-    const wasMoved = gesture.moved();
-    gesture.move(position);
-    if (!gesture.moved()) return;
-    // The drag begins: the canvas keeps the finger even when it leaves the picture.
-    if (!wasMoved) this.#mounted?.canvas().capture(event.pointerId);
-    this.#follow(gesture.viewAt(position, camera.dragRate()), gesture);
+    const wasMoved = drag.moved();
+    drag.move({ x: event.clientX, y: event.clientY });
+    const view = drag.view();
+    if (view === undefined) return;
+    // A drag of the picture begins: the canvas keeps the finger even when it leaves the picture.
+    if (!wasMoved) this.#mounted?.canvas.capture(event.pointerId);
+    this.#motion = undefined;
+    this.#follow(view, drag);
   }
 
   /** The view under the finger, one to one; the child it comes to lights in the list. */
-  #follow(value: number, gesture: Gesture): void {
+  #follow(value: number, drag: Drag): void {
     this.#view = this.#camera.clamp(value);
-    gesture.sample(this.#parts.clock.now(), this.#view);
+    drag.sample(this.#parts.clock.now(), this.#view);
     this.#layout();
     const nearest = this.#camera.nearest(this.#view);
     if (nearest !== undefined) this.#pointAt(nearest.id);
@@ -449,20 +444,20 @@ export class SceneView implements DrawnScene {
 
   /** The finger lets go: a drag coasts on its speed and comes to rest (on a floor for the tower); still under reduced motion. */
   #up(event: PointerEvent): void {
-    const gesture = this.#gesture;
+    const drag = this.#drag;
     const camera = this.#camera;
-    if (!gesture?.is(event.pointerId)) return;
-    this.#gesture = undefined;
-    if (!gesture.moved()) return;
-    if (!gesture.onSlider()) this.#dragged = true;
-    const speed = this.#parts.motion.reduced() ? 0 : gesture.speed(this.#parts.clock.now());
+    if (!drag?.is(event.pointerId)) return;
+    this.#drag = undefined;
+    if (!drag.moved()) return;
+    if (drag.hidesClick()) this.#dragged = true;
+    const speed = this.#parts.motion.reduced() ? 0 : drag.speed(this.#parts.clock.now());
     const target = camera.landing(this.#view, speed);
     this.#glide(target, camera.settle(Math.abs(target - this.#view)));
   }
 
   /** The slider's keys (a desktop extra): an arrow moves to the next stop or the one before. */
   #key(event: KeyboardEvent): void {
-    const step = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1 }[event.key];
+    const step = this.#mounted?.slider.step(event);
     if (step === undefined) return;
     const next = this.#camera.stepFrom(this.#view, step);
     if (next === undefined) return;
@@ -483,13 +478,6 @@ export class SceneView implements DrawnScene {
     }
     this.#motion = new Tween(this.#view, target, this.#parts.clock.now(), duration, this.#parts.coast);
     this.#run();
-  }
-
-  /** The view a finger on the slider's track points at. */
-  #trackValue(event: PointerEvent): number | undefined {
-    const box = this.#mounted?.slider().getBoundingClientRect();
-    if (this.#camera.track() === null || box === undefined) return undefined;
-    return this.#camera.alongTrack({ x: event.clientX, y: event.clientY }, box);
   }
 
   /** A tap on an open child: the trip in. Ignored while a trip runs, and when it ends a drag. */
@@ -536,7 +524,7 @@ export class SceneView implements DrawnScene {
   }
 
   #pick(id: string): void {
-    const host = this.#mounted?.host();
+    const host = this.#mounted?.host;
     if (host !== undefined) this.#parts.picks.pick(host, id);
   }
 }
