@@ -242,6 +242,8 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     const isLit = child.id === lit;
     const isHere = child.id === here;
     const named = isLit || isHere;
+    // A named door's own ink: yellow where you stand, white where you point.
+    const accent = isHere ? 'yl' : 'wh';
     const look = this.#lookOf(child);
     const ink = this.#inkOf(child);
     painter.beginPath();
@@ -250,7 +252,7 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     painter.fillStyle = palette(ink);
     painter.fill();
     painter.globalAlpha = named ? 1 : 0.25 + 0.7 * fog;
-    painter.strokeStyle = palette(isHere ? 'yl' : isLit ? 'wh' : ink);
+    painter.strokeStyle = palette(named ? accent : ink);
     painter.lineWidth = named ? 2 : 1.2;
     painter.stroke();
     painter.save();
@@ -266,7 +268,7 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     const middle = quad.middle();
     if (door.showsNumber(named)) {
       const text = named ? `${child.ordinal} · ${look.name}` : child.ordinal;
-      const tone = isHere ? 'yl' : isLit ? 'wh' : door.faint() ? 'dim' : 'text';
+      const tone = named ? accent : door.faint() ? 'dim' : 'text';
       this.#tag(painter, palette, size, text, { x: middle.x, y: quad.top() - 11 }, tone, named);
     }
     if (door.showsWord()) this.#tag(painter, palette, size, `‹${door.word()}›`, middle, 'dim', false);

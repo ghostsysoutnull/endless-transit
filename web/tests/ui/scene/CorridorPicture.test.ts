@@ -96,7 +96,6 @@ function palette(record: Set<string>): (token: string) => string {
 function picture(end: HallEnd = new EndWall()): CorridorPicture {
   const noise = new SceneHash();
   const glow = new ShadowGlow();
-  const wall = end;
   const reach = new EndingReach();
   const long = new LongHall();
   return new CorridorPicture({
@@ -105,8 +104,8 @@ function picture(end: HallEnd = new EndWall()): CorridorPicture {
     glow,
     halls: {
       long,
-      service: new ServiceHall(wall, reach),
-      curved: new CurvedHall(wall, reach),
+      service: new ServiceHall(end, reach),
+      curved: new CurvedHall(end, reach),
       static: new StaticHall(noise, reach),
       none: long,
     },
