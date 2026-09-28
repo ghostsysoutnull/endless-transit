@@ -403,13 +403,12 @@ facts (`Tween`, `SceneTrip`, `TravelCamera`, `StillCamera`, `Level`, `Retrace`, 
 makers handed in).
 
 **Found while planning:**
-- **The engine's factories all build their parts** (`Passages`, and every `*Factory`: `NameParts`, `Progeny`,
-  `Doors`, `Sentences`), wired by `LocationRegistry`. Converting `Passages` alone leaves two patterns (the lesson
-  "two places sharing a pattern"). Proposed: out of this wave, logged as HK-028, a wave of its own. **The one
-  question for the user.**
+- **The engine's factories all build their parts** (`Passages`, and 17 more in `src/engine/procgen/`: `NameParts`,
+  `Progeny`, `Doors`, `Sentences`, `Deal` …), wired by `LocationRegistry`. Converting `Passages` alone leaves two
+  patterns (the lesson "two places sharing a pattern"): all 18 go together, step 8 (the user's pick, 2026-09-28).
 - **`Passages` no longer takes a `Progeny`** (step 10 of the plan above removed it): that part of the item is done.
 - **`Shell` builds its `InputRouter`, and `InputRouter` its `SceneEvents`**: the same pattern, older; handing
-  `SceneEvents` in would make `Shell` carry it through. Both logged with HK-028, not fixed here.
+  `SceneEvents` in would make `Shell` carry it through. Both logged as HK-028, not fixed here.
 - **`Gesture.onSlider()` is asked in two places** (`SceneView.ts:537, 570`): both go with step 7's two drags.
 - **The slider's pointer use, name and value text have no test** (`tower.spec:23` finds it by role alone): step 7.0.
 
@@ -454,6 +453,11 @@ slider's name comes from `vm.slider`); a tap in a picture resolves to an option 
      `Drag`, one interface, answered by `PictureDrag` (past the slop, one to one) and `SliderDrag` (the track under
      the finger); `Gesture` splits into them and the `onSlider()` branch goes. `SceneMount` goes. `Gesture.test`
      splits into the two drags, its pointer-id test kept once. Guards: step 7.0, `tower.spec:17, 46`.
+8. **engine-parts.** The 18 files in `src/engine/procgen/` that build their helpers take them in their constructor,
+   through one small interface per role, owned in `procgen/` and shared by the factories that use it (the names, the
+   children, the sentences, the doors, the deal …). `LocationRegistry` — the engine's composition root, built in
+   `main.ts` — builds each helper once and hands it in. Guards: the goldens (`Goldens.test`: any change to what the
+   world generates shows there) and the engine tests, unchanged; no test builds a factory directly.
 
 Then the user checks the tower and the corridor on the phone (no corridor scene test exists in `e2e/`): drag,
 slider, pad ride, zoom in and out.
@@ -476,6 +480,7 @@ slider, pad ride, zoom in and out.
 | `SceneSlider` | entity | `SceneView` | the slider element's place, value and keys | none |
 | `Drag` + `PictureDrag`, `SliderDrag` | interface + entities | `SceneView` | where one finger moves the view | none |
 | `Easing`, `SceneEvents` | existing interface / service | `SceneView` | handed in, no new type | none |
+| one interface per procgen helper role | interfaces | `src/engine/procgen/` | what a factory asks of a helper | none |
 
 **Estimate** (the unit the notes measure: this conversation's final context, plus the agents): the build about
-300–400k; 7–17 design checks at 30–60k, 0.3–0.8M; this plan's grill measured 139k. In all about 0.9–1.4M.
+350–450k; 8–18 design checks at 30–60k, 0.3–0.9M; this plan's grill measured 139k. In all about 0.9–1.5M.
