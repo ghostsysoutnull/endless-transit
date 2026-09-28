@@ -14,6 +14,11 @@ describe('a level is a value: its number and what stands there', () => {
     expect(() => new Level(4, 'layer')).toThrow(RangeError);
   });
 
+  test('a Layer lies below the bedrock; the lobby and every floor above it do not', () => {
+    expect(new Level(-1, 'layer').belowBedrock()).toBe(true);
+    expect(new Level(0, 'floor').belowBedrock()).toBe(false);
+  });
+
   test('its label is its number, a Layer’s too', () => {
     expect(new Level(0, 'floor').label()).toBe('0');
     expect(new Level(12, 'floor').label()).toBe('12');

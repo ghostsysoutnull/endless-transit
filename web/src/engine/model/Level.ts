@@ -26,6 +26,11 @@ export class Level {
     return this.#kind;
   }
 
+  /** Whether it lies below the building's bedrock: a Layer's does. */
+  belowBedrock(): boolean {
+    return this.#number < 0;
+  }
+
   /** How the level is written on the tower and the pad: its number, a Layer's too (`-1`). */
   label(): string {
     return String(this.#number);

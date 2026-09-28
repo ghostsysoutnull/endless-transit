@@ -1,6 +1,6 @@
 /**
- * How a kind of level is drawn on the tower (U02): its row's strength on even and odd levels, the inks of its
- * row, its number and its gauge tick, and whether it lies below the bedrock.
+ * How a kind of level is drawn on the tower (U02): its row's strength on even and odd rows, and the inks of its
+ * row, its number and its gauge tick.
  */
 export class LevelLook {
   readonly #even: number;
@@ -8,27 +8,18 @@ export class LevelLook {
   readonly #ground: string;
   readonly #number: string;
   readonly #tick: string;
-  readonly #below: boolean;
 
-  constructor(facts: {
-    even: number;
-    odd: number;
-    ground: string;
-    number: string;
-    tick: string;
-    below: boolean;
-  }) {
+  constructor(facts: { even: number; odd: number; ground: string; number: string; tick: string }) {
     this.#even = facts.even;
     this.#odd = facts.odd;
     this.#ground = facts.ground;
     this.#number = facts.number;
     this.#tick = facts.tick;
-    this.#below = facts.below;
   }
 
-  /** The row's strength at this level: the floors alternate, so a stack reads as rows. */
-  alpha(level: number): number {
-    return level % 2 === 0 ? this.#even : this.#odd;
+  /** The row's strength at its place on the tower, counted from the lobby: rows alternate, so a stack reads as rows. */
+  alpha(row: number): number {
+    return row % 2 === 0 ? this.#even : this.#odd;
   }
 
   /** The row's ink. */
@@ -44,10 +35,5 @@ export class LevelLook {
   /** The ink of its label on the gauge. */
   tick(): string {
     return this.#tick;
-  }
-
-  /** Whether it lies below the bedrock. */
-  below(): boolean {
-    return this.#below;
   }
 }

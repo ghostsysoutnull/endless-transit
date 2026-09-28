@@ -88,10 +88,10 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     static: new StaticRow(),
     none: new LongRow(),
   };
-  /** Each kind of level's look: a floor in the rule's ink, a Layer faint in the void's red, below the bedrock. */
+  /** Each kind of level's look: a floor in the rule's ink, a Layer faint in the void's red. */
   readonly #levelLooks: Readonly<Record<LevelKind, LevelLook>> = {
-    floor: new LevelLook({ even: 0.5, odd: 0.35, ground: 'rule', number: 'text', tick: 'dim', below: false }),
-    layer: new LevelLook({ even: 0.1, odd: 0.1, ground: 'rd', number: 'rd', tick: 'rd', below: true }),
+    floor: new LevelLook({ even: 0.5, odd: 0.35, ground: 'rule', number: 'text', tick: 'dim' }),
+    layer: new LevelLook({ even: 0.1, odd: 0.1, ground: 'rd', number: 'rd', tick: 'rd' }),
   };
   /** Each roof at the tower's proportions (the mock's, `transit-reframed.html:775`), the peak kept below the top. */
   readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
@@ -437,7 +437,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   /** Once breached, a broken red line between the lowest floor and the first Layer: the bedrock, open. */
   #bedrockLine(painter: Painter, frame: Frame, palette: Palette): void {
-    const above = [...frame.rows.values()].filter((row) => !this.#levelLooks[row.level.kind()].below());
+    const above = [...frame.rows.values()].filter((row) => !row.level.belowBedrock());
     if (above.length === frame.rows.size) return;
     const y = this.#y(frame, Math.min(...above.map((row) => row.level.number()))) + frame.row;
     if (y < frame.top || y > frame.bottom) return;
