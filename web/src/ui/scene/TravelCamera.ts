@@ -3,7 +3,7 @@ import type { CameraTrack } from './CameraTrack.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 
 /**
- * A camera that travels (U02: the tower's car, later the corridor's walk): owns the rules of how its view moves —
+ * A camera that travels (U02: the tower's car, the corridor's walk): owns the rules of how its view moves —
  * the range, the trip's pace (`min(most, base + per·√distance)`: it speeds up, cruises and brakes), the settle
  * time, where a released view comes to rest (it coasts on its speed, then settles on a whole number when it
  * snaps), the stops (kept in their order along the view) and the slider. The numbers are the picture's; the rules

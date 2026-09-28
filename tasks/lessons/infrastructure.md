@@ -36,3 +36,5 @@ Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work
   twice.
 - **A record never restates the size of a list it points to**: a count beside the list's owner goes stale with
   every edit; the owner's check boxes are the progress.
+- **A plan note holds decisions, picks and pointers**: numbers and details the code and its comments already hold
+  are not restated, and a review's asks enter the note only where they change a decision.
