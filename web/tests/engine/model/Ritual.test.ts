@@ -17,7 +17,7 @@ const FLOORS = 3;
 /** A street with two three-floor buildings of the same name (Guide:293-295: a Keystone opens one building, not a name). */
 function street(): Street {
   const source: CountingChildSource = new CountingChildSource((parent: Location) => {
-    const origin = (index: number) => ({ seed: parent.seed().branch(index), index, children: source });
+    const origin = (index: number) => ({ seed: parent.seed().child(index), index, children: source });
     switch (parent.depth()) {
       case 0:
         return [0, 1].map(

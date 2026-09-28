@@ -1,12 +1,12 @@
-Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.
-Synth-Glass Slab|A pristine synth-glass barrier, reflecting the corridor's dim light.
-Pitted Concrete|A massive brutalist slab of pitted concrete.
-Reinforced Polymer|A slab of reinforced polymer, dull and unscratched.
-Oxidized Metal Hatch|An oxidized metal hatch, its wheel-lock seized.
-Pristine Ceramic|A pristine ceramic panel, cool and faintly glossy.
-Brutalist Slab|A massive brutalist slab of pitted concrete.
-Industrial Barrier|An industrial barrier of stamped steel and yellow chevrons.
-Riveted Iron Hatch|A hatch of riveted iron, its seams weeping orange.
-Frosted Crystal Pane|A pane of frosted crystal, faintly luminous.
-Lacquered Timber Gate|A timber gate under many coats of black lacquer.
-Bone-Lattice Aperture|An aperture of interlocking bone-white struts.
+Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.|metal
+Synth-Glass Slab|A pristine synth-glass barrier, reflecting the corridor's dim light.|glass
+Pitted Concrete|A massive brutalist slab of pitted concrete.|stone
+Reinforced Polymer|A slab of reinforced polymer, dull and unscratched.|plain
+Oxidized Metal Hatch|An oxidized metal hatch, its wheel-lock seized.|metal
+Pristine Ceramic|A pristine ceramic panel, cool and faintly glossy.|stone
+Brutalist Slab|A massive brutalist slab of pitted concrete.|stone
+Industrial Barrier|An industrial barrier of stamped steel and yellow chevrons.|metal
+Riveted Iron Hatch|A hatch of riveted iron, its seams weeping orange.|metal
+Frosted Crystal Pane|A pane of frosted crystal, faintly luminous.|glass
+Lacquered Timber Gate|A timber gate under many coats of black lacquer.|timber
+Bone-Lattice Aperture|An aperture of interlocking bone-white struts.|bone

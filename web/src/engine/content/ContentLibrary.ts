@@ -41,6 +41,16 @@ export class ContentLibrary {
     });
   }
 
+  /** A `name|sentence|key` list, in file order. A line without exactly two `|` is an error, never a guessed column. */
+  triples(path: string): readonly (readonly [string, string, string])[] {
+    return this.list(path).map((line) => {
+      const [name, sentence, key, ...rest] = line.split('|');
+      if (name === undefined || sentence === undefined || key === undefined || rest.length > 0)
+        throw new Error(`content file ${path}.txt: '${line}' is not a name|sentence|key line`);
+      return [name.trim(), sentence.trim(), key.trim()] as const;
+    });
+  }
+
   #parse(file: string): readonly string[] {
     const text = this.#source.read(file);
     if (text === undefined) throw new Error(`content file is missing: ${file}`);

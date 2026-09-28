@@ -1,17 +1,28 @@
+import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import type { CorridorShape } from '#engine/model/CorridorShape.ts';
+import { BoxRoof } from './BoxRoof.ts';
+import { CurvedRow } from './CurvedRow.ts';
 import { DoorLooks } from './DoorLooks.ts';
-import { Roof } from './Roof.ts';
+import { LongRow } from './LongRow.ts';
+import { MastRoof } from './MastRoof.ts';
+import { ParapetRoof } from './ParapetRoof.ts';
+import { PeakRoof } from './PeakRoof.ts';
+import { Roof, type RoofKind } from './Roof.ts';
+import type { RoofDrawer } from './RoofDrawer.ts';
+import type { RowShape } from './RowShape.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import { SceneHash } from './SceneHash.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
+import { ServiceRow } from './ServiceRow.ts';
+import { StillCamera } from './StillCamera.ts';
+import { StaticRow } from './StaticRow.ts';
+import { TravelCamera } from './TravelCamera.ts';
 
-const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
-/** No number on the picture is smaller than this (touch first: it must read on a phone). */
-const TEXT = 12;
 /** A floor's row is at least this tall where it fits (a thumb), and the window shows 4 to 11 of them. */
 const ROW = 50;
 const FEWEST = 4;
@@ -59,16 +70,30 @@ interface Frame {
  */
 export class TowerPicture implements ScenePicture<SceneVM> {
   readonly #noise = new SceneHash();
+  readonly #font = new CanvasFont();
   readonly #roofs = new Roof();
   readonly #looks = new DoorLooks();
+  /** How each corridor shape runs on a floor's row; a row without a shape (a Layer's) is the plain line. */
+  readonly #rows: Readonly<Record<CorridorShape, RowShape>> = {
+    long: new LongRow(),
+    service: new ServiceRow(),
+    curved: new CurvedRow(),
+    static: new StaticRow(),
+    none: new LongRow(),
+  };
+  /** Each roof at the tower's proportions (the mock's, `transit-reframed.html:775`), the peak kept below the top. */
+  readonly #roofDrawers: Readonly<Record<RoofKind, RoofDrawer>> = {
+    peak: new PeakRoof({ from: -0.18, to: 0.18, lift: 1.6, ceiling: 4 }),
+    mast: new MastRoof({ at: 0.2, lift: 1 }),
+    box: new BoxRoof({ from: -0.15, to: 0.15, lift: 0.5 }),
+    flat: new ParapetRoof(),
+  };
 
-  camera(vm: SceneVM, size: PictureSize): SceneCamera | null {
+  camera(vm: SceneVM, size: PictureSize): SceneCamera {
     const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
-    if (frame === undefined) return null;
-    const stops = vm.children
-      .map((child) => ({ id: child.id, at: Number(child.ordinal) }))
-      .sort((one, other) => one.at - other.at);
-    return {
+    if (frame === undefined) return new StillCamera();
+    const stops = vm.children.map((child) => ({ id: child.id, at: Number(child.ordinal) }));
+    return new TravelCamera({
       rest: frame.tower.car,
       min: frame.min,
       max: frame.max,
@@ -91,7 +116,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
             to: frame.min,
           }
         : null,
-    };
+    });
   }
 
   layout(vm: SceneVM, size: PictureSize, view: number): readonly SceneHit[] {
@@ -227,23 +252,15 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     painter.strokeStyle = palette('cy');
     painter.lineWidth = 1.2;
     painter.beginPath();
-    const kind = this.#roofs.of(frame.tower.address, frame.tower.landmark);
-    if (kind === 'peak') {
-      painter.moveTo(middle - width * 0.18, roof);
-      painter.lineTo(middle, Math.max(4, roof - rise * 1.6));
-      painter.lineTo(middle + width * 0.18, roof);
-    } else if (kind === 'mast') {
-      painter.moveTo(middle + width * 0.2, roof);
-      painter.lineTo(middle + width * 0.2, roof - rise);
-    } else if (kind === 'box') {
-      painter.moveTo(middle - width * 0.15, roof);
-      painter.lineTo(middle - width * 0.15, roof - rise * 0.5);
-      painter.lineTo(middle + width * 0.15, roof - rise * 0.5);
-      painter.lineTo(middle + width * 0.15, roof);
-    } else {
-      painter.moveTo(frame.inner, roof - 3);
-      painter.lineTo(frame.left + width, roof - 3);
-    }
+    this.#roofDrawers[this.#roofs.of(frame.tower.address, frame.tower.landmark)].trace(painter, {
+      base: roof,
+      rise,
+      origin: middle,
+      span: width,
+      middle,
+      left: frame.inner,
+      right: frame.left + width,
+    });
     painter.stroke();
     painter.globalAlpha = 1;
   }
@@ -278,7 +295,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   #count(painter: Painter, text: string, x: number, y: number, palette: Palette): void {
     painter.globalAlpha = 1;
-    painter.font = `400 ${String(TEXT)}px ${MONO}`;
+    painter.font = this.#font.of('regular');
     painter.textAlign = 'center';
     painter.textBaseline = 'middle';
     painter.fillStyle = palette('dim');
@@ -319,7 +336,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       painter.strokeRect(inner + 0.5, y + 0.5, width - shaft - 1, row);
     }
     painter.globalAlpha = 1;
-    painter.font = `${isLit ? '700' : '400'} ${String(TEXT)}px ${MONO}`;
+    painter.font = this.#font.of(isLit ? 'bold' : 'regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
     painter.fillStyle = palette(isLit || child?.visited === true ? 'yl' : abyss ? 'rd' : 'text');
@@ -361,13 +378,13 @@ export class TowerPicture implements ScenePicture<SceneVM> {
    */
   #corridor(painter: Painter, frame: Frame, level: number, y: number, palette: Palette): void {
     const passage = level >= 0 ? frame.tower.rows[level] : undefined;
-    const shape = passage?.shape ?? '';
+    const shape = this.#rows[passage?.shape ?? 'none'];
     const looks = passage?.looks ?? [];
     const line = y + frame.row * 0.76;
-    const bow = shape === 'curved' ? frame.row * 0.16 : 0;
+    const bow = shape.bow(frame.row);
     const from = frame.inner + 10;
     const full = frame.left + frame.width - 12;
-    const to = shape === 'service' || shape === 'static' ? full - (full - from) * 0.08 : full;
+    const to = shape.reach(from, full);
     const along = (p: number): { x: number; y: number } => ({
       x: from + (to - from) * p,
       y: line - bow * 4 * p * (1 - p),
@@ -381,21 +398,14 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       if (step === 0) painter.moveTo(point.x, point.y);
       else painter.lineTo(point.x, point.y);
     }
-    if (shape === 'service') {
-      painter.moveTo(to, line - 5);
-      painter.lineTo(to, line + 5);
-    }
+    shape.wall(painter, to, line);
     painter.stroke();
-    if (shape === 'static') {
-      painter.fillStyle = palette('mg');
-      painter.globalAlpha = 0.6;
-      for (let dot = 1; dot <= 3; dot++) painter.fillRect(to + dot * 3, line - 0.5, 1.5, 1.5);
-    }
+    shape.tail(painter, palette, to, line);
     const pairs = Math.ceil(looks.length / 2);
     for (const [index, look] of looks.entries()) {
       const point = along((Math.floor(index / 2) + 0.5) / pairs);
       painter.globalAlpha = 0.8;
-      painter.fillStyle = palette(this.#looks.ink(look.state));
+      painter.fillStyle = palette(this.#looks.ink(look.stateLook));
       painter.fillRect(point.x - 1, index % 2 === 1 ? point.y + 1 : point.y - 5, 2, 4);
     }
   }
@@ -469,7 +479,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     const ticks = new Set<number>([max]);
     for (let level = min === 0 ? 0 : Math.ceil(min / step) * step; level <= max; level += step)
       ticks.add(level);
-    painter.font = `400 ${String(TEXT)}px ${MONO}`;
+    painter.font = this.#font.of('regular');
     painter.textAlign = 'right';
     painter.textBaseline = 'middle';
     for (const level of ticks) {

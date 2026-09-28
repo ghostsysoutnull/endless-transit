@@ -1,17 +1,29 @@
 import { describe, expect, test } from 'vitest';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import { Roof, type RoofKind } from '#ui/scene/Roof.ts';
 import { TowerPicture } from '#ui/scene/TowerPicture.ts';
+import { doorLook } from '#tests/support/doorLook.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
 /** The phone's picture at 360 × 640 (tasks/ui/U01b.md) and a taller phone's. */
 const PHONE = { width: 328, height: 277 };
 const TALL = { width: 380, height: 403 };
-const STATES = ['Stable', 'Frozen', 'Cold', 'Static', 'Humming'];
-const SHAPES = ['long', 'service', 'curved', 'static'];
+/** Door states by name and the look their list gives them. */
+const STATES = [
+  { state: 'Stable', stateLook: 'plain' },
+  { state: 'Frozen', stateLook: 'frost' },
+  { state: 'Cold', stateLook: 'cold' },
+  { state: 'Static', stateLook: 'static' },
+  { state: 'Humming', stateLook: 'plain' },
+] as const;
+const SHAPES = ['long', 'service', 'curved', 'static'] as const;
 
 /** A tower of `floors` floors, `doors` a floor; listed top first as the engine lists them (Layers after the lobby); none listed at the elevator. */
-function tower(floors: number, options: { car?: number; below?: number; listed?: boolean } = {}): SceneVM {
+function tower(
+  floors: number,
+  options: { car?: number; below?: number; listed?: boolean; address?: string; landmark?: boolean } = {},
+): SceneVM {
   const below = options.below ?? 0;
   const ordinals = [
     ...Array.from({ length: floors }, (_, n) => floors - 1 - n),
@@ -39,19 +51,16 @@ function tower(floors: number, options: { car?: number; below?: number; listed?:
     tower: {
       floors,
       doors: 6,
-      address: '0.0.0.0.0.0.0.0.2',
-      landmark: false,
+      address: options.address ?? '0.0.0.0.0.0.0.0.2',
+      landmark: options.landmark ?? false,
       car: options.car ?? 0,
       below,
       rows: Array.from({ length: floors }, (_, n) => ({
         shape: SHAPES[n % 4] ?? 'long',
-        looks: Array.from({ length: 6 }, (_, k) => ({
-          material: 'Heavy Bulkhead',
-          state: STATES[(n + k) % 5] ?? 'Stable',
-        })),
+        looks: Array.from({ length: 6 }, (_, k) => doorLook(STATES[(n + k) % 5])),
       })),
     },
-    shape: '',
+    shape: 'none',
     slider: 'Ride to a floor',
     decay: 0,
     noise: '7F3A-91C2-0B4D-E6A8',
@@ -70,32 +79,33 @@ const picture = new TowerPicture();
 describe('the tower’s camera: the car’s floor is the view', () => {
   test('it rests at the car, runs from the lowest level open to the top floor, stops at every listed floor by its number, and settles on a floor', () => {
     const camera = picture.camera(tower(100, { car: 37 }), PHONE);
-    expect(camera).toMatchObject({ rest: 37, min: 0, max: 99, axis: 'y', snap: true, zoom: false });
-    expect(camera?.stops.map((stop) => stop.at)).toEqual(Array.from({ length: 100 }, (_, n) => n));
-    expect(camera?.stops[0]?.id).toBe('enter:99');
-    expect(picture.camera(tower(12, { below: 10 }), PHONE)?.min).toBe(-10);
+    expect([camera.rest(), camera.clamp(-5), camera.clamp(200)]).toEqual([37, 0, 99]);
+    expect([camera.along({ x: 1, y: 2 }), camera.zooms(), camera.landing(3.4, 0)]).toEqual([2, false, 3]);
+    expect(Array.from({ length: 100 }, (_, n) => camera.stopOf(`enter:${String(99 - n)}`))).toEqual(
+      Array.from({ length: 100 }, (_, n) => n),
+    );
+    expect(picture.camera(tower(12, { below: 10 }), PHONE).clamp(-100)).toBe(-10);
   });
 
   test('the gauge is a slider a thumb can hold, inside the picture, the top floor at its top; the elevator’s own screen has none and does not drag', () => {
     for (const size of [PHONE, TALL]) {
-      const track = picture.camera(tower(100), size)?.track;
+      const track = picture.camera(tower(100), size).track();
       expect(track?.width).toBeGreaterThanOrEqual(44);
       expect(track?.x).toBeGreaterThanOrEqual(0);
       expect((track?.x ?? 0) + (track?.width ?? 0)).toBeLessThanOrEqual(size.width);
       expect((track?.y ?? 0) + (track?.height ?? 0)).toBeLessThanOrEqual(size.height);
       expect(track).toMatchObject({ axis: 'y', from: 99, to: 0 });
     }
-    const still = picture.camera(tower(100, { car: 40, listed: false }), PHONE);
-    expect(still?.track).toBeNull();
-    expect(still?.drag).toBe(0);
-    expect(picture.camera({ ...tower(5), tower: null }, PHONE)).toBeNull();
+    const elevator = picture.camera(tower(100, { car: 40, listed: false }), PHONE);
+    expect([elevator.track(), elevator.drags()]).toEqual([null, false]);
+    const nothing = picture.camera({ ...tower(5), tower: null }, PHONE);
+    expect([nothing.track(), nothing.drags(), nothing.stopCount()]).toEqual([null, false, 0]);
   });
 
   test('the elevator speeds up, cruises and brakes: a long ride takes longer, never past 2.4 s', () => {
-    const pace = picture.camera(tower(100), PHONE)?.pace ?? { base: 0, per: 0, most: 0 };
-    const time = (d: number): number => Math.min(pace.most, pace.base + pace.per * Math.sqrt(d));
-    expect(time(1)).toBeLessThan(time(10));
-    expect(time(99)).toBeLessThanOrEqual(2400);
+    const camera = picture.camera(tower(100), PHONE);
+    expect(camera.pace(1)).toBeLessThan(camera.pace(10));
+    expect(camera.pace(99)).toBeLessThanOrEqual(2400);
   });
 });
 
@@ -180,5 +190,58 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
     picture.paint(middle, tower(100), PHONE, palette(middle.asked), 0, '', 50);
     expect(middle.asked.has('rd')).toBe(false);
     expect(middle.asked.has('bl')).toBe(true);
+  });
+});
+
+/** A digest of every call a painter was told, and how many: a picture's whole output in two values. */
+function digest(painter: RecordingPainter): readonly [string, number] {
+  let hash = 0x811c9dc5;
+  const text = painter.calls.join('\n');
+  for (let at = 0; at < text.length; at++) {
+    hash ^= text.charCodeAt(at);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return [(hash >>> 0).toString(16), painter.calls.length];
+}
+
+/** The first tower address on the street whose roof is `kind` (a landmark's is always the peak). */
+function addressWith(kind: RoofKind): string {
+  const roofs = new Roof();
+  for (let n = 0; ; n++) {
+    const address = `0.0.0.0.0.0.0.0.${String(n)}`;
+    if (roofs.of(address, false) === kind) return address;
+  }
+}
+
+/**
+ * Scaffolding (testing principle 7): the tower's calls pinned before its roofs and corridor rows move behind drawers
+ * found by key (U02 fixes, step 2a) — removed, with the street's digest, at U02's close-out.
+ */
+describe('the tower paints the same calls as before its drawers move (a digest of them)', () => {
+  const top = (address: string, landmark: boolean): SceneVM => tower(5, { car: 4, address, landmark });
+
+  test('each roof, the top in view', () => {
+    const digests = [
+      top('0.0.0.0.0.0.0.0.2', true),
+      top(addressWith('mast'), false),
+      top(addressWith('box'), false),
+      top(addressWith('flat'), false),
+    ].map((vm) => {
+      const painter = new RecordingPainter();
+      picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, '', 4);
+      return digest(painter);
+    });
+    expect(digests).toEqual([
+      ['9576b233', 207],
+      ['40ceb987', 202],
+      ['a2fb1b96', 208],
+      ['9465138f', 206],
+    ]);
+  });
+
+  test('a breached tower, the Layers’ rows in view', () => {
+    const painter = new RecordingPainter();
+    picture.paint(painter, tower(12, { below: 10 }), PHONE, (token) => `<${token}>`, 1234, 'enter:14', -3);
+    expect(digest(painter)).toEqual(['5b8f64ee', 214]);
   });
 });

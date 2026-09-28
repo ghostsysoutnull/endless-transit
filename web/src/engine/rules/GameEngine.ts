@@ -380,7 +380,12 @@ export class GameEngine {
       player:
         here === undefined
           ? null
-          : { coherence: player.coherence().value(), band: player.coherence().band(), steps: player.steps() },
+          : {
+              coherence: player.coherence().value(),
+              band: player.coherence().band(),
+              steps: player.steps(),
+              decay: player.coherence().decay(),
+            },
       buffer: here === undefined ? null : this.#bufferOf(player),
       prompt: this.#prompt?.summary() ?? null,
       options: this.#prompt?.options() ?? this.#commands.flatMap((entry) => entry.options()),

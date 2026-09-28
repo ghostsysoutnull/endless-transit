@@ -16,7 +16,7 @@ function tinyWorld(): { universe: Universe; source: CountingChildSource } {
   const source: CountingChildSource = new CountingChildSource((parent: Location) => {
     const origin = (index: number) => ({
       parent,
-      seed: parent.seed().branch(index),
+      seed: parent.seed().child(index),
       index,
       children: source,
     });
@@ -132,7 +132,7 @@ describe('Location — the questions a journey asks (defaults every kind inherit
       parent.depth() === 0
         ? [
             new SealedUnit(
-              { parent, seed: parent.seed().branch(0), index: 0, children: source },
+              { parent, seed: parent.seed().child(0), index: 0, children: source },
               { name: 'Sealed', landmark: false, floors: 3, doorsPerFloor: 2 },
             ),
           ]

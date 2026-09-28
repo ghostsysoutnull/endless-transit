@@ -195,3 +195,12 @@ describe('Seed — rough uniformity', () => {
     expect(fired / 8_000).toBeLessThan(0.28);
   });
 });
+
+describe('a child’s seed (the lazy-loading law)', () => {
+  test('child i is born from its parent’s seed branched by the number i, and nothing else', () => {
+    const parent = new Seed(0x7f3a91c2, 0x0b4de6a8);
+    expect(parent.child(3)).toEqual(parent.branch(3));
+    expect(parent.child(3)).not.toEqual(parent.branch('3'));
+    expect(parent.child(3)).not.toEqual(parent.child(4));
+  });
+});

@@ -1,14 +1,15 @@
-/** The door states the mock draws in their own ink (its `frozen`/`cold` blue, `static` magenta); the rest in the frame's cyan. */
-const INKS: Readonly<Record<string, string>> = { Frozen: 'bl', Cold: 'bl', Static: 'mg' };
-const PLAIN = 'cy';
+import type { DoorStateLook } from '#engine/model/DoorStateLook.ts';
+
+/** The ink each look of a door's state is drawn in: the mock's frost and cold blue, its static magenta, the frame's cyan. */
+const INKS: Readonly<Record<DoorStateLook, string>> = { frost: 'bl', cold: 'bl', static: 'mg', plain: 'cy' };
 
 /**
- * Owns one fact: how a door's look is drawn (U02) — the ink its state is drawn in, by the state's name on its
- * list (the list's key column: identity by stable key; a state the table does not know is drawn plain). Shared by
- * the tower's door ticks and the corridor's doors.
+ * Owns one fact: how a door's look is drawn (U02) — the ink its state is drawn in, by the look's key (its list's
+ * key column: identity by stable key; every key has an ink). The tower's door ticks are drawn by it; the corridor's
+ * doors will be (U02's corridor).
  */
 export class DoorLooks {
-  ink(state: string): string {
-    return INKS[state] ?? PLAIN;
+  ink(look: DoorStateLook): string {
+    return INKS[look];
   }
 }

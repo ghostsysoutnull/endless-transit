@@ -1,10 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
-import type { Apartment } from '#engine/model/Apartment.ts';
+import { Apartment } from '#engine/model/Apartment.ts';
 import type { Building } from '#engine/model/Building.ts';
+import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { Floor } from '#engine/model/Floor.ts';
-import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
+import { every, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
 
@@ -36,7 +37,7 @@ function buildingOf(n: number): Building {
   return must(street.children()[n % street.children().length]) as Building;
 }
 
-const SHAPES = ['long', 'service', 'curved', 'static'];
+const SHAPES: readonly CorridorShape[] = ['long', 'service', 'curved', 'static'];
 
 describe('the peek (U02): a floor reads its corridor’s shape and its doors’ looks from the seeds, making neither', () => {
   test('what a floor peeks is what its corridor and doors are once made, for every floor of forty buildings', () => {
@@ -45,11 +46,9 @@ describe('the peek (U02): a floor reads its corridor’s shape and its doors’ 
       for (const floor of building.children().slice(0, building.floors()) as Floor[]) {
         const peeked = must(floor.figure());
         const corridor = floor.corridor();
-        const doors = corridor.children().map((apartment) => (apartment as Apartment).door());
+        const doors = every(corridor.children(), Apartment).map((apartment) => apartment.door());
         expect(peeked.shape, floor.address().toString()).toBe(must(corridor.figure() ?? undefined).shape);
-        expect(peeked.looks).toEqual(
-          doors.map((door) => ({ material: door.material(), state: door.state() })),
-        );
+        expect(peeked.looks).toEqual(doors.map((door) => door.look()));
         expect(peeked.doors).toBe(building.doorsPerFloor());
       }
     }
@@ -58,7 +57,7 @@ describe('the peek (U02): a floor reads its corridor’s shape and its doors’ 
   test('a corridor’s shape is the key its sentence carries: one of four, and the curved gallery is curved', () => {
     for (let n = 0; n < 8; n++) {
       const corridor = floorOf(n).corridor();
-      const shape = must(corridor.figure() ?? undefined).shape ?? '';
+      const shape = must(corridor.figure() ?? undefined).shape ?? 'none';
       expect(SHAPES).toContain(shape);
       if (must(corridor.description()[0]).startsWith('A curved gallery')) expect(shape).toBe('curved');
       if (must(corridor.description()[0]).startsWith('A narrow service')) expect(shape).toBe('service');
@@ -116,12 +115,12 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
     expect(layer.drawing()).toBe('layer');
   });
 
-  test('a door hands its picture its material, its state and the word written on it', () => {
+  test('a door hands its picture its look and the word written on it', () => {
     const corridor = floorOf(7).corridor();
-    for (const apartment of corridor.children() as Apartment[]) {
+    for (const apartment of every(corridor.children(), Apartment)) {
       const door = apartment.door();
       expect(apartment.figure().door).toEqual({
-        look: { material: door.material(), state: door.state() },
+        look: door.look(),
         words: door.inscription()?.word() ?? '',
       });
     }

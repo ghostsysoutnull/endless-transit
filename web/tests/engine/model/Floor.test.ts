@@ -13,7 +13,7 @@ const FLOORS = 4;
 /** A street (depth 0) with one four-floor building; every floor has a corridor with nothing behind its doors yet. */
 function building(): { building: Building; source: CountingChildSource } {
   const source: CountingChildSource = new CountingChildSource((parent: Location) => {
-    const origin = (index: number) => ({ seed: parent.seed().branch(index), index, children: source });
+    const origin = (index: number) => ({ seed: parent.seed().child(index), index, children: source });
     switch (parent.depth()) {
       case 0:
         return [

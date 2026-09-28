@@ -1,6 +1,6 @@
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PromptSummary } from '#engine/rules/PromptSummary.ts';
-import { frameOf } from '#ui/Frame.ts';
+import { Frame } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { RecapVM } from './RecapVM.ts';
@@ -71,6 +71,7 @@ const ENDINGS: Readonly<
  * closing line of the ending the engine reached, and the two answers. No DOM.
  */
 export class RecapPresenter implements Presenter<RecapVM> {
+  readonly #frame = new Frame();
   readonly #masthead: Masthead;
 
   constructor(masthead: Masthead) {
@@ -89,7 +90,7 @@ export class RecapPresenter implements Presenter<RecapVM> {
     return {
       scene: RECAP,
       title: this.#masthead.name(),
-      frame: frameOf(snapshot.place),
+      frame: this.#frame.of(snapshot.place),
       heading: ending.heading,
       figures: ending.figures ? this.#figures(prompt) : [],
       steps: ending.shutdown

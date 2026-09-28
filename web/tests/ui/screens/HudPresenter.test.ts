@@ -3,6 +3,8 @@ import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
+import { doorLook } from '#tests/support/doorLook.ts';
+import { playerSummary } from '#tests/support/playerSummary.ts';
 
 const presenter = new HudPresenter(new Masthead('a1b2c3d'));
 
@@ -48,7 +50,7 @@ const PLANET: GameSnapshot = {
     ],
     frame: 'yellow',
     abyssal: false,
-    childrenHeading: 'Planetary landmasses scanned:',
+    childrenHeading: 'Planetary landmasses scanned',
     contents: null,
     telemetry: null,
     lattice: null,
@@ -74,7 +76,7 @@ const PLANET: GameSnapshot = {
     option({ id: 'leave', key: 'l', label: 'Leave Planet', role: 'return' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
-  player: { coherence: 87, band: 'stable', steps: 12 },
+  player: playerSummary({ coherence: 87, steps: 12 }),
   buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
   prompt: null,
   message: 'Entered Auraea.',
@@ -122,7 +124,7 @@ const FLOOR: GameSnapshot = {
     name: 'Floor 0',
     address: '0.0.0.0.1.0.0.0.0.0',
     position: { label: 'Z-AXIS', index: 1, total: 16 },
-    childrenHeading: 'Local access list:',
+    childrenHeading: 'Local access list',
   },
   options: [
     option({
@@ -651,10 +653,9 @@ describe('HudPresenter.toViewModel — the drawing (U01b): what the scene draws,
     expect(drawing.label).not.toBe('');
   });
 
-  test('the tear’s strength is the one Coherence gives: none while stable, half at 35', () => {
-    expect(presenter.toViewModel(DRAWN).drawing.decay).toBe(0);
-    const falling = { ...DRAWN, player: { coherence: 35, band: 'degraded', steps: 12 } };
-    expect(presenter.toViewModel(falling).drawing.decay).toBeCloseTo(0.5, 10);
+  test('the tear’s strength is the one the engine hands over with the player', () => {
+    const falling = { ...DRAWN, player: playerSummary({ coherence: 35, band: 'degraded', decay: 0.5 }) };
+    expect(presenter.toViewModel(falling).drawing.decay).toBe(0.5);
   });
 
   test('a child with no figure is drawn with none: no floors, no doors', () => {
@@ -677,7 +678,7 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
       name: 'Ornate Sanctum',
       drawing: 'building',
       address: '0.0.0.0.1.0.0.0.0',
-      childrenHeading: 'Ride to a floor:',
+      childrenHeading: 'Ride to a floor',
       figure: {
         floors,
         doors: 2,
@@ -691,8 +692,8 @@ function towerSnapshot(floors: number, car: number): GameSnapshot {
             doors: 2,
             shape: 'curved',
             looks: [
-              { material: 'Heavy Bulkhead', state: 'Frozen' },
-              { material: 'Pitted Concrete', state: 'Stable' },
+              doorLook({ state: 'Frozen', stateLook: 'frost' }),
+              doorLook({ material: 'Pitted Concrete', family: 'stone' }),
             ],
           })),
         },
@@ -731,13 +732,13 @@ describe('HudPresenter.toViewModel — the building (U02): the tower drawn, the 
       rows: Array.from({ length: 16 }, () => ({
         shape: 'curved',
         looks: [
-          { material: 'Heavy Bulkhead', state: 'Frozen' },
-          { material: 'Pitted Concrete', state: 'Stable' },
+          { material: 'Heavy Bulkhead', state: 'Frozen', family: 'metal', stateLook: 'frost' },
+          { material: 'Pitted Concrete', state: 'Stable', family: 'stone', stateLook: 'plain' },
         ],
       })),
     });
     expect(drawing.slider).toBe('Ride to a floor');
-    expect(drawing.shape).toBe('');
+    expect(drawing.shape).toBe('none');
     expect(presenter.toViewModel(STREET).drawing.tower).toBeNull();
   });
 
@@ -809,7 +810,10 @@ describe('HudPresenter.toViewModel — the rest', () => {
       bandLabel: 'stable',
       valueText: '87 percent, stable',
     });
-    const low = presenter.toViewModel({ ...PLANET, player: { coherence: 12, band: 'critical', steps: 3 } });
+    const low = presenter.toViewModel({
+      ...PLANET,
+      player: playerSummary({ coherence: 12, band: 'critical', steps: 3, decay: 0.8 }),
+    });
     expect(low.meter.value).toBe(12);
     expect(low.meter.band).toBe('critical');
     expect(low.meter.valueText).toBe('12 percent, critical');

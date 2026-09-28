@@ -35,6 +35,11 @@ export class Seed {
     return new Seed(Number.parseInt(hex.slice(0, 8), 16), Number.parseInt(hex.slice(8), 16));
   }
 
+  /** The seed child `index` of a place with this seed is born from, and nothing else (the lazy-loading law). */
+  child(index: number): Seed {
+    return this.branch(index);
+  }
+
   /**
    * The child seed for a key. A text key and a number key never meet: `branch(1)` is not `branch('1')`.
    * Text keys may not start with `#` — that prefix is this class's own (numbers and the draw helpers).

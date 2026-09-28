@@ -3,6 +3,7 @@ import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
+import { playerSummary } from '#tests/support/playerSummary.ts';
 
 const presenter = new BufferPresenter(new Masthead('a1b2c3d'));
 
@@ -48,7 +49,7 @@ const OPEN: GameSnapshot = {
     figure: null,
     noise: '0000-0000-0000-0000',
   },
-  player: { coherence: 54, band: 'degraded', steps: 6 },
+  player: playerSummary({ coherence: 54, band: 'degraded', steps: 6, decay: 0.2 }),
   buffer: {
     size: 2,
     capacity: 16,

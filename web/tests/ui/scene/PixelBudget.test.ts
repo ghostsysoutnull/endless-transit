@@ -29,4 +29,11 @@ describe('the pixel budget: sharp enough, cheap enough to hold the frame (Decisi
   test('an empty canvas costs nothing and still has a ratio', () => {
     expect(budget.ratio(2, 0, 0)).toBe(2);
   });
+
+  test('a budget of no pixels or no ratio is refused when it is made', () => {
+    expect(() => new PixelBudget(0)).toThrow(RangeError);
+    expect(() => new PixelBudget(2, 0)).toThrow(RangeError);
+    expect(() => new PixelBudget(2, -1)).toThrow(RangeError);
+    expect(() => new PixelBudget(Number.NaN)).toThrow(RangeError);
+  });
 });

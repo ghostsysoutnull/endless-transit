@@ -294,7 +294,7 @@ export class Building extends Location {
   }
 
   childrenHeading(): string {
-    return 'Ride to a floor:';
+    return 'Ride to a floor';
   }
 
   approachVerb(): string {

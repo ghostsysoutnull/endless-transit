@@ -11,8 +11,8 @@ import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.t
 
 const registry = realRegistry();
 const library = new ContentLibrary(new BundledContent());
-const MATERIALS = library.pairs('themes/doors/materials').map(([name]) => name);
-const STATES = library.pairs('themes/doors/states').map(([name]) => name);
+const MATERIALS = library.triples('themes/doors/materials').map(([name]) => name);
+const STATES = library.triples('themes/doors/states').map(([name]) => name);
 const WORDS = library.list('themes/doors/inscriptions');
 /** `[WORD]`, `_word_`, `⟨WORD⟩`, `!! WORD !!` — the four inscription styles (DoorInscription.groovy:10-24). */
 const STYLED = (word: string): readonly string[] => [

@@ -36,7 +36,7 @@ export class CosmicFilament extends Location {
   }
 
   childrenHeading(): string {
-    return 'Galactic sectors within this conduit:';
+    return 'Galactic sectors within this conduit';
   }
 
   approachVerb(): string {

@@ -198,8 +198,8 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
   const doors = new Doors(
     new ContentLibrary(
       new MemoryContentSource({
-        'themes/doors/materials.txt': 'Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.\n',
-        'themes/doors/states.txt': 'Cold|The frame is ice-cold to the touch.\n',
+        'themes/doors/materials.txt': 'Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.|metal\n',
+        'themes/doors/states.txt': 'Cold|The frame is ice-cold to the touch.|cold\n',
         'themes/doors/inscriptions.txt': 'LATTICE\n',
       }),
     ),

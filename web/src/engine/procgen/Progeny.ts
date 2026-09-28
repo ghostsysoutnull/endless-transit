@@ -8,7 +8,7 @@ const COUNT = 'children';
 /**
  * Owns one fact: how a parent's children come to be — how many (a draw in `min … max` on the parent's
  * seed, times `unit`, or a count the parent already decided), and that child `i` is born from
- * `parentSeed.branch(i)` and nothing else. Which factory makes a child is asked per child seed, so a level
+ * `parentSeed.child(i)` (`Seed` owns that rule) and nothing else. Which factory makes a child is asked per child seed, so a level
  * can mix kinds.
  */
 export class Progeny {
@@ -37,16 +37,11 @@ export class Progeny {
     return parentSeed.branch(COUNT).range(this.#count.min, this.#count.max) * this.#count.unit;
   }
 
-  /** The seed child `index` of a parent with this seed is born from — for a peek at a child not yet made (U02). */
-  childSeed(parentSeed: Seed, index: number): Seed {
-    return parentSeed.branch(index);
-  }
-
   /** Exactly `count` children — for a parent that decided its count when it was made (a building its floors) — from child index `from` on. */
   exactly(parent: Location, count: number, from = 0): readonly Location[] {
     return Array.from({ length: count }, (_, n) => {
       const index = from + n;
-      const seed = this.childSeed(parent.seed(), index);
+      const seed = parent.seed().child(index);
       return this.#factoryOf(seed).create({ parent, seed, index, children: this.#world });
     });
   }

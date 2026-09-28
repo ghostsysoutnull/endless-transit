@@ -1,5 +1,5 @@
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
-import { frameOf } from '#ui/Frame.ts';
+import { Frame } from '#ui/Frame.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
@@ -16,6 +16,7 @@ const RETURN_MARK = '▲ ';
  * extra (Decision 1).
  */
 export class HelpPresenter implements Presenter<HelpVM> {
+  readonly #frame = new Frame();
   readonly #masthead: Masthead;
 
   constructor(masthead: Masthead) {
@@ -35,7 +36,7 @@ export class HelpPresenter implements Presenter<HelpVM> {
     return {
       scene: HELP,
       title: this.#masthead.name(),
-      frame: frameOf(snapshot.place),
+      frame: this.#frame.of(snapshot.place),
       heading,
       lead: 'You are a traveller in an endless lattice of places. Every tap is a prompt; every prompt costs Coherence. Go deep, take what resonates, and come back before the link fails.',
       sections: [

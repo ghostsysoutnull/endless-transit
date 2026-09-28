@@ -10,6 +10,7 @@ import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
 import type { Passage } from './Passage.ts';
+import { Phrase } from './Phrase.ts';
 import type { ScanReport } from './ScanReport.ts';
 
 export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤', indexLabel: '' });
@@ -24,7 +25,7 @@ const STATES_BY_ID: ReadonlyMap<string, FloorState> = new Map(
 /** The resonance a floor shows on the building's list, in hertz (Building.groovy:215-216). */
 const RESONANCE = { min: 1000, max: 2999 };
 /** A floor made without a peek at its corridor (a Layer, whose child is an Artery): nothing to draw. */
-const NO_PASSAGE: Passage = { shape: '', looks: [] };
+const NO_PASSAGE: Passage = { shape: 'none', looks: [] };
 
 /**
  * A floor of a building: child `n` of the building is floor `n`, and its one child is its corridor. The
@@ -125,8 +126,7 @@ export class Floor extends Location {
 
   /** The building's list beside the floor: its zone in plain words (`Hydroponic bay`; U02 — integrity and resonance went). */
   override readings(): readonly Fact[] {
-    const plain = this.#zone.toLowerCase().replaceAll('_', ' ');
-    return [{ key: 'zone', label: 'Zone', value: plain.charAt(0).toUpperCase() + plain.slice(1) }];
+    return [{ key: 'zone', label: 'Zone', value: new Phrase(this.#zone.replaceAll('_', ' ')).plain() }];
   }
 
   building(): Building {

@@ -22,6 +22,19 @@ test files pin the letters.
 they go with the keys, or are covered another way. One of them, `focus.spec.ts`'s Enter round trip, also asserts the dock
 unfolded (`more` hidden), which is false since the wide layout went.
 
+### HK-026 — every browser spec plants its own save
+**Found:** 2026-09-28, the design check of `e2e/tower.spec.ts` (U02 fixes, step 0b). `e2e/support/harness.ts` now
+owns the save slot and `plant()`, and `tower.spec.ts` uses them. The 18 other specs keep their own copy of the slot
+key, and most keep a `plant()` helper (a11y, announce, buildings, fold, focus, help, items, map, playthrough,
+resilience, richness, ritual, scene, survival, world; some with `path`/`states` variants). **Fix:** each imports
+`plant` and builds its save with `saveText`; one commit, the specs green before and after.
+
+### HK-027 — a door's brief asks for its state by display name
+**Found:** 2026-09-28, the design check of U02's door keys. `Door.brief()` (`web/src/engine/model/Door.ts`) leaves the
+state out when it equals `'Stable'`, the name shown to the player, while every other rule about a door's state now
+goes by the list's key column. Stable's key is `plain`, like eight other states, so no key tells it apart. **Fix:** a
+key that says the state is worth naming (a fourth column, or Stable's own look key), and `brief()` asks the look.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators

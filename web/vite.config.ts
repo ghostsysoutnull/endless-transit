@@ -14,6 +14,8 @@ export default defineConfig(({ command, isPreview }) => {
     test: {
       include: ['tests/**/*.test.ts'],
       environment: 'node',
+      // Value objects are compared by their `equals` in every test (their state is `#private`).
+      setupFiles: ['tests/support/ValueEquality.ts'],
       // A quarter of the cores: at a half or more the heavy tests starve on this machine and pass their 5 s limit.
       maxWorkers: '25%',
     },

@@ -33,6 +33,22 @@ describe('ContentLibrary', () => {
     expect(() => library.pairs('bad')).toThrow(/bad\.txt.*lonely/);
   });
 
+  test('triples: a "name|sentence|key" list keeps file order, trims each part; a line without exactly two "|" is an error', () => {
+    const library = new ContentLibrary(
+      new MemoryContentSource({
+        'looks.txt': 'Frozen | Frost seals it. | frost\nStable|It holds.|plain\n',
+        'short.txt': 'Frozen|Frost seals it.\n',
+        'long.txt': 'Frozen|Frost|seals|frost\n',
+      }),
+    );
+    expect(library.triples('looks')).toEqual([
+      ['Frozen', 'Frost seals it.', 'frost'],
+      ['Stable', 'It holds.', 'plain'],
+    ]);
+    expect(() => library.triples('short')).toThrow(/short\.txt.*Frozen\|Frost seals it\./);
+    expect(() => library.triples('long')).toThrow(/long\.txt/);
+  });
+
   test('a missing or empty list is an error, never a silent empty default', () => {
     const library = new ContentLibrary(new MemoryContentSource({ 'blank.txt': '\n  \n' }));
     expect(() => library.list('themes/nowhere')).toThrow(/themes\/nowhere\.txt/);

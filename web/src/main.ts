@@ -5,12 +5,15 @@ import '@fontsource/ibm-plex-sans/latin-400.css';
 import '#ui/styles/app.css';
 import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
+import { BUILDING_KIND } from '#engine/model/Building.ts';
+import { STREET_KIND } from '#engine/model/Street.ts';
 import { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import { ThemeCatalog } from '#engine/procgen/ThemeCatalog.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
 import { ConsoleWarningSink } from '#platform/ConsoleWarningSink.ts';
 import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { BrowserFrameSource } from '#platform/BrowserFrameSource.ts';
+import { BrowserReducedMotion } from '#platform/BrowserReducedMotion.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { Masthead } from '#ui/Masthead.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
@@ -48,13 +51,22 @@ const engine = new GameEngine({
 const masthead = new Masthead(__ET_BUILD__);
 // The page's one frame loop (Decision 4): every canvas that moves listens to it.
 const clock = new MotionClock(new BrowserFrameSource(window));
+// Whether the player asked for reduced motion: asked by every moving thing, read only here.
+const motion = new BrowserReducedMotion(window);
 // The places that are drawn (U01b): a drawing key the engine hands over, and its picture. A new scene is one entry.
-const scenes = new SceneRegistry({ street: new StreetPicture(), building: new TowerPicture() });
-new Shell(engine, [
-  new ScreenStage(new RebootPresenter(masthead), new RebootView()),
-  new ScreenStage(new RecapPresenter(masthead), new RecapView()),
-  new ScreenStage(new BufferPresenter(masthead), new BufferView()),
-  new ScreenStage(new HelpPresenter(masthead), new HelpView()),
-  new ScreenStage(new TitlePresenter(masthead), new TitleView()),
-  new ScreenStage(new HudPresenter(masthead), new HudView(clock, scenes)),
-]).start(container);
+const scenes = new SceneRegistry({
+  [STREET_KIND.key()]: new StreetPicture(),
+  [BUILDING_KIND.key()]: new TowerPicture(),
+});
+new Shell(
+  engine,
+  [
+    new ScreenStage(new RebootPresenter(masthead), new RebootView()),
+    new ScreenStage(new RecapPresenter(masthead), new RecapView()),
+    new ScreenStage(new BufferPresenter(masthead), new BufferView()),
+    new ScreenStage(new HelpPresenter(masthead), new HelpView()),
+    new ScreenStage(new TitlePresenter(masthead), new TitleView()),
+    new ScreenStage(new HudPresenter(masthead), new HudView(clock, scenes, motion)),
+  ],
+  motion,
+).start(container);

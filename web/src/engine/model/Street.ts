@@ -41,7 +41,7 @@ export class Street extends Location {
   }
 
   childrenHeading(): string {
-    return 'Buildings on this street:';
+    return 'Buildings on this street';
   }
 
   approachVerb(): string {

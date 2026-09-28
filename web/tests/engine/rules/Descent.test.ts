@@ -73,12 +73,12 @@ describe('SCAN — a global command whose panel lasts one step (Guide:87, 134, 2
     const engine = engineOn(FIRST, saves);
     for (const id of ['new-world', 'enter-world']) engine.step(id);
     const street = engine.step('scan');
-    expect(street.player).toEqual({ coherence: 99, band: 'stable', steps: 0 });
+    expect(street.player).toMatchObject({ coherence: 99, band: 'stable', steps: 0 });
     expect(street.message).toBe('No scan-compatible structure detected in this strata.');
     expect(street.scan).toBeNull();
     for (const id of ['enter:0', 'enter:15', 'move:corridor', 'enter:0']) engine.step(id);
     const room = engine.step('scan');
-    expect(room.player).toEqual({ coherence: 94, band: 'stable', steps: 4 });
+    expect(room.player).toMatchObject({ coherence: 94, band: 'stable', steps: 4 });
     expect(room.message).toBe(
       `LOCAL_LATTICE_SCAN_INITIATED [LOCUS: ${FIRST_ROOM}]. SCAN_COMPLETE. LOCAL_PHASE_SYNCHRONIZED.`,
     );
@@ -145,7 +145,7 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     }
     expect(readings).toEqual(['SIGNAL: 10%', 'SIGNAL: 32%', 'SIGNAL: 63%', 'SIGNAL: 89%', 'SIGNAL: 100%']);
     expect(snapshot.message).toBe('HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated. Signal 100%.');
-    expect(snapshot.player).toEqual({ coherence: 90, band: 'stable', steps: 10 });
+    expect(snapshot.player).toMatchObject({ coherence: 90, band: 'stable', steps: 10 });
     expect(snapshot.options.find((option) => option.id === 'capture-echo')).toMatchObject({
       key: 'c',
       label: 'Capture Spectral Echo',

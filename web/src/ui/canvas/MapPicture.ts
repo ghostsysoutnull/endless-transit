@@ -1,11 +1,9 @@
 import type { LegendTone, MapPictureVM } from './MapPictureVM.ts';
+import { CanvasFont } from './CanvasFont.ts';
 import type { Painter } from './Painter.ts';
 import type { Palette } from './Palette.ts';
 import type { Picture, PictureSize } from './Picture.ts';
 
-const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
-/** No glyph or word on the canvas is smaller than this (touch-first: it must read on a phone). */
-const MIN_TEXT = 12;
 /** The legend strip under the grid. */
 const LEGEND_HEIGHT = 24;
 const LEGEND_GAP = 14;
@@ -36,6 +34,8 @@ const ALPHA: Readonly<Record<LegendTone, number>> = {
  * and the legend drawn with the same glyphs (HK-023: the old legend described glyphs never drawn).
  */
 export class MapPicture implements Picture<MapPictureVM> {
+  readonly #font = new CanvasFont();
+
   height(vm: MapPictureVM, width: number): number {
     return Math.round((width * vm.height) / vm.width) + LEGEND_HEIGHT;
   }
@@ -44,7 +44,7 @@ export class MapPicture implements Picture<MapPictureVM> {
     const cell = size.width / vm.width;
     const gridHeight = size.height - LEGEND_HEIGHT;
     const rowHeight = gridHeight / vm.height;
-    const glyphSize = Math.max(MIN_TEXT, Math.round(Math.min(cell, rowHeight) * 0.9));
+    const glyphSize = this.#font.atLeast(Math.round(Math.min(cell, rowHeight) * 0.9));
     const centre = (x: number, y: number): readonly [number, number] => [
       (x + 0.5) * cell,
       (y + 0.5) * rowHeight,
@@ -69,12 +69,12 @@ export class MapPicture implements Picture<MapPictureVM> {
 
     painter.textAlign = 'center';
     painter.textBaseline = 'middle';
-    painter.font = `400 ${String(glyphSize)}px ${MONO}`;
+    painter.font = this.#font.of('regular', glyphSize);
     for (const node of vm.nodes) {
       const [cx, cy] = centre(node.x, node.y);
       this.#glyph(painter, palette, node.glyph, cx, cy, node.tone);
     }
-    painter.font = `700 ${String(glyphSize)}px ${MONO}`;
+    painter.font = this.#font.of('bold', glyphSize);
     for (const mark of vm.marks) {
       const [cx, cy] = centre(mark.x, mark.y);
       this.#glyph(painter, palette, vm.markGlyph, cx, cy, 'mark');
@@ -93,7 +93,7 @@ export class MapPicture implements Picture<MapPictureVM> {
     painter.lineTo(ox - DIAMOND, oy);
     painter.closePath();
     painter.fill();
-    painter.font = `700 ${String(MIN_TEXT)}px ${MONO}`;
+    painter.font = this.#font.of('bold');
     painter.textAlign = 'left';
     this.#glyph(painter, palette, vm.origin.glyph, ox + DIAMOND + 4, oy, 'you');
 
@@ -122,7 +122,7 @@ export class MapPicture implements Picture<MapPictureVM> {
   /** The legend under the grid: glyph and word per entry, in the entry's own ink, left to right. */
   #legend(painter: Painter, vm: MapPictureVM, size: PictureSize, palette: Palette, top: number): void {
     const y = top + LEGEND_HEIGHT / 2;
-    painter.font = `400 ${String(MIN_TEXT)}px ${MONO}`;
+    painter.font = this.#font.of('regular');
     painter.textAlign = 'left';
     painter.textBaseline = 'middle';
     let x = 6;

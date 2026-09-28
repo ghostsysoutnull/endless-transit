@@ -1,10 +1,9 @@
+import { CanvasFont } from './CanvasFont.ts';
 import type { Painter } from './Painter.ts';
 import type { Palette } from './Palette.ts';
 import type { Picture, PictureSize } from './Picture.ts';
 import type { TracePictureVM } from './TracePictureVM.ts';
 
-const MONO = '"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
-const MIN_TEXT = 12;
 /** One level takes this much height: the kind on one line, the name on the next. */
 const ROW = 34;
 const TOP = 12;
@@ -22,6 +21,8 @@ const ELLIPSIS = '…';
  * current level in yellow with a pulsing ring, a level below the bedrock in the void's ink.
  */
 export class TracePicture implements Picture<TracePictureVM> {
+  readonly #font = new CanvasFont();
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- a row is as tall whatever the width
   height(vm: TracePictureVM, _width: number): number {
     return TOP + vm.rows.length * ROW + BOTTOM;
@@ -62,7 +63,7 @@ export class TracePicture implements Picture<TracePictureVM> {
       painter.arc(THREAD_X, y, PLATE, 0, Math.PI * 2);
       painter.stroke();
       painter.textAlign = 'center';
-      painter.font = `400 ${String(MIN_TEXT)}px ${MONO}`;
+      painter.font = this.#font.of('regular');
       painter.fillStyle = palette(ink);
       painter.fillText(row.glyph, THREAD_X, y);
 
@@ -72,7 +73,7 @@ export class TracePicture implements Picture<TracePictureVM> {
       const depthWidth = painter.measureText(row.depth).width + 6;
       painter.fillStyle = palette(row.abyssal ? 'ab' : 'dim');
       painter.fillText(row.kind, TEXT_X + depthWidth, y - 8);
-      painter.font = `${row.current ? '700' : '400'} ${String(MIN_TEXT)}px ${MONO}`;
+      painter.font = this.#font.of(row.current ? 'bold' : 'regular');
       painter.fillStyle = palette(ink);
       painter.fillText(this.#fit(painter, row.name, size.width - TEXT_X - RIGHT_PAD), TEXT_X, y + 8);
     }
