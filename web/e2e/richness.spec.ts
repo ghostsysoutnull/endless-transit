@@ -117,6 +117,7 @@ test('on a phone the objects sit under the moves, before the way out, and every 
 
 test('the elevator screen at the street’s first building: TECH_ERA, RESONANCE, STABILITY and ATMOS_SHIFT, the dealt sentence, the telemetry', async ({
   page,
+  hasTouch,
 }) => {
   const problems = watchForErrors(page);
   await plant(page, STREET);
@@ -125,8 +126,8 @@ test('the elevator screen at the street’s first building: TECH_ERA, RESONANCE,
   // The street's own chips read in plain words since U01b (Decision 16); the floor keeps its own below.
   await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/Era\s+Future/);
   await expect(page.locator('.tag[data-fact="culture"]')).toHaveText(/Culture\s+Baroque/);
-  await tapOption(page, 'enter:0', false);
-  await tapOption(page, 'enter:15', false);
+  await tapOption(page, 'enter:0', hasTouch);
+  await tapOption(page, 'enter:15', hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.locator('.tag')).toHaveCount(4);
   await expect(page.locator('.desc p').nth(0)).toHaveText(

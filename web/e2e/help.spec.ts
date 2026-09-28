@@ -28,7 +28,6 @@ function stat(page: Page, label: string) {
 test('HELP opens the manual — every button explained, the survival rules — costs one and no step; BACK returns to the same place; the fold is closed again', async ({
   page,
   hasTouch,
-  isMobile,
 }) => {
   const problems = watchForErrors(page);
   await plant(page, saveText(SEED, STREET));
@@ -60,10 +59,8 @@ test('HELP opens the manual — every button explained, the survival rules — c
   // One prompt: the help; the way back is free; no step.
   await expect(page.getByTestId('coherence')).toHaveText('99%');
   await expect(stat(page, 'Steps')).toHaveText('0');
-  if (isMobile) {
-    await expect(page.getByTestId('more')).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.getByRole('button', { name: /^help$/i })).toHaveCount(0);
-  }
+  await expect(page.getByTestId('more')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByRole('button', { name: /^help$/i })).toHaveCount(0);
   expect(problems).toEqual([]);
 });
 
