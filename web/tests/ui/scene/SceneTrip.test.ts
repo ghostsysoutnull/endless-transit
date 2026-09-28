@@ -12,6 +12,7 @@ function trip(facts: Partial<ConstructorParameters<typeof SceneTrip>[0]> = {}): 
     zoom: null,
     pick: 'enter:7',
     easing: new EaseInOut(),
+    anchor: { x: 0, y: 0 },
     ...facts,
   });
 }
@@ -45,5 +46,9 @@ describe('a trip in: the view rides to the child, then (if the picture zooms) th
     expect(ride.over(999)).toBe(false);
     expect(ride.over(1000)).toBe(true);
     expect(ride.view(1000)).toBe(40);
+  });
+
+  test('the zoom centres on the anchor it was given', () => {
+    expect(trip({ anchor: { x: 120, y: 80 } }).anchor()).toEqual({ x: 120, y: 80 });
   });
 });

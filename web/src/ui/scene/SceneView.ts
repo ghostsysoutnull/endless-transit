@@ -31,6 +31,17 @@ const STILL = 0;
 /** A tap on the slider's track glides the view there in this long. */
 const GLIDE = 320;
 
+/** What a mounted view holds, set together at mount and dropped together at dispose. */
+interface Mounted {
+  readonly host: HTMLElement;
+  readonly canvas: HTMLCanvasElement;
+  readonly slider: HTMLElement;
+  readonly observer: ResizeObserver;
+  readonly listeners: AbortController;
+  /** The canvas's colours, read from the stylesheet where it sits. */
+  readonly colours: StylePalette;
+}
+
 /**
  * The scene host (U01b, U02): a canvas the size of its host element, drawn by a registered picture on the page's
  * one clock, with the coherence tear over it, and — for a picture with a camera — the view it stands at (the
@@ -55,15 +66,9 @@ export class SceneView implements View<SceneVM> {
   /** How a ride between floors and a zoom back out ease, and how a released view coasts to rest. */
   readonly #ride = new EaseInOut();
   readonly #coast = new EaseOut();
-  /** The canvas's colours, read from the stylesheet where it sits; made at mount. */
-  #colours: StylePalette | undefined;
   readonly #fx = new CoherenceFx();
   readonly #budget = new PixelBudget();
-  #host: HTMLElement | undefined;
-  #canvas: HTMLCanvasElement | undefined;
-  #slider: HTMLElement | undefined;
-  #observer: ResizeObserver | undefined;
-  #listeners: AbortController | undefined;
+  #mounted: Mounted | undefined;
   #vm: SceneVM | undefined;
   #size: PictureSize = { width: 0, height: 0 };
   #ratio = 1;
@@ -75,7 +80,6 @@ export class SceneView implements View<SceneVM> {
   #motion: Tween | undefined;
   /** A going-in: ride, zoom, pick. */
   #trip: SceneTrip | undefined;
-  #tripAnchor: { readonly x: number; readonly y: number } | undefined;
   /** A zoom back out of the child just left, and the point it centres on. */
   #zoomOut:
     { readonly scale: Tween; readonly anchor: { readonly x: number; readonly y: number } } | undefined;
@@ -107,13 +111,8 @@ export class SceneView implements View<SceneVM> {
     slider.tabIndex = 0;
     slider.hidden = true;
     host.replaceChildren(canvas, slider);
-    this.#host = host;
-    this.#canvas = canvas;
-    this.#slider = slider;
-    this.#colours = new StylePalette(new ElementStyle(canvas));
     const listeners = new AbortController();
     const signal = listeners.signal;
-    this.#listeners = listeners;
     canvas.addEventListener(
       'pointerdown',
       (event) => {
@@ -191,24 +190,30 @@ export class SceneView implements View<SceneVM> {
       },
       { signal },
     );
-    this.#observer = new ResizeObserver(() => {
+    const observer = new ResizeObserver(() => {
       this.#fit();
       if (this.#leave === undefined) this.#paint(STILL);
     });
-    this.#observer.observe(host);
+    observer.observe(host);
+    this.#mounted = {
+      host,
+      canvas,
+      slider,
+      observer,
+      listeners,
+      colours: new StylePalette(new ElementStyle(canvas)),
+    };
   }
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
   render(vm: SceneVM): void {
-    if (vm === this.#vm) return;
     const before = this.#vm;
     this.#trip = undefined;
-    this.#tripAnchor = undefined;
     this.#zoomOut = undefined;
     this.#motion = undefined;
     this.#gesture = undefined;
     this.#vm = vm;
-    this.#colours?.frameChanged();
+    this.#mounted?.colours.frameChanged();
     this.#fit();
     const camera = this.#camera;
     if (before?.address === vm.address) {
@@ -230,8 +235,9 @@ export class SceneView implements View<SceneVM> {
     } else {
       this.#view = camera.rest();
     }
-    this.#canvas?.setAttribute('aria-label', vm.label);
-    if (this.#canvas !== undefined) this.#canvas.style.touchAction = camera.drags() ? 'none' : 'manipulation';
+    const canvas = this.#mounted?.canvas;
+    canvas?.setAttribute('aria-label', vm.label);
+    if (canvas !== undefined) canvas.style.touchAction = camera.drags() ? 'none' : 'manipulation';
     this.#layout();
     this.#run();
   }
@@ -257,15 +263,17 @@ export class SceneView implements View<SceneVM> {
   }
 
   /**
-   * A child picked from the list (U02, Decision 8: a door picked from the list is walked to, then opened): when
-   * the picture has a stop for it, the view rides there first and the pick follows — true, the scene took it;
-   * false when the picture's camera has no stop for it (the street's list enters at once) or no such child.
+   * Whether a child picked from the list is the picture's to ride to (U02, Decision 8: a door picked from the list is
+   * walked to, then opened): an open child the camera has a stop for. The street's list enters at once.
    */
-  enter(id: string): boolean {
+  leads(id: string): boolean {
     const child = this.#vm?.children.find((each) => each.id === id);
-    if (child === undefined || child.sealed || this.#camera.stopOf(id) === undefined) return false;
+    return child !== undefined && !child.sealed && this.#camera.stopOf(id) !== undefined;
+  }
+
+  /** The view rides to the child's stop and the pick follows; ignored while a trip runs. Asked first: `leads`. */
+  enter(id: string): void {
     if (this.#trip === undefined) this.#go(id);
-    return true;
   }
 
   /** The child lit from the list (its id), or none (empty). */
@@ -281,16 +289,12 @@ export class SceneView implements View<SceneVM> {
     this.#motion = undefined;
     this.#gesture = undefined;
     this.#stop();
-    this.#observer?.disconnect();
-    this.#observer = undefined;
-    this.#listeners?.abort();
-    this.#listeners = undefined;
-    this.#canvas?.remove();
-    this.#slider?.remove();
-    this.#canvas = undefined;
-    this.#slider = undefined;
-    this.#colours = undefined;
-    this.#host = undefined;
+    const mounted = this.#mounted;
+    mounted?.observer.disconnect();
+    mounted?.listeners.abort();
+    mounted?.canvas.remove();
+    mounted?.slider.remove();
+    this.#mounted = undefined;
     this.#vm = undefined;
     this.#camera = new StillCamera();
   }
@@ -328,16 +332,15 @@ export class SceneView implements View<SceneVM> {
     if (this.#zoomOut?.scale.done(time) === true) this.#zoomOut = undefined;
     if (!trip?.over(time)) return;
     this.#trip = undefined;
-    this.#tripAnchor = undefined;
     this.#pick(trip.pick());
   }
 
   /** The canvas takes its host's size, in device pixels within the budget; the picture says how its view moves there. */
   #fit(): void {
-    const host = this.#host;
-    const canvas = this.#canvas;
+    const mounted = this.#mounted;
     const vm = this.#vm;
-    if (host === undefined || canvas === undefined || vm === undefined) return;
+    if (mounted === undefined || vm === undefined) return;
+    const { host, canvas } = mounted;
     const size = { width: host.clientWidth, height: host.clientHeight };
     const ratio = this.#budget.ratio(
       host.ownerDocument.defaultView?.devicePixelRatio ?? 1,
@@ -368,7 +371,7 @@ export class SceneView implements View<SceneVM> {
 
   /** The slider over the picture at the camera's box; hidden when the picture has none. */
   #place(): void {
-    const slider = this.#slider;
+    const slider = this.#mounted?.slider;
     if (slider === undefined) return;
     const track = this.#camera.track();
     slider.hidden = track === null;
@@ -385,7 +388,7 @@ export class SceneView implements View<SceneVM> {
 
   /** The slider's value: the stop nearest the view, by its place in the slider's order, and its child's name. */
   #value(): void {
-    const slider = this.#slider;
+    const slider = this.#mounted?.slider;
     const nearest = this.#camera.nearest(this.#view);
     if (slider === undefined || slider.hidden || nearest === undefined) return;
     const now = String(nearest.index + 1);
@@ -396,13 +399,13 @@ export class SceneView implements View<SceneVM> {
   }
 
   #paint(time: number): void {
-    const canvas = this.#canvas;
+    const canvas = this.#mounted?.canvas;
     const vm = this.#vm;
     const { width, height } = this.#size;
     if (canvas === undefined || vm === undefined || width === 0 || height === 0) return;
     const context = canvas.getContext('2d');
     if (context === null) return;
-    const palette = this.#colours?.palette;
+    const palette = this.#mounted?.colours.palette;
     if (palette === undefined) return;
     const ratio = this.#ratio;
     context.globalAlpha = 1;
@@ -446,12 +449,7 @@ export class SceneView implements View<SceneVM> {
     const trip = this.#trip;
     if (trip !== undefined) {
       const scale = trip.scale(time);
-      if (scale <= 1) return undefined;
-      this.#tripAnchor ??= this.#hits.find((hit) => hit.id === trip.pick())?.anchor ?? {
-        x: this.#size.width / 2,
-        y: this.#size.height / 2,
-      };
-      return { scale, anchor: this.#tripAnchor };
+      return scale <= 1 ? undefined : { scale, anchor: trip.anchor() };
     }
     const out = this.#zoomOut;
     return out === undefined ? undefined : { scale: out.scale.at(time), anchor: out.anchor };
@@ -498,7 +496,7 @@ export class SceneView implements View<SceneVM> {
   }
 
   #hitAt(event: MouseEvent): SceneHit | undefined {
-    const box = this.#canvas?.getBoundingClientRect();
+    const box = this.#mounted?.canvas.getBoundingClientRect();
     if (box === undefined) return undefined;
     const x = event.clientX - box.left;
     const y = event.clientY - box.top;
@@ -530,8 +528,8 @@ export class SceneView implements View<SceneVM> {
     });
     if (!slider) return;
     event.preventDefault();
-    this.#slider?.setPointerCapture(event.pointerId);
-    this.#slider?.focus({ preventScroll: true });
+    this.#mounted?.slider.setPointerCapture(event.pointerId);
+    this.#mounted?.slider.focus({ preventScroll: true });
     // A tap on the track glides the view there; the thumb then follows the finger.
     const at = this.#trackValue(event);
     if (at !== undefined) this.#glide(at, GLIDE);
@@ -557,7 +555,7 @@ export class SceneView implements View<SceneVM> {
     gesture.move(position);
     if (!gesture.moved()) return;
     // The drag begins: the canvas keeps the finger even when it leaves the picture.
-    if (!wasMoved) this.#canvas?.setPointerCapture(event.pointerId);
+    if (!wasMoved) this.#mounted?.canvas.setPointerCapture(event.pointerId);
     this.#follow(gesture.viewAt(position, camera.dragRate()), gesture);
   }
 
@@ -611,7 +609,7 @@ export class SceneView implements View<SceneVM> {
 
   /** The view a finger on the slider's track points at. */
   #trackValue(event: PointerEvent): number | undefined {
-    const box = this.#slider?.getBoundingClientRect();
+    const box = this.#mounted?.slider.getBoundingClientRect();
     if (this.#camera.track() === null || box === undefined) return undefined;
     return this.#camera.alongTrack({ x: event.clientX, y: event.clientY }, box);
   }
@@ -639,6 +637,12 @@ export class SceneView implements View<SceneVM> {
     const stop = camera.stopOf(id);
     const to = stop === undefined ? this.#view : camera.clamp(stop);
     const distance = Math.abs(to - this.#view);
+    // Where the child will stand once the ride is over: the point the zoom centres on (the picture's layout is pure).
+    const landed = this.#vm === undefined ? [] : this.#picture.layout(this.#vm, this.#size, to);
+    const anchor = landed.find((hit) => hit.id === id)?.anchor ?? {
+      x: this.#size.width / 2,
+      y: this.#size.height / 2,
+    };
     this.#motion = undefined;
     this.#trip = new SceneTrip({
       from: this.#view,
@@ -648,11 +652,13 @@ export class SceneView implements View<SceneVM> {
       zoom: camera.zooms() ? { scale: ZOOM, time: ZOOM_TIME } : null,
       pick: id,
       easing: this.#ride,
+      anchor,
     });
     this.#run();
   }
 
   #pick(id: string): void {
-    if (this.#host !== undefined) this.#events.pick(this.#host, id);
+    const host = this.#mounted?.host;
+    if (host !== undefined) this.#events.pick(host, id);
   }
 }

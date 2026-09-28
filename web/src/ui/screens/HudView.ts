@@ -92,7 +92,10 @@ export class HudView implements View<HudVM> {
       this.#lit = '';
       this.#group = undefined;
     }
+    const kept = this.#scene?.view;
     this.#paint(vm);
+    // A view kept from the last render is shown the new frame; one made just now already shows it.
+    if (this.#scene !== undefined && this.#scene.view === kept) this.#scene.view.render(vm.drawing);
     const last = this.#last;
     const from =
       last === undefined || last === vm.drawing.address
@@ -115,7 +118,7 @@ export class HudView implements View<HudVM> {
     this.#bindScene(vm.drawing);
   }
 
-  /** The scene's view in its host: kept while the host and the picture stay, else made anew; gone with its host. */
+  /** The scene's view in its host: kept while the host and the picture stay, else made anew and shown the drawing; gone with its host. */
   #bindScene(drawing: SceneVM): void {
     const host = this.#host('scene');
     const picture = this.#scenes.picture(drawing.key);
@@ -130,9 +133,9 @@ export class HudView implements View<HudVM> {
         this.#light(id);
       });
       view.mount(host);
+      view.render(drawing);
       this.#scene = { host, picture, view };
     }
-    this.#scene.view.render(drawing);
     this.#scene.view.light(this.#lit);
   }
 
@@ -177,7 +180,10 @@ export class HudView implements View<HudVM> {
 
   /** A row or key tapped on a drawn place whose picture travels: the picture rides there first, and picks it (U02). */
   #through(event: Event, id: string): void {
-    if (this.#scene?.view.enter(id) === true) event.stopPropagation();
+    const view = this.#scene?.view;
+    if (view?.leads(id) !== true) return;
+    event.stopPropagation();
+    view.enter(id);
   }
 
   #toggleDebug(): void {
