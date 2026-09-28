@@ -115,9 +115,13 @@ export class TravelCamera implements SceneCamera {
   }
 
   stepFrom(view: number, step: number): CameraStop | undefined {
-    const nearest = this.nearest(view);
+    const nearest = this.#stops[this.nearest(view)?.index ?? -1];
     if (nearest === undefined) return undefined;
-    return this.#stops[Math.min(this.#stops.length - 1, Math.max(0, nearest.index + step))];
+    // Stops that share a view (a corridor's pair of doors) are one step: each view's first stop stands for it.
+    const views = [...new Set(this.#stops.map((stop) => stop.at))];
+    const from = views.indexOf(nearest.at);
+    const at = views[Math.min(views.length - 1, Math.max(0, from + step))];
+    return this.#stops.find((stop) => stop.at === at);
   }
 
   track(): CameraTrack | null {

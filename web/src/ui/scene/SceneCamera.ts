@@ -32,7 +32,7 @@ export interface SceneCamera {
   stopCount(): number;
   /** The stop nearest the view and its place in the slider's order; nothing when there are no stops. */
   nearest(view: number): { readonly id: string; readonly index: number } | undefined;
-  /** The stop `step` places from the one nearest the view, held at the ends. */
+  /** The first stop `step` views on from the one nearest the view (stops at one view are one step), held at the ends. */
   stepFrom(view: number, step: number): CameraStop | undefined;
   /** The slider's box on the picture; nothing when there is no slider. */
   track(): CameraTrack | null;
