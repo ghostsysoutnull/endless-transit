@@ -38,6 +38,21 @@ describe('a finger on a picture: a tap until it moves past the slop, then a drag
     expect(drag.view()).toBeCloseTo(3.8, 10);
   });
 
+  test('once it becomes a drag the canvas keeps its finger, asked once', () => {
+    const held: number[] = [];
+    const drag = new PictureDrag({
+      pointer: 1,
+      camera: CAMERA,
+      hold: { capture: (pointer) => held.push(pointer) },
+      point: { x: 0, y: 100 },
+      view: 3,
+    });
+    drag.move({ x: 0, y: 106 });
+    drag.move({ x: 0, y: 93 });
+    drag.move({ x: 0, y: 80 });
+    expect(held).toEqual([1]);
+  });
+
   test('it is the finger with its own pointer id, no other', () => {
     const drag = finger();
     expect([drag.is(1), drag.is(2)]).toEqual([true, false]);

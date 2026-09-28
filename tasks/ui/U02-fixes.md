@@ -158,22 +158,24 @@ are fixed together) and is named in the item.
   `one-job` (the user's pick, 2026-09-28): its split needs
   `one-job`'s view model mapped per picture, and its `passage?`/`shape?` part touches the Layer screens (U04).
   Done: —
-- [~] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
+- [x] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
   `SceneView` (`CoherenceFx`, `PixelBudget`), `CanvasView` (`PixelBudget`), `StreetPicture` and `TowerPicture`
   (`SceneHash`, `Roof`, `DoorLooks`), `Roof` (`SceneHash`), `Passages` (`Sentences`, `Doors`), `HudView`
   (`SceneView`, and the older `CanvasView` with its `MapPicture`). Taken as concrete classes: `MotionClock`,
   `SceneRegistry`, `Progeny` in `Passages` (the older presenters' `Masthead` likewise). Fix: built in `main.ts` and
   handed in through small interfaces owned by the code that uses them (a clock, the pictures, a child seed); `HudView`
   gets a scene-view factory. (OO 4.)
-  Done: —
-- [~] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
+  Done: steps 1–3 and 5–8 of the plan below — `99371c0`, `bdc041b`, `4f9296d`, `9147273`, `f0408c0`, `6fee422`,
+  `42146a2`, with their design checks' fixes `b7bee28`, `ccd736b`, `e20376a`, `69076b9`, `f98f748`, `3dbb450` and the
+  close-out commit
+- [x] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
   `reduced-motion` and `scene-events`, `SceneView` still holds the canvas sizing and mounting, the pointer gestures,
   the slider control (it still branches on `Gesture.onSlider()`: a picture gesture and a slider gesture
   go behind one interface with it), the trip and zoom, and the tear's painting (and it reaches through `SceneMount` to command the canvas
   and the slider; `CanvasView` likewise through `CanvasMount`: the mount gives its parts their orders when the
   canvas and the slider become their own objects); `HudPresenter` also maps figures into the `SceneVM`
   (`#drawing`) and holds the pad's grouping rule (`#pad`). Fix: each its own object, handed in. (OO 8.)
-  Done: —
+  Done: steps 4–7 of the plan below — `7e8ec52`, `9147273`, `f0408c0`, `6fee422` (slider pre-check `b550626`)
 
 ## Logged, not fixed (no check box)
 

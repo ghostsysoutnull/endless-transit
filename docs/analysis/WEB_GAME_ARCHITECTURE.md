@@ -38,7 +38,7 @@ src/
 │  ├─ rng/          Seed (own 64-bit kernel: branch(key) then one draw — pick, range, probability)
 │  ├─ content/      ContentSource + ContentLibrary (parsers of the .txt lists), WarningSink
 │  ├─ model/        the places (Universe … Room, the four abyssal kinds), value objects, relics, moves, scans
-│  ├─ procgen/      LocationRegistry (kind → factory), the factories, decks, names, themes
+│  ├─ procgen/      LocationRegistry (kind → factory; builds each factory's parts once), the factories, decks, names, themes
 │  ├─ rules/        GameEngine, Journey, Player, Coherence/Drain, commands, prompts, summaries
 │  └─ persistence/  SavedGame (the format, v6) + SaveStore interface
 ├─ content/       the forked .txt lists + index.txt files, and the ONE import.meta.glob (BundledContent)
@@ -188,8 +188,9 @@ Every canvas moves on the page's one `MotionClock` (behind a `FrameSource` the c
 pixel, ≤ 1.3 million pixels).
 
 **Scenes (U01b).** `src/ui/scene/` draws a place: the engine hands over a drawing key (`Location.drawing()`), each
-child's address and figure on its option, and the frame's seed; the presenter makes a `SceneVM` (with the tear's
-strength from `Coherence.decay()`); the `SceneRegistry` built in `main.ts` maps a key to a `ScenePicture` (today
+child's address and figure on its option, and the frame's seed; the presenter's `SceneDrawing` makes a `SceneVM` (with
+the tear's strength from `Coherence.decay()`); the `SceneRegistry` built in `main.ts` — each picture built with its
+parts by `ScenePictures` — maps a key to a `ScenePicture` (today
 `street` → `StreetPicture`: a pure `layout` into hit areas and a pure `paint`), and a key with no entry leaves the
 screen as it was. `SceneView` hosts it: a tap zooms into the child and only then sends a bubbling `pick`
 (`SceneEvents` makes it and reads its id back) the `InputRouter` turns into the option; a new frame of the game or a
