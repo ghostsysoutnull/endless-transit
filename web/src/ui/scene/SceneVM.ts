@@ -12,7 +12,7 @@ import type { Seed } from '#engine/rng/Seed.ts';
 export interface SceneVM {
   readonly key: string;
   readonly label: string;
-  /** The place's own address: a later scene zooms back out of the child it came from. */
+  /** The place's own address: it tells a new place from the same one drawn again. */
   readonly address: string;
   readonly children: readonly {
     readonly id: string;

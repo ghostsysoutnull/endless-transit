@@ -528,6 +528,7 @@ export class GameEngine {
         icon: step.kind().icon(),
         kind: step.kind().title(),
         name: step.name(),
+        address: step.address().toString(),
       })),
       status: here.status(),
       description: this.#corruption.read(here.description(), player.coherence(), frame),

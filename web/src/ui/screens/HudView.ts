@@ -15,6 +15,7 @@ import type { View } from '#ui/View.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+import { Retrace } from './Retrace.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
@@ -40,8 +41,8 @@ type Slot = 'pane' | 'map' | 'trace';
  * them for a reader. A place whose drawing key has a registered picture is drawn (U01b): the scene host sits
  * with the card (`data-drawn` lets the stylesheet put the picture and the list under the name on a phone),
  * the list is its twin — a row pointed at or focused lights its building, a building pointed at lights its
- * row (`data-lit`) — and coming back out of a child the picture zooms out of it: the view keeps the last
- * address it showed for its lifetime. A key with no picture leaves the screen as it was.
+ * row (`data-lit`) — and coming back out of a child the picture zooms out of it: the view keeps the path to the
+ * last place it showed for its lifetime (`Retrace`). A key with no picture leaves the screen as it was.
  */
 export class HudView implements View<HudVM> {
   #container: HTMLElement | undefined;
@@ -64,8 +65,8 @@ export class HudView implements View<HudVM> {
     | undefined;
   /** The child lit in the picture and the list, by its option id; empty when none. */
   #lit = '';
-  /** The address of the last place shown: the child it lies in is the one the picture zooms out of. */
-  #last: string | undefined;
+  /** The path to the last place shown: the child on it is the one the picture zooms out of. */
+  #came = new Retrace([]);
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
   #group: number | undefined;
 
@@ -96,16 +97,9 @@ export class HudView implements View<HudVM> {
     this.#paint(vm);
     // A view kept from the last render is shown the new frame; one made just now already shows it.
     if (this.#scene !== undefined && this.#scene.view === kept) this.#scene.view.render(vm.drawing);
-    const last = this.#last;
-    const from =
-      last === undefined || last === vm.drawing.address
-        ? undefined
-        : vm.drawing.children.find(
-            (child) =>
-              child.address !== '' && (last === child.address || last.startsWith(`${child.address}.`)),
-          );
+    const from = this.#came.from(vm.drawing.address, vm.drawing.children);
     if (from !== undefined) this.#scene?.view.arrive(from.id);
-    this.#last = vm.drawing.address;
+    this.#came = new Retrace(vm.rail.map((step) => step.address));
   }
 
   #paint(vm: HudVM): void {

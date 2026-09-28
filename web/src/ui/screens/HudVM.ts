@@ -13,12 +13,14 @@ export interface HudVM extends Screen {
   readonly frame: string;
   /**
    * The depth rail (U01a, Decision 6): the path from the universe, one level per step; the last one is where
-   * the player stands. Its glyph is shown; `kind` and `name` are read out, not hovered for.
+   * the player stands. Its glyph is shown; `kind` and `name` are read out, not hovered for; its address finds the
+   * place the next screen zooms out of.
    */
   readonly rail: readonly {
     readonly icon: string;
     readonly kind: string;
     readonly name: string;
+    readonly address: string;
     readonly current: boolean;
   }[];
   /** The coherence bar: the scale, the value, its band (a colour a screen picks by it), and what a reader hears. */

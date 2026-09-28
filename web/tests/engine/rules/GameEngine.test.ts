@@ -173,7 +173,7 @@ describe('GameEngine — walking the big world', () => {
       name: 'The Endless Universe',
       address: '0',
       position: null,
-      trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe' }],
+      trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' }],
       status: 'UNIMATRIX_STABLE',
       description: ['A neural web of infinite complexity.'],
       facts: [],
@@ -245,6 +245,7 @@ describe('GameEngine — walking the big world', () => {
     expect(place.position?.label).toBe('CONDUIT');
     expect(place.position?.index).toBe(1);
     expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Zeta-915-Link']);
+    expect(place.trail.map((step) => step.address)).toEqual(['0', '0.0']);
     expect(snapshot.options.find((option) => option.id === 'leave')).toEqual({
       id: 'leave',
       key: 'l',

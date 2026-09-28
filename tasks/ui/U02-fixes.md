@@ -43,11 +43,11 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   `Layer -0x1` (Decision 2). Fix: read the level number from `levels`; the Layer label per the open decision above.
   **The tester sees this one** if the label changes.
   Done: —
-- [ ] **noise-value — the frame's seed goes over as text and is parsed back.** `PlaceSummary.noise` is
+- [x] **noise-value — the frame's seed goes over as text and is parsed back.** `PlaceSummary.noise` is
   `frame.toString()`; `CoherenceFx` rebuilds it with the engine's `Seed.parse` and quietly falls back to
   `new Seed(0, 0)` when that fails. Fix: the snapshot carries a noise value, not a string to parse. (OO 6; TS: parse
   at the edge.)
-  Done: —
+  Done: `052f434`
 
 ## Choosing what to draw by comparing text (OO 3, 5)
 

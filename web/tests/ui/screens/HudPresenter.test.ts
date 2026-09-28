@@ -38,11 +38,11 @@ const PLANET: GameSnapshot = {
     address: '0.0.0.0.1',
     position: { label: 'ORBIT', index: 2, total: 5 },
     trail: [
-      { icon: '∞', kind: 'Universe', name: 'The Endless Universe' },
-      { icon: '»', kind: 'Cosmic filament', name: 'Zeta-915-Link' },
-      { icon: '○', kind: 'Galactic sector', name: 'Outer Expanse 91' },
-      { icon: '☼', kind: 'Solar system', name: 'Zeta Borealis' },
-      { icon: '⊕', kind: 'Planet', name: 'Auraea' },
+      { icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' },
+      { icon: '»', kind: 'Cosmic filament', name: 'Zeta-915-Link', address: '0.0' },
+      { icon: '○', kind: 'Galactic sector', name: 'Outer Expanse 91', address: '0.0.0' },
+      { icon: '☼', kind: 'Solar system', name: 'Zeta Borealis', address: '0.0.0.0' },
+      { icon: '⊕', kind: 'Planet', name: 'Auraea', address: '0.0.0.0.1' },
     ],
     status: 'RESONANCE: [BAROQUE]',
     description: ['A world on the surface layer of the lattice, tuned to one culture and one era.'],
@@ -274,6 +274,8 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
     expect(vm.rail.map((level) => level.current)).toEqual([false, false, false, false, true]);
     expect(vm.rail.map((level) => level.icon).join('')).toBe('∞»○☼⊕');
     expect(vm.rail[3]?.kind).toBe('Solar system');
+    // Each level keeps its address: the screen after this one finds by it the place it zooms out of.
+    expect(vm.rail.map((level) => level.address)).toEqual(['0', '0.0', '0.0.0', '0.0.0.0', '0.0.0.0.1']);
   });
 
   test('the readouts in plain words (U01a): the steps and the buffer — the depth is the rail; the locus, its hash, the seed and the readout fold are gone', () => {
