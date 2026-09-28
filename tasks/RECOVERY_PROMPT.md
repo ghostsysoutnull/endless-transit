@@ -1,9 +1,10 @@
 # Handover
 
 - **Branch:** `ui/u02-inside-the-building`.
-- **Next:** U02 of the UI rework, open: the corridor picture, on the fixed door looks. The wave's state and what
-  follows are in `tasks/ui/U02.md` ("State at handover"). The browser suite is red on this branch until U02's step 5,
-  by plan.
+- **Next:** U02 of the UI rework, open: the three design fixes after the corridor (`built-collaborators`,
+  `one-job`, `kinds-not-optionals`) — plan, grill, build. The wave's state and what follows are in `tasks/ui/U02.md`
+  ("State at handover"); the items in `tasks/ui/U02-fixes.md` ("After the corridor"). The browser suite is red on this
+  branch until U02's step 5, by plan.
 - **Open threads:**
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
   - ships (CONCEPT-001): the verdicts in `docs/analysis/SHIPS_CONCEPT.md`, section 7, none judged;
