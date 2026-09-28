@@ -49,6 +49,27 @@ describe('a camera that travels: where the view may stand, how long it takes to 
     expect(camera({ stops: [] }).nearest(3)).toBeUndefined();
   });
 
+  test('doors in pairs share a stop: the slider counts a pair once, and a step goes on to the first door of the next pair, or of the pair before, held at the ends', () => {
+    const corridor = camera({
+      stops: [
+        { id: 'enter:0', at: 0 },
+        { id: 'enter:1', at: 0 },
+        { id: 'enter:2', at: 2 },
+        { id: 'enter:3', at: 2 },
+        { id: 'enter:4', at: 4 },
+      ],
+    });
+    expect(corridor.stepFrom(0, 1)).toEqual({ id: 'enter:2', at: 2 });
+    expect(corridor.stepFrom(2, 1)).toEqual({ id: 'enter:4', at: 4 });
+    expect(corridor.stepFrom(4, 1)).toEqual({ id: 'enter:4', at: 4 });
+    expect(corridor.stepFrom(4, -1)).toEqual({ id: 'enter:2', at: 2 });
+    expect(corridor.stepFrom(2, -1)).toEqual({ id: 'enter:0', at: 0 });
+    expect(corridor.stepFrom(0, -1)).toEqual({ id: 'enter:0', at: 0 });
+    expect(corridor.stopCount()).toBe(3);
+    expect(corridor.nearest(2.3)).toEqual({ id: 'enter:2', index: 1 });
+    expect(corridor.stopOf('enter:3')).toBe(2);
+  });
+
   test('a child’s stop by its option id; none for a child it has no stop for', () => {
     expect(camera().stopOf('enter:2')).toBe(7);
     expect(camera().stopOf('enter:40')).toBeUndefined();

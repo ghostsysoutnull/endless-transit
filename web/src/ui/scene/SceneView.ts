@@ -64,6 +64,8 @@ export class SceneView implements View<SceneVM> {
   #ratio = 1;
   #hits: readonly SceneHit[] = [];
   #lit = '';
+  /** The child you stand by: the one you came back out of, until the picture shows another place. */
+  #here = '';
   #camera: SceneCamera = new StillCamera();
   #view = 0;
   /** A view on its way without a pick: a coast, a glide, a ride between floors. */
@@ -206,6 +208,7 @@ export class SceneView implements View<SceneVM> {
     this.#mounted?.colours().frameChanged();
     this.#fit();
     const camera = this.#camera;
+    if (before?.address !== vm.address) this.#here = '';
     if (before?.address === vm.address) {
       this.#view = camera.clamp(this.#view);
     } else if (before !== undefined && !this.#preference.reduced()) {
@@ -234,6 +237,7 @@ export class SceneView implements View<SceneVM> {
 
   /** Back out of the child with this id: the view stands at its stop, and the picture zooms out of it when it zooms. */
   arrive(id: string): void {
+    this.#here = id;
     const stop = this.#camera.stopOf(id);
     if (stop !== undefined) {
       this.#motion = undefined;
@@ -416,7 +420,7 @@ export class SceneView implements View<SceneVM> {
         ratio * (y - zoom.anchor.y * zoom.scale),
       );
     }
-    this.#picture.paint(context, vm, this.#size, palette, time, this.#lit, this.#view);
+    this.#picture.paint(context, vm, this.#size, palette, time, this.#lit, this.#view, this.#here);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     if (depth > 0) {
       context.globalAlpha = depth;

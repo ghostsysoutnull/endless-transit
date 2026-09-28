@@ -12,6 +12,8 @@ export interface Painter {
   textBaseline: CanvasTextBaseline;
   shadowColor: string;
   shadowBlur: number;
+  /** How far a shadow falls to the right of what casts it, in the canvas's own pixels (the transform does not scale it). */
+  shadowOffsetX: number;
   fillRect(x: number, y: number, width: number, height: number): void;
   strokeRect(x: number, y: number, width: number, height: number): void;
   beginPath(): void;
@@ -29,4 +31,6 @@ export interface Painter {
   measureText(text: string): { readonly width: number };
   save(): void;
   restore(): void;
+  /** The current transform; `a` is how many of the canvas's pixels a unit spans across. */
+  getTransform(): { readonly a: number };
 }

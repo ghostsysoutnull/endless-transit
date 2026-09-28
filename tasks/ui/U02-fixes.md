@@ -153,7 +153,10 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   inside types (`SceneVM`'s `door` and `tower`, `SceneCamera`'s `track`, `HudVM`'s `position` and `pad`,
   `GameOption`'s and `PlaceSummary`'s `figure`; the older `HudVM` `map`/`trace`/`sealedNote` share it). Fix: one
   member per kind, and an empty member that answers for itself where a part is missing (with `still-camera`).
-  (TS: a union of valid shapes.) After the corridor with `one-job` (the user's pick, 2026-09-28): its split needs
+  (TS: a union of valid shapes.) The corridor adds to it (design check on `c938a04`): `here`, a child id where
+  empty means none, beside the older `lit` (`ScenePicture.paint`, `SceneView#here`, `CorridorPicture.paint`), and
+  `PlacedDoor.word` and `CorridorPicture#lookOf` paying for a child's `door: … | null`. After the corridor with
+  `one-job` (the user's pick, 2026-09-28): its split needs
   `one-job`'s view model mapped per picture, and its `passage?`/`shape?` part touches the Layer screens (U04).
   Done: —
 - [ ] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
