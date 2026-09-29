@@ -3,24 +3,16 @@ import type { PlanRoom } from '#engine/model/PlanRoom.ts';
 import type { RoomSight } from '#engine/model/RoomSight.ts';
 import { RoomLook } from '#engine/model/RoomLook.ts';
 import { Seed } from '#engine/rng/Seed.ts';
-import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
-import { Diamond } from '#ui/scene/Diamond.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import { MarkedChild } from '#ui/scene/MarkedChild.ts';
 import { NoChild } from '#ui/scene/NoChild.ts';
-import { PlanLayout } from '#ui/scene/PlanLayout.ts';
-import { PlanPicture } from '#ui/scene/PlanPicture.ts';
 import type { PlanVM } from '#ui/scene/PlanVM.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
-import { SceneHash } from '#ui/scene/SceneHash.ts';
+import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
 const PHONE = { width: 360, height: 277 };
-const picture = new PlanPicture({
-  layout: new PlanLayout(new SceneHash()),
-  font: new CanvasFont(),
-  diamond: new Diamond(),
-});
+const picture = new ScenePictures().plan();
 /** One word each, so a test can tell which room a word was written in. */
 const NAMES = ['Kitchen', 'Pantry', 'Vault', 'Chapel'];
 const addressOf = (index: number): string => `0.0.0.0.0.0.0.0.0.0.0.3.${String(index)}`;
@@ -124,6 +116,29 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
         expect(TEXT_INKS, call).toContain(/<([a-z-]+)>/.exec(call)?.[1] ?? '');
       }
     }
+  });
+
+  test('the room you stand in, drawn in full: its name above its relics, each relic labelled with two words of its name at most', () => {
+    const base = plan({ sights: ['visited', 'visited', 'known', 'fog'], here: 1, relics: 2 });
+    const relics = [
+      child('capture:0', { ordinal: '1', name: 'Brass Astrolabe of Tides' }),
+      child('capture:1', { ordinal: '2', name: 'Salt Lamp' }),
+    ];
+    const vm: PlanVM = { ...base, relics, children: [...base.doors, ...relics] };
+    const rest = picture.rest(vm, picture.camera(vm, PHONE));
+    const painter = new RecordingPainter();
+    picture.paint(painter, vm, PHONE, palette(painter.asked), 0, new MarkedChild('capture:0'), rest);
+    const words = painter.calls.filter((call) => call.startsWith('fillText('));
+    const name = words.find((call) => call.startsWith('fillText(Pantry,'));
+    const nameY = Number(name?.split(',')[2]);
+    const tops = picture
+      .layout(vm, PHONE, rest)
+      .filter((hit) => hit.id.startsWith('capture:'))
+      .map((hit) => hit.y);
+    expect(tops).toHaveLength(2);
+    for (const top of tops) expect(nameY).toBeLessThan(top);
+    expect(words.some((call) => call.startsWith('fillText(Brass Astrolabe,'))).toBe(true);
+    expect(words.join('\n')).not.toContain('Tides');
   });
 
   test('a room in fog shows neither its name nor its number; a known one shows them', () => {

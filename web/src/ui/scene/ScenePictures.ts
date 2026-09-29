@@ -1,7 +1,11 @@
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
+import { ArchWall } from './ArchWall.ts';
+import { BeamLight } from './BeamLight.ts';
+import { BlockWall } from './BlockWall.ts';
 import { BonePanel } from './BonePanel.ts';
 import { BoxRoof } from './BoxRoof.ts';
 import { ColdMark } from './ColdMark.ts';
+import { ColumnWall } from './ColumnWall.ts';
 import { CorridorPicture } from './CorridorPicture.ts';
 import { CurvedHall } from './CurvedHall.ts';
 import { CurvedRow } from './CurvedRow.ts';
@@ -11,18 +15,27 @@ import { EndingReach } from './EndingReach.ts';
 import { EndWall } from './EndWall.ts';
 import { FrostMark } from './FrostMark.ts';
 import { GlassPanel } from './GlassPanel.ts';
+import { GlowLight } from './GlowLight.ts';
+import { LampLight } from './LampLight.ts';
+import { LatticeWall } from './LatticeWall.ts';
 import { LongHall } from './LongHall.ts';
 import { LongRow } from './LongRow.ts';
 import { MastRoof } from './MastRoof.ts';
 import { MetalPanel } from './MetalPanel.ts';
+import { NoLight } from './NoLight.ts';
 import { NoRoof } from './NoRoof.ts';
 import { ParapetRoof } from './ParapetRoof.ts';
 import { PeakRoof } from './PeakRoof.ts';
 import { PlainMark } from './PlainMark.ts';
 import { PlainPanel } from './PlainPanel.ts';
+import { PlainWall } from './PlainWall.ts';
 import { PlanLayout } from './PlanLayout.ts';
 import { PlanPicture } from './PlanPicture.ts';
+import { PlateWall } from './PlateWall.ts';
+import { RibWall } from './RibWall.ts';
 import { Roof } from './Roof.ts';
+import { RoomInsides } from './RoomInsides.ts';
+import { RoomWall } from './RoomWall.ts';
 import { SceneHash } from './SceneHash.ts';
 import { ServiceHall } from './ServiceHall.ts';
 import { ServiceRow } from './ServiceRow.ts';
@@ -121,8 +134,49 @@ export class ScenePictures {
     });
   }
 
-  /** The apartment's plan (U03), its rooms laid out by the shared hash. */
+  /**
+   * The apartment's plan (U03), its rooms laid out by the shared hash; the room you stand in drawn by its look
+   * (U03b): a wall per culture, in the culture's ink, and a light per era — a key with none listed is plain.
+   */
   plan(): PlanPicture {
-    return new PlanPicture({ layout: new PlanLayout(this.#noise), font: this.#font, diamond: new Diamond() });
+    const glow = new ShadowGlow();
+    const lattice = new LatticeWall();
+    const plates = new PlateWall();
+    const arches = new ArchWall();
+    const plain = new PlainWall();
+    return new PlanPicture({
+      layout: new PlanLayout(this.#noise),
+      font: this.#font,
+      diamond: new Diamond(),
+      glow,
+      insides: new RoomInsides({
+        walls: {
+          shogun: new RoomWall(lattice, 'ab'),
+          neon: new RoomWall(lattice, 'mg'),
+          rust: new RoomWall(plates, 'ab'),
+          abyssal: new RoomWall(plates, 'rd'),
+          gilded: new RoomWall(arches, 'yl'),
+          baroque: new RoomWall(arches, 'mg'),
+          zenith: new RoomWall(new ColumnWall(), 'wh'),
+          monolith: new RoomWall(new BlockWall(), 'dim'),
+          organic: new RoomWall(new RibWall(), 'cy'),
+          void: new RoomWall(plain, 'wh'),
+        },
+        lights: {
+          ancient: new LampLight('yl', glow),
+          analog: new LampLight('ab', glow),
+          industrial: new LampLight('wh', glow),
+          abyssal: new LampLight('rd', glow),
+          atomic: new GlowLight('cy', glow),
+          digital: new GlowLight('bl', glow),
+          future: new GlowLight('bc', glow),
+          singularity: new BeamLight('wh'),
+          entropic: new BeamLight('dim'),
+        },
+        plainWall: new RoomWall(plain, 'dim'),
+        noLight: new NoLight(),
+        noise: this.#noise,
+      }),
+    });
   }
 }

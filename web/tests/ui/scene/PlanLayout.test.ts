@@ -43,15 +43,17 @@ describe('an apartment’s plan (U03): serpentine rows, so each room opens onto 
   });
 
   test('each room shares a wall a doorway wide with the next, and the doorway stands on it', () => {
+    const wrong: string[] = [];
     everyPlan((plan, count, address) => {
       const rooms = plan.rooms();
       plan.doors().forEach((door, index) => {
         const where = `${address} ${String(count)} rooms, door ${String(index)}`;
-        expect(door.span(), where).toBeGreaterThanOrEqual(DOOR);
-        expect(door.on(must(rooms[index])), where).toBe(true);
-        expect(door.on(must(rooms[index + 1])), where).toBe(true);
+        if (door.span() < DOOR) wrong.push(`${where}: ${String(door.span())} wide`);
+        if (!door.on(must(rooms[index])) || !door.on(must(rooms[index + 1])))
+          wrong.push(`${where}: not on both rooms`);
       });
     });
+    expect(wrong).toEqual([]);
   });
 
   test('the first room touches the bottom of the footprint, where the entrance is cut into it', () => {
@@ -64,14 +66,16 @@ describe('an apartment’s plan (U03): serpentine rows, so each room opens onto 
   });
 
   test('no room is thinner than a third of its length', () => {
+    const wrong: string[] = [];
     everyPlan((plan, count, address) => {
       plan.rooms().forEach((room, index) => {
-        expect(
-          room.squareness(),
-          `${address} ${String(count)} rooms, room ${String(index)}`,
-        ).toBeGreaterThanOrEqual(1 / 3);
+        if (room.squareness() < 1 / 3)
+          wrong.push(
+            `${address} ${String(count)} rooms, room ${String(index)}: ${String(room.squareness())}`,
+          );
       });
     });
+    expect(wrong).toEqual([]);
   });
 
   test('the same apartment always has the same plan; another address, another plan', () => {
