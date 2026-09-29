@@ -144,7 +144,7 @@ are fixed together) and is named in the item.
 
 ## After the corridor
 
-- [~] **kinds-not-optionals — missing parts as optional fields, nulls and empty strings.** `Figure` is a bag of
+- [x] **kinds-not-optionals — missing parts as optional fields, nulls and empty strings.** `Figure` is a bag of
   optional parts for four kinds (`tower?`, `level?` — added by step 16 — `shape?`, `looks?`, `door?`), paid for in
   `HudPresenter` (`?? 0`, `?? ''`, `?? []`, and the pad's `level?.number ?? 0`) and `Building`
   (`?? { floors: 0, doors: 0 }`); `SceneVM` flattens the same kinds onto every child; empty strings as flags (a
@@ -157,7 +157,8 @@ are fixed together) and is named in the item.
   `PlacedDoor.word` and `CorridorPicture#lookOf` paying for a child's `door: … | null`. After the corridor with
   `one-job` (the user's pick, 2026-09-28): its split needs
   `one-job`'s view model mapped per picture, and its `passage?`/`shape?` part touches the Layer screens (U04).
-  Done: —
+  Done: steps 0–6 of its plan below — `ac51d56`, `c66b68b`, `276d2fb`, `55b7772`, `d3f3f2c`, `afa2afc`, `3c4ffc9`,
+  with their design checks' fixes `c38dc48`, `e28c613`, `35b40d9`, `12a0906`, `6114791`, `e363e7c`, `57b0ae9`.
 - [x] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
   `SceneView` (`CoherenceFx`, `PixelBudget`), `CanvasView` (`PixelBudget`), `StreetPicture` and `TowerPicture`
   (`SceneHash`, `Roof`, `DoorLooks`), `Roof` (`SceneHash`), `Passages` (`Sentences`, `Doors`), `HudView`
@@ -180,7 +181,7 @@ are fixed together) and is named in the item.
 ## Logged, not fixed (no check box)
 
 - `GameOption` is one flat shape for eight roles: the roles without a place carry a blank `place`, `ordinal` and
-  `address` and `figure: null` (TS: a union of valid shapes). Older code; its split is a wave of its own.
+  `address` (TS: a union of valid shapes). Older code; its split is a wave of its own.
 
 - `HudView` has several jobs too (OO 8): the templates of the HUD, card, list, dock and debug strip; the scene view's
   lifetime; the lit child kept in step between list and picture; the pad's group state; the map and trace slots; the
@@ -518,7 +519,7 @@ for by every picture reading parts it may not have.
 - `HudPresenter`'s `?? 0` and `?? []` named by the item moved to `SceneDrawing` and `FloorPad` (`one-job`): fixed there.
 - A tower's children and its rows come from one listing; a child's part is found by its address (a stable key), and
   a listed place with no part is not drawn (the one drop, in `SceneDrawing`).
-- Only `CorridorFactory` builds a `Corridor` in the game (not the Artery); `Floor.test:35`, `Ritual.test:40` build one
+- `CorridorFactory` and the `Artery` (its `none`) build a `Corridor`; `Floor.test:35`, `Ritual.test:40` build one
   with no shape.
 - The same `null`-inside pattern stands in about 27 more files the item does not name (`GameSnapshot`, `AsideVM`,
   `HudVM.scan`, `TravelRowVM`, `PlaceSummary`'s `frame`, `contents`, `telemetry`, `lattice` …): not touched here.
