@@ -11,7 +11,8 @@
    confirm option names its scope: the files, the kind of edit, and what is not touched. Options make sense without
    having read the document. A pick is built, not re-asked; a decision already made is never reopened.
 4. Design options are ambitious; a process option is offered only if it names its cost, what it teaches that isn't
-   already known and the failure it prevents.
+   already known and the failure it prevents. "Is this the best you can do?" sharpens the pick; it never swings to a
+   bigger scope.
 5. Nothing changes without a directive. A question gets only an answer: no edit, commit, branch or agent; a request for
    a review or a plan gets only the review or the plan; a request that implies a change ("this looks wrong") without a
    directive gets a plan and one question. A message with a question and a directive: answer, then do only what the
