@@ -10,7 +10,7 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
    plan review (`/grill`) reads it once in a subagent and only judges it, since the author is the worst judge of their
    own plan; an amendment it asks for is fixed, never reviewed again. I show the user the plan with the review's
    verdict and build on their go.
-3. **Build.** Each commit gets the design check in the background (the Codex's Verification). Fast tests judge
+3. **Build.** The finished piece gets the design check once, before it merges (the Codex's Verification). Fast tests judge
    what a machine can; what the user judges by using it (the look, the feel, the words on screen) waits for them, and
    the slow suites and the approved snapshot wait for the end.
 4. **The fast loop.** When there is something to try, the user tries it the way it is used and reports; I change it,

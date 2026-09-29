@@ -3,7 +3,7 @@
 - **Branch:** `ui/u03-apartment-and-room` (U03a merged into `master` and published; U03b continues here).
 - **Next:** U03b of the UI rework, the room drawn — its plan and state in `tasks/ui/U03.md` ("State at handover").
   U03a is published as build `b2db464`; the user's phone check of it comes first, and what it finds is fixed first.
-  The design checks follow the stopping rule in `tasks/lessons/infrastructure.md` ("A review chain has a stopping rule").
+  The design check runs once, on U03b finished, before it merges (the Codex's Verification).
 - **Open threads:**
   - the wall on picture taps and the minimap, a view control: `tasks/ui/U03.md`, "Asked, not answered";
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
