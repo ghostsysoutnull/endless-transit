@@ -2,11 +2,11 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { SightLook } from './SightLook.ts';
-import { SmallSquare } from './SmallSquare.ts';
+import { Tint } from './Tint.ts';
 
 /** The fog's hatching, this far apart and this strong; a fogged room this faint on the minimap. */
 const HATCH = { gap: 9, alpha: 0.15 };
-const SMALL = new SmallSquare('cy', 0.08);
+const SMALL = new Tint('cy', 0.08);
 
 /** A room not yet reached: the bare ground under a hatching of fog, no words, no marks, faint on the minimap. */
 export class FogLook implements SightLook {

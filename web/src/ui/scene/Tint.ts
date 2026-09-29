@@ -2,8 +2,8 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 
-/** A room on the minimap (U03): its box filled in one ink, at one strength. Value object. */
-export class SmallSquare {
+/** A box filled in one ink at one strength, 0 to 1 (U03: a room's floor, a room on the minimap). Value object. */
+export class Tint {
   readonly #ink: string;
   readonly #alpha: number;
 

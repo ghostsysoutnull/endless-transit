@@ -2,26 +2,24 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { SightLook } from './SightLook.ts';
-import type { SmallSquare } from './SmallSquare.ts';
+import type { Tint } from './Tint.ts';
 
 /** A room seen — visited, or known from a visited one: floored as strongly as it is seen over the ground, its words in its ink. Value object. */
 export class SeenLook implements SightLook {
-  readonly #floor: number;
+  readonly #floor: Tint;
   readonly #ink: string;
   readonly #dot: boolean;
-  readonly #small: SmallSquare;
+  readonly #small: Tint;
 
   constructor(facts: {
-    /** How strongly its floor shows, 0 to 1. */
-    floor: number;
+    /** Its floor, over the ground. */
+    floor: Tint;
     ink: string;
     /** Whether it carries the visited dot. */
     dot: boolean;
     /** How it shows on the minimap. */
-    small: SmallSquare;
+    small: Tint;
   }) {
-    if (!(facts.floor >= 0 && facts.floor <= 1))
-      throw new RangeError(`a strength runs from 0 to 1, got ${String(facts.floor)}`);
     this.#floor = facts.floor;
     this.#ink = facts.ink;
     this.#dot = facts.dot;
@@ -29,9 +27,7 @@ export class SeenLook implements SightLook {
   }
 
   paintFloor(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void {
-    painter.fillStyle = palette('panel');
-    painter.globalAlpha = this.#floor;
-    painter.fillRect(box.x, box.y, box.width, box.height);
+    this.#floor.paint(painter, palette, box);
   }
 
   label(write: (ink: string) => void): void {
