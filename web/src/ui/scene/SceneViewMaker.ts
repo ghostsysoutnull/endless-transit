@@ -1,4 +1,5 @@
 import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
+import type { ChildMark } from './ChildMark.ts';
 import type { SceneViews } from '#ui/screens/SceneViews.ts';
 import type { SceneViewParts } from './SceneViewParts.ts';
 import { SceneView } from './SceneView.ts';
@@ -11,7 +12,7 @@ export class SceneViewMaker implements SceneViews {
     this.#parts = parts;
   }
 
-  make(onLight: (id: string) => void): DrawnScene {
+  make(onLight: (mark: ChildMark) => void): DrawnScene {
     return new SceneView(this.#parts, onLight);
   }
 }

@@ -10,6 +10,7 @@ import type { TowerVM } from './TowerVM.ts';
 import { StillCamera } from './StillCamera.ts';
 import type { TowerParts } from './TowerParts.ts';
 import { TravelCamera } from './TravelCamera.ts';
+import type { ChildMark } from './ChildMark.ts';
 
 /** A floor's row is at least this tall where it fits (a thumb), and the window shows 4 to 11 of them. */
 const ROW = 50;
@@ -132,7 +133,7 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     size: PictureSize,
     palette: Palette,
     time: number,
-    lit: string,
+    lit: ChildMark,
     view: number,
   ): void {
     painter.globalAlpha = 1;
@@ -305,12 +306,12 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     level: number,
     palette: Palette,
     seconds: number,
-    lit: string,
+    lit: ChildMark,
   ): void {
     const { left, width, inner, shaft, row } = frame;
     const y = this.#y(frame, level);
     const child = this.#childAt(vm, level);
-    const isLit = child?.id === lit;
+    const isLit = child !== undefined && lit.marks(child.id);
     const look = this.#lookAt(frame, level);
     painter.globalAlpha = isLit ? 1 : look.alpha(level);
     painter.fillStyle = palette(isLit ? 'rule-hi' : look.ground());

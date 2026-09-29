@@ -2,6 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { Level } from '#engine/model/Level.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
+import { MarkedChild } from '#ui/scene/MarkedChild.ts';
+import { NoChild } from '#ui/scene/NoChild.ts';
 import type { TowerVM } from '#ui/scene/TowerVM.ts';
 import { Roof, type RoofKind } from '#ui/scene/Roof.ts';
 import { SceneHash } from '#ui/scene/SceneHash.ts';
@@ -157,9 +159,9 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
     const one = new RecordingPainter();
     const two = new RecordingPainter();
     const moved = new RecordingPainter();
-    picture.paint(one, tower(40), PHONE, palette(one.asked), 900, 'enter:3', 12);
-    picture.paint(two, tower(40), PHONE, palette(two.asked), 900, 'enter:3', 12);
-    picture.paint(moved, tower(40), PHONE, palette(moved.asked), 900, 'enter:3', 20);
+    picture.paint(one, tower(40), PHONE, palette(one.asked), 900, new MarkedChild('enter:3'), 12);
+    picture.paint(two, tower(40), PHONE, palette(two.asked), 900, new MarkedChild('enter:3'), 12);
+    picture.paint(moved, tower(40), PHONE, palette(moved.asked), 900, new MarkedChild('enter:3'), 20);
     expect(one.calls).toEqual(two.calls);
     expect(moved.calls).not.toEqual(one.calls);
   });
@@ -173,7 +175,7 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
       [tower(30, { listed: false }), 10],
     ] as const) {
       const painter = new RecordingPainter();
-      picture.paint(painter, vm, PHONE, palette(painter.asked), 700, 'enter:1', view);
+      picture.paint(painter, vm, PHONE, palette(painter.asked), 700, new MarkedChild('enter:1'), view);
       expect([...painter.asked].filter((t) => !TEXT_INKS.includes(t) && !SURFACE_INKS.includes(t))).toEqual(
         [],
       );
@@ -190,10 +192,10 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
 
   test('the bedrock shows in red only at the foot; a door’s state tints its tick', () => {
     const foot = new RecordingPainter();
-    picture.paint(foot, tower(100), PHONE, palette(foot.asked), 0, '', 0);
+    picture.paint(foot, tower(100), PHONE, palette(foot.asked), 0, new NoChild(), 0);
     expect(foot.asked.has('rd')).toBe(true);
     const middle = new RecordingPainter();
-    picture.paint(middle, tower(100), PHONE, palette(middle.asked), 0, '', 50);
+    picture.paint(middle, tower(100), PHONE, palette(middle.asked), 0, new NoChild(), 50);
     expect(middle.asked.has('rd')).toBe(false);
     expect(middle.asked.has('bl')).toBe(true);
   });
@@ -234,7 +236,7 @@ describe('the tower paints the same calls as before its drawers move (a digest o
       top(addressWith('flat'), false),
     ].map((vm) => {
       const painter = new RecordingPainter();
-      picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, '', 4);
+      picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, new NoChild(), 4);
       return digest(painter);
     });
     expect(digests).toEqual([
@@ -247,7 +249,15 @@ describe('the tower paints the same calls as before its drawers move (a digest o
 
   test('a breached tower, the Layers’ rows in view', () => {
     const painter = new RecordingPainter();
-    picture.paint(painter, tower(12, { below: 10 }), PHONE, (token) => `<${token}>`, 1234, 'enter:14', -3);
+    picture.paint(
+      painter,
+      tower(12, { below: 10 }),
+      PHONE,
+      (token) => `<${token}>`,
+      1234,
+      new MarkedChild('enter:14'),
+      -3,
+    );
     expect(digest(painter)).toEqual(['312684dc', 214]);
   });
 });

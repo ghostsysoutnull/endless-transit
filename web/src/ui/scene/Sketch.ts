@@ -6,6 +6,7 @@ import type { SceneChild } from './SceneChild.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
+import type { ChildMark } from './ChildMark.ts';
 
 /**
  * A view model bound to the picture that draws it (U02): what `SceneView` draws, never knowing which picture it is.
@@ -22,9 +23,9 @@ export interface Sketch {
     size: PictureSize,
     palette: Palette,
     time: number,
-    lit: string,
+    lit: ChildMark,
     view: number,
-    here: string,
+    here: ChildMark,
   ): void;
   camera(size: PictureSize): SceneCamera;
   /** Whether another sketch is drawn by the same picture: the screen keeps its scene while it is. */

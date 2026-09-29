@@ -1,3 +1,4 @@
+import type { ChildMark } from '#ui/scene/ChildMark.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
 import type { View } from '#ui/View.ts';
 
@@ -9,6 +10,6 @@ export interface DrawnScene extends View<Sketch> {
   leads(id: string): boolean;
   /** Ride to the child and pick it. Asked first: `leads`. */
   enter(id: string): void;
-  /** The child lit from the list (its id), or none (empty). */
-  light(id: string): void;
+  /** The child lit from the list, or none. */
+  light(mark: ChildMark): void;
 }

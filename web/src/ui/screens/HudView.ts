@@ -3,6 +3,9 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
+import type { ChildMark } from '#ui/scene/ChildMark.ts';
+import { MarkedChild } from '#ui/scene/MarkedChild.ts';
+import { NoChild } from '#ui/scene/NoChild.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
 import type { View } from '#ui/View.ts';
 import type { CanvasViews } from './CanvasViews.ts';
@@ -56,8 +59,8 @@ export class HudView implements View<HudVM> {
   readonly #views: SceneViews;
   /** The scene drawn now: its host, what it draws (bound to its picture) and the view drawing it. */
   #scene: { readonly host: HTMLElement; readonly sketch: Sketch; readonly view: DrawnScene } | undefined;
-  /** The child lit in the picture and the list, by its option id; empty when none. */
-  #lit = '';
+  /** The child lit in the picture and the list, or none. */
+  #lit: ChildMark = new NoChild();
   /** The path to the last place shown: the child on it is the one the picture zooms out of. */
   #came = new Retrace([]);
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
@@ -82,7 +85,7 @@ export class HudView implements View<HudVM> {
   render(vm: HudVM): void {
     this.#more = false;
     if (vm.scene !== this.#vm?.scene) {
-      this.#lit = '';
+      this.#lit = new NoChild();
       this.#group = undefined;
     }
     const kept = this.#scene?.view;
@@ -115,8 +118,8 @@ export class HudView implements View<HudVM> {
     }
     if (this.#scene?.host !== host || !this.#scene.sketch.samePicture(sketch)) {
       this.#scene?.view.dispose();
-      const view = this.#views.make((id) => {
-        this.#light(id);
+      const view = this.#views.make((mark) => {
+        this.#light(mark);
       });
       view.mount(host);
       view.render(sketch);
@@ -128,13 +131,14 @@ export class HudView implements View<HudVM> {
   }
 
   /** A child pointed at in the picture or the list: both light it; nothing re-renders when nothing changed. */
-  #light(id: string): void {
-    if (id === this.#lit || this.#scene === undefined) return;
-    this.#lit = id;
+  #light(mark: ChildMark): void {
+    if (mark.equals(this.#lit) || this.#scene === undefined) return;
+    this.#lit = mark;
     // The pad follows what is lit: dragging the car past a ten shows that ten's floors (the mock's `S.group`).
-    const group = this.#vm?.pad?.groups.findIndex((each) => each.keys.some((key) => key.id === id)) ?? -1;
+    const group =
+      this.#vm?.pad?.groups.findIndex((each) => each.keys.some((key) => mark.marks(key.id))) ?? -1;
     if (group >= 0) this.#group = group;
-    this.#scene.view.light(id);
+    this.#scene.view.light(mark);
     if (this.#vm !== undefined && this.#container !== undefined)
       render(this.#template(this.#vm), this.#container);
   }
@@ -142,7 +146,7 @@ export class HudView implements View<HudVM> {
   dispose(): void {
     this.#scene?.view.dispose();
     this.#scene = undefined;
-    this.#lit = '';
+    this.#lit = new NoChild();
     this.#canvases.dispose();
     if (this.#container !== undefined) render(nothing, this.#container);
     this.#container = undefined;
@@ -280,7 +284,12 @@ export class HudView implements View<HudVM> {
         </section>
         ${
           drawn
-            ? html`<div class="scene" data-testid="scene" data-canvas="scene" data-lit=${this.#lit}></div>`
+            ? html`<div
+                class="scene"
+                data-testid="scene"
+                data-canvas="scene"
+                data-lit=${this.#lit.written()}
+              ></div>`
             : nothing
         }
         ${this.#scan(vm)} ${vm.map === null ? nothing : this.#map(vm.map, 'map', 'map', vm.regions.map)}
@@ -537,21 +546,21 @@ export class HudView implements View<HudVM> {
                 type="button"
                 class=${['key', key.current ? 'you' : '', key.visited ? 'seen' : ''].join(' ').trim()}
                 data-option=${key.id}
-                ?data-lit=${drawn && this.#lit === key.id}
+                ?data-lit=${drawn && this.#lit.marks(key.id)}
                 @click=${(event: Event) => {
                   this.#through(event, key.id);
                 }}
                 @pointerenter=${() => {
-                  this.#light(key.id);
+                  this.#light(new MarkedChild(key.id));
                 }}
                 @pointerleave=${() => {
-                  this.#light('');
+                  this.#light(new NoChild());
                 }}
                 @focus=${() => {
-                  this.#light(key.id);
+                  this.#light(new MarkedChild(key.id));
                 }}
                 @blur=${() => {
-                  this.#light('');
+                  this.#light(new NoChild());
                 }}
               >
                 <span class="num" aria-hidden="true">${key.number}</span><span class="vh">${key.spoken}</span>
@@ -599,21 +608,21 @@ export class HudView implements View<HudVM> {
           type="button"
           class=${['row', row.mark === null ? '' : 'you', row.seen === null ? '' : 'seen'].join(' ').trim()}
           data-option=${row.id}
-          ?data-lit=${drawn && this.#lit === row.id}
+          ?data-lit=${drawn && this.#lit.marks(row.id)}
           @click=${(event: Event) => {
             this.#through(event, row.id);
           }}
           @pointerenter=${() => {
-            this.#light(row.id);
+            this.#light(new MarkedChild(row.id));
           }}
           @pointerleave=${() => {
-            this.#light('');
+            this.#light(new NoChild());
           }}
           @focus=${() => {
-            this.#light(row.id);
+            this.#light(new MarkedChild(row.id));
           }}
           @blur=${() => {
-            this.#light('');
+            this.#light(new NoChild());
           }}
         >
           <span class="ord">${row.ordinal}</span

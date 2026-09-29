@@ -15,6 +15,8 @@ import type { ScenePicture } from './ScenePicture.ts';
 import type { CorridorVM } from './CorridorVM.ts';
 import { StillCamera } from './StillCamera.ts';
 import { TravelCamera } from './TravelCamera.ts';
+import type { ChildMark } from './ChildMark.ts';
+import { MarkedChild } from './MarkedChild.ts';
 
 /**
  * The mock's walk (`transit-reframed.html:985-991, 1363, 1371`): a finger moves the view a unit every 40 px, a swipe
@@ -78,9 +80,9 @@ export class CorridorPicture implements ScenePicture<CorridorVM> {
     size: PictureSize,
     palette: Palette,
     time: number,
-    lit: string,
+    lit: ChildMark,
     view: number,
-    here: string,
+    here: ChildMark,
   ): void {
     const seconds = time / 1000;
     painter.globalAlpha = 1;
@@ -101,7 +103,8 @@ export class CorridorPicture implements ScenePicture<CorridorVM> {
       palette('ground'),
       0.85,
     );
-    const standing = here === '' ? (vm.children[0]?.id ?? '') : here;
+    const first = vm.children[0];
+    const standing = first === undefined ? here : here.or(new MarkedChild(first.id));
     for (const door of this.#place(vm, size, view))
       this.#door(painter, palette, size, door, seconds, lit, standing);
     new CorridorSlider({ size, hall }).draw(
@@ -233,14 +236,14 @@ export class CorridorPicture implements ScenePicture<CorridorVM> {
     size: PictureSize,
     door: PlacedDoor,
     seconds: number,
-    lit: string,
-    here: string,
+    lit: ChildMark,
+    here: ChildMark,
   ): void {
     const child = door.child();
     const quad = door.quad();
     const fog = door.fog();
-    const isLit = child.id === lit;
-    const isHere = child.id === here;
+    const isLit = lit.marks(child.id);
+    const isHere = here.marks(child.id);
     const named = isLit || isHere;
     // A named door's own ink: yellow where you stand, white where you point.
     const accent = isHere ? 'yl' : 'wh';

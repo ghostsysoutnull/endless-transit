@@ -7,6 +7,7 @@ import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
 import type { Sketch } from './Sketch.ts';
+import type { ChildMark } from './ChildMark.ts';
 
 /** A picture's own view model and the picture: each call handed on with the view model it was made for. Value object. */
 export class Sketched<VM extends SceneVM<SceneChild>> implements Sketch {
@@ -35,9 +36,9 @@ export class Sketched<VM extends SceneVM<SceneChild>> implements Sketch {
     size: PictureSize,
     palette: Palette,
     time: number,
-    lit: string,
+    lit: ChildMark,
     view: number,
-    here: string,
+    here: ChildMark,
   ): void {
     this.#picture.paint(painter, this.#vm, size, palette, time, lit, view, here);
   }

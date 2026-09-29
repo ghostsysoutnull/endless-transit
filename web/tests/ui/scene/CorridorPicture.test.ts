@@ -14,6 +14,8 @@ import type { HallEnd } from '#ui/scene/HallEnd.ts';
 import { FrostMark } from '#ui/scene/FrostMark.ts';
 import { GlassPanel } from '#ui/scene/GlassPanel.ts';
 import { LongHall } from '#ui/scene/LongHall.ts';
+import { MarkedChild } from '#ui/scene/MarkedChild.ts';
+import { NoChild } from '#ui/scene/NoChild.ts';
 import { MetalPanel } from '#ui/scene/MetalPanel.ts';
 import { PlainMark } from '#ui/scene/PlainMark.ts';
 import { PlainPanel } from '#ui/scene/PlainPanel.ts';
@@ -213,7 +215,16 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
   test('the same moment and view paint the same calls; another view walks the hall', () => {
     const paint = (view: number): string[] => {
       const painter = new RecordingPainter();
-      picture().paint(painter, corridor(12), PHONE, palette(painter.asked), 900, 'enter:3', view, '');
+      picture().paint(
+        painter,
+        corridor(12),
+        PHONE,
+        palette(painter.asked),
+        900,
+        new MarkedChild('enter:3'),
+        view,
+        new NoChild(),
+      );
       return painter.calls;
     };
     expect(paint(2)).toEqual(paint(2));
@@ -231,9 +242,9 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
             size,
             palette(painter.asked),
             700,
-            'enter:4',
+            new MarkedChild('enter:4'),
             view,
-            'enter:6',
+            new MarkedChild('enter:6'),
           );
           expect(
             [...painter.asked].filter((t) => !TEXT_INKS.includes(t) && !SURFACE_INKS.includes(t)),
@@ -260,9 +271,9 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
         PHONE,
         palette(painter.asked),
         0,
-        '',
+        new NoChild(),
         0,
-        '',
+        new NoChild(),
       );
       return painter.asked;
     };
@@ -274,7 +285,16 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
 
   test('the door you stand by and the lit one are named by their material; the rest go by their number', () => {
     const painter = new RecordingPainter();
-    picture().paint(painter, corridor(6), PHONE, palette(painter.asked), 0, 'enter:2', 0, 'enter:1');
+    picture().paint(
+      painter,
+      corridor(6),
+      PHONE,
+      palette(painter.asked),
+      0,
+      new MarkedChild('enter:2'),
+      0,
+      new MarkedChild('enter:1'),
+    );
     const words = painter.calls.filter((call) => call.startsWith('fillText('));
     expect(words.some((call) => call.includes('2 · Hatch 2,') && call.includes('<yl>'))).toBe(true);
     expect(words.some((call) => call.includes('3 · Hatch 3,') && call.includes('<wh>'))).toBe(true);
@@ -285,7 +305,16 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
     const drawn = (doors: number, view: number): number => {
       const end = new RecordingHallEnd();
       const painter = new RecordingPainter();
-      picture(end).paint(painter, corridor(doors), PHONE, palette(painter.asked), 0, '', view, '');
+      picture(end).paint(
+        painter,
+        corridor(doors),
+        PHONE,
+        palette(painter.asked),
+        0,
+        new NoChild(),
+        view,
+        new NoChild(),
+      );
       return end.drawn;
     };
     expect(drawn(4, 2)).toBe(1);
@@ -294,7 +323,7 @@ describe('the corridor painted: the stylesheet’s inks, words a phone can read'
 
   test('entering from the elevator you stand by the first door', () => {
     const painter = new RecordingPainter();
-    picture().paint(painter, corridor(6), PHONE, palette(painter.asked), 0, '', 0, '');
+    picture().paint(painter, corridor(6), PHONE, palette(painter.asked), 0, new NoChild(), 0, new NoChild());
     expect(painter.calls.some((call) => call.startsWith('fillText(1 · Hatch 1,'))).toBe(true);
   });
 });

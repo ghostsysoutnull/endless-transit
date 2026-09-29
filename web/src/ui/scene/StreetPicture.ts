@@ -7,6 +7,7 @@ import type { ScenePicture } from './ScenePicture.ts';
 import type { StreetVM } from './StreetVM.ts';
 import { StillCamera } from './StillCamera.ts';
 import type { StreetParts } from './StreetParts.ts';
+import type { ChildMark } from './ChildMark.ts';
 
 /** The strip under the ground line the numbers are written in. */
 const LABEL = 16;
@@ -80,7 +81,7 @@ export class StreetPicture implements ScenePicture<StreetVM> {
     size: PictureSize,
     palette: Palette,
     time: number,
-    lit: string,
+    lit: ChildMark,
   ): void {
     const seconds = time / 1000;
     const { width, height } = size;
@@ -117,11 +118,11 @@ export class StreetPicture implements ScenePicture<StreetVM> {
     });
   }
 
-  #building(painter: Painter, building: Standing, palette: Palette, seconds: number, lit: string): void {
+  #building(painter: Painter, building: Standing, palette: Palette, seconds: number, lit: ChildMark): void {
     const { child, middle, base, width, height, roof } = building;
     const left = middle - width / 2;
     const top = base - height;
-    const isLit = child.id === lit;
+    const isLit = lit.marks(child.id);
     const fade = child.sealed ? 0.45 : 1;
     painter.fillStyle = palette(isLit ? 'rule-hi' : 'rule');
     painter.globalAlpha = isLit ? 1 : 0.85 * fade;

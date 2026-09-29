@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
+import { MarkedChild } from '#ui/scene/MarkedChild.ts';
+import { NoChild } from '#ui/scene/NoChild.ts';
 import type { SceneHit } from '#ui/scene/SceneHit.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import type { StreetVM } from '#ui/scene/StreetVM.ts';
@@ -112,7 +114,7 @@ describe('the street picture’s variations, pinned before its hash and roofs mo
       children: street(9).children.map((child, index) => ({ ...child, sealed: index === 7 })),
     };
     const painter = new RecordingPainter();
-    picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, 'enter:2');
+    picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, new MarkedChild('enter:2'));
     let hash = 0x811c9dc5;
     const text = painter.calls.join('\n');
     for (let at = 0; at < text.length; at++) {
@@ -128,9 +130,9 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
     const one = new RecordingPainter();
     const two = new RecordingPainter();
     const later = new RecordingPainter();
-    picture.paint(one, street(10), PHONE, palette(one.asked), 1200, '');
-    picture.paint(two, street(10), PHONE, palette(two.asked), 1200, '');
-    picture.paint(later, street(10), PHONE, palette(later.asked), 1700, '');
+    picture.paint(one, street(10), PHONE, palette(one.asked), 1200, new NoChild());
+    picture.paint(two, street(10), PHONE, palette(two.asked), 1200, new NoChild());
+    picture.paint(later, street(10), PHONE, palette(later.asked), 1700, new NoChild());
     expect(one.calls).toEqual(two.calls);
     expect(later.calls).not.toEqual(one.calls);
   });
@@ -138,7 +140,7 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
   test('every ink is one of the listed tokens; every word or number is 12 px or more', () => {
     for (const size of [PHONE, WIDE]) {
       const painter = new RecordingPainter();
-      picture.paint(painter, street(20), size, palette(painter.asked), 800, 'enter:3');
+      picture.paint(painter, street(20), size, palette(painter.asked), 800, new MarkedChild('enter:3'));
       expect(
         [...painter.asked].filter((token) => !TEXT_INKS.includes(token) && !SURFACE_INKS.includes(token)),
       ).toEqual([]);
@@ -153,7 +155,7 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
 
   test('each building is numbered under its feet by the number its row goes by, twenty too', () => {
     const painter = new RecordingPainter();
-    picture.paint(painter, street(20), PHONE, palette(painter.asked), 0, '');
+    picture.paint(painter, street(20), PHONE, palette(painter.asked), 0, new NoChild());
     const numbers = painter.calls
       .filter((call) => call.startsWith('fillText('))
       .map((call) => call.slice(9).split(',')[0]);
@@ -163,8 +165,8 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
   test('the lit building is outlined in yellow; none is when nothing is lit', () => {
     const plain = new RecordingPainter();
     const lit = new RecordingPainter();
-    picture.paint(plain, street(6), PHONE, palette(plain.asked), 0, '');
-    picture.paint(lit, street(6), PHONE, palette(lit.asked), 0, 'enter:4');
+    picture.paint(plain, street(6), PHONE, palette(plain.asked), 0, new NoChild());
+    picture.paint(lit, street(6), PHONE, palette(lit.asked), 0, new MarkedChild('enter:4'));
     const outlines = (painter: RecordingPainter) =>
       painter.calls.filter((call) => call.startsWith('strokeRect(') || call.startsWith('stroke(<yl>'));
     expect(lit.calls.filter((call) => call.startsWith('stroke(<yl>')).length).toBeGreaterThan(
