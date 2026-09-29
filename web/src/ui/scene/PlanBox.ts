@@ -48,27 +48,29 @@ export class PlanBox {
 
   /** Whether its left or right wall stands at this x. */
   sideAt(x: number): boolean {
-    return Math.abs(this.left() - x) < EDGE || Math.abs(this.right() - x) < EDGE;
+    return this.#meets(this.left(), x) || this.#meets(this.right(), x);
   }
 
   /** Whether its top or bottom wall stands at this y. */
   levelAt(y: number): boolean {
-    return Math.abs(this.top() - y) < EDGE || Math.abs(this.bottom() - y) < EDGE;
+    return this.#meets(this.top(), y) || this.#meets(this.bottom(), y);
   }
 
   /**
    * The doorway into a box that shares a wall with this one: in the middle of the shared stretch of this box's right
-   * or left wall (the other's left or right), else of its bottom or top. The layout only asks it of boxes that touch.
+   * or left wall (the other's left or right), else of its bottom or top (the other's top or bottom). A box that
+   * shares no wall with this one has no doorway to it.
    */
   doorTo(next: PlanBox): PlanDoor {
-    const near = (one: number, other: number): boolean => Math.abs(one - other) < EDGE;
     const top = Math.max(this.top(), next.top());
     const bottom = Math.min(this.bottom(), next.bottom());
     const left = Math.max(this.left(), next.left());
     const right = Math.min(this.right(), next.right());
-    if (near(this.right(), next.left())) return new SideDoor(this.right(), top, bottom);
-    if (near(this.left(), next.right())) return new SideDoor(this.left(), top, bottom);
-    return new LevelDoor(near(this.bottom(), next.top()) ? this.bottom() : this.top(), left, right);
+    if (this.#meets(this.right(), next.left())) return new SideDoor(this.right(), top, bottom);
+    if (this.#meets(this.left(), next.right())) return new SideDoor(this.left(), top, bottom);
+    if (this.#meets(this.bottom(), next.top())) return new LevelDoor(this.bottom(), left, right);
+    if (this.#meets(this.top(), next.bottom())) return new LevelDoor(this.top(), left, right);
+    throw new RangeError('two boxes that share no wall have no doorway between them');
   }
 
   area(): number {
@@ -99,5 +101,10 @@ export class PlanBox {
       this.#width === other.#width &&
       this.#height === other.#height
     );
+  }
+
+  /** Two walls closer than `EDGE` are one. */
+  #meets(one: number, other: number): boolean {
+    return Math.abs(one - other) < EDGE;
   }
 }

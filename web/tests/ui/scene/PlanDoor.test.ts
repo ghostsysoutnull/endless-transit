@@ -30,6 +30,10 @@ describe('a doorway on the plan (U03)', () => {
     expect([start.x(), end.x()]).toEqual([0, 0.4]);
   });
 
+  test('two boxes that share no wall have no doorway between them', () => {
+    expect(() => new PlanBox(0, 0, 1, 1).doorTo(new PlanBox(0, 5, 1, 1))).toThrow(RangeError);
+  });
+
   test('a doorway needs wall to stand in', () => {
     expect(() => new SideDoor(1, 2, 2)).toThrow(RangeError);
     expect(() => new LevelDoor(1, 3, 2)).toThrow(RangeError);
