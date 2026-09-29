@@ -25,6 +25,7 @@ import { CoherenceFx } from '#ui/scene/CoherenceFx.ts';
 import { EaseInOut } from '#ui/scene/EaseInOut.ts';
 import { EaseOut } from '#ui/scene/EaseOut.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
+import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
@@ -106,9 +107,8 @@ new Shell(
         new SceneViewMaker({
           clock,
           motion,
-          canvases: canvasMaker,
+          canvases: new SceneCanvasMaker({ canvases: canvasMaker, tear: new TearPass(new CoherenceFx()) }),
           sliders: new SliderMaker(),
-          tear: new TearPass(new CoherenceFx()),
           picks: new SceneEvents(),
           ride: new EaseInOut(),
           coast: new EaseOut(),

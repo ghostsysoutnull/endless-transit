@@ -1,5 +1,4 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import type { PixelCanvas } from '#ui/canvas/PixelCanvas.ts';
 import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Drag } from './Drag.ts';
@@ -7,6 +6,7 @@ import { MarkedChild } from './MarkedChild.ts';
 import { NoChild } from './NoChild.ts';
 import { PictureDrag } from './PictureDrag.ts';
 import type { SceneCamera } from './SceneCamera.ts';
+import type { SceneCanvas } from './SceneCanvas.ts';
 import { StillCamera } from './StillCamera.ts';
 import type { SceneSlider } from './SceneSlider.ts';
 import { SliderDrag } from './SliderDrag.ts';
@@ -44,11 +44,11 @@ export class SceneView implements DrawnScene {
   readonly #parts: SceneViewParts;
   /** Told which child the picture points at (or none): the list lights its twin. */
   readonly #onLight: (mark: ChildMark) => void;
-  /** What a mount puts in the host, made together and torn down together: the canvas, the slider, the listeners. */
+  /** What a mount puts in the host, made together and torn down together: the canvas, the slider and its listeners. */
   #mounted:
     | {
         readonly host: HTMLElement;
-        readonly canvas: PixelCanvas;
+        readonly canvas: SceneCanvas;
         readonly slider: SceneSlider;
         readonly listeners: AbortController;
       }
@@ -81,55 +81,30 @@ export class SceneView implements DrawnScene {
   }
 
   mount(host: HTMLElement): void {
-    const canvas = this.#parts.canvases.mount(host, () => {
-      this.#fit();
-      if (this.#leave === undefined) this.#paint(STILL);
+    const canvas = this.#parts.canvases.mount(host, {
+      down: (event) => {
+        this.#downOnPicture(event);
+      },
+      move: (event) => {
+        this.#move(event);
+      },
+      up: (event) => {
+        this.#up(event);
+      },
+      leave: () => {
+        if (this.#drag === undefined) this.#pointAt(new NoChild());
+      },
+      tap: (event) => {
+        this.#tap(event);
+      },
+      resized: () => {
+        this.#fit();
+        if (this.#leave === undefined) this.#paint(STILL);
+      },
     });
     const slider = this.#parts.sliders.mount(host);
     const listeners = new AbortController();
     const signal = listeners.signal;
-    canvas.listen(
-      'pointerdown',
-      (event) => {
-        this.#downOnPicture(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointermove',
-      (event) => {
-        this.#move(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointerup',
-      (event) => {
-        this.#up(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointercancel',
-      (event) => {
-        this.#up(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointerleave',
-      () => {
-        if (this.#drag === undefined) this.#pointAt(new NoChild());
-      },
-      signal,
-    );
-    canvas.listen(
-      'click',
-      (event) => {
-        this.#tap(event);
-      },
-      signal,
-    );
     slider.listen(
       'pointerdown',
       (event) => {
@@ -341,23 +316,13 @@ export class SceneView implements DrawnScene {
     const sketch = this.#sketch;
     const { width, height } = this.#size;
     if (canvas === undefined || sketch === undefined || width === 0 || height === 0) return;
-    const palette = canvas.palette();
-    canvas.paint((context) => {
-      context.globalAlpha = 1;
-      const zoom = this.#zoomAt(time);
-      context.save();
-      zoom.apply(context, this.#size);
-      sketch.paint(context, this.#size, palette, time, this.#lit, this.#view, this.#here);
-      context.restore();
-      zoom.fade(context, this.#size, palette('ground'));
-      this.#parts.tear.draw(context, canvas, {
-        size: this.#size,
-        palette,
-        noise: sketch.frame().noise,
-        decay: sketch.frame().decay,
-        time,
-      });
-    });
+    const frame = sketch.frame();
+    canvas.paint(
+      { size: this.#size, zoom: this.#zoomAt(time), noise: frame.noise, decay: frame.decay, time },
+      (context, palette) => {
+        sketch.paint(context, this.#size, palette, time, this.#lit, this.#view, this.#here);
+      },
+    );
   }
 
   /** The zoom at this moment: a trip's once its ride is over (anchored where the child then stands), the way back out, or none (scale 1). */
