@@ -42,3 +42,6 @@ Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work
   another test doesn't is deleted, never rewritten.
 - **A tool that fails is reported when it fails**: never silently replaced by a weaker one; every agent's brief says so.
 - **`git mv` stages at once**: `git diff --cached --name-only` is empty before a commit's own `git add`.
+- **A review chain has a stopping rule**: the design check runs once per built piece; a fix commit is checked only on
+  the lines it touched; a finding that is only tidying is logged, not chased; when a round finds only polish, stop and
+  tell the user what the chain costs.

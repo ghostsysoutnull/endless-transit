@@ -64,6 +64,11 @@ facts so only the floor's kind changed). `LocationKind`'s constructor builds `In
 `'indexLabel' in facts` (OO 3, 4, 5). **Fix:** the facts carry the counter (`count: new Indexed('ORBIT')` or
 `new Unindexed()`), passed by each of the about 20 kinds; the constructor stores it.
 
+### HK-033 — the room's picture repeats the scene's height floor and ceiling
+**Found:** 2026-09-29, the design check of `b2db464` (U03a). `app.css`'s `.world[data-drawn]:has(.objects) > .scene`
+repeats `clamp(200px, …, 44dvh)` from the drawn scene's rule, changing only the space held back (395 px, not 363 px).
+**Fix:** one `height` rule reading `var(--scene-reserve, 363px)`; the room's rule sets only `--scene-reserve: 395px`.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators
