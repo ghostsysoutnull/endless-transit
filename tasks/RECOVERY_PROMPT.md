@@ -1,9 +1,9 @@
 # Handover
 
-- **Branch:** `master` (U02 merged; the next iteration starts its own branch).
+- **Branch:** `master` (U02 merged and its branch deleted; the next iteration starts its own branch).
 - **Next:** U03 of the UI rework, the apartment and the room — its row in `tasks/UI_QUEUE.md`; plan, grill, build.
-  U02 is built but not yet published: its live build and the drag's feel on the phone wait for the user's word
-  (`tasks/ui/U02.md`, "As built").
+  U02 is published as build `b67dfe9`; the user's phone check of it (the drag's feel, HK-029, the tower slider's `0`
+  half under its box) is pending — what it finds comes first (`tasks/ui/U02.md`, "As built").
 - **Open threads:**
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
   - ships (CONCEPT-001): the verdicts in `docs/analysis/SHIPS_CONCEPT.md`, section 7, none judged;
