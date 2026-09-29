@@ -1,8 +1,9 @@
-import type { Level } from '#engine/model/Level.ts';
+import type { LevelRow } from '#engine/model/LevelRow.ts';
 import type { LevelKind } from '#engine/model/LevelKind.ts';
 import type { Portrait } from '#engine/model/Portrait.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { HudVM } from './HudVM.ts';
+import { ListedParts } from './ListedParts.ts';
 import type { Pads } from './Pads.ts';
 import type { PadGroup } from './PadGroup.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
@@ -29,7 +30,7 @@ export class FloorPad implements Pads {
     if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
     return portrait.drawnBy<HudVM['pad']>({
       street: () => null,
-      tower: (tower) => this.#pad(new Map(tower.rows.map((row) => [row.address, row.level])), travel, rows),
+      tower: (tower) => this.#pad(new ListedParts(tower.rows), travel, rows),
       corridor: () => null,
       unseen: () => null,
     });
@@ -37,16 +38,13 @@ export class FloorPad implements Pads {
 
   /** The pad of the numbered places, each at its level. */
   #pad(
-    levels: ReadonlyMap<string, Level>,
+    levels: ListedParts<LevelRow>,
     travel: readonly GameOption[],
     rows: readonly TravelRowVM[],
   ): HudVM['pad'] {
-    const numbered = rows
-      .flatMap((row, index) => {
-        const option = travel[index];
-        const level = option === undefined ? undefined : levels.get(option.address);
-        return option === undefined || level === undefined ? [] : [{ row, option, level }];
-      })
+    const numbered = levels
+      .drawn(travel, (option, part, index) => ({ row: rows[index], option, level: part.level }))
+      .flatMap(({ row, option, level }) => (row === undefined ? [] : [{ row, option, level }]))
       .sort((one, other) => one.level.number() - other.level.number());
     const tens = travel.length > PAD_GROUP;
     const groups = new Map<number, (typeof numbered)[number][]>();

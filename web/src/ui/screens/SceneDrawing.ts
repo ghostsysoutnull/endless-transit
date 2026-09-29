@@ -2,6 +2,7 @@ import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { Drawings } from './Drawings.ts';
+import { ListedParts } from './ListedParts.ts';
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
@@ -31,17 +32,11 @@ export class SceneDrawing implements Drawings {
       level: null,
       door: null,
     });
-    /** The listed places the portrait draws a part for, each with its part; a place it has none for is not drawn. */
+    /** The listed places the portrait draws a part for, each with its part. */
     const drawn = <P extends { readonly address: string }>(
       parts: readonly P[],
       draw: (option: GameOption, part: P) => SceneVM['children'][number],
-    ): SceneVM['children'] => {
-      const byAddress = new Map(parts.map((part) => [part.address, part]));
-      return travel.flatMap((option) => {
-        const part = byAddress.get(option.address);
-        return part === undefined ? [] : [draw(option, part)];
-      });
-    };
+    ): SceneVM['children'] => new ListedParts(parts).drawn(travel, draw);
     return place.portrait.drawnBy<SceneVM>({
       street(buildings) {
         return {
