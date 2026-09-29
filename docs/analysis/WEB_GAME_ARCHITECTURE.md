@@ -211,7 +211,8 @@ size — `TravelCamera` (the tower's car, the corridor's walk: range, pace, coas
 `SceneTrip` (ride to the child's stop, zoom when the picture zooms, then the pick); motion is `Tween`s on the clock;
 `Zoom` is the canvas transform at one moment and `TearPass` draws the tear over the frame. The lit child and the one
 you stand by are a `ChildMark` (`MarkedChild` or `NoChild`). `SceneView`'s parts come whole in `SceneViewParts`, its
-canvas a `PixelCanvas` made by `CanvasMaker` (a canvas in its host within the `PixelBudget`, inked where it sits).
+canvas a `SceneCanvas` made by `SceneCanvasMaker` (U03: a `PixelCanvas` from `CanvasMaker` — a canvas in its host
+within the `PixelBudget`, inked where it sits — listened to through `CanvasInput`, painted under the zoom and torn).
 `TowerPicture` draws a row per level (a floor's corridor as a line in its shape, a tick per door; the Layers faint in
 the void's red below the bedrock), the roof `Roof` picks, the car and the gauge; `CorridorPicture` walks a `HallView`
 (a pair of doors every 2.2 units) with one part per key from `CorridorParts` — a `HallShape` per corridor shape, a

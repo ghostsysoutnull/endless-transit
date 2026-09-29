@@ -1,9 +1,9 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PixelCanvas } from '#ui/canvas/PixelCanvas.ts';
-import type { Seed } from '#engine/rng/Seed.ts';
 import type { PointerHold } from './PointerHold.ts';
 import type { Tear } from './Tear.ts';
+import type { TearFrame } from './TearFrame.ts';
 import type { Zoom } from './Zoom.ts';
 
 /**
@@ -62,13 +62,7 @@ export class SceneCanvas implements PointerHold {
 
   /** One frame: the picture drawn under the zoom, faded to the ground as far as the zoom has gone, then torn. */
   paint(
-    frame: {
-      readonly size: PictureSize;
-      readonly zoom: Zoom;
-      readonly noise: Seed;
-      readonly decay: number;
-      readonly time: number;
-    },
+    frame: Omit<TearFrame, 'palette'> & { readonly zoom: Zoom },
     draw: (context: CanvasRenderingContext2D, palette: Palette) => void,
   ): void {
     const canvas = this.#canvas;
@@ -80,13 +74,7 @@ export class SceneCanvas implements PointerHold {
       draw(context, palette);
       context.restore();
       frame.zoom.fade(context, frame.size, palette('ground'));
-      this.#tear.draw(context, canvas, {
-        size: frame.size,
-        palette,
-        noise: frame.noise,
-        decay: frame.decay,
-        time: frame.time,
-      });
+      this.#tear.draw(context, canvas, { ...frame, palette });
     });
   }
 
