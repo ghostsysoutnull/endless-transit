@@ -1,9 +1,11 @@
+import type { ChildMark } from './ChildMark.ts';
 import type { Sketch } from './Sketch.ts';
 import type { StagedScene } from './StagedScene.ts';
 
 /**
- * The scene the stage shows (U03): its host element, the sketch it shows, the host drawing it — and whether that host
- * was made for this sketch, so it shows it already. Value object: kept, it is a new one with the new sketch.
+ * The scene the stage shows (U03): its host element, the sketch it shows and the host drawing it — and whether that
+ * host was made for this sketch, so it shows it already. Immutable: kept for the next sketch, it is a new record.
+ * What the stage asks of the scene goes through it.
  */
 export class ShownScene<S extends Sketch> {
   readonly #host: HTMLElement;
@@ -33,7 +35,23 @@ export class ShownScene<S extends Sketch> {
     if (!this.#fresh) this.#view.render(this.#sketch);
   }
 
-  view(): StagedScene<S> {
-    return this.#view;
+  arrive(id: string): void {
+    this.#view.arrive(id);
+  }
+
+  leads(id: string): boolean {
+    return this.#view.leads(id);
+  }
+
+  enter(id: string): void {
+    this.#view.enter(id);
+  }
+
+  light(mark: ChildMark): void {
+    this.#view.light(mark);
+  }
+
+  dispose(): void {
+    this.#view.dispose();
   }
 }
