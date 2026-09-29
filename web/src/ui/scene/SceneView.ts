@@ -1,19 +1,20 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import type { PixelCanvas } from '#ui/canvas/PixelCanvas.ts';
-import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Drag } from './Drag.ts';
 import { MarkedChild } from './MarkedChild.ts';
 import { NoChild } from './NoChild.ts';
 import { PictureDrag } from './PictureDrag.ts';
 import type { SceneCamera } from './SceneCamera.ts';
+import type { SceneCanvas } from './SceneCanvas.ts';
 import { StillCamera } from './StillCamera.ts';
 import type { SceneSlider } from './SceneSlider.ts';
 import { SliderDrag } from './SliderDrag.ts';
 import type { SceneHit } from './SceneHit.ts';
+import { SceneHits } from './SceneHits.ts';
 import { SceneTrip } from './SceneTrip.ts';
 import type { SceneViewParts } from './SceneViewParts.ts';
-import type { Sketch } from './Sketch.ts';
+import type { LineScene } from './LineScene.ts';
+import type { LineSketch } from './LineSketch.ts';
 import { Tween } from './Tween.ts';
 import { Zoom } from './Zoom.ts';
 
@@ -40,23 +41,23 @@ const GLIDE = 320;
  * still, the view jumps, a tap enters at once and nothing zooms; the tear is drawn but does not move. The canvas is
  * the image a reader hears named; the slider is its own control beside it.
  */
-export class SceneView implements DrawnScene {
+export class SceneView implements LineScene {
   readonly #parts: SceneViewParts;
   /** Told which child the picture points at (or none): the list lights its twin. */
   readonly #onLight: (mark: ChildMark) => void;
-  /** What a mount puts in the host, made together and torn down together: the canvas, the slider, the listeners. */
+  /** What a mount puts in the host, made together and torn down together: the canvas, the slider and its listeners. */
   #mounted:
     | {
         readonly host: HTMLElement;
-        readonly canvas: PixelCanvas;
+        readonly canvas: SceneCanvas;
         readonly slider: SceneSlider;
         readonly listeners: AbortController;
       }
     | undefined;
   /** What it draws: a view model bound to its picture. */
-  #sketch: Sketch | undefined;
+  #sketch: LineSketch | undefined;
   #size: PictureSize = { width: 0, height: 0 };
-  #hits: readonly SceneHit[] = [];
+  #hits = new SceneHits([]);
   #lit: ChildMark = new NoChild();
   /** The child you stand by: the one you came back out of, until the picture shows another place. */
   #here: ChildMark = new NoChild();
@@ -81,55 +82,30 @@ export class SceneView implements DrawnScene {
   }
 
   mount(host: HTMLElement): void {
-    const canvas = this.#parts.canvases.mount(host, () => {
-      this.#fit();
-      if (this.#leave === undefined) this.#paint(STILL);
+    const canvas = this.#parts.canvases.mount(host, {
+      down: (event) => {
+        this.#downOnPicture(event);
+      },
+      move: (event) => {
+        this.#move(event);
+      },
+      up: (event) => {
+        this.#up(event);
+      },
+      leave: () => {
+        if (this.#drag === undefined) this.#pointAt(new NoChild());
+      },
+      tap: (event) => {
+        this.#tap(event);
+      },
+      resized: () => {
+        this.#fit();
+        if (this.#leave === undefined) this.#paint(STILL);
+      },
     });
     const slider = this.#parts.sliders.mount(host);
     const listeners = new AbortController();
     const signal = listeners.signal;
-    canvas.listen(
-      'pointerdown',
-      (event) => {
-        this.#downOnPicture(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointermove',
-      (event) => {
-        this.#move(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointerup',
-      (event) => {
-        this.#up(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointercancel',
-      (event) => {
-        this.#up(event);
-      },
-      signal,
-    );
-    canvas.listen(
-      'pointerleave',
-      () => {
-        if (this.#drag === undefined) this.#pointAt(new NoChild());
-      },
-      signal,
-    );
-    canvas.listen(
-      'click',
-      (event) => {
-        this.#tap(event);
-      },
-      signal,
-    );
     slider.listen(
       'pointerdown',
       (event) => {
@@ -169,7 +145,7 @@ export class SceneView implements DrawnScene {
   }
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
-  render(sketch: Sketch): void {
+  render(sketch: LineSketch): void {
     const before = this.#sketch?.frame();
     const vm = sketch.frame();
     this.#trip = undefined;
@@ -216,7 +192,7 @@ export class SceneView implements DrawnScene {
       this.#view = this.#camera.clamp(stop);
       this.#layout();
     }
-    const hit = this.#hits.find((each) => each.id === id);
+    const hit = this.#hits.of(id);
     if (hit === undefined || this.#parts.motion.reduced() || !this.#camera.zooms()) {
       if (this.#leave === undefined) this.#paint(STILL);
       return;
@@ -319,7 +295,7 @@ export class SceneView implements DrawnScene {
   #layout(): void {
     const sketch = this.#sketch;
     if (sketch === undefined) return;
-    this.#hits = sketch.layout(this.#size, this.#view);
+    this.#hits = new SceneHits(sketch.layout(this.#size, this.#view));
     this.#value();
   }
 
@@ -341,23 +317,13 @@ export class SceneView implements DrawnScene {
     const sketch = this.#sketch;
     const { width, height } = this.#size;
     if (canvas === undefined || sketch === undefined || width === 0 || height === 0) return;
-    const palette = canvas.palette();
-    canvas.paint((context) => {
-      context.globalAlpha = 1;
-      const zoom = this.#zoomAt(time);
-      context.save();
-      zoom.apply(context, this.#size);
-      sketch.paint(context, this.#size, palette, time, this.#lit, this.#view, this.#here);
-      context.restore();
-      zoom.fade(context, this.#size, palette('ground'));
-      this.#parts.tear.draw(context, canvas, {
-        size: this.#size,
-        palette,
-        noise: sketch.frame().noise,
-        decay: sketch.frame().decay,
-        time,
-      });
-    });
+    const frame = sketch.frame();
+    canvas.paint(
+      { size: this.#size, zoom: this.#zoomAt(time), noise: frame.noise, decay: frame.decay, time },
+      (context, palette) => {
+        sketch.paint(context, this.#size, palette, time, this.#lit, this.#view, this.#here);
+      },
+    );
   }
 
   /** The zoom at this moment: a trip's once its ride is over (anchored where the child then stands), the way back out, or none (scale 1). */
@@ -372,10 +338,7 @@ export class SceneView implements DrawnScene {
   #hitAt(event: MouseEvent): SceneHit | undefined {
     const point = this.#mounted?.canvas.pointAt(event);
     if (point === undefined) return undefined;
-    const { x, y } = point;
-    return this.#hits.find(
-      (hit) => x >= hit.x && x <= hit.x + hit.width && y >= hit.y && y <= hit.y + hit.height,
-    );
+    return this.#hits.at(point);
   }
 
   /** Pointed at in the picture: drawn lit here, and told to the screen so the list lights its twin. */
@@ -511,8 +474,8 @@ export class SceneView implements DrawnScene {
     const to = stop === undefined ? this.#view : camera.clamp(stop);
     const distance = Math.abs(to - this.#view);
     // Where the child will stand once the ride is over: the point the zoom centres on (the picture's layout is pure).
-    const landed = this.#sketch === undefined ? [] : this.#sketch.layout(this.#size, to);
-    const anchor = landed.find((hit) => hit.id === id)?.anchor ?? {
+    const landed = new SceneHits(this.#sketch === undefined ? [] : this.#sketch.layout(this.#size, to));
+    const anchor = landed.of(id)?.anchor ?? {
       x: this.#size.width / 2,
       y: this.#size.height / 2,
     };

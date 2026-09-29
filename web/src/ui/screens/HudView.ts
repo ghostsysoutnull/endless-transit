@@ -9,13 +9,12 @@ import { NoChild } from '#ui/scene/NoChild.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
 import type { View } from '#ui/View.ts';
 import type { CanvasViews } from './CanvasViews.ts';
-import type { DrawnScene } from './DrawnScene.ts';
+import type { DrawnStage } from './DrawnStage.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import type { PictureBook } from './PictureBook.ts';
 import { Retrace } from './Retrace.ts';
-import type { SceneViews } from './SceneViews.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
 type Slot = 'pane' | 'map' | 'trace';
@@ -56,9 +55,10 @@ export class HudView implements View<HudVM> {
     trace: TracePictureVM;
   }>;
   readonly #book: PictureBook;
-  readonly #views: SceneViews;
-  /** The scene drawn now: its host, what it draws (bound to its picture) and the view drawing it. */
-  #scene: { readonly host: HTMLElement; readonly sketch: Sketch; readonly view: DrawnScene } | undefined;
+  /** The screen's own listeners: made at each mount (the shell mounts the screen again after a prompt), taken away with it. */
+  #listeners = new AbortController();
+  /** Which scene shows the place's picture now (U03: `SceneStage`). */
+  readonly #stage: DrawnStage;
   /** The child lit in the picture and the list, or none. */
   #lit: ChildMark = new NoChild();
   /** The path to the last place shown: the child on it is the one the picture zooms out of. */
@@ -66,10 +66,10 @@ export class HudView implements View<HudVM> {
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
   #group: number | undefined;
 
-  /** The registry binds a drawing to its picture (U01b); the makers make the scene and each canvas the screen carries (U02). */
-  constructor(book: PictureBook, views: SceneViews, canvases: CanvasViews) {
+  /** The registry binds a drawing to its picture (U01b); the stage shows its scene (U03); the makers make each canvas the screen carries (U02). */
+  constructor(book: PictureBook, stage: DrawnStage, canvases: CanvasViews) {
     this.#book = book;
-    this.#views = views;
+    this.#stage = stage;
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
       map: () => canvases.map(),
@@ -77,8 +77,51 @@ export class HudView implements View<HudVM> {
     });
   }
 
+  /**
+   * Every button of the screen that is also drawn in the picture — a row, a pad key, a move, the way out, a relic's
+   * tile — goes through the picture when tapped (U02, U03: it rides, walks or glides there first) and lights its twin
+   * while pointed at or focused: one listener each on the screen, before the shell's own router hears the click.
+   */
   mount(container: HTMLElement): void {
     this.#container = container;
+    this.#listeners = new AbortController();
+    const signal = this.#listeners.signal;
+    container.addEventListener(
+      'click',
+      (event) => {
+        const id = this.#drawnOption(event.target);
+        if (id !== undefined) this.#through(event, id);
+      },
+      // Heard on the way down, before the shell's router hears it on the way up the same element.
+      { signal, capture: true },
+    );
+    for (const type of ['pointerover', 'focusin'] as const) {
+      container.addEventListener(
+        type,
+        (event) => {
+          const id = this.#drawnOption(event.target);
+          if (id !== undefined) this.#light(new MarkedChild(id));
+        },
+        { signal },
+      );
+    }
+    for (const type of ['pointerout', 'focusout'] as const) {
+      container.addEventListener(
+        type,
+        (event) => {
+          const id = this.#drawnOption(event.target);
+          if (id !== undefined && this.#drawnOption(event.relatedTarget) !== id) this.#light(new NoChild());
+        },
+        { signal },
+      );
+    }
+  }
+
+  /** The option id of the button an event reached, when the place's picture draws that option too; none otherwise. */
+  #drawnOption(target: EventTarget | null): string | undefined {
+    if (!(target instanceof Element)) return undefined;
+    const id = target.closest<HTMLElement>('button[data-option]')?.dataset.option;
+    return this.#vm?.drawing.frame().children.some((child) => child.id === id) === true ? id : undefined;
   }
 
   /** A step's render: the dock folds again; the view's other toggles keep their state. */
@@ -88,13 +131,12 @@ export class HudView implements View<HudVM> {
       this.#lit = new NoChild();
       this.#group = undefined;
     }
-    const kept = this.#scene?.view;
     this.#paint(vm);
-    // A view kept from the last render is shown the new frame; one made just now already shows it.
-    if (this.#scene !== undefined && this.#scene.view === kept) this.#scene.view.render(this.#scene.sketch);
+    // A scene kept from the last render is shown the new frame; one made just now already shows it.
+    this.#stage.redraw();
     const drawing = vm.drawing.frame();
     const from = this.#came.from(drawing.address, drawing.children);
-    if (from !== undefined) this.#scene?.view.arrive(from.id);
+    if (from !== undefined) this.#stage.arrive(from.id);
     this.#came = new Retrace(vm.rail.map((step) => step.address));
   }
 
@@ -108,31 +150,17 @@ export class HudView implements View<HudVM> {
     this.#bindScene(vm.drawing.sketchedBy(this.#book));
   }
 
-  /** The scene's view in its host: kept while the host and the picture stay, else made anew and shown the drawing; gone with its host. */
+  /** The scene shown in its host: kept while the host and the picture stay, else made anew; gone with its host. */
   #bindScene(sketch: Sketch): void {
-    const host = this.#host('scene');
-    if (host === null || !sketch.drawn()) {
-      this.#scene?.view.dispose();
-      this.#scene = undefined;
-      return;
-    }
-    if (this.#scene?.host !== host || !this.#scene.sketch.samePicture(sketch)) {
-      this.#scene?.view.dispose();
-      const view = this.#views.make((mark) => {
-        this.#light(mark);
-      });
-      view.mount(host);
-      view.render(sketch);
-      this.#scene = { host, sketch, view };
-    } else {
-      this.#scene = { ...this.#scene, sketch };
-    }
-    this.#scene.view.light(this.#lit);
+    this.#stage.show(this.#host('scene'), sketch, (mark) => {
+      this.#light(mark);
+    });
+    this.#stage.light(this.#lit);
   }
 
   /** A child pointed at in the picture or the list: both light it; nothing re-renders when nothing changed. */
   #light(mark: ChildMark): void {
-    if (mark.equals(this.#lit) || this.#scene === undefined) return;
+    if (mark.equals(this.#lit) || !this.#stage.showing()) return;
     this.#lit = mark;
     // The pad follows what is lit: dragging the car past a ten shows that ten's floors (the mock's `S.group`).
     const group =
@@ -140,14 +168,14 @@ export class HudView implements View<HudVM> {
         ? this.#vm.pad.groups.findIndex((each) => each.keys.some((key) => mark.marks(key.id)))
         : -1;
     if (group >= 0) this.#group = group;
-    this.#scene.view.light(mark);
+    this.#stage.light(mark);
     if (this.#vm !== undefined && this.#container !== undefined)
       render(this.#template(this.#vm), this.#container);
   }
 
   dispose(): void {
-    this.#scene?.view.dispose();
-    this.#scene = undefined;
+    this.#stage.clear();
+    this.#listeners.abort();
     this.#lit = new NoChild();
     this.#canvases.dispose();
     if (this.#container !== undefined) render(nothing, this.#container);
@@ -174,10 +202,9 @@ export class HudView implements View<HudVM> {
 
   /** A row or key tapped on a drawn place whose picture travels: the picture rides there first, and picks it (U02). */
   #through(event: Event, id: string): void {
-    const view = this.#scene?.view;
-    if (view?.leads(id) !== true) return;
+    if (!this.#stage.leads(id)) return;
     event.stopPropagation();
-    view.enter(id);
+    this.#stage.enter(id);
   }
 
   #toggleDebug(): void {
@@ -496,6 +523,7 @@ export class HudView implements View<HudVM> {
                                       type="button"
                                       class="tile take"
                                       data-option=${tile.action.id}
+                                      ?data-lit=${this.#lit.marks(tile.action.id)}
                                       data-relic=${tile.key}
                                       aria-label=${tile.action.label}
                                     >
@@ -549,21 +577,6 @@ export class HudView implements View<HudVM> {
                 class=${['key', key.current ? 'you' : '', key.visited ? 'seen' : ''].join(' ').trim()}
                 data-option=${key.id}
                 ?data-lit=${drawn && this.#lit.marks(key.id)}
-                @click=${(event: Event) => {
-                  this.#through(event, key.id);
-                }}
-                @pointerenter=${() => {
-                  this.#light(new MarkedChild(key.id));
-                }}
-                @pointerleave=${() => {
-                  this.#light(new NoChild());
-                }}
-                @focus=${() => {
-                  this.#light(new MarkedChild(key.id));
-                }}
-                @blur=${() => {
-                  this.#light(new NoChild());
-                }}
               >
                 <span class="num" aria-hidden="true">${key.number}</span><span class="vh">${key.spoken}</span>
               </button>
@@ -611,21 +624,6 @@ export class HudView implements View<HudVM> {
           class=${['row', row.mark === null ? '' : 'you', row.seen === null ? '' : 'seen'].join(' ').trim()}
           data-option=${row.id}
           ?data-lit=${drawn && this.#lit.marks(row.id)}
-          @click=${(event: Event) => {
-            this.#through(event, row.id);
-          }}
-          @pointerenter=${() => {
-            this.#light(new MarkedChild(row.id));
-          }}
-          @pointerleave=${() => {
-            this.#light(new NoChild());
-          }}
-          @focus=${() => {
-            this.#light(new MarkedChild(row.id));
-          }}
-          @blur=${() => {
-            this.#light(new NoChild());
-          }}
         >
           <span class="ord">${row.ordinal}</span
           ><span class="mid"
@@ -663,7 +661,13 @@ export class HudView implements View<HudVM> {
   /** A dock-style button; a `tabIndex` of −1 keeps it out of the tab order (the debug tools, I09). */
   #docked(option: OptionVM, tabIndex?: number): TemplateResult {
     return html`
-      <button type="button" class="pb" data-option=${option.id} tabindex=${tabIndex ?? nothing}>
+      <button
+        type="button"
+        class="pb"
+        data-option=${option.id}
+        ?data-lit=${this.#lit.marks(option.id)}
+        tabindex=${tabIndex ?? nothing}
+      >
         ${option.key === '' ? nothing : html`<kbd aria-hidden="true">${option.key}</kbd>`}<span
           >${option.label}</span
         >

@@ -188,9 +188,21 @@ describe('the atmosphere: walls from the culture, lighting from the era, structu
       colour: 'grey',
       walls: 'bare concrete',
       lighting: 'a crt glow',
+      // The keys of the lists the words came from: the fallback's, not the culture's own.
+      keys: { walls: 'monolith', light: 'analog' },
     });
     expect(sink.messages()).toEqual([
       "[THEME_WARN] no walls file for 'rust' — falling back to 'monolith' (themes/atmosphere/walls/rust.txt)",
     ]);
+  });
+});
+
+describe('the atmosphere names the lists its words came from (U03: what the room is drawn by)', () => {
+  test('in every room, glitched or not, the walls come from the list its walls key names and the lighting from its light key', () => {
+    for (const room of rooms) {
+      const { walls, lighting, keys } = room.atmosphere();
+      expect(library.list(`themes/atmosphere/walls/${keys.walls}`), walls).toContain(walls);
+      expect(library.list(`themes/atmosphere/lighting/${keys.light}`), lighting).toContain(lighting);
+    }
   });
 });

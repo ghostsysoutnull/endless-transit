@@ -25,8 +25,10 @@ import { CoherenceFx } from '#ui/scene/CoherenceFx.ts';
 import { EaseInOut } from '#ui/scene/EaseInOut.ts';
 import { EaseOut } from '#ui/scene/EaseOut.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
+import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
+import { SceneStage } from '#ui/scene/SceneStage.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
 import { SliderMaker } from '#ui/scene/SliderMaker.ts';
@@ -75,6 +77,7 @@ const scenes = new SceneRegistry({
   street: pictures.street(),
   tower: pictures.tower(),
   corridor: pictures.corridor(),
+  plan: pictures.plan(),
 });
 // The world screen's canvases: the map and the trace, drawn in the pictures' one font (U02).
 const font = new CanvasFont();
@@ -103,16 +106,17 @@ new Shell(
       ),
       new HudView(
         scenes,
-        new SceneViewMaker({
-          clock,
-          motion,
-          canvases: canvasMaker,
-          sliders: new SliderMaker(),
-          tear: new TearPass(new CoherenceFx()),
-          picks: new SceneEvents(),
-          ride: new EaseInOut(),
-          coast: new EaseOut(),
-        }),
+        new SceneStage(
+          new SceneViewMaker({
+            clock,
+            motion,
+            canvases: new SceneCanvasMaker({ canvases: canvasMaker, tear: new TearPass(new CoherenceFx()) }),
+            sliders: new SliderMaker(),
+            picks: new SceneEvents(),
+            ride: new EaseInOut(),
+            coast: new EaseOut(),
+          }),
+        ),
         canvases,
       ),
     ),

@@ -32,7 +32,8 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
   a blocking read.
 - **A screen:** a presenter + view stage in `main.ts`. **A drawn place:** a portrait member (a `PortraitReader`
   method) in the engine; its view model, a `Drawing` member and a `PictureBook` method (`SceneRegistry` holds its
-  `ScenePicture`) on the screen — the compiler names every reader to answer. A place with `NoPortrait` keeps the
+  picture: a `ScenePicture` whose view is one number, or a `PlanDrawing` that pans and zooms, each shown by its host
+  kind on `SceneStage`) on the screen — the compiler names every reader to answer. A place with `NoPortrait` keeps the
   screen as it was.
 - **A kind of fragment:** one class and one row in the `FragmentReader`'s table.
 - **A fact about a place:** that place's `remember()`/`recall()` — its one home, and what the save carries.

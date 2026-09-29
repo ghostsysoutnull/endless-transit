@@ -14,9 +14,12 @@ import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
 import type { Origin } from './Origin.ts';
+import { PlanPortrait } from './PlanPortrait.ts';
+import type { Portrait } from './Portrait.ts';
 import type { Relic } from './Relic.ts';
 import { RelicFragment } from './RelicFragment.ts';
 import type { RoomCategory } from './RoomCategory.ts';
+import { RoomLook } from './RoomLook.ts';
 import type { ScanReport } from './ScanReport.ts';
 
 export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
@@ -31,6 +34,8 @@ const READER = new FragmentReader();
 const LOTTERY = 'action';
 const WIN = 0.3;
 const PRIZE = { min: 1_000_000, max: 9_999_999 };
+/** Below this many degrees a room is drawn cold (U03; the mock's line). */
+const COLD = 8;
 /** The scan's WAVE column (ScanCommand.groovy:188-189): resonant, plain, and degraded under an anomaly. */
 const WAVES = { resonant: '≈≈≈', plain: '~~~', degraded: '###' } as const;
 
@@ -233,6 +238,31 @@ export class Room extends Location {
     });
   }
 
+  /** A room is drawn as its apartment's plan, zoomed into it (U03): the rooms as far as they are seen, and its own look. */
+  override portrait(seen: (place: Location) => boolean): Portrait {
+    return new PlanPortrait({
+      rooms: this.#apartment.plan(seen),
+      here: this.address().toString(),
+      look: this.look(),
+    });
+  }
+
+  /** How it is drawn: the lists its walls and lighting came from, the cold, its furniture, the anomaly (U03). */
+  look(): RoomLook {
+    return new RoomLook({
+      walls: this.#atmosphere.keys.walls,
+      light: this.#atmosphere.keys.light,
+      cold: this.#traits.temperature < COLD,
+      furniture: this.#furniture.length,
+      anomaly: this.#apartment.anomaly(),
+    });
+  }
+
+  /** A scan in a room resolves its apartment's plan (U03). */
+  override survey(): void {
+    this.#apartment.survey();
+  }
+
   /** A scan in a room is the apartment's strata overview (ScanCommand.groovy:46-47). */
   override scan(seen: (place: Location) => boolean): ScanReport | undefined {
     return this.#apartment.scan(seen);
@@ -268,6 +298,10 @@ export class Room extends Location {
 
   override moves(): readonly Move[] {
     return MOVES.offered(this);
+  }
+
+  override leadsTo(id: string): Location | undefined {
+    return MOVES.to(this, id);
   }
 
   override move(id: string): Location | undefined {

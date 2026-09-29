@@ -8,6 +8,8 @@ const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
 const LOBBY = `${BUILDING}.0`;
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
+/** The lobby's second door: an apartment of one room — no move, eighteen relics; its first button is a relic's tile (U03). */
+const ONLY_ROOM = `${LOBBY}.0.1.0`;
 /** The narrowest phone we promise (Decision 1). */
 const NARROW = { width: 360, height: 640 };
 
@@ -113,6 +115,7 @@ const KINDS: readonly {
   { kind: 'elevator', save: saveText(SEED, LOBBY), expectKind: 'FLOOR' },
   { kind: 'corridor', save: saveText(SEED, LOBBY, { [LOBBY]: 'corridor' }), expectKind: 'FLOOR' },
   { kind: 'room', save: saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }), expectKind: 'ROOM' },
+  { kind: 'one-room', save: saveText(SEED, ONLY_ROOM, { [LOBBY]: 'corridor' }), expectKind: 'ROOM' },
   {
     kind: 'scan',
     save: saveText(SEED, LOBBY, { [LOBBY]: 'corridor' }),

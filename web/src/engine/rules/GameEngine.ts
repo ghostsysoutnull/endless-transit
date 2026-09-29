@@ -207,6 +207,7 @@ export class GameEngine {
           const player = this.#journey.player();
           const report = here?.scan((place) => player.visited(place));
           if (report === undefined) return 'No scan-compatible structure detected in this strata.';
+          here?.survey();
           this.#scan = {
             title: report.title,
             notes: report.notes,
@@ -504,11 +505,16 @@ export class GameEngine {
   #moveOptions(): readonly GameOption[] {
     const here = this.#journey.here();
     if (here === undefined) return [];
-    return here.moves().map((move) => ({
-      ...systemOption(`${MOVE}${move.id}`, MOVE_KEYS[move.id] ?? '', move.label),
-      role: 'move',
-      opposite: `${MOVE}${move.opposite}`,
-    }));
+    return here.moves().map((move) => {
+      const to = here.leadsTo(move.id);
+      return {
+        ...systemOption(`${MOVE}${move.id}`, MOVE_KEYS[move.id] ?? '', move.label),
+        role: 'move',
+        opposite: `${MOVE}${move.opposite}`,
+        place: to?.name() ?? '',
+        address: to?.address().toString() ?? '',
+      };
+    });
   }
 
   #summaryOf(here: Location, player: Player): PlaceSummary {
@@ -529,7 +535,7 @@ export class GameEngine {
       status: here.status(),
       description: this.#corruption.read(here.description(), player.coherence(), frame),
       facts: here.facts(),
-      portrait: here.portrait(),
+      portrait: here.portrait((place) => player.visited(place)),
       noise: frame,
       frame: here.vibe()?.frame() ?? null,
       abyssal: here.abyssal(),

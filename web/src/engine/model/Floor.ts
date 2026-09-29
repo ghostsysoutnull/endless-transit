@@ -213,6 +213,10 @@ export class Floor extends Location {
     return this.#state.moves(this);
   }
 
+  override leadsTo(id: string): Location | undefined {
+    return this.#state.leadsTo(this, id);
+  }
+
   override move(id: string): Location | undefined {
     return this.#state.move(this, id);
   }

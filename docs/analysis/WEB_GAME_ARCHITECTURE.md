@@ -196,7 +196,9 @@ portrait into a `Drawing` — one member per picture, holding that picture's own
 their parts by `ListedParts`, or `Undrawn`. `HudView` asks the drawing for its `Sketch` from the `SceneRegistry` built
 in `main.ts` (a `PictureBook`: each picture built with its parts by `ScenePictures`, a pure `layout` into hit areas and
 a pure `paint`), which binds the view model to its picture; an undrawn place's sketch draws nothing and the screen
-stays as it was. `SceneView` hosts the sketch: a tap zooms into the child and only then sends a bubbling `pick`
+stays as it was. `HudView` shows the sketch through the `SceneStage` built in `main.ts` (U03): the sketch tells the
+stage which kind of host it needs (`stageOn` → `SceneStages`), and the stage keeps its host while the host element and
+the picture stay, else makes one through `SceneHosts`. `SceneView` hosts a `LineSketch` (a view that is one number): a tap zooms into the child and only then sends a bubbling `pick`
 (`SceneEvents` makes it and reads its id back) the `InputRouter` turns into the option; a new frame of the game or a
 dispose drops a zoom in flight; the child pointed at is told to `HudView`, which lights the list's twin through
 `data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no
@@ -211,13 +213,26 @@ size — `TravelCamera` (the tower's car, the corridor's walk: range, pace, coas
 `SceneTrip` (ride to the child's stop, zoom when the picture zooms, then the pick); motion is `Tween`s on the clock;
 `Zoom` is the canvas transform at one moment and `TearPass` draws the tear over the frame. The lit child and the one
 you stand by are a `ChildMark` (`MarkedChild` or `NoChild`). `SceneView`'s parts come whole in `SceneViewParts`, its
-canvas a `PixelCanvas` made by `CanvasMaker` (a canvas in its host within the `PixelBudget`, inked where it sits).
+canvas a `SceneCanvas` made by `SceneCanvasMaker` (U03: a `PixelCanvas` from `CanvasMaker` — a canvas in its host
+within the `PixelBudget`, inked where it sits — listened to through `CanvasInput`, painted under the zoom and torn).
 `TowerPicture` draws a row per level (a floor's corridor as a line in its shape, a tick per door; the Layers faint in
 the void's red below the bedrock), the roof `Roof` picks, the car and the gauge; `CorridorPicture` walks a `HallView`
 (a pair of doors every 2.2 units) with one part per key from `CorridorParts` — a `HallShape` per corridor shape, a
 panel per material family, a mark per state look (`DoorLooks` the inks) — each door a `PlacedDoor`, and the
 `CorridorSlider` along its foot. A building's floors are listed as a pad of numbers (`FloorPad`), one group up to
 twenty, else by tens (`FloorsByTen`, the Layers together first, `LayersTogether`), the car's group shown first.
+
+**The apartment's plan (U03).** A room's portrait is its apartment's plan (`PlanPortrait` → `PlanFigure`: every room
+in walking order with its `RoomSight` — visited, known, fog, which `Apartment.plan` owns — and its relic marks, the
+room stood in, its `RoomLook`); a scan surveys the apartment, which remembers it. `PlanLayout` lays the rooms out in
+serpentine rows (`FloorPlan`: `PlanBox`es in plan units, a `PlanDoor` — `SideDoor` or `LevelDoor` — between each room
+and the next, the entrance under the first). The plan's view is a `Framing` (a centre in `PlanPoint`s and a scale),
+not one number, so it has its own host: `PlanScene` shows a `PlanSketch` (`Planned`: `PlanPicture` + `PlanVM`) on
+the shared `SceneCanvas`; its `PlanCamera` keeps the framing in range, frames a room, coasts and shows the `Minimap`;
+a `PlanGesture` is a `PlanDrag` or a `Pinch`; a `PlanGlide` moves the view and a `PlanTrip` moves it then picks. The
+picture places each room (`PlacedRoom`) and paints it by its sight (`SIGHT_LOOKS`: a `SeenLook` or the `FogLook`, in
+`Tint`s). `SceneDrawing` joins the doorways' moves to their rooms by address, the leave and the takes; `HudView`
+sends every drawn button through the picture and lights its twin with one delegated listener each.
 
 **Debug mode.** `?debug` on the address, read only in `main.ts`, puts the debug commands on offer (INTEGRITY ladder,
 PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `debug: true`.

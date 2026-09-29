@@ -1,5 +1,6 @@
 import type { BuildingFigure } from './BuildingFigure.ts';
 import type { CorridorFigure } from './CorridorFigure.ts';
+import type { PlanFigure } from './PlanFigure.ts';
 import type { TowerFigure } from './TowerFigure.ts';
 
 /** What reads a portrait answers: one method per drawn kind, and `unseen` for a place no picture draws. */
@@ -8,5 +9,7 @@ export interface PortraitReader<R> {
   street(buildings: readonly BuildingFigure[]): R;
   tower(tower: TowerFigure): R;
   corridor(corridor: CorridorFigure): R;
+  /** A room: its apartment's plan, zoomed into it (U03). */
+  plan(plan: PlanFigure): R;
   unseen(): R;
 }

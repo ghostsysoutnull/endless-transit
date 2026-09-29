@@ -65,8 +65,8 @@ See [Saving](#saving-seeds-and-the-debug-tools).
 **The screen.** The top box is the HUD: the game's name, **Steps**, **Buffer** (what you carry, out of
 16) and the Coherence bar (Integrity below the bedrock). Under it runs the **depth rail**: one glyph for each level from
 the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:24-35, 102-123 --> Under the
-rail is the place: its kind and its name. On a street, in a building, at an elevator and in a corridor a **picture**
-comes next (below), then the **moves** as buttons, then the list of what lies one level down, then the place's chips
+rail is the place: its kind and its name. On a street, in a building, at an elevator, in a corridor and in a room a
+**picture** comes next (below), then the **moves** as buttons, then the list of what lies one level down, then the place's chips
 (your position among your neighbours, such as `Orbit 2 of 5` on a planet or `Building 2 of 20` in a building — a floor
 has none, its name and the tower say its height — then its tags) and its description. Elsewhere the chips, the moves
 and the description come first and the list after them. <!-- src/ui/screens/HudPresenter.ts:124-143 --> The list is one
@@ -81,8 +81,16 @@ the picture to zoom into it. In a building the picture is the **tower**, a row p
 shaft: drag the tower, or the slider down its right side, to ride the car, and tap a floor — on the tower or on the
 pad — to ride there and step out. At an elevator the tower stands still, the car at your floor. In a **corridor** you
 look down the hall: drag it, or the slider along its foot, to walk, and tap a door to walk to it and open it; the door
-you came back out of is drawn yellow. If your phone asks for reduced motion, nothing rides, walks or zooms: a tap goes
-straight in. <!-- src/engine/model/Location.ts, src/ui/scene/SceneView.ts -->
+you came back out of is drawn yellow. In a **room** the picture is the apartment's **plan**, framed on the room you
+stand in: its rooms in rows walked like a snake, a doorway only into the room before and the room after, the entrance
+under the first. A room you have not reached is in fog until you visit the room next to it; a scan in any room clears
+the whole plan for good, and marks the objects in every room. Drag the plan or pinch it; when it is bigger than the
+picture a small map in its corner shows where you look, and a tap on it goes there. Tap a doorway (or **GO FORWARD** /
+**GO BACK**) to glide into that room, an object's diamond (or its button) to take it, and the entrance (or **EXIT
+APARTMENT**) in the first room to pull back and leave. If your phone asks for reduced motion, nothing rides, walks,
+glides or zooms: a tap goes straight in. <!-- src/engine/model/Location.ts, src/ui/scene/SceneView.ts,
+src/ui/scene/PlanScene.ts:48, src/ui/scene/PlanLayout.ts:26, src/engine/model/Apartment.ts:136-169,
+src/engine/rules/GameEngine.ts:210 -->
 
 **Your first walk.** Every action is a button. Tap it.
 
@@ -94,8 +102,9 @@ straight in. <!-- src/engine/model/Location.ts, src/ui/scene/SceneView.ts -->
    floors the pad shows ten at a time, with a tab for each ten. Tap a floor. <!-- src/ui/screens/FloorPad.ts:12, 29-37, 48-49 -->
 3. You are in the **elevator** for that floor: **GO UP**, **GO DOWN**, **ENTER CORRIDOR**.
 4. The corridor lists doors. Tap one. You are dropped straight into the first room behind it.
-5. If the room has objects, each one is a button: tap it to take it. **GO FORWARD** walks to the next room, **GO BACK**
-   to the previous; **EXIT APARTMENT** is offered in the first room only.
+5. The room is drawn as its apartment's plan. If the room has objects, each one is a diamond in the picture and a button
+   under it: tap either to take it. **GO FORWARD** walks to the next room, **GO BACK** to the previous; **EXIT
+   APARTMENT** is offered in the first room only.
 
 Congratulations, you have played the game. Everything below is how to play it well. Short of time? The
 [cheat sheet]({{ "/web/cheat_sheet.html" | relative_url }}) is one screen, and **HELP** in the dock is the same manual
@@ -128,7 +137,7 @@ offer changes nothing and costs nothing.
 
 | Button | Key | What it does |
 | :-- | :-- | :-- |
-| **SCAN** | `S` | What is behind the doors, which floors are near you (two either side), or the rooms of the apartment. Costs 1, no step. <!-- src/engine/model/Building.ts:20-21 --> |
+| **SCAN** | `S` | What is behind the doors, which floors are near you (two either side), or the rooms of the apartment — which also clears the apartment's plan of fog for good. Costs 1, no step. <!-- src/engine/model/Building.ts:20-21 --> |
 | **MAP** | `M` | Draws the places you can enter from here, you at the centre; dim is unvisited. Nothing inside a room. Costs 1, no step. |
 | **BUFFER** | `I` | Your inventory. Costs 1 to open; everything inside is free. |
 | **TRACE** | none | Your whole path from the universe down to here, drawn. Costs 1. |

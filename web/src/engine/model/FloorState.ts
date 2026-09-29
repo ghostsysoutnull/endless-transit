@@ -20,6 +20,8 @@ export interface FloorState {
   /** Whether a path may continue from the floor into this child (its corridor) in this mode. */
   admits(floor: Floor, child: Location): boolean;
   moves(floor: Floor): readonly Move[];
+  /** Where a move would lead, without making it. */
+  leadsTo(floor: Floor, id: string): Location | undefined;
   move(floor: Floor, id: string): Location | undefined;
   facts(floor: Floor): readonly Fact[];
   description(floor: Floor): readonly string[];

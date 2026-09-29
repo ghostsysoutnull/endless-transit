@@ -48,6 +48,10 @@ export class CorridorState implements FloorState {
     return MOVES.offered(floor);
   }
 
+  leadsTo(floor: Floor, id: string): Location | undefined {
+    return MOVES.to(floor, id);
+  }
+
   move(floor: Floor, id: string): Location | undefined {
     return MOVES.make(floor, id);
   }

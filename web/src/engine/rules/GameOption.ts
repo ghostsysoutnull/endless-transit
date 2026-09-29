@@ -35,7 +35,7 @@ export interface GameOption {
   readonly current: boolean;
   /** The listed place has been visited — the old game's `[V]` (Corridor.groovy:71-72, Building.groovy:222). */
   readonly visited: boolean;
-  /** The listed place's address as text (`0.2.1`): where a picture zooms in and back out; empty when it leads into none. */
+  /** The address as text (`0.2.1`) of the listed place, or of where a move leads (U03): where a picture zooms or glides to; empty when it leads into none. */
   readonly address: string;
   /** The listed place goes by its own number (a floor, Guide:111): a screen may lay such a list out as a pad of numbers (U02). */
   readonly numbered: boolean;

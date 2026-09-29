@@ -5,6 +5,8 @@ import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { Drawing } from './Drawing.ts';
 import type { Drawings } from './Drawings.ts';
 import { DrawnCorridor } from './DrawnCorridor.ts';
+import type { DrawnOptions } from './DrawnOptions.ts';
+import { DrawnPlan } from './DrawnPlan.ts';
 import { DrawnStreet } from './DrawnStreet.ts';
 import { DrawnTower } from './DrawnTower.ts';
 import { ListedParts } from './ListedParts.ts';
@@ -16,7 +18,8 @@ export class SceneDrawing implements Drawings {
    * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,
    * in the list's order (`ListedParts`), with what the part adds; and the words a reader hears instead of the picture.
    */
-  of(place: PlaceSummary, travel: readonly GameOption[], decay: number): Drawing {
+  of(place: PlaceSummary, options: DrawnOptions, decay: number): Drawing {
+    const travel = options.travel;
     return place.portrait.drawnBy<Drawing>({
       street: (buildings) =>
         new DrawnStreet(
@@ -54,15 +57,36 @@ export class SceneDrawing implements Drawings {
           ),
           shape: corridor.shape,
         }),
-      unseen: () =>
-        new Undrawn(
-          this.#frame(
-            place,
-            decay,
-            travel.map((option) => this.#child(option)),
-          ),
-        ),
+      plan: (plan) => {
+        // Each doorway's move by the room it leads to; the way out; the relics by their take (U03).
+        const doors = options.moves
+          .filter((move) => plan.rooms.some((room) => room.address === move.address))
+          .map((move) => this.#child(move));
+        const exits = options.leave.map((leave) => this.#child(leave));
+        const relics = options.takes.map((take) => this.#child(take));
+        return new DrawnPlan({
+          ...this.#frame(place, decay, [...doors, ...exits, ...relics]),
+          rooms: plan.rooms,
+          here: plan.here,
+          look: plan.look,
+          doors,
+          exits,
+          relics,
+        });
+      },
+      unseen: () => this.#undrawn(place, travel, decay),
     });
+  }
+
+  /** A place no picture draws: its frame around its listed places. */
+  #undrawn(place: PlaceSummary, travel: readonly GameOption[], decay: number): Drawing {
+    return new Undrawn(
+      this.#frame(
+        place,
+        decay,
+        travel.map((option) => this.#child(option)),
+      ),
+    );
   }
 
   /** What every picture's view model shares, around its children: the words a reader hears count what is drawn. */
