@@ -7,6 +7,7 @@ import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
  * room on the minimap, and lets the room's words be written in its ink — or not. One per sight (`SIGHT_LOOKS`).
  */
 export interface SightLook {
+  /** What its sight lays over the ground of the room's floor. */
   paintFloor(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void;
   /** The room's words and marks, written in the look's ink by `write`; nothing where the room is not seen. */
   label(write: (ink: string) => void): void;

@@ -48,9 +48,12 @@ export class PlacedRoom {
     return { x: box.x + box.width / 2, y: box.y + box.height - Math.min(18, box.height / 4) };
   }
 
-  /** Its floor as its sight paints it, outlined in yellow when you stand in it. */
+  /** The ground under it, its floor as its sight paints it over that, outlined in yellow when you stand in it. */
   paintFloor(painter: Painter, palette: Palette): void {
     const box = this.#box;
+    painter.fillStyle = palette('ground');
+    painter.globalAlpha = 1;
+    painter.fillRect(box.x, box.y, box.width, box.height);
     this.#look.paintFloor(painter, palette, box);
     if (!this.#here) return;
     painter.strokeStyle = palette('yl');

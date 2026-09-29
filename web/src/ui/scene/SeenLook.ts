@@ -2,13 +2,14 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { SightLook } from './SightLook.ts';
+import type { SmallSquare } from './SmallSquare.ts';
 
-/** A room seen — visited, or known from a visited one: floored as strongly as it is seen, its words in its ink. Value object. */
+/** A room seen — visited, or known from a visited one: floored as strongly as it is seen over the ground, its words in its ink. Value object. */
 export class SeenLook implements SightLook {
   readonly #floor: number;
   readonly #ink: string;
   readonly #dot: boolean;
-  readonly #small: { readonly ink: string; readonly alpha: number };
+  readonly #small: SmallSquare;
 
   constructor(facts: {
     /** How strongly its floor shows, 0 to 1. */
@@ -17,8 +18,10 @@ export class SeenLook implements SightLook {
     /** Whether it carries the visited dot. */
     dot: boolean;
     /** How it shows on the minimap. */
-    small: { readonly ink: string; readonly alpha: number };
+    small: SmallSquare;
   }) {
+    if (!(facts.floor >= 0 && facts.floor <= 1))
+      throw new RangeError(`a strength runs from 0 to 1, got ${String(facts.floor)}`);
     this.#floor = facts.floor;
     this.#ink = facts.ink;
     this.#dot = facts.dot;
@@ -26,9 +29,6 @@ export class SeenLook implements SightLook {
   }
 
   paintFloor(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void {
-    painter.fillStyle = palette('ground');
-    painter.globalAlpha = 1;
-    painter.fillRect(box.x, box.y, box.width, box.height);
     painter.fillStyle = palette('panel');
     painter.globalAlpha = this.#floor;
     painter.fillRect(box.x, box.y, box.width, box.height);
@@ -48,8 +48,6 @@ export class SeenLook implements SightLook {
   }
 
   paintSmall(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void {
-    painter.fillStyle = palette(this.#small.ink);
-    painter.globalAlpha = this.#small.alpha;
-    painter.fillRect(box.x, box.y, box.width, box.height);
+    this.#small.paint(painter, palette, box);
   }
 }
