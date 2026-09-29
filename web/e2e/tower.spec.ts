@@ -53,6 +53,26 @@ test('the gauge is a slider named by the list, its value a floor: a finger on it
   expect(problems).toEqual([]);
 });
 
+test('the slider is hidden where the picture has nothing to slide to: on the street and at a floor’s elevator', async ({
+  page,
+  hasTouch,
+}) => {
+  const problems = watchForErrors(page);
+  await plant(page, saveText(SEED, STREET));
+  await page.goto('./');
+  const slider = page.getByTestId('scene').locator('[role=slider]');
+  await expect(slider).toHaveCount(1);
+  await expect(slider).toBeHidden();
+  await tapOption(page, 'enter:0', hasTouch);
+  await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
+  await expect(slider).toBeVisible();
+  await press(page, /^Ride to Floor 7,/, hasTouch);
+  await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
+  await expect(slider).toHaveCount(1);
+  await expect(slider).toBeHidden();
+  expect(problems).toEqual([]);
+});
+
 test('a floor tapped on the pad: the car rides there first, then the floor is entered', async ({
   page,
   hasTouch,
