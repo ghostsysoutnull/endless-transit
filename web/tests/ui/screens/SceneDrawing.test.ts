@@ -9,6 +9,7 @@ import type { Drawing } from '#ui/screens/Drawing.ts';
 import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
 import { option, PLANET, STREET, towerSnapshot } from '#tests/support/hudSnapshots.ts';
 import { corridorVM, readDrawing, streetVM, towerVM } from '#tests/support/readDrawing.ts';
+import { placeOf } from '#tests/support/snapshotParts.ts';
 
 /** What the snapshot's place draws: its listed places are the options the engine marks as travel. */
 function drawingOf(snapshot: GameSnapshot): Drawing {
@@ -25,7 +26,7 @@ describe('the drawing (U01b): what the scene draws, as data', () => {
   const DRAWN: GameSnapshot = {
     ...STREET,
     place: {
-      ...(STREET.place ?? ({} as never)),
+      ...placeOf(STREET),
       portrait: new StreetPortrait([
         { address: '0.0.0.0.1.0.0.0.0', floors: 16, doors: 9 },
         { address: '0.0.0.0.1.0.0.0.1', floors: 60, doors: 4 },
@@ -139,7 +140,7 @@ describe('the corridor (U02): its doors drawn', () => {
       drawingOf({
         ...STREET,
         place: {
-          ...(STREET.place ?? ({} as never)),
+          ...placeOf(STREET),
           childrenHeading: 'Doors',
           portrait: new CorridorPortrait({
             shape: 'curved',

@@ -7,6 +7,7 @@ import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { Frame } from '#ui/Frame.ts';
 import { RecapPresenter } from '#ui/screens/RecapPresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
+import { placeOf, promptOf } from '#tests/support/snapshotParts.ts';
 
 const presenter = new RecapPresenter(new BuildMasthead('a1b2c3d'), new Frame());
 
@@ -115,8 +116,8 @@ describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRec
   test('below the bedrock: the void’s termination — three typewritten lines, no figures, no shutdown, ending "Sleep among the static, Operator." in the abyssal frame (Guide:424-425; SessionRecap.groovy:19-32)', () => {
     const vm = presenter.toViewModel({
       ...RECAP,
-      place: { ...(RECAP.place ?? ({} as never)), abyssal: true },
-      prompt: { ...(RECAP.prompt ?? ({} as never)), outcome: 'void' },
+      place: { ...placeOf(RECAP), abyssal: true },
+      prompt: { ...promptOf(RECAP), outcome: 'void' },
     });
     expect(vm.heading).toBe('[VOID_RESONANCE_TERMINATION]');
     expect(vm.figures).toEqual([]);

@@ -3,6 +3,7 @@ import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { hudPresenter } from '#tests/support/hudPresenter.ts';
 import { option, PLANET, STREET, towerSnapshot } from '#tests/support/hudSnapshots.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
+import { placeOf } from '#tests/support/snapshotParts.ts';
 
 const presenter = hudPresenter('a1b2c3d');
 
@@ -10,7 +11,7 @@ const presenter = hudPresenter('a1b2c3d');
 const FLOOR: GameSnapshot = {
   ...PLANET,
   place: {
-    ...(PLANET.place ?? ({} as never)),
+    ...placeOf(PLANET),
     kind: 'Floor',
     icon: '▤',
     name: 'Floor 0',
@@ -45,7 +46,7 @@ const FLOOR: GameSnapshot = {
 /** A building: floors listed top first, numbered by floor, with their readings. */
 const BUILDING: GameSnapshot = {
   ...PLANET,
-  place: { ...(PLANET.place ?? ({} as never)), kind: 'Building', name: 'Ornate Sanctum' },
+  place: { ...placeOf(PLANET), kind: 'Building', name: 'Ornate Sanctum' },
   options: [
     option({
       id: 'enter:0',
@@ -76,7 +77,7 @@ const BUILDING: GameSnapshot = {
 const ROOM: GameSnapshot = {
   ...PLANET,
   place: {
-    ...(PLANET.place ?? ({} as never)),
+    ...placeOf(PLANET),
     kind: 'Room',
     icon: '□',
     name: 'Grand Power Plant',
@@ -181,7 +182,7 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
     expect(vm.place.position).toEqual({ label: 'Orbit', value: '2 of 5' });
     const universe = presenter.toViewModel({
       ...PLANET,
-      place: { ...(PLANET.place ?? ({} as never)), position: null, address: '0', frame: null },
+      place: { ...placeOf(PLANET), position: null, address: '0', frame: null },
     });
     expect(universe.place.position).toBeNull();
     expect(universe.frame).toBe('default');
@@ -261,7 +262,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     const bare = presenter.toViewModel({
       ...ROOM,
       place: {
-        ...(ROOM.place ?? ({} as never)),
+        ...placeOf(ROOM),
         contents: { objects: [], furniture: ['overturned tatami mat', 'cracked shoji screen'] },
       },
       options: ROOM.options.filter((option) => option.role !== 'take'),
@@ -392,7 +393,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
   const room: GameSnapshot = {
     ...PLANET,
     place: {
-      ...(PLANET.place ?? ({} as never)),
+      ...placeOf(PLANET),
       kind: 'Room',
       name: 'Grand Power Plant',
       contents: { objects: [], furniture: ['overturned pew'] },
@@ -466,7 +467,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
     const below = presenter.toViewModel({
       ...room,
       place: {
-        ...(room.place ?? ({} as never)),
+        ...placeOf(room),
         kind: 'Shard',
         abyssal: true,
         telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: 'We see you.' },
@@ -586,7 +587,7 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
   } as const;
   const OUTDOORS: GameSnapshot = {
     ...STREET,
-    place: { ...(STREET.place ?? ({} as never)), lattice: LATTICE },
+    place: { ...placeOf(STREET), lattice: LATTICE },
   };
 
   test('the pane beside the list carries the map outdoors (Guide:339) — the picture, and every node as words; nothing where the telemetry is', () => {

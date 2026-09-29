@@ -6,6 +6,7 @@ import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { doorLook } from './doorLook.ts';
 import { playerSummary } from './playerSummary.ts';
+import { placeOf } from './snapshotParts.ts';
 
 /** The world screen's snapshots: an option with defaults, a planet, a street and a building, shared by the tests of its presenter and its parts. */
 
@@ -87,7 +88,7 @@ export const PLANET: GameSnapshot = {
 export const STREET: GameSnapshot = {
   ...PLANET,
   place: {
-    ...(PLANET.place ?? ({} as never)),
+    ...placeOf(PLANET),
     kind: 'Street',
     name: 'Bright Boulevard',
     address: '0.0.0.0.1.0.0.0',
@@ -126,7 +127,7 @@ export function towerSnapshot(floors: number, car: number, layers = 0): GameSnap
   return {
     ...STREET,
     place: {
-      ...(STREET.place ?? ({} as never)),
+      ...placeOf(STREET),
       kind: 'Building',
       name: 'Ornate Sanctum',
       portrait: new TowerPortrait({
