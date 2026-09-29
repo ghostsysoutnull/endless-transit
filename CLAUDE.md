@@ -11,7 +11,8 @@
    confirm option names its scope: the files, the kind of edit, and what is not touched. Options make sense without
    having read the document. A pick is built, not re-asked; a decision already made is never reopened.
 4. Design options are ambitious; a process option is offered only if it names its cost, what it teaches that isn't
-   already known and the failure it prevents.
+   already known and the failure it prevents. "Is this the best you can do?" sharpens the pick; it never swings to a
+   bigger scope.
 5. Nothing changes without a directive. A question gets only an answer: no edit, commit, branch or agent; a request for
    a review or a plan gets only the review or the plan; a request that implies a change ("this looks wrong") without a
    directive gets a plan and one question. A message with a question and a directive: answer, then do only what the
@@ -32,6 +33,9 @@
 11. A commit/push directive covers the work's close-out records. No second confirmation.
 12. A rule approved in this session binds at once. The file loads only when a session starts, so until the next one I
     state the rule in chat and put it in every agent's brief.
+13. Before repeating work (another round, another fix, another review) I name its category: a bug the player meets,
+    a fact kept in two places, or tidying. Then I weigh its proportion: what it costs in tokens and the user's waiting
+    time against what it changes for the player. Tidying, or a cost out of proportion, stops there, said in one line.
 
 ## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
