@@ -519,8 +519,7 @@ export class GameEngine {
       icon: here.kind().icon(),
       name: here.name(),
       address: here.address().toString(),
-      position:
-        peers.length === 0 ? { counted: false } : here.kind().position(peers.indexOf(here) + 1, peers.length),
+      position: here.kind().position(peers.indexOf(here) + 1, peers.length),
       trail: here.trail().map((step) => ({
         icon: step.kind().icon(),
         kind: step.kind().title(),

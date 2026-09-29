@@ -25,11 +25,7 @@ export function laid(track: CameraTrack): Laid {
 }
 
 /** A shown track's box and axis, and the views a finger reads at its two ends; a failed test when it is hidden. */
-export function shownTrack(track: CameraTrack): {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
+export function shownTrack(track: CameraTrack): SliderBox & {
   readonly axis: 'x' | 'y';
   readonly from: number | undefined;
   readonly to: number | undefined;
