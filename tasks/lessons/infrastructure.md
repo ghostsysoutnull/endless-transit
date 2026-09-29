@@ -38,3 +38,7 @@ Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work
   every edit; the owner's check boxes are the progress.
 - **A plan note holds decisions, picks and pointers**: numbers and details the code and its comments already hold
   are not restated, and a review's asks enter the note only where they change a decision.
+- **A reviewer's suggested fix to a test is judged by the testing principles first**: a line that catches nothing
+  another test doesn't is deleted, never rewritten.
+- **A tool that fails is reported when it fails**: never silently replaced by a weaker one; every agent's brief says so.
+- **`git mv` stages at once**: `git diff --cached --name-only` is empty before a commit's own `git add`.
