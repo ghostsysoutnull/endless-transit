@@ -571,10 +571,25 @@ body {
   color: var(--dim);
 }
 
+/* The count bumps from its left edge when a taken relic lands on it (U03b, RelicFlight). */
 .stat dd {
   margin: 0;
   color: var(--text);
   overflow-wrap: anywhere;
+  transform-origin: left center;
+}
+
+/* A taken relic's flight to the Buffer count (U03b, RelicFlight): a small diamond, moved by the script. */
+
+.relic-flight {
+  position: fixed;
+  z-index: 50;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--yl);
+  background: var(--ground);
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .world .cap {

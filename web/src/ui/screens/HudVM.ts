@@ -36,7 +36,8 @@ export interface HudVM extends Screen {
     readonly valueText: string;
   };
   /** The readouts beside the meter, in plain words (U01a, Decision 1): the steps and the buffer. */
-  readonly stats: readonly { readonly label: string; readonly value: string }[];
+  /** Each stat by its key (`steps`, `buffer`: what the relic's flight lands on), its label and its value. */
+  readonly stats: readonly { readonly key: string; readonly label: string; readonly value: string }[];
   readonly place: {
     readonly eyebrow: string;
     readonly icon: string;

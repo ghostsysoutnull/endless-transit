@@ -39,7 +39,8 @@ interface Shown {
  * with the coherence tear over it, and the framing the view stands at. One finger pans the plan one to one and coasts
  * when let go; two pinch it about their midpoint; a tap on the minimap glides there. A tap on a doorway, the entrance
  * or a relic — or its button in the list, the moves or the dock (`enter`) — glides where the picture says (into the
- * next room, back to the whole plan) and only then asks for it to be picked; a relic is picked at once. A new
+ * next room, back to the whole plan) and only then asks for it to be picked; a relic is picked at once and flies to
+ * the buffer (`Flight`). A new
  * view-model drops a trip in flight and its pick; the same room keeps the view, another room of the same apartment
  * glides to it, and the first one shows the whole plan and glides in. What is pointed at is told to the screen
  * (`onLight`) so the list lights its twin. Under reduced motion the picture is a still, the view jumps and a tap picks
@@ -237,11 +238,19 @@ export class PlanScene implements StagedScene<PlanSketch> {
     this.#run();
   }
 
-  /** Where the picture sends the view for this option, then its pick; a relic (no stop) or reduced motion picks at once. */
+  /**
+   * Where the picture sends the view for this option, then its pick; a relic (no stop) is picked at once and flies to
+   * the buffer from where it lies; under reduced motion anything is picked at once, and nothing flies.
+   */
   #go(id: string): void {
     const shown = this.#shown;
     const stop = shown?.sketch.stopOf(shown.camera, id);
-    if (this.#parts.motion.reduced() || shown === undefined || stop === undefined) {
+    if (this.#parts.motion.reduced() || shown === undefined) {
+      this.#pick(id);
+      return;
+    }
+    if (stop === undefined) {
+      this.#fly(id);
       this.#pick(id);
       return;
     }
@@ -257,6 +266,13 @@ export class PlanScene implements StagedScene<PlanSketch> {
       id,
     );
     this.#run();
+  }
+
+  /** A relic's flight from where the picture lays it out, when it does. */
+  #fly(id: string): void {
+    const canvas = this.#mounted?.canvas;
+    const hit = this.#hits.of(id);
+    if (canvas !== undefined && hit !== undefined) this.#parts.flight.fly(canvas.onPage(hit.anchor));
   }
 
   #pick(id: string): void {

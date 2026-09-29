@@ -238,7 +238,7 @@ export class HudView implements View<HudVM> {
               (stat) => html`
                 <div class="stat">
                   <dt>${stat.label}</dt>
-                  <dd>${stat.value}</dd>
+                  <dd data-testid=${`stat-${stat.key}`}>${stat.value}</dd>
                 </div>
               `,
             )}

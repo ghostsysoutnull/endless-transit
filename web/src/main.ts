@@ -49,6 +49,7 @@ import { RecapPresenter } from '#ui/screens/RecapPresenter.ts';
 import { RecapView } from '#ui/screens/RecapView.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 import { TitleView } from '#ui/screens/TitleView.ts';
+import { RelicFlight } from '#ui/RelicFlight.ts';
 import { ScreenStage } from '#ui/ScreenStage.ts';
 import { Shell } from '#ui/Shell.ts';
 
@@ -107,15 +108,21 @@ new Shell(
       new HudView(
         scenes,
         new SceneStage(
-          new SceneViewMaker({
-            clock,
-            motion,
-            canvases: new SceneCanvasMaker({ canvases: canvasMaker, tear: new TearPass(new CoherenceFx()) }),
-            sliders: new SliderMaker(),
-            picks: new SceneEvents(),
-            ride: new EaseInOut(),
-            coast: new EaseOut(),
-          }),
+          new SceneViewMaker(
+            {
+              clock,
+              motion,
+              canvases: new SceneCanvasMaker({
+                canvases: canvasMaker,
+                tear: new TearPass(new CoherenceFx()),
+              }),
+              sliders: new SliderMaker(),
+              picks: new SceneEvents(),
+              ride: new EaseInOut(),
+              coast: new EaseOut(),
+            },
+            new RelicFlight(document),
+          ),
         ),
         canvases,
       ),

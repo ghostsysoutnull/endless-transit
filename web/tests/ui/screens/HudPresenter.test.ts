@@ -172,8 +172,8 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
 
   test('the readouts in plain words (U01a): the steps and the buffer — the depth is the rail; the locus, its hash, the seed and the readout fold are gone', () => {
     expect(vm.stats).toEqual([
-      { label: 'Steps', value: '12' },
-      { label: 'Buffer', value: '0/16' },
+      { key: 'steps', label: 'Steps', value: '12' },
+      { key: 'buffer', label: 'Buffer', value: '0/16' },
     ]);
     expect(vm).not.toHaveProperty('readout');
     expect(vm).not.toHaveProperty('crumbs');
@@ -233,7 +233,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
         },
       ],
     });
-    expect(vm.stats[1]).toEqual({ label: 'Buffer', value: '1/16' });
+    expect(vm.stats[1]).toEqual({ key: 'buffer', label: 'Buffer', value: '1/16' });
     expect(vm.options.map((each) => each.id)).toEqual([
       'capture:0',
       'capture:1',
@@ -256,7 +256,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(full.aside.objects?.note).toBe('BUFFER FULL — merge or drop a fragment to take more.');
     expect(full.aside.objects?.tiles.map((tile) => tile.action)).toEqual([null, null]);
     expect(full.options.map((each) => each.id)).toEqual(['move:forward', 'leave', 'buffer', 'to-title']);
-    expect(full.stats[1]).toEqual({ label: 'Buffer', value: '16/16' });
+    expect(full.stats[1]).toEqual({ key: 'buffer', label: 'Buffer', value: '16/16' });
   });
 
   test('an empty room says so in words and has no OBJECTS_DETECTED row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
@@ -542,7 +542,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
     expect(low.meter.value).toBe(12);
     expect(low.meter.band).toBe('critical');
     expect(low.meter.valueText).toBe('12 percent, critical');
-    expect(low.stats[0]).toEqual({ label: 'Steps', value: '3' });
+    expect(low.stats[0]).toEqual({ key: 'steps', label: 'Steps', value: '3' });
   });
 
   test('a visited row carries the [V] mark with words for a reader; an unvisited one none (Corridor.groovy:71-72)', () => {

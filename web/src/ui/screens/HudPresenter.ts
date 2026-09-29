@@ -115,8 +115,9 @@ export class HudPresenter implements Presenter<HudVM> {
         valueText: `${String(player.coherence)} percent, ${player.band}`,
       },
       stats: [
-        { label: 'Steps', value: String(player.steps) },
+        { key: 'steps', label: 'Steps', value: String(player.steps) },
         {
+          key: 'buffer',
           label: 'Buffer',
           value: `${String(snapshot.buffer?.size ?? 0)}/${String(snapshot.buffer?.capacity ?? 0)}`,
         },
