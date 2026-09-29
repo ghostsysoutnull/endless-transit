@@ -11,7 +11,7 @@ Welcome to the **Endless Transit** neural link manual.
 You are standing at the gateway to an infinite procedural lattice. This interface provides the tactical data and operational protocols required to maintain your coherence during the Transit.
 
 ## [DIRECT_UPLINK]
-**[▶ PLAY IN THE BROWSER]({{ "/play/" | relative_url }})** — the web build of the Transit, phone or desktop, nothing to install. The port is complete: the whole game, from the street to the bedrock and below; the corner of its title screen names the build.
+**[▶ PLAY IN THE BROWSER]({{ "/play/" | relative_url }})** — the web build of the Transit, for your phone, nothing to install. The port is complete: the whole game, from the street to the bedrock and below; the corner of its title screen names the build.
 
 *   **[WEB_OPERATOR]**: How to play it with one thumb, every number, and where it differs from the terminal game: the [WEB_PLAYER'S_GUIDE]({{ "/web/players_guide.html" | relative_url }})
 *   **[WEB_QUICK_REFERENCE]**: One screen: the [WEB_CHEAT_SHEET]({{ "/web/cheat_sheet.html" | relative_url }})

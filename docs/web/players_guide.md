@@ -2,7 +2,7 @@
 layout: terminal
 title: WEB_PLAYERS_GUIDE
 map_type: strategy
-description: How to play Endless Transit in the browser, on a phone or a desktop - every button, every number, and where the web game differs from the terminal game.
+description: How to play Endless Transit in the browser, on a phone - every button, every number, and where the web game differs from the terminal game.
 ---
 
 <div class="guide" markdown="1">
@@ -10,11 +10,11 @@ description: How to play Endless Transit in the browser, on a phone or a desktop
 # The Player's Guide to Endless Transit on the web
 
 This page is written in plain language, for the game you play at
-[**ghostsysoutnull.github.io/endless-transit/play/**]({{ "/play/" | relative_url }}) — on a phone held upright or in a
-desktop browser, nothing to install. The terminal game has its own [guide]({{ "/terminal/guide/players_guide.html" | relative_url }});
+[**ghostsysoutnull.github.io/endless-transit/play/**]({{ "/play/" | relative_url }}) — on a phone held upright,
+nothing to install. The terminal game has its own [guide]({{ "/terminal/guide/players_guide.html" | relative_url }});
 the two games share a world and most rules, and the last section of this page lists every place they differ.
 
-Every number here was read from the web game's source code (`web/src`) on 2026-09-23. If this page and the game ever
+Every number here was read from the web game's source code (`web/src`) on 2026-09-23, and checked again on 2026-09-29. If this page and the game ever
 disagree, one of them has a bug.
 
 <div class="toc" markdown="1">
@@ -62,26 +62,36 @@ type one in. <!-- src/engine/rules/GameEngine.ts:104-126, src/platform/CryptoEnt
 in the world puts you straight back where you stood — the game saves itself after every tap, in this browser only.
 See [Saving](#saving-seeds-and-the-debug-tools).
 
-**The screen, on a phone.** The top box is the HUD: the game's name, **Steps**, **Buffer** (what you carry, out of
+**The screen.** The top box is the HUD: the game's name, **Steps**, **Buffer** (what you carry, out of
 16) and the Coherence bar (Integrity below the bedrock). Under it runs the **depth rail**: one glyph for each level from
-the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:24-35, 99-115 --> Under the
-rail is the place: its kind, its name, its chips (your position among your neighbours, such as `Z-axis 1 of 16` on a
-floor or `Strata 2 of 20` in a building, then its tags), then the **moves** as buttons, then its description.
-<!-- src/ui/screens/HudPresenter.ts:116-131 --> Below that, the list of what lies one level down, one
-button per place. At the bottom, always in reach of your thumb, is the **dock**: the way out (`▲ LEAVE …`) and **MORE**.
-MORE opens the rest of the dock above it — SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again
-after your next tap. <!-- src/ui/screens/HudPresenter.ts:162-169 -->
+the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:24-35, 102-123 --> Under the
+rail is the place: its kind and its name. On a street, in a building, at an elevator and in a corridor a **picture**
+comes next (below), then the **moves** as buttons, then the list of what lies one level down, then the place's chips
+(your position among your neighbours, such as `Orbit 2 of 5` on a planet or `Building 2 of 20` in a building — a floor
+has none, its name and the tower say its height — then its tags) and its description. Elsewhere the chips, the moves
+and the description come first and the list after them. <!-- src/ui/screens/HudPresenter.ts:124-143 --> The list is one
+button per place, except a building's floors, which are a pad of numbers. At the bottom, always in reach of your
+thumb, is the **dock**: the way out (`▲ LEAVE …`) and **MORE**. MORE opens the rest of the dock above it — SCAN, MAP,
+BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again after your next tap.
+<!-- src/ui/screens/HudPresenter.ts:176-182 -->
 
-**The screen, on a desktop.** The same, with the rail down the left and each level's name beside its glyph, the list beside the place, all eight dock buttons in
-a row, and a letter on every button: that letter is its key. A phone needs none.
+**The pictures.** A street, a building and a corridor are drawn above their list, and the two light each other: touch
+a place in the picture and its button lights, touch a button and its place lights. On the street, tap a building in
+the picture to zoom into it. In a building the picture is the **tower**, a row per floor with the elevator car in its
+shaft: drag the tower, or the slider down its right side, to ride the car, and tap a floor — on the tower or on the
+pad — to ride there and step out. At an elevator the tower stands still, the car at your floor. In a **corridor** you
+look down the hall: drag it, or the slider along its foot, to walk, and tap a door to walk to it and open it; the door
+you came back out of is drawn yellow. If your phone asks for reduced motion, nothing rides, walks or zooms: a tap goes
+straight in. <!-- src/engine/model/Location.ts, src/ui/scene/SceneView.ts -->
 
 **Your first walk.** Every action is a button. Tap it.
 
 1. You begin on a **street** with 100 Coherence. The street's tags tell you the era and culture of this part of the
    world. Everything worth taking is below you, inside the buildings; the rest of the universe is above you, one
    `▲ LEAVE STREET` at a time.
-2. Tap a building. You arrive in its lobby with a list of floors, top floor first, the elevator marked `[>X<]` at the
-   floor it waits on. Tap a floor. <!-- src/engine/model/Building.ts:16-17 -->
+2. Tap a building. You arrive in its lobby: the building drawn as a tower and, under it, a pad of floor numbers from
+   `0`, the lobby, upward, the elevator's floor outlined in yellow and the floors you have visited dimmed. Past twenty
+   floors the pad shows ten at a time, with a tab for each ten. Tap a floor. <!-- src/ui/screens/FloorPad.ts:12, 29-37, 48-49 -->
 3. You are in the **elevator** for that floor: **GO UP**, **GO DOWN**, **ENTER CORRIDOR**.
 4. The corridor lists doors. Tap one. You are dropped straight into the first room behind it.
 5. If the room has objects, each one is a button: tap it to take it. **GO FORWARD** walks to the next room, **GO BACK**
@@ -104,34 +114,35 @@ offer changes nothing and costs nothing.
 | Button | What it does |
 | :-- | :-- |
 | A listed place | Enters it. The list is what lies one level down. |
-| `▲ LEAVE …` | Back up one level. From a corridor it goes to the building and skips the elevator; the floor is back at the elevator on your next visit. <!-- src/engine/model/Floor.ts:180-183 --> |
-| **GO UP** / **GO DOWN** | Ride the elevator one floor. The top floor drops GO UP, the ground floor drops GO DOWN. <!-- src/engine/model/ElevatorState.ts:9-10 --> |
+| `▲ LEAVE …` | Back up one level. From a corridor it goes to the building and skips the elevator; the floor is back at the elevator on your next visit. <!-- src/engine/model/Floor.ts:220-224 --> |
+| **GO UP** / **GO DOWN** | Ride the elevator one floor. The top floor drops GO UP, the ground floor drops GO DOWN. <!-- src/engine/model/ElevatorState.ts:16-21 --> |
 | **ENTER CORRIDOR** / **BACK TO ELEVATOR** | The corridor lists the floor's doors; a door opens an apartment's first room. |
 | **GO FORWARD** / **GO BACK** | Walk an apartment's rooms. |
 | **EXIT APARTMENT** | Back to the corridor, from the first room only. <!-- src/engine/model/Room.ts:282-284 --> |
-| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`BUFFER FULL — merge or drop a fragment to take more`). <!-- src/ui/screens/HudPresenter.ts:291 --> |
+| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`BUFFER FULL — merge or drop a fragment to take more`). <!-- src/ui/screens/HudPresenter.ts:305 --> |
 | **BREACH THE BEDROCK** | On the top floor of a primed building whose Keystone you hold, in the elevator or the corridor. Spends the Keystone. |
 | **DESCEND INTO THE SUBSTRATE** | On floor 0 of a breached building, where GO DOWN used to be. |
-| **SCAN FOR SPECTRAL ECHOES** / **CAPTURE SPECTRAL ECHO** | In a Null Reach: scan until the signal reaches 100, then capture. <!-- src/engine/rules/GameEngine.ts:480-494 --> |
+| **SCAN FOR SPECTRAL ECHOES** / **CAPTURE SPECTRAL ECHO** | In a Null Reach: scan until the signal reaches 100, then capture. <!-- src/engine/rules/GameEngine.ts:487-501 --> |
 
 ### The dock
 
 | Button | Key | What it does |
 | :-- | :-- | :-- |
-| **SCAN** | `S` | What is behind the doors, which floors are near you (two either side), or the rooms of the apartment. Costs 1, no step. <!-- src/engine/model/Building.ts:18-19 --> |
+| **SCAN** | `S` | What is behind the doors, which floors are near you (two either side), or the rooms of the apartment. Costs 1, no step. <!-- src/engine/model/Building.ts:20-21 --> |
 | **MAP** | `M` | Draws the places you can enter from here, you at the centre; dim is unvisited. Nothing inside a room. Costs 1, no step. |
 | **BUFFER** | `I` | Your inventory. Costs 1 to open; everything inside is free. |
 | **TRACE** | none | Your whole path from the universe down to here, drawn. Costs 1. |
 | **HELP** | `H` | The operator's manual: what every button does and how not to die. Costs 1. |
 | **TITLE SCREEN** | `T` | Back to the title; the world waits behind CONTINUE. Costs 1. |
 | **END SESSION** | `Q` | The recap of this run. **RESUME** comes back for free; END SESSION again goes to the title with your place kept. |
-| **MORE** / **LESS** | — | On a phone, the rest of the dock. |
+| **MORE** / **LESS** | — | The rest of the dock. |
 
 <!-- src/engine/rules/GameEngine.ts:201-282 -->
 
-The keys are a desktop extra and the letter on the button is the key: a listed place takes a digit (`1`–`9`) or, for
-floors, its **floor number** (`0` is the lobby; floors 10 and up have no key); the moves take `U`, `D`, `C`, `B`, `F`;
-the way out `L`; the breach `J`; the echo hunt `E` and `C`. <!-- src/engine/rules/GameEngine.ts:44-64, 426-441 -->
+A phone shows no keys. With a keyboard attached, the buttons still answer to them: a listed place takes a digit
+(`1`–`9`) or, for floors, its **floor number** (`0` is the lobby; floors 10 and up have no key); the moves take `U`,
+`D`, `C`, `B`, `F`; the way out `L`; the breach `J`; the echo hunt `E` and `C`.
+<!-- src/engine/rules/GameEngine.ts:44-64, 441-446 -->
 
 ### The buffer screen
 
@@ -152,7 +163,7 @@ Coherence is the whole survival game, so here is exactly how it works.
 **Some places cost more.** The 1 becomes 2 in a place whose era is `ENTROPIC`, and 2 anywhere below a building's
 bedrock. Both at once is 4, but that only happens on a Layer's own screens, its elevator and its corridor view: the
 crypts and shards below bedrock are never entropic, so they cost 2. Nothing costs less than 1. The era that counts is the
-one in the street header, never an apartment's own. <!-- src/engine/rules/Drain.ts:9-10, 19-22; src/engine/model/Layer.ts:15-16 -->
+one in the street header, never an apartment's own. <!-- src/engine/rules/Drain.ts:9-10, 19-22; src/engine/model/Layer.ts:18-19 -->
 
 **Only merging gives it back.** Every merge adds 15. It is capped at 100. Nothing else restores Coherence: not
 resonance, not visiting new places, not time. <!-- src/engine/rules/Player.ts:7-8, 81; src/engine/rules/Coherence.ts:63-65 -->
@@ -172,7 +183,7 @@ sealed again, a Null Reach forgets you took its echo. <!-- src/engine/rules/Game
 | Under 40 | The place's description starts corrupting: each character has a 1-in-10 chance of turning to static. |
 | Under 30 | Red bar, `CRITICAL`. The map sprouts magenta `X` marks, one for every two points below 30. |
 
-<!-- src/engine/rules/Coherence.ts:7-15, 86-90; src/engine/rules/Corruption.ts:6-7 -->
+<!-- src/engine/rules/Coherence.ts:7-15, 91-99; src/engine/rules/Corruption.ts:6-7 -->
 
 <div class="tip" markdown="1">
 **Rule of thumb.** Keep at least two fragments in the buffer at all times. Two fragments is one merge, and one merge is
@@ -218,7 +229,7 @@ web game reads the same word lists. <!-- src/engine/model/RoomCategory.ts, src/c
 
 **Inscriptions are rarer and stronger.** About one door in five has words on it. Two of them are guarantees:
 `[DATA_VAULT]` means Laboratory or Bio-Server, `!! DANGER !!` means Security Station or Armory. Any other word just
-means "not one of those four". <!-- src/engine/procgen/Doors.ts:9-10 -->
+means "not one of those four". <!-- src/engine/procgen/Doors.ts:15-16 -->
 
 **Material and state mean nothing.** Whether the door is a rusted hatch or polished ceramic is decoration.
 
@@ -245,15 +256,15 @@ counts nothing. The tally does nothing else. <!-- src/engine/model/Frequency.ts:
 **Keystones.** When a building is primed (next section) and you merge two fragments while inside it, you get that
 building's Keystone instead of a hybrid: `Critical waveform collapse: KEYSTONE_STABILIZED`. It is worth 0 Hz, and it is
 the key to the basement. You only ever hold one per building, and it opens only that building, even if another one has
-the same name. <!-- src/engine/model/Keystone.ts:6-7, src/engine/model/Building.ts:132-140 -->
+the same name. <!-- src/engine/model/Keystone.ts:6-7, src/engine/model/Building.ts:155-163 -->
 
 ## The ritual and the bedrock
 
-This is the game's one real quest. <!-- src/engine/model/Building.ts:20-23, 124-126 -->
+This is the game's one real quest. <!-- src/engine/model/Building.ts:22-23, 146-149 -->
 
 1. **Pick a small building.** You will need to pick up at least one object on *every* floor. Buildings have 3 to 100
-   floors, and 41% of them are small, with 3 to 10. The street list does not show floor counts; the lobby lists every
-   floor, and SCAN at any elevator says `TOTAL_STRATA`. <!-- src/engine/procgen/BuildingSizes.ts:5-10 -->
+   floors, and 41% of them are small, with 3 to 10. The street list does not show floor counts; a building's
+   `Floors` chip does, and SCAN at any elevator says `TOTAL_STRATA`. <!-- src/engine/procgen/BuildingSizes.ts:6-11, src/engine/model/Building.ts:271 -->
 2. **Take something on every floor.** Any capture counts, including a Hidden Frequency that lands in your lap. Nothing
    on screen shows which floors you have sampled, so keep count yourself.
 3. **Merge seven times inside the building.** Merges done on the street or elsewhere do not count. This is seven
@@ -262,15 +273,16 @@ This is the game's one real quest. <!-- src/engine/model/Building.ts:20-23, 124-
    eighth is the first that can produce the Keystone. You need at least nine fragments in total to get there.
    <!-- src/engine/rules/Journey.ts:155-166 -->
 5. **Ride to the top floor.** A new button, **BREACH THE BEDROCK**, appears in the elevator and in the corridor. It
-   consumes the Keystone and the lobby's status line reads `BEDROCK_BREACHED`.
+   consumes the Keystone and the lobby's status line reads `The bedrock is breached`. <!-- src/engine/model/Building.ts:276-282 -->
 6. **Go to floor 0.** GO DOWN now reads **DESCEND INTO THE SUBSTRATE**. Tap it.
 
-**What is down there.** Ten Layers, `-0x1` down to `-0xA`, listed under the floors in the lobby with a pressure reading
-that climbs 10% a layer to 100%. Floors are called Layers, corridors Arteries, apartments Crypts, rooms Shards. The
+**What is down there.** Ten Layers, `-0x1` down to `-0xA`, on the lobby's pad before floor `0` (their own tab past
+twenty keys) and drawn under the floors on the tower, each with a pressure reading that climbs 10% a layer to 100% —
+read out by a screen reader, and by SCAN. Floors are called Layers, corridors Arteries, apartments Crypts, rooms Shards. The
 frame turns red, Coherence is relabelled `INTEGRITY` and drains twice as fast, on the map every node is `☠`, and the
 telemetry pane adds a `[VOID]` line about a third of the time. Everything you take down there gets the culture bonus,
 because the whole basement is one culture, the abyssal one, whose 28 objects you never see above ground.
-<!-- src/engine/model/Building.ts:22-23; src/engine/model/Layer.ts:12-16; src/engine/rules/Telemetry.ts:8-10; src/engine/procgen/ThemeCatalog.ts:10-11 -->
+<!-- src/engine/model/Building.ts:24-25; src/engine/model/Layer.ts:13-19; src/engine/rules/Telemetry.ts:8-10; src/engine/procgen/ThemeCatalog.ts:10-11 -->
 
 **Ending the session down there gives you a different ending.** See the FAQ.
 
@@ -287,7 +299,7 @@ and each reach holds one free Spectral Echo. <!-- src/engine/procgen/FilamentFac
 
 **Landmarks** are buildings with grand names, marked on the street list. There are 15 names. They contain nothing
 special; the name is the prize. A street's building has a 4% chance (3% plus half a percent per level below depth 5),
-doubled under a Null Reach, never more than 25%. <!-- src/engine/procgen/BuildingNamer.ts:10-15 -->
+doubled under a Null Reach, never more than 25%. <!-- src/engine/procgen/BuildingNamer.ts:11-15 -->
 
 **Check the era.** The street's chips show its `Era`. If it is `ENTROPIC`, every prompt costs 2. There is no era that
 costs less. <!-- src/engine/rules/Drain.ts:10 -->
@@ -299,11 +311,11 @@ frequency bonus lands on the *other* culture there, and it swaps the planet's tw
 **Apartments drift in time.** Some apartments carry the planet's *second* era: their objects and lighting are of that
 era, and the room's `TEMPORAL_MARKER` tag says so. The drain cost still follows the street header.
 
-**Stability.** `STABILITY` on a floor's diagnostic is the share of the country's apartments that follow the planet's
+**Stability.** The `Stability` chip at an elevator is the share of the country's apartments that follow the planet's
 main culture: 85% shifted by up to a tenth either way, kept between 10% and 90%. <!-- src/engine/model/Vibe.ts:6-8, src/engine/procgen/CountryFactory.ts:13-14 -->
 
 **Building size odds.** Small 41% (3 to 10 floors, 2 to 6 doors a corridor), medium 30% (10 to 25, 4 to 10), large
-20% (30 to 50, 8 to 16), massive 9% (50 to 100, 10 to 20). <!-- src/engine/procgen/BuildingSizes.ts:6-10 -->
+20% (30 to 50, 8 to 16), massive 9% (50 to 100, 10 to 20). <!-- src/engine/procgen/BuildingSizes.ts:6-11 -->
 
 **How big the world is.** 3 to 7 filaments in the universe, 4 to 8 nodes on a filament, 3 to 7 solar systems in a
 sector, 2 to 10 planets, 2 to 8 countries, 2 to 10 cities, 3 to 15 streets, 4 to 20 buildings on a street (always an
@@ -314,17 +326,17 @@ even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/
 **The depth rail** under the HUD is your path, one glyph for each level, the current one ringed: `∞` universe,
 `»` filament, `○` sector or null reach, `☼` solar system, `⊕` planet, `⬚` country, `🏙` city, `═` street, `⌂` building,
 `▤` floor, `▅` corridor, `🚪` apartment, `□` room; below bedrock the shard is `☠`. Its length is how deep you are: one
-glyph at the universe, thirteen in a room. A phone shows the glyphs, and a screen reader reads each level's kind and
-name. A desktop shows the names too, in a column down the left.
+glyph at the universe, thirteen in a room. The rail shows the glyphs, and a screen reader reads each level's kind and
+name.
 
 **Steps** is how many steps the game accepted: moves, places and takes alike. It carries over when you reload.
 Commands cost Coherence but do not count here.
 
-**The pane** beside the list (under it on a phone) is a drawn map from the street level upward and a telemetry block
+**The pane** under the list is a drawn map from the street level upward and a telemetry block
 from the building level downward. On the map, dim symbols are unvisited and bright ones are visited.
 <!-- src/engine/rules/Telemetry.ts:33-34 -->
 
-**Visited marks.** A place you have been to shows a green `[V]` on its row. One trip into a room marks the room, the
+**Visited marks.** A place you have been to shows a green `[V]` on its row; on a building's pad its number is dimmed. One trip into a room marks the room, the
 apartment, and every ancestor on the way up to the universe. <!-- src/engine/rules/Player.ts:123-131 -->
 
 **The status line** under the description is what your last tap did: the place entered, the object captured and its
@@ -332,9 +344,10 @@ frequency, the merge made.
 
 **The frame colour** is the planet's main culture, one of nine; below bedrock it is the void's red.
 
-**Floor zone names** in the lobby are picked by height. Floor 0 is always `TRANSIT_LOBBY` and the top floor
-`PEAK_OBSERVATORY`; floors 1 to 4 draw from four basement-style names, floors within four of the top from four
-executive names, everything between from four living names. <!-- src/engine/procgen/FloorZones.ts:5-7, 26 -->
+**Floor zone names** are picked by height; a screen reader hears each on its pad key (`Zone Transit lobby`), and SCAN
+names it `FUNCTION`. Floor 0 is always the transit lobby and the top floor the peak observatory — so the pad calls
+them **Lobby** and **Peak** — floors 1 to 4 draw from four basement-style names, floors within four of the top from
+four executive names, everything between from four living names. <!-- src/engine/procgen/FloorZones.ts:7-8, 27; src/engine/model/Floor.ts:72-77, 139-142 -->
 
 ## Saving, seeds and the debug tools
 
@@ -359,7 +372,7 @@ a browser may clear its storage at any time. There is no export and no import.
 tools: an `INTEGRITY` ladder that sets your Coherence to 100, 70, 69, 40, 39, 30, 29 or 1; inside a building,
 **PRIME BUILDING** (every floor sampled, seven merges in — your next merge inside it forges the Keystone) and
 **SPAWN KEYSTONE** (the building's Keystone straight into your buffer). There is no breach tool: prime, merge, ride to
-the top and breach. <!-- src/main.ts:34-35, src/engine/rules/GameEngine.ts:283-318, src/engine/rules/Coherence.ts:36-44 -->
+the top and breach. <!-- src/main.ts:57-58, src/engine/rules/GameEngine.ts:283-318, src/engine/rules/Coherence.ts:36-44 -->
 
 ## Ten tips, ranked
 
@@ -385,7 +398,7 @@ port's iteration notes (`tasks/port/I02.md` to `I09.md`).
 
 1. **The first screen shows 100.** The terminal game drains before it draws its first screen, so you begin a point or
    two down; here the drain belongs to the tap, and the first tap shows 99.
-2. **The basement is ten Layers deep**, `-0x1` to `-0xA`, listed in the lobby with their pressure. The terminal game
+2. **The basement is ten Layers deep**, `-0x1` to `-0xA`, on the lobby's pad, each with its pressure. The terminal game
    manufactures layers for as long as you keep pressing `d`.
 3. **A dropped fragment keeps everything**: its frequency, its provenance, its kind. A dropped Keystone still opens its
    building; a dropped hybrid or Hidden Frequency comes back worth what it held. The terminal game keeps only the name.
@@ -459,7 +472,7 @@ four shutdown steps and "Neural link severed." RESUME takes you back to the worl
 <!-- src/engine/rules/Endings.ts:3-14, src/ui/screens/RecapPresenter.ts:45-67 -->
 
 **Is there a bottom to the basement?**
-Yes: Layer `-0xA`, where the pressure reads 100%.
+Yes: Layer `-0xA`, where the pressure reads 100% (SCAN, or a screen reader on its pad key, says so).
 
 **Do landmarks have better loot?**
 No. Same objects as any other building. The name is the whole reward.

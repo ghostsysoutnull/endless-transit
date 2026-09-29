@@ -4,6 +4,7 @@ developer or a fresh session that needs the picture without reading the ten iter
 — the record of every class, choice and Guide-versus-code decision). The law the code lives by is `web/CLAUDE.md`;
 this page explains the shape that law produced. Player-facing rules and numbers: `docs/web/players_guide.md`.
 **Updated:** 2026-09-26 — the class tour moved here from `web/CLAUDE.md`; the desktop profile is gone (phones only).
+**Updated:** 2026-09-29 — U02: the building and the corridor drawn, their parts, and the portraits the engine hands over.
 
 > **In one paragraph.** `web/` is one npm package: a strict-TypeScript single-page game on Vite, with a pure and
 > deterministic engine that knows nothing of the browser, a thin browser layer that hands it storage and entropy, and
@@ -200,6 +201,23 @@ stays as it was. `SceneView` hosts the sketch: a tap zooms into the child and on
 dispose drops a zoom in flight; the child pointed at is told to `HudView`, which lights the list's twin through
 `data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no
 zoom.
+
+**The building and the corridor (U02).** A picture's view moves: it answers a `SceneCamera` for its view model at a
+size — `TravelCamera` (the tower's car, the corridor's walk: range, pace, coast, the stops, and a `CameraTrack`) or
+`StillCamera` (the street) — and `SceneView` owns where the view stands and asks the camera every rule. The track is a
+`SliderTrack` (its `SliderBox`, axis and the views at its ends) or `NoTrack`; it lays the real `role=slider`
+(`SceneSlider`, a `SliderFace`) over itself or hides it, and reads a finger on it. A finger is a `Drag`:
+`PictureDrag` on the picture (past a slop, one to one) or `SliderDrag` on the track, each let go with its `Fling`. A going-in is a
+`SceneTrip` (ride to the child's stop, zoom when the picture zooms, then the pick); motion is `Tween`s on the clock;
+`Zoom` is the canvas transform at one moment and `TearPass` draws the tear over the frame. The lit child and the one
+you stand by are a `ChildMark` (`MarkedChild` or `NoChild`). `SceneView`'s parts come whole in `SceneViewParts`, its
+canvas a `PixelCanvas` made by `CanvasMaker` (a canvas in its host within the `PixelBudget`, inked where it sits).
+`TowerPicture` draws a row per level (a floor's corridor as a line in its shape, a tick per door; the Layers faint in
+the void's red below the bedrock), the roof `Roof` picks, the car and the gauge; `CorridorPicture` walks a `HallView`
+(a pair of doors every 2.2 units) with one part per key from `CorridorParts` — a `HallShape` per corridor shape, a
+panel per material family, a mark per state look (`DoorLooks` the inks) — each door a `PlacedDoor`, and the
+`CorridorSlider` along its foot. A building's floors are listed as a pad of numbers (`FloorPad`), one group up to
+twenty, else by tens (`FloorsByTen`, the Layers together first, `LayersTogether`), the car's group shown first.
 
 **Debug mode.** `?debug` on the address, read only in `main.ts`, puts the debug commands on offer (INTEGRITY ladder,
 PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `debug: true`.

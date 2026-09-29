@@ -14,24 +14,23 @@ facts; if the two ever disagree, the guide wins and this page has a bug.
 
 ## Start
 
-Open [**the game**]({{ "/play/" | relative_url }}) on a phone or a desktop. **NEW WORLD** draws a seed, **RE-ROLL**
-draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Every action is a button; on a desktop the
-letter on a button is its key. The game saves itself after every tap, in this browser only; a reload continues.
+Open [**the game**]({{ "/play/" | relative_url }}) on a phone. **NEW WORLD** draws a seed, **RE-ROLL**
+draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Every action is a button. The game saves itself after every tap, in this browser only; a reload continues.
 
-**Try it:** tap a building, then `00 TRANSIT_LOBBY`, **ENTER CORRIDOR**, the first door. Tap an object.
+**Try it:** tap a building, then `0` on its pad of floors (the lobby), **ENTER CORRIDOR**, the first door. Tap an object.
 
 ## Buttons
 
 | Moving | |
 | :-- | :-- |
-| A listed place | enters it (a floor's key is its number: `0` is the lobby) |
+| A listed place | enters it (a building's floors are a pad of numbers: `0` is the lobby; past twenty, a tab per ten) |
 | `▲ LEAVE …` | up one level (from a corridor: to the building, skipping the elevator) |
 | Elevator | **GO UP**, **GO DOWN**, **ENTER CORRIDOR** |
 | Corridor | doors, **BACK TO ELEVATOR** |
 | Room | an object takes it; **GO FORWARD**, **GO BACK**; **EXIT APARTMENT** in the first room only |
 | Null Reach | **SCAN FOR SPECTRAL ECHOES** until 100, then **CAPTURE SPECTRAL ECHO** |
 
-| The dock (a phone keeps `▲ LEAVE` and **MORE** under your thumb) | |
+| The dock (`▲ LEAVE` and **MORE** stay under your thumb) | |
 | :-- | :-- |
 | **SCAN** | doors and room types, nearby floors, or the apartment's rooms |
 | **MAP** | what is below you, drawn; dim is unvisited |
