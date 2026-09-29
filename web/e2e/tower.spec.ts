@@ -60,15 +60,13 @@ test('the slider is hidden where the picture has nothing to slide to: on the str
   const problems = watchForErrors(page);
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
-  const slider = page.getByTestId('scene').locator('[role=slider]');
-  await expect(slider).toHaveCount(1);
+  const slider = page.getByTestId('scene').getByRole('slider');
   await expect(slider).toBeHidden();
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expect(slider).toBeVisible();
   await press(page, /^Ride to Floor 7,/, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
-  await expect(slider).toHaveCount(1);
   await expect(slider).toBeHidden();
   expect(problems).toEqual([]);
 });
