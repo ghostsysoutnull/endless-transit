@@ -19,6 +19,11 @@ export class MoveTable<Self> {
     return [...this.#rules.values()].filter((rule) => rule.to(self) !== undefined).map((rule) => rule.move);
   }
 
+  /** Where the move with this id would lead from here, without making it; nothing when it is not offered from here. */
+  to(self: Self, id: string): Location | undefined {
+    return this.#rules.get(id)?.to(self);
+  }
+
   /** Makes the move with this id: where it leads, after what it does; nothing when it is not offered from here. */
   make(self: Self, id: string): Location | undefined {
     const rule = this.#rules.get(id);

@@ -47,24 +47,30 @@ export class Atmospheres implements AtmosphereDeal {
     const structure = swapped('structure')
       ? glitch.branch('structure').pick(GLITCH_STRUCTURES)
       : facts.trait.key();
+    const structureList = this.#listed('structures', structure, `${ATMOSPHERE}/structures`);
+    const wallsList = this.#listed('walls', walls, CULTURES);
+    const lightList = this.#listed('lighting', lighting, `${ATMOSPHERE}/lighting`);
     return {
-      structure: seed
-        .branch('structure')
-        .pick(this.#pool('structures', structure, `${ATMOSPHERE}/structures`)),
+      structure: seed.branch('structure').pick(this.#pool('structures', structureList)),
       colour: seed.branch('colour').pick(this.#library.list(COLOURS)),
-      walls: seed.branch('walls').pick(this.#pool('walls', walls, CULTURES)),
-      lighting: seed.branch('lighting').pick(this.#pool('lighting', lighting, `${ATMOSPHERE}/lighting`)),
+      walls: seed.branch('walls').pick(this.#pool('walls', wallsList)),
+      lighting: seed.branch('lighting').pick(this.#pool('lighting', lightList)),
+      keys: { walls: wallsList, light: lightList },
     };
   }
 
-  /** The list for a key, or — with a warning — the list of the first key in the index it belongs to. */
-  #pool(category: string, key: string, indexOf: string): readonly string[] {
+  /** The key whose list the words come from: its own when the content has it, else — with a warning — the first key of the index it belongs to. */
+  #listed(category: string, key: string, indexOf: string): string {
     const path = `${ATMOSPHERE}/${category}/${key}`;
-    if (this.#library.has(path)) return this.#library.list(path);
+    if (this.#library.has(path)) return key;
     const fallback = this.#library.index(indexOf)[0] ?? '';
     this.#warnings.warn(
       `[THEME_WARN] no ${category} file for '${key}' — falling back to '${fallback}' (${path}.txt)`,
     );
-    return this.#library.list(`${ATMOSPHERE}/${category}/${fallback}`);
+    return fallback;
+  }
+
+  #pool(category: string, key: string): readonly string[] {
+    return this.#library.list(`${ATMOSPHERE}/${category}/${key}`);
   }
 }

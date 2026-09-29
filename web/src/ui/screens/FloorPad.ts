@@ -32,6 +32,7 @@ export class FloorPad implements Pads {
       street: () => ({ shown: false }),
       tower: (tower) => this.#pad(new ListedParts(tower.rows), travel, rows),
       corridor: () => ({ shown: false }),
+      plan: () => ({ shown: false }),
       unseen: () => ({ shown: false }),
     });
   }

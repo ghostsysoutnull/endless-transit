@@ -7,6 +7,7 @@ import type { DoorFigure } from './DoorFigure.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
+import type { PlanRoom } from './PlanRoom.ts';
 import type { Relic } from './Relic.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 import type { ScanReport } from './ScanReport.ts';
@@ -20,6 +21,8 @@ export const APARTMENT_KIND = new LocationKind({
 
 /** Where the apartment's relics are dealt to: relic `i` goes to the room `branch(DEALT).branch(i)` draws (ApartmentFactory.groovy:63-68). */
 const DEALT = 'dealt';
+/** What an apartment whose plan a scan resolved remembers (U03). */
+const SURVEYED = JSON.stringify({ surveyed: true });
 
 /**
  * The unit behind one door of a corridor: its rooms are its children. It has a culture and an era of its
@@ -37,6 +40,8 @@ export class Apartment extends Location {
   readonly #anomaly: boolean;
   readonly #rooms: number;
   readonly #relics: readonly Relic[];
+  /** A scan in one of its rooms resolved the plan (U03, Decision 9). */
+  #surveyed = false;
 
   constructor(
     origin: Origin<Corridor>,
@@ -121,6 +126,46 @@ export class Apartment extends Location {
           .branch(i)
           .range(0, this.#rooms - 1) === index,
     );
+  }
+
+  /**
+   * Its rooms as its plan draws them (U03), in walking order: a room the traveller has been to is visited; one a
+   * visited room leads to — or any, once the plan is surveyed — is known; the rest are fog. The relics lying in a room
+   * are marked once it is visited or the plan surveyed.
+   */
+  plan(seen: (place: Location) => boolean): readonly PlanRoom[] {
+    const rooms = this.children();
+    const reached = new Set(
+      rooms
+        .filter(seen)
+        .flatMap((room) => room.moves().map((move) => room.leadsTo(move.id)))
+        .filter((room) => room !== undefined),
+    );
+    return rooms.map((room) => {
+      const visited = seen(room);
+      return {
+        address: room.address().toString(),
+        name: room.name(),
+        sight: visited ? 'visited' : this.#surveyed || reached.has(room) ? 'known' : 'fog',
+        relics: visited || this.#surveyed ? (room.contents()?.objects.length ?? 0) : 0,
+      };
+    });
+  }
+
+  /** A scan in one of its rooms: the plan stays resolved. */
+  override survey(): void {
+    this.#surveyed = true;
+  }
+
+  override remember(): string | undefined {
+    return this.#surveyed ? SURVEYED : undefined;
+  }
+
+  /** Only the survey: nothing else an apartment keeps. */
+  override recall(memento: string): boolean {
+    if (memento !== SURVEYED) return false;
+    this.#surveyed = true;
+    return true;
   }
 
   override arrival(): Location {

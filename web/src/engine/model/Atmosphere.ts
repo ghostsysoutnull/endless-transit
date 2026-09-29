@@ -4,4 +4,6 @@ export interface Atmosphere {
   readonly colour: string;
   readonly walls: string;
   readonly lighting: string;
+  /** The keys of the lists the walls and the lighting were dealt from (U03: what the room is drawn by). */
+  readonly keys: { readonly walls: string; readonly light: string };
 }

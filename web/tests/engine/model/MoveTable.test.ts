@@ -35,6 +35,15 @@ const table = new MoveTable<Self>([
 ]);
 
 describe('MoveTable — one owner for what a kind offers and what making it does', () => {
+  test('to: where a move would lead, without making it — its act never runs; nothing when it is not offered or unknown', () => {
+    const self: Self = { acted: [], open: false };
+    expect(table.to(self, 'ring')).toBe(THERE);
+    expect(table.to(self, 'on')).toBe(THERE);
+    expect(table.to(self, 'gate')).toBeUndefined();
+    expect(table.to(self, 'fly')).toBeUndefined();
+    expect(self.acted).toEqual([]);
+  });
+
   test('offered: the moves that lead somewhere from here, in the table’s order; a move that leads nowhere is not offered', () => {
     expect(table.offered({ acted: [], open: true }).map((move) => move.id)).toEqual(['on', 'gate', 'ring']);
     expect(table.offered({ acted: [], open: false }).map((move) => move.id)).toEqual(['on', 'ring']);

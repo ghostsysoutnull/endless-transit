@@ -132,7 +132,7 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
     expect(building.recall(JSON.stringify({ breached: true }))).toBe(true);
     const layer = must(building.floorNumbered(-1));
     layer.arrive();
-    expect(readPortrait(layer.portrait())).toEqual({ drawn: 'unseen' });
+    expect(readPortrait(layer.portrait(() => true))).toEqual({ drawn: 'unseen' });
   });
 
   test('a door hands its picture its look and the word written on it', () => {

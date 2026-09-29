@@ -5,6 +5,7 @@ import { Coherence } from '#engine/rules/Coherence.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import type { PlanFigure } from '#engine/model/PlanFigure.ts';
 import { FixedEntropySource } from '#tests/support/FixedEntropySource.ts';
 import { MemorySaveStore } from '#tests/support/MemorySaveStore.ts';
 import { corridorOf, readPortrait, towerOf } from '#tests/support/readPortrait.ts';
@@ -44,8 +45,15 @@ function system(id: string, key: string, label: string): GameOption {
 }
 
 /** A move option names the option that undoes it, so a screen can keep the focus off it. */
-function move(id: string, key: string, label: string, opposite: string): GameOption {
-  return { ...system(`move:${id}`, key, label), role: 'move', opposite: `move:${opposite}` };
+/** A move option, and the place it leads to (U03: a move carries where it goes). */
+function move(
+  id: string,
+  key: string,
+  label: string,
+  opposite: string,
+  to: { readonly place: string; readonly address: string },
+): GameOption {
+  return { ...system(`move:${id}`, key, label), role: 'move', opposite: `move:${opposite}`, ...to };
 }
 
 function ids(snapshot: GameSnapshot): string[] {
@@ -97,6 +105,32 @@ function inTheFirstRoom(engine: GameEngine): GameSnapshot {
   engine.step('move:corridor');
   return engine.step('enter:0');
 }
+
+/** The plan a room's snapshot hands its picture, or a failed test when it is drawn otherwise. */
+function planOf(snapshot: GameSnapshot): PlanFigure {
+  const read = readPortrait(must(snapshot.place ?? undefined).portrait);
+  if (read.drawn !== 'plan') throw new Error(`expected the plan, got ${read.drawn}`);
+  return read.plan;
+}
+
+describe('GameEngine — a room is drawn as its apartment’s plan (U03)', () => {
+  test('the room stood in is visited, the next known, its relics unmarked; a scan marks them, and a reload keeps it', () => {
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves);
+    const room = inTheFirstRoom(engine);
+    expect(planOf(room).here).toBe(room.place?.address);
+    expect(planOf(room).rooms.map((each) => [each.sight, each.relics])).toEqual([
+      ['visited', 4],
+      ['known', 0],
+    ]);
+    const scanned = engine.step('scan');
+    expect(planOf(scanned).rooms.map((each) => [each.sight, each.relics])).toEqual([
+      ['visited', 4],
+      ['known', 4],
+    ]);
+    expect(planOf(engineOn(saves).snapshot()).rooms.map((each) => each.relics)).toEqual([4, 4]);
+  });
+});
 
 describe('GameEngine — the traveller the screen is shown', () => {
   test('the player hands the screen the tear’s strength its coherence gives', () => {
@@ -396,8 +430,12 @@ describe('GameEngine — walking the big world', () => {
     expect(lobby.place?.position).toEqual({ counted: false });
     expect(lobby.place?.facts.map((fact) => fact.label)).toEqual(['Era', 'Culture', 'Stability', 'Trait']);
     expect(lobby.options).toEqual([
-      move('up', 'u', 'Go Up', 'down'),
-      move('corridor', 'c', 'Enter Corridor', 'elevator'),
+      move('up', 'u', 'Go Up', 'down', { place: 'Floor 1', address: '0.0.0.0.0.0.0.0.0.1' }),
+      // Asking where the corridor is leaves the floor at its elevator: it leads to the floor itself.
+      move('corridor', 'c', 'Enter Corridor', 'elevator', {
+        place: 'Floor 0',
+        address: '0.0.0.0.0.0.0.0.0.0',
+      }),
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
       system('scan', 's', 'Scan'),
       system('map', 'm', 'Map'),
@@ -473,7 +511,10 @@ describe('GameEngine — walking the big world', () => {
       words: 'VOID_SINK',
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
-      move('elevator', 'b', 'Back to Elevator', 'corridor'),
+      move('elevator', 'b', 'Back to Elevator', 'corridor', {
+        place: 'Floor 0',
+        address: '0.0.0.0.0.0.0.0.0.0',
+      }),
     ]);
     expect(corridor.options.find((option) => option.id === 'leave')?.label).toBe('Leave Floor');
     const elevator = engine.step('move:elevator');
@@ -518,7 +559,10 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], voice: null });
     expect(engine.snapshot().place?.telemetry).toEqual(room.place?.telemetry);
     expect(room.options.filter((option) => option.role !== 'take')).toEqual([
-      move('forward', 'f', 'Go forward', 'back'),
+      move('forward', 'f', 'Go forward', 'back', {
+        place: 'Baroque Maintenance Bay',
+        address: '0.0.0.0.0.0.0.0.0.0.0.0.1',
+      }),
       { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
       system('scan', 's', 'Scan'),
       system('map', 'm', 'Map'),

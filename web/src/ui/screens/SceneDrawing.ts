@@ -54,6 +54,15 @@ export class SceneDrawing implements Drawings {
           ),
           shape: corridor.shape,
         }),
+      // The plan's picture comes with its host (U03, a later commit): until then a room keeps its screen.
+      plan: () =>
+        new Undrawn(
+          this.#frame(
+            place,
+            decay,
+            travel.map((option) => this.#child(option)),
+          ),
+        ),
       unseen: () =>
         new Undrawn(
           this.#frame(

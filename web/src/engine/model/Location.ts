@@ -68,8 +68,12 @@ export abstract class Location {
     return [];
   }
 
-  /** What this place's own picture is handed, and so which picture draws it (U02): none, unless the kind is drawn. */
-  portrait(): Portrait {
+  /**
+   * What this place's own picture is handed, and so which picture draws it (U02): none, unless the kind is drawn.
+   * `seen` says which places the traveller has been to (a room's plan fogs the rooms not reached, U03).
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default draws nothing; a room reads it
+  portrait(_seen: (place: Location) => boolean): Portrait {
     return new NoPortrait();
   }
 
@@ -146,12 +150,23 @@ export abstract class Location {
     return [];
   }
 
+  /** Where the move with this id would lead, without making it; nothing when there is no such move. Pure. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default offers no move; a kind with moves answers
+  leadsTo(_id: string): Location | undefined {
+    return undefined;
+  }
+
   /** Makes the move with this id and says where the traveller stands after it; nothing when there is no such move. */
   move(id: string): Location | undefined {
     if (this.moves().some((move) => move.id === id)) {
       throw new Error(`${this.kind().key()} offers the move '${id}' but does not make it`);
     }
     return undefined;
+  }
+
+  /** A scan was made here: a kind that keeps what a scan resolves remembers it (an apartment's plan, U03); most keep nothing. */
+  survey(): void {
+    // Nothing to keep.
   }
 
   /** What a save must keep of this place's own state, as text; nothing when it is in its default state. */
