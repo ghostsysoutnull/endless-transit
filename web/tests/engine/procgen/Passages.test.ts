@@ -3,9 +3,11 @@ import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Apartment } from '#engine/model/Apartment.ts';
 import type { Building } from '#engine/model/Building.ts';
+import { Corridor } from '#engine/model/Corridor.ts';
 import type { CorridorShape } from '#engine/model/CorridorShape.ts';
 import type { Floor } from '#engine/model/Floor.ts';
 import { Level } from '#engine/model/Level.ts';
+import { corridorOf, readPortrait, towerOf } from '#tests/support/readPortrait.ts';
 import { every, must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
@@ -45,20 +47,21 @@ describe('the peek (U02): a floor reads its corridor’s shape and its doors’ 
     for (let n = 0; n < 40; n++) {
       const building = buildingOf(n);
       for (const floor of building.children().slice(0, building.floors()) as Floor[]) {
-        const peeked = must(floor.figure());
-        const corridor = floor.corridor();
+        const peeked = must(floor.onTower()[0]);
+        const corridor = must(every([floor.corridor()], Corridor)[0]);
         const doors = every(corridor.children(), Apartment).map((apartment) => apartment.door());
-        expect(peeked.shape, floor.address().toString()).toBe(must(corridor.figure() ?? undefined).shape);
+        expect(peeked.shape, floor.address().toString()).toBe(corridor.shape());
+        expect(floor.shape()).toBe(corridor.shape());
         expect(peeked.looks).toEqual(doors.map((door) => door.look()));
-        expect(peeked.doors).toBe(building.doorsPerFloor());
+        expect(peeked.looks).toHaveLength(building.doorsPerFloor());
       }
     }
   });
 
   test('a corridor’s shape is the key its sentence carries: one of four, and the curved gallery is curved', () => {
     for (let n = 0; n < 8; n++) {
-      const corridor = floorOf(n).corridor();
-      const shape = must(corridor.figure() ?? undefined).shape ?? 'none';
+      const corridor = must(every([floorOf(n).corridor()], Corridor)[0]);
+      const shape = corridor.shape();
       expect(SHAPES).toContain(shape);
       if (must(corridor.description()[0]).startsWith('A curved gallery')) expect(shape).toBe('curved');
       if (must(corridor.description()[0]).startsWith('A narrow service')) expect(shape).toBe('service');
@@ -67,9 +70,8 @@ describe('the peek (U02): a floor reads its corridor’s shape and its doors’ 
 
   test('the building’s portrait peeks every floor and makes no corridor: no floor has asked for its children', () => {
     const building = buildingOf(3);
-    const portrait = must(building.portrait());
     const floors = building.children().slice(0, building.floors());
-    expect(portrait.tower?.rows).toHaveLength(building.floors());
+    expect(towerOf(building.portrait()).rows).toHaveLength(building.floors());
     expect(floors.some((floor) => floor.populated())).toBe(false);
   });
 });
@@ -84,26 +86,29 @@ describe('the corridor list carries its shapes', () => {
 });
 
 describe('what draws a floor, and what its picture is handed (U02)', () => {
-  test('at the elevator a floor is drawn by the tower and handed the building’s portrait; in the corridor by the corridor, handed its own shape and doors', () => {
+  test('at the elevator a floor is drawn as its building’s tower; in the corridor as the corridor, handed its shape and a door per apartment', () => {
     const building = buildingOf(6);
     const floor = must(building.children()[1]) as Floor;
     floor.arrive();
-    expect(floor.drawing()).toBe('building');
-    expect(floor.portrait()).toEqual(building.portrait());
-    expect(building.portrait().tower?.car).toBe(1);
+    expect(readPortrait(floor.portrait())).toEqual(readPortrait(building.portrait()));
+    expect(towerOf(building.portrait()).car).toBe(1);
     floor.move('corridor');
-    expect(floor.drawing()).toBe('corridor');
-    expect(floor.portrait()?.shape).toBe(must(floor.corridor().figure() ?? undefined).shape);
-    expect(floor.portrait()?.looks).toHaveLength(building.doorsPerFloor());
-    expect(floor.portrait()?.tower).toBeUndefined();
+    const corridor = corridorOf(floor.portrait());
+    expect(corridor.shape).toBe(must(every([floor.corridor()], Corridor)[0]).shape());
+    expect(corridor.doors.map((door) => door.address)).toEqual(
+      floor
+        .corridor()
+        .children()
+        .map((apartment) => apartment.address().toString()),
+    );
   });
 
-  test('the building’s portrait: its size, its address and landmark (what the roof is drawn from), the car', () => {
+  test('a building on its street: its address, its floors and the doors on each; its tower: its address and landmark (what the roof is drawn from), the car', () => {
     const building = buildingOf(2);
-    const portrait = must(building.portrait());
-    expect(portrait.floors).toBe(building.floors());
-    expect(portrait.doors).toBe(building.doorsPerFloor());
-    expect(portrait.tower).toMatchObject({
+    expect(building.onStreet()).toEqual([
+      { address: building.address().toString(), floors: building.floors(), doors: building.doorsPerFloor() },
+    ]);
+    expect(towerOf(building.portrait())).toMatchObject({
       address: building.address().toString(),
       landmark: building.landmark(),
       car: 0,
@@ -113,33 +118,34 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
   test('the building’s portrait has a row per level, lowest first, each with its level (a floor’s or a Layer’s): the Layers’ rows only once breached', () => {
     const building = buildingOf(2);
     const floors = Array.from({ length: building.floors() }, (_, n) => new Level(n, 'floor'));
-    expect(building.portrait().tower?.rows.map((row) => row.level)).toEqual(floors);
+    expect(towerOf(building.portrait()).rows.map((row) => row.level)).toEqual(floors);
     expect(building.recall(JSON.stringify({ breached: true }))).toBe(true);
     const layers = Array.from(
       { length: building.layers() },
       (_, k) => new Level(k - building.layers(), 'layer'),
     );
-    expect(building.portrait().tower?.rows.map((row) => row.level)).toEqual([...layers, ...floors]);
+    expect(towerOf(building.portrait()).rows.map((row) => row.level)).toEqual([...layers, ...floors]);
   });
 
-  test('a Layer keeps its own screen until U04: drawn by its kind’s key, and at its elevator it hands its own portrait, not the tower', () => {
+  test('a Layer keeps its own screen until U04: no picture draws it, not even the tower at its elevator', () => {
     const building = buildingOf(2);
     expect(building.recall(JSON.stringify({ breached: true }))).toBe(true);
     const layer = must(building.floorNumbered(-1));
     layer.arrive();
-    expect(layer.drawing()).toBe('layer');
-    expect(layer.portrait()).toEqual(layer.figure());
-    expect(layer.portrait()?.tower).toBeUndefined();
+    expect(readPortrait(layer.portrait())).toEqual({ drawn: 'unseen' });
   });
 
   test('a door hands its picture its look and the word written on it', () => {
     const corridor = floorOf(7).corridor();
     for (const apartment of every(corridor.children(), Apartment)) {
       const door = apartment.door();
-      expect(apartment.figure().door).toEqual({
-        look: door.look(),
-        words: door.inscription()?.word() ?? '',
-      });
+      expect(apartment.onCorridor()).toEqual([
+        {
+          address: apartment.address().toString(),
+          look: door.look(),
+          words: door.inscription()?.word() ?? '',
+        },
+      ]);
     }
   });
 });

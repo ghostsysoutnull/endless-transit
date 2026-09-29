@@ -53,8 +53,6 @@ function tower(
             door: null,
           })),
     tower: {
-      floors,
-      doors: 6,
       address: options.address ?? '0.0.0.0.0.0.0.0.2',
       landmark: options.landmark ?? false,
       car: options.car ?? 0,

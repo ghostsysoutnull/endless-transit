@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import type { Portrait } from '#engine/model/Portrait.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { FloorPad } from '#ui/screens/FloorPad.ts';
 import { FloorsByTen } from '#ui/screens/FloorsByTen.ts';
@@ -24,10 +25,18 @@ function row(facts: Partial<TravelRowVM> & { id: string }): TravelRowVM {
   };
 }
 
+/** The portrait of a snapshot's place: what the pad finds each level on. */
+function portraitOf(snapshot: GameSnapshot): Portrait {
+  const place = snapshot.place;
+  if (place === null) throw new Error('a pad needs a place');
+  return place.portrait;
+}
+
 /** The pad of a snapshot's list: its travel options, each with a row of its own id. */
 function padOf(snapshot: GameSnapshot): HudVM['pad'] {
   const travel = snapshot.options.filter((each) => each.role === 'travel');
   return pads.of(
+    portraitOf(snapshot),
     travel,
     travel.map((each) => row({ id: each.id })),
   );
@@ -35,7 +44,8 @@ function padOf(snapshot: GameSnapshot): HudVM['pad'] {
 
 describe('the floors as a pad (U02, Decision 7)', () => {
   test('up to twenty floors: one group, ascending, each key its number and its row’s words for a reader', () => {
-    const travel = towerSnapshot(16, 5).options.filter((each) => each.role === 'travel');
+    const tower = towerSnapshot(16, 5);
+    const travel = tower.options.filter((each) => each.role === 'travel');
     const rows = travel.map((each) =>
       each.id === 'enter:10'
         ? row({
@@ -46,7 +56,7 @@ describe('the floors as a pad (U02, Decision 7)', () => {
           })
         : row({ id: each.id }),
     );
-    const pad = pads.of(travel, rows);
+    const pad = pads.of(portraitOf(tower), travel, rows);
     expect(pad?.groups).toHaveLength(1);
     expect(pad?.open).toBe(0);
     const keys = pad?.groups[0]?.keys ?? [];

@@ -1,5 +1,4 @@
 import type { Fact } from '#engine/model/Fact.ts';
-import type { Figure } from '#engine/model/Figure.ts';
 
 /**
  * The letter of the visited mark the old lists drew after a name (`[V]`, Corridor.groovy:71-72,
@@ -38,8 +37,6 @@ export interface GameOption {
   readonly visited: boolean;
   /** The listed place's address as text (`0.2.1`): where a picture zooms in and back out; empty when it leads into none. */
   readonly address: string;
-  /** The listed place's shape on the picture (a building's floors and doors, a floor's row, a door); nothing for the rest. */
-  readonly figure: Figure | null;
   /** The listed place goes by its own number (a floor, Guide:111): a screen may lay such a list out as a pad of numbers (U02). */
   readonly numbered: boolean;
 }

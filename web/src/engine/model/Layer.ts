@@ -1,11 +1,12 @@
 import type { Building } from './Building.ts';
 import type { Fact } from './Fact.ts';
-import type { Figure } from './Figure.ts';
 import type { LevelKind } from './LevelKind.ts';
 import { Floor } from './Floor.ts';
 import type { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
+import { NoPortrait } from './NoPortrait.ts';
 import type { Origin } from './Origin.ts';
+import type { Portrait } from './Portrait.ts';
 
 export const LAYER_KIND = new LocationKind({ key: 'layer', title: 'Layer', icon: '▤', indexLabel: 'STRATA' });
 
@@ -33,18 +34,13 @@ export class Layer extends Floor {
     return LAYER_KIND;
   }
 
-  /** A Layer keeps its own screen until U04: drawn by its kind's picture, whatever its mode. */
-  override drawing(): string {
-    return LAYER_KIND.key();
-  }
-
   override levelKind(): LevelKind {
     return 'layer';
   }
 
-  /** What its own picture is handed: its own row, whatever its mode — never the tower the floors hand theirs. */
-  override portrait(): Figure | null {
-    return this.figure();
+  /** A Layer keeps its own screen until U04 draws it, whatever its mode — never the tower the floors are drawn as. */
+  override portrait(): Portrait {
+    return new NoPortrait();
   }
 
   /** `Layer -0x1` … (Floor.groovy:110-112). */

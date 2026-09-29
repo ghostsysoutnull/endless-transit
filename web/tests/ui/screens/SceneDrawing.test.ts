@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { DoorLook } from '#engine/model/DoorLook.ts';
 import { Level } from '#engine/model/Level.ts';
+import { StreetPortrait } from '#engine/model/StreetPortrait.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
@@ -21,7 +22,14 @@ function drawingOf(snapshot: GameSnapshot): SceneVM {
 describe('the drawing (U01b): what the scene draws, as data', () => {
   const DRAWN: GameSnapshot = {
     ...STREET,
-    place: { ...(STREET.place ?? ({} as never)), drawing: 'street', noise: new Seed(0xa1b2c3d4, 0xe5f60718) },
+    place: {
+      ...(STREET.place ?? ({} as never)),
+      portrait: new StreetPortrait([
+        { address: '0.0.0.0.1.0.0.0.0', floors: 16, doors: 9 },
+        { address: '0.0.0.0.1.0.0.0.1', floors: 60, doors: 4 },
+      ]),
+      noise: new Seed(0xa1b2c3d4, 0xe5f60718),
+    },
     options: [
       option({
         id: 'enter:0',
@@ -30,7 +38,6 @@ describe('the drawing (U01b): what the scene draws, as data', () => {
         place: 'Ornate Sanctum',
         ordinal: '1',
         address: '0.0.0.0.1.0.0.0.0',
-        figure: { floors: 16, doors: 9 },
         visited: true,
       }),
       option({
@@ -41,14 +48,13 @@ describe('the drawing (U01b): what the scene draws, as data', () => {
         sealed: true,
         landmark: true,
         address: '0.0.0.0.1.0.0.0.1',
-        figure: { floors: 60, doors: 4 },
       }),
       option({ id: 'leave', key: 'l', label: 'Leave Street', role: 'return' }),
       option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
     ],
   };
 
-  test('one child per listed place, in the list’s order, with its figure, its address and its marks; the key, the noise and the place’s address pass through', () => {
+  test('one child per listed place, in the list’s order, with its building’s figure, its address and its marks; the noise and the place’s address pass through', () => {
     const drawing = drawingOf(DRAWN);
     expect(drawing.key).toBe('street');
     expect(drawing.noise).toEqual(new Seed(0xa1b2c3d4, 0xe5f60718));
@@ -84,9 +90,9 @@ describe('the drawing (U01b): what the scene draws, as data', () => {
     expect(drawing.label).not.toBe('');
   });
 
-  test('a child with no figure is drawn with none: no floors, no doors', () => {
+  test('a place no picture draws: its children with no figure, no floors, no doors', () => {
     const plain = drawingOf(PLANET);
-    expect(plain.key).toBe('planet');
+    expect(plain.key).toBe('');
     expect(plain.children.map((child) => [child.floors, child.doors])).toEqual([
       [0, 0],
       [0, 0],
@@ -99,8 +105,6 @@ describe('the building (U02): the tower drawn', () => {
     const drawing = drawingOf(towerSnapshot(16, 5));
     expect(drawing.key).toBe('building');
     expect(drawing.tower).toEqual({
-      floors: 16,
-      doors: 2,
       address: '0.0.0.0.1.0.0.0.0',
       landmark: true,
       car: 5,

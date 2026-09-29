@@ -27,7 +27,6 @@ const DEAD: GameSnapshot = {
       current: false,
       visited: false,
       address: '',
-      figure: null,
       numbered: false,
     },
   ],

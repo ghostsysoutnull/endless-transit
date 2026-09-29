@@ -1,15 +1,19 @@
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Address } from './Address.ts';
+import type { BuildingFigure } from './BuildingFigure.ts';
 import type { Capture } from './Capture.ts';
 import type { Contents } from './Contents.ts';
+import type { DoorFigure } from './DoorFigure.ts';
 import type { Echo } from './Echo.ts';
 import type { Era } from './Era.ts';
 import type { Fact } from './Fact.ts';
-import type { Figure } from './Figure.ts';
 import type { Fragment } from './Fragment.ts';
+import type { LevelRow } from './LevelRow.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
+import { NoPortrait } from './NoPortrait.ts';
 import type { Origin } from './Origin.ts';
+import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Vibe } from './Vibe.ts';
 
@@ -64,19 +68,24 @@ export abstract class Location {
     return [];
   }
 
-  /** Which picture draws this place: its kind's key, unless the kind is drawn by another's picture. */
-  drawing(): string {
-    return this.kind().key();
+  /** What this place's own picture is handed, and so which picture draws it (U02): none, unless the kind is drawn. */
+  portrait(): Portrait {
+    return new NoPortrait();
   }
 
-  /** This place's shape on its parent's picture; nothing unless the kind has one (a building). */
-  figure(): Figure | null {
-    return null;
+  /** What this place adds to its street's picture: nothing, unless the kind stands on a street (a building). */
+  onStreet(): readonly BuildingFigure[] {
+    return [];
   }
 
-  /** What this place's own picture is handed (U02): its figure, unless the kind draws more of itself (a tower). */
-  portrait(): Figure | null {
-    return this.figure();
+  /** What this place adds to its building's tower: nothing, unless the kind is a level of it (a floor, a Layer). */
+  onTower(): readonly LevelRow[] {
+    return [];
+  }
+
+  /** What this place adds to its corridor's picture: nothing, unless the kind is behind a door (an apartment). */
+  onCorridor(): readonly DoorFigure[] {
+    return [];
   }
 
   /** The readings shown beside this place on its parent's list; none unless the kind has some. */

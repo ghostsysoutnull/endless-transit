@@ -3,7 +3,7 @@ import type { Culture } from './Culture.ts';
 import type { Door } from './Door.ts';
 import type { Era } from './Era.ts';
 import type { Fact } from './Fact.ts';
-import type { Figure } from './Figure.ts';
+import type { DoorFigure } from './DoorFigure.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
@@ -74,15 +74,14 @@ export class Apartment extends Location {
   }
 
   /** Its door on the corridor's picture (U02): the door's look and the word written on it, if any. */
-  override figure(): Figure {
-    return {
-      floors: 0,
-      doors: 0,
-      door: {
+  override onCorridor(): readonly DoorFigure[] {
+    return [
+      {
+        address: this.address().toString(),
         look: this.#door.look(),
         words: this.#door.inscription()?.word() ?? '',
       },
-    };
+    ];
   }
 
   /** The kind of the first room behind the door — what the door's words and trace were decided by (CorridorFactory.groovy:44-45). */

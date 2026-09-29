@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -24,7 +25,6 @@ function option(id: string, key: string, label: string): GameOption {
     current: false,
     visited: false,
     address: '',
-    figure: null,
     numbered: false,
   };
 }
@@ -47,8 +47,7 @@ const RECAP: GameSnapshot = {
     contents: null,
     telemetry: null,
     lattice: null,
-    drawing: 'building',
-    figure: null,
+    portrait: new NoPortrait(),
     noise: new Seed(0, 0),
   },
   player: playerSummary({ coherence: 61, band: 'degraded', steps: 33, decay: 0.1 }),

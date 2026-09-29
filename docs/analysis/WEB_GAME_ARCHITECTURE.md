@@ -187,8 +187,10 @@ Every canvas moves on the page's one `MotionClock` (behind a `FrameSource` the c
 `requestAnimationFrame`; it runs only while something listens) and keeps the `PixelBudget` (≤ 2 device pixels per CSS
 pixel, ≤ 1.3 million pixels).
 
-**Scenes (U01b).** `src/ui/scene/` draws a place: the engine hands over a drawing key (`Location.drawing()`), each
-child's address and figure on its option, and the frame's seed; the presenter's `SceneDrawing` makes a `SceneVM` (with
+**Scenes (U01b).** `src/ui/scene/` draws a place: the engine hands over the place's portrait (`Location.portrait()`:
+the street, the tower, the corridor, or none), which tells its reader which it is and carries each drawn child's part by
+its address (`onStreet()`, `onTower()`, `onCorridor()`), and the frame's seed; the presenter's `SceneDrawing` reads the
+portrait into a `SceneVM` (with
 the tear's strength from `Coherence.decay()`); the `SceneRegistry` built in `main.ts` — each picture built with its
 parts by `ScenePictures` — maps a key to a `ScenePicture` (today
 `street` → `StreetPicture`: a pure `layout` into hit areas and a pure `paint`), and a key with no entry leaves the

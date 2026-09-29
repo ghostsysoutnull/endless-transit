@@ -1,4 +1,6 @@
+import type { Level } from '#engine/model/Level.ts';
 import type { LevelKind } from '#engine/model/LevelKind.ts';
+import type { Portrait } from '#engine/model/Portrait.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { HudVM } from './HudVM.ts';
 import type { Pads } from './Pads.ts';
@@ -20,14 +22,29 @@ export class FloorPad implements Pads {
   /**
    * A list whose every place goes by its own number (a building's floors) is laid out as a pad of numbers
    * (U02, Decision 7): one group up to 20, else by tens — ascending, the Layers' group first — and the group
-   * shown first is the one holding the current row (where the elevator stands).
+   * shown first is the one holding the current row (where the elevator stands). Each place's level is its row's on
+   * the tower the portrait draws; no tower, no pad.
    */
-  of(travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
+  of(portrait: Portrait, travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
     if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
+    return portrait.drawnBy<HudVM['pad']>({
+      street: () => null,
+      tower: (tower) => this.#pad(new Map(tower.rows.map((row) => [row.address, row.level])), travel, rows),
+      corridor: () => null,
+      unseen: () => null,
+    });
+  }
+
+  /** The pad of the numbered places, each at its level. */
+  #pad(
+    levels: ReadonlyMap<string, Level>,
+    travel: readonly GameOption[],
+    rows: readonly TravelRowVM[],
+  ): HudVM['pad'] {
     const numbered = rows
       .flatMap((row, index) => {
         const option = travel[index];
-        const level = option?.figure?.level;
+        const level = option === undefined ? undefined : levels.get(option.address);
         return option === undefined || level === undefined ? [] : [{ row, option, level }];
       })
       .sort((one, other) => one.level.number() - other.level.number());

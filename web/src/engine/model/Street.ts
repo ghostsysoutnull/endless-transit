@@ -2,6 +2,8 @@ import type { Fact } from './Fact.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
+import type { Portrait } from './Portrait.ts';
+import { StreetPortrait } from './StreetPortrait.ts';
 
 export const STREET_KIND = new LocationKind({ key: 'street', title: 'Street', icon: '═', indexLabel: 'WAY' });
 
@@ -46,6 +48,11 @@ export class Street extends Location {
 
   approachVerb(): string {
     return 'Enter Building:';
+  }
+
+  /** Drawn with its buildings, each as it stands (U01b). */
+  override portrait(): Portrait {
+    return new StreetPortrait(this.listing().flatMap((child) => child.onStreet()));
   }
 
   /** A new journey starts on a street (Guide:41). */

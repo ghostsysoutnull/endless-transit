@@ -32,8 +32,6 @@ export interface SceneVM {
   }[];
   /** The tower the place is drawn as (a building, a floor at its elevator); nothing for the rest. */
   readonly tower: {
-    readonly floors: number;
-    readonly doors: number;
     readonly address: string;
     readonly landmark: boolean;
     readonly car: number;
