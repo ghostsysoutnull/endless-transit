@@ -46,6 +46,24 @@ name is written beside its number (`5 · Industrial Barrier`) and runs into the 
 off. The corridor's drawing did not change in that build, so it likely dates from the corridor itself. **Fix:** the
 name keeps clear of the doors' numbers (shortened, moved, or drawn over them), and the user judges it on the phone.
 
+### HK-030 — a door with no word written on it carries an empty string
+**Found:** 2026-09-29, the design check of `276d2fb` (U02, `kinds-not-optionals`). `DoorFigure.words` and the
+corridor view model's `door.words` are `''` when nothing is written, and `PlacedDoor` asks `word() !== ''` (OO 6;
+TS: a union of valid shapes). **Fix:** a value that is a written word or none and answers whether it shows and what it
+says, like `ChildMark`; built where the engine reads the door's inscription.
+
+### HK-031 — horizontal or vertical is branched on in three places
+**Found:** 2026-09-29, the design check of `d3f3f2c` (U02, `kinds-not-optionals`). `SliderTrack.along`,
+`SceneSlider.placeAt` (the `aria-orientation`) and `TravelCamera.along` each compare an axis to `'x'`/`'y'` (OO 3).
+**Fix:** an axis value object with two members that reads a point along itself and names its orientation; the three
+ask it.
+
+### HK-032 — a kind picks how it counts its places by the shape of its facts
+**Found:** 2026-09-29, the design check of `afa2afc` (U02, `kinds-not-optionals`, step 5, which chose a union of
+facts so only the floor's kind changed). `LocationKind`'s constructor builds `Indexed` or `Unindexed` by testing
+`'indexLabel' in facts` (OO 3, 4, 5). **Fix:** the facts carry the counter (`count: new Indexed('ORBIT')` or
+`new Unindexed()`), passed by each of the about 20 kinds; the constructor stores it.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators
