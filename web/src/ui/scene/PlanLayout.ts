@@ -1,8 +1,6 @@
 import { FloorPlan } from './FloorPlan.ts';
-import { PlanBox } from './PlanBox.ts';
 import { LevelDoor } from './LevelDoor.ts';
-import type { PlanDoor } from './PlanDoor.ts';
-import { SideDoor } from './SideDoor.ts';
+import { PlanBox } from './PlanBox.ts';
 import type { Fractions } from './Fractions.ts';
 
 /** A room's area in plan units (the mock's `n * 1.7`, `transit-reframed.html:577`). */
@@ -16,8 +14,6 @@ const SPREAD = 0.4;
 const SPARE = 200;
 const WIDTHS = 300;
 const ROW_WIDTHS = 50;
-/** Two walls closer than this are one. */
-const EDGE = 1e-9;
 
 /**
  * Owns one fact (U03): how an apartment's rooms are laid out — a pure function of the room count and the address.
@@ -62,7 +58,7 @@ export class PlanLayout {
       width,
       height,
       rooms: laid,
-      doors: laid.slice(1).map((next, index) => this.#between(laid[index] ?? next, next)),
+      doors: laid.slice(1).map((next, index) => (laid[index] ?? next).doorTo(next)),
       entry: new LevelDoor(height, first.left(), first.right()),
     });
   }
@@ -81,16 +77,5 @@ export class PlanLayout {
         .slice(0, spare),
     );
     return Array.from({ length: rows }, (_, row) => (takers.has(row) ? each + 1 : each));
-  }
-
-  /** The doorway between a room and the next: the middle of the wall they share. */
-  #between(one: PlanBox, next: PlanBox): PlanDoor {
-    const meet = (a: number, b: number): boolean => Math.abs(a - b) < EDGE;
-    if (meet(one.right(), next.left()) || meet(next.right(), one.left())) {
-      const x = meet(one.right(), next.left()) ? one.right() : one.left();
-      return new SideDoor(x, Math.max(one.top(), next.top()), Math.min(one.bottom(), next.bottom()));
-    }
-    const y = meet(one.bottom(), next.top()) ? one.bottom() : one.top();
-    return new LevelDoor(y, Math.max(one.left(), next.left()), Math.min(one.right(), next.right()));
   }
 }

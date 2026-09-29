@@ -2,9 +2,6 @@ import type { PlanBox } from './PlanBox.ts';
 import type { PlanDoor } from './PlanDoor.ts';
 import { PlanPoint } from './PlanPoint.ts';
 
-/** Two walls closer than this are one. */
-const EDGE = 1e-9;
-
 /** A doorway in a wall that runs across, at `y`, the shared wall running from `left` to `right`. Value object. */
 export class LevelDoor implements PlanDoor {
   readonly #y: number;
@@ -12,13 +9,15 @@ export class LevelDoor implements PlanDoor {
   readonly #right: number;
 
   constructor(y: number, left: number, right: number) {
+    if (!(right > left))
+      throw new RangeError(`a doorway needs wall to stand in, got ${String(left)} to ${String(right)}`);
     this.#y = y;
     this.#left = left;
     this.#right = right;
   }
 
   middle(): PlanPoint {
-    return new PlanPoint((this.#left + this.#right) / 2, this.#y);
+    return new PlanPoint(this.#along(), this.#y);
   }
 
   span(): number {
@@ -27,13 +26,15 @@ export class LevelDoor implements PlanDoor {
 
   gap(width: number): readonly [PlanPoint, PlanPoint] {
     const half = Math.min(width, this.span()) / 2;
-    const middle = (this.#left + this.#right) / 2;
-    return [new PlanPoint(middle - half, this.#y), new PlanPoint(middle + half, this.#y)];
+    return [new PlanPoint(this.#along() - half, this.#y), new PlanPoint(this.#along() + half, this.#y)];
   }
 
   on(box: PlanBox): boolean {
-    const middle = (this.#left + this.#right) / 2;
-    const atWall = Math.abs(box.top() - this.#y) < EDGE || Math.abs(box.bottom() - this.#y) < EDGE;
-    return atWall && middle > box.left() && middle < box.right();
+    return box.levelAt(this.#y) && this.#along() > box.left() && this.#along() < box.right();
+  }
+
+  /** The middle of the shared wall, along it. */
+  #along(): number {
+    return (this.#left + this.#right) / 2;
   }
 }

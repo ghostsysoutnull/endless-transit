@@ -1,4 +1,10 @@
+import { LevelDoor } from './LevelDoor.ts';
+import type { PlanDoor } from './PlanDoor.ts';
 import { PlanPoint } from './PlanPoint.ts';
+import { SideDoor } from './SideDoor.ts';
+
+/** Two walls closer than this, in plan units, are one. */
+const EDGE = 1e-9;
 
 /** A box on an apartment's plan, in plan units (a room is about 1.3 across): where it starts and how big it is. Value object. */
 export class PlanBox {
@@ -38,6 +44,31 @@ export class PlanBox {
 
   height(): number {
     return this.#height;
+  }
+
+  /** Whether its left or right wall stands at this x. */
+  sideAt(x: number): boolean {
+    return Math.abs(this.left() - x) < EDGE || Math.abs(this.right() - x) < EDGE;
+  }
+
+  /** Whether its top or bottom wall stands at this y. */
+  levelAt(y: number): boolean {
+    return Math.abs(this.top() - y) < EDGE || Math.abs(this.bottom() - y) < EDGE;
+  }
+
+  /**
+   * The doorway into a box that shares a wall with this one: in the middle of the shared stretch of this box's right
+   * or left wall (the other's left or right), else of its bottom or top. The layout only asks it of boxes that touch.
+   */
+  doorTo(next: PlanBox): PlanDoor {
+    const near = (one: number, other: number): boolean => Math.abs(one - other) < EDGE;
+    const top = Math.max(this.top(), next.top());
+    const bottom = Math.min(this.bottom(), next.bottom());
+    const left = Math.max(this.left(), next.left());
+    const right = Math.min(this.right(), next.right());
+    if (near(this.right(), next.left())) return new SideDoor(this.right(), top, bottom);
+    if (near(this.left(), next.right())) return new SideDoor(this.left(), top, bottom);
+    return new LevelDoor(near(this.bottom(), next.top()) ? this.bottom() : this.top(), left, right);
   }
 
   area(): number {
