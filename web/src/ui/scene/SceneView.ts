@@ -42,7 +42,7 @@ const GLIDE = 320;
  */
 export class SceneView implements DrawnScene {
   readonly #parts: SceneViewParts;
-  /** Told which child the picture points at (or none, empty): the list lights its twin. */
+  /** Told which child the picture points at (or none): the list lights its twin. */
   readonly #onLight: (mark: ChildMark) => void;
   /** What a mount puts in the host, made together and torn down together: the canvas, the slider, the listeners. */
   #mounted:
