@@ -16,7 +16,7 @@ const FLOOR: GameSnapshot = {
     icon: '▤',
     name: 'Floor 0',
     address: '0.0.0.0.1.0.0.0.0.0',
-    position: { label: 'Z-AXIS', index: 1, total: 16 },
+    position: { counted: true, label: 'Z-AXIS', index: 1, total: 16 },
     childrenHeading: 'Local access list',
   },
   options: [
@@ -82,7 +82,7 @@ const ROOM: GameSnapshot = {
     icon: '□',
     name: 'Grand Power Plant',
     address: '0.0.0.0.1.0.0.0.0.0.0.0.0',
-    position: { label: 'CELL', index: 1, total: 2 },
+    position: { counted: true, label: 'CELL', index: 1, total: 2 },
     facts: [
       { key: 'reading', label: 'TYPE', value: 'Power Plant' },
       { key: 'stable', label: 'RESONANCE', value: '[STABLE]' },
@@ -182,7 +182,7 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
     expect(vm.place.position).toEqual({ label: 'Orbit', value: '2 of 5' });
     const universe = presenter.toViewModel({
       ...PLANET,
-      place: { ...placeOf(PLANET), position: null, address: '0', frame: null },
+      place: { ...placeOf(PLANET), position: { counted: false }, address: '0', frame: null },
     });
     expect(universe.place.position).toBeNull();
     expect(universe.frame).toBe('default');

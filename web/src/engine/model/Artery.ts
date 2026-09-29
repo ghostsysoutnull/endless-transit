@@ -21,7 +21,7 @@ export class Artery extends Corridor {
   readonly #vibe: Vibe;
 
   constructor(origin: Origin<Floor>, facts: { sentence: string; vibe: Vibe }) {
-    super(origin, { sentence: facts.sentence });
+    super(origin, { sentence: facts.sentence, shape: 'none' });
     this.#vibe = facts.vibe;
   }
 

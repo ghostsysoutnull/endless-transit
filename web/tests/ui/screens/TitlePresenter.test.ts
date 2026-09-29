@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
+import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
@@ -121,12 +122,12 @@ describe('TitlePresenter.toViewModel', () => {
     };
     expect(presenter.accepts(atTitle)).toBe(true);
     expect(presenter.toViewModel(atTitle).scene).toBe('title');
-    const place = {
+    const place: PlaceSummary = {
       kind: 'Universe',
       icon: '∞',
       name: 'The Endless Universe',
       address: '0',
-      position: null,
+      position: { counted: false },
       trail: [],
       status: '',
       description: [],

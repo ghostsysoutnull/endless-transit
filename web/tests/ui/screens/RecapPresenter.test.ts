@@ -37,7 +37,7 @@ const RECAP: GameSnapshot = {
     icon: '⌂',
     name: 'Ornate Sanctum',
     address: '0.0.0.0.0.0.0.0.0',
-    position: null,
+    position: { counted: false },
     trail: [],
     status: '',
     description: [],

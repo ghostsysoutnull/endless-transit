@@ -17,7 +17,7 @@ import { Phrase } from './Phrase.ts';
 import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤', indexLabel: '' });
+export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤' });
 
 /** The two modes, stateless, shared by every floor; a saved mode id finds its state here — a new mode is one more entry. */
 const ELEVATOR: FloorState = new ElevatorState();

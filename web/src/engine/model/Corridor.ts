@@ -23,12 +23,12 @@ export class Corridor extends Location {
   readonly #sentence: string;
   readonly #shape: CorridorShape;
 
-  /** `shape` is the key its sentence carries (`long`, `service`, `curved`, `static`); `none` when made without one. */
-  constructor(origin: Origin<Floor>, facts: { sentence: string; shape?: CorridorShape }) {
+  /** `shape` is the key its sentence carries (`long`, `service`, `curved`, `static`). */
+  constructor(origin: Origin<Floor>, facts: { sentence: string; shape: CorridorShape }) {
     super(origin);
     this.#floor = origin.parent;
     this.#sentence = facts.sentence;
-    this.#shape = facts.shape ?? 'none';
+    this.#shape = facts.shape;
   }
 
   kind(): LocationKind {

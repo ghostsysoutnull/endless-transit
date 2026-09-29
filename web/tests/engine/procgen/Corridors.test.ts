@@ -236,8 +236,8 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
   test('a room lists nothing, and the apartment is where its position is counted', () => {
     const room: Location = must(rooms[10]);
     expect(room.listing()).toEqual([]);
-    expect(room.kind().indexLabel()).toBe('CELL');
+    expect(room.kind().position(1, 2)).toMatchObject({ label: 'CELL' });
     expect(room.kind().icon()).toBe('□');
-    expect(must(room.parent()).kind().indexLabel()).toBe('UNIT');
+    expect(must(room.parent()).kind().position(1, 2)).toMatchObject({ label: 'UNIT' });
   });
 });

@@ -35,7 +35,7 @@ export const PLANET: GameSnapshot = {
     icon: '⊕',
     name: 'Auraea',
     address: '0.0.0.0.1',
-    position: { label: 'ORBIT', index: 2, total: 5 },
+    position: { counted: true, label: 'ORBIT', index: 2, total: 5 },
     trail: [
       { icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' },
       { icon: '»', kind: 'Cosmic filament', name: 'Zeta-915-Link', address: '0.0' },

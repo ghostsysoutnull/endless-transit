@@ -132,7 +132,7 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     const layer = floorOf(building, -1);
     expect(layer.kind().title()).toBe('Layer');
     expect(layer.kind().icon()).toBe('▤');
-    expect(layer.kind().indexLabel()).toBe('STRATA');
+    expect(layer.kind().position(1, 2)).toMatchObject({ label: 'STRATA' });
     expect(layer.number()).toBe(-1);
     expect(layer.callSign()).toBe('Layer -0x1');
     expect(layer.readings().map((fact) => [fact.label, fact.value])).toEqual([
@@ -195,7 +195,7 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
         expect(shard.kind().key()).toBe('shard');
         expect(shard.kind().title()).toBe('Shard');
         expect(shard.kind().icon()).toBe('☠');
-        expect(shard.kind().indexLabel()).toBe('SHARD');
+        expect(shard.kind().position(1, 2)).toMatchObject({ label: 'SHARD' });
         expect(shard.abyssal()).toBe(true);
         expect(shard.leaveLabel()).toBe('Exit Crypt');
         expect(shard).toBeInstanceOf(Room);

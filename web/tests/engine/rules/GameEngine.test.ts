@@ -175,7 +175,7 @@ describe('GameEngine — walking the big world', () => {
       icon: '∞',
       name: 'The Endless Universe',
       address: '0',
-      position: null,
+      position: { counted: false },
       trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' }],
       status: 'UNIMATRIX_STABLE',
       description: ['A neural web of infinite complexity.'],
@@ -242,8 +242,7 @@ describe('GameEngine — walking the big world', () => {
     expect(place.name).toBe('Zeta-915-Link');
     expect(place.address).toBe('0.0');
     expect(place.trail).toHaveLength(2);
-    expect(place.position?.label).toBe('CONDUIT');
-    expect(place.position?.index).toBe(1);
+    expect(place.position).toMatchObject({ label: 'CONDUIT', index: 1 });
     expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Zeta-915-Link']);
     expect(place.trail.map((step) => step.address)).toEqual(['0', '0.0']);
     expect(snapshot.options.find((option) => option.id === 'leave')).toEqual({
@@ -346,7 +345,7 @@ describe('GameEngine — walking the big world', () => {
       { key: 'culture', label: 'Culture', value: 'baroque' },
       { key: 'reading', label: 'Floors', value: '16' },
     ]);
-    expect(building.place?.position).toEqual({ label: 'Building', index: 1, total: 4 });
+    expect(building.place?.position).toEqual({ counted: true, label: 'Building', index: 1, total: 4 });
     expect(building.place?.childrenHeading).toBe('Ride to a floor');
     const floors = building.options.filter((option) => option.role === 'travel');
     expect(floors).toHaveLength(16);
@@ -394,7 +393,7 @@ describe('GameEngine — walking the big world', () => {
     expect(lobby.place?.kind).toBe('Floor');
     expect(lobby.place?.name).toBe('Floor 0');
     // A floor has no position chip (U02): its name and the tower say its height.
-    expect(lobby.place?.position).toBeNull();
+    expect(lobby.place?.position).toEqual({ counted: false });
     expect(lobby.place?.facts.map((fact) => fact.label)).toEqual(['Era', 'Culture', 'Stability', 'Trait']);
     expect(lobby.options).toEqual([
       move('up', 'u', 'Go Up', 'down'),
@@ -489,7 +488,7 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.name).toBe('Grand Power Plant');
     expect(room.place?.address).toBe('0.0.0.0.0.0.0.0.0.0.0.0.0');
     expect(room.place?.trail).toHaveLength(13);
-    expect(room.place?.position).toEqual({ label: 'CELL', index: 1, total: 2 });
+    expect(room.place?.position).toEqual({ counted: true, label: 'CELL', index: 1, total: 2 });
     expect(room.place?.trail.map((step) => step.icon).join('')).toBe('∞»○☼⊕⬚🏙═⌂▤▅🚪□');
     expect(room.place?.trail[11]?.name).toBe('_void_sink_ Brutalist Slab [PITTED]');
     expect(room.place?.description).toHaveLength(2);
@@ -530,7 +529,7 @@ describe('GameEngine — walking the big world', () => {
       system('recap', 'q', 'End session'),
     ]);
     const second = engine.step('move:forward');
-    expect(second.place?.position?.index).toBe(2);
+    expect(second.place?.position).toMatchObject({ index: 2 });
     expect(second.options.filter((option) => option.role !== 'take').map((option) => option.id)).toEqual([
       'move:back',
       'scan',
@@ -541,7 +540,7 @@ describe('GameEngine — walking the big world', () => {
       'to-title',
       'recap',
     ]);
-    expect(engine.step('leave').place?.position?.index).toBe(2);
+    expect(engine.step('leave').place?.position).toMatchObject({ index: 2 });
     engine.step('move:back');
     const floor = engine.step('leave');
     expect(floor.place?.kind).toBe('Floor');

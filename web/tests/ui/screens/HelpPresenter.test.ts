@@ -16,7 +16,7 @@ const HELP: GameSnapshot = {
     icon: '═',
     name: 'Bright Boulevard',
     address: '0.0.0.0.0.0.0.0',
-    position: { label: 'WAY', index: 1, total: 8 },
+    position: { counted: true, label: 'WAY', index: 1, total: 8 },
     trail: [],
     status: 'SYNC: [STABLE]',
     description: [],

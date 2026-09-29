@@ -125,13 +125,12 @@ export class HudPresenter implements Presenter<HudVM> {
         eyebrow: place.kind.toUpperCase(),
         icon: place.icon,
         name: place.name,
-        position:
-          place.position === null
-            ? null
-            : {
-                label: new Phrase(place.position.label).plain(),
-                value: `${String(place.position.index)} of ${String(place.position.total)}`,
-              },
+        position: !place.position.counted
+          ? null
+          : {
+              label: new Phrase(place.position.label).plain(),
+              value: `${String(place.position.index)} of ${String(place.position.total)}`,
+            },
         tags: place.facts.map((fact) => ({
           key: fact.key,
           label: fact.label,

@@ -36,7 +36,7 @@ const OPEN: GameSnapshot = {
     icon: '□',
     name: 'Grand Power Plant',
     address: '0.0.0.0.0.0.0.0.0.0.0.0.0',
-    position: { label: 'CELL', index: 1, total: 2 },
+    position: { counted: true, label: 'CELL', index: 1, total: 2 },
     trail: [],
     status: 'ATMOS: 14% | TEMP: 7°C',
     description: [],
