@@ -6,11 +6,13 @@ import type { SceneChild } from './SceneChild.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
+import type { LineSketch } from './LineSketch.ts';
+import type { SceneStages } from './SceneStages.ts';
 import type { Sketch } from './Sketch.ts';
 import type { ChildMark } from './ChildMark.ts';
 
 /** A picture's own view model and the picture: each call handed on with the view model it was made for. Value object. */
-export class Sketched<VM extends SceneVM<SceneChild>> implements Sketch {
+export class Sketched<VM extends SceneVM<SceneChild>> implements LineSketch {
   readonly #picture: ScenePicture<VM>;
   readonly #vm: VM;
 
@@ -53,5 +55,9 @@ export class Sketched<VM extends SceneVM<SceneChild>> implements Sketch {
 
   drawnBy(picture: ScenePicture<never>): boolean {
     return picture === this.#picture;
+  }
+
+  stageOn(stage: SceneStages): void {
+    stage.line(this);
   }
 }

@@ -196,7 +196,9 @@ portrait into a `Drawing` — one member per picture, holding that picture's own
 their parts by `ListedParts`, or `Undrawn`. `HudView` asks the drawing for its `Sketch` from the `SceneRegistry` built
 in `main.ts` (a `PictureBook`: each picture built with its parts by `ScenePictures`, a pure `layout` into hit areas and
 a pure `paint`), which binds the view model to its picture; an undrawn place's sketch draws nothing and the screen
-stays as it was. `SceneView` hosts the sketch: a tap zooms into the child and only then sends a bubbling `pick`
+stays as it was. `HudView` shows the sketch through the `SceneStage` built in `main.ts` (U03): the sketch tells the
+stage which kind of host it needs (`stageOn` → `SceneStages`), and the stage keeps its host while the host element and
+the picture stay, else makes one through `SceneHosts`. `SceneView` hosts a `LineSketch` (a view that is one number): a tap zooms into the child and only then sends a bubbling `pick`
 (`SceneEvents` makes it and reads its id back) the `InputRouter` turns into the option; a new frame of the game or a
 dispose drops a zoom in flight; the child pointed at is told to `HudView`, which lights the list's twin through
 `data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no

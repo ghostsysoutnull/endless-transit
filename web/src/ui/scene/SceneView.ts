@@ -1,5 +1,4 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
-import type { DrawnScene } from '#ui/screens/DrawnScene.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Drag } from './Drag.ts';
 import { MarkedChild } from './MarkedChild.ts';
@@ -13,7 +12,8 @@ import { SliderDrag } from './SliderDrag.ts';
 import type { SceneHit } from './SceneHit.ts';
 import { SceneTrip } from './SceneTrip.ts';
 import type { SceneViewParts } from './SceneViewParts.ts';
-import type { Sketch } from './Sketch.ts';
+import type { LineScene } from './LineScene.ts';
+import type { LineSketch } from './LineSketch.ts';
 import { Tween } from './Tween.ts';
 import { Zoom } from './Zoom.ts';
 
@@ -40,7 +40,7 @@ const GLIDE = 320;
  * still, the view jumps, a tap enters at once and nothing zooms; the tear is drawn but does not move. The canvas is
  * the image a reader hears named; the slider is its own control beside it.
  */
-export class SceneView implements DrawnScene {
+export class SceneView implements LineScene {
   readonly #parts: SceneViewParts;
   /** Told which child the picture points at (or none): the list lights its twin. */
   readonly #onLight: (mark: ChildMark) => void;
@@ -54,7 +54,7 @@ export class SceneView implements DrawnScene {
       }
     | undefined;
   /** What it draws: a view model bound to its picture. */
-  #sketch: Sketch | undefined;
+  #sketch: LineSketch | undefined;
   #size: PictureSize = { width: 0, height: 0 };
   #hits: readonly SceneHit[] = [];
   #lit: ChildMark = new NoChild();
@@ -144,7 +144,7 @@ export class SceneView implements DrawnScene {
   }
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
-  render(sketch: Sketch): void {
+  render(sketch: LineSketch): void {
     const before = this.#sketch?.frame();
     const vm = sketch.frame();
     this.#trip = undefined;
