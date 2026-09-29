@@ -1,8 +1,8 @@
 import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { Screen } from '#ui/Screen.ts';
 import type { AsideVM } from './AsideVM.ts';
+import type { Drawing } from './Drawing.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
@@ -74,8 +74,8 @@ export interface HudVM extends Screen {
     readonly picture: TracePictureVM;
     readonly lines: readonly string[];
   } | null;
-  /** What the place's picture draws (U01b); a screen draws it only when a picture is registered for its key. */
-  readonly drawing: SceneVM;
+  /** What the place's picture draws (U01b), or that no picture draws it: the screen then stays as it was. */
+  readonly drawing: Drawing;
   /**
    * A list of places that go by their own numbers (a building's floors) as a pad of numbers (U02): the groups
    * (one, or tens past 20 — each with its label, `10–19`, and its rows), which one shows first, and the name of

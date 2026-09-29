@@ -1,85 +1,102 @@
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
+import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import type { Drawing } from './Drawing.ts';
 import type { Drawings } from './Drawings.ts';
+import { DrawnCorridor } from './DrawnCorridor.ts';
+import { DrawnStreet } from './DrawnStreet.ts';
+import { DrawnTower } from './DrawnTower.ts';
 import { ListedParts } from './ListedParts.ts';
+import { Undrawn } from './Undrawn.ts';
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
   /**
-   * What the place's picture draws, told by its portrait: a child per listed place its portrait draws, in the list's
-   * order, its part found by its address; and the words a reader hears instead of the picture.
+   * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,
+   * in the list's order (`ListedParts`), with what the part adds; and the words a reader hears instead of the picture.
    */
-  of(place: PlaceSummary, travel: readonly GameOption[], decay: number): SceneVM {
-    const open = travel.filter((option) => !option.sealed).length;
-    const frame = {
-      label: `Picture of ${place.name}: ${String(travel.length)} places drawn, ${String(open)} open — the list below enters them too`,
+  of(place: PlaceSummary, travel: readonly GameOption[], decay: number): Drawing {
+    return place.portrait.drawnBy<Drawing>({
+      street: (buildings) =>
+        new DrawnStreet(
+          this.#frame(
+            place,
+            travel,
+            decay,
+            new ListedParts(buildings).drawn(travel, (option, building) => ({
+              ...this.#child(option),
+              floors: building.floors,
+              doors: building.doors,
+            })),
+          ),
+        ),
+      tower: (tower) =>
+        new DrawnTower({
+          ...this.#frame(
+            place,
+            travel,
+            decay,
+            new ListedParts(tower.rows).drawn(travel, (option, row) => ({
+              ...this.#child(option),
+              level: row.level,
+            })),
+          ),
+          tower,
+        }),
+      corridor: (corridor) =>
+        new DrawnCorridor({
+          ...this.#frame(
+            place,
+            travel,
+            decay,
+            new ListedParts(corridor.doors).drawn(travel, (option, door) => ({
+              ...this.#child(option),
+              door: { look: door.look, words: door.words },
+            })),
+          ),
+          shape: corridor.shape,
+        }),
+      unseen: () =>
+        new Undrawn(
+          this.#frame(
+            place,
+            travel,
+            decay,
+            travel.map((option) => this.#child(option)),
+          ),
+        ),
+    });
+  }
+
+  /** What every picture's view model shares, around its children: the words a reader hears count what is drawn. */
+  #frame<C extends SceneChild>(
+    place: PlaceSummary,
+    travel: readonly GameOption[],
+    decay: number,
+    children: readonly C[],
+  ): SceneVM<C> {
+    const open = children.filter((child) => !child.sealed).length;
+    return {
+      label: `Picture of ${place.name}: ${String(children.length)} places drawn, ${String(open)} open — the list below enters them too`,
       address: place.address,
+      children,
       slider: travel.length === 0 ? '' : place.childrenHeading,
       decay,
       noise: place.noise,
     };
-    const child = (option: GameOption): SceneVM['children'][number] => ({
+  }
+
+  /** What every picture knows of a listed place. */
+  #child(option: GameOption): SceneChild {
+    return {
       id: option.id,
       ordinal: option.ordinal,
       name: option.place,
-      floors: 0,
-      doors: 0,
       landmark: option.landmark,
       visited: option.visited,
       sealed: option.sealed,
       address: option.address,
-      level: null,
-      door: null,
-    });
-    /** The listed places the portrait draws a part for, each with its part. */
-    const drawn = <P extends { readonly address: string }>(
-      parts: readonly P[],
-      draw: (option: GameOption, part: P) => SceneVM['children'][number],
-    ): SceneVM['children'] => new ListedParts(parts).drawn(travel, draw);
-    return place.portrait.drawnBy<SceneVM>({
-      street(buildings) {
-        return {
-          ...frame,
-          key: 'street',
-          children: drawn(buildings, (option, building) => ({
-            ...child(option),
-            floors: building.floors,
-            doors: building.doors,
-          })),
-          tower: null,
-          shape: 'none',
-        };
-      },
-      tower(tower) {
-        return {
-          ...frame,
-          key: 'building',
-          children: drawn(tower.rows, (option, row) => ({ ...child(option), level: row.level })),
-          tower: {
-            address: tower.address,
-            landmark: tower.landmark,
-            car: tower.car,
-            rows: tower.rows.map((row) => ({ level: row.level, shape: row.shape, looks: row.looks })),
-          },
-          shape: 'none',
-        };
-      },
-      corridor(corridor) {
-        return {
-          ...frame,
-          key: 'corridor',
-          children: drawn(corridor.doors, (option, door) => ({
-            ...child(option),
-            door: { look: door.look, words: door.words },
-          })),
-          tower: null,
-          shape: corridor.shape,
-        };
-      },
-      unseen() {
-        return { ...frame, key: '', children: travel.map(child), tower: null, shape: 'none' };
-      },
-    });
+    };
   }
 }

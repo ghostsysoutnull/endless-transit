@@ -5,9 +5,6 @@ import '@fontsource/ibm-plex-sans/latin-400.css';
 import '#ui/styles/app.css';
 import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
-import { BUILDING_KIND } from '#engine/model/Building.ts';
-import { CORRIDOR_KIND } from '#engine/model/Corridor.ts';
-import { STREET_KIND } from '#engine/model/Street.ts';
 import { LocationRegistry } from '#engine/procgen/LocationRegistry.ts';
 import { ThemeCatalog } from '#engine/procgen/ThemeCatalog.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
@@ -72,12 +69,12 @@ const frame = new Frame();
 const clock = new MotionClock(new BrowserFrameSource(window));
 // Whether the player asked for reduced motion: asked by every moving thing, read only here.
 const motion = new BrowserReducedMotion(window);
-// The places that are drawn (U01b): a drawing key the engine hands over, and its picture. A new scene is one entry.
+// The places that are drawn (U01b): a picture per drawn kind the engine's portraits name. A new kind is one more.
 const pictures = new ScenePictures();
 const scenes = new SceneRegistry({
-  [STREET_KIND.key()]: pictures.street(),
-  [BUILDING_KIND.key()]: pictures.tower(),
-  [CORRIDOR_KIND.key()]: pictures.corridor(),
+  street: pictures.street(),
+  tower: pictures.tower(),
+  corridor: pictures.corridor(),
 });
 // The world screen's canvases: the map and the trace, drawn in the pictures' one font (U02).
 const font = new CanvasFont();

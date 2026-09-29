@@ -190,11 +190,12 @@ pixel, ≤ 1.3 million pixels).
 **Scenes (U01b).** `src/ui/scene/` draws a place: the engine hands over the place's portrait (`Location.portrait()`:
 the street, the tower, the corridor, or none), which tells its reader which it is and carries each drawn child's part by
 its address (`onStreet()`, `onTower()`, `onCorridor()`), and the frame's seed; the presenter's `SceneDrawing` reads the
-portrait into a `SceneVM` (with
-the tear's strength from `Coherence.decay()`); the `SceneRegistry` built in `main.ts` — each picture built with its
-parts by `ScenePictures` — maps a key to a `ScenePicture` (today
-`street` → `StreetPicture`: a pure `layout` into hit areas and a pure `paint`), and a key with no entry leaves the
-screen as it was. `SceneView` hosts it: a tap zooms into the child and only then sends a bubbling `pick`
+portrait into a `Drawing` — one member per picture, holding that picture's own view model (`StreetVM`, `TowerVM`,
+`CorridorVM`, each a `SceneVM` frame with the tear's strength from `Coherence.decay()`), its listed children matched to
+their parts by `ListedParts`, or `Undrawn`. `HudView` asks the drawing for its `Sketch` from the `SceneRegistry` built
+in `main.ts` (a `PictureBook`: each picture built with its parts by `ScenePictures`, a pure `layout` into hit areas and
+a pure `paint`), which binds the view model to its picture; an undrawn place's sketch draws nothing and the screen
+stays as it was. `SceneView` hosts the sketch: a tap zooms into the child and only then sends a bubbling `pick`
 (`SceneEvents` makes it and reads its id back) the `InputRouter` turns into the option; a new frame of the game or a
 dispose drops a zoom in flight; the child pointed at is told to `HudView`, which lights the list's twin through
 `data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no

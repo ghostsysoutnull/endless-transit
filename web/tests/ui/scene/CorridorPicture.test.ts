@@ -18,7 +18,7 @@ import { MetalPanel } from '#ui/scene/MetalPanel.ts';
 import { PlainMark } from '#ui/scene/PlainMark.ts';
 import { PlainPanel } from '#ui/scene/PlainPanel.ts';
 import { SceneHash } from '#ui/scene/SceneHash.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import type { CorridorVM } from '#ui/scene/CorridorVM.ts';
 import { ServiceHall } from '#ui/scene/ServiceHall.ts';
 import { ShadowGlow } from '#ui/scene/ShadowGlow.ts';
 import { StaticHall } from '#ui/scene/StaticHall.ts';
@@ -56,28 +56,23 @@ function look(index: number, state: number): ReturnType<typeof doorLook> {
 function corridor(
   doors: number,
   options: { shape?: CorridorShape; visited?: readonly number[]; states?: readonly number[] } = {},
-): SceneVM {
+): CorridorVM {
   return {
-    key: 'corridor',
     label: 'Picture of a corridor',
     address: '0.0.0.0.0.0.0.0.2.3',
     children: Array.from({ length: doors }, (_, index) => ({
       id: `enter:${String(index)}`,
       ordinal: String(index + 1),
       name: `_word_ Hatch ${String(index + 1)} [STATE]`,
-      floors: 0,
-      doors: 0,
       landmark: false,
       visited: options.visited?.includes(index) ?? false,
       sealed: false,
       address: `0.0.0.0.0.0.0.0.2.3.${String(index)}`,
-      level: null,
       door: {
         look: look(index, options.states?.[index] ?? index),
         words: index % 3 === 0 ? 'KEEP_WALKING' : '',
       },
     })),
-    tower: null,
     shape: options.shape ?? 'service',
     slider: 'Doors',
     decay: 0,

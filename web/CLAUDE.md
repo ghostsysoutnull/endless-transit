@@ -30,8 +30,10 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
 - **A move:** a row in its owner's `MoveTable` — what is offered is what can be made.
 - **A question to the player:** a `Prompt` state whose options are the only ones on offer, settled by a `Reply`; never
   a blocking read.
-- **A screen:** a presenter + view stage in `main.ts`. **A drawn place:** a `SceneRegistry` entry (drawing key →
-  `ScenePicture`); a key with no entry keeps the screen as it was.
+- **A screen:** a presenter + view stage in `main.ts`. **A drawn place:** a portrait member (a `PortraitReader`
+  method) in the engine; its view model, a `Drawing` member and a `PictureBook` method (`SceneRegistry` holds its
+  `ScenePicture`) on the screen — the compiler names every reader to answer. A place with `NoPortrait` keeps the
+  screen as it was.
 - **A kind of fragment:** one class and one row in the `FragmentReader`'s table.
 - **A fact about a place:** that place's `remember()`/`recall()` — its one home, and what the save carries.
 

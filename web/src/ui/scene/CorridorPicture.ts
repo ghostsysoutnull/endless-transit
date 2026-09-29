@@ -12,7 +12,7 @@ import { Quad } from './Quad.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
-import type { SceneVM } from './SceneVM.ts';
+import type { CorridorVM } from './CorridorVM.ts';
 import { StillCamera } from './StillCamera.ts';
 import { TravelCamera } from './TravelCamera.ts';
 
@@ -38,7 +38,7 @@ const HALF_DOOR = 0.45;
  * along the hall you stand, owned by the scene host. A pure function of its view-model, size, time, lit child,
  * view and the door you stand by; it builds none of its parts.
  */
-export class CorridorPicture implements ScenePicture<SceneVM> {
+export class CorridorPicture implements ScenePicture<CorridorVM> {
   readonly #parts: CorridorParts;
 
   constructor(parts: CorridorParts) {
@@ -46,7 +46,7 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
   }
 
   /** The walk along the hall; a hall without doors stands still. */
-  camera(vm: SceneVM, size: PictureSize): SceneCamera {
+  camera(vm: CorridorVM, size: PictureSize): SceneCamera {
     const hall = this.#hall(vm, size, 0);
     if (!hall.walks()) return new StillCamera();
     return new TravelCamera({
@@ -65,7 +65,7 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     });
   }
 
-  layout(vm: SceneVM, size: PictureSize, view: number): readonly SceneHit[] {
+  layout(vm: CorridorVM, size: PictureSize, view: number): readonly SceneHit[] {
     return this.#place(vm, size, view)
       .filter((door) => door.inReach())
       .map((door) => door.hit())
@@ -74,7 +74,7 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
 
   paint(
     painter: Painter,
-    vm: SceneVM,
+    vm: CorridorVM,
     size: PictureSize,
     palette: Palette,
     time: number,
@@ -114,12 +114,12 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
     painter.globalAlpha = 1;
   }
 
-  #hall(vm: SceneVM, size: PictureSize, view: number): HallView {
+  #hall(vm: CorridorVM, size: PictureSize, view: number): HallView {
     return new HallView({ size, view, doors: vm.children.length, shape: this.#parts.halls[vm.shape] });
   }
 
   /** The doors in sight where the view puts them, far to near (the order they are drawn in). */
-  #place(vm: SceneVM, size: PictureSize, view: number): PlacedDoor[] {
+  #place(vm: CorridorVM, size: PictureSize, view: number): PlacedDoor[] {
     const hall = this.#hall(vm, size, view);
     const placed: PlacedDoor[] = [];
     for (const [index, child] of vm.children.entries()) {
@@ -282,24 +282,21 @@ export class CorridorPicture implements ScenePicture<SceneVM> {
   }
 
   /** The ink a door is drawn in: its state's, dim when sealed. */
-  #inkOf(child: SceneVM['children'][number]): string {
+  #inkOf(child: CorridorVM['children'][number]): string {
     return child.sealed ? 'dim' : this.#parts.inks.ink(this.#lookOf(child).state);
   }
 
   /**
    * The door's material family, state look and the name it goes by in the hall: its material's (the mock's
-   * `Riveted Iron Hatch` — the option's full name adds the word and the state, which the door already shows); a child
-   * with no door's look (none in a corridor) is drawn plain under its own name.
+   * `Riveted Iron Hatch` — the option's full name adds the word and the state, which the door already shows).
    */
-  #lookOf(child: SceneVM['children'][number]): {
+  #lookOf(child: CorridorVM['children'][number]): {
     readonly family: MaterialFamily;
     readonly state: DoorStateLook;
     readonly name: string;
   } {
-    const look = child.door?.look;
-    return look === undefined
-      ? { family: 'plain', state: 'plain', name: child.name }
-      : { family: look.family(), state: look.stateLook(), name: look.material() };
+    const look = child.door.look;
+    return { family: look.family(), state: look.stateLook(), name: look.material() };
   }
 
   /** Words on a dark backing, centred on a point and kept inside the picture (the mock's `tag`). */

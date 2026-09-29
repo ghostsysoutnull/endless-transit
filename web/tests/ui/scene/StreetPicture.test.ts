@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import type { SceneHit } from '#ui/scene/SceneHit.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
+import type { StreetVM } from '#ui/scene/StreetVM.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
 /** The phone's picture at 360 × 640 (measured, tasks/ui/U01b.md), and a wider one: the layout scales. */
@@ -13,9 +13,8 @@ const WIDE = { width: 680, height: 510 };
 function street(
   count: number,
   floors: (index: number) => number = (index) => 5 + ((index * 37) % 96),
-): SceneVM {
+): StreetVM {
   return {
-    key: 'street',
     label: 'Picture of Bright Boulevard',
     address: '0.0.0.0.0.0.0.0',
     children: Array.from({ length: count }, (_, index) => ({
@@ -28,11 +27,7 @@ function street(
       visited: index === 0,
       sealed: false,
       address: `0.0.0.0.0.0.0.0.${String(index)}`,
-      level: null,
-      door: null,
     })),
-    tower: null,
-    shape: 'none',
     slider: '',
     decay: 0,
     noise: new Seed(0x7f3a91c2, 0x0b4de6a8),
@@ -112,7 +107,7 @@ describe('the street picture: one row of buildings on a ground line, as the mock
 
 describe('the street picture’s variations, pinned before its hash and roofs move out (U02 step 0)', () => {
   test('a fixed street at a fixed moment paints the same calls as before the move (a digest of them)', () => {
-    const vm: SceneVM = {
+    const vm: StreetVM = {
       ...street(9),
       children: street(9).children.map((child, index) => ({ ...child, sealed: index === 7 })),
     };

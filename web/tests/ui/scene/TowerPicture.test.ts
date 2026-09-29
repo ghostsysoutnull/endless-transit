@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { Level } from '#engine/model/Level.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import type { TowerVM } from '#ui/scene/TowerVM.ts';
 import { Roof, type RoofKind } from '#ui/scene/Roof.ts';
 import { SceneHash } from '#ui/scene/SceneHash.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
@@ -26,14 +26,13 @@ const SHAPES = ['long', 'service', 'curved', 'static'] as const;
 function tower(
   floors: number,
   options: { car?: number; below?: number; listed?: boolean; address?: string; landmark?: boolean } = {},
-): SceneVM {
+): TowerVM {
   const below = options.below ?? 0;
   const ordinals = [
     ...Array.from({ length: floors }, (_, n) => floors - 1 - n),
     ...Array.from({ length: below }, (_, k) => -1 - k),
   ];
   return {
-    key: 'building',
     label: 'Picture of a tower',
     address: '0.0.0.0.0.0.0.0.2',
     children:
@@ -43,14 +42,11 @@ function tower(
             id: `enter:${String(index)}`,
             ordinal: String(ordinal),
             name: `Floor ${String(ordinal)}`,
-            floors: 0,
-            doors: 0,
             landmark: false,
             visited: ordinal % 7 === 0,
             sealed: false,
             address: `0.0.0.0.0.0.0.0.2.${String(index)}`,
             level: new Level(ordinal, ordinal < 0 ? 'layer' : 'floor'),
-            door: null,
           })),
     tower: {
       address: options.address ?? '0.0.0.0.0.0.0.0.2',
@@ -58,18 +54,19 @@ function tower(
       car: options.car ?? 0,
       rows: [
         ...Array.from({ length: below }, (_, k) => ({
+          address: `0.0.0.0.0.0.0.0.2.${String(floors + below - 1 - k)}`,
           level: new Level(k - below, 'layer'),
           shape: 'none' as const,
           looks: [],
         })),
         ...Array.from({ length: floors }, (_, n) => ({
+          address: `0.0.0.0.0.0.0.0.2.${String(n)}`,
           level: new Level(n, 'floor'),
           shape: SHAPES[n % 4] ?? 'long',
           looks: Array.from({ length: 6 }, (_, k) => doorLook(STATES[(n + k) % 5])),
         })),
       ],
     },
-    shape: 'none',
     slider: 'Ride to a floor',
     decay: 0,
     noise: new Seed(0x7f3a91c2, 0x0b4de6a8),
@@ -107,7 +104,7 @@ describe('the tower’s camera: the car’s floor is the view', () => {
     }
     const elevator = picture.camera(tower(100, { car: 40, listed: false }), PHONE);
     expect([elevator.track(), elevator.drags()]).toEqual([null, false]);
-    const nothing = picture.camera({ ...tower(5), tower: null }, PHONE);
+    const nothing = picture.camera({ ...tower(5), tower: { ...tower(5).tower, rows: [] } }, PHONE);
     expect([nothing.track(), nothing.drags(), nothing.stopCount()]).toEqual([null, false, 0]);
   });
 
@@ -227,7 +224,7 @@ function addressWith(kind: RoofKind): string {
  * found by key (U02 fixes, step 2a) — removed, with the street's digest, at U02's close-out.
  */
 describe('the tower paints the same calls as before its drawers move (a digest of them)', () => {
-  const top = (address: string, landmark: boolean): SceneVM => tower(5, { car: 4, address, landmark });
+  const top = (address: string, landmark: boolean): TowerVM => tower(5, { car: 4, address, landmark });
 
   test('each roof, the top in view', () => {
     const digests = [

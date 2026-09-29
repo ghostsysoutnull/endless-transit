@@ -3,15 +3,14 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
-import type { ScenePicture } from '#ui/scene/ScenePicture.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import type { Sketch } from '#ui/scene/Sketch.ts';
 import type { View } from '#ui/View.ts';
 import type { CanvasViews } from './CanvasViews.ts';
 import type { DrawnScene } from './DrawnScene.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
-import type { Pictures } from './Pictures.ts';
+import type { PictureBook } from './PictureBook.ts';
 import { Retrace } from './Retrace.ts';
 import type { SceneViews } from './SceneViews.ts';
 
@@ -53,12 +52,10 @@ export class HudView implements View<HudVM> {
     map: MapPanelVM['picture'];
     trace: TracePictureVM;
   }>;
-  readonly #scenes: Pictures;
+  readonly #book: PictureBook;
   readonly #views: SceneViews;
-  /** The scene drawn now: its host, its picture and the view drawing it. */
-  #scene:
-    | { readonly host: HTMLElement; readonly picture: ScenePicture<SceneVM>; readonly view: DrawnScene }
-    | undefined;
+  /** The scene drawn now: its host, what it draws (bound to its picture) and the view drawing it. */
+  #scene: { readonly host: HTMLElement; readonly sketch: Sketch; readonly view: DrawnScene } | undefined;
   /** The child lit in the picture and the list, by its option id; empty when none. */
   #lit = '';
   /** The path to the last place shown: the child on it is the one the picture zooms out of. */
@@ -66,9 +63,9 @@ export class HudView implements View<HudVM> {
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
   #group: number | undefined;
 
-  /** The registry says which places are drawn (U01b); the makers make the scene and each canvas the screen carries (U02). */
-  constructor(scenes: Pictures, views: SceneViews, canvases: CanvasViews) {
-    this.#scenes = scenes;
+  /** The registry binds a drawing to its picture (U01b); the makers make the scene and each canvas the screen carries (U02). */
+  constructor(book: PictureBook, views: SceneViews, canvases: CanvasViews) {
+    this.#book = book;
     this.#views = views;
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
@@ -91,8 +88,9 @@ export class HudView implements View<HudVM> {
     const kept = this.#scene?.view;
     this.#paint(vm);
     // A view kept from the last render is shown the new frame; one made just now already shows it.
-    if (this.#scene !== undefined && this.#scene.view === kept) this.#scene.view.render(vm.drawing);
-    const from = this.#came.from(vm.drawing.address, vm.drawing.children);
+    if (this.#scene !== undefined && this.#scene.view === kept) this.#scene.view.render(this.#scene.sketch);
+    const drawing = vm.drawing.frame();
+    const from = this.#came.from(drawing.address, drawing.children);
     if (from !== undefined) this.#scene?.view.arrive(from.id);
     this.#came = new Retrace(vm.rail.map((step) => step.address));
   }
@@ -104,26 +102,27 @@ export class HudView implements View<HudVM> {
     this.#canvases.bind('pane', this.#host('pane'), vm.aside.map?.picture ?? null);
     this.#canvases.bind('map', this.#host('map'), vm.map?.picture ?? null);
     this.#canvases.bind('trace', this.#host('trace'), vm.trace?.picture ?? null);
-    this.#bindScene(vm.drawing);
+    this.#bindScene(vm.drawing.sketchedBy(this.#book));
   }
 
   /** The scene's view in its host: kept while the host and the picture stay, else made anew and shown the drawing; gone with its host. */
-  #bindScene(drawing: SceneVM): void {
+  #bindScene(sketch: Sketch): void {
     const host = this.#host('scene');
-    const picture = this.#scenes.picture(drawing.key);
-    if (host === null || picture === undefined) {
+    if (host === null || !sketch.drawn()) {
       this.#scene?.view.dispose();
       this.#scene = undefined;
       return;
     }
-    if (this.#scene?.host !== host || this.#scene.picture !== picture) {
+    if (this.#scene?.host !== host || !this.#scene.sketch.samePicture(sketch)) {
       this.#scene?.view.dispose();
-      const view = this.#views.make(picture, (id) => {
+      const view = this.#views.make((id) => {
         this.#light(id);
       });
       view.mount(host);
-      view.render(drawing);
-      this.#scene = { host, picture, view };
+      view.render(sketch);
+      this.#scene = { host, sketch, view };
+    } else {
+      this.#scene = { ...this.#scene, sketch };
     }
     this.#scene.view.light(this.#lit);
   }
@@ -181,7 +180,7 @@ export class HudView implements View<HudVM> {
   }
 
   #template(vm: HudVM): TemplateResult {
-    const drawn = this.#scenes.picture(vm.drawing.key) !== undefined;
+    const drawn = vm.drawing.sketchedBy(this.#book).drawn();
     return html`
       <div class="app world" data-frame=${vm.frame} data-band=${vm.meter.band} ?data-drawn=${drawn}>
         <section class="hud" aria-label=${vm.regions.hud}>

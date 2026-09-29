@@ -490,8 +490,7 @@ describe('HudPresenter.toViewModel — the picture and the pad (U01b, U02): made
       player: playerSummary({ coherence: 35, band: 'degraded', decay: 0.5 }),
     };
     const vm = presenter.toViewModel(falling);
-    expect(vm.drawing.key).toBe('building');
-    expect(vm.drawing.decay).toBe(0.5);
+    expect(vm.drawing.frame().decay).toBe(0.5);
     expect(vm.pad?.groups[0]?.keys).toHaveLength(16);
   });
 });

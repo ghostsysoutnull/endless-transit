@@ -1,8 +1,8 @@
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import type { Sketch } from '#ui/scene/Sketch.ts';
 import type { View } from '#ui/View.ts';
 
 /** What the world screen asks of the scene it draws (`SceneView`): a view that also rides, lights and comes back out. */
-export interface DrawnScene extends View<SceneVM> {
+export interface DrawnScene extends View<Sketch> {
   /** Back out of the child with this id. */
   arrive(id: string): void;
   /** Whether a child picked from the list is the picture's to ride to. */
