@@ -10,6 +10,7 @@ import { SceneHash } from '#ui/scene/SceneHash.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { doorLook } from '#tests/support/doorLook.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
+import { laid, shownTrack } from '#tests/support/laidTrack.ts';
 
 /** The phone's picture at 360 × 640 (tasks/ui/U01b.md) and a taller phone's. */
 const PHONE = { width: 328, height: 277 };
@@ -97,17 +98,17 @@ describe('the tower’s camera: the car’s floor is the view', () => {
 
   test('the gauge is a slider a thumb can hold, inside the picture, the top floor at its top; the elevator’s own screen has none and does not drag', () => {
     for (const size of [PHONE, TALL]) {
-      const track = picture.camera(tower(100), size).track();
-      expect(track?.width).toBeGreaterThanOrEqual(44);
-      expect(track?.x).toBeGreaterThanOrEqual(0);
-      expect((track?.x ?? 0) + (track?.width ?? 0)).toBeLessThanOrEqual(size.width);
-      expect((track?.y ?? 0) + (track?.height ?? 0)).toBeLessThanOrEqual(size.height);
+      const track = shownTrack(picture.camera(tower(100), size).track());
+      expect(track.width).toBeGreaterThanOrEqual(44);
+      expect(track.x).toBeGreaterThanOrEqual(0);
+      expect(track.x + track.width).toBeLessThanOrEqual(size.width);
+      expect(track.y + track.height).toBeLessThanOrEqual(size.height);
       expect(track).toMatchObject({ axis: 'y', from: 99, to: 0 });
     }
     const elevator = picture.camera(tower(100, { car: 40, listed: false }), PHONE);
-    expect([elevator.track(), elevator.drags()]).toEqual([null, false]);
+    expect([laid(elevator.track()).shown, elevator.drags()]).toEqual([false, false]);
     const nothing = picture.camera({ ...tower(5), tower: { ...tower(5).tower, rows: [] } }, PHONE);
-    expect([nothing.track(), nothing.drags(), nothing.stopCount()]).toEqual([null, false, 0]);
+    expect([laid(nothing.track()).shown, nothing.drags(), nothing.stopCount()]).toEqual([false, false, 0]);
   });
 
   test('the elevator speeds up, cruises and brakes: a long ride takes longer, never past 2.4 s', () => {

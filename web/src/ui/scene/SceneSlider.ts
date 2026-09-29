@@ -1,4 +1,5 @@
 import type { SceneCamera } from './SceneCamera.ts';
+import type { SliderFace } from './SliderFace.ts';
 import type { TrackReader } from './TrackReader.ts';
 
 /** The slider's arrow keys (a desktop extra): up and right to the next stop, down and left to the one before. */
@@ -9,7 +10,7 @@ const STEPS: Readonly<Record<string, number>> = { ArrowUp: 1, ArrowRight: 1, Arr
  * hidden where the picture has none, named by the list's heading, its value the stop nearest the view and that
  * child's name. It reads a finger along its track, and its arrow keys as steps.
  */
-export class SceneSlider implements TrackReader {
+export class SceneSlider implements TrackReader, SliderFace {
   readonly #element: HTMLElement;
 
   constructor(host: HTMLElement) {
@@ -21,19 +22,28 @@ export class SceneSlider implements TrackReader {
     host.append(this.#element);
   }
 
-  /** Laid over the camera's track and named; hidden when the camera has none. */
+  /** Laid over the camera's track, or hidden where it has none; named, one place per stop. */
   place(camera: SceneCamera, name: string): void {
-    const track = camera.track();
-    this.#element.hidden = track === null;
-    if (track === null) return;
-    this.#element.style.left = `${String(track.x)}px`;
-    this.#element.style.top = `${String(track.y)}px`;
-    this.#element.style.width = `${String(track.width)}px`;
-    this.#element.style.height = `${String(track.height)}px`;
-    this.#element.setAttribute('aria-orientation', track.axis === 'y' ? 'vertical' : 'horizontal');
+    camera.track().lay(this);
     this.#element.setAttribute('aria-label', name);
     this.#element.setAttribute('aria-valuemin', '1');
     this.#element.setAttribute('aria-valuemax', String(camera.stopCount()));
+  }
+
+  placeAt(
+    box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number },
+    axis: 'x' | 'y',
+  ): void {
+    this.#element.hidden = false;
+    this.#element.style.left = `${String(box.x)}px`;
+    this.#element.style.top = `${String(box.y)}px`;
+    this.#element.style.width = `${String(box.width)}px`;
+    this.#element.style.height = `${String(box.height)}px`;
+    this.#element.setAttribute('aria-orientation', axis === 'y' ? 'vertical' : 'horizontal');
+  }
+
+  hide(): void {
+    this.#element.hidden = true;
   }
 
   /** Its value: the stop at this place in its order (from 0), named by its child; nothing changes while hidden. */
@@ -46,8 +56,7 @@ export class SceneSlider implements TrackReader {
 
   /** The view under a point on the page along its track; nothing when the camera has no track. */
   valueAt(point: { readonly x: number; readonly y: number }, camera: SceneCamera): number | undefined {
-    if (camera.track() === null) return undefined;
-    return camera.alongTrack(point, this.#element.getBoundingClientRect());
+    return camera.track().along(point, this.#element.getBoundingClientRect());
   }
 
   /** The step an arrow key asks for; nothing for any other key. */

@@ -12,7 +12,7 @@ export interface SceneVM<C extends SceneChild> {
   /** The place's own address: it tells a new place from the same one drawn again. */
   readonly address: string;
   readonly children: readonly C[];
-  /** The name a reader hears for the picture's slider (the list's heading); empty when there is none. */
+  /** The name a reader hears for the picture's slider (the list's heading); the slider shows only where the camera has a track. */
   readonly slider: string;
   /** How strongly the picture tears, 0 to 1 (`Coherence.decay`). */
   readonly decay: number;

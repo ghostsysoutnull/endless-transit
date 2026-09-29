@@ -22,7 +22,6 @@ export class SceneDrawing implements Drawings {
         new DrawnStreet(
           this.#frame(
             place,
-            travel,
             decay,
             new ListedParts(buildings).drawn(travel, (option, building) => ({
               ...this.#child(option),
@@ -35,7 +34,6 @@ export class SceneDrawing implements Drawings {
         new DrawnTower({
           ...this.#frame(
             place,
-            travel,
             decay,
             new ListedParts(tower.rows).drawn(travel, (option, row) => ({
               ...this.#child(option),
@@ -48,7 +46,6 @@ export class SceneDrawing implements Drawings {
         new DrawnCorridor({
           ...this.#frame(
             place,
-            travel,
             decay,
             new ListedParts(corridor.doors).drawn(travel, (option, door) => ({
               ...this.#child(option),
@@ -61,7 +58,6 @@ export class SceneDrawing implements Drawings {
         new Undrawn(
           this.#frame(
             place,
-            travel,
             decay,
             travel.map((option) => this.#child(option)),
           ),
@@ -70,18 +66,13 @@ export class SceneDrawing implements Drawings {
   }
 
   /** What every picture's view model shares, around its children: the words a reader hears count what is drawn. */
-  #frame<C extends SceneChild>(
-    place: PlaceSummary,
-    travel: readonly GameOption[],
-    decay: number,
-    children: readonly C[],
-  ): SceneVM<C> {
+  #frame<C extends SceneChild>(place: PlaceSummary, decay: number, children: readonly C[]): SceneVM<C> {
     const open = children.filter((child) => !child.sealed).length;
     return {
       label: `Picture of ${place.name}: ${String(children.length)} places drawn, ${String(open)} open — the list below enters them too`,
       address: place.address,
       children,
-      slider: travel.length === 0 ? '' : place.childrenHeading,
+      slider: place.childrenHeading,
       decay,
       noise: place.noise,
     };

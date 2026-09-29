@@ -23,7 +23,7 @@ export class TravelCamera implements SceneCamera {
   readonly #stops: readonly CameraStop[];
   /** The slider's places: one per view, the first stop there standing for its twins (a corridor's pair of doors). */
   readonly #places: readonly CameraStop[];
-  readonly #track: CameraTrack | null;
+  readonly #track: CameraTrack;
 
   constructor(facts: {
     /** Where the view stands when the place is first shown. */
@@ -43,7 +43,7 @@ export class TravelCamera implements SceneCamera {
     zoom: boolean;
     /** Where the view goes before each child is entered, in the slider's order. */
     stops: readonly CameraStop[];
-    track: CameraTrack | null;
+    track: CameraTrack;
   }) {
     if (!(facts.min <= facts.max))
       throw new RangeError(`a camera's range runs up: ${String(facts.min)} to ${String(facts.max)}`);
@@ -123,25 +123,14 @@ export class TravelCamera implements SceneCamera {
     return this.#places[Math.min(this.#places.length - 1, Math.max(0, nearest.index + step))];
   }
 
-  track(): CameraTrack | null {
+  track(): CameraTrack {
     return this.#track;
   }
 
-  alongTrack(
-    point: { readonly x: number; readonly y: number },
-    box: { readonly left: number; readonly top: number; readonly width: number; readonly height: number },
-  ): number {
-    const track = this.#track;
-    if (track === null) return this.#rest;
-    const fraction =
-      track.axis === 'y'
-        ? (point.y - box.top) / Math.max(1, box.height)
-        : (point.x - box.left) / Math.max(1, box.width);
-    return track.from + (track.to - track.from) * Math.min(1, Math.max(0, fraction));
-  }
-
   equals(other: SceneCamera): boolean {
-    return other instanceof TravelCamera && this.#facts() === other.#facts();
+    return (
+      other instanceof TravelCamera && this.#facts() === other.#facts() && this.#track.equals(other.#track)
+    );
   }
 
   /** Every fact it moves by, as one text: two cameras with the same facts are the same camera. */
@@ -165,20 +154,6 @@ export class TravelCamera implements SceneCamera {
         const facts: Required<CameraStop> = { id: stop.id, at: stop.at };
         return [facts.id, facts.at];
       }),
-      this.#track === null ? null : Object.values(this.#trackFacts(this.#track)),
     ]);
-  }
-
-  /** The track's facts in a fixed order; typed, so a field added to the track must be added here too. */
-  #trackFacts(track: CameraTrack): Required<CameraTrack> {
-    return {
-      x: track.x,
-      y: track.y,
-      width: track.width,
-      height: track.height,
-      axis: track.axis,
-      from: track.from,
-      to: track.to,
-    };
   }
 }

@@ -31,6 +31,7 @@ import { doorLook } from '#tests/support/doorLook.ts';
 import { RecordingHallEnd } from '#tests/support/RecordingHallEnd.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 import { ShadowNotingPainter } from '#tests/support/ShadowNotingPainter.ts';
+import { laid, shownTrack } from '#tests/support/laidTrack.ts';
 
 /** The phone's picture at 360 × 640 (tasks/ui/U01b.md) and a taller phone's. */
 const PHONE = { width: 328, height: 277 };
@@ -156,17 +157,17 @@ describe('the corridor’s camera: how far along the hall you stand', () => {
   test('the slider is a band along the foot a thumb can hold, inside the picture; its ends reach past the hall’s', () => {
     for (const size of [PHONE, TALL]) {
       const camera = picture().camera(corridor(9), size);
-      const track = camera.track();
-      expect(track?.axis).toBe('x');
-      expect(track?.height).toBeGreaterThanOrEqual(44);
-      expect(track?.x).toBeGreaterThanOrEqual(0);
-      expect((track?.x ?? 0) + (track?.width ?? 0)).toBeLessThanOrEqual(size.width);
-      expect((track?.y ?? 0) + (track?.height ?? 0)).toBeLessThanOrEqual(size.height);
-      expect(track?.from).toBeLessThan(0);
-      expect(track?.to).toBeGreaterThan(8.6);
+      const track = shownTrack(camera.track());
+      expect(track.axis).toBe('x');
+      expect(track.height).toBeGreaterThanOrEqual(44);
+      expect(track.x).toBeGreaterThanOrEqual(0);
+      expect(track.x + track.width).toBeLessThanOrEqual(size.width);
+      expect(track.y + track.height).toBeLessThanOrEqual(size.height);
+      expect(track.from).toBeLessThan(0);
+      expect(track.to).toBeGreaterThan(8.6);
     }
     const empty = picture().camera(corridor(0), PHONE);
-    expect([empty.track(), empty.drags(), empty.stopCount()]).toEqual([null, false, 0]);
+    expect([laid(empty.track()).shown, empty.drags(), empty.stopCount()]).toEqual([false, false, 0]);
   });
 });
 

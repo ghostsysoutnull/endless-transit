@@ -11,6 +11,8 @@ import { StillCamera } from './StillCamera.ts';
 import type { TowerParts } from './TowerParts.ts';
 import { TravelCamera } from './TravelCamera.ts';
 import type { ChildMark } from './ChildMark.ts';
+import { NoTrack } from './NoTrack.ts';
+import { SliderTrack } from './SliderTrack.ts';
 
 /** A floor's row is at least this tall where it fits (a thumb), and the window shows 4 to 11 of them. */
 const ROW = 50;
@@ -91,7 +93,7 @@ export class TowerPicture implements ScenePicture<TowerVM> {
       zoom: false,
       stops,
       track: frame.gauge
-        ? {
+        ? new SliderTrack({
             x: size.width - SLIDER - 4,
             y: frame.top,
             width: SLIDER,
@@ -99,8 +101,8 @@ export class TowerPicture implements ScenePicture<TowerVM> {
             axis: 'y',
             from: frame.max,
             to: frame.min,
-          }
-        : null,
+          })
+        : new NoTrack(),
     });
   }
 

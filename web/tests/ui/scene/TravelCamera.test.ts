@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { NoTrack } from '#ui/scene/NoTrack.ts';
 import { travelCamera as camera } from '#tests/support/travelCamera.ts';
 
 describe('a camera that travels: where the view may stand, how long it takes to get there', () => {
@@ -57,13 +58,6 @@ describe('a camera that travels: where the view may stand, how long it takes to 
     expect(camera().stopCount()).toBe(10);
   });
 
-  test('a finger on the track: its share of the way from the track’s start to its end, held at the ends', () => {
-    const box = { left: 270, top: 30, width: 58, height: 200 };
-    expect(camera().alongTrack({ x: 290, y: 80 }, box)).toBeCloseTo(6.75, 10);
-    expect(camera().alongTrack({ x: 290, y: 0 }, box)).toBe(9);
-    expect(camera().alongTrack({ x: 290, y: 400 }, box)).toBe(0);
-  });
-
   test('a finger is measured along the axis it drags on', () => {
     expect(camera().along({ x: 12, y: 40 })).toBe(40);
     expect(camera({ axis: 'x' }).along({ x: 12, y: 40 })).toBe(12);
@@ -84,6 +78,7 @@ describe('a camera that travels: where the view may stand, how long it takes to 
   test('two cameras with the same facts move alike; another fact, another camera', () => {
     expect(camera().equals(camera())).toBe(true);
     expect(camera().equals(camera({ rest: 4 }))).toBe(false);
+    expect(camera().equals(camera({ track: new NoTrack() }))).toBe(false);
   });
 
   test('it drags only when a pixel moves it; it rides without zooming unless told to', () => {
