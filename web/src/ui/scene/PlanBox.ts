@@ -1,3 +1,5 @@
+import { PlanPoint } from './PlanPoint.ts';
+
 /** A box on an apartment's plan, in plan units (a room is about 1.3 across): where it starts and how big it is. Value object. */
 export class PlanBox {
   readonly #x: number;
@@ -47,8 +49,16 @@ export class PlanBox {
     return Math.min(this.#width, this.#height) / Math.max(this.#width, this.#height);
   }
 
-  centre(): { readonly x: number; readonly y: number } {
-    return { x: this.#x + this.#width / 2, y: this.#y + this.#height / 2 };
+  centre(): PlanPoint {
+    return new PlanPoint(this.#x + this.#width / 2, this.#y + this.#height / 2);
+  }
+
+  topLeft(): PlanPoint {
+    return new PlanPoint(this.#x, this.#y);
+  }
+
+  bottomRight(): PlanPoint {
+    return new PlanPoint(this.#x + this.#width, this.#y + this.#height);
   }
 
   equals(other: PlanBox): boolean {

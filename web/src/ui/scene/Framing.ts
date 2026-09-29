@@ -1,4 +1,6 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import { PlanPoint } from './PlanPoint.ts';
+import type { Point } from './Point.ts';
 
 /**
  * Where the plan's view stands (U03): the plan point at the middle of the picture, in plan units, and how many CSS
@@ -29,25 +31,19 @@ export class Framing {
   }
 
   /** Where a plan point is drawn on a picture of this size, in CSS pixels. */
-  toPicture(
-    point: { readonly x: number; readonly y: number },
-    size: PictureSize,
-  ): { readonly x: number; readonly y: number } {
+  toPicture(point: PlanPoint, size: PictureSize): Point {
     return {
-      x: size.width / 2 + (point.x - this.#x) * this.#scale,
-      y: size.height / 2 + (point.y - this.#y) * this.#scale,
+      x: size.width / 2 + (point.x() - this.#x) * this.#scale,
+      y: size.height / 2 + (point.y() - this.#y) * this.#scale,
     };
   }
 
   /** The plan point under a point on a picture of this size. */
-  toPlan(
-    point: { readonly x: number; readonly y: number },
-    size: PictureSize,
-  ): { readonly x: number; readonly y: number } {
-    return {
-      x: this.#x + (point.x - size.width / 2) / this.#scale,
-      y: this.#y + (point.y - size.height / 2) / this.#scale,
-    };
+  toPlan(point: Point, size: PictureSize): PlanPoint {
+    return new PlanPoint(
+      this.#x + (point.x - size.width / 2) / this.#scale,
+      this.#y + (point.y - size.height / 2) / this.#scale,
+    );
   }
 
   /** Moved with a finger that moved this many CSS pixels: the plan follows it. */
@@ -56,20 +52,15 @@ export class Framing {
   }
 
   /** At another scale, the plan point under `point` kept where it is. */
-  zoomedAbout(point: { readonly x: number; readonly y: number }, scale: number, size: PictureSize): Framing {
+  zoomedAbout(point: Point, scale: number, size: PictureSize): Framing {
     return this.placing(this.toPlan(point, size), point, scale, size);
   }
 
   /** At this scale, with a plan point drawn at a point of the picture (a pinch keeps what its fingers hold under them). */
-  placing(
-    plan: { readonly x: number; readonly y: number },
-    at: { readonly x: number; readonly y: number },
-    scale: number,
-    size: PictureSize,
-  ): Framing {
+  placing(plan: PlanPoint, at: Point, scale: number, size: PictureSize): Framing {
     return new Framing(
-      plan.x - (at.x - size.width / 2) / scale,
-      plan.y - (at.y - size.height / 2) / scale,
+      plan.x() - (at.x - size.width / 2) / scale,
+      plan.y() - (at.y - size.height / 2) / scale,
       scale,
     );
   }

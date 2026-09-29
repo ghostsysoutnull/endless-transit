@@ -1,5 +1,6 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { Framing } from './Framing.ts';
+import type { PlanPoint } from './PlanPoint.ts';
 import type { Point } from './Point.ts';
 
 /** Where two fingers touch the picture, in CSS pixels. */
@@ -13,7 +14,7 @@ export class Pinch {
   readonly #framing: Framing;
   readonly #size: PictureSize;
   /** The plan point first under the fingers' midpoint. */
-  readonly #held: Point;
+  readonly #held: PlanPoint;
   /** How far apart the fingers first were, in CSS pixels. */
   readonly #apart: number;
 
@@ -26,7 +27,9 @@ export class Pinch {
 
   /** The framing with the fingers here now (unclamped: the camera keeps it in range). */
   at([one, other]: Fingers): Framing {
-    const scale = (this.#framing.scale() * Math.hypot(one.x - other.x, one.y - other.y)) / this.#apart;
+    // Two fingers on one spot are a pixel apart, as when they first touch: a framing always has a scale.
+    const scale =
+      (this.#framing.scale() * Math.max(1, Math.hypot(one.x - other.x, one.y - other.y))) / this.#apart;
     return this.#framing.placing(
       this.#held,
       { x: (one.x + other.x) / 2, y: (one.y + other.y) / 2 },

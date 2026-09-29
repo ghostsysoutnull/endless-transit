@@ -45,4 +45,22 @@ describe('two fingers zooming the plan (U03)', () => {
     expect(moved.toPicture(held, SIZE).x).toBeCloseTo(200, 9);
     expect(moved.toPicture(held, SIZE).y).toBeCloseTo(140, 9);
   });
+
+  test('two fingers brought onto one spot still frame the plan: the zoom goes out, never to nothing', () => {
+    const framing = new Framing(2, 1, 100);
+    const pinch = new Pinch(
+      framing,
+      [
+        { x: 150, y: 100 },
+        { x: 210, y: 100 },
+      ],
+      SIZE,
+    );
+    const closed = pinch.at([
+      { x: 180, y: 100 },
+      { x: 180, y: 100 },
+    ]);
+    expect(closed.scale()).toBeGreaterThan(0);
+    expect(closed.scale()).toBeLessThan(framing.scale());
+  });
 });

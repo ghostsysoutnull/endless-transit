@@ -47,18 +47,9 @@ describe('an apartment’s plan (U03): serpentine rows, so each room opens onto 
       const rooms = plan.rooms();
       plan.doors().forEach((door, index) => {
         const where = `${address} ${String(count)} rooms, door ${String(index)}`;
-        expect(door.span, where).toBeGreaterThanOrEqual(DOOR);
-        for (const room of [must(rooms[index]), must(rooms[index + 1])]) {
-          const onEdge =
-            door.wall === 'y'
-              ? [room.left(), room.right()].some((x) => Math.abs(x - door.x) < 1e-9) &&
-                door.y > room.top() &&
-                door.y < room.bottom()
-              : [room.top(), room.bottom()].some((y) => Math.abs(y - door.y) < 1e-9) &&
-                door.x > room.left() &&
-                door.x < room.right();
-          expect(onEdge, where).toBe(true);
-        }
+        expect(door.span(), where).toBeGreaterThanOrEqual(DOOR);
+        expect(door.on(must(rooms[index])), where).toBe(true);
+        expect(door.on(must(rooms[index + 1])), where).toBe(true);
       });
     });
   });
@@ -67,9 +58,8 @@ describe('an apartment’s plan (U03): serpentine rows, so each room opens onto 
     everyPlan((plan, _count, address) => {
       const first = must(plan.rooms()[0]);
       expect(first.bottom(), address).toBeCloseTo(plan.height(), 9);
-      expect(plan.entry().y).toBe(plan.height());
-      expect(plan.entry().x).toBeGreaterThan(first.left());
-      expect(plan.entry().x).toBeLessThan(first.right());
+      expect(plan.entry().on(first), address).toBe(true);
+      expect(plan.entry().middle().y()).toBe(plan.height());
     });
   });
 

@@ -1,9 +1,14 @@
-/** A doorway on a plan, in plan units: the middle of its gap, the way the wall it is cut in runs, and how wide the wall it shares is. */
+import type { PlanBox } from './PlanBox.ts';
+import type { PlanPoint } from './PlanPoint.ts';
+
+/** A doorway on a plan (U03): cut in a wall two rooms share — or in the footprint's edge, the entrance. */
 export interface PlanDoor {
-  readonly x: number;
-  readonly y: number;
-  /** `x`: cut in a wall that runs across (a floor or ceiling line); `y`: in a wall that runs up and down. */
-  readonly wall: 'x' | 'y';
-  /** How much wall the two rooms share, the door's gap at most. */
-  readonly span: number;
+  /** The middle of the doorway. */
+  middle(): PlanPoint;
+  /** How much wall the two sides share: the most the doorway can be. */
+  span(): number;
+  /** The two ends of its gap, at most `width` wide and never wider than the wall it shares. */
+  gap(width: number): readonly [PlanPoint, PlanPoint];
+  /** Whether it is cut in one of this box's walls. */
+  on(box: PlanBox): boolean;
 }

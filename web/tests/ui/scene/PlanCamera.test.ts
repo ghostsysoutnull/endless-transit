@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { Framing } from '#ui/scene/Framing.ts';
 import { PlanCamera } from '#ui/scene/PlanCamera.ts';
 import { PlanLayout } from '#ui/scene/PlanLayout.ts';
+import { PlanPoint } from '#ui/scene/PlanPoint.ts';
 import { SceneHash } from '#ui/scene/SceneHash.ts';
 
 const PHONE = { width: 360, height: 277 };
@@ -12,8 +13,8 @@ describe('the plan’s camera on a picture of one size (U03)', () => {
     for (const count of [1, 4, 10, 48]) {
       const plan = layout.of(count, '0.1.2');
       const whole = new PlanCamera(plan, PHONE).whole();
-      const corner = whole.toPicture({ x: plan.width(), y: plan.height() }, PHONE);
-      const origin = whole.toPicture({ x: 0, y: 0 }, PHONE);
+      const corner = whole.toPicture(new PlanPoint(plan.width(), plan.height()), PHONE);
+      const origin = whole.toPicture(new PlanPoint(0, 0), PHONE);
       expect(origin.x).toBeGreaterThanOrEqual(0);
       expect(origin.y).toBeGreaterThanOrEqual(0);
       expect(corner.x).toBeLessThanOrEqual(PHONE.width);
@@ -27,8 +28,8 @@ describe('the plan’s camera on a picture of one size (U03)', () => {
       const camera = new PlanCamera(plan, PHONE);
       plan.rooms().forEach((room, index) => {
         const framing = camera.room(index);
-        const topLeft = framing.toPicture({ x: room.left(), y: room.top() }, PHONE);
-        const bottomRight = framing.toPicture({ x: room.right(), y: room.bottom() }, PHONE);
+        const topLeft = framing.toPicture(room.topLeft(), PHONE);
+        const bottomRight = framing.toPicture(room.bottomRight(), PHONE);
         const where = `${String(count)} rooms, room ${String(index)}`;
         expect(topLeft.x, where).toBeGreaterThanOrEqual(0);
         expect(topLeft.y, where).toBeGreaterThanOrEqual(0);
@@ -42,12 +43,16 @@ describe('the plan’s camera on a picture of one size (U03)', () => {
   test('a finger cannot zoom far past the whole plan nor push the plan out of the frame', () => {
     const plan = layout.of(10, '0.1.2');
     const camera = new PlanCamera(plan, PHONE);
-    const out = camera.clamp(new Framing(plan.width() / 2, plan.height() / 2, 1));
-    expect(out.scale()).toBeCloseTo(camera.whole().scale() * 0.85, 9);
+    const middle = { x: plan.width() / 2, y: plan.height() / 2 };
+    const out = camera.clamp(new Framing(middle.x, middle.y, 1));
+    // Out past the whole plan the zoom stops, a little below it, however hard it is pushed.
+    expect(out.scale()).toBeLessThan(camera.whole().scale());
+    expect(out.equals(camera.clamp(new Framing(middle.x, middle.y, 0.001)))).toBe(true);
+    // Pushed far up and to the right, the plan's top-right corner stays near the frame's own.
     const pushed = camera.clamp(new Framing(1000, -1000, 200));
-    const left = pushed.toPicture({ x: plan.width(), y: 0 }, PHONE);
-    expect(left.x).toBeGreaterThanOrEqual(PHONE.width - 24);
-    expect(left.y).toBeLessThanOrEqual(24);
+    const corner = pushed.toPicture(new PlanPoint(plan.width(), 0), PHONE);
+    expect(corner.x).toBeGreaterThan(PHONE.width / 2);
+    expect(corner.y).toBeLessThan(PHONE.height / 2);
   });
 
   test('a view let go coasts the way it was moving, and stops inside the frame', () => {

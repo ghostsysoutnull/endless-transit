@@ -1,6 +1,8 @@
 import { FloorPlan } from './FloorPlan.ts';
 import { PlanBox } from './PlanBox.ts';
+import { LevelDoor } from './LevelDoor.ts';
 import type { PlanDoor } from './PlanDoor.ts';
+import { SideDoor } from './SideDoor.ts';
 import type { Fractions } from './Fractions.ts';
 
 /** A room's area in plan units (the mock's `n * 1.7`, `transit-reframed.html:577`). */
@@ -61,7 +63,7 @@ export class PlanLayout {
       height,
       rooms: laid,
       doors: laid.slice(1).map((next, index) => this.#between(laid[index] ?? next, next)),
-      entry: { x: first.centre().x, y: height, wall: 'x', span: first.width() },
+      entry: new LevelDoor(height, first.left(), first.right()),
     });
   }
 
@@ -85,14 +87,10 @@ export class PlanLayout {
   #between(one: PlanBox, next: PlanBox): PlanDoor {
     const meet = (a: number, b: number): boolean => Math.abs(a - b) < EDGE;
     if (meet(one.right(), next.left()) || meet(next.right(), one.left())) {
-      const top = Math.max(one.top(), next.top());
-      const bottom = Math.min(one.bottom(), next.bottom());
       const x = meet(one.right(), next.left()) ? one.right() : one.left();
-      return { x, y: (top + bottom) / 2, wall: 'y', span: bottom - top };
+      return new SideDoor(x, Math.max(one.top(), next.top()), Math.min(one.bottom(), next.bottom()));
     }
-    const left = Math.max(one.left(), next.left());
-    const right = Math.min(one.right(), next.right());
     const y = meet(one.bottom(), next.top()) ? one.bottom() : one.top();
-    return { x: (left + right) / 2, y, wall: 'x', span: right - left };
+    return new LevelDoor(y, Math.max(one.left(), next.left()), Math.min(one.right(), next.right()));
   }
 }

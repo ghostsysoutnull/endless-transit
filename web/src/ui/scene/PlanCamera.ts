@@ -72,7 +72,7 @@ export class PlanCamera {
       this.#fit(),
     );
     const centre = box.centre();
-    return this.clamp(new Framing(centre.x, centre.y, scale));
+    return this.clamp(new Framing(centre.x(), centre.y(), scale));
   }
 
   /** Where a view let go moving at this speed (plan units a second, on each axis) comes to rest. */
