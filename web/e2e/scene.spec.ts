@@ -62,6 +62,19 @@ async function steps(page: Page): Promise<string> {
   return (await page.locator('.stats dd').first().textContent()) ?? '';
 }
 
+/** How many device pixels wide the scene's canvas is drawn. */
+async function breadth(page: Page): Promise<number> {
+  return page
+    .getByTestId('scene')
+    .locator('canvas')
+    .evaluate((el) => (el as HTMLCanvasElement).width);
+}
+
+/** The page's clock runs a second on, then stops: animation frames and timers wait for `runFor`, so a tap lands inside a zoom for sure. */
+async function holdTime(page: Page): Promise<void> {
+  await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
+}
+
 async function still(page: Page): Promise<string> {
   return page
     .getByTestId('scene')
@@ -142,15 +155,18 @@ test('a tap in the picture then a tap in the list before the zoom ends: exactly 
   page,
   hasTouch,
 }) => {
+  await page.clock.install();
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
   const before = Number(await steps(page));
   const name = (await page.locator('button[data-option="enter:3"] .lb').textContent()) ?? '';
-  await tapAt(page, await pointOf(page, 'enter:0'), hasTouch);
+  const point = await pointOf(page, 'enter:0');
+  await holdTime(page);
+  await tapAt(page, point, hasTouch);
   await tapOption(page, 'enter:3', hasTouch);
   expect(await kind(page)).toBe('BUILDING');
   // Long past the zoom's end: the dropped pick never rode a floor of the building.
-  await page.waitForTimeout(800);
+  await page.clock.runFor(800);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   expect(name).toContain(await page.getByTestId('place-name').textContent());
   expect(Number(await steps(page))).toBe(before + 1);
@@ -255,9 +271,9 @@ test('the picture refits its host when the screen changes size', async ({ page }
   await page.setViewportSize({ width: 360, height: 640 });
   await page.goto('./');
   const canvas = page.getByTestId('scene').locator('canvas');
-  const narrow = await canvas.evaluate((el) => (el as HTMLCanvasElement).width);
+  const narrow = await breadth(page);
   await page.setViewportSize({ width: 412, height: 915 });
-  await expect.poll(() => canvas.evaluate((el) => (el as HTMLCanvasElement).width)).toBeGreaterThan(narrow);
+  await expect.poll(() => breadth(page)).toBeGreaterThan(narrow);
   // The canvas fills its host's content box, borders aside.
   const inside = await page.getByTestId('scene').evaluate((el) => el.clientWidth);
   const drawn = await canvas.boundingBox();
@@ -268,17 +284,20 @@ test('coming back out of a building, the street zooms out of it: a tap while it 
   page,
   hasTouch,
 }) => {
+  await page.clock.install();
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
   const point = await pointOf(page, 'enter:1');
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
+  await holdTime(page);
   await press(page, /leave/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await tapAt(page, point, hasTouch);
   // Long past a zoom in's end: the tap landed while the street was zooming out, so nothing was entered.
-  await page.waitForTimeout(900);
+  await page.clock.runFor(900);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
+  await page.clock.resume();
   await tapAt(page, point, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
 });
