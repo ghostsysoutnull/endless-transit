@@ -3,6 +3,7 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { Diamond } from './Diamond.ts';
 import type { PictureFont } from './PictureFont.ts';
+import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { Point } from './Point.ts';
 import type { SightLook } from './SightLook.ts';
 
@@ -11,8 +12,6 @@ const NAMED = { width: 90, height: 44 };
 const NUMBERED = { width: 22, height: 18 };
 /** At most this many relic marks in a room's corner, and a room this wide at least to carry them. */
 const MARKS = { most: 5, room: 30 };
-/** The fog's hatching, this far apart. */
-const HATCH = 9;
 /** Two lines of a name, this far apart. */
 const LEADING = 15;
 
@@ -23,14 +22,14 @@ const LEADING = 15;
  */
 export class PlacedRoom {
   readonly #room: PlanRoom;
-  readonly #box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+  readonly #box: PlanBoxOnPicture;
   readonly #look: SightLook;
   readonly #number: string;
   readonly #here: boolean;
 
   constructor(facts: {
     room: PlanRoom;
-    box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+    box: PlanBoxOnPicture;
     look: SightLook;
     number: string;
     here: boolean;
@@ -49,48 +48,37 @@ export class PlacedRoom {
     return { x: box.x + box.width / 2, y: box.y + box.height - Math.min(18, box.height / 4) };
   }
 
-  /** Its floor by how far it is seen, the fog's hatching over it, outlined in yellow when you stand in it. */
+  /** Its floor as its sight paints it, outlined in yellow when you stand in it. */
   paintFloor(painter: Painter, palette: Palette): void {
     const box = this.#box;
-    painter.fillStyle = palette('ground');
+    this.#look.paintFloor(painter, palette, box);
+    if (!this.#here) return;
+    painter.strokeStyle = palette('yl');
     painter.globalAlpha = 1;
-    painter.fillRect(box.x, box.y, box.width, box.height);
-    painter.fillStyle = palette('panel');
-    painter.globalAlpha = this.#look.floor;
-    painter.fillRect(box.x, box.y, box.width, box.height);
-    if (this.#look.hatch > 0) {
-      painter.save();
-      painter.beginPath();
-      painter.rect(box.x, box.y, box.width, box.height);
-      painter.clip();
-      painter.strokeStyle = palette('cy');
-      painter.globalAlpha = this.#look.hatch;
-      painter.lineWidth = 1;
-      painter.beginPath();
-      for (let d = -box.height; d < box.width; d += HATCH) {
-        painter.moveTo(box.x + d, box.y + box.height);
-        painter.lineTo(box.x + d + box.height, box.y);
-      }
-      painter.stroke();
-      painter.restore();
-    }
-    if (this.#here) {
-      painter.strokeStyle = palette('yl');
-      painter.globalAlpha = 1;
-      painter.lineWidth = 1.6;
-      painter.strokeRect(box.x + 1, box.y + 1, box.width - 2, box.height - 2);
-    }
+    painter.lineWidth = 1.6;
+    painter.strokeRect(box.x + 1, box.y + 1, box.width - 2, box.height - 2);
   }
 
-  /** Its name and number where they fit, its relic marks and the visited dot — as far as its sight shows them. */
+  /** Its name and number where they fit and its relic marks, as far as its sight lets them be written; the visited dot. */
   paintMarks(
     painter: Painter,
     palette: Palette,
     parts: { readonly font: PictureFont; readonly diamond: Diamond },
   ): void {
-    if (!this.#look.labelled) return;
+    this.#look.label((ink) => {
+      this.#write(painter, palette, parts, this.#here ? 'yl' : ink);
+    });
+    if (!this.#here) this.#look.paintDot(painter, palette, this.#box);
+  }
+
+  /** Its name and number where they fit, in this ink, and the marks of the relics lying in it. */
+  #write(
+    painter: Painter,
+    palette: Palette,
+    parts: { readonly font: PictureFont; readonly diamond: Diamond },
+    ink: string,
+  ): void {
     const box = this.#box;
-    const ink = this.#here ? 'yl' : this.#look.ink;
     const centre = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
     painter.globalAlpha = 1;
     painter.textBaseline = 'middle';
@@ -112,17 +100,10 @@ export class PlacedRoom {
       painter.fillStyle = palette(ink);
       painter.fillText(this.#number, centre.x, centre.y);
     }
-    if (!this.#here && this.#room.relics > 0 && box.width > MARKS.room) {
-      painter.fillStyle = palette('yl');
-      for (let mark = 0; mark < Math.min(this.#room.relics, MARKS.most); mark++) {
-        parts.diamond.trace(painter, box.x + box.width - 9 - mark * 9, box.y + 9, 4);
-        painter.fill();
-      }
-    }
-    if (!this.#here && this.#look.dot && box.width > 14) {
-      painter.fillStyle = palette('yl');
-      painter.beginPath();
-      painter.arc(box.x + box.width - 7, box.y + box.height - 7, 2.3, 0, Math.PI * 2);
+    if (this.#here || this.#room.relics === 0 || box.width <= MARKS.room) return;
+    painter.fillStyle = palette('yl');
+    for (let mark = 0; mark < Math.min(this.#room.relics, MARKS.most); mark++) {
+      parts.diamond.trace(painter, box.x + box.width - 9 - mark * 9, box.y + 9, 4);
       painter.fill();
     }
   }

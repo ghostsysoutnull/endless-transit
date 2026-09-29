@@ -1,15 +1,15 @@
-/** How a room on the plan looks for how far it is seen (U03): its floor, its fog, its words and marks, and on the minimap. */
+import type { Painter } from '#ui/canvas/Painter.ts';
+import type { Palette } from '#ui/canvas/Palette.ts';
+import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
+
+/**
+ * How a room on the plan looks for how far it is seen (U03): it paints the room's floor, the visited dot and the
+ * room on the minimap, and lets the room's words be written in its ink — or not. One per sight (`SIGHT_LOOKS`).
+ */
 export interface SightLook {
-  /** How strongly its floor shows, 0 to 1. */
-  readonly floor: number;
-  /** How strongly the fog's hatching crosses it, 0 for none. */
-  readonly hatch: number;
-  /** Whether its number, name and relic marks are written in it. */
-  readonly labelled: boolean;
-  /** The ink its words are written in (the room you stand in writes in yellow whatever its sight). */
-  readonly ink: string;
-  /** Whether it carries the visited dot. */
-  readonly dot: boolean;
-  /** How it shows on the minimap. */
-  readonly minimap: { readonly ink: string; readonly alpha: number };
+  paintFloor(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void;
+  /** The room's words and marks, written in the look's ink by `write`; nothing where the room is not seen. */
+  label(write: (ink: string) => void): void;
+  paintDot(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void;
+  paintSmall(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void;
 }

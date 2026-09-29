@@ -64,15 +64,12 @@ export class Minimap implements MinimapView {
     painter.lineWidth = 1;
     painter.strokeRect(this.#left - FRAME, this.#top - FRAME, width + FRAME * 2, height + FRAME * 2);
     this.#plan.rooms().forEach((box, index) => {
-      const look = SIGHT_LOOKS[rooms[index]?.sight ?? 'fog'].minimap;
-      painter.fillStyle = palette(look.ink);
-      painter.globalAlpha = look.alpha;
-      painter.fillRect(
-        this.#left + box.left() * this.#scale + 0.5,
-        this.#top + box.top() * this.#scale + 0.5,
-        box.width() * this.#scale - 1,
-        box.height() * this.#scale - 1,
-      );
+      SIGHT_LOOKS[rooms[index]?.sight ?? 'fog'].paintSmall(painter, palette, {
+        x: this.#left + box.left() * this.#scale + 0.5,
+        y: this.#top + box.top() * this.#scale + 0.5,
+        width: box.width() * this.#scale - 1,
+        height: box.height() * this.#scale - 1,
+      });
     });
     // The view's box, as much of it as lies on the plan.
     const span = (at: number, length: number, half: number): readonly [number, number] => [
