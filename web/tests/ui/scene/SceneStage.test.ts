@@ -7,6 +7,13 @@ import type { ScenePicture } from '#ui/scene/ScenePicture.ts';
 import { SceneStage } from '#ui/scene/SceneStage.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import { Sketched } from '#ui/scene/Sketched.ts';
+import { Planned } from '#ui/scene/Planned.ts';
+import type { PlanDrawing } from '#ui/scene/PlanDrawing.ts';
+import type { PlanVM } from '#ui/scene/PlanVM.ts';
+import { PlanCamera } from '#ui/scene/PlanCamera.ts';
+import { PlanLayout } from '#ui/scene/PlanLayout.ts';
+import { SceneHash } from '#ui/scene/SceneHash.ts';
+import { RoomLook } from '#engine/model/RoomLook.ts';
 import { StillCamera } from '#ui/scene/StillCamera.ts';
 import { Unsketched } from '#ui/scene/Unsketched.ts';
 import { NotingScene } from '#tests/support/NotingScene.ts';
@@ -20,19 +27,44 @@ function aPicture(): ScenePicture<SceneVM<SceneChild>> {
   return { layout: () => [], paint: () => undefined, camera: () => new StillCamera() };
 }
 
+function aPlanPicture(): PlanDrawing<PlanVM> {
+  const camera = (): PlanCamera =>
+    new PlanCamera(new PlanLayout(new SceneHash()).of(1, '0'), { width: 1, height: 1 });
+  return {
+    layout: () => [],
+    paint: () => undefined,
+    camera,
+    stopOf: () => undefined,
+    rest: () => camera().whole(),
+  };
+}
+
+function aPlanFrame(address: string): PlanVM {
+  return {
+    ...aFrame(address),
+    rooms: [],
+    here: address,
+    look: new RoomLook({ walls: 'rust', light: 'analog', cold: false, furniture: 1, anomaly: false }),
+    doors: [],
+    exits: [],
+    relics: [],
+  };
+}
+
 function aFrame(address: string): SceneVM<SceneChild> {
   return { label: '', address, children: [], slider: '', decay: 0, noise: new Seed(0, 0) };
 }
 
+/** A stage whose hosts note what they are asked, the kind each was made for first in its calls. */
 function aStage(): { stage: SceneStage; made: NotingScene[] } {
   const made: NotingScene[] = [];
-  const stage = new SceneStage({
-    line: (onLight) => {
-      const scene = new NotingScene(onLight);
-      made.push(scene);
-      return scene;
-    },
-  });
+  const make = (kind: string) => (onLight: (mark: ChildMark) => void) => {
+    const scene = new NotingScene(onLight);
+    scene.calls.push(kind);
+    made.push(scene);
+    return scene;
+  };
+  const stage = new SceneStage({ line: make('line'), plan: make('plan') });
   return { stage, made };
 }
 
@@ -43,7 +75,7 @@ describe('the scene stage: which scene host shows the picture now', () => {
     const { stage, made } = aStage();
     stage.show(aHost(), new Sketched(aPicture(), aFrame('0.1')), ignore);
     stage.redraw();
-    expect(made.map((scene) => scene.calls)).toEqual([['mount', 'render 0.1']]);
+    expect(made.map((scene) => scene.calls)).toEqual([['line', 'mount', 'render 0.1']]);
     expect(stage.showing()).toBe(true);
   });
 
@@ -54,7 +86,7 @@ describe('the scene stage: which scene host shows the picture now', () => {
     stage.show(host, new Sketched(picture, aFrame('0.1')), ignore);
     stage.show(host, new Sketched(picture, aFrame('0.2')), ignore);
     stage.redraw();
-    expect(made.map((scene) => scene.calls)).toEqual([['mount', 'render 0.1', 'render 0.2']]);
+    expect(made.map((scene) => scene.calls)).toEqual([['line', 'mount', 'render 0.1', 'render 0.2']]);
   });
 
   test('another picture takes the old scene down and makes one for the new, told whom to tell what it points at', () => {
@@ -65,10 +97,22 @@ describe('the scene stage: which scene host shows the picture now', () => {
     stage.show(host, new Sketched(aPicture(), aFrame('0.1.3')), (mark) => lit.push(mark));
     made[1]?.onLight(new MarkedChild('enter:2'));
     expect(made.map((scene) => scene.calls)).toEqual([
-      ['mount', 'render 0.1', 'dispose'],
-      ['mount', 'render 0.1.3'],
+      ['line', 'mount', 'render 0.1', 'dispose'],
+      ['line', 'mount', 'render 0.1.3'],
     ]);
     expect(lit.map((mark) => mark.written())).toEqual(['enter:2']);
+  });
+
+  test('a picture of another kind (a room’s plan after the corridor) takes the old host down and makes one of its kind', () => {
+    const { stage, made } = aStage();
+    const host = aHost();
+    stage.show(host, new Sketched(aPicture(), aFrame('0.1.3')), ignore);
+    stage.show(host, new Planned(aPlanPicture(), aPlanFrame('0.1.3.0')), ignore);
+    stage.redraw();
+    expect(made.map((scene) => scene.calls)).toEqual([
+      ['line', 'mount', 'render 0.1.3', 'dispose'],
+      ['plan', 'mount', 'render 0.1.3.0'],
+    ]);
   });
 
   test('the same picture in a new host is a new scene', () => {

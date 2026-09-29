@@ -19,6 +19,8 @@ import { ParapetRoof } from './ParapetRoof.ts';
 import { PeakRoof } from './PeakRoof.ts';
 import { PlainMark } from './PlainMark.ts';
 import { PlainPanel } from './PlainPanel.ts';
+import { PlanLayout } from './PlanLayout.ts';
+import { PlanPicture } from './PlanPicture.ts';
 import { Roof } from './Roof.ts';
 import { SceneHash } from './SceneHash.ts';
 import { ServiceHall } from './ServiceHall.ts';
@@ -116,5 +118,10 @@ export class ScenePictures {
         plain: new PlainMark(),
       },
     });
+  }
+
+  /** The apartment's plan (U03), its rooms laid out by the shared hash. */
+  plan(): PlanPicture {
+    return new PlanPicture({ layout: new PlanLayout(this.#noise), font: this.#font });
   }
 }

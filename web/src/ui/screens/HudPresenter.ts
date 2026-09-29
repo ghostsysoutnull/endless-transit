@@ -163,7 +163,16 @@ export class HudPresenter implements Presenter<HudVM> {
           ? { shown: false }
           : { shown: true, ...this.#mapPanel(snapshot.map, MAP_HEADING) },
       trace: snapshot.trace === null ? { shown: false } : this.#tracePanel(snapshot.trace),
-      drawing: this.#drawings.of(place, travel, player.decay),
+      drawing: this.#drawings.of(
+        place,
+        {
+          travel,
+          moves: snapshot.options.filter((option) => option.role === 'move'),
+          leave: snapshot.options.filter((option) => option.role === 'return'),
+          takes,
+        },
+        player.decay,
+      ),
       pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows,

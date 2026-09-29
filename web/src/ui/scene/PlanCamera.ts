@@ -1,6 +1,9 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { FloorPlan } from './FloorPlan.ts';
 import { Framing } from './Framing.ts';
+import { Minimap } from './Minimap.ts';
+import type { MinimapView } from './MinimapView.ts';
+import { NoMinimap } from './NoMinimap.ts';
 
 /** Room kept clear around the whole plan when it fits, in CSS pixels (the mock's `aptLimits`, `transit-reframed.html:610`). */
 const FIT_MARGIN = { width: 36, height: 44 };
@@ -13,6 +16,8 @@ const OVERSHOOT = 24;
 const ROOM_SHARE = 0.62;
 /** A let-go view coasts on for this long, in seconds of its speed (the mock's `vel * .3`). */
 const COAST = 0.3;
+/** A glide's time: the mock's 460 ms through a doorway; each factor of e in zoom adds `perZoom`, up to `most` (the pull back, about 760 ms). */
+const PACE = { base: 460, perZoom: 280, most: 900 };
 /** Past the frame by this much, the plan does not fit and the minimap shows (the mock's `- 12`). */
 const OVERFLOW = 12;
 
@@ -88,5 +93,15 @@ export class PlanCamera {
       this.#plan.width() * framing.scale() > this.#size.width - OVERFLOW ||
       this.#plan.height() * framing.scale() > this.#size.height - OVERFLOW
     );
+  }
+
+  /** The minimap at this framing: the whole plan in a corner while it runs past the frame, else none. */
+  minimap(framing: Framing): MinimapView {
+    return this.overflows(framing) ? new Minimap(this.#plan, this.#size) : new NoMinimap();
+  }
+
+  /** How long a glide between two framings takes, in milliseconds: the mock's 460 ms through a doorway, longer as the zoom changes more. */
+  pace(from: Framing, to: Framing): number {
+    return Math.min(PACE.most, PACE.base + PACE.perZoom * Math.abs(Math.log(to.scale() / from.scale())));
   }
 }

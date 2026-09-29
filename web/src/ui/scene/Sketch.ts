@@ -1,5 +1,4 @@
 import type { SceneChild } from './SceneChild.ts';
-import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneStages } from './SceneStages.ts';
 import type { SceneVM } from './SceneVM.ts';
 
@@ -14,8 +13,8 @@ export interface Sketch {
   drawn(): boolean;
   /** Whether another sketch is drawn by the same picture: the screen keeps its scene while it is. */
   samePicture(other: Sketch): boolean;
-  /** Whether this picture draws it. */
-  drawnBy(picture: ScenePicture<never>): boolean;
+  /** Whether this picture draws it: the very picture, by identity, of whichever kind. */
+  drawnBy(picture: object): boolean;
   /** Shown by the stage's host of its kind. */
   stageOn(stage: SceneStages): void;
 }

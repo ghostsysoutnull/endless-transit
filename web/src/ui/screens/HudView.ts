@@ -55,6 +55,8 @@ export class HudView implements View<HudVM> {
     trace: TracePictureVM;
   }>;
   readonly #book: PictureBook;
+  /** The screen's own listeners, taken away with it. */
+  readonly #listeners = new AbortController();
   /** Which scene shows the place's picture now (U03: `SceneStage`). */
   readonly #stage: DrawnStage;
   /** The child lit in the picture and the list, or none. */
@@ -75,8 +77,50 @@ export class HudView implements View<HudVM> {
     });
   }
 
+  /**
+   * Every button of the screen that is also drawn in the picture — a row, a pad key, a move, the way out, a relic's
+   * tile — goes through the picture when tapped (U02, U03: it rides, walks or glides there first) and lights its twin
+   * while pointed at or focused: one listener each on the screen, before the shell's own router hears the click.
+   */
   mount(container: HTMLElement): void {
     this.#container = container;
+    const signal = this.#listeners.signal;
+    container.addEventListener(
+      'click',
+      (event) => {
+        const id = this.#drawnOption(event.target);
+        if (id !== undefined) this.#through(event, id);
+      },
+      // Heard on the way down, before the shell's router hears it on the way up the same element.
+      { signal, capture: true },
+    );
+    for (const type of ['pointerover', 'focusin'] as const) {
+      container.addEventListener(
+        type,
+        (event) => {
+          const id = this.#drawnOption(event.target);
+          if (id !== undefined) this.#light(new MarkedChild(id));
+        },
+        { signal },
+      );
+    }
+    for (const type of ['pointerout', 'focusout'] as const) {
+      container.addEventListener(
+        type,
+        (event) => {
+          const id = this.#drawnOption(event.target);
+          if (id !== undefined && this.#drawnOption(event.relatedTarget) !== id) this.#light(new NoChild());
+        },
+        { signal },
+      );
+    }
+  }
+
+  /** The option id of the button an event reached, when the place's picture draws that option too; none otherwise. */
+  #drawnOption(target: EventTarget | null): string | undefined {
+    if (!(target instanceof Element)) return undefined;
+    const id = target.closest<HTMLElement>('button[data-option]')?.dataset.option;
+    return this.#vm?.drawing.frame().children.some((child) => child.id === id) === true ? id : undefined;
   }
 
   /** A step's render: the dock folds again; the view's other toggles keep their state. */
@@ -130,6 +174,7 @@ export class HudView implements View<HudVM> {
 
   dispose(): void {
     this.#stage.clear();
+    this.#listeners.abort();
     this.#lit = new NoChild();
     this.#canvases.dispose();
     if (this.#container !== undefined) render(nothing, this.#container);
@@ -477,6 +522,7 @@ export class HudView implements View<HudVM> {
                                       type="button"
                                       class="tile take"
                                       data-option=${tile.action.id}
+                                      ?data-lit=${this.#lit.marks(tile.action.id)}
                                       data-relic=${tile.key}
                                       aria-label=${tile.action.label}
                                     >
@@ -530,21 +576,6 @@ export class HudView implements View<HudVM> {
                 class=${['key', key.current ? 'you' : '', key.visited ? 'seen' : ''].join(' ').trim()}
                 data-option=${key.id}
                 ?data-lit=${drawn && this.#lit.marks(key.id)}
-                @click=${(event: Event) => {
-                  this.#through(event, key.id);
-                }}
-                @pointerenter=${() => {
-                  this.#light(new MarkedChild(key.id));
-                }}
-                @pointerleave=${() => {
-                  this.#light(new NoChild());
-                }}
-                @focus=${() => {
-                  this.#light(new MarkedChild(key.id));
-                }}
-                @blur=${() => {
-                  this.#light(new NoChild());
-                }}
               >
                 <span class="num" aria-hidden="true">${key.number}</span><span class="vh">${key.spoken}</span>
               </button>
@@ -592,21 +623,6 @@ export class HudView implements View<HudVM> {
           class=${['row', row.mark === null ? '' : 'you', row.seen === null ? '' : 'seen'].join(' ').trim()}
           data-option=${row.id}
           ?data-lit=${drawn && this.#lit.marks(row.id)}
-          @click=${(event: Event) => {
-            this.#through(event, row.id);
-          }}
-          @pointerenter=${() => {
-            this.#light(new MarkedChild(row.id));
-          }}
-          @pointerleave=${() => {
-            this.#light(new NoChild());
-          }}
-          @focus=${() => {
-            this.#light(new MarkedChild(row.id));
-          }}
-          @blur=${() => {
-            this.#light(new NoChild());
-          }}
         >
           <span class="ord">${row.ordinal}</span
           ><span class="mid"
@@ -644,7 +660,13 @@ export class HudView implements View<HudVM> {
   /** A dock-style button; a `tabIndex` of −1 keeps it out of the tab order (the debug tools, I09). */
   #docked(option: OptionVM, tabIndex?: number): TemplateResult {
     return html`
-      <button type="button" class="pb" data-option=${option.id} tabindex=${tabIndex ?? nothing}>
+      <button
+        type="button"
+        class="pb"
+        data-option=${option.id}
+        ?data-lit=${this.#lit.marks(option.id)}
+        tabindex=${tabIndex ?? nothing}
+      >
         ${option.key === '' ? nothing : html`<kbd aria-hidden="true">${option.key}</kbd>`}<span
           >${option.label}</span
         >

@@ -1,9 +1,9 @@
 import type { ChildMark } from '#ui/scene/ChildMark.ts';
-import type { LineScene } from '#ui/scene/LineScene.ts';
-import type { LineSketch } from '#ui/scene/LineSketch.ts';
+import type { Sketch } from '#ui/scene/Sketch.ts';
+import type { StagedScene } from '#ui/scene/StagedScene.ts';
 
 /** A scene host that notes what the stage asked of it. */
-export class NotingScene implements LineScene {
+export class NotingScene implements StagedScene<Sketch> {
   readonly calls: string[] = [];
   readonly onLight: (mark: ChildMark) => void;
 
@@ -15,7 +15,7 @@ export class NotingScene implements LineScene {
     this.calls.push('mount');
   }
 
-  render(sketch: LineSketch): void {
+  render(sketch: Sketch): void {
     this.calls.push(`render ${sketch.frame().address}`);
   }
 

@@ -53,7 +53,7 @@ export class Sketched<VM extends SceneVM<SceneChild>> implements LineSketch {
     return other.drawnBy(this.#picture);
   }
 
-  drawnBy(picture: ScenePicture<never>): boolean {
+  drawnBy(picture: object): boolean {
     return picture === this.#picture;
   }
 

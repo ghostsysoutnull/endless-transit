@@ -986,6 +986,12 @@ body {
   background: var(--panel2);
 }
 
+/* A move, the way out or a relic's tile whose twin is pointed at in the plan, or that is pointed at itself (U03). */
+.pb[data-lit],
+.tile.take[data-lit] {
+  border-color: var(--yl);
+}
+
 .row .mark {
   color: var(--yl);
   font-weight: 700;

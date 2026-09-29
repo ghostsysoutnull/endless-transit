@@ -1,4 +1,5 @@
 import type { CorridorVM } from '#ui/scene/CorridorVM.ts';
+import type { PlanVM } from '#ui/scene/PlanVM.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { StreetVM } from '#ui/scene/StreetVM.ts';
@@ -11,6 +12,7 @@ export type ReadDrawing =
   | { readonly drawn: 'street'; readonly vm: StreetVM }
   | { readonly drawn: 'tower'; readonly vm: TowerVM }
   | { readonly drawn: 'corridor'; readonly vm: CorridorVM }
+  | { readonly drawn: 'plan'; readonly vm: PlanVM }
   | { readonly drawn: 'unseen'; readonly vm: SceneVM<SceneChild> };
 
 /** Which picture the drawing asks the book for, and with what; a drawing that asks for none is unseen. */
@@ -27,6 +29,10 @@ export function readDrawing(drawing: Drawing): ReadDrawing {
     },
     corridor(vm) {
       read = { drawn: 'corridor', vm };
+      return new Unsketched(vm);
+    },
+    plan(vm) {
+      read = { drawn: 'plan', vm };
       return new Unsketched(vm);
     },
   });
@@ -51,5 +57,12 @@ export function towerVM(drawing: Drawing): TowerVM {
 export function corridorVM(drawing: Drawing): CorridorVM {
   const read = readDrawing(drawing);
   if (read.drawn !== 'corridor') throw new Error(`expected the corridor, got ${read.drawn}`);
+  return read.vm;
+}
+
+/** The plan's view model, or a failed test when the drawing is for another picture. */
+export function planVM(drawing: Drawing): PlanVM {
+  const read = readDrawing(drawing);
+  if (read.drawn !== 'plan') throw new Error(`expected the plan, got ${read.drawn}`);
   return read.vm;
 }

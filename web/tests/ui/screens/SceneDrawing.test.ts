@@ -2,22 +2,25 @@ import { describe, expect, test } from 'vitest';
 import { CorridorPortrait } from '#engine/model/CorridorPortrait.ts';
 import { DoorLook } from '#engine/model/DoorLook.ts';
 import { Level } from '#engine/model/Level.ts';
+import { PlanPortrait } from '#engine/model/PlanPortrait.ts';
+import { RoomLook } from '#engine/model/RoomLook.ts';
 import { StreetPortrait } from '#engine/model/StreetPortrait.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { Drawing } from '#ui/screens/Drawing.ts';
 import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
 import { option, PLANET, STREET, towerSnapshot } from '#tests/support/hudSnapshots.ts';
-import { corridorVM, readDrawing, streetVM, towerVM } from '#tests/support/readDrawing.ts';
+import { corridorVM, planVM, readDrawing, streetVM, towerVM } from '#tests/support/readDrawing.ts';
 import { placeOf } from '#tests/support/snapshotParts.ts';
 
 /** What the snapshot's place draws: its listed places are the options the engine marks as travel. */
 function drawingOf(snapshot: GameSnapshot): Drawing {
   const place = snapshot.place;
   if (place === null) throw new Error('a drawing needs a place');
+  const by = (role: string) => snapshot.options.filter((each) => each.role === role);
   return new SceneDrawing().of(
     place,
-    snapshot.options.filter((each) => each.role === 'travel'),
+    { travel: by('travel'), moves: by('move'), leave: by('return'), takes: by('take') },
     0,
   );
 }
@@ -162,5 +165,46 @@ describe('the corridor (U02): its doors drawn', () => {
       ['enter:1', { look: PLAIN, words: '' }],
     ]);
     expect(drawing.slider).toBe('Doors');
+  });
+});
+
+describe('the plan (U03): a room drawn as its apartment, the options it draws joined by what they do', () => {
+  const ROOMS = ['0.0.0.0.1.0.0.0.0.2.0.4.0', '0.0.0.0.1.0.0.0.0.2.0.4.1'];
+  const ROOM: GameSnapshot = {
+    ...STREET,
+    place: {
+      ...placeOf(STREET),
+      address: ROOMS[0] ?? '',
+      portrait: new PlanPortrait({
+        rooms: [
+          { address: ROOMS[0] ?? '', name: 'Quiet Archive', sight: 'visited', relics: 1 },
+          { address: ROOMS[1] ?? '', name: 'Salt Pantry', sight: 'known', relics: 0 },
+        ],
+        here: ROOMS[0] ?? '',
+        look: new RoomLook({ walls: 'rust', light: 'analog', cold: true, furniture: 2, anomaly: false }),
+      }),
+    },
+    options: [
+      option({ id: 'capture:0', label: 'Take bone flute', place: 'bone flute', role: 'take', ordinal: '1' }),
+      option({
+        id: 'move:forward',
+        label: 'Go forward',
+        place: 'Salt Pantry',
+        role: 'move',
+        address: ROOMS[1] ?? '',
+      }),
+      option({ id: 'leave', key: 'l', label: 'Exit Apartment', role: 'return' }),
+      option({ id: 'scan', key: 's', label: 'Scan', role: 'system' }),
+    ],
+  };
+
+  test('the doorway is the move by the room it leads to, the way out is the leave, the relics are the takes; nothing else is drawn', () => {
+    const drawing = planVM(drawingOf(ROOM));
+    expect(drawing.doors.map((door) => [door.id, door.address])).toEqual([['move:forward', ROOMS[1]]]);
+    expect(drawing.exits.map((exit) => exit.id)).toEqual(['leave']);
+    expect(drawing.relics.map((relic) => [relic.id, relic.name])).toEqual([['capture:0', 'bone flute']]);
+    expect(drawing.children.map((each) => each.id)).toEqual(['move:forward', 'leave', 'capture:0']);
+    expect(drawing.here).toBe(ROOMS[0]);
+    expect(drawing.rooms.map((room) => room.sight)).toEqual(['visited', 'known']);
   });
 });
