@@ -1,22 +1,15 @@
 import type { CameraTrack } from './CameraTrack.ts';
+import type { SliderBox } from './SliderBox.ts';
 import type { SliderFace } from './SliderFace.ts';
 
 /** A slider's box on the picture, in CSS pixels, the axis it runs along, and the view at its start (top or left) and its end. Value object. */
 export class SliderTrack implements CameraTrack {
-  readonly #box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
+  readonly #box: SliderBox;
   readonly #axis: 'x' | 'y';
   readonly #from: number;
   readonly #to: number;
 
-  constructor(facts: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    axis: 'x' | 'y';
-    from: number;
-    to: number;
-  }) {
+  constructor(facts: SliderBox & { axis: 'x' | 'y'; from: number; to: number }) {
     this.#box = { x: facts.x, y: facts.y, width: facts.width, height: facts.height };
     this.#axis = facts.axis;
     this.#from = facts.from;

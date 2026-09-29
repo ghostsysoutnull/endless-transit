@@ -1,4 +1,5 @@
 import type { SceneCamera } from './SceneCamera.ts';
+import type { SliderBox } from './SliderBox.ts';
 import type { SliderFace } from './SliderFace.ts';
 import type { TrackReader } from './TrackReader.ts';
 
@@ -30,10 +31,7 @@ export class SceneSlider implements TrackReader, SliderFace {
     this.#element.setAttribute('aria-valuemax', String(camera.stopCount()));
   }
 
-  placeAt(
-    box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number },
-    axis: 'x' | 'y',
-  ): void {
+  placeAt(box: SliderBox, axis: 'x' | 'y'): void {
     this.#element.hidden = false;
     this.#element.style.left = `${String(box.x)}px`;
     this.#element.style.top = `${String(box.y)}px`;
