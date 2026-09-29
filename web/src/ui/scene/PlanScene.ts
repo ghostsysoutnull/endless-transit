@@ -6,13 +6,14 @@ import { NoChild } from './NoChild.ts';
 import { Pinch } from './Pinch.ts';
 import type { PlanCamera } from './PlanCamera.ts';
 import { PlanDrag } from './PlanDrag.ts';
+import type { PlanGesture } from './PlanGesture.ts';
 import { PlanGlide } from './PlanGlide.ts';
 import type { PlanSceneParts } from './PlanSceneParts.ts';
 import type { PlanSketch } from './PlanSketch.ts';
 import { PlanTrip } from './PlanTrip.ts';
 import type { Point } from './Point.ts';
 import type { SceneCanvas } from './SceneCanvas.ts';
-import type { SceneHit } from './SceneHit.ts';
+import { SceneHits } from './SceneHits.ts';
 import type { StagedScene } from './StagedScene.ts';
 import { Zoom } from './Zoom.ts';
 
@@ -24,6 +25,14 @@ const COAST = 620;
 const MINIMAP = 480;
 /** The plan is drawn at its own scale: the host never grows it (a scale-1 zoom; `SceneCanvas` paints under one). */
 const UNZOOMED = new Zoom({ scale: 1, anchor: { x: 0, y: 0 }, full: 2 });
+
+/** What the host shows: the sketch, the size it is drawn at, how its view moves there, and where the view stands. */
+interface Shown {
+  readonly sketch: PlanSketch;
+  readonly size: PictureSize;
+  readonly camera: PlanCamera;
+  readonly framing: Framing;
+}
 
 /**
  * The plan's host (U03): a canvas the size of its host element, drawn by the plan's picture on the page's one clock,
@@ -40,11 +49,9 @@ export class PlanScene implements StagedScene<PlanSketch> {
   readonly #parts: PlanSceneParts;
   readonly #onLight: (mark: ChildMark) => void;
   #mounted: { readonly host: HTMLElement; readonly canvas: SceneCanvas } | undefined;
-  #sketch: PlanSketch | undefined;
-  #size: PictureSize = { width: 0, height: 0 };
-  #camera: PlanCamera | undefined;
-  #framing: Framing | undefined;
-  #hits: readonly SceneHit[] = [];
+  /** What is shown, once a sketch has been drawn at a size. */
+  #shown: Shown | undefined;
+  #hits = new SceneHits([]);
   #lit: ChildMark = new NoChild();
   /** The view on its way without a pick: a coast, a glide, the arrival. */
   #glide: PlanGlide | undefined;
@@ -52,8 +59,8 @@ export class PlanScene implements StagedScene<PlanSketch> {
   #trip: PlanTrip | undefined;
   /** The fingers on the picture, by pointer id, in CSS pixels on the picture. */
   readonly #fingers = new Map<number, Point>();
-  #drag: PlanDrag | undefined;
-  #pinch: Pinch | undefined;
+  /** One finger dragging or two pinching; none between. */
+  #gesture: PlanGesture | undefined;
   /** The click that ends a drag or a pinch is not a tap. */
   #dragged = false;
   /** Stops listening to the clock; set while the picture moves. */
@@ -76,13 +83,14 @@ export class PlanScene implements StagedScene<PlanSketch> {
         this.#up(event);
       },
       leave: () => {
-        if (this.#drag === undefined) this.#pointAt(new NoChild());
+        if (this.#gesture === undefined) this.#pointAt(new NoChild());
       },
       tap: (event) => {
         this.#tap(event);
       },
       resized: () => {
-        this.#fit();
+        const shown = this.#shown;
+        if (shown !== undefined) this.#show(shown.sketch, shown.framing);
         if (this.#leave === undefined) this.#paint(STILL);
       },
     });
@@ -91,33 +99,27 @@ export class PlanScene implements StagedScene<PlanSketch> {
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
   render(sketch: PlanSketch): void {
-    const before = this.#sketch?.frame();
-    this.#sketch = sketch;
+    const before = this.#shown;
     this.#trip = undefined;
     this.#glide = undefined;
-    this.#drag = undefined;
-    this.#pinch = undefined;
+    this.#gesture = undefined;
     this.#fingers.clear();
     this.#mounted?.canvas.frameChanged();
-    this.#fit();
-    const camera = this.#camera;
-    if (camera === undefined) return;
-    const rest = sketch.rest(camera);
-    const reduced = this.#parts.motion.reduced();
-    if (before?.address === sketch.frame().address) {
-      this.#framing = camera.clamp(this.#framing ?? rest);
-    } else if (reduced) {
-      this.#framing = rest;
+    const size = this.#mounted?.canvas.hostSize() ?? { width: 0, height: 0 };
+    const rest = sketch.rest(sketch.camera(size));
+    if (before?.sketch.frame().address === sketch.frame().address) {
+      this.#show(sketch, before.framing);
+    } else if (this.#parts.motion.reduced()) {
+      this.#show(sketch, rest);
     } else {
       // Another room: glide there from where the view stands; the first room: show the whole plan, then go in.
-      const from = before === undefined ? camera.whole() : (this.#framing ?? rest);
-      this.#framing = from;
-      if (!from.equals(rest)) this.#glideTo(rest, camera.pace(from, rest), this.#parts.ride);
+      const from = before === undefined ? sketch.camera(size).whole() : before.framing;
+      this.#show(sketch, from);
+      this.#glideTo(rest, sketch.camera(size).pace(from, rest), this.#parts.ride);
     }
     const canvas = this.#mounted?.canvas;
     canvas?.name(sketch.frame().label);
     canvas?.touch(true);
-    this.#layout();
     this.#run();
   }
 
@@ -128,7 +130,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
 
   /** Every open option the plan draws is the picture's to go to: through a doorway, back out, or a relic taken. */
   leads(id: string): boolean {
-    const child = this.#sketch?.frame().children.find((each) => each.id === id);
+    const child = this.#shown?.sketch.frame().children.find((each) => each.id === id);
     return child !== undefined && !child.sealed;
   }
 
@@ -145,13 +147,11 @@ export class PlanScene implements StagedScene<PlanSketch> {
   dispose(): void {
     this.#trip = undefined;
     this.#glide = undefined;
-    this.#drag = undefined;
-    this.#pinch = undefined;
+    this.#gesture = undefined;
     this.#stop();
     this.#mounted?.canvas.remove();
     this.#mounted = undefined;
-    this.#sketch = undefined;
-    this.#camera = undefined;
+    this.#shown = undefined;
   }
 
   #run(): void {
@@ -175,10 +175,8 @@ export class PlanScene implements StagedScene<PlanSketch> {
   #frame(time: number): void {
     const trip = this.#trip;
     const motion = trip ?? this.#glide;
-    if (motion !== undefined) {
-      this.#framing = motion.at(time);
-      this.#layout();
-    }
+    const shown = this.#shown;
+    if (motion !== undefined && shown !== undefined) this.#show(shown.sketch, motion.at(time));
     this.#paint(time);
     if (this.#glide?.over(time) === true) this.#glide = undefined;
     if (trip?.over(time) !== true) return;
@@ -190,71 +188,70 @@ export class PlanScene implements StagedScene<PlanSketch> {
     });
   }
 
-  /** The canvas takes its host's size; the picture says how its view moves there. */
-  #fit(): void {
-    const mounted = this.#mounted;
-    const sketch = this.#sketch;
-    if (mounted === undefined || sketch === undefined) return;
-    const size = mounted.canvas.hostSize();
-    mounted.canvas.fit(size);
-    this.#size = size;
-    this.#camera = sketch.camera(size);
-    if (this.#framing !== undefined) this.#framing = this.#camera.clamp(this.#framing);
-    this.#layout();
-  }
-
-  #layout(): void {
-    const sketch = this.#sketch;
-    const framing = this.#framing;
-    if (sketch === undefined || framing === undefined) return;
-    this.#hits = sketch.layout(this.#size, framing);
+  /**
+   * The sketch shown at a framing: the canvas takes its host's size, the picture says how its view moves there, the
+   * framing is kept in range and the tappable parts laid out where it puts them.
+   */
+  #show(sketch: PlanSketch, framing: Framing): void {
+    const canvas = this.#mounted?.canvas;
+    if (canvas === undefined) return;
+    const size = canvas.hostSize();
+    canvas.fit(size);
+    const camera = sketch.camera(size);
+    const kept = camera.clamp(framing);
+    this.#shown = { sketch, size, camera, framing: kept };
+    this.#hits = new SceneHits(sketch.layout(size, kept));
   }
 
   #paint(time: number): void {
     const canvas = this.#mounted?.canvas;
-    const sketch = this.#sketch;
-    const framing = this.#framing;
-    if (canvas === undefined || sketch === undefined || framing === undefined) return;
-    if (this.#size.width === 0 || this.#size.height === 0) return;
-    const frame = sketch.frame();
+    const shown = this.#shown;
+    if (canvas === undefined || shown === undefined || shown.size.width === 0 || shown.size.height === 0)
+      return;
+    const frame = shown.sketch.frame();
     canvas.paint(
-      { size: this.#size, zoom: UNZOOMED, noise: frame.noise, decay: frame.decay, time },
+      { size: shown.size, zoom: UNZOOMED, noise: frame.noise, decay: frame.decay, time },
       (context, palette) => {
-        sketch.paint(context, this.#size, palette, time, this.#lit, framing);
+        shown.sketch.paint(context, shown.size, palette, time, this.#lit, shown.framing);
       },
     );
   }
 
   /** The view on its way to a framing, at once under reduced motion. */
   #glideTo(to: Framing, duration: number, easing: PlanSceneParts['ride']): void {
-    const from = this.#framing;
-    if (from === undefined || this.#parts.motion.reduced() || from.equals(to)) {
+    const shown = this.#shown;
+    if (shown === undefined) return;
+    if (this.#parts.motion.reduced() || shown.framing.equals(to)) {
       this.#glide = undefined;
-      this.#framing = to;
-      this.#layout();
+      this.#show(shown.sketch, to);
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
-    this.#glide = new PlanGlide({ from, to, start: this.#parts.clock.now(), duration, easing });
+    this.#glide = new PlanGlide({
+      from: shown.framing,
+      to,
+      start: this.#parts.clock.now(),
+      duration,
+      easing,
+    });
     this.#run();
   }
 
   /** Where the picture sends the view for this option, then its pick; a relic (no stop) or reduced motion picks at once. */
   #go(id: string): void {
-    const camera = this.#camera;
-    const from = this.#framing;
-    const stop = camera === undefined ? undefined : this.#sketch?.stopOf(camera, id);
-    if (this.#parts.motion.reduced() || camera === undefined || from === undefined || stop === undefined) {
+    const shown = this.#shown;
+    const stop = shown?.sketch.stopOf(shown.camera, id);
+    if (this.#parts.motion.reduced() || shown === undefined || stop === undefined) {
       this.#pick(id);
       return;
     }
     this.#glide = undefined;
     this.#trip = new PlanTrip(
       new PlanGlide({
-        from,
+        from: shown.framing,
         to: stop,
         start: this.#parts.clock.now(),
-        duration: camera.pace(from, stop),
+        duration: shown.camera.pace(shown.framing, stop),
         easing: this.#parts.ride,
       }),
       id,
@@ -267,13 +264,6 @@ export class PlanScene implements StagedScene<PlanSketch> {
     if (host !== undefined) this.#parts.picks.pick(host, id);
   }
 
-  #hitAt(point: Point): SceneHit | undefined {
-    return this.#hits.find(
-      (hit) =>
-        point.x >= hit.x && point.x <= hit.x + hit.width && point.y >= hit.y && point.y <= hit.y + hit.height,
-    );
-  }
-
   /** Pointed at in the picture: drawn lit here, and told to the screen so the list lights its twin. */
   #pointAt(mark: ChildMark): void {
     if (mark.equals(this.#lit)) return;
@@ -282,84 +272,66 @@ export class PlanScene implements StagedScene<PlanSketch> {
   }
 
   #markAt(point: Point): ChildMark {
-    const hit = this.#hitAt(point);
+    const hit = this.#hits.at(point);
     return hit === undefined ? new NoChild() : new MarkedChild(hit.id);
   }
 
   /** A finger down: the view stops where it stands; one finger may drag, a second makes it a pinch. Ignored in a trip. */
   #down(event: PointerEvent): void {
     const canvas = this.#mounted?.canvas;
-    const framing = this.#framing;
-    if (this.#trip !== undefined || canvas === undefined || framing === undefined) return;
+    const shown = this.#shown;
+    if (this.#trip !== undefined || canvas === undefined || shown === undefined) return;
     const point = canvas.pointAt(event);
     this.#fingers.set(event.pointerId, point);
     this.#glide = undefined;
     this.#pointAt(this.#markAt(point));
     const [one, other] = [...this.#fingers.values()];
     if (one !== undefined && other !== undefined) {
-      this.#drag = undefined;
-      this.#pinch = new Pinch(framing, [one, other], this.#size);
+      this.#gesture = new Pinch(shown.framing, [one, other], shown.size);
       canvas.capture(event.pointerId);
       return;
     }
     this.#dragged = false;
-    this.#drag = new PlanDrag({
+    this.#gesture = new PlanDrag({
       pointer: event.pointerId,
       hold: canvas,
       point: { x: event.clientX, y: event.clientY },
-      framing,
+      framing: shown.framing,
     });
   }
 
+  /** A finger moves: the gesture moves the plan with it; with no gesture, what it points at lights. */
   #move(event: PointerEvent): void {
     const canvas = this.#mounted?.canvas;
-    const camera = this.#camera;
-    if (canvas === undefined || camera === undefined) return;
+    const shown = this.#shown;
+    if (canvas === undefined || shown === undefined) return;
     const point = canvas.pointAt(event);
     if (this.#fingers.has(event.pointerId)) this.#fingers.set(event.pointerId, point);
-    const [one, other] = [...this.#fingers.values()];
-    if (this.#pinch !== undefined && one !== undefined && other !== undefined) {
-      this.#show(camera.clamp(this.#pinch.at([one, other])));
+    const gesture = this.#gesture;
+    if (gesture === undefined) {
+      if (this.#trip === undefined) this.#pointAt(this.#markAt(point));
       return;
     }
-    const drag = this.#drag;
-    if (drag?.is(event.pointerId) !== true) {
-      if (this.#drag === undefined && this.#trip === undefined) this.#pointAt(this.#markAt(point));
-      return;
-    }
-    drag.move({ x: event.clientX, y: event.clientY });
-    const framing = drag.framing();
+    gesture.follow(this.#fingers, { x: event.clientX, y: event.clientY }, event.pointerId);
+    const framing = gesture.framing();
     if (framing === undefined) return;
-    this.#show(camera.clamp(framing));
-    drag.sample(this.#parts.clock.now(), camera.clamp(framing));
-  }
-
-  /** The view at a framing a finger put it at: laid out and drawn now. */
-  #show(framing: Framing): void {
-    this.#framing = framing;
-    this.#layout();
+    this.#show(shown.sketch, framing);
+    const moved = this.#shown?.framing ?? framing;
+    gesture.sample(this.#parts.clock.now(), moved);
     if (this.#leave === undefined) this.#paint(STILL);
   }
 
-  /** A finger lifted: a pinch ends when fewer than two remain; a drag coasts on its speed (still under reduced motion). */
+  /** A finger lifted: the gesture it ends coasts on its speed (still under reduced motion), and hides the click after it. */
   #up(event: PointerEvent): void {
     this.#fingers.delete(event.pointerId);
-    if (this.#pinch !== undefined) {
-      if (this.#fingers.size < 2) {
-        this.#pinch = undefined;
-        this.#dragged = true;
-      }
-      return;
-    }
-    const drag = this.#drag;
-    const camera = this.#camera;
-    const framing = this.#framing;
-    if (drag?.is(event.pointerId) !== true || camera === undefined || framing === undefined) return;
-    this.#drag = undefined;
-    if (!drag.moved()) return;
+    const gesture = this.#gesture;
+    const shown = this.#shown;
+    if (gesture?.endsWith(event.pointerId, this.#fingers) !== true || shown === undefined) return;
+    this.#gesture = undefined;
+    if (!gesture.moved()) return;
     this.#dragged = true;
-    const speed = this.#parts.motion.reduced() ? { x: 0, y: 0 } : drag.speed(this.#parts.clock.now());
-    this.#glideTo(camera.landing(framing, speed), COAST, this.#parts.coast);
+    const speed = this.#parts.motion.reduced() ? { x: 0, y: 0 } : gesture.speed(this.#parts.clock.now());
+    this.#glideTo(shown.camera.landing(shown.framing, speed), COAST, this.#parts.coast);
   }
 
   /** A tap: on the minimap the view glides there; on an open option, the trip to it. Not when it ends a drag, nor in a trip. */
@@ -369,17 +341,15 @@ export class PlanScene implements StagedScene<PlanSketch> {
       return;
     }
     const canvas = this.#mounted?.canvas;
-    const camera = this.#camera;
-    const framing = this.#framing;
-    if (this.#trip !== undefined || canvas === undefined || camera === undefined || framing === undefined)
-      return;
+    const shown = this.#shown;
+    if (this.#trip !== undefined || canvas === undefined || shown === undefined) return;
     const point = canvas.pointAt(event);
-    const minimap = camera.minimap(framing);
+    const minimap = shown.camera.minimap(shown.framing);
     if (minimap.holds(point)) {
-      this.#glideTo(camera.clamp(minimap.framingAt(point, framing)), MINIMAP, this.#parts.ride);
+      this.#glideTo(shown.camera.clamp(minimap.framingAt(point, shown.framing)), MINIMAP, this.#parts.ride);
       return;
     }
-    const hit = this.#hitAt(point);
+    const hit = this.#hits.at(point);
     if (hit !== undefined && this.leads(hit.id)) this.#go(hit.id);
   }
 }

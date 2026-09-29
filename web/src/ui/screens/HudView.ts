@@ -55,8 +55,8 @@ export class HudView implements View<HudVM> {
     trace: TracePictureVM;
   }>;
   readonly #book: PictureBook;
-  /** The screen's own listeners, taken away with it. */
-  readonly #listeners = new AbortController();
+  /** The screen's own listeners: made at each mount (the shell mounts the screen again after a prompt), taken away with it. */
+  #listeners = new AbortController();
   /** Which scene shows the place's picture now (U03: `SceneStage`). */
   readonly #stage: DrawnStage;
   /** The child lit in the picture and the list, or none. */
@@ -84,6 +84,7 @@ export class HudView implements View<HudVM> {
    */
   mount(container: HTMLElement): void {
     this.#container = container;
+    this.#listeners = new AbortController();
     const signal = this.#listeners.signal;
     container.addEventListener(
       'click',

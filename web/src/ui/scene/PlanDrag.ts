@@ -1,5 +1,6 @@
 import { Fling } from './Fling.ts';
 import type { Framing } from './Framing.ts';
+import type { PlanGesture } from './PlanGesture.ts';
 import type { PointerHold } from './PointerHold.ts';
 import type { Point } from './Point.ts';
 
@@ -10,7 +11,7 @@ const SLOP = 6;
  * One finger on the plan (U03): where it went down on the page and the framing then; a tap until it goes past the
  * slop, a drag from then on, panning the plan one to one, the finger kept by the canvas. Made per finger.
  */
-export class PlanDrag {
+export class PlanDrag implements PlanGesture {
   readonly #pointer: number;
   readonly #hold: PointerHold;
   readonly #start: Point;
@@ -28,16 +29,18 @@ export class PlanDrag {
     this.#from = facts.framing;
   }
 
-  is(pointer: number): boolean {
-    return this.#pointer === pointer;
-  }
-
-  /** The finger is at this point on the page now. */
-  move(point: Point): void {
-    this.#at = point;
-    if (this.#moved || Math.hypot(point.x - this.#start.x, point.y - this.#start.y) <= SLOP) return;
+  /** Its own finger, at this point on the page now, moves the plan; any other finger nothing. */
+  follow(_fingers: ReadonlyMap<number, Point>, page: Point, pointer: number): void {
+    if (pointer !== this.#pointer) return;
+    this.#at = page;
+    if (this.#moved || Math.hypot(page.x - this.#start.x, page.y - this.#start.y) <= SLOP) return;
     this.#moved = true;
     this.#hold.capture(this.#pointer);
+  }
+
+  /** It ends when its own finger lifts. */
+  endsWith(pointer: number): boolean {
+    return pointer === this.#pointer;
   }
 
   moved(): boolean {

@@ -5,6 +5,7 @@ import { ColdMark } from './ColdMark.ts';
 import { CorridorPicture } from './CorridorPicture.ts';
 import { CurvedHall } from './CurvedHall.ts';
 import { CurvedRow } from './CurvedRow.ts';
+import { Diamond } from './Diamond.ts';
 import { DoorLooks } from './DoorLooks.ts';
 import { EndingReach } from './EndingReach.ts';
 import { EndWall } from './EndWall.ts';
@@ -122,6 +123,6 @@ export class ScenePictures {
 
   /** The apartment's plan (U03), its rooms laid out by the shared hash. */
   plan(): PlanPicture {
-    return new PlanPicture({ layout: new PlanLayout(this.#noise), font: this.#font });
+    return new PlanPicture({ layout: new PlanLayout(this.#noise), font: this.#font, diamond: new Diamond() });
   }
 }

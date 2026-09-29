@@ -10,6 +10,7 @@ import { StillCamera } from './StillCamera.ts';
 import type { SceneSlider } from './SceneSlider.ts';
 import { SliderDrag } from './SliderDrag.ts';
 import type { SceneHit } from './SceneHit.ts';
+import { SceneHits } from './SceneHits.ts';
 import { SceneTrip } from './SceneTrip.ts';
 import type { SceneViewParts } from './SceneViewParts.ts';
 import type { LineScene } from './LineScene.ts';
@@ -56,7 +57,7 @@ export class SceneView implements LineScene {
   /** What it draws: a view model bound to its picture. */
   #sketch: LineSketch | undefined;
   #size: PictureSize = { width: 0, height: 0 };
-  #hits: readonly SceneHit[] = [];
+  #hits = new SceneHits([]);
   #lit: ChildMark = new NoChild();
   /** The child you stand by: the one you came back out of, until the picture shows another place. */
   #here: ChildMark = new NoChild();
@@ -191,7 +192,7 @@ export class SceneView implements LineScene {
       this.#view = this.#camera.clamp(stop);
       this.#layout();
     }
-    const hit = this.#hits.find((each) => each.id === id);
+    const hit = this.#hits.of(id);
     if (hit === undefined || this.#parts.motion.reduced() || !this.#camera.zooms()) {
       if (this.#leave === undefined) this.#paint(STILL);
       return;
@@ -294,7 +295,7 @@ export class SceneView implements LineScene {
   #layout(): void {
     const sketch = this.#sketch;
     if (sketch === undefined) return;
-    this.#hits = sketch.layout(this.#size, this.#view);
+    this.#hits = new SceneHits(sketch.layout(this.#size, this.#view));
     this.#value();
   }
 
@@ -337,10 +338,7 @@ export class SceneView implements LineScene {
   #hitAt(event: MouseEvent): SceneHit | undefined {
     const point = this.#mounted?.canvas.pointAt(event);
     if (point === undefined) return undefined;
-    const { x, y } = point;
-    return this.#hits.find(
-      (hit) => x >= hit.x && x <= hit.x + hit.width && y >= hit.y && y <= hit.y + hit.height,
-    );
+    return this.#hits.at(point);
   }
 
   /** Pointed at in the picture: drawn lit here, and told to the screen so the list lights its twin. */
@@ -476,8 +474,8 @@ export class SceneView implements LineScene {
     const to = stop === undefined ? this.#view : camera.clamp(stop);
     const distance = Math.abs(to - this.#view);
     // Where the child will stand once the ride is over: the point the zoom centres on (the picture's layout is pure).
-    const landed = this.#sketch === undefined ? [] : this.#sketch.layout(this.#size, to);
-    const anchor = landed.find((hit) => hit.id === id)?.anchor ?? {
+    const landed = new SceneHits(this.#sketch === undefined ? [] : this.#sketch.layout(this.#size, to));
+    const anchor = landed.of(id)?.anchor ?? {
       x: this.#size.width / 2,
       y: this.#size.height / 2,
     };

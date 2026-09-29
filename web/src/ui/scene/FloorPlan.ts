@@ -46,6 +46,11 @@ export class FloorPlan {
     return this.#doors;
   }
 
+  /** The doorway between two rooms, by their places in walking order: only rooms next to each other have one. */
+  doorBetween(one: number, other: number): PlanDoor | undefined {
+    return Math.abs(one - other) === 1 ? this.#doors[Math.min(one, other)] : undefined;
+  }
+
   /** Into the first room, through the bottom of the footprint. */
   entry(): PlanDoor {
     return this.#entry;

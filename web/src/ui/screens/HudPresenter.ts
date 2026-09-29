@@ -89,9 +89,9 @@ export class HudPresenter implements Presenter<HudVM> {
     if (place === null || player === null) throw new Error('HudPresenter needs a snapshot with a place');
     const travel = snapshot.options.filter((option) => option.role === 'travel');
     const rows = travel.map((option) => this.#row(option));
-    const moves = snapshot.options
-      .filter((option) => option.role === 'move')
-      .map((option) => this.#docked(option));
+    const moveOptions = snapshot.options.filter((option) => option.role === 'move');
+    const leaveOptions = snapshot.options.filter((option) => option.role === 'return');
+    const moves = moveOptions.map((option) => this.#docked(option));
     const dock = snapshot.options
       .filter((option) => option.role === 'return' || option.role === 'system')
       .map((option) => this.#docked(option));
@@ -167,8 +167,8 @@ export class HudPresenter implements Presenter<HudVM> {
         place,
         {
           travel,
-          moves: snapshot.options.filter((option) => option.role === 'move'),
-          leave: snapshot.options.filter((option) => option.role === 'return'),
+          moves: moveOptions,
+          leave: leaveOptions,
           takes,
         },
         player.decay,
@@ -184,7 +184,7 @@ export class HudPresenter implements Presenter<HudVM> {
       dock,
       // On a phone only the way out stays out of the fold (I09): one row, LEAVE and MORE, under the thumb.
       fold: {
-        after: snapshot.options.filter((option) => option.role === 'return').length,
+        after: leaveOptions.length,
         more: 'MORE',
         less: 'LESS',
         label: 'More of the dock',

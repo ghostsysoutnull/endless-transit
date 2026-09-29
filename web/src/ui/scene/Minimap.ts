@@ -6,6 +6,7 @@ import type { FloorPlan } from './FloorPlan.ts';
 import { Framing } from './Framing.ts';
 import type { MinimapView } from './MinimapView.ts';
 import type { Point } from './Point.ts';
+import { SIGHT_LOOKS } from './SightLooks.ts';
 
 /** The minimap's most width (share of the picture, and pixels) and height, its gap from the corner, its frame (the mock's, `transit-reframed.html:898-903`). */
 const WIDEST = { share: 0.3, pixels: 118 };
@@ -14,8 +15,6 @@ const CORNER = 10;
 const FRAME = 5;
 /** A tap this close outside the minimap still falls on it. */
 const REACH = 6;
-/** How strongly a room shows on it, by how far it is seen. */
-const SHOWN = { visited: 0.55, known: 0.3, fog: 0.08 } as const;
 
 /** The whole plan small in the top right corner, the rooms by how far they are seen, the view's box on it. Immutable. */
 export class Minimap implements MinimapView {
@@ -65,9 +64,9 @@ export class Minimap implements MinimapView {
     painter.lineWidth = 1;
     painter.strokeRect(this.#left - FRAME, this.#top - FRAME, width + FRAME * 2, height + FRAME * 2);
     this.#plan.rooms().forEach((box, index) => {
-      const sight = rooms[index]?.sight ?? 'fog';
-      painter.fillStyle = palette(sight === 'visited' ? 'yl' : 'cy');
-      painter.globalAlpha = SHOWN[sight];
+      const look = SIGHT_LOOKS[rooms[index]?.sight ?? 'fog'].minimap;
+      painter.fillStyle = palette(look.ink);
+      painter.globalAlpha = look.alpha;
       painter.fillRect(
         this.#left + box.left() * this.#scale + 0.5,
         this.#top + box.top() * this.#scale + 0.5,

@@ -4,6 +4,7 @@ import type { RoomSight } from '#engine/model/RoomSight.ts';
 import { RoomLook } from '#engine/model/RoomLook.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
+import { Diamond } from '#ui/scene/Diamond.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import { MarkedChild } from '#ui/scene/MarkedChild.ts';
 import { NoChild } from '#ui/scene/NoChild.ts';
@@ -13,10 +14,13 @@ import type { PlanVM } from '#ui/scene/PlanVM.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import { SceneHash } from '#ui/scene/SceneHash.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
-import { must } from '#tests/support/world.ts';
 
 const PHONE = { width: 360, height: 277 };
-const picture = new PlanPicture({ layout: new PlanLayout(new SceneHash()), font: new CanvasFont() });
+const picture = new PlanPicture({
+  layout: new PlanLayout(new SceneHash()),
+  font: new CanvasFont(),
+  diamond: new Diamond(),
+});
 /** One word each, so a test can tell which room a word was written in. */
 const NAMES = ['Kitchen', 'Pantry', 'Vault', 'Chapel'];
 const addressOf = (index: number): string => `0.0.0.0.0.0.0.0.0.0.0.3.${String(index)}`;
@@ -138,6 +142,5 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
     expect(words).toContain('Pantry');
     expect(words).not.toContain('Vault');
     expect(words).not.toMatch(/fillText\(3,/);
-    expect(must(vm.rooms[2]).sight).toBe('fog');
   });
 });

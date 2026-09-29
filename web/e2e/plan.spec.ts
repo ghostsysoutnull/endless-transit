@@ -84,9 +84,13 @@ test('the doorway tapped in the picture lights its button, and leads on to the n
   page,
   hasTouch,
 }) => {
+  await page.clock.install();
   await inTheFirstRoom(page);
-  await page.waitForTimeout(1000);
+  // The arrival's glide into the room is over: the doorway stands where it rests.
+  await page.clock.runFor(1200);
+  await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 100);
   const point = await pointOf(page, 'move:forward');
+  await page.clock.resume();
   await page
     .getByTestId('scene')
     .locator('canvas')
@@ -97,9 +101,13 @@ test('the doorway tapped in the picture lights its button, and leads on to the n
 });
 
 test('a relic’s tile is taken at once, no glide', async ({ page, hasTouch }) => {
+  await page.clock.install();
   await inTheFirstRoom(page);
+  await page.clock.runFor(1200);
+  await holdTime(page);
+  // No frame runs from here on: a take that waited for a glide would never land.
   await tapOption(page, 'capture:0', hasTouch);
-  await expect(page.locator('button.tile')).toHaveCount(3, { timeout: 250 });
+  await expect(page.locator('button.tile')).toHaveCount(3);
 });
 
 test('leaving the first room: the view pulls back to the whole plan first, then the corridor', async ({
@@ -117,8 +125,29 @@ test('leaving the first room: the view pulls back to the whole plan first, then 
 });
 
 test('reduced motion: Go forward enters the next room at once', async ({ page, hasTouch }) => {
+  await page.clock.install();
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await inTheFirstRoom(page);
+  await holdTime(page);
+  // No frame runs from here on: a move that waited for a glide would never land.
   await tapOption(page, 'move:forward', hasTouch);
-  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant', { timeout: 250 });
+  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+});
+
+test('back from the help screen, the plan still takes the taps: Go forward glides first', async ({
+  page,
+  hasTouch,
+}) => {
+  await page.clock.install();
+  await inTheFirstRoom(page);
+  await press(page, /^help$/i, hasTouch);
+  await expect(page.getByTestId('help-heading')).toHaveCount(1);
+  await press(page, /back to the world/i, hasTouch);
+  await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
+  await page.clock.runFor(1200);
+  await holdTime(page);
+  await tapOption(page, 'move:forward', hasTouch);
+  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+  await page.clock.runFor(1000);
+  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
 });
