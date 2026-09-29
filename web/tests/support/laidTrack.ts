@@ -1,16 +1,12 @@
 import type { CameraTrack } from '#ui/scene/CameraTrack.ts';
+import type { SliderBox } from '#ui/scene/SliderBox.ts';
 
 /** A track as the slider sees it once laid: shown over a box, running along an axis — or hidden. */
 export type Laid =
   | { readonly shown: false }
   | {
       readonly shown: true;
-      readonly box: {
-        readonly x: number;
-        readonly y: number;
-        readonly width: number;
-        readonly height: number;
-      };
+      readonly box: SliderBox;
       readonly axis: 'x' | 'y';
     };
 
