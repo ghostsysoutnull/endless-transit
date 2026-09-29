@@ -53,7 +53,8 @@ test('entering a place moves the focus to the first place on its list — every 
   const first = page.locator('button[data-option="enter:0"]');
   await (hasTouch ? first.tap() : first.click());
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
-  expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
+  // A building's floors are a pad counting up (U02): its first key is the lobby.
+  await expect(page.getByRole('button', { name: /^Ride to Lobby,/ })).toBeFocused();
 });
 
 test('a key pressed with nothing focused does not grab the focus', async ({ page, hasTouch }) => {

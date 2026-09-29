@@ -141,8 +141,11 @@ test(
     await expect(page.getByTestId('status')).toContainText('HARMONIC_INVERSION_PROTOCOL_ENGAGED');
     await expect(page.locator('.frag', { hasText: 'Keystone' })).toHaveCount(0);
     await press(page, /leave floor/i, hasTouch);
-    await expect(page.locator('.diag')).toHaveText('BEDROCK_BREACHED');
-    await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(26);
+    await expect(page.locator('.diag')).toHaveText('The bedrock is breached');
+    // The Layers join the pad, past twenty by tens: the lobby's ten is a tab away.
+    const tens = page.getByRole('group', { name: 'Floors by tens' }).getByRole('button');
+    await expect(tens).toHaveText(['-0xA–-0x1', '0–9', '10–15']);
+    await (hasTouch ? tens.nth(1).tap() : tens.nth(1).click());
     await tapOption(page, `enter:${String(PEAK)}`, hasTouch);
     await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
     await press(page, /descend into the substrate/i, hasTouch);

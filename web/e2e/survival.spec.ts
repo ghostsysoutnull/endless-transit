@@ -171,10 +171,11 @@ test('play until death and continue: the failure screen, REBUILD, the same seed 
   await expect(rows.nth(1).locator('.seen-mark')).toHaveCount(0);
   await shoot(page, '3b-reborn-street');
   await tapOption(page, 'enter:0', hasTouch);
-  await expect(page.locator('.row.you')).toHaveCount(1);
-  await expect(page.locator('.row.you .ord')).toHaveText('00');
-  await expect(page.locator('.row.seen')).toHaveCount(1);
-  await expect(page.locator('.row.seen .ord')).toHaveText('00');
+  // The pad: the elevator waits at the lobby, the one floor visited.
+  await expect(page.getByRole('button', { name: /Elevator here/ })).toHaveAccessibleName(
+    /^Ride to Lobby, Elevator here, Visited,/,
+  );
+  await expect(page.getByRole('button', { name: /Visited/ })).toHaveCount(1);
   expect(problems).toEqual([]);
 });
 
@@ -217,12 +218,11 @@ test('close the tab and reopen: a new page with the same storage continues with 
   const floors = again.locator('button[data-option^="enter:"]');
   await expect(floors).toHaveCount(16);
   // Visited: the lobby and floor 1; the elevator stands at floor 1.
-  await expect(again.locator('.row.seen')).toHaveCount(2);
-  await expect(again.locator('.row.you .ord')).toHaveText('01');
-  await expect(floors.nth(14).locator('.seen-mark')).toHaveText('[V]');
-  await expect(floors.nth(15).locator('.seen-mark')).toHaveText('[V]');
-  await expect(floors.nth(13).locator('.seen-mark')).toHaveCount(0);
-  await again.locator('.row.you').scrollIntoViewIfNeeded();
+  await expect(again.getByRole('button', { name: /Visited/ })).toHaveCount(2);
+  await expect(again.getByRole('button', { name: /^Ride to Lobby, Visited,/ })).toHaveCount(1);
+  const car = again.getByRole('button', { name: /Elevator here/ });
+  await expect(car).toHaveAccessibleName(/^Ride to Floor 1, Elevator here, Visited,/);
+  await car.scrollIntoViewIfNeeded();
   await shoot(again, '4-visited-marks', false);
   expect(moreProblems).toEqual([]);
   await reopened.close();

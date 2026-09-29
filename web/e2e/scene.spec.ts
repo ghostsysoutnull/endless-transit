@@ -69,7 +69,7 @@ async function still(page: Page): Promise<string> {
     .evaluate((el) => (el as HTMLCanvasElement).toDataURL());
 }
 
-test('the street is drawn: a named picture with its list as its twin; a building is not drawn yet', async ({
+test('the street is drawn: a named picture with its list as its twin; a building is drawn as its tower', async ({
   page,
   hasTouch,
 }) => {
@@ -78,8 +78,7 @@ test('the street is drawn: a named picture with its list as its twin; a building
   await page.goto('./');
   const scene = page.getByTestId('scene');
   await expect(scene).toHaveCount(1);
-  await expect(scene).toHaveAttribute('role', 'img');
-  expect(((await scene.getAttribute('aria-label')) ?? '').trim()).not.toBe('');
+  await expect(scene.getByRole('img', { name: /^Picture of Bright Boulevard/ })).toHaveCount(1);
   await expect(scene.locator('canvas')).toHaveCount(1);
   // No option lives on the picture: the list is the one set of buttons.
   await expect(scene.locator('[data-option]')).toHaveCount(0);
@@ -87,7 +86,9 @@ test('the street is drawn: a named picture with its list as its twin; a building
   await shoot(page, 'street');
   await tapOption(page, 'enter:0', hasTouch);
   expect(await kind(page)).toBe('BUILDING');
-  await expect(page.getByTestId('scene')).toHaveCount(0);
+  await expect(
+    page.getByTestId('scene').getByRole('img', { name: /^Picture of Ornate Sanctum/ }),
+  ).toHaveCount(1);
   expect(problems).toEqual([]);
 });
 
