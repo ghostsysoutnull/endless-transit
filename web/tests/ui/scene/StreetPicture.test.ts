@@ -107,24 +107,6 @@ describe('the street picture: one row of buildings on a ground line, as the mock
   });
 });
 
-describe('the street picture’s variations, pinned before its hash and roofs move out (U02 step 0)', () => {
-  test('a fixed street at a fixed moment paints the same calls as before the move (a digest of them)', () => {
-    const vm: StreetVM = {
-      ...street(9),
-      children: street(9).children.map((child, index) => ({ ...child, sealed: index === 7 })),
-    };
-    const painter = new RecordingPainter();
-    picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, new MarkedChild('enter:2'));
-    let hash = 0x811c9dc5;
-    const text = painter.calls.join('\n');
-    for (let at = 0; at < text.length; at++) {
-      hash ^= text.charCodeAt(at);
-      hash = Math.imul(hash, 0x01000193);
-    }
-    expect([(hash >>> 0).toString(16), painter.calls.length]).toEqual(['ff77aeac', 530]);
-  });
-});
-
 describe('the street picture: painted with the stylesheet’s inks, text a phone can read', () => {
   test('the same moment paints the same calls; another moment moves the rain and the windows', () => {
     const one = new RecordingPainter();
@@ -160,6 +142,20 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
       .filter((call) => call.startsWith('fillText('))
       .map((call) => call.slice(9).split(',')[0]);
     expect(numbers).toEqual(street(20).children.map((child) => child.ordinal));
+  });
+
+  test('a sealed building is outlined dim', () => {
+    const open = new RecordingPainter();
+    const sealed = new RecordingPainter();
+    const one: StreetVM = {
+      ...street(6),
+      children: street(6).children.map((child, index) => ({ ...child, sealed: index === 3 })),
+    };
+    picture.paint(open, street(6), PHONE, palette(open.asked), 0, new NoChild());
+    picture.paint(sealed, one, PHONE, palette(sealed.asked), 0, new NoChild());
+    const dim = (painter: RecordingPainter) =>
+      painter.calls.filter((call) => call.startsWith('stroke(<dim>')).length;
+    expect(dim(sealed)).toBeGreaterThan(dim(open));
   });
 
   test('the lit building is outlined in yellow; none is when nothing is lit', () => {

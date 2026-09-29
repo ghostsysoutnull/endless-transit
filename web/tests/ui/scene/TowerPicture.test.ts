@@ -202,17 +202,6 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
   });
 });
 
-/** A digest of every call a painter was told, and how many: a picture's whole output in two values. */
-function digest(painter: RecordingPainter): readonly [string, number] {
-  let hash = 0x811c9dc5;
-  const text = painter.calls.join('\n');
-  for (let at = 0; at < text.length; at++) {
-    hash ^= text.charCodeAt(at);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return [(hash >>> 0).toString(16), painter.calls.length];
-}
-
 /** The first tower address on the street whose roof is `kind` (a landmark's is always the peak). */
 function addressWith(kind: RoofKind): string {
   const roofs = new Roof(new SceneHash());
@@ -222,43 +211,16 @@ function addressWith(kind: RoofKind): string {
   }
 }
 
-/**
- * Scaffolding (testing principle 7): the tower's calls pinned before its roofs and corridor rows move behind drawers
- * found by key (U02 fixes, step 2a) — removed, with the street's digest, at U02's close-out.
- */
-describe('the tower paints the same calls as before its drawers move (a digest of them)', () => {
-  const top = (address: string, landmark: boolean): TowerVM => tower(5, { car: 4, address, landmark });
-
-  test('each roof, the top in view', () => {
-    const digests = [
-      top('0.0.0.0.0.0.0.0.2', true),
-      top(addressWith('mast'), false),
-      top(addressWith('box'), false),
-      top(addressWith('flat'), false),
-    ].map((vm) => {
-      const painter = new RecordingPainter();
-      picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, new NoChild(), 4);
-      return digest(painter);
-    });
-    expect(digests).toEqual([
-      ['9576b233', 207],
-      ['40ceb987', 202],
-      ['a2fb1b96', 208],
-      ['9465138f', 206],
-    ]);
-  });
-
-  test('a breached tower, the Layers’ rows in view', () => {
-    const painter = new RecordingPainter();
-    picture.paint(
-      painter,
-      tower(12, { below: 10 }),
-      PHONE,
-      (token) => `<${token}>`,
-      1234,
-      new MarkedChild('enter:14'),
-      -3,
-    );
-    expect(digest(painter)).toEqual(['312684dc', 214]);
+describe('the tower’s roof', () => {
+  test('a landmark wears the peak, drawn otherwise than the roof its address gives any other building', () => {
+    for (const kind of ['mast', 'box', 'flat'] as const) {
+      const [plain, landmark] = [false, true].map((isLandmark) => {
+        const painter = new RecordingPainter();
+        const vm = tower(5, { car: 4, address: addressWith(kind), landmark: isLandmark });
+        picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, new NoChild(), 4);
+        return painter.calls;
+      });
+      expect(landmark, kind).not.toEqual(plain);
+    }
   });
 });
