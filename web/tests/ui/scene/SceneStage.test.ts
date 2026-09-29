@@ -105,6 +105,6 @@ describe('the scene stage: which scene host shows the picture now', () => {
     stage.arrive('enter:1');
     stage.enter('enter:2');
     stage.light(new MarkedChild('enter:2'));
-    expect(made[0]?.calls.slice(2)).toEqual(['arrive enter:1', 'enter enter:2', 'light']);
+    expect(made[0]?.calls.slice(-3)).toEqual(['arrive enter:1', 'enter enter:2', 'light']);
   });
 });

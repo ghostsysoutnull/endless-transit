@@ -1,24 +1,24 @@
 import type { DrawnStage } from '#ui/screens/DrawnStage.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { DrawnScene } from './DrawnScene.ts';
-import type { LineScene } from './LineScene.ts';
 import type { LineSketch } from './LineSketch.ts';
 import type { SceneHosts } from './SceneHosts.ts';
 import type { SceneStages } from './SceneStages.ts';
+import { ShownScene } from './ShownScene.ts';
 import type { Sketch } from './Sketch.ts';
+import type { StagedScene } from './StagedScene.ts';
 
 /**
  * Owns one fact (U03, out of `HudView`): which scene host shows the world screen's picture now. A sketch tells it
  * which kind of host it needs; the host is kept while the host element and the picture stay, else the old one is
- * taken down and one of the sketch's kind made through `SceneHosts`. Built in `main.ts`, handed to `HudView`.
+ * taken down and one of the sketch's kind made through `SceneHosts`. A new kind of host is a field, a method and its
+ * entry in `#shown`. Built in `main.ts`, handed to `HudView`.
  */
 export class SceneStage implements DrawnStage, SceneStages {
   readonly #hosts: SceneHosts;
-  /** Where the sketch being shown goes, and whom its scene tells what its picture points at; set by `show`. */
+  /** Where the sketch being dispatched goes, and whom a scene made for it tells what its picture points at: set for one `show`. */
   #at: { readonly host: HTMLElement; readonly onLight: (mark: ChildMark) => void } | undefined;
-  #line: { readonly host: HTMLElement; readonly sketch: LineSketch; readonly view: LineScene } | undefined;
-  /** The scene was made by the last `show`: it already shows its sketch. */
-  #fresh = false;
+  #line: ShownScene<LineSketch> | undefined;
 
   constructor(hosts: SceneHosts) {
     this.#hosts = hosts;
@@ -31,23 +31,11 @@ export class SceneStage implements DrawnStage, SceneStages {
     }
     this.#at = { host, onLight };
     sketch.stageOn(this);
+    this.#at = undefined;
   }
 
   line(sketch: LineSketch): void {
-    const at = this.#at;
-    if (at === undefined) return;
-    const shown = this.#line;
-    if (shown?.host === at.host && shown.sketch.samePicture(sketch)) {
-      this.#line = { ...shown, sketch };
-      this.#fresh = false;
-      return;
-    }
-    this.clear();
-    const view = this.#hosts.line(at.onLight);
-    view.mount(at.host);
-    view.render(sketch);
-    this.#line = { host: at.host, sketch, view };
-    this.#fresh = true;
+    this.#line = this.#staged(this.#line, sketch, (onLight) => this.#hosts.line(onLight));
   }
 
   bare(): void {
@@ -55,8 +43,7 @@ export class SceneStage implements DrawnStage, SceneStages {
   }
 
   redraw(): void {
-    const shown = this.#line;
-    if (shown !== undefined && !this.#fresh) shown.view.render(shown.sketch);
+    this.#shown()?.redraw();
   }
 
   showing(): boolean {
@@ -80,12 +67,32 @@ export class SceneStage implements DrawnStage, SceneStages {
   }
 
   clear(): void {
-    this.#line?.view.dispose();
+    this.#scene()?.dispose();
     this.#line = undefined;
-    this.#fresh = false;
+  }
+
+  /** The scene kept for a sketch of its picture in its host, else the old one taken down and one made and shown it. */
+  #staged<S extends Sketch>(
+    shown: ShownScene<S> | undefined,
+    sketch: S,
+    make: (onLight: (mark: ChildMark) => void) => StagedScene<S>,
+  ): ShownScene<S> | undefined {
+    const at = this.#at;
+    if (at === undefined) return shown;
+    if (shown?.keeps(at.host, sketch) === true) return shown.keptFor(sketch);
+    this.clear();
+    const view = make(at.onLight);
+    view.mount(at.host);
+    view.render(sketch);
+    return new ShownScene({ host: at.host, sketch, view, fresh: true });
+  }
+
+  /** The scene shown now, of whichever kind. */
+  #shown(): ShownScene<LineSketch> | undefined {
+    return this.#line;
   }
 
   #scene(): DrawnScene | undefined {
-    return this.#line?.view;
+    return this.#shown()?.view();
   }
 }
