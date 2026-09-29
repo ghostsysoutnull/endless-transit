@@ -32,7 +32,12 @@ function building(): { building: Building; source: CountingChildSource } {
             ),
         );
       case 2:
-        return [new Corridor({ ...origin(0), parent: parent as Floor }, { sentence: 'A long corridor' })];
+        return [
+          new Corridor(
+            { ...origin(0), parent: parent as Floor },
+            { sentence: 'A long corridor', shape: 'long' },
+          ),
+        ];
       default:
         return [];
     }

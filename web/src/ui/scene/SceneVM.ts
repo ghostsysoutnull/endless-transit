@@ -1,52 +1,18 @@
-import type { CorridorShape } from '#engine/model/CorridorShape.ts';
-import type { DoorLook } from '#engine/model/DoorLook.ts';
-import type { Level } from '#engine/model/Level.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { SceneChild } from './SceneChild.ts';
 
 /**
- * What a scene draws, as readonly data — plain data and the engine's value objects (U01b, U02): which picture (a
- * key the registry looks up, never one a view branches on), the words a reader hears for it, where it stands, one
- * child per listed place in the list's order — its option id is the pick — the coherence tear's strength and
- * seed, and what the building's pictures need: the tower (its size, roof, car and a row per level), the
- * corridor's shape, and the slider's name.
+ * What every scene draws, as readonly data — plain data and the engine's value objects (U01b, U02): the words a
+ * reader hears for the picture, where it stands, one child per listed place it draws in the list's order — its
+ * option id is the pick — the name a reader hears for its slider (the list's heading), and the coherence tear's
+ * strength and seed. Each picture's own view model adds what only it draws.
  */
-export interface SceneVM {
-  readonly key: string;
+export interface SceneVM<C extends SceneChild> {
   readonly label: string;
   /** The place's own address: it tells a new place from the same one drawn again. */
   readonly address: string;
-  readonly children: readonly {
-    readonly id: string;
-    readonly ordinal: string;
-    readonly name: string;
-    readonly floors: number;
-    readonly doors: number;
-    readonly landmark: boolean;
-    readonly visited: boolean;
-    readonly sealed: boolean;
-    readonly address: string;
-    /** The level a floor stands at; nothing for any other child. */
-    readonly level: Level | null;
-    /** A door's look and the word written on it; nothing for any other child. */
-    readonly door: { readonly look: DoorLook; readonly words: string } | null;
-  }[];
-  /** The tower the place is drawn as (a building, a floor at its elevator); nothing for the rest. */
-  readonly tower: {
-    readonly floors: number;
-    readonly doors: number;
-    readonly address: string;
-    readonly landmark: boolean;
-    readonly car: number;
-    /** A row per level, lowest first: its level, how its corridor runs and how its doors look. */
-    readonly rows: readonly {
-      readonly level: Level;
-      readonly shape: CorridorShape;
-      readonly looks: readonly DoorLook[];
-    }[];
-  } | null;
-  /** How the place's corridor runs (`long`, `service`, `curved`, `static`); `none` when it has none. */
-  readonly shape: CorridorShape;
-  /** The name a reader hears for the picture's slider (the list's heading); empty when there is none. */
+  readonly children: readonly C[];
+  /** The name a reader hears for the picture's slider (the list's heading); the slider shows only where the camera has a track. */
   readonly slider: string;
   /** How strongly the picture tears, 0 to 1 (`Coherence.decay`). */
   readonly decay: number;

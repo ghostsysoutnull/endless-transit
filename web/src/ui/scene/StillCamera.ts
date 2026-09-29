@@ -1,5 +1,6 @@
 import type { CameraStop } from './CameraStop.ts';
 import type { CameraTrack } from './CameraTrack.ts';
+import { NoTrack } from './NoTrack.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 
 /** A camera that stands still (the street, U01b): its view never leaves 0, nothing drags, no slider; going in zooms. */
@@ -56,12 +57,8 @@ export class StillCamera implements SceneCamera {
     return undefined;
   }
 
-  track(): CameraTrack | null {
-    return null;
-  }
-
-  alongTrack(): number {
-    return 0;
+  track(): CameraTrack {
+    return new NoTrack();
   }
 
   /** Every still camera moves by the same rules: not at all. */

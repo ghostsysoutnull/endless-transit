@@ -125,13 +125,13 @@ export class HudPresenter implements Presenter<HudVM> {
         eyebrow: place.kind.toUpperCase(),
         icon: place.icon,
         name: place.name,
-        position:
-          place.position === null
-            ? null
-            : {
-                label: new Phrase(place.position.label).plain(),
-                value: `${String(place.position.index)} of ${String(place.position.total)}`,
-              },
+        position: !place.position.counted
+          ? { shown: false }
+          : {
+              shown: true,
+              label: new Phrase(place.position.label).plain(),
+              value: `${String(place.position.index)} of ${String(place.position.total)}`,
+            },
         tags: place.facts.map((fact) => ({
           key: fact.key,
           label: fact.label,
@@ -158,16 +158,19 @@ export class HudPresenter implements Presenter<HudVM> {
                 note: row.note,
               })),
             },
-      map: snapshot.map === null ? null : this.#mapPanel(snapshot.map, MAP_HEADING),
-      trace: snapshot.trace === null ? null : this.#tracePanel(snapshot.trace),
+      map:
+        snapshot.map === null
+          ? { shown: false }
+          : { shown: true, ...this.#mapPanel(snapshot.map, MAP_HEADING) },
+      trace: snapshot.trace === null ? { shown: false } : this.#tracePanel(snapshot.trace),
       drawing: this.#drawings.of(place, travel, player.decay),
-      pad: this.#pads.of(travel, rows),
+      pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows,
       moves,
       sealedNote: rows.some((row) => row.sealed)
-        ? 'STRUCTURES SEALED · the lattice opens their doors in a later build'
-        : null,
+        ? { shown: true, text: 'STRUCTURES SEALED · the lattice opens their doors in a later build' }
+        : { shown: false },
       sealedTag: 'SEALED',
       dock,
       // On a phone only the way out stays out of the fold (I09): one row, LEAVE and MORE, under the thumb.
@@ -273,6 +276,7 @@ export class HudPresenter implements Presenter<HudVM> {
       abyssal: step.abyssal,
     }));
     return {
+      shown: true,
       label: 'Lattice trace',
       heading: TRACE_HEADING,
       picture: { rows },

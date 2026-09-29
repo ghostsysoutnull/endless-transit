@@ -7,6 +7,7 @@ import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { FixedEntropySource } from '#tests/support/FixedEntropySource.ts';
 import { MemorySaveStore } from '#tests/support/MemorySaveStore.ts';
+import { corridorOf, readPortrait, towerOf } from '#tests/support/readPortrait.ts';
 import { must, realRegistry } from '#tests/support/world.ts';
 
 const FIRST = new Seed(0x7f3a91c2, 0x0b4de6a8);
@@ -38,7 +39,6 @@ function system(id: string, key: string, label: string): GameOption {
     current: false,
     visited: false,
     address: '',
-    figure: null,
     numbered: false,
   };
 }
@@ -167,18 +167,19 @@ describe('GameEngine — walking the big world', () => {
       'recap',
     ]);
     const snapshot = walkedDown(engine, 0);
-    expect(snapshot.place).toEqual({
+    // No picture draws the universe: the screen stays as it was.
+    const { portrait, ...place } = must(snapshot.place ?? undefined);
+    expect(readPortrait(portrait)).toEqual({ drawn: 'unseen' });
+    expect(place).toEqual({
       kind: 'Universe',
       icon: '∞',
       name: 'The Endless Universe',
       address: '0',
-      position: null,
+      position: { counted: false },
       trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' }],
       status: 'UNIMATRIX_STABLE',
       description: ['A neural web of infinite complexity.'],
       facts: [],
-      drawing: 'universe',
-      figure: null,
       noise: new Seed(0xd7f5c533, 0xb7fc1498),
       frame: null,
       abyssal: false,
@@ -219,7 +220,6 @@ describe('GameEngine — walking the big world', () => {
       // The first filament is on the way to the street a new world starts on, so it has been visited (Guide:430).
       visited: true,
       address: '0.0',
-      figure: null,
       numbered: false,
     });
     expect(ids(snapshot)).not.toContain('leave');
@@ -242,8 +242,7 @@ describe('GameEngine — walking the big world', () => {
     expect(place.name).toBe('Zeta-915-Link');
     expect(place.address).toBe('0.0');
     expect(place.trail).toHaveLength(2);
-    expect(place.position?.label).toBe('CONDUIT');
-    expect(place.position?.index).toBe(1);
+    expect(place.position).toMatchObject({ label: 'CONDUIT', index: 1 });
     expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Zeta-915-Link']);
     expect(place.trail.map((step) => step.address)).toEqual(['0', '0.0']);
     expect(snapshot.options.find((option) => option.id === 'leave')).toEqual({
@@ -260,7 +259,6 @@ describe('GameEngine — walking the big world', () => {
       current: false,
       visited: false,
       address: '',
-      figure: null,
       numbered: false,
     });
     expect(snapshot.message).toBe('Entered Zeta-915-Link.');
@@ -295,32 +293,37 @@ describe('GameEngine — walking the big world', () => {
     expect(ids(engine.snapshot())).not.toContain('leave');
   });
 
-  test("the street hands the screen what draws it (U01b): its drawing key, this frame's noise, each building's address and figure", () => {
+  test("the street hands the screen what draws it (U01b): its portrait with each building's address and figure, this frame's noise", () => {
     const engine = engineOn(new MemorySaveStore());
     const street = walkedDown(engine, 7);
     const place = must(street.place ?? undefined);
-    expect(place.drawing).toBe('street');
     const buildings = street.options.filter((option) => option.role === 'travel');
     expect(buildings[0]?.address).toBe(`${place.address}.0`);
-    expect(buildings[0]?.figure).toEqual({ floors: 16, doors: 9 });
+    const drawn = readPortrait(place.portrait);
+    expect(drawn.drawn).toBe('street');
+    expect(drawn.drawn === 'street' ? drawn.buildings[0] : undefined).toEqual({
+      address: `${place.address}.0`,
+      floors: 16,
+      doors: 9,
+    });
     expect(buildings.map((option) => option.address)).toEqual(
       buildings.map((_, index) => `${place.address}.${String(index)}`),
     );
-    // The options that are not places carry no address and no figure.
-    expect(street.options.find((option) => option.id === 'leave')).toMatchObject({
-      address: '',
-      figure: null,
-    });
-    // A building answers with its drawing key too, and hands its own picture its tower (U02); its floors carry
-    // their peeked rows and go by their numbers, the street's buildings do not.
+    // The options that are not places carry no address.
+    expect(street.options.find((option) => option.id === 'leave')).toMatchObject({ address: '' });
+    // A building is drawn as its tower (U02), a row per floor, each floor's peeked row at its address; its floors go
+    // by their numbers, the street's buildings do not.
     expect(buildings.every((option) => !option.numbered)).toBe(true);
-    expect(place.figure).toBeNull();
     const building = engine.step('enter:0');
-    expect(building.place?.drawing).toBe('building');
-    expect(building.place?.figure?.tower).toMatchObject({ car: 0 });
-    expect(building.place?.figure?.tower?.rows).toHaveLength(16);
+    const tower = towerOf(must(building.place ?? undefined).portrait);
+    expect(tower).toMatchObject({ car: 0 });
+    expect(tower.rows).toHaveLength(16);
     const floors = building.options.filter((option) => option.role === 'travel');
-    expect(floors.every((option) => option.numbered && option.figure?.looks?.length === 9)).toBe(true);
+    expect(floors.every((option) => option.numbered)).toBe(true);
+    expect(tower.rows.map((row) => row.address).toSorted()).toEqual(
+      floors.map((option) => option.address).toSorted(),
+    );
+    expect(tower.rows.every((row) => row.looks.length === 9)).toBe(true);
     // The noise is the frame's: the same place two steps later draws another frame.
     const back = engine.step('leave');
     expect(back.place?.address).toBe(place.address);
@@ -342,13 +345,11 @@ describe('GameEngine — walking the big world', () => {
       { key: 'culture', label: 'Culture', value: 'baroque' },
       { key: 'reading', label: 'Floors', value: '16' },
     ]);
-    expect(building.place?.position).toEqual({ label: 'Building', index: 1, total: 4 });
+    expect(building.place?.position).toEqual({ counted: true, label: 'Building', index: 1, total: 4 });
     expect(building.place?.childrenHeading).toBe('Ride to a floor');
     const floors = building.options.filter((option) => option.role === 'travel');
     expect(floors).toHaveLength(16);
-    // The row the floor peeks is pinned by the peek's own test (Passages.test); here only that it has one.
-    expect(floors[0]?.figure).toMatchObject({ floors: 0, doors: 9 });
-    expect({ ...floors[0], figure: null }).toEqual({
+    expect(floors[0]).toEqual({
       id: 'enter:0',
       key: '',
       label: 'Ride to Peak',
@@ -362,7 +363,6 @@ describe('GameEngine — walking the big world', () => {
       current: false,
       visited: false,
       address: '0.0.0.0.0.0.0.0.0.15',
-      figure: null,
       numbered: true,
     });
     expect(floors.map((option) => option.ordinal)).toEqual(
@@ -393,7 +393,7 @@ describe('GameEngine — walking the big world', () => {
     expect(lobby.place?.kind).toBe('Floor');
     expect(lobby.place?.name).toBe('Floor 0');
     // A floor has no position chip (U02): its name and the tower say its height.
-    expect(lobby.place?.position).toBeNull();
+    expect(lobby.place?.position).toEqual({ counted: false });
     expect(lobby.place?.facts.map((fact) => fact.label)).toEqual(['Era', 'Culture', 'Stability', 'Trait']);
     expect(lobby.options).toEqual([
       move('up', 'u', 'Go Up', 'down'),
@@ -459,20 +459,18 @@ describe('GameEngine — walking the big world', () => {
       current: false,
       visited: false,
       address: '0.0.0.0.0.0.0.0.0.0.0.0',
-      figure: {
-        floors: 0,
-        doors: 0,
-        door: {
-          look: new DoorLook({
-            material: 'Brutalist Slab',
-            state: 'Pitted',
-            family: 'stone',
-            stateLook: 'plain',
-          }),
-          words: 'VOID_SINK',
-        },
-      },
       numbered: false,
+    });
+    // The corridor is drawn with a door per apartment, found by its address: its look and the word written on it.
+    expect(corridorOf(must(corridor.place ?? undefined).portrait).doors[0]).toEqual({
+      address: '0.0.0.0.0.0.0.0.0.0.0.0',
+      look: new DoorLook({
+        material: 'Brutalist Slab',
+        state: 'Pitted',
+        family: 'stone',
+        stateLook: 'plain',
+      }),
+      words: 'VOID_SINK',
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
       move('elevator', 'b', 'Back to Elevator', 'corridor'),
@@ -490,7 +488,7 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.name).toBe('Grand Power Plant');
     expect(room.place?.address).toBe('0.0.0.0.0.0.0.0.0.0.0.0.0');
     expect(room.place?.trail).toHaveLength(13);
-    expect(room.place?.position).toEqual({ label: 'CELL', index: 1, total: 2 });
+    expect(room.place?.position).toEqual({ counted: true, label: 'CELL', index: 1, total: 2 });
     expect(room.place?.trail.map((step) => step.icon).join('')).toBe('∞»○☼⊕⬚🏙═⌂▤▅🚪□');
     expect(room.place?.trail[11]?.name).toBe('_void_sink_ Brutalist Slab [PITTED]');
     expect(room.place?.description).toHaveLength(2);
@@ -531,7 +529,7 @@ describe('GameEngine — walking the big world', () => {
       system('recap', 'q', 'End session'),
     ]);
     const second = engine.step('move:forward');
-    expect(second.place?.position?.index).toBe(2);
+    expect(second.place?.position).toMatchObject({ index: 2 });
     expect(second.options.filter((option) => option.role !== 'take').map((option) => option.id)).toEqual([
       'move:back',
       'scan',
@@ -542,7 +540,7 @@ describe('GameEngine — walking the big world', () => {
       'to-title',
       'recap',
     ]);
-    expect(engine.step('leave').place?.position?.index).toBe(2);
+    expect(engine.step('leave').place?.position).toMatchObject({ index: 2 });
     engine.step('move:back');
     const floor = engine.step('leave');
     expect(floor.place?.kind).toBe('Floor');

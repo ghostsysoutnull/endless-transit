@@ -4,9 +4,10 @@ import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
-import type { SceneVM } from './SceneVM.ts';
+import type { StreetVM } from './StreetVM.ts';
 import { StillCamera } from './StillCamera.ts';
 import type { StreetParts } from './StreetParts.ts';
+import type { ChildMark } from './ChildMark.ts';
 
 /** The strip under the ground line the numbers are written in. */
 const LABEL = 16;
@@ -29,7 +30,7 @@ const RAIN = 40;
 
 /** One building as the picture stands it: its slot, its body and the child it draws. */
 interface Standing {
-  readonly child: SceneVM['children'][number];
+  readonly child: StreetVM['children'][number];
   readonly slot: number;
   /** The x of its middle, the y of its feet, its body's width and height, the room its roof takes. */
   readonly middle: number;
@@ -47,7 +48,7 @@ interface Standing {
  * view-model, size, time and lit child: every ink is a token of the stylesheet, every variation a hash of the
  * building's address — never the clock's randomness.
  */
-export class StreetPicture implements ScenePicture<SceneVM> {
+export class StreetPicture implements ScenePicture<StreetVM> {
   readonly #parts: StreetParts;
 
   constructor(parts: StreetParts) {
@@ -59,7 +60,7 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     return new StillCamera();
   }
 
-  layout(vm: SceneVM, size: PictureSize): readonly SceneHit[] {
+  layout(vm: StreetVM, size: PictureSize): readonly SceneHit[] {
     return this.#stand(vm, size).map((building) => {
       const top = building.base - building.height;
       const y = Math.max(0, top - building.roof - 2);
@@ -74,7 +75,14 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     });
   }
 
-  paint(painter: Painter, vm: SceneVM, size: PictureSize, palette: Palette, time: number, lit: string): void {
+  paint(
+    painter: Painter,
+    vm: StreetVM,
+    size: PictureSize,
+    palette: Palette,
+    time: number,
+    lit: ChildMark,
+  ): void {
     const seconds = time / 1000;
     const { width, height } = size;
     painter.globalAlpha = 1;
@@ -90,7 +98,7 @@ export class StreetPicture implements ScenePicture<SceneVM> {
   }
 
   /** Where each building stands: one row along the ground line, slots the mock's width apart. */
-  #stand(vm: SceneVM, size: PictureSize): Standing[] {
+  #stand(vm: StreetVM, size: PictureSize): Standing[] {
     const slot = size.width / (vm.children.length + 0.6);
     const base = size.height * GROUND;
     const reach = base - size.height * SKY;
@@ -110,11 +118,11 @@ export class StreetPicture implements ScenePicture<SceneVM> {
     });
   }
 
-  #building(painter: Painter, building: Standing, palette: Palette, seconds: number, lit: string): void {
+  #building(painter: Painter, building: Standing, palette: Palette, seconds: number, lit: ChildMark): void {
     const { child, middle, base, width, height, roof } = building;
     const left = middle - width / 2;
     const top = base - height;
-    const isLit = child.id === lit;
+    const isLit = lit.marks(child.id);
     const fade = child.sealed ? 0.45 : 1;
     painter.fillStyle = palette(isLit ? 'rule-hi' : 'rule');
     painter.globalAlpha = isLit ? 1 : 0.85 * fade;

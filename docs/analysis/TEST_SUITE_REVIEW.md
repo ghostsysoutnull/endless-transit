@@ -62,6 +62,7 @@ Scope: the web game (`web/`). The old Groovy game in `terminal/` was not examine
   - The survival failures are not a lost feature: the floor pad still marks "you are here" and "visited" as `.key.you` /
     `.key.seen` (`web/src/ui/screens/HudView.ts:554`). One run only, so whether the failures are deterministic is
     UNCERTAIN.
+  - Since then (2026-09-29): all nine moved on purpose to what U02 built (`a26effe`); the full suite is green.
 - **Leaks:** `git status --short` clean after every run; `dist/`, `test-results/`, `playwright-report/` are ignored.
 - **Growth over the UI rework** (`cdff32d~1` → `e577e8f`): source +2,512 lines, tests +1,273, test declarations 484 →
   545 (+61). About 1.09 test lines per source line overall.

@@ -1,9 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
+import { MarkedChild } from '#ui/scene/MarkedChild.ts';
+import { NoChild } from '#ui/scene/NoChild.ts';
 import type { SceneHit } from '#ui/scene/SceneHit.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
+import type { StreetVM } from '#ui/scene/StreetVM.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
 /** The phone's picture at 360 × 640 (measured, tasks/ui/U01b.md), and a wider one: the layout scales. */
@@ -13,9 +15,8 @@ const WIDE = { width: 680, height: 510 };
 function street(
   count: number,
   floors: (index: number) => number = (index) => 5 + ((index * 37) % 96),
-): SceneVM {
+): StreetVM {
   return {
-    key: 'street',
     label: 'Picture of Bright Boulevard',
     address: '0.0.0.0.0.0.0.0',
     children: Array.from({ length: count }, (_, index) => ({
@@ -28,11 +29,7 @@ function street(
       visited: index === 0,
       sealed: false,
       address: `0.0.0.0.0.0.0.0.${String(index)}`,
-      level: null,
-      door: null,
     })),
-    tower: null,
-    shape: 'none',
     slider: '',
     decay: 0,
     noise: new Seed(0x7f3a91c2, 0x0b4de6a8),
@@ -110,32 +107,14 @@ describe('the street picture: one row of buildings on a ground line, as the mock
   });
 });
 
-describe('the street picture’s variations, pinned before its hash and roofs move out (U02 step 0)', () => {
-  test('a fixed street at a fixed moment paints the same calls as before the move (a digest of them)', () => {
-    const vm: SceneVM = {
-      ...street(9),
-      children: street(9).children.map((child, index) => ({ ...child, sealed: index === 7 })),
-    };
-    const painter = new RecordingPainter();
-    picture.paint(painter, vm, PHONE, (token) => `<${token}>`, 1234, 'enter:2');
-    let hash = 0x811c9dc5;
-    const text = painter.calls.join('\n');
-    for (let at = 0; at < text.length; at++) {
-      hash ^= text.charCodeAt(at);
-      hash = Math.imul(hash, 0x01000193);
-    }
-    expect([(hash >>> 0).toString(16), painter.calls.length]).toEqual(['ff77aeac', 530]);
-  });
-});
-
 describe('the street picture: painted with the stylesheet’s inks, text a phone can read', () => {
   test('the same moment paints the same calls; another moment moves the rain and the windows', () => {
     const one = new RecordingPainter();
     const two = new RecordingPainter();
     const later = new RecordingPainter();
-    picture.paint(one, street(10), PHONE, palette(one.asked), 1200, '');
-    picture.paint(two, street(10), PHONE, palette(two.asked), 1200, '');
-    picture.paint(later, street(10), PHONE, palette(later.asked), 1700, '');
+    picture.paint(one, street(10), PHONE, palette(one.asked), 1200, new NoChild());
+    picture.paint(two, street(10), PHONE, palette(two.asked), 1200, new NoChild());
+    picture.paint(later, street(10), PHONE, palette(later.asked), 1700, new NoChild());
     expect(one.calls).toEqual(two.calls);
     expect(later.calls).not.toEqual(one.calls);
   });
@@ -143,7 +122,7 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
   test('every ink is one of the listed tokens; every word or number is 12 px or more', () => {
     for (const size of [PHONE, WIDE]) {
       const painter = new RecordingPainter();
-      picture.paint(painter, street(20), size, palette(painter.asked), 800, 'enter:3');
+      picture.paint(painter, street(20), size, palette(painter.asked), 800, new MarkedChild('enter:3'));
       expect(
         [...painter.asked].filter((token) => !TEXT_INKS.includes(token) && !SURFACE_INKS.includes(token)),
       ).toEqual([]);
@@ -158,18 +137,32 @@ describe('the street picture: painted with the stylesheet’s inks, text a phone
 
   test('each building is numbered under its feet by the number its row goes by, twenty too', () => {
     const painter = new RecordingPainter();
-    picture.paint(painter, street(20), PHONE, palette(painter.asked), 0, '');
+    picture.paint(painter, street(20), PHONE, palette(painter.asked), 0, new NoChild());
     const numbers = painter.calls
       .filter((call) => call.startsWith('fillText('))
       .map((call) => call.slice(9).split(',')[0]);
     expect(numbers).toEqual(street(20).children.map((child) => child.ordinal));
   });
 
+  test('a sealed building is outlined dim', () => {
+    const open = new RecordingPainter();
+    const sealed = new RecordingPainter();
+    const one: StreetVM = {
+      ...street(6),
+      children: street(6).children.map((child, index) => ({ ...child, sealed: index === 3 })),
+    };
+    picture.paint(open, street(6), PHONE, palette(open.asked), 0, new NoChild());
+    picture.paint(sealed, one, PHONE, palette(sealed.asked), 0, new NoChild());
+    const dim = (painter: RecordingPainter) =>
+      painter.calls.filter((call) => call.startsWith('stroke(<dim>')).length;
+    expect(dim(sealed)).toBeGreaterThan(dim(open));
+  });
+
   test('the lit building is outlined in yellow; none is when nothing is lit', () => {
     const plain = new RecordingPainter();
     const lit = new RecordingPainter();
-    picture.paint(plain, street(6), PHONE, palette(plain.asked), 0, '');
-    picture.paint(lit, street(6), PHONE, palette(lit.asked), 0, 'enter:4');
+    picture.paint(plain, street(6), PHONE, palette(plain.asked), 0, new NoChild());
+    picture.paint(lit, street(6), PHONE, palette(lit.asked), 0, new MarkedChild('enter:4'));
     const outlines = (painter: RecordingPainter) =>
       painter.calls.filter((call) => call.startsWith('strokeRect(') || call.startsWith('stroke(<yl>'));
     expect(lit.calls.filter((call) => call.startsWith('stroke(<yl>')).length).toBeGreaterThan(

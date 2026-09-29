@@ -34,13 +34,8 @@ export interface SceneCamera {
   nearest(view: number): { readonly id: string; readonly index: number } | undefined;
   /** The slider's place `step` places from the one nearest the view, held at the ends. */
   stepFrom(view: number, step: number): CameraStop | undefined;
-  /** The slider's box on the picture; nothing when there is no slider. */
-  track(): CameraTrack | null;
-  /** The view under a point on the slider, whose box on the page this is: its share of the way along the track, held. */
-  alongTrack(
-    point: { readonly x: number; readonly y: number },
-    box: { readonly left: number; readonly top: number; readonly width: number; readonly height: number },
-  ): number;
+  /** The slider on the picture, or `NoTrack`. */
+  track(): CameraTrack;
   /** Whether it moves the view by the same rules as another camera. */
   equals(other: SceneCamera): boolean;
 }

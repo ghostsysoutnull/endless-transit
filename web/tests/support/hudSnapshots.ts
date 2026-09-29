@@ -1,9 +1,12 @@
 import { Level } from '#engine/model/Level.ts';
+import { NoPortrait } from '#engine/model/NoPortrait.ts';
+import { TowerPortrait } from '#engine/model/TowerPortrait.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { doorLook } from './doorLook.ts';
 import { playerSummary } from './playerSummary.ts';
+import { placeOf } from './snapshotParts.ts';
 
 /** The world screen's snapshots: an option with defaults, a planet, a street and a building, shared by the tests of its presenter and its parts. */
 
@@ -20,7 +23,6 @@ export function option(facts: Partial<GameOption> & { id: string; label: string 
     current: false,
     visited: false,
     address: '',
-    figure: null,
     numbered: false,
     ...facts,
   };
@@ -33,7 +35,7 @@ export const PLANET: GameSnapshot = {
     icon: '⊕',
     name: 'Auraea',
     address: '0.0.0.0.1',
-    position: { label: 'ORBIT', index: 2, total: 5 },
+    position: { counted: true, label: 'ORBIT', index: 2, total: 5 },
     trail: [
       { icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' },
       { icon: '»', kind: 'Cosmic filament', name: 'Zeta-915-Link', address: '0.0' },
@@ -53,8 +55,7 @@ export const PLANET: GameSnapshot = {
     contents: null,
     telemetry: null,
     lattice: null,
-    drawing: 'planet',
-    figure: null,
+    portrait: new NoPortrait(),
     noise: new Seed(0, 0),
   },
   options: [
@@ -87,7 +88,7 @@ export const PLANET: GameSnapshot = {
 export const STREET: GameSnapshot = {
   ...PLANET,
   place: {
-    ...(PLANET.place ?? ({} as never)),
+    ...placeOf(PLANET),
     kind: 'Street',
     name: 'Bright Boulevard',
     address: '0.0.0.0.1.0.0.0',
@@ -113,36 +114,46 @@ export const STREET: GameSnapshot = {
   ],
 };
 
+/** The tower snapshot's building. */
+const TOWER = '0.0.0.0.1.0.0.0.0';
+
+/** The address of the tower snapshot's level `number`, as the engine numbers its children: floor `n` is child `n`, Layer `-k` child `floors + k - 1`. */
+function levelAddress(floors: number, number: number): string {
+  return `${TOWER}.${String(number >= 0 ? number : floors - number - 1)}`;
+}
+
 /** A building of `floors` floors as the engine lists it (top first, `layers` Layers open after the lobby), the elevator at `car`, floor 3 visited. */
 export function towerSnapshot(floors: number, car: number, layers = 0): GameSnapshot {
   return {
     ...STREET,
     place: {
-      ...(STREET.place ?? ({} as never)),
+      ...placeOf(STREET),
       kind: 'Building',
       name: 'Ornate Sanctum',
-      drawing: 'building',
-      address: '0.0.0.0.1.0.0.0.0',
-      childrenHeading: 'Ride to a floor',
-      figure: {
-        floors,
-        doors: 2,
-        tower: {
-          address: '0.0.0.0.1.0.0.0.0',
-          landmark: true,
-          car,
-          rows: Array.from({ length: floors }, (_, number) => ({
-            floors: 0,
-            doors: 2,
+      portrait: new TowerPortrait({
+        address: TOWER,
+        landmark: true,
+        car,
+        rows: [
+          ...Array.from({ length: layers }, (_, k) => ({
+            address: levelAddress(floors, k - layers),
+            level: new Level(k - layers, 'layer'),
+            shape: 'none' as const,
+            looks: [],
+          })),
+          ...Array.from({ length: floors }, (_, number) => ({
+            address: levelAddress(floors, number),
             level: new Level(number, 'floor'),
-            shape: 'curved',
+            shape: 'curved' as const,
             looks: [
               doorLook({ state: 'Frozen', stateLook: 'frost' }),
               doorLook({ material: 'Pitted Concrete', family: 'stone' }),
             ],
           })),
-        },
-      },
+        ],
+      }),
+      address: TOWER,
+      childrenHeading: 'Ride to a floor',
     },
     options: [
       ...Array.from({ length: floors }, (_, index) => {
@@ -155,7 +166,7 @@ export function towerSnapshot(floors: number, car: number, layers = 0): GameSnap
           current: number === car,
           visited: number === 3,
           numbered: true,
-          figure: { floors: 0, doors: 2, level: new Level(number, 'floor') },
+          address: levelAddress(floors, number),
           readings: [{ key: 'zone', label: 'Zone', value: 'Living unit' }],
         });
       }),
@@ -167,7 +178,7 @@ export function towerSnapshot(floors: number, car: number, layers = 0): GameSnap
           place: `Layer ${String(number)}`,
           ordinal: String(number),
           numbered: true,
-          figure: { floors: 0, doors: 0, level: new Level(number, 'layer') },
+          address: levelAddress(floors, number),
         });
       }),
       option({ id: 'leave', key: 'l', label: 'Leave Building', role: 'return' }),

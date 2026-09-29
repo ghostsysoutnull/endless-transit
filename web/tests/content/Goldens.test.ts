@@ -20,9 +20,7 @@ function page(vm: HudVM): string {
   lines.push(`${vm.meter.label}: ${vm.meter.text} ${vm.meter.bandLabel}`);
   lines.push(`stats: ${vm.stats.map((stat) => `${stat.label} ${stat.value}`).join(' | ')}`);
   const chips = [
-    ...(vm.place.position === null
-      ? []
-      : [`${vm.place.position.label} ${vm.place.position.value} (position)`]),
+    ...(!vm.place.position.shown ? [] : [`${vm.place.position.label} ${vm.place.position.value} (position)`]),
     ...vm.place.tags.map((tag) => `${tag.label} ${tag.value} (${tag.key})`),
   ];
   if (chips.length > 0) lines.push(`tags: ${chips.join(' | ')}`);
@@ -33,7 +31,7 @@ function page(vm: HudVM): string {
   if (vm.moves.length > 0)
     lines.push(`moves: ${vm.moves.map((move) => `[${move.key}] ${move.label}`).join(' | ')}`);
   if (vm.rows.length > 0) {
-    lines.push(`${vm.heading}${vm.sealedNote === null ? '' : ` (${vm.sealedNote})`}`);
+    lines.push(`${vm.heading}${vm.sealedNote.shown ? ` (${vm.sealedNote.text})` : ''}`);
     for (const row of vm.rows) {
       const marks = [
         row.sealed ? vm.sealedTag : '',

@@ -131,7 +131,7 @@ test('the elevator screen at the street’s first building: TECH_ERA, RESONANCE,
   await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.locator('.tag')).toHaveCount(4);
   await expect(page.locator('.desc p').nth(0)).toHaveText(
-    'Floor 0. BAROQUE geometry presses in from every wall; the elevator sighs shut behind you.',
+    'Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.',
   );
   await expect(page.getByTestId('telemetry').locator('.bars span')).toHaveCount(5);
   expect(problems).toEqual([]);

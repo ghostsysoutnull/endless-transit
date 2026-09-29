@@ -16,7 +16,6 @@ export function systemOption(id: string, key: string, label: string): GameOption
     current: false,
     visited: false,
     address: '',
-    figure: null,
     numbered: false,
   };
 }

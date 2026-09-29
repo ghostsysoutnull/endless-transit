@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -22,7 +23,6 @@ function option(facts: Partial<GameOption> & { id: string; label: string }): Gam
     current: false,
     visited: false,
     address: '',
-    figure: null,
     numbered: false,
     ...facts,
   };
@@ -36,7 +36,7 @@ const OPEN: GameSnapshot = {
     icon: '□',
     name: 'Grand Power Plant',
     address: '0.0.0.0.0.0.0.0.0.0.0.0.0',
-    position: { label: 'CELL', index: 1, total: 2 },
+    position: { counted: true, label: 'CELL', index: 1, total: 2 },
     trail: [],
     status: 'ATMOS: 14% | TEMP: 7°C',
     description: [],
@@ -47,8 +47,7 @@ const OPEN: GameSnapshot = {
     contents: { objects: [], furniture: [] },
     telemetry: { spectrogram: [1, 1, 1, 1, 1], voice: null },
     lattice: null,
-    drawing: 'room',
-    figure: null,
+    portrait: new NoPortrait(),
     noise: new Seed(0, 0),
   },
   player: playerSummary({ coherence: 54, band: 'degraded', steps: 6, decay: 0.2 }),

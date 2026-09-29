@@ -1,11 +1,12 @@
 import type { Fact } from './Fact.ts';
-import type { Figure } from './Figure.ts';
+import type { BuildingFigure } from './BuildingFigure.ts';
 import type { Fragment } from './Fragment.ts';
 import { Keystone } from './Keystone.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { ScanReport } from './ScanReport.ts';
+import { TowerPortrait } from './TowerPortrait.ts';
 
 export const BUILDING_KIND = new LocationKind({
   key: 'building',
@@ -69,8 +70,8 @@ export class Building extends Location {
   }
 
   /** How it stands on the street's picture: its floors and the doors on each. */
-  override figure(): Figure {
-    return { floors: this.#floors, doors: this.#doorsPerFloor };
+  override onStreet(): readonly BuildingFigure[] {
+    return [{ address: this.address().toString(), floors: this.#floors, doors: this.#doorsPerFloor }];
   }
 
   /**
@@ -78,20 +79,15 @@ export class Building extends Location {
    * per level, lowest first — the Layers open below once breached, deepest first, then the floors — each peeked
    * by its floor, never a corridor made.
    */
-  override portrait(): Figure {
+  override portrait(): TowerPortrait {
     const children = this.children();
     const layers = this.#breached ? children.slice(this.#floors).reverse() : [];
-    return {
-      ...this.figure(),
-      tower: {
-        address: this.address().toString(),
-        landmark: this.#landmark,
-        car: this.#elevatorAt,
-        rows: [...layers, ...children.slice(0, this.#floors)].map(
-          (level) => level.figure() ?? { floors: 0, doors: 0 },
-        ),
-      },
-    };
+    return new TowerPortrait({
+      address: this.address().toString(),
+      landmark: this.#landmark,
+      car: this.#elevatorAt,
+      rows: [...layers, ...children.slice(0, this.#floors)].flatMap((level) => level.onTower()),
+    });
   }
 
   floors(): number {

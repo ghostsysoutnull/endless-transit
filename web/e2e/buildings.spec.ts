@@ -40,22 +40,18 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
+  // The floors are a pad of numbers (U02, Decision 7), each key read out with its floor's zone.
   const floors = page.locator('button[data-option^="enter:"]');
   await expect(floors).toHaveCount(16);
-  await expect(floors.first().locator('.ord')).toHaveText('15');
-  await expect(floors.first()).toContainText('PEAK_OBSERVATORY');
-  await expect(floors.first()).toContainText('100%');
-  await expect(floors.first()).toContainText(/\d{4}Hz/);
-  await expect(floors.last().locator('.ord')).toHaveText('00');
-  await expect(floors.last()).toContainText('TRANSIT_LOBBY');
-  // The elevator column's current-floor mark: the elevator waits at the lobby before anyone rides it.
-  await expect(page.locator('.row.you')).toHaveCount(1);
-  await expect(floors.last().locator('.mark')).toHaveText('[>X<]');
-  await expect(floors.first().locator('.mark')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^Ride to Peak, Zone Peak observatory$/ })).toHaveCount(1);
+  // The elevator waits at the lobby before anyone rides it: the one key read out as where it is.
+  const here = page.getByRole('button', { name: /Elevator here/ });
+  await expect(here).toHaveCount(1);
+  await expect(here).toHaveAccessibleName(/^Ride to Lobby, Elevator here, Zone Transit lobby$/);
   await expect(page.locator('.moves')).toHaveCount(0);
   await expectTouchable(page, 'building');
   await shoot(page, '1-building');
-  await page.locator('.row.you').scrollIntoViewIfNeeded();
+  await here.scrollIntoViewIfNeeded();
   await shoot(page, '1a-building-elevator-at-lobby');
   await page.evaluate(() => {
     window.scrollTo(0, 0);
@@ -115,14 +111,14 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await press(page, /leave floor/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   // The elevator now stands at floor 2, and a reload remembers it (the building is on the trail).
-  await expect(page.locator('.row.you')).toHaveCount(1);
-  await expect(page.locator('button[data-option="enter:13"] .mark')).toHaveText('[>X<]');
-  await expect(page.locator('button[data-option="enter:15"] .mark')).toHaveCount(0);
+  const car = page.getByRole('button', { name: /Elevator here/ });
+  await expect(car).toHaveCount(1);
+  await expect(car).toHaveAccessibleName(/^Ride to Floor 2, Elevator here/);
   await page.reload();
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
-  await expect(page.locator('button[data-option="enter:13"] .mark')).toHaveText('[>X<]');
-  await expect(page.locator('.row.you')).toHaveCount(1);
-  await page.locator('.row.you').scrollIntoViewIfNeeded();
+  await expect(car).toHaveCount(1);
+  await expect(car).toHaveAccessibleName(/^Ride to Floor 2, Elevator here/);
+  await car.scrollIntoViewIfNeeded();
   await shoot(page, '1b-building-elevator-at-2');
   // The floor left from the corridor is back at the elevator on the next visit (Guide:113).
   await tapOption(page, 'enter:13', hasTouch);
@@ -156,39 +152,42 @@ test('reload restores the room, and the way out still opens on the door list', a
   expect(problems).toEqual([]);
 });
 
-test('a tall building: a hundred floors scroll, the lobby is reached at the bottom, leave stays in reach, and the floor opens from the top', async ({
+test('a tall building: its floors come as a pad by tens, the lobby’s ten shown first with leave in reach, and the lobby opens from there', async ({
   page,
   hasTouch,
 }) => {
-  // Seed 7F3A: Bright Boulevard's buildings are 16, ?, ?, ? floors — find a massive one by walking the street.
+  // Seed 7F3A: Bright Boulevard's buildings are 16, ?, ?, ? floors — find the tallest by walking the street.
   await plant(page, '0.0.0.0.0.0.0.0');
   await page.goto('./');
-  const tallest = await page.evaluate(() => {
+  const buildings = await page.evaluate(() => {
     const rows = [...document.querySelectorAll<HTMLElement>('button[data-option^="enter:"]')];
     return rows.map((row) => row.dataset.option ?? '');
   });
-  expect(tallest.length).toBe(4);
+  expect(buildings.length).toBe(4);
   let most = 0;
-  let pick = tallest[0] ?? '';
-  for (const id of tallest) {
+  let pick = buildings[0] ?? '';
+  for (const id of buildings) {
     await tapOption(page, id, hasTouch);
-    const count = await page.locator('button[data-option^="enter:"]').count();
-    if (count > most) {
-      most = count;
+    const floors = Number(
+      (await page.locator('.tag', { hasText: /^Floors/ }).textContent())?.replace(/\D/g, ''),
+    );
+    if (floors > most) {
+      most = floors;
       pick = id;
     }
     await press(page, /leave building/i, hasTouch);
   }
+  expect(most).toBeGreaterThan(20);
   await tapOption(page, pick, hasTouch);
-  await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(most);
+  // Past twenty the pad goes by tens: a tab per ten, the one holding the car — the lobby's — shown first.
+  const tens = page.getByRole('group', { name: 'Floors by tens' }).getByRole('button');
+  await expect(tens).toHaveCount(Math.ceil(most / 10));
+  await expect(tens.first()).toHaveAttribute('aria-pressed', 'true');
   await expectTouchable(page, 'tall building');
-  const lobby = page.locator(`button[data-option="enter:${String(most - 1)}"]`);
+  const lobby = page.getByRole('button', { name: /^Ride to Lobby,/ });
   await lobby.scrollIntoViewIfNeeded();
   await expect(lobby).toBeInViewport();
-  if (hasTouch) {
-    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-    await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport();
-  }
+  await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport();
   await (hasTouch ? lobby.tap() : lobby.click());
   await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   expect(await page.evaluate(() => window.scrollY)).toBe(0);

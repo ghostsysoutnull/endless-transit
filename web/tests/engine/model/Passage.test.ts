@@ -21,7 +21,7 @@ describe('a floor’s corridor-to-be is a value: equal by its shape and its door
     const looks = [doorLook()];
     const passage = new Passage('long', looks);
     looks.push(FROZEN);
-    expect(passage.doors()).toBe(1);
+    expect(passage.looks()).toHaveLength(1);
     expect(passage).toEqual(new Passage('long', [doorLook()]));
   });
 });

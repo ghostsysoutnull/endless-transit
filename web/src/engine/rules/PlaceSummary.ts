@@ -1,5 +1,6 @@
 import type { Fact } from '#engine/model/Fact.ts';
-import type { Figure } from '#engine/model/Figure.ts';
+import type { Portrait } from '#engine/model/Portrait.ts';
+import type { Position } from '#engine/model/Position.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import type { MapSummary } from './MapSummary.ts';
 import type { TelemetrySummary } from './Telemetry.ts';
@@ -9,20 +10,18 @@ export interface PlaceSummary {
   /** The kind's title (`Solar system`) — never its key: a screen has no business branching on it. */
   readonly kind: string;
   /**
-   * Which picture draws the place (`street`) — a key the screen looks up in its registry of pictures, never
-   * one it branches on (U01b); a key with no picture keeps the screen as it was.
+   * Which picture draws the place and what it is handed (U01b, U02): the street, the tower, the corridor, or none —
+   * the screen then stays as it was. It tells its reader which it is.
    */
-  readonly drawing: string;
-  /** What the place's own picture is handed (U02): a building's tower, a corridor's shape; nothing for most kinds. */
-  readonly figure: Figure | null;
+  readonly portrait: Portrait;
   /** This frame's seed (`FrameEntropy`: the place and the step count): what a picture's noise is drawn from, never the clock. */
   readonly noise: Seed;
   readonly icon: string;
   readonly name: string;
   /** The path as text, `0.2.1`. */
   readonly address: string;
-  /** One-based position among the siblings; nothing for the universe, nor for a kind with no index label (a floor: its name and the tower say its height, U02). */
-  readonly position: { readonly label: string; readonly index: number; readonly total: number } | null;
+  /** Its position among the siblings; not counted for the universe, nor for a kind with no index label (a floor: its name and the tower say its height, U02). */
+  readonly position: Position;
   /** From the universe down to here, each step with its address. */
   readonly trail: readonly {
     readonly icon: string;

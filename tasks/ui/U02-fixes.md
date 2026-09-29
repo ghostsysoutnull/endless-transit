@@ -144,7 +144,7 @@ are fixed together) and is named in the item.
 
 ## After the corridor
 
-- [ ] **kinds-not-optionals — missing parts as optional fields, nulls and empty strings.** `Figure` is a bag of
+- [x] **kinds-not-optionals — missing parts as optional fields, nulls and empty strings.** `Figure` is a bag of
   optional parts for four kinds (`tower?`, `level?` — added by step 16 — `shape?`, `looks?`, `door?`), paid for in
   `HudPresenter` (`?? 0`, `?? ''`, `?? []`, and the pad's `level?.number ?? 0`) and `Building`
   (`?? { floors: 0, doors: 0 }`); `SceneVM` flattens the same kinds onto every child; empty strings as flags (a
@@ -157,7 +157,8 @@ are fixed together) and is named in the item.
   `PlacedDoor.word` and `CorridorPicture#lookOf` paying for a child's `door: … | null`. After the corridor with
   `one-job` (the user's pick, 2026-09-28): its split needs
   `one-job`'s view model mapped per picture, and its `passage?`/`shape?` part touches the Layer screens (U04).
-  Done: —
+  Done: steps 0–6 of its plan below — `ac51d56`, `c66b68b`, `276d2fb`, `55b7772`, `d3f3f2c`, `afa2afc`, `3c4ffc9`,
+  with their design checks' fixes `c38dc48`, `e28c613`, `35b40d9`, `12a0906`, `6114791`, `e363e7c`, `57b0ae9`.
 - [x] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
   `SceneView` (`CoherenceFx`, `PixelBudget`), `CanvasView` (`PixelBudget`), `StreetPicture` and `TowerPicture`
   (`SceneHash`, `Roof`, `DoorLooks`), `Roof` (`SceneHash`), `Passages` (`Sentences`, `Doors`), `HudView`
@@ -180,7 +181,7 @@ are fixed together) and is named in the item.
 ## Logged, not fixed (no check box)
 
 - `GameOption` is one flat shape for eight roles: the roles without a place carry a blank `place`, `ordinal` and
-  `address` and `figure: null` (TS: a union of valid shapes). Older code; its split is a wave of its own.
+  `address` (TS: a union of valid shapes). Older code; its split is a wave of its own.
 
 - `HudView` has several jobs too (OO 8): the templates of the HUD, card, list, dock and debug strip; the scene view's
   lifetime; the lit child kept in step between list and picture; the pad's group state; the map and trace slots; the
@@ -489,3 +490,140 @@ slider, pad ride, zoom in and out.
 
 **Estimate** (the unit the notes measure: this conversation's final context, plus the agents): the build about
 350–450k; 8–18 design checks at 30–60k, 0.3–0.9M; this plan's grill measured 139k. In all about 0.9–1.5M.
+
+## Plan (`kinds-not-optionals`, 2026-09-29) — amended after the grill
+
+**Premise.** Nothing on screen changes. One commit per step, each green on `npm run check`, its design check before
+the next begins; after each commit that touches `SceneView`, `HudView` or a picture, the browser set of the plan
+above (`scene`, `tower`, `fold`, `a11y`, `focus`, `map`), passing when its reds are the baseline's (`scene.spec:72`,
+`focus.spec:43`). The five-files-per-step limit is lifted for this session (the user, 2026-09-29).
+
+**The design (one owner per fact, tell don't ask, a union of valid shapes).** Which picture draws a place and what
+it is handed are one fact, today split between a drawing key and a bag of optional parts. They become one engine
+value, the place's **portrait**, one member per drawn kind — the street, the tower, the corridor — and an empty
+member for a place no picture draws. A reader answers each member (double dispatch: the engine calls the one method
+for its kind, nobody asks the kind). The portrait carries its listed children's parts, each child's kind fixed by its
+parent's picture, so `GameOption.figure` goes. On the screen's side each picture gets its own view model, and a view
+model bound to its picture (a **sketch**) is what `SceneView` draws. The drawing key goes: the portrait's kind is the
+picture. Where a part is missing, an empty member answers for itself (no track, no child marked, no panel).
+The grill compiled the dispatch in a strict scratch probe: no cast, nothing generic reaches `SceneView` or `HudView`.
+
+**The trade (OO 5).** A new drawn kind — U04's Layer first — is a new portrait member and a new method on
+`PortraitReader` (so on `SceneDrawing` and `FloorPad`), on `PictureBook` (so on `SceneRegistry`), and a new
+`on…()` hook on `Location`, the compiler naming every place that must answer. Today it is one registry entry, paid
+for by every picture reading parts it may not have.
+
+**Found while planning:**
+- `Corridor.figure()` has no caller outside `Passages.test`, but it is the one reader of `#shape`: it becomes the
+  query `Corridor.shape()`, and `Passages.test:48-51, 57-65` read that.
+- `HudPresenter`'s `?? 0` and `?? []` named by the item moved to `SceneDrawing` and `FloorPad` (`one-job`): fixed there.
+- A tower's children and its rows come from one listing; a child's part is found by its address (a stable key), and
+  a listed place with no part is not drawn (the one drop, in `SceneDrawing`).
+- `CorridorFactory` and the `Artery` (its `none`) build a `Corridor`; `Floor.test:35`, `Ritual.test:40` build one
+  with no shape.
+- The same `null`-inside pattern stands in about 27 more files the item does not name (`GameSnapshot`, `AsideVM`,
+  `HudVM.scan`, `TravelRowVM`, `PlaceSummary`'s `frame`, `contents`, `telemetry`, `lattice` …): not touched here.
+
+**Laws this makes false, fixed in the step that does it:** `web/CLAUDE.md:33-34` ("A drawn place: a `SceneRegistry`
+entry (drawing key → `ScenePicture`) …") and `docs/analysis/WEB_GAME_ARCHITECTURE.md:190-194` (the drawing key,
+each child's figure on its option), both at step 2 (step 1 fixes the architecture's engine half).
+
+**Guards.** Step 1: `SceneDrawing.test:56-83, 99-118`, `FloorPad.test`, `HudPresenter.test:493-495` — their
+expected values stay literally the same, only their inputs are built from portraits; in the browser `tower.spec:17-80`
+and `scene.spec:118-156`. The goldens never read the drawing or the pad: not a guard here. Walls: a tap in a picture
+resolves to an option id — `scene.spec:118, 140` for the street; the corridor's door walk only by
+`CorridorPicture.test` (no browser spec taps it); reduced motion — `scene.spec:158`; picture text at 12 px or more —
+`StreetPicture.test:143-154`, `TowerPicture.test:172-188`, `CorridorPicture.test:228-249`, kept word for word; a view
+carries no words — `ViewsCarryNoWords`; the lazy-loading law — `Passages.test:71` (no corridor made by a peek), kept.
+
+### Steps
+0. **slider-hidden**, its own commit before any production change: `tower.spec` (or `scene.spec`) checks the slider
+   is hidden on the street and at a floor's elevator, and shown in a building. Green against today's code. It guards
+   step 4, which rewrites every unit assertion of the hidden slider.
+1. **engine-portrait.** Engine: `Portrait` (`drawnBy<R>(reader: PortraitReader<R>): R`), `PortraitReader<R>`
+   (`street`, `tower`, `corridor`, `unseen`), members `StreetPortrait`, `TowerPortrait`, `CorridorPortrait`,
+   `NoPortrait`; parts `BuildingFigure` (address, floors, doors), `TowerFigure` (replaces `Tower`: floors, doors,
+   address, landmark, car, rows), `LevelRow` (address, level, shape, looks), `CorridorFigure` (shape, looks, doors),
+   `DoorFigure` (address, look, words). `Location`: `portrait(): Portrait` (default `NoPortrait`), and what a child
+   adds to its parent's picture — `onStreet(): readonly BuildingFigure[]` (a building), `onTower(): readonly
+   LevelRow[]` (a floor, a Layer), `onCorridor(): readonly DoorFigure[]` (an apartment), each empty by default — a
+   list, never an optional. `figure()` and `drawing()` go (`Location`, `Floor`, `Layer`, `Apartment`, `Building`,
+   `FloorState`, `CorridorState`, `ElevatorState`); `Corridor.figure()` becomes `shape()`. `Street` and `Building` draw
+   their portraits; a floor's state picks its (`ElevatorState`: its building's tower with nobody listed;
+   `CorridorState`: the corridor); a `Layer`'s is `NoPortrait` until U04 draws it. `PlaceSummary`: `portrait`
+   replaces `drawing` and `figure`; `GameOption.figure` goes (`GameEngine`, `SystemOption`). UI in the same commit:
+   `SceneDrawing`, `FloorPad`, `Pads`, `HudPresenter.ts:164` read the portrait into today's `SceneVM` and pad.
+   Tests changed on purpose: `Passages.test:48-72, 91-139` (a floor's row, its portrait by state, a Layer unseen, an
+   apartment's door; `:71` kept), `GameEngine.test:41, 180-181, 222, 263, 302-323, 350-365, 462` (the street and
+   the tower by their portraits), `SceneDrawing.test`, `FloorPad.test`, `HudPresenter.test`, the snapshot builder
+   `tests/support/hudSnapshots.ts:23, 56-57, 124-170`, and the five presenter tests' summaries
+   (`BufferPresenter.test:25, 50-51`, `HelpPresenter.test:29-30, 51`, `RebootPresenter.test:30`,
+   `RecapPresenter.test:27, 50-51`, `TitlePresenter.test:25, 139-140`); a portrait-reading double in
+   `tests/support/` if the tests need one. `docs/analysis/WEB_GAME_ARCHITECTURE.md`'s engine half of the scenes line.
+2. **picture-vms.** `SceneVM<C>` keeps the frame every picture shares (label, address, children, slider, decay,
+   noise); `SceneChild` the child's shared facts; `StreetVM`, `TowerVM` (the tower), `CorridorVM` (the shape) with
+   their children (`floors`/`doors`; `level`; `door`) — nothing optional, no `null`. `Drawing` (its frame, and
+   `sketchedBy(book): Sketch`), members `DrawnStreet`, `DrawnTower`, `DrawnCorridor`, `Undrawn`; `Undrawn` answers
+   `Unsketched`, the empty `Sketch` (it draws nothing and `drawn()` is false), and `HudView` asks `sketch.drawn()`
+   where it asked `picture(key) !== undefined` (`HudView.ts:114, 184`). `SceneDrawing` answers the portrait with a
+   `Drawing` (`Drawings`, `HudVM.ts:78`). `PictureBook` (`street`, `tower`, `corridor` → `Sketch`), answered by
+   `SceneRegistry`, which now holds the three typed pictures; `Pictures` goes. `Sketch`, answered by `Sketched<VM>`
+   (a view model bound to its picture: layout, paint, camera, its frame; `samePicture(other)`, which asks the other
+   `drawnBy(picture)`). `SceneView` draws a `Sketch`; `SceneViews`/`SceneViewMaker.make(onLight)` take no picture;
+   `DrawnScene` renders a `Sketch`; `HudView` keeps the scene while the host and the picture stay.
+   `StreetPicture`, `TowerPicture`, `CorridorPicture`, `PlacedDoor` take their own view model: `TowerPicture`'s
+   `vm.tower?.car ?? 0` and `child.level === null`, `CorridorPicture#lookOf`'s plain door and `PlacedDoor.word`'s
+   `?? ''` go. `main.ts` builds the registry from `ScenePictures`. Tests changed on purpose: all of
+   `SceneDrawing.test` (a drawing per portrait), the three picture tests' view-model builders (assertions kept),
+   `HudPresenter.test:493`, `hudSnapshots.ts`; the two digest pins unchanged. Laws: `web/CLAUDE.md:33-34`, the
+   architecture's scenes paragraph.
+3. **child-mark.** `ChildMark`: an interface answered by `MarkedChild` (a child's id) and `NoChild` — `marks(id)`,
+   `or(other)`, `equals` — so no empty id is left anywhere: the lit child and the one you stand by, in
+   `ScenePicture.paint`, `Sketch`, `SceneView#lit`/`#here`, `DrawnScene.light`, `HudView#lit`, `SceneView`'s
+   `onLight`, and the three pictures; `CorridorPicture`'s `here === '' ? first : here` becomes `here.or(first)`.
+   `HudView` writes `data-lit` from it (the attribute's text unchanged). Tests: the corridor's `here` tests and the
+   pictures' `lit` arguments.
+4. **no-track.** `CameraTrack` becomes an interface answered by `SliderTrack` (the box and the views at its ends) and
+   `NoTrack`: it lays the slider over itself or hides it, through `SliderFace` (a small interface owned by the track,
+   answered by `SceneSlider`: place a box, hide), reads a point on it (`alongTrack` moves in), and answers `equals`
+   (`TravelCamera.ts:168-182` compares by it). `TravelCamera` takes one (`TowerPicture` without a gauge,
+   `CorridorPicture` without doors hand `NoTrack`); `StillCamera` answers `NoTrack`; `SceneCamera.ts:38-44`,
+   `CorridorSlider.ts:37`, `SceneSlider.ts:24-50` tell the track. `SceneVM.slider` is always the list's heading (the
+   slider shows where the track does, so its empty flag goes). Tests: `TravelCamera.test`, `StillCamera.test`,
+   `tests/support/travelCamera.ts`, `TowerPicture.test:103-113`, `CorridorPicture.test:162-172`; guards: step 0 and
+   `tower.spec` (the slider's name and value).
+5. **kinds-without-index.** `LocationKind`'s facts are a union: with an `indexLabel`, or without (the floor's, today
+   `''`); it holds `Indexed` or `Unindexed` (value objects answering the position chip, `Position`: the chip or
+   `NoPosition`), so `GameEngine` stops comparing to `''` and `PlaceSummary.position` is never `null`. Only
+   `Floor.ts`'s kind changes its facts. `Corridor`'s `shape?` is required. Tests: `LocationKind.test:5-14`,
+   `GameEngine.test` (a floor has no position), `Floor.test:35`, `Ritual.test:40`, `LocationRegistry.test:93`,
+   `Substrate.test:135, 198`, `Corridors.test:239-241`.
+6. **hud-panels.** `HudVM`'s `position`, `pad`, `map`, `trace` and `sealedNote`: each a union of the panel and its
+   absence (`{ shown: false }`), never `null`; `HudPresenter` and `FloorPad` build them, `HudView` renders a shown
+   one (`HudView.ts:104-106, 136, 251-254, 287, 296-306`). Tests: `HudPresenter.test`'s asserts on those five fields,
+   `FloorPad.test:80`, `Goldens.test.ts:23-25, 36` (reads `position` and `sealedNote`; the goldens' text unchanged).
+
+### Shape table
+| what | kind | owner | the one fact it owns | statics + why |
+| :-- | :-- | :-- | :-- | :-- |
+| `Portrait`, `PortraitReader<R>` | interfaces (value object / service ports) | the engine's summary; the UI answers the reader | which picture draws a place and what it is handed | none |
+| `StreetPortrait`, `TowerPortrait`, `CorridorPortrait` | value objects | `Street`; `Building`; `Floor` in its corridor | a drawn kind's parts, its children's included | none |
+| `NoPortrait` | value object | `Location` (default) | a place no picture draws | none |
+| `BuildingFigure`, `TowerFigure`, `LevelRow`, `CorridorFigure`, `DoorFigure` | value objects (readonly data around the engine's value objects) | `Building`, `Floor`, `Apartment` | one kind's part as its picture reads it | none |
+| `Location.onStreet/onTower/onCorridor` | methods (lists, empty by default) | each drawn child kind | what it adds to its parent's picture | none |
+| `SceneVM<C>`, `SceneChild`, `StreetVM`, `TowerVM`, `CorridorVM` | value objects (view models) | `SceneDrawing` | what one picture draws | none |
+| `Drawing` + `DrawnStreet`, `DrawnTower`, `DrawnCorridor`, `Undrawn` | interface + value objects | `SceneDrawing`, `HudView` | a view model and which picture it is for | none |
+| `PictureBook` | interface (service) | `Drawing`; answered by `SceneRegistry` | a picture per drawn kind | none |
+| `Sketch` / `Sketched<VM>`, `Unsketched` | interface / value objects | `SceneView`, `HudView` | a view model bound to its picture (`drawnBy`, `samePicture`, `drawn`), or nothing to draw | none |
+| `ChildMark` / `MarkedChild`, `NoChild` | interface / value objects | `SceneView`, `HudView` | a child's id, or none | none |
+| `CameraTrack` / `SliderTrack`, `NoTrack` | interface / value objects | the cameras | where the slider lies, or that there is none (`equals`) | none |
+| `SliderFace` | interface (service) | `CameraTrack`; answered by `SceneSlider` | what a track asks of the slider element | none |
+| `Indexed`, `Unindexed`; `Position` / `NoPosition` | value objects | `LocationKind`; `PlaceSummary` | whether and how a kind's place is counted among its siblings | none |
+
+**How many classes it reaches:** about 70 source files — some 33 new (11 engine, about 22 screen), about 40
+changed, 5 removed (`Figure`, `Tower`, `Pictures`, the old `SceneVM` shape, `CameraTrack`'s data shape) — and about
+30 test files. Steps 1–2 are most of it (about 50 files).
+
+**Estimate** (the unit the notes measure: this conversation's final context, plus the agents): the build about
+600–800k; design checks about 0.6–1.2M (session 5 measured 610k over 12 runs for eight smaller steps); the grill
+measured 166k. In all about 1.4–2.2M.

@@ -6,10 +6,13 @@ import { LevelLook } from './LevelLook.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
-import type { SceneVM } from './SceneVM.ts';
+import type { TowerVM } from './TowerVM.ts';
 import { StillCamera } from './StillCamera.ts';
 import type { TowerParts } from './TowerParts.ts';
 import { TravelCamera } from './TravelCamera.ts';
+import type { ChildMark } from './ChildMark.ts';
+import { NoTrack } from './NoTrack.ts';
+import { SliderTrack } from './SliderTrack.ts';
 
 /** A floor's row is at least this tall where it fits (a thumb), and the window shows 4 to 11 of them. */
 const ROW = 50;
@@ -30,11 +33,11 @@ const SETTLE = { base: 380, per: 40 };
 const COAST = 0.22;
 
 /** A level's row on the tower. */
-type Row = NonNullable<SceneVM['tower']>['rows'][number];
+type Row = TowerVM['tower']['rows'][number];
 
 /** Where the window stands at a view: its box, its rows, and which levels it shows. */
 interface Frame {
-  readonly tower: NonNullable<SceneVM['tower']>;
+  readonly tower: TowerVM['tower'];
   /** Each level's row by its number. */
   readonly rows: ReadonlyMap<number, Row>;
   readonly top: number;
@@ -61,7 +64,7 @@ interface Frame {
  * the gauge on the right: the whole height, its ticks, the floors visited, the window and the car. The view is
  * the car's floor, owned by the scene host. A pure function of its view-model, size, time, lit child and view.
  */
-export class TowerPicture implements ScenePicture<SceneVM> {
+export class TowerPicture implements ScenePicture<TowerVM> {
   readonly #parts: TowerParts;
   /** Each kind of level's look: a floor in the rule's ink, a Layer faint in the void's red. */
   readonly #levelLooks: Readonly<Record<LevelKind, LevelLook>> = {
@@ -73,12 +76,10 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     this.#parts = parts;
   }
 
-  camera(vm: SceneVM, size: PictureSize): SceneCamera {
-    const frame = this.#frame(vm, size, vm.tower?.car ?? 0);
+  camera(vm: TowerVM, size: PictureSize): SceneCamera {
+    const frame = this.#frame(vm, size, vm.tower.car);
     if (frame === undefined) return new StillCamera();
-    const stops = vm.children.flatMap((child) =>
-      child.level === null ? [] : [{ id: child.id, at: child.level.number() }],
-    );
+    const stops = vm.children.map((child) => ({ id: child.id, at: child.level.number() }));
     return new TravelCamera({
       rest: frame.tower.car,
       min: frame.min,
@@ -92,7 +93,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
       zoom: false,
       stops,
       track: frame.gauge
-        ? {
+        ? new SliderTrack({
             x: size.width - SLIDER - 4,
             y: frame.top,
             width: SLIDER,
@@ -100,12 +101,12 @@ export class TowerPicture implements ScenePicture<SceneVM> {
             axis: 'y',
             from: frame.max,
             to: frame.min,
-          }
-        : null,
+          })
+        : new NoTrack(),
     });
   }
 
-  layout(vm: SceneVM, size: PictureSize, view: number): readonly SceneHit[] {
+  layout(vm: TowerVM, size: PictureSize, view: number): readonly SceneHit[] {
     const frame = this.#frame(vm, size, view);
     if (frame === undefined) return [];
     const hits: SceneHit[] = [];
@@ -130,11 +131,11 @@ export class TowerPicture implements ScenePicture<SceneVM> {
 
   paint(
     painter: Painter,
-    vm: SceneVM,
+    vm: TowerVM,
     size: PictureSize,
     palette: Palette,
     time: number,
-    lit: string,
+    lit: ChildMark,
     view: number,
   ): void {
     painter.globalAlpha = 1;
@@ -167,9 +168,9 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     painter.globalAlpha = 1;
   }
 
-  #frame(vm: SceneVM, size: PictureSize, view: number): Frame | undefined {
+  #frame(vm: TowerVM, size: PictureSize, view: number): Frame | undefined {
     const tower = vm.tower;
-    if (tower === null || tower.rows.length === 0) return undefined;
+    if (tower.rows.length === 0) return undefined;
     const rows = new Map(tower.rows.map((row) => [row.level.number(), row]));
     const min = Math.min(...rows.keys());
     const max = Math.max(...rows.keys());
@@ -215,8 +216,8 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     return frame.bottom - (level - frame.base + 1) * frame.row;
   }
 
-  #childAt(vm: SceneVM, level: number): SceneVM['children'][number] | undefined {
-    return vm.children.find((child) => child.level?.number() === level);
+  #childAt(vm: TowerVM, level: number): TowerVM['children'][number] | undefined {
+    return vm.children.find((child) => child.level.number() === level);
   }
 
   /** How the level is drawn, by what stands there; a level with no row (none today: every level has one) as a floor. */
@@ -302,17 +303,17 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   /** One floor's row: its ground, its windows, its corridor in its shape with a tick per door, its number. */
   #floor(
     painter: Painter,
-    vm: SceneVM,
+    vm: TowerVM,
     frame: Frame,
     level: number,
     palette: Palette,
     seconds: number,
-    lit: string,
+    lit: ChildMark,
   ): void {
     const { left, width, inner, shaft, row } = frame;
     const y = this.#y(frame, level);
     const child = this.#childAt(vm, level);
-    const isLit = child?.id === lit;
+    const isLit = child !== undefined && lit.marks(child.id);
     const look = this.#lookAt(frame, level);
     painter.globalAlpha = isLit ? 1 : look.alpha(level);
     painter.fillStyle = palette(isLit ? 'rule-hi' : look.ground());
@@ -458,7 +459,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
   /** The gauge: the whole height on a track, its ticks, the floors visited, the window's span and the car. */
   #gauge(
     painter: Painter,
-    vm: SceneVM,
+    vm: TowerVM,
     frame: Frame,
     size: PictureSize,
     palette: Palette,
@@ -491,7 +492,7 @@ export class TowerPicture implements ScenePicture<SceneVM> {
     painter.fillStyle = palette('yl');
     painter.globalAlpha = 0.85;
     for (const child of vm.children) {
-      if (child.visited && child.level !== null) painter.fillRect(x - 6, at(child.level.number()) - 1, 14, 2);
+      if (child.visited) painter.fillRect(x - 6, at(child.level.number()) - 1, 14, 2);
     }
     const high = at(Math.min(max, frame.base + frame.visible - 1));
     const low = at(frame.base);

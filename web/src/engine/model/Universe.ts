@@ -1,12 +1,8 @@
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 
-export const UNIVERSE_KIND = new LocationKind({
-  key: 'universe',
-  title: 'Universe',
-  icon: '∞',
-  indexLabel: 'ROOT',
-});
+/** The one place of its seed: not counted among siblings, having none. */
+export const UNIVERSE_KIND = new LocationKind({ key: 'universe', title: 'Universe', icon: '∞' });
 
 /** The root of the tree. It has no generated name: there is one universe per seed, and the seed is its identity. */
 export class Universe extends Location {

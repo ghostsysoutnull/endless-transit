@@ -1,9 +1,9 @@
 # Handover
 
-- **Branch:** `ui/u02-inside-the-building`.
-- **Next:** U02 of the UI rework, open: `kinds-not-optionals`, the last design fix after the corridor — plan, grill,
-  build. The wave's state and what follows are in `tasks/ui/U02.md` ("State at handover"); the item in
-  `tasks/ui/U02-fixes.md` ("After the corridor"). The browser suite is red on this branch until U02's step 5, by plan.
+- **Branch:** `master` (U02 merged; the next iteration starts its own branch).
+- **Next:** U03 of the UI rework, the apartment and the room — its row in `tasks/UI_QUEUE.md`; plan, grill, build.
+  U02 is built but not yet published: its live build and the drag's feel on the phone wait for the user's word
+  (`tasks/ui/U02.md`, "As built").
 - **Open threads:**
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
   - ships (CONCEPT-001): the verdicts in `docs/analysis/SHIPS_CONCEPT.md`, section 7, none judged;
@@ -11,6 +11,5 @@
     `gh auth refresh -s workflow`);
   - the tester's findings, when they come: each becomes a fix under the queue's "Reported by the tester";
   - the rule reviews are closed; not reviewed: `.claude/commands/chronicle.md`;
-  - the keyboard shortcuts in a phones-only game, keep or remove: `tasks/backlog/HOUSEKEEPING.md`, HK-025;
-  - the browser specs' copied save helper: `tasks/backlog/HOUSEKEEPING.md`, HK-026; a door's brief by name: HK-027;
-    `Shell` and `InputRouter` building their own parts: HK-028; a lit door's name over the next number: HK-029.
+  - `tasks/backlog/HOUSEKEEPING.md`: HK-025 (keep the keys in a phones-only game, or remove them — the user's call),
+    HK-026 to HK-032.

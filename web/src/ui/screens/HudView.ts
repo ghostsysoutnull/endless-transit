@@ -3,15 +3,17 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
-import type { ScenePicture } from '#ui/scene/ScenePicture.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
+import type { ChildMark } from '#ui/scene/ChildMark.ts';
+import { MarkedChild } from '#ui/scene/MarkedChild.ts';
+import { NoChild } from '#ui/scene/NoChild.ts';
+import type { Sketch } from '#ui/scene/Sketch.ts';
 import type { View } from '#ui/View.ts';
 import type { CanvasViews } from './CanvasViews.ts';
 import type { DrawnScene } from './DrawnScene.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
-import type { Pictures } from './Pictures.ts';
+import type { PictureBook } from './PictureBook.ts';
 import { Retrace } from './Retrace.ts';
 import type { SceneViews } from './SceneViews.ts';
 
@@ -53,22 +55,20 @@ export class HudView implements View<HudVM> {
     map: MapPanelVM['picture'];
     trace: TracePictureVM;
   }>;
-  readonly #scenes: Pictures;
+  readonly #book: PictureBook;
   readonly #views: SceneViews;
-  /** The scene drawn now: its host, its picture and the view drawing it. */
-  #scene:
-    | { readonly host: HTMLElement; readonly picture: ScenePicture<SceneVM>; readonly view: DrawnScene }
-    | undefined;
-  /** The child lit in the picture and the list, by its option id; empty when none. */
-  #lit = '';
+  /** The scene drawn now: its host, what it draws (bound to its picture) and the view drawing it. */
+  #scene: { readonly host: HTMLElement; readonly sketch: Sketch; readonly view: DrawnScene } | undefined;
+  /** The child lit in the picture and the list, or none. */
+  #lit: ChildMark = new NoChild();
   /** The path to the last place shown: the child on it is the one the picture zooms out of. */
   #came = new Retrace([]);
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
   #group: number | undefined;
 
-  /** The registry says which places are drawn (U01b); the makers make the scene and each canvas the screen carries (U02). */
-  constructor(scenes: Pictures, views: SceneViews, canvases: CanvasViews) {
-    this.#scenes = scenes;
+  /** The registry binds a drawing to its picture (U01b); the makers make the scene and each canvas the screen carries (U02). */
+  constructor(book: PictureBook, views: SceneViews, canvases: CanvasViews) {
+    this.#book = book;
     this.#views = views;
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
@@ -85,14 +85,15 @@ export class HudView implements View<HudVM> {
   render(vm: HudVM): void {
     this.#more = false;
     if (vm.scene !== this.#vm?.scene) {
-      this.#lit = '';
+      this.#lit = new NoChild();
       this.#group = undefined;
     }
     const kept = this.#scene?.view;
     this.#paint(vm);
     // A view kept from the last render is shown the new frame; one made just now already shows it.
-    if (this.#scene !== undefined && this.#scene.view === kept) this.#scene.view.render(vm.drawing);
-    const from = this.#came.from(vm.drawing.address, vm.drawing.children);
+    if (this.#scene !== undefined && this.#scene.view === kept) this.#scene.view.render(this.#scene.sketch);
+    const drawing = vm.drawing.frame();
+    const from = this.#came.from(drawing.address, drawing.children);
     if (from !== undefined) this.#scene?.view.arrive(from.id);
     this.#came = new Retrace(vm.rail.map((step) => step.address));
   }
@@ -102,40 +103,44 @@ export class HudView implements View<HudVM> {
     this.#vm = vm;
     render(this.#template(vm), this.#container);
     this.#canvases.bind('pane', this.#host('pane'), vm.aside.map?.picture ?? null);
-    this.#canvases.bind('map', this.#host('map'), vm.map?.picture ?? null);
-    this.#canvases.bind('trace', this.#host('trace'), vm.trace?.picture ?? null);
-    this.#bindScene(vm.drawing);
+    this.#canvases.bind('map', this.#host('map'), vm.map.shown ? vm.map.picture : null);
+    this.#canvases.bind('trace', this.#host('trace'), vm.trace.shown ? vm.trace.picture : null);
+    this.#bindScene(vm.drawing.sketchedBy(this.#book));
   }
 
   /** The scene's view in its host: kept while the host and the picture stay, else made anew and shown the drawing; gone with its host. */
-  #bindScene(drawing: SceneVM): void {
+  #bindScene(sketch: Sketch): void {
     const host = this.#host('scene');
-    const picture = this.#scenes.picture(drawing.key);
-    if (host === null || picture === undefined) {
+    if (host === null || !sketch.drawn()) {
       this.#scene?.view.dispose();
       this.#scene = undefined;
       return;
     }
-    if (this.#scene?.host !== host || this.#scene.picture !== picture) {
+    if (this.#scene?.host !== host || !this.#scene.sketch.samePicture(sketch)) {
       this.#scene?.view.dispose();
-      const view = this.#views.make(picture, (id) => {
-        this.#light(id);
+      const view = this.#views.make((mark) => {
+        this.#light(mark);
       });
       view.mount(host);
-      view.render(drawing);
-      this.#scene = { host, picture, view };
+      view.render(sketch);
+      this.#scene = { host, sketch, view };
+    } else {
+      this.#scene = { ...this.#scene, sketch };
     }
     this.#scene.view.light(this.#lit);
   }
 
   /** A child pointed at in the picture or the list: both light it; nothing re-renders when nothing changed. */
-  #light(id: string): void {
-    if (id === this.#lit || this.#scene === undefined) return;
-    this.#lit = id;
+  #light(mark: ChildMark): void {
+    if (mark.equals(this.#lit) || this.#scene === undefined) return;
+    this.#lit = mark;
     // The pad follows what is lit: dragging the car past a ten shows that ten's floors (the mock's `S.group`).
-    const group = this.#vm?.pad?.groups.findIndex((each) => each.keys.some((key) => key.id === id)) ?? -1;
+    const group =
+      this.#vm?.pad.shown === true
+        ? this.#vm.pad.groups.findIndex((each) => each.keys.some((key) => mark.marks(key.id)))
+        : -1;
     if (group >= 0) this.#group = group;
-    this.#scene.view.light(id);
+    this.#scene.view.light(mark);
     if (this.#vm !== undefined && this.#container !== undefined)
       render(this.#template(this.#vm), this.#container);
   }
@@ -143,7 +148,7 @@ export class HudView implements View<HudVM> {
   dispose(): void {
     this.#scene?.view.dispose();
     this.#scene = undefined;
-    this.#lit = '';
+    this.#lit = new NoChild();
     this.#canvases.dispose();
     if (this.#container !== undefined) render(nothing, this.#container);
     this.#container = undefined;
@@ -181,7 +186,7 @@ export class HudView implements View<HudVM> {
   }
 
   #template(vm: HudVM): TemplateResult {
-    const drawn = this.#scenes.picture(vm.drawing.key) !== undefined;
+    const drawn = vm.drawing.sketchedBy(this.#book).drawn();
     return html`
       <div class="app world" data-frame=${vm.frame} data-band=${vm.meter.band} ?data-drawn=${drawn}>
         <section class="hud" aria-label=${vm.regions.hud}>
@@ -248,11 +253,11 @@ export class HudView implements View<HudVM> {
           <div class="body">
             <ul class="tags">
               ${
-                vm.place.position === null
-                  ? nothing
-                  : html`<li class="chip pos">
+                vm.place.position.shown
+                  ? html`<li class="chip pos">
                       <span class="k">${vm.place.position.label}</span> ${vm.place.position.value}
                     </li>`
+                  : nothing
               }
               ${vm.place.tags.map(
                 (tag) => html`
@@ -281,10 +286,15 @@ export class HudView implements View<HudVM> {
         </section>
         ${
           drawn
-            ? html`<div class="scene" data-testid="scene" data-canvas="scene" data-lit=${this.#lit}></div>`
+            ? html`<div
+                class="scene"
+                data-testid="scene"
+                data-canvas="scene"
+                data-lit=${this.#lit.written()}
+              ></div>`
             : nothing
         }
-        ${this.#scan(vm)} ${vm.map === null ? nothing : this.#map(vm.map, 'map', 'map', vm.regions.map)}
+        ${this.#scan(vm)} ${vm.map.shown ? this.#map(vm.map, 'map', 'map', vm.regions.map) : nothing}
         ${this.#trace(vm)}
         <div class="side">
           ${
@@ -293,17 +303,17 @@ export class HudView implements View<HudVM> {
               : html`
                   <section class="travel" aria-label=${vm.regions.travel}>
                     <h3 class="heading">${vm.heading}</h3>
-                    ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
+                    ${vm.sealedNote.shown ? html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote.text}</p>` : nothing}
                     ${
-                      vm.pad === null
-                        ? html`<ol class="rows">
+                      vm.pad.shown
+                        ? this.#pad(vm, vm.pad, drawn)
+                        : html`<ol class="rows">
                             ${repeat(
                               vm.rows,
                               (row) => `${vm.scene}/${row.id}`,
                               (row) => this.#row(row, vm.sealedTag, drawn),
                             )}
                           </ol>`
-                        : this.#pad(vm, vm.pad, drawn)
                     }
                   </section>
                 `
@@ -443,7 +453,7 @@ export class HudView implements View<HudVM> {
   /** The drawn trace: the canvas in its host, and the same rows as lines for a reader only. */
   #trace(vm: HudVM): TemplateResult | typeof nothing {
     const trace = vm.trace;
-    if (trace === null) return nothing;
+    if (!trace.shown) return nothing;
     return html`
       <section class="tracep" data-testid="trace" aria-label=${vm.regions.trace} tabindex="-1" data-spot>
         <h3 class="heading">${trace.heading}</h3>
@@ -524,7 +534,7 @@ export class HudView implements View<HudVM> {
    * The pad (U02): the shown group's keys — a real button each, its number shown and its row's words for a
    * reader, lighting its floor like a row — then, past twenty, a tab per ten; a tab only shows its group.
    */
-  #pad(vm: HudVM, pad: NonNullable<HudVM['pad']>, drawn: boolean): TemplateResult {
+  #pad(vm: HudVM, pad: Extract<HudVM['pad'], { readonly shown: true }>, drawn: boolean): TemplateResult {
     const shown = Math.min(this.#group ?? pad.open, pad.groups.length - 1);
     const group = pad.groups[shown];
     return html`
@@ -538,21 +548,21 @@ export class HudView implements View<HudVM> {
                 type="button"
                 class=${['key', key.current ? 'you' : '', key.visited ? 'seen' : ''].join(' ').trim()}
                 data-option=${key.id}
-                ?data-lit=${drawn && this.#lit === key.id}
+                ?data-lit=${drawn && this.#lit.marks(key.id)}
                 @click=${(event: Event) => {
                   this.#through(event, key.id);
                 }}
                 @pointerenter=${() => {
-                  this.#light(key.id);
+                  this.#light(new MarkedChild(key.id));
                 }}
                 @pointerleave=${() => {
-                  this.#light('');
+                  this.#light(new NoChild());
                 }}
                 @focus=${() => {
-                  this.#light(key.id);
+                  this.#light(new MarkedChild(key.id));
                 }}
                 @blur=${() => {
-                  this.#light('');
+                  this.#light(new NoChild());
                 }}
               >
                 <span class="num" aria-hidden="true">${key.number}</span><span class="vh">${key.spoken}</span>
@@ -600,21 +610,21 @@ export class HudView implements View<HudVM> {
           type="button"
           class=${['row', row.mark === null ? '' : 'you', row.seen === null ? '' : 'seen'].join(' ').trim()}
           data-option=${row.id}
-          ?data-lit=${drawn && this.#lit === row.id}
+          ?data-lit=${drawn && this.#lit.marks(row.id)}
           @click=${(event: Event) => {
             this.#through(event, row.id);
           }}
           @pointerenter=${() => {
-            this.#light(row.id);
+            this.#light(new MarkedChild(row.id));
           }}
           @pointerleave=${() => {
-            this.#light('');
+            this.#light(new NoChild());
           }}
           @focus=${() => {
-            this.#light(row.id);
+            this.#light(new MarkedChild(row.id));
           }}
           @blur=${() => {
-            this.#light('');
+            this.#light(new NoChild());
           }}
         >
           <span class="ord">${row.ordinal}</span

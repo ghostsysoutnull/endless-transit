@@ -1,11 +1,10 @@
-import { BUILDING_KIND } from './Building.ts';
 import type { Fact } from './Fact.ts';
-import type { Figure } from './Figure.ts';
 import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
 import { MoveTable } from './MoveTable.ts';
+import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
 
 /** The ground floor: below it lies the substrate, not another floor (ElevatorState.groovy:32-38). */
@@ -44,11 +43,7 @@ export class ElevatorState implements FloorState {
   }
 
   /** At the elevator the floor is drawn as its building's tower, the car standing here (U02). */
-  drawing(): string {
-    return BUILDING_KIND.key();
-  }
-
-  portrait(floor: Floor): Figure | null {
+  portrait(floor: Floor): Portrait {
     return floor.building().portrait();
   }
 

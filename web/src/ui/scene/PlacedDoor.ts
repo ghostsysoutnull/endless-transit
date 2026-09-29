@@ -1,6 +1,6 @@
 import type { Quad } from './Quad.ts';
 import type { SceneHit } from './SceneHit.ts';
-import type { SceneVM } from './SceneVM.ts';
+import type { CorridorVM } from './CorridorVM.ts';
 
 /** A door can be tapped while this near and this wide; its number shows while this near, its word nearer still. */
 const REACH = 11;
@@ -17,19 +17,19 @@ const FAINT = 0.5;
  * whether it is faint, where a tap finds it. Value object, made per frame.
  */
 export class PlacedDoor {
-  readonly #child: SceneVM['children'][number];
+  readonly #child: CorridorVM['children'][number];
   readonly #depth: number;
   readonly #fog: number;
   readonly #quad: Quad;
 
-  constructor(facts: { child: SceneVM['children'][number]; depth: number; fog: number; quad: Quad }) {
+  constructor(facts: { child: CorridorVM['children'][number]; depth: number; fog: number; quad: Quad }) {
     this.#child = facts.child;
     this.#depth = facts.depth;
     this.#fog = facts.fog;
     this.#quad = facts.quad;
   }
 
-  child(): SceneVM['children'][number] {
+  child(): CorridorVM['children'][number] {
     return this.#child;
   }
 
@@ -71,7 +71,7 @@ export class PlacedDoor {
 
   /** The word written on it; empty when none. */
   word(): string {
-    return this.#child.door?.words ?? '';
+    return this.#child.door.words;
   }
 
   /** Whether its word is written: it has one and is among the nearest. */

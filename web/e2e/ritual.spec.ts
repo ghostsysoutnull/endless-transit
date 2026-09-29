@@ -140,10 +140,14 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
 
   await press(page, /leave floor/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
-  await expect(page.locator('.diag')).toHaveText('BEDROCK_BREACHED');
-  await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(26);
-  await expect(page.locator('button[data-option="enter:16"]')).toContainText('Layer -0x1');
-  await expect(page.locator('button[data-option="enter:16"]')).toContainText('P: 10%');
+  await expect(page.locator('.diag')).toHaveText('The bedrock is breached');
+  // The ten Layers join the pad: past twenty it goes by tens, the Layers' own group first; the car's ten shows.
+  const tens = page.getByRole('group', { name: 'Floors by tens' }).getByRole('button');
+  await expect(tens).toHaveText(['-0xA–-0x1', '0–9', '10–15']);
+  await expect(tens.nth(2)).toHaveAttribute('aria-pressed', 'true');
+  await (hasTouch ? tens.first().tap() : tens.first().click());
+  await expect(page.getByRole('button', { name: /^Ride to Layer -0x1,.*P: 10%/ })).toHaveCount(1);
+  await (hasTouch ? tens.nth(1).tap() : tens.nth(1).click());
   await tapOption(page, 'enter:15', hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   const descend = page.getByRole('button', { name: /descend into the substrate/i });

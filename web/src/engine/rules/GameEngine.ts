@@ -458,7 +458,6 @@ export class GameEngine {
       current: child.current(),
       visited: player.visited(child),
       address: child.address().toString(),
-      figure: child.figure(),
       numbered: child.goesByNumber(),
     }));
   }
@@ -520,10 +519,7 @@ export class GameEngine {
       icon: here.kind().icon(),
       name: here.name(),
       address: here.address().toString(),
-      position:
-        peers.length === 0 || here.kind().indexLabel() === ''
-          ? null
-          : { label: here.kind().indexLabel(), index: peers.indexOf(here) + 1, total: peers.length },
+      position: here.kind().position(peers.indexOf(here) + 1, peers.length),
       trail: here.trail().map((step) => ({
         icon: step.kind().icon(),
         kind: step.kind().title(),
@@ -533,8 +529,7 @@ export class GameEngine {
       status: here.status(),
       description: this.#corruption.read(here.description(), player.coherence(), frame),
       facts: here.facts(),
-      drawing: here.drawing(),
-      figure: here.portrait(),
+      portrait: here.portrait(),
       noise: frame,
       frame: here.vibe()?.frame() ?? null,
       abyssal: here.abyssal(),

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -6,6 +7,7 @@ import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { Frame } from '#ui/Frame.ts';
 import { RecapPresenter } from '#ui/screens/RecapPresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
+import { placeOf, promptOf } from '#tests/support/snapshotParts.ts';
 
 const presenter = new RecapPresenter(new BuildMasthead('a1b2c3d'), new Frame());
 
@@ -24,7 +26,6 @@ function option(id: string, key: string, label: string): GameOption {
     current: false,
     visited: false,
     address: '',
-    figure: null,
     numbered: false,
   };
 }
@@ -36,7 +37,7 @@ const RECAP: GameSnapshot = {
     icon: '⌂',
     name: 'Ornate Sanctum',
     address: '0.0.0.0.0.0.0.0.0',
-    position: null,
+    position: { counted: false },
     trail: [],
     status: '',
     description: [],
@@ -47,8 +48,7 @@ const RECAP: GameSnapshot = {
     contents: null,
     telemetry: null,
     lattice: null,
-    drawing: 'building',
-    figure: null,
+    portrait: new NoPortrait(),
     noise: new Seed(0, 0),
   },
   player: playerSummary({ coherence: 61, band: 'degraded', steps: 33, decay: 0.1 }),
@@ -116,8 +116,8 @@ describe('RecapPresenter — the endings of a session (Guide:422-430, SessionRec
   test('below the bedrock: the void’s termination — three typewritten lines, no figures, no shutdown, ending "Sleep among the static, Operator." in the abyssal frame (Guide:424-425; SessionRecap.groovy:19-32)', () => {
     const vm = presenter.toViewModel({
       ...RECAP,
-      place: { ...(RECAP.place ?? ({} as never)), abyssal: true },
-      prompt: { ...(RECAP.prompt ?? ({} as never)), outcome: 'void' },
+      place: { ...placeOf(RECAP), abyssal: true },
+      prompt: { ...promptOf(RECAP), outcome: 'void' },
     });
     expect(vm.heading).toBe('[VOID_RESONANCE_TERMINATION]');
     expect(vm.figures).toEqual([]);

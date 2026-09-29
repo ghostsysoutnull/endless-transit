@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { BuildMasthead } from '#ui/BuildMasthead.ts';
@@ -15,7 +16,7 @@ const HELP: GameSnapshot = {
     icon: '═',
     name: 'Bright Boulevard',
     address: '0.0.0.0.0.0.0.0',
-    position: { label: 'WAY', index: 1, total: 8 },
+    position: { counted: true, label: 'WAY', index: 1, total: 8 },
     trail: [],
     status: 'SYNC: [STABLE]',
     description: [],
@@ -26,8 +27,7 @@ const HELP: GameSnapshot = {
     contents: null,
     telemetry: null,
     lattice: null,
-    drawing: 'street',
-    figure: null,
+    portrait: new NoPortrait(),
     noise: new Seed(0, 0),
   },
   player: playerSummary({ coherence: 85, steps: 14 }),
@@ -48,7 +48,6 @@ const HELP: GameSnapshot = {
       current: false,
       visited: false,
       address: '',
-      figure: null,
       numbered: false,
     },
   ],

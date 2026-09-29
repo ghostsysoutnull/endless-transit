@@ -24,11 +24,6 @@ export class Passage {
     return this.#looks;
   }
 
-  /** How many doors the corridor will have. */
-  doors(): number {
-    return this.#looks.length;
-  }
-
   equals(other: Passage): boolean {
     return (
       this.#shape === other.#shape &&

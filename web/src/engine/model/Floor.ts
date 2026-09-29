@@ -1,21 +1,23 @@
 import type { Building } from './Building.ts';
+import type { CorridorShape } from './CorridorShape.ts';
 import { CorridorState } from './CorridorState.ts';
 import { ElevatorState } from './ElevatorState.ts';
 import type { Fact } from './Fact.ts';
-import type { Figure } from './Figure.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Fragment } from './Fragment.ts';
 import { Location } from './Location.ts';
 import { Level } from './Level.ts';
+import type { LevelRow } from './LevelRow.ts';
 import type { LevelKind } from './LevelKind.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
 import type { Origin } from './Origin.ts';
 import { Passage } from './Passage.ts';
 import { Phrase } from './Phrase.ts';
+import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤', indexLabel: '' });
+export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤' });
 
 /** The two modes, stateless, shared by every floor; a saved mode id finds its state here — a new mode is one more entry. */
 const ELEVATOR: FloorState = new ElevatorState();
@@ -90,14 +92,15 @@ export class Floor extends Location {
   }
 
   /** Its row on the tower's picture: its level, how its corridor runs and how its doors look — peeked, not made (U02). */
-  override figure(): Figure {
-    return {
-      floors: 0,
-      level: this.level(),
-      doors: this.#passage.doors(),
-      shape: this.#passage.shape(),
-      looks: this.#passage.looks(),
-    };
+  override onTower(): readonly LevelRow[] {
+    return [
+      {
+        address: this.address().toString(),
+        level: this.level(),
+        shape: this.#passage.shape(),
+        looks: this.#passage.looks(),
+      },
+    ];
   }
 
   /** The level it stands at. */
@@ -111,11 +114,7 @@ export class Floor extends Location {
   }
 
   /** The mode decides what draws the floor: the tower at the elevator, the corridor in it (U02). */
-  override drawing(): string {
-    return this.#state.drawing();
-  }
-
-  override portrait(): Figure | null {
+  override portrait(): Portrait {
     return this.#state.portrait(this);
   }
 
@@ -159,6 +158,11 @@ export class Floor extends Location {
   /** A floor's map is its doors, at the elevator as in the corridor (the floor's own rooms; Guide:92). */
   override mapNodes(): readonly Location[] {
     return this.corridor().listing();
+  }
+
+  /** How its corridor runs: the peek's, the very shape the made corridor has. */
+  shape(): CorridorShape {
+    return this.#passage.shape();
   }
 
   /** The floor's one child. */

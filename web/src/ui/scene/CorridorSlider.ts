@@ -5,6 +5,8 @@ import type { CameraTrack } from './CameraTrack.ts';
 import type { Glow } from './Glow.ts';
 import type { HallShape } from './HallShape.ts';
 import type { HallView } from './HallView.ts';
+import type { SliderBox } from './SliderBox.ts';
+import { SliderTrack } from './SliderTrack.ts';
 
 /** The band (the mock's `.scrub`, `transit-reframed.html:74-84`): this far in from the sides and the foot, this tall. */
 const INSET = 10;
@@ -36,12 +38,12 @@ export class CorridorSlider {
   /** The band as the camera's track: along `x`, the views at its two ends as a finger holding the window reads them. */
   track(): CameraTrack {
     const band = this.#band();
-    return {
+    return new SliderTrack({
       ...band,
       axis: 'x',
       from: this.#valueAt(band.x),
       to: this.#valueAt(band.x + band.width),
-    };
+    });
   }
 
   /** The slider over the picture; `doors` in the hall's order, each its state's ink and whether it was visited. */
@@ -98,7 +100,7 @@ export class CorridorSlider {
     shape.mark(painter, palette, { x: band.x + band.width - 38, y: middle });
   }
 
-  #band(): { readonly x: number; readonly y: number; readonly width: number; readonly height: number } {
+  #band(): SliderBox {
     return {
       x: INSET,
       y: this.#size.height - INSET - BAND,
