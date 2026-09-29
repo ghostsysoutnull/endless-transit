@@ -33,6 +33,9 @@
 11. A commit/push directive covers the work's close-out records. No second confirmation.
 12. A rule approved in this session binds at once. The file loads only when a session starts, so until the next one I
     state the rule in chat and put it in every agent's brief.
+13. Before repeating work (another round, another fix, another review) I name its category: a bug the player meets,
+    a fact kept in two places, or tidying. Then I weigh its proportion: what it costs in tokens and the user's waiting
+    time against what it changes for the player. Tidying, or a cost out of proportion, stops there, said in one line.
 
 ## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
