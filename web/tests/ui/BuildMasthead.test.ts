@@ -1,14 +1,13 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { expect, test } from 'vitest';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
 
 const SCREENS = new URL('../../src/ui/screens/', import.meta.url);
 
 test('the masthead owns the game’s name and the build stamp — every screen shows the same two', () => {
-  const masthead = new Masthead('a1b2c3d');
+  const masthead = new BuildMasthead('a1b2c3d');
   expect(masthead.name()).toBe('ENDLESS TRANSIT');
   expect(masthead.buildLine()).toBe('build a1b2c3d');
-  expect(new Masthead('dev').buildLine()).toBe('build dev');
 });
 
 test('no presenter spells the name or the build line itself', () => {

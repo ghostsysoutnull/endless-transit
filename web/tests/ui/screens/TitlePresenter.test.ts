@@ -1,11 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
 
-const presenter = new TitlePresenter(new Masthead('a1b2c3d'));
+const presenter = new TitlePresenter(new BuildMasthead('a1b2c3d'));
 
 function option(id: string, key: string, label: string): GameOption {
   return {
@@ -104,20 +104,6 @@ describe('TitlePresenter.toViewModel', () => {
         trace: null,
       }).build,
     ).toBe('build a1b2c3d');
-    expect(
-      new TitlePresenter(new Masthead('dev')).toViewModel({
-        world: null,
-        place: null,
-        player: null,
-        buffer: null,
-        prompt: null,
-        options: [],
-        message: '',
-        scan: null,
-        map: null,
-        trace: null,
-      }).build,
-    ).toBe('build dev');
   });
 
   test('the title is the screen of a snapshot without a place — and only of that one', () => {

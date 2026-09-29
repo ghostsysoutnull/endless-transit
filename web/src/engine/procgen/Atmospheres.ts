@@ -5,6 +5,7 @@ import type { Culture } from '#engine/model/Culture.ts';
 import type { Era } from '#engine/model/Era.ts';
 import type { Trait } from '#engine/model/Trait.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { AtmosphereDeal } from './AtmosphereDeal.ts';
 
 const ATMOSPHERE = 'themes/atmosphere';
 const CULTURES = 'themes/cultures';
@@ -26,7 +27,7 @@ const GLITCH_STRUCTURES = ['abyssal', 'Singularity'];
  * index promised but the content lacks is never a silent generic line: the first key of that index stands
  * in and the warning sink hears which file is missing (`[THEME_WARN]`, Guide:319).
  */
-export class Atmospheres {
+export class Atmospheres implements AtmosphereDeal {
   readonly #library: ContentLibrary;
   readonly #warnings: WarningSink;
 

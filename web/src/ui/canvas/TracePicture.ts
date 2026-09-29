@@ -1,4 +1,4 @@
-import { CanvasFont } from './CanvasFont.ts';
+import type { PictureFont } from '#ui/scene/PictureFont.ts';
 import type { Painter } from './Painter.ts';
 import type { Palette } from './Palette.ts';
 import type { Picture, PictureSize } from './Picture.ts';
@@ -21,7 +21,11 @@ const ELLIPSIS = '…';
  * current level in yellow with a pulsing ring, a level below the bedrock in the void's ink.
  */
 export class TracePicture implements Picture<TracePictureVM> {
-  readonly #font = new CanvasFont();
+  readonly #font: PictureFont;
+
+  constructor(font: PictureFont) {
+    this.#font = font;
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- a row is as tall whatever the width
   height(vm: TracePictureVM, _width: number): number {

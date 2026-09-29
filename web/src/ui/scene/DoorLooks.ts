@@ -1,4 +1,5 @@
 import type { DoorStateLook } from '#engine/model/DoorStateLook.ts';
+import type { DoorInks } from './DoorInks.ts';
 
 /** The ink each look of a door's state is drawn in: the mock's frost and cold blue, its static magenta, the frame's cyan. */
 const INKS: Readonly<Record<DoorStateLook, string>> = { frost: 'bl', cold: 'bl', static: 'mg', plain: 'cy' };
@@ -8,7 +9,7 @@ const INKS: Readonly<Record<DoorStateLook, string>> = { frost: 'bl', cold: 'bl',
  * key column: identity by stable key; every key has an ink). The tower's door ticks, the corridor's doors and its
  * slider's ticks are drawn by it.
  */
-export class DoorLooks {
+export class DoorLooks implements DoorInks {
   ink(look: DoorStateLook): string {
     return INKS[look];
   }

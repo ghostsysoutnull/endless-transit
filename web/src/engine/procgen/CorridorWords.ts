@@ -1,19 +1,20 @@
-import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { type CorridorShape, corridorShape } from '#engine/model/CorridorShape.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
-import { Sentences } from './Sentences.ts';
+import type { CorridorDeal } from './CorridorDeal.ts';
+import type { LineDecks } from './LineDecks.ts';
+import type { LineDeal } from './LineDeal.ts';
 
 /**
  * Owns one fact: a corridor's sentence and the shape it carries, dealt together (U02) — the corridor list read whole
  * and typed when it is made, so one unknown shape refuses the list; the deal is `Sentences`'. Shared by the corridor
  * as it is made and the floor's peek at it.
  */
-export class CorridorWords {
-  readonly #sentences: Sentences;
+export class CorridorWords implements CorridorDeal {
+  readonly #sentences: LineDeal;
   readonly #lines: readonly (readonly [string, CorridorShape])[];
 
-  constructor(library: ContentLibrary) {
-    this.#sentences = new Sentences(library, 'corridor');
+  constructor(decks: LineDecks) {
+    this.#sentences = decks.of('corridor');
     this.#lines = this.#sentences.lines(corridorShape);
   }
 

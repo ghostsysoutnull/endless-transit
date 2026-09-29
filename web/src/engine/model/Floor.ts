@@ -93,11 +93,16 @@ export class Floor extends Location {
   override figure(): Figure {
     return {
       floors: 0,
-      level: new Level(this.#number, this.levelKind()),
+      level: this.level(),
       doors: this.#passage.doors(),
       shape: this.#passage.shape(),
       looks: this.#passage.looks(),
     };
+  }
+
+  /** The level it stands at. */
+  level(): Level {
+    return new Level(this.#number, this.levelKind());
   }
 
   /** What stands at its level: a floor; a Layer answers otherwise. */

@@ -19,9 +19,10 @@ describe('a level is a value: its number and what stands there', () => {
     expect(new Level(0, 'floor').belowBedrock()).toBe(false);
   });
 
-  test('its label is its number, a Layer’s too', () => {
+  test('a floor’s label is its number; a Layer’s is its number in hex, as the game names it', () => {
     expect(new Level(0, 'floor').label()).toBe('0');
     expect(new Level(12, 'floor').label()).toBe('12');
-    expect(new Level(-1, 'layer').label()).toBe('-1');
+    expect(new Level(-1, 'layer').label()).toBe('-0x1');
+    expect(new Level(-26, 'layer').label()).toBe('-0x1A');
   });
 });

@@ -1,5 +1,4 @@
 import { Phrase } from '#engine/model/Phrase.ts';
-import type { LevelKind } from '#engine/model/LevelKind.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -7,22 +6,18 @@ import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { TraceSummary } from '#engine/rules/TraceSummary.ts';
 import type { LegendTone, NodeTone } from '#ui/canvas/MapPictureVM.ts';
-import { Frame } from '#ui/Frame.ts';
+import type { FrameOf } from '#ui/FrameOf.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
-import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
-import { FloorsByTen } from './FloorsByTen.ts';
-import { LayersTogether } from './LayersTogether.ts';
-import type { PadGroup } from './PadGroup.ts';
+import type { Drawings } from './Drawings.ts';
+import type { Pads } from './Pads.ts';
 
 const RETURN_MARK = '▲ ';
-/** Up to this many numbered places, the pad is one group; past it, groups of ten (Decision 7: floors by tens above 20). */
-const PAD_GROUP = 20;
 /** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
 const SCAN_MARK = { text: '>>', label: 'You are here' } as const;
 /**
@@ -71,16 +66,16 @@ const TRACE_MARK = '>> ';
  * snapshot becomes a panel of rows.
  */
 export class HudPresenter implements Presenter<HudVM> {
-  readonly #frame = new Frame();
-  /** Past twenty, the pad's group of a level by what stands there: the Layers all in one, a floor in its ten. */
-  readonly #padGroups: Readonly<Record<LevelKind, PadGroup>> = {
-    floor: new FloorsByTen(),
-    layer: new LayersTogether(),
-  };
+  readonly #frame: FrameOf;
   readonly #masthead: Masthead;
+  readonly #drawings: Drawings;
+  readonly #pads: Pads;
 
-  constructor(masthead: Masthead) {
+  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings, pads: Pads) {
     this.#masthead = masthead;
+    this.#frame = frame;
+    this.#drawings = drawings;
+    this.#pads = pads;
   }
 
   /** The world screen: a place, and no prompt in the way. */
@@ -165,8 +160,8 @@ export class HudPresenter implements Presenter<HudVM> {
             },
       map: snapshot.map === null ? null : this.#mapPanel(snapshot.map, MAP_HEADING),
       trace: snapshot.trace === null ? null : this.#tracePanel(snapshot.trace),
-      drawing: this.#drawing(place, travel, player.decay),
-      pad: this.#pad(travel, rows),
+      drawing: this.#drawings.of(place, travel, player.decay),
+      pad: this.#pads.of(travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows,
       moves,
@@ -209,96 +204,6 @@ export class HudPresenter implements Presenter<HudVM> {
         debug: 'Debug tools',
       },
     };
-  }
-
-  /**
-   * What the place's picture draws: a child per listed place, in the list's order, its shape from the
-   * option's figure (none: no floors, no doors), and the words a reader hears instead of the picture.
-   */
-  #drawing(place: PlaceSummary, travel: readonly GameOption[], decay: number): SceneVM {
-    const open = travel.filter((option) => !option.sealed).length;
-    const figure = place.figure;
-    const tower = figure?.tower;
-    return {
-      key: place.drawing,
-      label: `Picture of ${place.name}: ${String(travel.length)} places drawn, ${String(open)} open — the list below enters them too`,
-      address: place.address,
-      children: travel.map((option) => ({
-        id: option.id,
-        ordinal: option.ordinal,
-        name: option.place,
-        floors: option.figure?.floors ?? 0,
-        doors: option.figure?.doors ?? 0,
-        landmark: option.landmark,
-        visited: option.visited,
-        sealed: option.sealed,
-        address: option.address,
-        level: option.figure?.level ?? null,
-        door: option.figure?.door ?? null,
-      })),
-      tower:
-        figure === null || tower === undefined
-          ? null
-          : {
-              floors: figure.floors,
-              doors: figure.doors,
-              address: tower.address,
-              landmark: tower.landmark,
-              car: tower.car,
-              rows: tower.rows.flatMap((row) =>
-                row.level === undefined
-                  ? []
-                  : [{ level: row.level, shape: row.shape ?? 'none', looks: row.looks ?? [] }],
-              ),
-            },
-      shape: figure?.shape ?? 'none',
-      slider: travel.length === 0 ? '' : place.childrenHeading,
-      decay,
-      noise: place.noise,
-    };
-  }
-
-  /**
-   * A list whose every place goes by its own number (a building's floors) is laid out as a pad of numbers
-   * (U02, Decision 7): one group up to 20, else by tens — ascending, the Layers' group first — and the group
-   * shown first is the one holding the current row (where the elevator stands).
-   */
-  #pad(travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
-    if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
-    const numbered = rows
-      .flatMap((row, index) => {
-        const option = travel[index];
-        const level = option?.figure?.level;
-        return option === undefined || level === undefined ? [] : [{ row, option, level }];
-      })
-      .sort((one, other) => one.level.number() - other.level.number());
-    const tens = travel.length > PAD_GROUP;
-    const groups = new Map<number, (typeof numbered)[number][]>();
-    for (const entry of numbered) {
-      const group = tens ? this.#padGroups[entry.level.kind()].of(entry.level) : 0;
-      groups.set(group, [...(groups.get(group) ?? []), entry]);
-    }
-    const list = [...groups.values()].map((group) => {
-      const first = group[0]?.level.label() ?? '';
-      const last = group.at(-1)?.level.label() ?? '';
-      return {
-        label: `${first}–${last}`,
-        keys: group.map(({ row, option, level }) => ({
-          id: row.id,
-          number: level.label(),
-          spoken: [
-            row.label,
-            ...(row.mark === null ? [] : [row.mark.label]),
-            ...(row.seen === null ? [] : [row.seen.label]),
-            ...row.readings.map((reading) => `${reading.label} ${reading.value}`),
-          ].join(', '),
-          current: option.current,
-          visited: option.visited,
-        })),
-      };
-    });
-    const open = list.findIndex((group) => group.keys.some((key) => key.current));
-    return { label: 'Floors by tens', groups: list, open: Math.max(0, open) };
   }
 
   /**

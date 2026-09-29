@@ -1,11 +1,12 @@
+import type { Pictures } from '#ui/screens/Pictures.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { SceneVM } from './SceneVM.ts';
 
 /**
  * Owns one fact: which picture draws which place, by the drawing key the engine hands over (Decision 1). A new
- * scene is one entry here, built in `main.ts`; a key with no entry keeps the screen as it was.
+ * scene is one entry here, built by `ScenePictures` and registered in `main.ts`; a key with no entry keeps the screen as it was.
  */
-export class SceneRegistry {
+export class SceneRegistry implements Pictures {
   readonly #pictures: ReadonlyMap<string, ScenePicture<SceneVM>>;
 
   constructor(pictures: Readonly<Record<string, ScenePicture<SceneVM>>>) {

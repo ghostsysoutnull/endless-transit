@@ -16,9 +16,8 @@ from `main.ts`, never builds them.
 When one fix reaches an older file because it shares the pattern, that file is fixed too (two places sharing a pattern
 are fixed together) and is named in the item.
 
-**Open decision:** `floor-numbers` changes what the tower draws. It could write a Layer as the game names it (`-0x1`,
-from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _not yet made_; it is one line,
-`Level.label()`.
+**Decision (the user's pick, 2026-09-28):** the tower and the pad write a Layer as the game names it, `-0x1`
+(`Level.label()`, which `Layer.name()` now asks too). Nothing else here changes the screen.
 
 ## The UI works out rules the game should hand it (the engine law)
 
@@ -159,22 +158,24 @@ from `Layer -0x1`), or keep `-1`. Nothing else here changes the screen. Pick: _n
   `one-job` (the user's pick, 2026-09-28): its split needs
   `one-job`'s view model mapped per picture, and its `passage?`/`shape?` part touches the Layer screens (U04).
   Done: —
-- [ ] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
+- [x] **built-collaborators — classes build their helpers, or take them as concrete classes.** Built inside:
   `SceneView` (`CoherenceFx`, `PixelBudget`), `CanvasView` (`PixelBudget`), `StreetPicture` and `TowerPicture`
   (`SceneHash`, `Roof`, `DoorLooks`), `Roof` (`SceneHash`), `Passages` (`Sentences`, `Doors`), `HudView`
   (`SceneView`, and the older `CanvasView` with its `MapPicture`). Taken as concrete classes: `MotionClock`,
   `SceneRegistry`, `Progeny` in `Passages` (the older presenters' `Masthead` likewise). Fix: built in `main.ts` and
   handed in through small interfaces owned by the code that uses them (a clock, the pictures, a child seed); `HudView`
   gets a scene-view factory. (OO 4.)
-  Done: —
-- [ ] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
+  Done: steps 1–3 and 5–8 of the plan below — `99371c0`, `bdc041b`, `4f9296d`, `9147273`, `f0408c0`, `6fee422`,
+  `42146a2`, with their design checks' fixes `b7bee28`, `ccd736b`, `e20376a`, `69076b9`, `f98f748`, `3dbb450` and the
+  close-out commit
+- [x] **one-job — `SceneView` and `HudPresenter` each carry several jobs.** After `camera-rules`, `still-camera`,
   `reduced-motion` and `scene-events`, `SceneView` still holds the canvas sizing and mounting, the pointer gestures,
   the slider control (it still branches on `Gesture.onSlider()`: a picture gesture and a slider gesture
   go behind one interface with it), the trip and zoom, and the tear's painting (and it reaches through `SceneMount` to command the canvas
   and the slider; `CanvasView` likewise through `CanvasMount`: the mount gives its parts their orders when the
   canvas and the slider become their own objects); `HudPresenter` also maps figures into the `SceneVM`
   (`#drawing`) and holds the pad's grouping rule (`#pad`). Fix: each its own object, handed in. (OO 8.)
-  Done: —
+  Done: steps 4–7 of the plan below — `7e8ec52`, `9147273`, `f0408c0`, `6fee422` (slider pre-check `b550626`)
 
 ## Logged, not fixed (no check box)
 
@@ -385,3 +386,106 @@ a pad key rides the car and then enters that floor; a drag on the tower lights a
 32–72× it, `U01-cost.md:8-10`). The measured builds: U01a 390k (`U01.md:150`), U01b 320k (`U01b.md:147`). The first
 tier touches more files than either but builds no new picture: about 350–450k. The second tier: about 200–300k, in its
 own session. The design check: 20 commits × 40–60k of the agent's own context = 0.8–1.2M. In all, about 1.4–2.0M.
+
+## Plan (after the corridor: `built-collaborators` and `one-job`, 2026-09-28) — amended after the grill
+
+**Premise.** Nothing on screen changes. One commit per step below, each green on `npm run check`, its design check
+before the next begins. After each commit that touches `SceneView`, `HudView`, `CanvasView` or `InputRouter`:
+`npx playwright test e2e/scene.spec.ts e2e/tower.spec.ts e2e/fold.spec.ts e2e/a11y.spec.ts e2e/focus.spec.ts
+e2e/map.spec.ts`; the baseline (taken 2026-09-28, session 5, without `map.spec`) is red at `scene.spec:72` and
+`focus.spec:43` only, both by plan — a commit passes when that set is unchanged. `kinds-not-optionals` gets its own
+plan once these land: its split maps the view model per picture, which `SceneDrawing` (step 4) creates.
+
+**The line drawn (OO 4).** Handed in, through a small interface owned by its user: a service that holds a rule or
+reaches the platform — the clock, the pictures, the hash, the roofs, the font, the door inks, the frame, the pad's
+groups, the tear, the scene events, the easings, the canvases, and a picture's drawers with behaviour (the roof
+drawers, the row shapes), as `CorridorParts` already is. Not handed in: a value made per call from the call's own
+facts (`Tween`, `SceneTrip`, `TravelCamera`, `StillCamera`, `Level`, `Retrace`, a drag); a table of plain values
+(`LevelLook`, which stays in `TowerPicture`); a view's own state holder (`CanvasSlots`, built by `HudView` from the
+makers handed in).
+
+**Found while planning:**
+- **The engine's factories all build their parts** (`Passages`, and 17 more in `src/engine/procgen/`: `NameParts`,
+  `Progeny`, `Doors`, `Sentences`, `Deal` …), wired by `LocationRegistry`. Converting `Passages` alone leaves two
+  patterns (the lesson "two places sharing a pattern"): all 18 go together, step 8 (the user's pick, 2026-09-28).
+- **`Passages` no longer takes a `Progeny`** (step 10 of the plan above removed it): that part of the item is done.
+- **`Shell` builds its `InputRouter`, and `InputRouter` its `SceneEvents`**: the same pattern, older; handing
+  `SceneEvents` in would make `Shell` carry it through. Both logged as HK-028, not fixed here.
+- **`Gesture.onSlider()` is asked in two places** (`SceneView.ts:537, 570`): both go with step 7's two drags.
+- **The slider's pointer use, name and value text have no test** (`tower.spec:23` finds it by role alone): step 7.0.
+
+**Walls touched and their guards:** reduced motion — `a11y.spec`, `scene.spec:158`; picture text at 12 px or more —
+`Pictures.test`, `CanvasFont.test`; a view carries no words — `ViewsCarryNoWords` (it scans `screens/*View.ts`; the
+slider's name comes from `vm.slider`); a tap in a picture resolves to an option id — `scene.spec:118, 140`.
+
+### Steps
+1. **picture-parts.** `ScenePictures`, a factory (the composition root's scene part, its reason in a comment): builds
+   the street, the tower and the corridor with their parts, the hash and the roofs shared. `StreetPicture` and
+   `TowerPicture` take their parts (font, hash, roofs, inks, roof drawers, row shapes) as `CorridorPicture` does;
+   `Roof` takes its hash. `main.ts` builds the registry from it. Tests build the street and the tower through it;
+   `CorridorPicture.test` keeps its own builder (it hands in its own `HallEnd`); `TowerPicture.test:219` builds `Roof`
+   with a hash. Guards: the picture tests and the two digest pins, unchanged.
+2. **presenter-helpers.** `Frame` handed to the four presenters that build one (Buffer, Recap, Help, Hud), through a
+   small interface; `Masthead` becomes a small interface in `src/ui/` (`name`, `buildLine`), the class
+   `BuildMasthead`. Changed on purpose: `Goldens.test:12`, `Masthead.test:8`, the six presenter tests' setup;
+   deleted: `Masthead.test:11` (the same behaviour as `:10`).
+3. **hud-view-wiring.** `Clock` (`now`, `subscribe`) and `Pictures` (`picture(key)`), small interfaces owned by the
+   scene and `HudView`; `MotionClock` and `SceneRegistry` answer them. `HudView` takes a `SceneViews` factory and a
+   `CanvasViews` factory (a method per slot); `MapPicture` and `TracePicture` take their font. All built in
+   `main.ts`. `Pictures.test:77, 99, 121, 140, 171` build them with a font. Guard: the browser set.
+4. **hud-presenter-jobs.** `HudPresenter.#drawing` becomes `SceneDrawing` (a place and its travel options → the
+   `SceneVM`) and `#pad` becomes `FloorPad` (the travel rows → the pad, with its `PadGroup` table), each handed in
+   through a small interface. The drawing tests (`HudPresenter.test:597-738`) and the pad tests (`:740-801`) move
+   down to `SceneDrawing.test` and `FloorPad.test` (testing principle 4); deleted on the way: `:785` (the pad's
+   wording only) and `:798` (the same branch as `:797`). `HudPresenter.test` keeps one test that the view model carries
+   a drawing and a pad; `Goldens.test:12` builds the presenter with both. The goldens do not change.
+5. **pixel-canvas.** `PixelCanvas`: a canvas in a host, sized in device pixels within the `PixelBudget`, its
+   `StylePalette`, its removal. `CanvasView` and `SceneView` both hold one, made by a `Canvases` factory handed in
+   (the palette needs the element). `CanvasMount` goes; `SceneMount` loses the canvas. Guards: `scene.spec:158-206`
+   (the still frame and the tear), `map.spec:36-48` (the map and trace canvases fill and paint), `fold.spec`.
+6. **scene-tear-and-zoom.** `TearPass` (the `CoherenceFx` plan drawn over the frame, `SceneView.ts:450-487`) and
+   `Zoom` (a trip's zoom or the way back out, and the transform it puts on the canvas, `:404-447`). Test RED first:
+   `Zoom` — at scale 1 the anchor stays put, fully zoomed it sits in the middle. That closes the UNGUARDED zoom anchor
+   of step 13 above.
+7. **scene-slider.**
+   - **7.0, its own commit before any production change:** `tower.spec` finds the slider by role and name (the
+     list's heading) and checks its value text names a floor; a pointer down on its track changes `aria-valuenow`,
+     and a drag along it changes it again. Green against today's code.
+   - `SceneSlider` owns the `role=slider` element: placed on the camera's track, its value and name, its arrow keys.
+     `Drag`, one interface, answered by `PictureDrag` (past the slop, one to one) and `SliderDrag` (the track under
+     the finger); `Gesture` splits into them and the `onSlider()` branch goes. `SceneMount` goes. `Gesture.test`
+     splits into the two drags, its pointer-id test kept once. Guards: step 7.0, `tower.spec:17, 46`.
+8. **engine-parts.** The 18 files in `src/engine/procgen/` that build their helpers take them in their constructor,
+   through one small interface per role, owned in `procgen/` and shared by the factories that use it (the names, the
+   children, the sentences, the doors, the deal …). `LocationRegistry` — the engine's composition root, built in
+   `main.ts` — builds each helper once and hands it in. Guards: the goldens (`Goldens.test`: any change to what the
+   world generates shows there) and the engine tests, unchanged; no test builds a factory directly.
+   - Found in the build: handing in `Progeny`, `NameParts` and `Sentences` ready-made would move each factory's own
+     facts (how many children and of which kind, which name list, which sentences) into the registry. So those three
+     come through makers (`Offspring`, `NameLists`, `LineDecks`), and each factory asks with its own facts.
+
+Then the user checks the tower and the corridor on the phone (no corridor scene test exists in `e2e/`): drag,
+slider, pad ride, zoom in and out.
+
+### Shape table
+| what | kind | owner | the one fact it owns | statics + why |
+| :-- | :-- | :-- | :-- | :-- |
+| `ScenePictures` | factory | `main.ts` | which parts each picture is built with | none |
+| `Masthead` / `BuildMasthead` | interface / service | `src/ui/`, the presenters | the game's name and build line | none |
+| `FrameOf` / `Frame` | interface / service | the four presenters | a place's frame colour name | none |
+| `Hash`, `Roofs` / `SceneHash`, `Roof` | interfaces / services | `Roof`, `StreetPicture`, `TowerPicture` | a text's fraction; a building's roof kind | none |
+| `SceneDrawing` + interface | service | `HudPresenter` | how a place and its options become the picture's view model | none |
+| `FloorPad` + interface | service | `HudPresenter` | how numbered rows group into a pad | none |
+| `Clock`, `Pictures` | interfaces | the scene, `HudView` | what their users ask of the clock and the registry | none |
+| `SceneViews` / `SceneViewMaker` | interface / factory | `HudView`, `main.ts` | how a scene view is made for a picture | none |
+| `CanvasViews` / `CanvasViewMaker` | interface / factory | `HudView`, `main.ts` | how each canvas slot's view is made | none |
+| `PixelCanvas` / `Canvases` | entity / factory interface | `CanvasView`, `SceneView` | a canvas's pixel size within the budget, and its inks | none |
+| `TearPass` + interface | service | `SceneView` | how the tear is drawn over a frame | none |
+| `Zoom` | value object | `SceneView` (per frame) | the canvas transform of a zoom at a moment | none |
+| `SceneSlider` | entity | `SceneView` | the slider element's place, value and keys | none |
+| `Drag` + `PictureDrag`, `SliderDrag` | interface + entities | `SceneView` | where one finger moves the view | none |
+| `Easing`, `SceneEvents` | existing interface / service | `SceneView` | handed in, no new type | none |
+| one interface per procgen helper role | interfaces | `src/engine/procgen/` | what a factory asks of a helper | none |
+
+**Estimate** (the unit the notes measure: this conversation's final context, plus the agents): the build about
+350–450k; 8–18 design checks at 30–60k, 0.3–0.9M; this plan's grill measured 139k. In all about 0.9–1.5M.

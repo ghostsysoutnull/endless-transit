@@ -29,6 +29,30 @@ test('the tower’s gauge is a slider: its arrow keys move the car from floor to
   expect(problems).toEqual([]);
 });
 
+test('the gauge is a slider named by the list, its value a floor: a finger on its track moves the car there, a drag along it moves it on', async ({
+  page,
+  hasTouch,
+}) => {
+  const problems = watchForErrors(page);
+  await building(page, hasTouch);
+  const slider = page.getByTestId('scene').getByRole('slider', { name: 'Ride to a floor' });
+  await expect(slider).toHaveAttribute('aria-valuetext', /^Floor \d+$/);
+  const box = await slider.boundingBox();
+  if (box === null) throw new Error('the slider has no box');
+  const x = box.x + box.width / 2;
+  const start = await slider.getAttribute('aria-valuenow');
+  await page.mouse.move(x, box.y + 2);
+  await page.mouse.down();
+  // The tap at the top of the track lands on the top floor, the slider's last place.
+  const top = (await slider.getAttribute('aria-valuemax')) ?? '';
+  expect(start).not.toBe(top);
+  await expect(slider).toHaveAttribute('aria-valuenow', top);
+  await page.mouse.move(x, box.y + box.height - 2, { steps: 12 });
+  await page.mouse.up();
+  await expect(slider).not.toHaveAttribute('aria-valuenow', top);
+  expect(problems).toEqual([]);
+});
+
 test('a floor tapped on the pad: the car rides there first, then the floor is entered', async ({
   page,
   hasTouch,

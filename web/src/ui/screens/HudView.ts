@@ -1,22 +1,19 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
-import { CanvasView } from '#ui/canvas/CanvasView.ts';
-import { MapPicture } from '#ui/canvas/MapPicture.ts';
-import { TracePicture } from '#ui/canvas/TracePicture.ts';
 import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
-import type { MotionClock } from '#ui/scene/MotionClock.ts';
 import type { ScenePicture } from '#ui/scene/ScenePicture.ts';
-import type { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
-import { SceneView } from '#ui/scene/SceneView.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { View } from '#ui/View.ts';
+import type { CanvasViews } from './CanvasViews.ts';
+import type { DrawnScene } from './DrawnScene.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+import type { Pictures } from './Pictures.ts';
 import { Retrace } from './Retrace.ts';
-import type { ReducedMotion } from '#ui/ReducedMotion.ts';
+import type { SceneViews } from './SceneViews.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
 type Slot = 'pane' | 'map' | 'trace';
@@ -56,12 +53,11 @@ export class HudView implements View<HudVM> {
     map: MapPanelVM['picture'];
     trace: TracePictureVM;
   }>;
-  readonly #clock: MotionClock;
-  readonly #scenes: SceneRegistry;
-  readonly #motion: ReducedMotion;
+  readonly #scenes: Pictures;
+  readonly #views: SceneViews;
   /** The scene drawn now: its host, its picture and the view drawing it. */
   #scene:
-    | { readonly host: HTMLElement; readonly picture: ScenePicture<SceneVM>; readonly view: SceneView }
+    | { readonly host: HTMLElement; readonly picture: ScenePicture<SceneVM>; readonly view: DrawnScene }
     | undefined;
   /** The child lit in the picture and the list, by its option id; empty when none. */
   #lit = '';
@@ -70,15 +66,14 @@ export class HudView implements View<HudVM> {
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
   #group: number | undefined;
 
-  /** The page's one clock moves every canvas of the screen, unless motion is reduced; the registry says which places are drawn (U01b). */
-  constructor(clock: MotionClock, scenes: SceneRegistry, motion: ReducedMotion) {
-    this.#clock = clock;
+  /** The registry says which places are drawn (U01b); the makers make the scene and each canvas the screen carries (U02). */
+  constructor(scenes: Pictures, views: SceneViews, canvases: CanvasViews) {
     this.#scenes = scenes;
-    this.#motion = motion;
+    this.#views = views;
     this.#canvases = new CanvasSlots({
-      pane: () => new CanvasView(new MapPicture(), clock, motion),
-      map: () => new CanvasView(new MapPicture(), clock, motion),
-      trace: () => new CanvasView(new TracePicture(), clock, motion),
+      pane: () => canvases.pane(),
+      map: () => canvases.map(),
+      trace: () => canvases.trace(),
     });
   }
 
@@ -123,7 +118,7 @@ export class HudView implements View<HudVM> {
     }
     if (this.#scene?.host !== host || this.#scene.picture !== picture) {
       this.#scene?.view.dispose();
-      const view = new SceneView(picture, this.#clock, this.#motion, (id) => {
+      const view = this.#views.make(picture, (id) => {
         this.#light(id);
       });
       view.mount(host);

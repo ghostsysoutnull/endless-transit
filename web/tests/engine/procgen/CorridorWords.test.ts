@@ -1,12 +1,15 @@
 import { describe, expect, test } from 'vitest';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { CorridorWords } from '#engine/procgen/CorridorWords.ts';
+import { LibrarySentences } from '#engine/procgen/LibrarySentences.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { MemoryContentSource } from '#tests/support/MemoryContentSource.ts';
 
 function words(list: string): CorridorWords {
   return new CorridorWords(
-    new ContentLibrary(new MemoryContentSource({ 'themes/descriptions/corridor.txt': list })),
+    new LibrarySentences(
+      new ContentLibrary(new MemoryContentSource({ 'themes/descriptions/corridor.txt': list })),
+    ),
   );
 }
 

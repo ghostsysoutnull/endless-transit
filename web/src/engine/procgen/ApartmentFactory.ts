@@ -1,4 +1,3 @@
-import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { Apartment, APARTMENT_KIND } from '#engine/model/Apartment.ts';
 import type { Corridor } from '#engine/model/Corridor.ts';
 import type { ApartmentShape } from './ApartmentShape.ts';
@@ -6,13 +5,13 @@ import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
 import { ROOM_KIND } from '#engine/model/Room.ts';
-import { Deal } from './Deal.ts';
-import { Doors } from './Doors.ts';
-import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
-import { ObjectDeck } from './ObjectDeck.ts';
-import { Progeny } from './Progeny.ts';
 import type { RoomCategories } from './RoomCategories.ts';
+import type { Children } from './Children.ts';
+import type { Dealer } from './Dealer.ts';
+import type { DoorDeal } from './DoorDeal.ts';
+import type { Offspring } from './Offspring.ts';
+import type { RelicDeck } from './RelicDeck.ts';
 
 /** One apartment in a hundred is a temporal anomaly (ApartmentFactory.groovy:27-31). */
 const ANOMALY = 0.01;
@@ -36,23 +35,24 @@ const APARTMENT: ApartmentShape = {
  */
 export class ApartmentFactory implements LocationFactory<Apartment, Corridor> {
   readonly #shape: ApartmentShape;
-  readonly #doors: Doors;
+  readonly #doors: DoorDeal;
   readonly #categories: RoomCategories;
-  readonly #rooms: Progeny;
-  readonly #deck: ObjectDeck;
-  readonly #deal = new Deal();
+  readonly #rooms: Children;
+  readonly #deck: RelicDeck;
+  readonly #deal: Dealer;
 
   constructor(
-    world: FactoryLookup,
-    library: ContentLibrary,
+    offspring: Offspring,
+    parts: { doors: DoorDeal; deck: RelicDeck; deal: Dealer },
     categories: RoomCategories,
     shape: ApartmentShape = APARTMENT,
   ) {
     this.#shape = shape;
-    this.#doors = new Doors(library);
+    this.#doors = parts.doors;
     this.#categories = categories;
-    this.#rooms = new Progeny(world, ROOMS, () => world.factoryFor(shape.rooms));
-    this.#deck = new ObjectDeck(library);
+    this.#rooms = offspring.of(ROOMS, () => shape.rooms);
+    this.#deck = parts.deck;
+    this.#deal = parts.deal;
   }
 
   kind(): LocationKind {

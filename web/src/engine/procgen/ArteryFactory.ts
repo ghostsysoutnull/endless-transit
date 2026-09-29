@@ -5,10 +5,10 @@ import type { Location } from '#engine/model/Location.ts';
 import type { LocationKind } from '#engine/model/LocationKind.ts';
 import type { Origin } from '#engine/model/Origin.ts';
 import { Vibe } from '#engine/model/Vibe.ts';
-import type { FactoryLookup } from './FactoryLookup.ts';
 import type { LocationFactory } from './LocationFactory.ts';
-import { Progeny } from './Progeny.ts';
 import type { ThemeCatalog } from './ThemeCatalog.ts';
+import type { Children } from './Children.ts';
+import type { Offspring } from './Offspring.ts';
 
 /** Every Artery is told in the same words (Corridor.groovy:46). */
 const SENTENCE = 'A pulsing, organic artery of data';
@@ -22,11 +22,11 @@ const ONE_CULTURE = 1;
  */
 export class ArteryFactory implements LocationFactory<Artery, Floor> {
   readonly #themes: ThemeCatalog;
-  readonly #crypts: Progeny;
+  readonly #crypts: Children;
 
-  constructor(world: FactoryLookup, themes: ThemeCatalog) {
+  constructor(offspring: Offspring, themes: ThemeCatalog) {
     this.#themes = themes;
-    this.#crypts = new Progeny(world, undefined, () => world.factoryFor(CRYPT_KIND));
+    this.#crypts = offspring.of(undefined, () => CRYPT_KIND);
   }
 
   kind(): LocationKind {

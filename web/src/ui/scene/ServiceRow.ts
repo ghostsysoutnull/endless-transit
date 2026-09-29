@@ -1,10 +1,14 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { RowShape } from './RowShape.ts';
-import { ShortReach } from './ShortReach.ts';
+import type { RowReach } from './RowReach.ts';
 
 /** A narrow service corridor on the tower: the line stops short at a blank end wall. */
 export class ServiceRow implements RowShape {
-  readonly #end = new ShortReach();
+  readonly #end: RowReach;
+
+  constructor(end: RowReach) {
+    this.#end = end;
+  }
 
   bow(): number {
     return 0;

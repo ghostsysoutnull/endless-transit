@@ -1,5 +1,6 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { Names } from './Names.ts';
 
 const NAMING = 'name';
 
@@ -8,7 +9,7 @@ const NAMING = 'name';
  * directory's index order, each word on its own branch of the location's naming seed. How the words are
  * joined is the business of the factory that asks.
  */
-export class NameParts {
+export class NameParts implements Names {
   readonly #library: ContentLibrary;
   readonly #directory: string;
 

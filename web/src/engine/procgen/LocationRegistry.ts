@@ -7,6 +7,19 @@ import { Shard, SHARD_KIND } from '#engine/model/Shard.ts';
 import { UNIVERSE_KIND } from '#engine/model/Universe.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { ApartmentFactory } from './ApartmentFactory.ts';
+import { Atmospheres } from './Atmospheres.ts';
+import { BuildingNamer } from './BuildingNamer.ts';
+import { BuildingSizes } from './BuildingSizes.ts';
+import { CorridorWords } from './CorridorWords.ts';
+import { Deal } from './Deal.ts';
+import { Doors } from './Doors.ts';
+import { FloorZones } from './FloorZones.ts';
+import { Furnishings } from './Furnishings.ts';
+import { LibraryNames } from './LibraryNames.ts';
+import { LibrarySentences } from './LibrarySentences.ts';
+import { ObjectDeck } from './ObjectDeck.ts';
+import { Passages } from './Passages.ts';
+import { ProgenyMaker } from './ProgenyMaker.ts';
 import { ArteryFactory } from './ArteryFactory.ts';
 import { BuildingFactory } from './BuildingFactory.ts';
 import { CityFactory } from './CityFactory.ts';
@@ -36,31 +49,50 @@ export class LocationRegistry implements FactoryLookup {
   readonly #factories: ReadonlyMap<string, LocationFactory>;
 
   constructor(library: ContentLibrary, themes: ThemeCatalog, warnings: WarningSink) {
+    // The engine's composition root: each factory's parts built once here and handed in; each factory keeps its own
+    // facts (how many children, which kind, which list) and asks the makers for them.
     const categories = new RoomCategories(library);
+    const offspring = new ProgenyMaker(this);
+    const names = new LibraryNames(library);
+    const decks = new LibrarySentences(library);
+    const deal = new Deal();
+    const doors = new Doors(library);
+    const words = new CorridorWords(decks);
+    const deck = new ObjectDeck(library);
+    const apartments = { doors, deck, deal };
+    const rooms = {
+      atmospheres: new Atmospheres(library, warnings),
+      furnishings: new Furnishings(library, deal),
+      deal,
+    };
     const entries: readonly LocationFactory[] = [
-      new UniverseFactory(this),
-      new FilamentFactory(this, library),
-      new SectorFactory(this, library),
-      new NullReachFactory(this),
-      new SolarSystemFactory(this, library),
-      new PlanetFactory(this, library, themes),
-      new CountryFactory(this, library, themes),
-      new CityFactory(this, library),
-      new StreetFactory(this, library),
-      new BuildingFactory(this, library),
-      new FloorFactory(this, library),
-      new CorridorFactory(this, library),
-      new ApartmentFactory(this, library, categories),
-      new RoomFactory(library, categories, warnings),
+      new UniverseFactory(offspring),
+      new FilamentFactory(offspring, names),
+      new SectorFactory(offspring, names),
+      new NullReachFactory(offspring),
+      new SolarSystemFactory(offspring, names),
+      new PlanetFactory(offspring, names, themes),
+      new CountryFactory(offspring, names, themes),
+      new CityFactory(offspring, names),
+      new StreetFactory(offspring, names),
+      new BuildingFactory(offspring, { namer: new BuildingNamer(library), sizes: new BuildingSizes() }),
+      new FloorFactory(offspring, {
+        zones: new FloorZones(library),
+        decks,
+        passages: new Passages(words, doors),
+      }),
+      new CorridorFactory(offspring, words),
+      new ApartmentFactory(offspring, apartments, categories),
+      new RoomFactory(library, categories, rooms),
       // Below the bedrock (I07): the same factories, registered again as the abyssal kinds.
-      new LayerFactory(this),
-      new ArteryFactory(this, themes),
-      new ApartmentFactory(this, library, categories, {
+      new LayerFactory(offspring),
+      new ArteryFactory(offspring, themes),
+      new ApartmentFactory(offspring, apartments, categories, {
         kind: CRYPT_KIND,
         rooms: SHARD_KIND,
         make: (origin, facts) => new Crypt(origin, facts),
       }),
-      new RoomFactory(library, categories, warnings, {
+      new RoomFactory(library, categories, rooms, {
         kind: SHARD_KIND,
         make: (origin, facts) => new Shard(origin, facts),
       }),

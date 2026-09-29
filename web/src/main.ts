@@ -16,37 +16,33 @@ import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { BrowserFrameSource } from '#platform/BrowserFrameSource.ts';
 import { BrowserReducedMotion } from '#platform/BrowserReducedMotion.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
-import { Masthead } from '#ui/Masthead.ts';
+import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
-import { BonePanel } from '#ui/scene/BonePanel.ts';
-import { ColdMark } from '#ui/scene/ColdMark.ts';
-import { CorridorPicture } from '#ui/scene/CorridorPicture.ts';
-import { CurvedHall } from '#ui/scene/CurvedHall.ts';
-import { DoorLooks } from '#ui/scene/DoorLooks.ts';
-import { EndingReach } from '#ui/scene/EndingReach.ts';
-import { EndWall } from '#ui/scene/EndWall.ts';
-import { FrostMark } from '#ui/scene/FrostMark.ts';
-import { GlassPanel } from '#ui/scene/GlassPanel.ts';
-import { LongHall } from '#ui/scene/LongHall.ts';
-import { MetalPanel } from '#ui/scene/MetalPanel.ts';
+import { CanvasMaker } from '#ui/canvas/CanvasMaker.ts';
+import { CanvasViewMaker } from '#ui/canvas/CanvasViewMaker.ts';
+import { MapPicture } from '#ui/canvas/MapPicture.ts';
+import { TracePicture } from '#ui/canvas/TracePicture.ts';
+import { Frame } from '#ui/Frame.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
-import { PlainMark } from '#ui/scene/PlainMark.ts';
-import { PlainPanel } from '#ui/scene/PlainPanel.ts';
-import { SceneHash } from '#ui/scene/SceneHash.ts';
-import { ServiceHall } from '#ui/scene/ServiceHall.ts';
-import { ShadowGlow } from '#ui/scene/ShadowGlow.ts';
-import { StaticHall } from '#ui/scene/StaticHall.ts';
-import { StaticMark } from '#ui/scene/StaticMark.ts';
-import { StonePanel } from '#ui/scene/StonePanel.ts';
-import { TimberPanel } from '#ui/scene/TimberPanel.ts';
+import { CoherenceFx } from '#ui/scene/CoherenceFx.ts';
+import { EaseInOut } from '#ui/scene/EaseInOut.ts';
+import { EaseOut } from '#ui/scene/EaseOut.ts';
+import { PixelBudget } from '#ui/scene/PixelBudget.ts';
+import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
-import { StreetPicture } from '#ui/scene/StreetPicture.ts';
-import { TowerPicture } from '#ui/scene/TowerPicture.ts';
+import { ScenePictures } from '#ui/scene/ScenePictures.ts';
+import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
+import { SliderMaker } from '#ui/scene/SliderMaker.ts';
+import { TearPass } from '#ui/scene/TearPass.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
 import { HelpView } from '#ui/screens/HelpView.ts';
+import { FloorPad } from '#ui/screens/FloorPad.ts';
+import { FloorsByTen } from '#ui/screens/FloorsByTen.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
+import { LayersTogether } from '#ui/screens/LayersTogether.ts';
+import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
 import { HudView } from '#ui/screens/HudView.ts';
 import { RebootPresenter } from '#ui/screens/RebootPresenter.ts';
 import { RebootView } from '#ui/screens/RebootView.ts';
@@ -70,57 +66,59 @@ const engine = new GameEngine({
   debug,
 });
 
-const masthead = new Masthead(__ET_BUILD__);
+const masthead = new BuildMasthead(__ET_BUILD__);
+const frame = new Frame();
 // The page's one frame loop (Decision 4): every canvas that moves listens to it.
 const clock = new MotionClock(new BrowserFrameSource(window));
 // Whether the player asked for reduced motion: asked by every moving thing, read only here.
 const motion = new BrowserReducedMotion(window);
 // The places that are drawn (U01b): a drawing key the engine hands over, and its picture. A new scene is one entry.
-// The corridor is handed every part it draws with (U02): a hall per shape, a panel per material, a mark per state.
-const noise = new SceneHash();
-const glow = new ShadowGlow();
-const wall = new EndWall();
-const reach = new EndingReach();
-const long = new LongHall();
+const pictures = new ScenePictures();
 const scenes = new SceneRegistry({
-  [STREET_KIND.key()]: new StreetPicture(),
-  [BUILDING_KIND.key()]: new TowerPicture(),
-  [CORRIDOR_KIND.key()]: new CorridorPicture({
-    font: new CanvasFont(),
-    inks: new DoorLooks(),
-    glow,
-    halls: {
-      long,
-      service: new ServiceHall(wall, reach),
-      curved: new CurvedHall(wall, reach),
-      static: new StaticHall(noise, reach),
-      none: long,
-    },
-    panels: {
-      glass: new GlassPanel(),
-      metal: new MetalPanel(),
-      stone: new StonePanel(),
-      timber: new TimberPanel(),
-      bone: new BonePanel(),
-      plain: new PlainPanel(),
-    },
-    marks: {
-      frost: new FrostMark(noise),
-      cold: new ColdMark(glow),
-      static: new StaticMark(),
-      plain: new PlainMark(),
-    },
-  }),
+  [STREET_KIND.key()]: pictures.street(),
+  [BUILDING_KIND.key()]: pictures.tower(),
+  [CORRIDOR_KIND.key()]: pictures.corridor(),
 });
+// The world screen's canvases: the map and the trace, drawn in the pictures' one font (U02).
+const font = new CanvasFont();
+// Every canvas on the page's one pixel budget (Decision 4).
+const canvasMaker = new CanvasMaker(new PixelBudget());
+const canvases = new CanvasViewMaker(
+  { map: new MapPicture(font), trace: new TracePicture(font) },
+  clock,
+  motion,
+  canvasMaker,
+);
 new Shell(
   engine,
   [
     new ScreenStage(new RebootPresenter(masthead), new RebootView()),
-    new ScreenStage(new RecapPresenter(masthead), new RecapView()),
-    new ScreenStage(new BufferPresenter(masthead), new BufferView()),
-    new ScreenStage(new HelpPresenter(masthead), new HelpView()),
+    new ScreenStage(new RecapPresenter(masthead, frame), new RecapView()),
+    new ScreenStage(new BufferPresenter(masthead, frame), new BufferView()),
+    new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
     new ScreenStage(new TitlePresenter(masthead), new TitleView()),
-    new ScreenStage(new HudPresenter(masthead), new HudView(clock, scenes, motion)),
+    new ScreenStage(
+      new HudPresenter(
+        masthead,
+        frame,
+        new SceneDrawing(),
+        new FloorPad({ floor: new FloorsByTen(), layer: new LayersTogether() }),
+      ),
+      new HudView(
+        scenes,
+        new SceneViewMaker({
+          clock,
+          motion,
+          canvases: canvasMaker,
+          sliders: new SliderMaker(),
+          tear: new TearPass(new CoherenceFx()),
+          picks: new SceneEvents(),
+          ride: new EaseInOut(),
+          coast: new EaseOut(),
+        }),
+        canvases,
+      ),
+    ),
   ],
   motion,
 ).start(container);

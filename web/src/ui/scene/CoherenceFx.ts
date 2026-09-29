@@ -1,5 +1,6 @@
 import { Seed } from '#engine/rng/Seed.ts';
 import type { FxPlan } from './FxPlan.ts';
+import type { FxPlans } from './FxPlans.ts';
 
 /** The tear cycles through this many frames, so a frame's plan is drawn once and reused. */
 export const FX_FRAMES = 8;
@@ -17,7 +18,7 @@ const NOTHING: FxPlan = { tears: [], grain: [], tint: 0, dark: false };
  * frame of the cycle `k`, never the clock or `Math.random`. The same noise, decay and `k` always plan the
  * same frame; the plans of the current noise — any seed equal to it — are kept, the rest forgotten.
  */
-export class CoherenceFx {
+export class CoherenceFx implements FxPlans {
   #noise = new Seed(0, 0);
   #decay = 0;
   #plans: (FxPlan | undefined)[] = [];

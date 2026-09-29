@@ -35,6 +35,11 @@ state out when it equals `'Stable'`, the name shown to the player, while every o
 goes by the list's key column. Stable's key is `plain`, like eight other states, so no key tells it apart. **Fix:** a
 key that says the state is worth naming (a fourth column, or Stable's own look key), and `brief()` asks the look.
 
+### HK-028 — `Shell` builds its `InputRouter`, and `InputRouter` its `SceneEvents`
+**Found:** 2026-09-28, the plan for U02's `built-collaborators` (`tasks/ui/U02-fixes.md`). Both build a collaborator
+instead of taking it (OO 4). **Fix:** `main.ts` builds both and hands them in; `Shell` takes the router, the router
+takes `SceneEvents`.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators

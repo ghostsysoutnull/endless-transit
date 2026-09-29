@@ -2,14 +2,13 @@ import { expect, test } from 'vitest';
 import { Seed } from '#engine/rng/Seed.ts';
 import { GameEngine } from '#engine/rules/GameEngine.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
-import { Masthead } from '#ui/Masthead.ts';
-import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import type { HudVM } from '#ui/screens/HudVM.ts';
 import { FixedEntropySource } from '#tests/support/FixedEntropySource.ts';
+import { hudPresenter } from '#tests/support/hudPresenter.ts';
 import { MemorySaveStore } from '#tests/support/MemorySaveStore.ts';
 import { realRegistry } from '#tests/support/world.ts';
 
-const presenter = new HudPresenter(new Masthead('golden'));
+const presenter = hudPresenter('golden');
 
 /** Everything the world screen shows, as text — every word of the view-model, in its order. */
 function page(vm: HudVM): string {

@@ -1,5 +1,6 @@
 import type { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { Zones } from './Zones.ts';
 
 const WORDS = 'names/floors';
 /** Floors below this draw from the lowest zone list; floors within this many of the top from the highest. */
@@ -12,7 +13,7 @@ const EXECUTIVE_WITHIN = 5;
  * `names/floors/zones/index`, the three under the top from the highest, everything between from the
  * middle. The words are the lists'; the heights are this file's.
  */
-export class FloorZones {
+export class FloorZones implements Zones {
   readonly #library: ContentLibrary;
 
   constructor(library: ContentLibrary) {

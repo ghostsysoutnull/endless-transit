@@ -3,7 +3,7 @@ import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import type { SceneHit } from '#ui/scene/SceneHit.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
-import { StreetPicture } from '#ui/scene/StreetPicture.ts';
+import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
 /** The phone's picture at 360 × 640 (measured, tasks/ui/U01b.md), and a wider one: the layout scales. */
@@ -50,7 +50,7 @@ function overlap(a: SceneHit, b: SceneHit): boolean {
   return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 }
 
-const picture = new StreetPicture();
+const picture = new ScenePictures().street();
 
 describe('the street picture: one row of buildings on a ground line, as the mock draws it, laid out as hit areas', () => {
   for (const size of [PHONE, WIDE]) {

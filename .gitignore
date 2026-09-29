@@ -17,6 +17,9 @@ terminal/screenshots/screenshot_*.txt
 terminal/screenshots/baseline_refactor_survival.txt
 terminal/screenshots/temp_test_screenshot.txt
 
+# The root link to web/node_modules: the code-search tool (LSP) finds TypeScript from the repo root.
+/node_modules
+
 # web/ — generated
 web/node_modules/
 web/dist/

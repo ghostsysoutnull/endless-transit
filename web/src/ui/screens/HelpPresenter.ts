@@ -1,5 +1,5 @@
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
-import { Frame } from '#ui/Frame.ts';
+import type { FrameOf } from '#ui/FrameOf.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
@@ -16,11 +16,12 @@ const RETURN_MARK = '▲ ';
  * extra (Decision 1).
  */
 export class HelpPresenter implements Presenter<HelpVM> {
-  readonly #frame = new Frame();
+  readonly #frame: FrameOf;
   readonly #masthead: Masthead;
 
-  constructor(masthead: Masthead) {
+  constructor(masthead: Masthead, frame: FrameOf) {
     this.#masthead = masthead;
+    this.#frame = frame;
   }
 
   accepts(snapshot: GameSnapshot): boolean {
