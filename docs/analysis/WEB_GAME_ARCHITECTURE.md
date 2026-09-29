@@ -222,6 +222,18 @@ panel per material family, a mark per state look (`DoorLooks` the inks) — each
 `CorridorSlider` along its foot. A building's floors are listed as a pad of numbers (`FloorPad`), one group up to
 twenty, else by tens (`FloorsByTen`, the Layers together first, `LayersTogether`), the car's group shown first.
 
+**The apartment's plan (U03).** A room's portrait is its apartment's plan (`PlanPortrait` → `PlanFigure`: every room
+in walking order with its `RoomSight` — visited, known, fog, which `Apartment.plan` owns — and its relic marks, the
+room stood in, its `RoomLook`); a scan surveys the apartment, which remembers it. `PlanLayout` lays the rooms out in
+serpentine rows (`FloorPlan`: `PlanBox`es in plan units, a `PlanDoor` — `SideDoor` or `LevelDoor` — between each room
+and the next, the entrance under the first). The plan's view is a `Framing` (a centre in `PlanPoint`s and a scale),
+not one number, so it has its own host: `PlanScene` shows a `PlanSketch` (`Planned`: `PlanPicture` + `PlanVM`) on
+the shared `SceneCanvas`; its `PlanCamera` keeps the framing in range, frames a room, coasts and shows the `Minimap`;
+a `PlanGesture` is a `PlanDrag` or a `Pinch`; a `PlanGlide` moves the view and a `PlanTrip` moves it then picks. The
+picture places each room (`PlacedRoom`) and paints it by its sight (`SIGHT_LOOKS`: a `SeenLook` or the `FogLook`, in
+`Tint`s). `SceneDrawing` joins the doorways' moves to their rooms by address, the leave and the takes; `HudView`
+sends every drawn button through the picture and lights its twin with one delegated listener each.
+
 **Debug mode.** `?debug` on the address, read only in `main.ts`, puts the debug commands on offer (INTEGRITY ladder,
 PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `debug: true`.
 

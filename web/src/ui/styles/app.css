@@ -1668,6 +1668,21 @@ body {
   order: -1;
 }
 
+/* A room's relics come right after the picture and its moves (U03): in a room of one, with no move, a relic's tile is
+   the first thing to tap, and it shows above the dock — the picture a little shorter on a small phone to make room for
+   the tiles' heading (at 360 × 640 the first tile clears the dock by 8 px; a taller phone keeps 44 % of its height). */
+.world[data-drawn]:has(.objects) > .scene {
+  height: clamp(200px, calc(100dvh - 395px), 44dvh);
+}
+
+.world[data-drawn] .aside {
+  display: contents;
+}
+
+.world[data-drawn] .aside > .objects {
+  order: -1;
+}
+
 /* The name stands over the picture as its caption; the rest of the card keeps the card's box. */
 .world[data-drawn] .cap > .head {
   padding-inline: 2px;
