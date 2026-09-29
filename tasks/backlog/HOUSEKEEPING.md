@@ -40,6 +40,12 @@ key that says the state is worth naming (a fourth column, or Stable's own look k
 instead of taking it (OO 4). **Fix:** `main.ts` builds both and hands them in; `Shell` takes the router, the router
 takes `SceneEvents`.
 
+### HK-029 — a lit door's name runs into the next door's number
+**Found:** 2026-09-29, the live check of build `a2e1ad0` (U02, the corridor, phone at 360 × 640). A lit door's full
+name is written beside its number (`5 · Industrial Barrier`) and runs into the next door's number (`6`), which cuts it
+off. The corridor's drawing did not change in that build, so it likely dates from the corridor itself. **Fix:** the
+name keeps clear of the doors' numbers (shortened, moved, or drawn over them), and the user judges it on the phone.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators
