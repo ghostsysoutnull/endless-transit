@@ -27,12 +27,12 @@ export class FloorPad implements Pads {
    * the tower the portrait draws; no tower, no pad.
    */
   of(portrait: Portrait, travel: readonly GameOption[], rows: readonly TravelRowVM[]): HudVM['pad'] {
-    if (travel.length === 0 || travel.some((option) => !option.numbered)) return null;
+    if (travel.length === 0 || travel.some((option) => !option.numbered)) return { shown: false };
     return portrait.drawnBy<HudVM['pad']>({
-      street: () => null,
+      street: () => ({ shown: false }),
       tower: (tower) => this.#pad(new ListedParts(tower.rows), travel, rows),
-      corridor: () => null,
-      unseen: () => null,
+      corridor: () => ({ shown: false }),
+      unseen: () => ({ shown: false }),
     });
   }
 
@@ -72,6 +72,6 @@ export class FloorPad implements Pads {
       };
     });
     const open = list.findIndex((group) => group.keys.some((key) => key.current));
-    return { label: 'Floors by tens', groups: list, open: Math.max(0, open) };
+    return { shown: true, label: 'Floors by tens', groups: list, open: Math.max(0, open) };
   }
 }

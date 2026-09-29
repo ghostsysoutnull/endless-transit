@@ -4,6 +4,7 @@ import { hudPresenter } from '#tests/support/hudPresenter.ts';
 import { option, PLANET, STREET, towerSnapshot } from '#tests/support/hudSnapshots.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
 import { placeOf } from '#tests/support/snapshotParts.ts';
+import { shown } from '#tests/support/shownPanel.ts';
 
 const presenter = hudPresenter('a1b2c3d');
 
@@ -179,12 +180,12 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
   });
 
   test('the position among its siblings is a plain chip under the kind’s own word — `Orbit 2 of 5`; the universe has none', () => {
-    expect(vm.place.position).toEqual({ label: 'Orbit', value: '2 of 5' });
+    expect(vm.place.position).toEqual({ shown: true, label: 'Orbit', value: '2 of 5' });
     const universe = presenter.toViewModel({
       ...PLANET,
       place: { ...placeOf(PLANET), position: { counted: false }, address: '0', frame: null },
     });
-    expect(universe.place.position).toBeNull();
+    expect(universe.place.position).toEqual({ shown: false });
     expect(universe.frame).toBe('default');
   });
 });
@@ -330,7 +331,7 @@ describe('HudPresenter.toViewModel — options stay data', () => {
       { id: 'leave', key: 'L', label: '▲ LEAVE PLANET', opposite: '' },
       { id: 'to-title', key: 'T', label: 'TITLE SCREEN', opposite: '' },
     ]);
-    expect(vm.sealedNote).toBeNull();
+    expect(vm.sealedNote).toEqual({ shown: false });
   });
 
   test('the options the input router may act on are the open ones, rows first — a sealed row is never one of them', () => {
@@ -347,7 +348,7 @@ describe('HudPresenter.toViewModel — options stay data', () => {
       ['02', true, true],
     ]);
     expect(street.rows[1]?.label).toBe('The Void-Watcher');
-    expect(street.sealedNote).toMatch(/sealed/i);
+    expect(shown(street.sealedNote).text).toMatch(/sealed/i);
     expect(street.sealedTag).toBe('SEALED');
   });
 
@@ -492,7 +493,7 @@ describe('HudPresenter.toViewModel — the picture and the pad (U01b, U02): made
     };
     const vm = presenter.toViewModel(falling);
     expect(vm.drawing.frame().decay).toBe(0.5);
-    expect(vm.pad?.groups[0]?.keys).toHaveLength(16);
+    expect(shown(vm.pad).groups[0]?.keys).toHaveLength(16);
   });
 });
 
@@ -631,37 +632,40 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
   });
 
   test('the MAP command’s panel is the same picture under the narrative, headed as the old screen was; none when the last step was no map; no GLITCH entry without marks; ☠ below the bedrock', () => {
-    expect(presenter.toViewModel(OUTDOORS).map).toBeNull();
-    const shown = presenter.toViewModel({ ...OUTDOORS, map: LATTICE });
-    expect(shown.map?.label).toBe('Lattice map');
-    expect(shown.map?.heading).toBe('[NEURAL_LATTICE_PROJECTION]');
-    expect(shown.map?.origin).toBe('SCAN_ORIGIN: Bright Boulevard');
-    expect(shown.map?.picture).toEqual(presenter.toViewModel(OUTDOORS).aside.map?.picture);
-    expect(shown.regions.map).toBe('Map');
-    const calm = presenter.toViewModel({ ...OUTDOORS, map: { ...LATTICE, marks: [] } });
-    expect(calm.map?.picture.legend.map((entry) => entry.label)).toEqual(['YOU', 'VISITED', 'UNVISITED']);
-    expect(calm.map?.summary).toBe('Lattice map of Bright Boulevard: 3 nodes, 1 visited.');
-    const below = presenter.toViewModel({
-      ...OUTDOORS,
-      map: {
-        ...LATTICE,
-        abyssal: true,
-        origin: { name: 'Layer -0x1', glyph: '☠' },
-        nodes: [{ x: 1, y: 1, glyph: '☠', name: 'Crypt 1', visited: false, noise: false }],
-      },
-    });
-    expect(below.map?.picture.legend).toEqual([
+    expect(presenter.toViewModel(OUTDOORS).map).toEqual({ shown: false });
+    const drawn = presenter.toViewModel({ ...OUTDOORS, map: LATTICE });
+    const map = shown(drawn.map);
+    expect(map.label).toBe('Lattice map');
+    expect(map.heading).toBe('[NEURAL_LATTICE_PROJECTION]');
+    expect(map.origin).toBe('SCAN_ORIGIN: Bright Boulevard');
+    expect(map.picture).toEqual(presenter.toViewModel(OUTDOORS).aside.map?.picture);
+    expect(drawn.regions.map).toBe('Map');
+    const calm = shown(presenter.toViewModel({ ...OUTDOORS, map: { ...LATTICE, marks: [] } }).map);
+    expect(calm.picture.legend.map((entry) => entry.label)).toEqual(['YOU', 'VISITED', 'UNVISITED']);
+    expect(calm.summary).toBe('Lattice map of Bright Boulevard: 3 nodes, 1 visited.');
+    const below = shown(
+      presenter.toViewModel({
+        ...OUTDOORS,
+        map: {
+          ...LATTICE,
+          abyssal: true,
+          origin: { name: 'Layer -0x1', glyph: '☠' },
+          nodes: [{ x: 1, y: 1, glyph: '☠', name: 'Crypt 1', visited: false, noise: false }],
+        },
+      }).map,
+    );
+    expect(below.picture.legend).toEqual([
       { glyph: '☠', label: 'YOU', tone: 'you' },
       { glyph: '☠', label: 'VISITED', tone: 'visited' },
       { glyph: '☠', label: 'UNVISITED', tone: 'unvisited' },
       { glyph: 'X', label: 'GLITCH', tone: 'mark' },
     ]);
-    expect(below.map?.heading).toBe('[NEURAL_LATTICE_PROJECTION]');
+    expect(below.heading).toBe('[NEURAL_LATTICE_PROJECTION]');
   });
 
   test('the TRACE command’s panel: one row per level with the depth, the kind in capitals, the name with its note, the current one last; the rows as words for a reader', () => {
-    expect(presenter.toViewModel(OUTDOORS).trace).toBeNull();
-    const shown = presenter.toViewModel({
+    expect(presenter.toViewModel(OUTDOORS).trace).toEqual({ shown: false });
+    const traced = presenter.toViewModel({
       ...OUTDOORS,
       trace: {
         steps: [
@@ -695,7 +699,8 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
         ],
       },
     });
-    expect(shown.trace).toEqual({
+    expect(traced.trace).toEqual({
+      shown: true,
       label: 'Lattice trace',
       heading: '[NEURAL_LATTICE_TRACE_INITIATED]',
       picture: {
@@ -732,7 +737,7 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
         '>> [12] ☠ SHARD : Inverted Processing Core',
       ],
     });
-    expect(shown.regions.trace).toBe('Trace');
+    expect(traced.regions.trace).toBe('Trace');
   });
 
   test('the dock folds after the way out (I09): on a phone LEAVE stays in reach and every other option opens behind MORE; the fold is empty of LEAVE at the universe', () => {

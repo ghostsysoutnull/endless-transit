@@ -103,8 +103,8 @@ export class HudView implements View<HudVM> {
     this.#vm = vm;
     render(this.#template(vm), this.#container);
     this.#canvases.bind('pane', this.#host('pane'), vm.aside.map?.picture ?? null);
-    this.#canvases.bind('map', this.#host('map'), vm.map?.picture ?? null);
-    this.#canvases.bind('trace', this.#host('trace'), vm.trace?.picture ?? null);
+    this.#canvases.bind('map', this.#host('map'), vm.map.shown ? vm.map.picture : null);
+    this.#canvases.bind('trace', this.#host('trace'), vm.trace.shown ? vm.trace.picture : null);
     this.#bindScene(vm.drawing.sketchedBy(this.#book));
   }
 
@@ -136,7 +136,9 @@ export class HudView implements View<HudVM> {
     this.#lit = mark;
     // The pad follows what is lit: dragging the car past a ten shows that ten's floors (the mock's `S.group`).
     const group =
-      this.#vm?.pad?.groups.findIndex((each) => each.keys.some((key) => mark.marks(key.id))) ?? -1;
+      this.#vm?.pad.shown === true
+        ? this.#vm.pad.groups.findIndex((each) => each.keys.some((key) => mark.marks(key.id)))
+        : -1;
     if (group >= 0) this.#group = group;
     this.#scene.view.light(mark);
     if (this.#vm !== undefined && this.#container !== undefined)
@@ -251,11 +253,11 @@ export class HudView implements View<HudVM> {
           <div class="body">
             <ul class="tags">
               ${
-                vm.place.position === null
-                  ? nothing
-                  : html`<li class="chip pos">
+                vm.place.position.shown
+                  ? html`<li class="chip pos">
                       <span class="k">${vm.place.position.label}</span> ${vm.place.position.value}
                     </li>`
+                  : nothing
               }
               ${vm.place.tags.map(
                 (tag) => html`
@@ -292,7 +294,7 @@ export class HudView implements View<HudVM> {
               ></div>`
             : nothing
         }
-        ${this.#scan(vm)} ${vm.map === null ? nothing : this.#map(vm.map, 'map', 'map', vm.regions.map)}
+        ${this.#scan(vm)} ${vm.map.shown ? this.#map(vm.map, 'map', 'map', vm.regions.map) : nothing}
         ${this.#trace(vm)}
         <div class="side">
           ${
@@ -301,17 +303,17 @@ export class HudView implements View<HudVM> {
               : html`
                   <section class="travel" aria-label=${vm.regions.travel}>
                     <h3 class="heading">${vm.heading}</h3>
-                    ${vm.sealedNote === null ? nothing : html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote}</p>`}
+                    ${vm.sealedNote.shown ? html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote.text}</p>` : nothing}
                     ${
-                      vm.pad === null
-                        ? html`<ol class="rows">
+                      vm.pad.shown
+                        ? this.#pad(vm, vm.pad, drawn)
+                        : html`<ol class="rows">
                             ${repeat(
                               vm.rows,
                               (row) => `${vm.scene}/${row.id}`,
                               (row) => this.#row(row, vm.sealedTag, drawn),
                             )}
                           </ol>`
-                        : this.#pad(vm, vm.pad, drawn)
                     }
                   </section>
                 `
@@ -451,7 +453,7 @@ export class HudView implements View<HudVM> {
   /** The drawn trace: the canvas in its host, and the same rows as lines for a reader only. */
   #trace(vm: HudVM): TemplateResult | typeof nothing {
     const trace = vm.trace;
-    if (trace === null) return nothing;
+    if (!trace.shown) return nothing;
     return html`
       <section class="tracep" data-testid="trace" aria-label=${vm.regions.trace} tabindex="-1" data-spot>
         <h3 class="heading">${trace.heading}</h3>
@@ -532,7 +534,7 @@ export class HudView implements View<HudVM> {
    * The pad (U02): the shown group's keys — a real button each, its number shown and its row's words for a
    * reader, lighting its floor like a row — then, past twenty, a tab per ten; a tab only shows its group.
    */
-  #pad(vm: HudVM, pad: NonNullable<HudVM['pad']>, drawn: boolean): TemplateResult {
+  #pad(vm: HudVM, pad: Extract<HudVM['pad'], { readonly shown: true }>, drawn: boolean): TemplateResult {
     const shown = Math.min(this.#group ?? pad.open, pad.groups.length - 1);
     const group = pad.groups[shown];
     return html`

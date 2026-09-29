@@ -4,6 +4,7 @@ import type { Screen } from '#ui/Screen.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { Drawing } from './Drawing.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
+import type { Panel } from './Panel.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
 /** The world screen as readonly data — plain data and the engine's value objects, framework-free. */
@@ -40,8 +41,8 @@ export interface HudVM extends Screen {
     readonly eyebrow: string;
     readonly icon: string;
     readonly name: string;
-    /** Its position among its siblings as a chip (`Orbit`, `2 of 5`); nothing for the universe. */
-    readonly position: { readonly label: string; readonly value: string } | null;
+    /** Its position among its siblings as a chip (`Orbit`, `2 of 5`); not shown for the universe, nor a floor. */
+    readonly position: Panel<{ readonly label: string; readonly value: string }>;
     readonly tags: readonly { readonly key: string; readonly label: string; readonly value: string }[];
     readonly description: readonly string[];
     /** Labelled lines under the description — a room's FURNITURE, its object count (the mock's rows). */
@@ -64,24 +65,24 @@ export interface HudVM extends Screen {
       readonly note: string;
     }[];
   } | null;
-  /** The map the last MAP drew (Guide:92): the picture and its words; nothing when the last step was no map. */
-  readonly map: MapPanelVM | null;
-  /** The trace the last TRACE drew (Guide:92): the picture and one line per level for a reader; nothing when the last step was no trace. */
-  readonly trace: {
+  /** The map the last MAP drew (Guide:92): the picture and its words; not shown when the last step was no map. */
+  readonly map: Panel<MapPanelVM>;
+  /** The trace the last TRACE drew (Guide:92): the picture and one line per level for a reader; not shown when the last step was no trace. */
+  readonly trace: Panel<{
     /** The panel's accessible name. */
     readonly label: string;
     readonly heading: string;
     readonly picture: TracePictureVM;
     readonly lines: readonly string[];
-  } | null;
+  }>;
   /** What the place's picture draws (U01b), or that no picture draws it: the screen then stays as it was. */
   readonly drawing: Drawing;
   /**
    * A list of places that go by their own numbers (a building's floors) as a pad of numbers (U02): the groups
    * (one, or tens past 20 — each with its label, `10–19`, and its rows), which one shows first, and the name of
-   * the tabs; nothing for any other list. `rows` still holds every row.
+   * the tabs; not shown for any other list. `rows` still holds every row.
    */
-  readonly pad: {
+  readonly pad: Panel<{
     readonly label: string;
     readonly groups: readonly {
       readonly label: string;
@@ -95,14 +96,14 @@ export interface HudVM extends Screen {
       }[];
     }[];
     readonly open: number;
-  } | null;
+  }>;
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
   /** The moves the place offers (up, down, into the corridor, on to the next room): a strip of buttons above the list. */
   readonly moves: readonly OptionVM[];
-  /** Why some rows are closed; nothing when none is. */
-  readonly sealedNote: string | null;
+  /** Why some rows are closed; not shown when none is. */
+  readonly sealedNote: Panel<{ readonly text: string }>;
   /** The word on a closed row. */
   readonly sealedTag: string;
   /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button. */
