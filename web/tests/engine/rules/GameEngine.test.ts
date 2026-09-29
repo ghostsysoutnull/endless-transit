@@ -44,8 +44,7 @@ function system(id: string, key: string, label: string): GameOption {
   };
 }
 
-/** A move option names the option that undoes it, so a screen can keep the focus off it. */
-/** A move option, and the place it leads to (U03: a move carries where it goes). */
+/** A move option names the option that undoes it, so a screen can keep the focus off it, and the place it leads to (U03). */
 function move(
   id: string,
   key: string,

@@ -138,15 +138,15 @@ export class Apartment extends Location {
     const reached = new Set(
       rooms
         .filter(seen)
-        .flatMap((room) => room.moves().map((move) => room.leadsTo(move.id)))
-        .filter((room) => room !== undefined),
+        .flatMap((room) => room.moves().map((move) => room.leadsTo(move.id)?.address().toString() ?? '')),
     );
     return rooms.map((room) => {
       const visited = seen(room);
+      const address = room.address().toString();
       return {
-        address: room.address().toString(),
+        address,
         name: room.name(),
-        sight: visited ? 'visited' : this.#surveyed || reached.has(room) ? 'known' : 'fog',
+        sight: visited ? 'visited' : this.#surveyed || reached.has(address) ? 'known' : 'fog',
         relics: visited || this.#surveyed ? (room.contents()?.objects.length ?? 0) : 0,
       };
     });

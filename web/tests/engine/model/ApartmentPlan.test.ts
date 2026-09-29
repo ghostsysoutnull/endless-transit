@@ -15,8 +15,8 @@ function as<T>(value: unknown, type: new (...args: never[]) => T): T {
   return value;
 }
 
-/** The first apartment of a sampled world with at least this many rooms. */
-function apartmentWith(rooms: number): Apartment {
+/** The first apartment of a sampled world with at least this many rooms, and whatever else it must have. */
+function apartmentWith(rooms: number, also: (apartment: Apartment) => boolean = () => true): Apartment {
   for (let n = 0; n < 200; n++) {
     const street = must(toStreet(registry.universe(sampleSeed(n)), () => n).at(-1));
     const building = as(street.children()[0], Building);
@@ -25,7 +25,7 @@ function apartmentWith(rooms: number): Apartment {
       .corridor()
       .children()
       .map((each) => as(each, Apartment))
-      .find((apartment) => apartment.roomCount() >= rooms);
+      .find((apartment) => apartment.roomCount() >= rooms && also(apartment));
     if (found !== undefined) return found;
   }
   throw new Error(`no apartment of ${String(rooms)} rooms`);
@@ -67,15 +67,13 @@ describe('a room is drawn as its apartment’s plan (U03)', () => {
   });
 
   test('relic marks: what lies in a visited room, nothing shown in a room not visited; a take lowers them', () => {
-    const rooms = roomsOf(apartmentWith(3));
+    const rooms = roomsOf(apartmentWith(3, (apartment) => apartment.relicsIn(0).length > 0));
     const first = must(rooms[0]);
     const lying = first.objects().length;
     const plan = planOf(first, seenOnly(first));
     expect(plan.rooms.map((room) => room.relics)).toEqual([lying, ...rooms.slice(1).map(() => 0)]);
-    if (lying > 0) {
-      first.capture(0);
-      expect(planOf(first, seenOnly(first)).rooms[0]?.relics).toBe(lying - 1);
-    }
+    first.capture(0);
+    expect(planOf(first, seenOnly(first)).rooms[0]?.relics).toBe(lying - 1);
   });
 
   test('a surveyed apartment: every room known, the relics of every room marked', () => {

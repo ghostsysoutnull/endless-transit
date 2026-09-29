@@ -55,23 +55,20 @@ export class SceneDrawing implements Drawings {
           shape: corridor.shape,
         }),
       // The plan's picture comes with its host (U03, a later commit): until then a room keeps its screen.
-      plan: () =>
-        new Undrawn(
-          this.#frame(
-            place,
-            decay,
-            travel.map((option) => this.#child(option)),
-          ),
-        ),
-      unseen: () =>
-        new Undrawn(
-          this.#frame(
-            place,
-            decay,
-            travel.map((option) => this.#child(option)),
-          ),
-        ),
+      plan: () => this.#undrawn(place, travel, decay),
+      unseen: () => this.#undrawn(place, travel, decay),
     });
+  }
+
+  /** A place no picture draws: its frame around its listed places. */
+  #undrawn(place: PlaceSummary, travel: readonly GameOption[], decay: number): Drawing {
+    return new Undrawn(
+      this.#frame(
+        place,
+        decay,
+        travel.map((option) => this.#child(option)),
+      ),
+    );
   }
 
   /** What every picture's view model shares, around its children: the words a reader hears count what is drawn. */
