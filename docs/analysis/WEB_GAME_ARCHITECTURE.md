@@ -224,6 +224,17 @@ band in the middle of the view moving, and the thread through each band's spot) 
 zooming into each spot, landing on your band); both built in `main.ts`. The rail is one button (`railTrace`) running
 TRACE, out of the tab order; the view keeps the level nearest the finger to open the column there.
 
+**The pole and the vibe (U05).** A level hands its vibe over as data: `Location.vibeFigure()` answers a `VibeFigure`
+(nothing above the planet; the planet's main and second pairs and stability; from the country down the trait, whether
+the level rebelled — `City` — and which values it drew from the second pair — `Apartment`, its rooms asking it), made by
+`Vibe.figure()`, which owns the drift rule and the stability's words (`stabilityText()`). `Location.poleSigns()` names
+a level's states (a curved corridor, a door not stable, an anomaly), and `LocationKind.glyph()` its plate's drawing;
+the trace step carries all three. `PolePresenter` (injected into `HudPresenter` as `PoleWords`) makes the `PoleVM`;
+`PoleLayout` places the rows, the ribbons' runs (broken where a value changes or a rebel district swaps), the drift
+current, its hooks and the ships' empty berths; `PolePicture` paints them, each plate's glyph from a
+`Record<GlyphLook, PoleGlyph>` built in `ScenePictures`. `TracePole` shows it in the trace, a button over each level's
+row, and `HudView` switches Pole | Column, the pick kept by a `TraceViewMemory` (`LocalStorageTraceViewMemory`).
+
 **The building and the corridor (U02).** A picture's view moves: it answers a `SceneCamera` for its view model at a
 size — `TravelCamera` (the tower's car, the corridor's walk: range, pace, coast, the stops, and a `CameraTrack`) or
 `StillCamera` (the street) — and `SceneView` owns where the view stands and asks the camera every rule. The track is a
