@@ -8,7 +8,7 @@ import type { AreaPart } from './AreaPart.ts';
 export const FILAMENT_KIND = new LocationKind({
   key: 'filament',
   title: 'Cosmic filament',
-  icon: '»',
+  scale: '10²⁴ m', icon: '»',
   indexLabel: 'CONDUIT',
 });
 

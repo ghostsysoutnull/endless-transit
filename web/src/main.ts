@@ -18,7 +18,6 @@ import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import { CanvasMaker } from '#ui/canvas/CanvasMaker.ts';
 import { CanvasViewMaker } from '#ui/canvas/CanvasViewMaker.ts';
 import { MapPicture } from '#ui/canvas/MapPicture.ts';
-import { TracePicture } from '#ui/canvas/TracePicture.ts';
 import { Frame } from '#ui/Frame.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
 import { CoherenceFx } from '#ui/scene/CoherenceFx.ts';
@@ -27,6 +26,8 @@ import { EaseOut } from '#ui/scene/EaseOut.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
+import { Dive } from '#ui/scene/Dive.ts';
+import { TraceBands } from '#ui/scene/TraceBands.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { SceneStage } from '#ui/scene/SceneStage.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
@@ -85,12 +86,7 @@ const scenes = new SceneRegistry({
 const font = new CanvasFont();
 // Every canvas on the page's one pixel budget (Decision 4).
 const canvasMaker = new CanvasMaker(new PixelBudget());
-const canvases = new CanvasViewMaker(
-  { map: new MapPicture(font), trace: new TracePicture(font) },
-  clock,
-  motion,
-  canvasMaker,
-);
+const canvases = new CanvasViewMaker({ map: new MapPicture(font) }, clock, motion, canvasMaker);
 new Shell(
   engine,
   [
@@ -126,6 +122,10 @@ new Shell(
           ),
         ),
         canvases,
+        {
+          bands: new TraceBands({ canvases: canvasMaker, clock, motion }),
+          dive: new Dive({ canvases: canvasMaker, clock, motion }),
+        },
       ),
     ),
   ],

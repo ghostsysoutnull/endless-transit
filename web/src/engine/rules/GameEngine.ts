@@ -243,8 +243,23 @@ export class GameEngine {
         options: () => (this.#atTitle() ? [] : [systemOption(TRACE, '', 'Trace')]),
         run: () => {
           const trail = this.#journey.here()?.trail() ?? [];
+          const player = this.#journey.player();
+          const seen = (place: Location): boolean => player.visited(place);
           this.#trace = {
             steps: trail.map((step, depth) => ({
+              address: step.address().toString(),
+              portrait: step.bandPortrait(seen, trail[depth + 1]),
+              children: step.listing().map((child) => ({
+                address: child.address().toString(),
+                name: child.name(),
+                ordinal: String(child.ordinal()),
+                landmark: child.landmark(),
+                visited: player.visited(child),
+                sealed: child.sealed(),
+              })),
+              facts: step.facts(),
+              words: step.description()[0] ?? '',
+              scale: step.kind().scale(),
               depth,
               icon: step.kind().icon(),
               kind: step.kind().title(),

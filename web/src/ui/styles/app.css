@@ -448,6 +448,25 @@ body {
    stand is ringed in the frame's colour. The names are read out, not shown. */
 .rail {
   min-width: 0;
+  position: relative;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* The rail is one button (U04): a tap anywhere on it runs TRACE, the column opening at the level nearest the finger. */
+.rail-hit {
+  all: unset;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rail-hit:focus-visible {
+  outline: 2px solid var(--frame);
+  outline-offset: 2px;
 }
 
 .rail ol {
@@ -1694,7 +1713,7 @@ body {
    (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
 .world[data-drawn] > .scene {
   order: -2;
-  height: clamp(200px, calc(100dvh - 363px), 44dvh);
+  height: clamp(200px, calc(100dvh - 381px), 44dvh);
 }
 
 .world[data-drawn] .travel {
@@ -1864,4 +1883,229 @@ body {
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* The trace column (U04, Decision 11): over everything, a band a level from the universe down to you, the thread
+   through them; a band tapped opens larger; the dive plays over it all. */
+.column {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: var(--ground);
+  color: var(--text);
+}
+
+.col-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule-hi);
+  touch-action: none;
+}
+
+.col-head h2 {
+  flex: 1;
+  margin: 0;
+  color: var(--frame);
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.col-dive,
+.col-close,
+.col-skip {
+  all: unset;
+  box-sizing: border-box;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 14px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--rule-hi);
+  color: var(--text);
+  font: 700 14px var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.col-dive {
+  border-color: var(--yl);
+  color: var(--yl);
+}
+
+.col-dive:focus-visible,
+.col-close:focus-visible,
+.col-skip:focus-visible {
+  outline: 2px solid var(--frame);
+}
+
+.col-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.col-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px 12px 40vh;
+}
+
+.col-thread {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.col-thread canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bands {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.band {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid var(--rule-hi);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.band:focus-visible {
+  outline: 2px solid var(--frame);
+}
+
+.band-li.here .band {
+  border-color: var(--frame);
+}
+
+.band-li.abyssal .band {
+  border-color: var(--rd);
+}
+
+.b-pic {
+  position: relative;
+  display: block;
+  height: 150px;
+}
+
+.band-li.open .b-pic {
+  height: 320px;
+}
+
+.b-cv {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.b-cv canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.b-scale {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  padding: 1px 6px;
+  background: var(--ground);
+  color: var(--cy);
+  font-size: 12px;
+}
+
+.b-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px 10px;
+}
+
+.b-info .eyebrow {
+  color: var(--dim);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.b-info .eyebrow b {
+  color: var(--yl);
+}
+
+.b-name {
+  color: var(--frame);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.b-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.b-tags .chip {
+  border: 1px solid var(--rule-hi);
+  padding: 1px 6px;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.b-tags .chip b {
+  color: var(--text);
+  font-weight: 400;
+}
+
+.b-words {
+  font-size: 13px;
+}
+
+.b-fact {
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.col-reel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--ground);
+}
+
+.reel {
+  position: absolute;
+  inset: 0;
+}
+
+.reel canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.col-skip {
+  position: absolute;
+  right: 12px;
+  bottom: 24px;
+  background: var(--ground);
 }

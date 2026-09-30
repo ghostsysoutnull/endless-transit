@@ -9,7 +9,7 @@ import type { AreaPart } from './AreaPart.ts';
 export const PLANET_KIND = new LocationKind({
   key: 'planet',
   title: 'Planet',
-  icon: '⊕',
+  scale: '10⁷ m', icon: '⊕',
   indexLabel: 'ORBIT',
 });
 

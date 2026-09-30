@@ -90,6 +90,16 @@ export abstract class Location {
     return [];
   }
 
+  /**
+   * What this place's band in the trace draws (U04): its own picture, unless the kind is drawn otherwise there — a
+   * floor as its tower at its car, a corridor as the corridor, an apartment as its plan at the room you went into
+   * (`next`, the step below it on the trail, or none on the last).
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default ignores the step below; an apartment reads it
+  bandPortrait(seen: (place: Location) => boolean, _next: Location | undefined): Portrait {
+    return this.portrait(seen);
+  }
+
   /** What this place adds to its street's picture: nothing, unless the kind stands on a street (a building). */
   onStreet(): readonly BuildingFigure[] {
     return [];

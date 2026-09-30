@@ -11,7 +11,7 @@ import { TowerPortrait } from './TowerPortrait.ts';
 export const BUILDING_KIND = new LocationKind({
   key: 'building',
   title: 'Building',
-  icon: '⌂',
+  scale: '10² m', icon: '⌂',
   indexLabel: 'Building',
 });
 

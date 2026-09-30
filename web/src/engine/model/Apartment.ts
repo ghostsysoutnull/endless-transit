@@ -11,11 +11,12 @@ import type { PlanRoom } from './PlanRoom.ts';
 import type { Relic } from './Relic.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 import type { ScanReport } from './ScanReport.ts';
+import type { Portrait } from './Portrait.ts';
 
 export const APARTMENT_KIND = new LocationKind({
   key: 'apartment',
   title: 'Apartment',
-  icon: '🚪',
+  scale: '15 m', icon: '🚪',
   indexLabel: 'UNIT',
 });
 
@@ -236,5 +237,10 @@ export class Apartment extends Location {
 
   approachVerb(): string {
     return 'Enter Room:';
+  }
+
+  /** In the trace an apartment is its plan at the room you went into: that room's own picture (U04). */
+  override bandPortrait(seen: (place: Location) => boolean, next: Location | undefined): Portrait {
+    return next === undefined ? super.bandPortrait(seen, next) : next.portrait(seen);
   }
 }

@@ -1,4 +1,4 @@
-import type { TracePictureVM } from '#ui/canvas/TracePictureVM.ts';
+import type { TraceColumnVM } from './TraceColumnVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Screen } from '#ui/Screen.ts';
 import type { AsideVM } from './AsideVM.ts';
@@ -70,13 +70,9 @@ export interface HudVM extends Screen {
   /** The map the last MAP drew (Guide:92): the picture and its words; not shown when the last step was no map. */
   readonly map: Panel<MapPanelVM>;
   /** The trace the last TRACE drew (Guide:92): the picture and one line per level for a reader; not shown when the last step was no trace. */
-  readonly trace: Panel<{
-    /** The panel's accessible name. */
-    readonly label: string;
-    readonly heading: string;
-    readonly picture: TracePictureVM;
-    readonly lines: readonly string[];
-  }>;
+  readonly trace: Panel<TraceColumnVM>;
+  /** The rail as one button (U04): it runs TRACE, the column opening at the level nearest the finger. */
+  readonly railTrace: { readonly id: string; readonly label: string } | null;
   /** What the place's picture draws (U01b), or that no picture draws it: the screen then stays as it was. */
   readonly drawing: Drawing;
   /**

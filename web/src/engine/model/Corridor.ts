@@ -5,11 +5,13 @@ import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { ScanReport } from './ScanReport.ts';
+import { CorridorPortrait } from './CorridorPortrait.ts';
+import type { Portrait } from './Portrait.ts';
 
 export const CORRIDOR_KIND = new LocationKind({
   key: 'corridor',
   title: 'Corridor',
-  icon: '▅',
+  scale: '40 m', icon: '▅',
   indexLabel: 'CONDUIT',
 });
 
@@ -96,5 +98,14 @@ export class Corridor extends Location {
 
   approachVerb(): string {
     return 'Open';
+  }
+
+  /** In the trace a corridor is drawn as its floor's corridor, walked (U04). */
+  override bandPortrait(): Portrait {
+    return new CorridorPortrait({
+      shape: this.#floor.shape(),
+      abyssal: this.abyssal(),
+      doors: this.listing().flatMap((apartment) => apartment.onCorridor()),
+    });
   }
 }

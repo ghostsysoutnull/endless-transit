@@ -10,7 +10,7 @@ import type { AreaPart } from './AreaPart.ts';
 export const COUNTRY_KIND = new LocationKind({
   key: 'country',
   title: 'Country',
-  icon: '⬚',
+  scale: '10⁶ m', icon: '⬚',
   indexLabel: 'REGION',
 });
 

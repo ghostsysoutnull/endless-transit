@@ -1,3 +1,4 @@
+import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
@@ -54,9 +55,6 @@ const LEGEND: Readonly<Record<LegendTone, string>> = {
   mark: 'GLITCH',
 };
 const MAP_HEADING = '[NEURAL_LATTICE_PROJECTION]';
-const TRACE_HEADING = '[NEURAL_LATTICE_TRACE_INITIATED]';
-/** The trace's mark on the current line (LatticeTraceComponent.groovy:85). */
-const TRACE_MARK = '>> ';
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -178,7 +176,11 @@ export class HudPresenter implements Presenter<HudVM> {
         snapshot.map === null
           ? { shown: false }
           : { shown: true, ...this.#mapPanel(snapshot.map, MAP_HEADING) },
-      trace: snapshot.trace === null ? { shown: false } : this.#tracePanel(snapshot.trace),
+      trace:
+        snapshot.trace === null ? { shown: false } : this.#column(snapshot.trace, place.noise, player.decay),
+      railTrace: snapshot.options.some((option) => option.id === 'trace')
+        ? { id: 'trace', label: 'Trace: every level from the universe down to here' }
+        : null,
       drawing,
       pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
@@ -280,24 +282,47 @@ export class HudPresenter implements Presenter<HudVM> {
     };
   }
 
-  /** The trace as a panel: the picture's rows, and the same rows as lines of text (the old `ll` output) for a reader. */
-  #tracePanel(trace: TraceSummary): HudVM['trace'] {
-    const rows = trace.steps.map((step) => ({
-      depth: `[${String(step.depth).padStart(2, '0')}]`,
-      glyph: step.icon,
-      kind: step.kind.toUpperCase(),
-      name: `${step.name}${step.meta}`,
-      current: step.current,
-      abyssal: step.abyssal,
-    }));
+  /** The trace as a column (U04): a band a level, its picture the level's own, its words and counts plain. */
+  #column(trace: TraceSummary, noise: Seed, decay: number): HudVM['trace'] {
+    const steps = trace.steps;
     return {
       shown: true,
-      label: 'Lattice trace',
-      heading: TRACE_HEADING,
-      picture: { rows },
-      lines: rows.map(
-        (row) => `${row.current ? TRACE_MARK : ''}${row.depth} ${row.glyph} ${row.kind} : ${row.name}`,
-      ),
+      label: 'Trace from the universe',
+      title: 'Trace',
+      close: 'Close',
+      closeMark: '✕',
+      dive: 'Dive',
+      skip: 'Skip',
+      bands: steps.map((step, index) => {
+        const next = steps[index + 1];
+        const depth = String(step.depth).padStart(2, '0');
+        const visited = step.children.filter((child) => child.visited).length;
+        const facts = [
+          ...(step.children.length === 0
+            ? []
+            : [`${String(step.children.length)} inside · ${String(visited)} visited`]),
+          ...(next === undefined ? [] : [`You went down into ${next.name}`]),
+        ];
+        return {
+          key: step.address,
+          eyebrow: `Depth ${depth} · ${step.kind}`,
+          name: step.name,
+          label: `Depth ${depth}, ${step.kind}: ${step.name}${step.current ? ', you are here' : ''}`,
+          here: step.current,
+          hereText: 'You are here',
+          tags: step.facts.map((fact) => ({
+            key: fact.key,
+            label: fact.label,
+            value: new Phrase(fact.value).capitalised(),
+          })),
+          words: step.words,
+          facts,
+          scale: step.scale,
+          abyssal: step.abyssal,
+          drawing: this.#drawings.band(step, noise, decay),
+          into: next?.address ?? '',
+        };
+      }),
     };
   }
 

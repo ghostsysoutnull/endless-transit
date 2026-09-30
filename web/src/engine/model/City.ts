@@ -6,7 +6,7 @@ import type { Vibe } from './Vibe.ts';
 import type { Portrait } from './Portrait.ts';
 import type { AreaPart } from './AreaPart.ts';
 
-export const CITY_KIND = new LocationKind({ key: 'city', title: 'City', icon: '🏙', indexLabel: 'DISTRICT' });
+export const CITY_KIND = new LocationKind({ key: 'city', title: 'City', scale: '10⁴ m', icon: '🏙', indexLabel: 'DISTRICT' });
 
 /** A city; one in ten is a rebel district, which carries the planet's vibe with cultures and eras swapped. */
 export class City extends Location {

@@ -6,7 +6,7 @@ import type { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 
-export const LAYER_KIND = new LocationKind({ key: 'layer', title: 'Layer', icon: '▤', indexLabel: 'STRATA' });
+export const LAYER_KIND = new LocationKind({ key: 'layer', title: 'Layer', scale: '60 m', icon: '▤', indexLabel: 'STRATA' });
 
 /** Every Layer is the substrate (Building.groovy:79). */
 const ZONE = 'ABYSSAL_SUBSTRATE';

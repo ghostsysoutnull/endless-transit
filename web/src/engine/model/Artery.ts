@@ -8,7 +8,7 @@ import type { Vibe } from './Vibe.ts';
 export const ARTERY_KIND = new LocationKind({
   key: 'artery',
   title: 'Artery',
-  icon: '▅',
+  scale: '40 m', icon: '▅',
   indexLabel: 'CONDUIT',
 });
 

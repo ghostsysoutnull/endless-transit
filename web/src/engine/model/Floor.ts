@@ -17,7 +17,7 @@ import { Phrase } from './Phrase.ts';
 import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤' });
+export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', scale: '60 m', icon: '▤' });
 
 /** The two modes, stateless, shared by every floor; a saved mode id finds its state here — a new mode is one more entry. */
 const ELEVATOR: FloorState = new ElevatorState();
@@ -244,6 +244,11 @@ export class Floor extends Location {
 
   description(): readonly string[] {
     return this.#state.description(this);
+  }
+
+  /** In the trace a floor is its building's tower, the car at its level (U04). */
+  override bandPortrait(): Portrait {
+    return this.#building.portrait();
   }
 
   status(): string {
