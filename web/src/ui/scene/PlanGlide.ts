@@ -3,7 +3,7 @@ import type { Framing } from './Framing.ts';
 import type { PlanMotion } from './PlanMotion.ts';
 import { Tween } from './Tween.ts';
 
-/** The plan's view gliding from one framing to another (a coast, a minimap tap). Immutable. */
+/** The plan's view gliding from one framing to another (a coast, a pinch settling, the corner map pulling back). Immutable. */
 export class PlanGlide implements PlanMotion {
   readonly #from: Framing;
   readonly #to: Framing;
