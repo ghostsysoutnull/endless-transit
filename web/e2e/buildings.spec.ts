@@ -90,9 +90,9 @@ test('from the title: a new world lands on a street; into a building, the elevat
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(page.getByTestId('path').locator('li')).toHaveCount(13);
   await expect(page.getByTestId('path')).toContainText('Corridor');
-  await expect(page.locator('.tag')).toHaveCount(6); // TEMPORAL_MARKER (I07), TYPE, OXY, TEMP, SIGNAL, RESONANCE
+  await expect(page.locator('.tag')).toHaveCount(5); // Era (I07), Type, Oxygen, Temp, Signal
   await expect(page.locator('.desc p')).toHaveCount(2);
-  await expect(page.getByRole('button', { name: /exit apartment/i })).toBeVisible();
+  await expect(page.getByRole('button', { name: /leave the apartment/i })).toBeVisible();
   await expectTouchable(page, 'room');
   await shoot(page, '4-room');
 
@@ -100,11 +100,11 @@ test('from the title: a new world lands on a street; into a building, the elevat
   const forward = page.getByRole('button', { name: /go forward/i });
   if ((await forward.count()) > 0) {
     await press(page, /go forward/i, hasTouch);
-    await expect(page.getByRole('button', { name: /exit apartment/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /leave the apartment/i })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /go back/i })).toBeVisible();
     await press(page, /go back/i, hasTouch);
   }
-  await press(page, /exit apartment/i, hasTouch);
+  await press(page, /leave the apartment/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
   await expect(page.getByTestId('place-name')).toHaveText('Floor 2');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
@@ -146,7 +146,7 @@ test('reload restores the room, and the way out still opens on the door list', a
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(page.getByTestId('place-name')).toHaveText(room);
   await expect(page.getByTestId('status')).toContainText(/restored/i);
-  await press(page, /exit apartment/i, hasTouch);
+  await press(page, /leave the apartment/i, hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
   expect(problems).toEqual([]);
@@ -202,7 +202,7 @@ test('still fits at 360 px wide inside a building: building, elevator, corridor,
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expectTouchable(page, '360px room');
-  await press(page, /exit apartment/i, hasTouch);
+  await press(page, /leave the apartment/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
   await expectTouchable(page, '360px corridor');
   await press(page, /back to elevator/i, hasTouch);

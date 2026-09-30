@@ -24,7 +24,7 @@ function namesAlong(seed: Seed, index: number): string[] {
       .listing()
       .map((each) => each.name())
       .join(' | ')}`,
-    `room: ${room.name()} (${String(room.parent()?.children().length)} rooms), ${room.description().join(' ')} ${room.status()}`,
+    `room: ${room.name()} (${String(room.parent()?.children().length)} rooms), ${room.description().join(' ')}`,
   ];
 }
 
@@ -45,8 +45,8 @@ test('seed 7F3A-91C2-0B4D-E6A8, first child all the way down', () => {
     'vibe: baroque/future, then shogun/industrial, Industrial @ 0.77',
     'buildings: 4, first: Ornate Sanctum',
     'building 0: Ornate Sanctum, 16 floors, 9 doors, corridor theme baroque, top floor Peak observatory',
-    'doors: _void_sink_ Brutalist Slab [PITTED] | Lacquered Timber Gate [WEEPING] | ⟨RESONANCE⟩ Synth-Glass Slab [PITTED] | _quarantine_ Riveted Iron Hatch [FROZEN] | Industrial Barrier [SCORCHED] | Synth-Glass Slab [PITTED] | Frosted Crystal Pane [WEEPING] | Synth-Glass Slab [SCORCHED] | Reinforced Polymer [RUSTED]',
-    'room: Grand Power Plant (2 rooms), You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread. The space is illuminated by a soft holographic haze with no visible source. ATMOS: 14% | TEMP: 7°C',
+    'doors: Brutalist Slab, pitted | Lacquered Timber Gate, weeping | Synth-Glass Slab, pitted | Riveted Iron Hatch, frozen | Industrial Barrier, scorched | Synth-Glass Slab, pitted | Frosted Crystal Pane, weeping | Synth-Glass Slab, scorched | Reinforced Polymer, rusted',
+    'room: Grand Power Plant (2 rooms), You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread. The space is illuminated by a soft holographic haze with no visible source.',
   ]);
 });
 
@@ -63,8 +63,8 @@ test('seed 0000-0000-0000-0000, second child all the way down', () => {
     'vibe: gilded/analog, then zenith/atomic, Ceremonial @ 0.855',
     'buildings: 4, first: SalonSpire',
     'building 1: Velvet Conservatory, 5 floors, 3 doors, corridor theme gilded, top floor Peak observatory',
-    'doors: Industrial Barrier [FROZEN] | Brutalist Slab [STATIC] | Brutalist Slab [PITTED]',
-    'room: Lacquered Ritual Chamber (7 rooms), You are in sacred geometric reconstruction. The walls are purple panels of tooled leather and brass studs. The space is illuminated by the amber glow of a radio dial. ATMOS: 16% | TEMP: 11°C',
+    'doors: Industrial Barrier, frozen | Brutalist Slab, static | Brutalist Slab, pitted',
+    'room: Lacquered Ritual Chamber (7 rooms), You are in sacred geometric reconstruction. The walls are purple panels of tooled leather and brass studs. The space is illuminated by the amber glow of a radio dial.',
   ]);
 });
 
@@ -81,7 +81,7 @@ test('seed 0000-1234-0000-4660, third child all the way down', () => {
     'vibe: neon/industrial, then rust/atomic, Ceremonial @ 0.9',
     'buildings: 8, first: StripWell',
     'building 2: Fluorescent Terminal, 7 floors, 2 doors, corridor theme neon, top floor Peak observatory',
-    'doors: [VOID_SINK] Pitted Concrete | ⟨VOID_SINK⟩ Synth-Glass Slab [SCORCHED]',
-    'room: Synthetic Memory Well (7 rooms), You are in a circular nave beneath a dark dome. The walls are gray corrugated plastic over flickering tubes. The space is illuminated by sparks arcing from an open junction. ATMOS: 19% | TEMP: 16°C',
+    'doors: Pitted Concrete | Synth-Glass Slab, scorched',
+    'room: Synthetic Memory Well (7 rooms), You are in a circular nave beneath a dark dome. The walls are gray corrugated plastic over flickering tubes. The space is illuminated by sparks arcing from an open junction.',
   ]);
 });

@@ -56,7 +56,7 @@ export class HelpPresenter implements Presenter<HelpVM> {
             },
             {
               term: 'GO FORWARD · GO BACK',
-              what: 'Walk an apartment’s rooms. Only the first room has EXIT APARTMENT.',
+              what: 'Walk an apartment’s rooms. Only the first room has the way out: Leave the apartment.',
             },
             {
               term: 'An object',

@@ -22,7 +22,7 @@ import type { RoomCategory } from './RoomCategory.ts';
 import { RoomLook } from './RoomLook.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'CELL' });
+export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'ROOM' });
 
 /** Under an anomaly the interpretation is glitched: structure, walls and lighting each at its own share (Room.groovy:268-272). */
 const STATIC = new Glitch();
@@ -314,7 +314,7 @@ export class Room extends Location {
   }
 
   override leaveLabel(): string {
-    return 'Exit Apartment';
+    return this.#apartment.wayOut();
   }
 
   /** The neural-link interpretation (Room.groovy:274-276), one sentence per line; glitched under an anomaly. */
@@ -331,25 +331,27 @@ export class Room extends Location {
   }
 
   /**
-   * The local cell diagnostic (Room.groovy:124-130): the resonance is degraded under an anomaly — and first
-   * the apartment's era marker, which the old game wrote on a screen nobody ever saw (Apartment.groovy:44;
-   * Decision 7: a label that never showed is made to show, where the traveller stands).
+   * The local cell diagnostic (Room.groovy:124-130), in plain words (U03b): the apartment's era first, which the
+   * old game wrote on a screen nobody ever saw (Apartment.groovy:44; Decision 7: a label that never showed is made
+   * to show, where the traveller stands), the room's readings, and `Degraded` only under an anomaly.
    */
   override facts(): readonly Fact[] {
+    const degraded: readonly Fact[] = this.#apartment.anomaly()
+      ? [{ key: 'alert', label: 'Degraded', value: '' }]
+      : [];
     return [
-      { key: 'era', label: 'TEMPORAL_MARKER', value: this.#apartment.era().key() },
-      { key: 'reading', label: 'TYPE', value: this.type() },
-      { key: 'reading', label: 'OXY', value: `${String(this.#traits.oxygen)}%` },
-      { key: 'reading', label: 'TEMP', value: `${String(this.#traits.temperature)}°C` },
-      { key: 'signal', label: 'SIGNAL', value: this.#traits.signal },
-      this.#apartment.anomaly()
-        ? { key: 'alert', label: 'RESONANCE', value: '[DEGRADED]' }
-        : { key: 'stable', label: 'RESONANCE', value: '[STABLE]' },
+      { key: 'era', label: 'Era', value: this.#apartment.era().key() },
+      { key: 'reading', label: 'Type', value: this.type() },
+      { key: 'reading', label: 'Oxygen', value: `${String(this.#traits.oxygen)}%` },
+      { key: 'reading', label: 'Temp', value: `${String(this.#traits.temperature)}°C` },
+      { key: 'signal', label: 'Signal', value: this.#traits.signal },
+      ...degraded,
     ];
   }
 
+  /** None (U03b): the old diagnostic line only repeated the readings the facts show. */
   status(): string {
-    return `ATMOS: ${String(this.#traits.oxygen)}% | TEMP: ${String(this.#traits.temperature)}°C`;
+    return '';
   }
 
   childrenHeading(): string {

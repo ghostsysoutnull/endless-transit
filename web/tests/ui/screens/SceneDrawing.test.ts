@@ -193,7 +193,7 @@ describe('the plan (U03): a room drawn as its apartment, the options it draws jo
         role: 'move',
         address: ROOMS[1] ?? '',
       }),
-      option({ id: 'leave', key: 'l', label: 'Exit Apartment', role: 'return' }),
+      option({ id: 'leave', key: 'l', label: 'Leave the apartment', role: 'return' }),
       option({ id: 'scan', key: 's', label: 'Scan', role: 'system' }),
     ],
   };

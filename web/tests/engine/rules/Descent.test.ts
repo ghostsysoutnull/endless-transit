@@ -332,11 +332,11 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       frame: 'abyssal',
       position: { label: 'SHARD', index: 1, total: 8 },
     });
-    expect(shard.place?.facts[0]).toEqual({ key: 'era', label: 'TEMPORAL_MARKER', value: 'atomic' });
+    expect(shard.place?.facts[0]).toEqual({ key: 'era', label: 'Era', value: 'atomic' });
     expect(shard.place?.trail.slice(9).map((step) => `${step.icon} ${step.name}`)).toEqual([
       '▤ Layer -0x1',
       '▅ Artery',
-      '🚪 Frosted Crystal Pane [HUMMING]',
+      '🚪 Frosted Crystal Pane, humming',
       '☠ Inverted Processing Core',
     ]);
     expect(shard.place?.contents?.objects.map((object) => object.name)).toEqual([

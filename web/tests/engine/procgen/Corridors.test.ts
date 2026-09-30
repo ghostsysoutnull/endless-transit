@@ -53,19 +53,16 @@ describe('a corridor and its doors (Guide, "Reading doors before you open them")
     expect(Math.max(...counts)).toBe(20);
   });
 
-  test('a door is a material and a state; the state shows in capitals unless it is Stable (Door.groovy:62-70, DoorAppearance.groovy:22-27)', () => {
+  test('a door is a material and a state; its name is the material, then the state in plain words unless it is Stable, and never the words on it (Door.groovy:62-70, DoorAppearance.groovy:22-27; U03b)', () => {
     expect(apartments.length).toBeGreaterThan(1_000);
     for (const apartment of apartments) {
       const door = apartment.door();
       expect(MATERIALS).toContain(door.material());
       expect(STATES).toContain(door.state());
       expect(door.brief()).toBe(
-        door.state() === 'Stable' ? door.material() : `${door.material()} [${door.state().toUpperCase()}]`,
+        door.state() === 'Stable' ? door.material() : `${door.material()}, ${door.state().toLowerCase()}`,
       );
-      const inscription = door.inscription();
-      expect(door.description()).toBe(
-        inscription === undefined ? door.brief() : `${inscription.formatted()} ${door.brief()}`,
-      );
+      expect(door.description()).toBe(door.brief());
       expect(apartment.name()).toBe(door.description());
     }
     expect(apartments.some((apartment) => apartment.door().state() === 'Stable')).toBe(true);
@@ -152,17 +149,10 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(Math.max(...oxygen)).toBe(21);
     expect(Math.min(...temperature)).toBe(5);
     expect(Math.max(...temperature)).toBe(25);
-    expect(new Set(rooms.map((room) => room.signal()))).toEqual(new Set(['[SHIELDED]', '[CLEAR]']));
+    expect(new Set(rooms.map((room) => room.signal()))).toEqual(new Set(['shielded', 'clear']));
     const room = must(rooms[0]);
-    expect(room.status()).toBe(`ATMOS: ${String(room.oxygen())}% | TEMP: ${String(room.temperature())}°C`);
-    expect(room.facts().map((fact) => fact.label)).toEqual([
-      'TEMPORAL_MARKER',
-      'TYPE',
-      'OXY',
-      'TEMP',
-      'SIGNAL',
-      'RESONANCE',
-    ]);
+    expect(room.status()).toBe('');
+    expect(room.facts().map((fact) => fact.label)).toEqual(['Era', 'Type', 'Oxygen', 'Temp', 'Signal']);
   });
 
   test('the room’s words are its atmosphere — structure, walls with a colour, lighting — from its own culture, era and trait in all but the glitched few (Room.groovy:274-276; ThemeService.groovy:87-124)', () => {
@@ -217,7 +207,7 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
     expect(must(first).move('back')).toBeUndefined();
     expect(must(first).exit()).toBe(wide.parent()?.arrival());
     expect(must(first).exit()?.kind().key()).toBe('floor');
-    expect(must(first).leaveLabel()).toBe('Exit Apartment');
+    expect(must(first).leaveLabel()).toBe('Leave the apartment');
     expect(must(second).exit()).toBeUndefined();
     expect(must(second).leave()).toBeUndefined();
     const single = must(apartments.find((apartment) => apartment.children().length === 1));
@@ -236,7 +226,7 @@ describe('an apartment and its rooms (Guide, "Finding things worth taking")', ()
   test('a room lists nothing, and the apartment is where its position is counted', () => {
     const room: Location = must(rooms[10]);
     expect(room.listing()).toEqual([]);
-    expect(room.kind().position(1, 2)).toMatchObject({ label: 'CELL' });
+    expect(room.kind().position(1, 2)).toMatchObject({ label: 'ROOM' });
     expect(room.kind().icon()).toBe('□');
     expect(must(room.parent()).kind().position(1, 2)).toMatchObject({ label: 'UNIT' });
   });

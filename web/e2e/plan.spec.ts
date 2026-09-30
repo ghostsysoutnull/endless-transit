@@ -138,7 +138,7 @@ test('leaving the first room: the view pulls back to the whole plan first, then 
   await inTheFirstRoom(page);
   await page.clock.runFor(1200);
   await holdTime(page);
-  await press(page, /exit apartment/i, hasTouch);
+  await press(page, /leave the apartment/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await page.clock.runFor(1200);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');

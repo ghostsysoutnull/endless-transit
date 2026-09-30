@@ -123,7 +123,7 @@ const ROOM: GameSnapshot = {
       ordinal: '2',
     }),
     option({ id: 'move:forward', key: 'f', label: 'Go forward', role: 'move', opposite: 'move:back' }),
-    option({ id: 'leave', key: 'l', label: 'Exit Apartment', role: 'return' }),
+    option({ id: 'leave', key: 'l', label: 'Leave the apartment', role: 'return' }),
     option({ id: 'buffer', key: 'i', label: 'Buffer', role: 'system' }),
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
@@ -207,10 +207,10 @@ describe('HudPresenter.toViewModel — the narrative panel', () => {
 describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; the mock’s console column)', () => {
   const vm = presenter.toViewModel(ROOM);
 
-  test('the panel carries FURNITURE and the object count as rows; the objects are tiles in the aside, each by its key, each a take when the engine offers one; the buffer count rides in the stats', () => {
+  test('the panel carries the furniture and the relic count as rows; the objects are tiles in the aside, each by its key, each a take when the engine offers one; the buffer count rides in the stats', () => {
     expect(vm.place.rows).toEqual([
-      { label: 'FURNITURE', value: 'overturned tatami mat, cracked shoji screen' },
-      { label: 'OBJECTS_DETECTED', value: '2' },
+      { label: 'Furniture', value: 'overturned tatami mat, cracked shoji screen' },
+      { label: 'Relics', value: '2' },
     ]);
     expect(vm.place.tags[1]).toEqual({ key: 'stable', label: 'RESONANCE', value: '[STABLE]' });
     expect(vm.aside.objects).toEqual({
@@ -242,7 +242,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
       'buffer',
       'to-title',
     ]);
-    expect(vm.dock.map((each) => each.label)).toEqual(['▲ EXIT APARTMENT', 'BUFFER', 'TITLE SCREEN']);
+    expect(vm.dock.map((each) => each.label)).toEqual(['▲ LEAVE THE APARTMENT', 'BUFFER', 'TITLE SCREEN']);
   });
 
   test('a full buffer: the takes come sealed, so the tiles have no action and the pane says why; nothing of it is on offer', () => {
@@ -253,13 +253,13 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
         option.role === 'take' ? { ...option, key: '', sealed: true } : option,
       ),
     });
-    expect(full.aside.objects?.note).toBe('BUFFER FULL — merge or drop a fragment to take more.');
+    expect(full.aside.objects?.note).toBe('The buffer is full: merge or drop a fragment to take more.');
     expect(full.aside.objects?.tiles.map((tile) => tile.action)).toEqual([null, null]);
     expect(full.options.map((each) => each.id)).toEqual(['move:forward', 'leave', 'buffer', 'to-title']);
     expect(full.stats[1]).toEqual({ key: 'buffer', label: 'Buffer', value: '16/16' });
   });
 
-  test('an empty room says so in words and has no OBJECTS_DETECTED row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
+  test('an empty room says so in words and has no Relics row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
     const bare = presenter.toViewModel({
       ...ROOM,
       place: {
@@ -276,7 +276,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
       tiles: [],
     });
     expect(bare.place.rows).toEqual([
-      { label: 'FURNITURE', value: 'overturned tatami mat, cracked shoji screen' },
+      { label: 'Furniture', value: 'overturned tatami mat, cracked shoji screen' },
     ]);
     const planet = presenter.toViewModel(PLANET);
     expect(planet.aside).toEqual({ objects: null, telemetry: null, map: null });

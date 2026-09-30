@@ -462,7 +462,7 @@ describe('GameEngine — walking the big world', () => {
     ]);
   });
 
-  test('the corridor: the doors are listed with their inscriptions, back to the elevator is the one move, leave still goes to the building', () => {
+  test('the corridor: the doors are listed by name, their words told in the appearance, back to the elevator is the one move, leave still goes to the building', () => {
     const engine = engineOn(new MemorySaveStore());
     engine.step('new-world');
     engine.step('enter-world');
@@ -478,8 +478,8 @@ describe('GameEngine — walking the big world', () => {
     expect(doors[0]).toEqual({
       id: 'enter:0',
       key: '1',
-      label: 'Open _void_sink_ Brutalist Slab [PITTED]',
-      place: '_void_sink_ Brutalist Slab [PITTED]',
+      label: 'Open Brutalist Slab, pitted',
+      place: 'Brutalist Slab, pitted',
       role: 'travel',
       sealed: false,
       landmark: false,
@@ -487,7 +487,7 @@ describe('GameEngine — walking the big world', () => {
       readings: [
         {
           key: 'narrative',
-          label: 'APPEARANCE',
+          label: '',
           value:
             "A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.",
         },
@@ -528,18 +528,11 @@ describe('GameEngine — walking the big world', () => {
     expect(room.place?.name).toBe('Grand Power Plant');
     expect(room.place?.address).toBe('0.0.0.0.0.0.0.0.0.0.0.0.0');
     expect(room.place?.trail).toHaveLength(13);
-    expect(room.place?.position).toEqual({ counted: true, label: 'CELL', index: 1, total: 2 });
+    expect(room.place?.position).toEqual({ counted: true, label: 'ROOM', index: 1, total: 2 });
     expect(room.place?.trail.map((step) => step.icon).join('')).toBe('∞»○☼⊕⬚🏙═⌂▤▅🚪□');
-    expect(room.place?.trail[11]?.name).toBe('_void_sink_ Brutalist Slab [PITTED]');
+    expect(room.place?.trail[11]?.name).toBe('Brutalist Slab, pitted');
     expect(room.place?.description).toHaveLength(2);
-    expect(room.place?.facts.map((fact) => fact.label)).toEqual([
-      'TEMPORAL_MARKER',
-      'TYPE',
-      'OXY',
-      'TEMP',
-      'SIGNAL',
-      'RESONANCE',
-    ]);
+    expect(room.place?.facts.map((fact) => fact.label)).toEqual(['Era', 'Type', 'Oxygen', 'Temp', 'Signal']);
     // The free lottery rolled on the move that landed here (Guide:187): step 4 of this walk wins (Void.test pins the roll).
     expect(room.message).toBe(
       'Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.',
@@ -562,7 +555,7 @@ describe('GameEngine — walking the big world', () => {
         place: 'Baroque Maintenance Bay',
         address: '0.0.0.0.0.0.0.0.0.0.0.0.1',
       }),
-      { ...system('leave', 'l', 'Exit Apartment'), role: 'return' },
+      { ...system('leave', 'l', 'Leave the apartment'), role: 'return' },
       system('scan', 's', 'Scan'),
       system('map', 'm', 'Map'),
       system('buffer', 'i', 'Buffer'),
