@@ -12,16 +12,18 @@ export class LocationKind {
   readonly #key: string;
   readonly #title: string;
   readonly #icon: string;
+  readonly #scale: string;
   readonly #index: IndexLabel;
 
   constructor(
     facts:
-      | { key: string; title: string; icon: string; indexLabel: string }
-      | { key: string; title: string; icon: string },
+      | { key: string; title: string; scale: string; icon: string; indexLabel: string }
+      | { key: string; title: string; scale: string; icon: string },
   ) {
     this.#key = facts.key;
     this.#title = facts.title;
     this.#icon = facts.icon;
+    this.#scale = facts.scale;
     this.#index = 'indexLabel' in facts ? new Indexed(facts.indexLabel) : new Unindexed();
   }
 
@@ -31,6 +33,11 @@ export class LocationKind {
 
   title(): string {
     return this.#title;
+  }
+
+  /** How big a place of this kind is, as the trace's band writes it (`10²⁶ m` … `5 m`, U04). */
+  scale(): string {
+    return this.#scale;
   }
 
   icon(): string {

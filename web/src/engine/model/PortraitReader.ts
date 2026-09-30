@@ -1,3 +1,4 @@
+import type { AreaFigure } from './AreaFigure.ts';
 import type { BuildingFigure } from './BuildingFigure.ts';
 import type { CorridorFigure } from './CorridorFigure.ts';
 import type { PlanFigure } from './PlanFigure.ts';
@@ -11,5 +12,7 @@ export interface PortraitReader<R> {
   corridor(corridor: CorridorFigure): R;
   /** A room: its apartment's plan, zoomed into it (U03). */
   plan(plan: PlanFigure): R;
+  /** A level above the street: its children as marks in its area (U04). */
+  area(area: AreaFigure): R;
   unseen(): R;
 }

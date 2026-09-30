@@ -7,6 +7,7 @@ import type { Vibe } from './Vibe.ts';
 export const ARTERY_KIND = new LocationKind({
   key: 'artery',
   title: 'Artery',
+  scale: '40 m',
   icon: '▅',
   indexLabel: 'CONDUIT',
 });
@@ -36,9 +37,5 @@ export class Artery extends Corridor {
   /** The bedrock's vibe: what its Crypts and Shards draw from, and what the drain reads below it. */
   override vibe(): Vibe {
     return this.#vibe;
-  }
-
-  override status(): string {
-    return `TRAFFIC: [PRESSURE_HIGH] | THEME: [${this.#vibe.culture().key().toUpperCase()}]`;
   }
 }

@@ -1,5 +1,4 @@
 import type { Fact } from './Fact.ts';
-import { CorridorPortrait } from './CorridorPortrait.ts';
 import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
@@ -30,10 +29,7 @@ export class CorridorState implements FloorState {
 
   /** In the corridor the floor is drawn as the corridor, walked (U02): how it runs, and each door as it looks. */
   portrait(floor: Floor): Portrait {
-    return new CorridorPortrait({
-      shape: floor.shape(),
-      doors: this.listing(floor).flatMap((apartment) => apartment.onCorridor()),
-    });
+    return floor.walked();
   }
 
   listing(floor: Floor): readonly Location[] {

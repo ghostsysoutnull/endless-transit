@@ -1,4 +1,23 @@
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
+import { AreaInk } from './AreaInk.ts';
+import { AreaPicture } from './AreaPicture.ts';
+import { AreaSpots } from './AreaSpots.ts';
+import { CityMark } from './CityMark.ts';
+import { CityScene } from './CityScene.ts';
+import { CountryScene } from './CountryScene.ts';
+import { FilamentScene } from './FilamentScene.ts';
+import { GlobeMark } from './GlobeMark.ts';
+import { LaneMark } from './LaneMark.ts';
+import { PlanetScene } from './PlanetScene.ts';
+import { ReachScene } from './ReachScene.ts';
+import { RegionMark } from './RegionMark.ts';
+import { SectorScene } from './SectorScene.ts';
+import { SpiralMark } from './SpiralMark.ts';
+import { StarMark } from './StarMark.ts';
+import { StrandMark } from './StrandMark.ts';
+import { SystemScene } from './SystemScene.ts';
+import { UniverseScene } from './UniverseScene.ts';
+import { VoidMark } from './VoidMark.ts';
 import { ArchWall } from './ArchWall.ts';
 import { BeamLight } from './BeamLight.ts';
 import { BlockWall } from './BlockWall.ts';
@@ -138,6 +157,36 @@ export class ScenePictures {
    * The apartment's plan (U03), its rooms laid out by the shared hash; the room you stand in drawn by its look
    * (U03b): a wall per culture, in the culture's ink, and a light per era — a key with none listed is plain.
    */
+  /** The levels above the street (U04): a drawing a level and a mark a child kind, sharing one ink and one spread. */
+  area(): AreaPicture {
+    const ink = new AreaInk(this.#noise);
+    const spread = new AreaSpots(this.#noise);
+    return new AreaPicture({
+      font: this.#font,
+      ink,
+      scenes: {
+        universe: new UniverseScene(ink, spread),
+        filament: new FilamentScene(ink, spread),
+        sector: new SectorScene(ink, spread),
+        'null-reach': new ReachScene(ink),
+        'solar-system': new SystemScene(ink),
+        planet: new PlanetScene(ink),
+        country: new CountryScene(ink, spread),
+        city: new CityScene(ink, spread),
+      },
+      marks: {
+        filament: new StrandMark(ink),
+        sector: new SpiralMark(ink),
+        'null-reach': new VoidMark(),
+        'solar-system': new StarMark(ink),
+        planet: new GlobeMark(ink),
+        country: new RegionMark(ink),
+        city: new CityMark(ink),
+        street: new LaneMark(ink),
+      },
+    });
+  }
+
   plan(): PlanPicture {
     const glow = new ShadowGlow();
     const lattice = new LatticeWall();

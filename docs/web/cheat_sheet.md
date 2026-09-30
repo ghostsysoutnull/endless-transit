@@ -35,11 +35,11 @@ draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Ev
 | **SCAN** | doors and room types, nearby floors, or the apartment's rooms |
 | **MAP** | what is below you, drawn; dim is unvisited |
 | **BUFFER** | inventory: **SELECT** one, **SELECT** another = merge; **DROP HERE** lays it in the room; **▲ BACK TO REALITY** |
-| **TRACE** | your whole path, drawn |
+| **TRACE** | your whole path: a band a level, each drawn; tap a band to open it larger; **DIVE** zooms down to you |
 | **HELP** | the manual, inside the game |
 | **TITLE SCREEN** · **END SESSION** | the title (the world waits behind **CONTINUE**) · the recap (**RESUME** comes back) |
 
-The depth rail under the HUD is your path, one glyph for each level; the one you stand in is ringed.
+The depth rail under the HUD is your path, one glyph for each level; the one you stand in is ringed. Tap it for the trace.
 
 ## What things cost
 

@@ -118,6 +118,7 @@ test('headings are in order on every screen: the title, a street with the map an
   await press(page, /^trace$/i, hasTouch);
   await expect(page.getByTestId('trace')).toBeVisible();
   expectSane(await headings(page), 'street with the trace');
+  await press(page, /^close$/i, hasTouch);
   await tapOption(page, 'debug:integrity:1', hasTouch);
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('failure')).toBeVisible();

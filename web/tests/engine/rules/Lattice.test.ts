@@ -6,6 +6,7 @@ import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import { FixedEntropySource } from '#tests/support/FixedEntropySource.ts';
 import { MemorySaveStore } from '#tests/support/MemorySaveStore.ts';
+import { readPortrait } from '#tests/support/readPortrait.ts';
 import { must, realRegistry } from '#tests/support/world.ts';
 
 const FIRST = new Seed(0x7f3a91c2, 0x0b4de6a8);
@@ -240,7 +241,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     expect(room.player?.coherence).toBe(94);
   });
 
-  test('TRACE costs one and counts no step; the panel is the trail with each level’s type, name and note, the last one current', () => {
+  test('TRACE costs one and counts no step; the trace is the trail with each level’s type and name, the last one current', () => {
     const engine = engineOn(
       new MemorySaveStore(saveText(`${BUILDING}.15`, { [BUILDING]: '{"elevator":15}' })),
     );
@@ -249,19 +250,17 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     expect(shown.player).toMatchObject({ coherence: 99, band: 'stable', steps: 0 });
     expect(shown.message).toBe('NEURAL_LATTICE_TRACE_INITIATED: 10 levels from the universe.');
     expect(
-      shown.trace?.steps.map(
-        (step) => `${String(step.depth)} ${step.icon} ${step.kind} : ${step.name}${step.meta}`,
-      ),
+      shown.trace?.steps.map((step) => `${String(step.depth)} ${step.icon} ${step.kind} : ${step.name}`),
     ).toEqual([
       '0 ∞ Universe : The Endless Universe',
       '1 » Cosmic filament : Zeta-915-Link',
       '2 ○ Galactic sector : Outer Expanse 91',
       '3 ☼ Solar system : Zeta Borealis',
-      '4 ⊕ Planet : Auraea [SURFACE | ERA: FUTURE]',
-      '5 ⬚ Country : Southern Glacier Kingdom [TRAIT: INDUSTRIAL]',
+      '4 ⊕ Planet : Auraea',
+      '5 ⬚ Country : Southern Glacier Kingdom',
       '6 🏙 City : Rainhaven',
       '7 ═ Street : Bright Boulevard',
-      '8 ⌂ Building : Ornate Sanctum [FLOORS: 16]',
+      '8 ⌂ Building : Ornate Sanctum',
       '9 ▤ Floor : Floor 15',
     ]);
     expect(shown.trace?.steps.map((step) => step.current)).toEqual([...Array<boolean>(9).fill(false), true]);
@@ -270,17 +269,49 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     expect(engine.step('move:corridor').trace).toBeNull();
   });
 
-  test('below the bedrock the trace reads BREACHED on the building and the void on every level under it', () => {
+  test('each level of the trace carries what its band draws (U04): its picture, its places, its chips, its words and its scale', () => {
+    const engine = engineOn(
+      new MemorySaveStore(saveText(`${BUILDING}.15`, { [BUILDING]: '{"elevator":15}' })),
+    );
+    const steps = must(engine.step('trace').trace ?? undefined).steps;
+    expect(steps.map((step) => readPortrait(step.portrait).drawn)).toEqual([
+      ...Array<string>(7).fill('area'),
+      'street',
+      'tower',
+      'tower',
+    ]);
+    expect(steps.map((step) => step.scale)).toEqual([
+      '10²⁶ m',
+      '10²⁴ m',
+      '10²¹ m',
+      '10¹³ m',
+      '10⁷ m',
+      '10⁶ m',
+      '10⁴ m',
+      '10³ m',
+      '10² m',
+      '60 m',
+    ]);
+    const street = must(steps[7]);
+    const building = must(steps[8]);
+    // The street marks the building you went into among its places, the one you stand in visited.
+    expect(street.children.some((child) => child.address === building.address && child.visited)).toBe(true);
+    expect(must(steps[4]).facts.map((fact) => `${fact.label} ${fact.value}`)).toEqual([
+      'Culture baroque',
+      'Era future',
+    ]);
+    expect(must(steps[7]).words).toBe('Buildings stand in pairs along both sides of the way.');
+  });
+
+  test('below the bedrock the trace draws the void on every level under the building; the Artery walked in the void, the Crypt as its plan', () => {
     const engine = engineOn(
       new MemorySaveStore(
         saveText(`${LAYER}.0.0.0`, { [BUILDING]: '{"elevator":-1,"breached":true}', [LAYER]: 'corridor' }),
       ),
     );
     const shown = engine.step('trace');
-    expect(
-      shown.trace?.steps.slice(8).map((step) => `${step.icon} ${step.kind} : ${step.name}${step.meta}`),
-    ).toEqual([
-      '⌂ Building : Ornate Sanctum [BREACHED]',
+    expect(shown.trace?.steps.slice(8).map((step) => `${step.icon} ${step.kind} : ${step.name}`)).toEqual([
+      '⌂ Building : Ornate Sanctum',
       '▤ Layer : Layer -0x1',
       '▅ Artery : Artery',
       '🚪 Crypt : Frosted Crystal Pane, humming',
@@ -293,6 +324,10 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
       true,
       true,
     ]);
+    const artery = readPortrait(must(shown.trace?.steps[10]).portrait);
+    expect(artery.drawn === 'corridor' && artery.corridor.abyssal).toBe(true);
+    const crypt = readPortrait(must(shown.trace?.steps[11]).portrait);
+    expect(crypt.drawn === 'plan' && crypt.plan.here).toBe(must(shown.trace?.steps[12]).address);
   });
 
   test('MAP and TRACE are on offer everywhere in the world, never at the title; MAP is keyed m, TRACE has no key', () => {

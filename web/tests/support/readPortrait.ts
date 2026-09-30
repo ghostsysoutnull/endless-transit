@@ -1,3 +1,4 @@
+import type { AreaFigure } from '#engine/model/AreaFigure.ts';
 import type { BuildingFigure } from '#engine/model/BuildingFigure.ts';
 import type { CorridorFigure } from '#engine/model/CorridorFigure.ts';
 import type { PlanFigure } from '#engine/model/PlanFigure.ts';
@@ -10,6 +11,7 @@ export type ReadPortrait =
   | { readonly drawn: 'tower'; readonly tower: TowerFigure }
   | { readonly drawn: 'corridor'; readonly corridor: CorridorFigure }
   | { readonly drawn: 'plan'; readonly plan: PlanFigure }
+  | { readonly drawn: 'area'; readonly area: AreaFigure }
   | { readonly drawn: 'unseen' };
 
 export function readPortrait(portrait: Portrait): ReadPortrait {
@@ -18,6 +20,7 @@ export function readPortrait(portrait: Portrait): ReadPortrait {
     tower: (tower) => ({ drawn: 'tower', tower }),
     corridor: (corridor) => ({ drawn: 'corridor', corridor }),
     plan: (plan) => ({ drawn: 'plan', plan }),
+    area: (area) => ({ drawn: 'area', area }),
     unseen: () => ({ drawn: 'unseen' }),
   });
 }

@@ -1,3 +1,4 @@
+import type { AreaVM } from '#ui/scene/AreaVM.ts';
 import type { CorridorVM } from '#ui/scene/CorridorVM.ts';
 import type { PlanVM } from '#ui/scene/PlanVM.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
@@ -13,6 +14,7 @@ export type ReadDrawing =
   | { readonly drawn: 'tower'; readonly vm: TowerVM }
   | { readonly drawn: 'corridor'; readonly vm: CorridorVM }
   | { readonly drawn: 'plan'; readonly vm: PlanVM }
+  | { readonly drawn: 'area'; readonly vm: AreaVM }
   | { readonly drawn: 'unseen'; readonly vm: SceneVM<SceneChild> };
 
 /** Which picture the drawing asks the book for, and with what; a drawing that asks for none is unseen. */
@@ -33,6 +35,10 @@ export function readDrawing(drawing: Drawing): ReadDrawing {
     },
     plan(vm) {
       read = { drawn: 'plan', vm };
+      return new Unsketched(vm);
+    },
+    area(vm) {
+      read = { drawn: 'area', vm };
       return new Unsketched(vm);
     },
   });

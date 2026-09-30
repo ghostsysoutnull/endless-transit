@@ -16,8 +16,9 @@ import { Passage } from './Passage.ts';
 import { Phrase } from './Phrase.ts';
 import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
+import { CorridorPortrait } from './CorridorPortrait.ts';
 
-export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', icon: '▤' });
+export const FLOOR_KIND = new LocationKind({ key: 'floor', title: 'Floor', scale: '60 m', icon: '▤' });
 
 /** The two modes, stateless, shared by every floor; a saved mode id finds its state here — a new mode is one more entry. */
 const ELEVATOR: FloorState = new ElevatorState();
@@ -166,6 +167,16 @@ export class Floor extends Location {
   }
 
   /** The floor's one child. */
+  /** Its corridor drawn, walked (U02, U04): how it runs, whether below the bedrock, each door as it looks — the picture in the corridor, and the corridor's band in the trace. */
+  walked(): Portrait {
+    const corridor = this.corridor();
+    return new CorridorPortrait({
+      shape: this.shape(),
+      abyssal: corridor.abyssal(),
+      doors: corridor.listing().flatMap((apartment) => apartment.onCorridor()),
+    });
+  }
+
   corridor(): Location {
     const corridor = this.children()[0];
     if (corridor === undefined) throw new Error(`${this.name()} has no corridor`);
@@ -244,6 +255,11 @@ export class Floor extends Location {
 
   description(): readonly string[] {
     return this.#state.description(this);
+  }
+
+  /** In the trace a floor is its building's tower, the car at its level (U04). */
+  override bandPortrait(): Portrait {
+    return this.#building.portrait();
   }
 
   status(): string {

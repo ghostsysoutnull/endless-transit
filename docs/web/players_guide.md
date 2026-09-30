@@ -64,8 +64,9 @@ See [Saving](#saving-seeds-and-the-debug-tools).
 
 **The screen.** The top box is the HUD: the Coherence bar (Integrity below the bedrock), **Steps** and **Buffer** (how many
 fragments you carry); where a place is drawn it is one thin row. Under it runs the **depth rail**: one glyph for each
-level from the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:27-38, 122-139 -->
-Under the rail is the place: its kind and its name. On a street, in a building, at an elevator and in a corridor a
+level from the universe down to where you stand, which is ringed; the whole rail is one button that opens the **trace**
+at the level nearest your finger (below). <!-- src/ui/screens/HudPresenter.ts:181, src/ui/screens/HudView.ts:252 -->
+Under the rail is the place: its kind and its name. Everywhere from the universe down to a corridor a
 **picture** comes next (below), then the **moves** as buttons, then the list of what lies one level down, then the place's chips
 (your position among your neighbours, such as `Orbit 2 of 5` on a planet or `Building 2 of 20` in a building — a floor
 has none, its name and the tower say its height — then its tags) and its description. In a room the picture takes most
@@ -77,9 +78,13 @@ out (`▲ LEAVE …`) and **MORE** — and in a room its moves, **GO BACK** and 
 dock above it — SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again after your next tap.
 <!-- src/ui/screens/HudPresenter.ts:109-118, 191-200, src/ui/screens/MovesInDock.ts -->
 
-**The pictures.** A street, a building and a corridor are drawn above their list, and the two light each other: touch
-a place in the picture and its button lights, touch a button and its place lights. On the street, tap a building in
-the picture to zoom into it. In a building the picture is the **tower**, a row per floor with the elevator car in its
+**The pictures.** Every place from the universe down to a corridor is drawn above its list, and the two light each
+other: touch a place in the picture and its button lights, touch a button and its place lights. Above the street each
+level shows what lies inside it as marks: the universe its filaments strung out of the root, a filament its sectors
+and null reaches along its strand, a sector its stars round the core, a system its planets on their orbits, a planet
+its countries on the globe, a country its cities inside the coast, a city its streets as lit lanes on the grid; a
+null reach's ring pulses as its echo's signal grows. Tap a mark to zoom into it; leaving zooms back out.
+<!-- src/ui/scene/ScenePictures.ts:161 --> On the street, tap a building in the picture to zoom into it. In a building the picture is the **tower**, a row per floor with the elevator car in its
 shaft: drag the tower, or the slider down its right side, to ride the car, and tap a floor — on the tower or on the
 pad — to ride there and step out. At an elevator the tower stands still, the car at your floor. In a **corridor** you
 look down the hall: drag it, or the slider along its foot, to walk, and tap a door to walk to it and open it; the door
@@ -150,7 +155,7 @@ offer changes nothing and costs nothing.
 | **SCAN** | `S` | What is behind the doors, which floors are near you (two either side), or the rooms of the apartment — which also clears the apartment's plan of fog for good. Costs 1, no step. <!-- src/engine/model/Building.ts:20-21 --> |
 | **MAP** | `M` | Draws the places you can enter from here, you at the centre; dim is unvisited. Nothing inside a room. Costs 1, no step. |
 | **BUFFER** | `I` | Your inventory. Costs 1 to open; everything inside is free. |
-| **TRACE** | none | Your whole path from the universe down to here, drawn. Costs 1. |
+| **TRACE** | none | Opens the trace over the screen: a band for each level from the universe down to you, each the level's own picture with the place you went down into marked, a thread running through them to you. Tap a band to open it larger; **DIVE** zooms from the universe down to you and lands on your band; ✕, Esc or a swipe down its header closes it. The rail opens it too. Costs 1. <!-- src/ui/screens/HudPresenter.ts:286, src/ui/screens/HudView.ts:206-219 --> |
 | **HELP** | `H` | The operator's manual: what every button does and how not to die. Costs 1. |
 | **TITLE SCREEN** | `T` | Back to the title; the world waits behind CONTINUE. Costs 1. |
 | **END SESSION** | `Q` | The recap of this run. **RESUME** comes back for free; END SESSION again goes to the title with your place kept. |
@@ -231,9 +236,9 @@ after the tap's own message. One roll per step, decided by the room and your ste
 HELP) never roll, and reloading a save does not either. <!-- src/engine/model/Room.ts:30-33, src/engine/rules/GameEngine.ts:361-367 -->
 
 **Echoes in the void.** A Null Reach on the filament list holds one **Spectral Echo** worth 1,000 to 9,999 Hz. Tap
-**SCAN FOR SPECTRAL ECHOES** a few times until the signal reaches 100 — each scan adds 10 to 39, fixed by the reach and
+**SCAN FOR SPECTRAL ECHOES** a few times until the signal — its chip, `Signal 40%` — reaches 100 — each scan adds 10 to 39, fixed by the reach and
 your step count — then **CAPTURE SPECTRAL ECHO**. One echo per reach, until a reboot rebuilds the world.
-<!-- src/engine/model/Echo.ts:6-10 -->
+<!-- src/engine/model/Echo.ts:6-10, src/engine/model/NullReach.ts:53 -->
 
 ## Reading doors before you open them
 
@@ -296,7 +301,7 @@ This is the game's one real quest. <!-- src/engine/model/Building.ts:22-23, 146-
 6. **Go to floor 0.** GO DOWN now reads **DESCEND INTO THE SUBSTRATE**. Tap it.
 
 **What is down there.** Ten Layers, `-0x1` down to `-0xA`, on the lobby's pad before floor `0` (their own tab past
-twenty keys) and drawn under the floors on the tower, each with a pressure reading that climbs 10% a layer to 100% —
+twenty keys) and drawn under the floors on the tower — once breached, the count of levels below the tower glows red — each with a pressure reading that climbs 10% a layer to 100% —
 read out by a screen reader, and by SCAN. Floors are called Layers, corridors Arteries, apartments Crypts, rooms Shards. The
 frame turns red, Coherence is relabelled `INTEGRITY` and drains twice as fast, on the map every node is `☠`, and the
 telemetry pane adds a `[VOID]` line about a third of the time. Everything you take down there gets the culture bonus,
@@ -346,7 +351,7 @@ even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/
 `»` filament, `○` sector or null reach, `☼` solar system, `⊕` planet, `⬚` country, `🏙` city, `═` street, `⌂` building,
 `▤` floor, `▅` corridor, `🚪` apartment, `□` room; below bedrock the shard is `☠`. Its length is how deep you are: one
 glyph at the universe, thirteen in a room. The rail shows the glyphs, and a screen reader reads each level's kind and
-name.
+name. Tap it to open the trace; a keyboard opens it with TRACE in the dock.
 
 **Steps** is how many steps the game accepted: moves, places and takes alike. It carries over when you reload.
 Commands cost Coherence but do not count here.

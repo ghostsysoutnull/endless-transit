@@ -3,10 +3,13 @@ import type { Fact } from './Fact.ts';
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
+import type { Portrait } from './Portrait.ts';
+import type { AreaPart } from './AreaPart.ts';
 
 export const NULL_REACH_KIND = new LocationKind({
   key: 'null-reach',
   title: 'Null reach',
+  scale: '10²¹ m',
   icon: '○',
   indexLabel: 'VOID',
 });
@@ -36,10 +39,6 @@ export class NullReach extends Location {
     return this.#name;
   }
 
-  override callSign(): string {
-    return `VOID_REACH: ${this.#name}`;
-  }
-
   override echo(): Echo {
     return this.#echo;
   }
@@ -50,19 +49,18 @@ export class NullReach extends Location {
     return ['A pocket of absolute silence. Only the echoes of distant, dead civilizations remain.'];
   }
 
+  /** What the hunt has come to, a chip (U04): the signal's strength, a scan still to make, or the echo taken. */
   override facts(): readonly Fact[] {
+    if (this.#echo.found()) return [{ key: 'signal', label: 'Echo taken', value: '' }];
     const signal = this.#echo.signal();
-    const status =
-      signal === 0
-        ? 'Searching for signals...'
-        : `SIGNAL_STRENGTH: ${String(signal)}% | FREQ_DRIFT: ${String(this.#echo.fragment().frequency().hertz())}Hz`;
-    return [{ key: 'signal', label: 'VOID_STATUS', value: status }];
+    return [
+      { key: 'signal', label: 'Signal', value: signal === 0 ? 'scan to search' : `${String(signal)}%` },
+    ];
   }
 
+  /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
   status(): string {
-    if (this.#echo.found()) return 'SIGNAL: [HARVESTED]';
-    const signal = this.#echo.signal();
-    return signal === 0 ? 'SIGNAL: [SCAN_REQUIRED]' : `SIGNAL: ${String(signal)}%`;
+    return '';
   }
 
   override remember(): string | undefined {
@@ -83,5 +81,15 @@ export class NullReach extends Location {
 
   override landmarkFactor(): number {
     return super.landmarkFactor() * LANDMARK_FACTOR;
+  }
+
+  /** Drawn as an area of its children (U04). */
+  override portrait(): Portrait {
+    return this.area('null-reach', this.#echo.found() ? 0 : this.#echo.signal());
+  }
+
+  /** Marked in its parent's area (U04). */
+  override onArea(): readonly AreaPart[] {
+    return [{ address: this.address().toString(), mark: 'null-reach' }];
   }
 }

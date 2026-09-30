@@ -1,4 +1,5 @@
 import type { PictureBook } from '#ui/screens/PictureBook.ts';
+import type { AreaVM } from './AreaVM.ts';
 import type { CorridorVM } from './CorridorVM.ts';
 import type { PlanDrawing } from './PlanDrawing.ts';
 import { Planned } from './Planned.ts';
@@ -18,17 +19,20 @@ export class SceneRegistry implements PictureBook {
   readonly #tower: ScenePicture<TowerVM>;
   readonly #corridor: ScenePicture<CorridorVM>;
   readonly #plan: PlanDrawing<PlanVM>;
+  readonly #area: ScenePicture<AreaVM>;
 
   constructor(pictures: {
     readonly street: ScenePicture<StreetVM>;
     readonly tower: ScenePicture<TowerVM>;
     readonly corridor: ScenePicture<CorridorVM>;
     readonly plan: PlanDrawing<PlanVM>;
+    readonly area: ScenePicture<AreaVM>;
   }) {
     this.#street = pictures.street;
     this.#tower = pictures.tower;
     this.#corridor = pictures.corridor;
     this.#plan = pictures.plan;
+    this.#area = pictures.area;
   }
 
   street(vm: StreetVM): Sketch {
@@ -45,5 +49,9 @@ export class SceneRegistry implements PictureBook {
 
   plan(vm: PlanVM): Sketch {
     return new Planned(this.#plan, vm);
+  }
+
+  area(vm: AreaVM): Sketch {
+    return new Sketched(this.#area, vm);
   }
 }

@@ -134,6 +134,7 @@ export function towerSnapshot(floors: number, car: number, layers = 0): GameSnap
         address: TOWER,
         landmark: true,
         car,
+        breached: layers > 0,
         rows: [
           ...Array.from({ length: layers }, (_, k) => ({
             address: levelAddress(floors, k - layers),

@@ -22,7 +22,13 @@ import type { RoomCategory } from './RoomCategory.ts';
 import { RoomLook } from './RoomLook.ts';
 import type { ScanReport } from './ScanReport.ts';
 
-export const ROOM_KIND = new LocationKind({ key: 'room', title: 'Room', icon: '□', indexLabel: 'ROOM' });
+export const ROOM_KIND = new LocationKind({
+  key: 'room',
+  title: 'Room',
+  scale: '5 m',
+  icon: '□',
+  indexLabel: 'ROOM',
+});
 
 /** Under an anomaly the interpretation is glitched: structure, walls and lighting each at its own share (Room.groovy:268-272). */
 const STATIC = new Glitch();

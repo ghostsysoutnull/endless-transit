@@ -3,10 +3,13 @@ import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { Vibe } from './Vibe.ts';
+import type { Portrait } from './Portrait.ts';
+import type { AreaPart } from './AreaPart.ts';
 
 export const PLANET_KIND = new LocationKind({
   key: 'planet',
   title: 'Planet',
+  scale: '10⁷ m',
   icon: '⊕',
   indexLabel: 'ORBIT',
 });
@@ -40,18 +43,14 @@ export class Planet extends Location {
 
   override facts(): readonly Fact[] {
     return [
-      { key: 'culture', label: 'RESONANCE', value: this.#vibe.culture().key() },
-      { key: 'era', label: 'TIMELINE', value: this.#vibe.era().key() },
+      { key: 'culture', label: 'Culture', value: this.#vibe.culture().key() },
+      { key: 'era', label: 'Era', value: this.#vibe.era().key() },
     ];
   }
 
+  /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
   status(): string {
-    return `RESONANCE: [${this.#vibe.culture().key().toUpperCase()}]`;
-  }
-
-  /** The trace's note (Planet.groovy:30-34): a planet is always the surface. */
-  override meta(): string {
-    return ` [SURFACE | ERA: ${this.#vibe.era().key().toUpperCase()}]`;
+    return '';
   }
 
   childrenHeading(): string {
@@ -60,5 +59,15 @@ export class Planet extends Location {
 
   approachVerb(): string {
     return 'Visit';
+  }
+
+  /** Drawn as an area of its children (U04). */
+  override portrait(): Portrait {
+    return this.area('planet');
+  }
+
+  /** Marked in its parent's area (U04). */
+  override onArea(): readonly AreaPart[] {
+    return [{ address: this.address().toString(), mark: 'planet' }];
   }
 }

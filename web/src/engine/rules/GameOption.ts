@@ -6,6 +6,8 @@ import type { Fact } from '#engine/model/Fact.ts';
  * keys it hands to listed places — so a row never reads `[V] … [V]`.
  */
 export const VISITED_KEY = 'v';
+/** The TRACE command's option id (U04): the rail runs it too. */
+export const TRACE_ID = 'trace';
 
 /** A thing the player can do right now — data, never a closure. The engine resolves `id` to the action. */
 export interface GameOption {

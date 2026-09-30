@@ -131,7 +131,7 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     for (const id of ['new-world', 'enter-world', 'leave', 'leave', 'leave', 'leave', 'leave'])
       snapshot = engine.step(id);
     expect(snapshot.place?.name).toBe('Null Reach F4E');
-    expect(snapshot.place?.status).toBe('SIGNAL: [SCAN_REQUIRED]');
+    expect(snapshot.place?.facts).toEqual([{ key: 'signal', label: 'Signal', value: 'scan to search' }]);
     expect(snapshot.options.find((option) => option.id === 'echo')).toMatchObject({
       key: 'e',
       label: 'Scan for spectral echoes',
@@ -141,9 +141,9 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     const readings: string[] = [];
     while (!snapshot.options.some((option) => option.id === 'capture-echo')) {
       snapshot = engine.step('echo');
-      readings.push(snapshot.place?.status ?? '');
+      readings.push(snapshot.place?.facts[0]?.value ?? '');
     }
-    expect(readings).toEqual(['SIGNAL: 10%', 'SIGNAL: 32%', 'SIGNAL: 63%', 'SIGNAL: 89%', 'SIGNAL: 100%']);
+    expect(readings).toEqual(['10%', '32%', '63%', '89%', '100%']);
     expect(snapshot.message).toBe('HARMONIC_LOCK_ESTABLISHED: Spectral Echo isolated. Signal 100%.');
     expect(snapshot.player).toMatchObject({ coherence: 90, band: 'stable', steps: 10 });
     expect(snapshot.options.find((option) => option.id === 'capture-echo')).toMatchObject({
@@ -157,7 +157,7 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     expect(captured.buffer?.fragments).toEqual([
       { key: 'echo(0.0.0)', name: 'Spectral Echo', hertz: 9958, resonant: false },
     ]);
-    expect(captured.place?.status).toBe('SIGNAL: [HARVESTED]');
+    expect(captured.place?.facts[0]?.label).toBe('Echo taken');
     expect(captured.place?.description).toEqual([
       'A silent void. The spectral resonance has been harvested.',
     ]);
@@ -165,8 +165,8 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     expect(engine.step('echo').message).toBe(captured.message);
     // The hunt is in the save: a reload finds the echo gone (Guide:369-370 said the old save did not).
     expect(saves.load()).toContain('"0.0.0":"{\\"found\\":true}"');
-    expect(engineOn(ZERO, new MemorySaveStore(saves.load())).snapshot().place?.status).toBe(
-      'SIGNAL: [HARVESTED]',
+    expect(engineOn(ZERO, new MemorySaveStore(saves.load())).snapshot().place?.facts[0]?.label).toBe(
+      'Echo taken',
     );
   });
 });
@@ -273,7 +273,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       address: LAYER,
       abyssal: true,
       position: { label: 'STRATA', index: 1, total: 10 },
-      status: 'SYSTEM_STATUS: [ABYSS_SYNC]',
+      status: '',
       description: ['Layer -0x1. The air is thick with oily static and the hum of abyssal substrate.'],
     });
     expect([
@@ -314,7 +314,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       kind: 'Layer',
       name: 'Layer -0x1',
       abyssal: true,
-      status: 'TRAFFIC: [PRESSURE_HIGH] | THEME: [ABYSSAL]',
+      status: '',
       facts: [
         { key: 'culture', label: 'Culture', value: 'abyssal' },
         { key: 'reading', label: 'Doors', value: '9' },

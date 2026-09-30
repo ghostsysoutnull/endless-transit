@@ -55,6 +55,7 @@ function tower(
       address: options.address ?? '0.0.0.0.0.0.0.0.2',
       landmark: options.landmark ?? false,
       car: options.car ?? 0,
+      breached: below > 0,
       rows: [
         ...Array.from({ length: below }, (_, k) => ({
           address: `0.0.0.0.0.0.0.0.2.${String(floors + below - 1 - k)}`,
@@ -199,6 +200,17 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
     picture.paint(middle, tower(100), PHONE, palette(middle.asked), 0, new NoChild(), 50);
     expect(middle.asked.has('rd')).toBe(false);
     expect(middle.asked.has('bl')).toBe(true);
+  });
+
+  test('once the bedrock is breached the count of levels below is written in red, the foot out of view (U04)', () => {
+    const below = (vm: TowerVM): string => {
+      const painter = new RecordingPainter();
+      picture.paint(painter, vm, PHONE, palette(painter.asked), 0, new NoChild(), 50);
+      const call = painter.calls.find((each) => each.startsWith('fillText(▼')) ?? '';
+      return /<([a-z-]+)>/.exec(call)?.[1] ?? '';
+    };
+    expect(below(tower(100))).toBe('dim');
+    expect(below(tower(100, { below: 10 }))).toBe('rd');
   });
 });
 

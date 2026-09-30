@@ -162,7 +162,8 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   // The depth is the rail's length (U01a): the universe down to the building, and the Layer under it.
   await expect(page.getByTestId('path').locator('li')).toHaveCount(10);
   await expect(page.locator('.chip.pos')).toHaveText(/Strata\s+1 of 10/);
-  await expect(page.locator('.diag')).toHaveText('SYSTEM_STATUS: [ABYSS_SYNC]');
+  // Drawn (U04): the tower, the car below the bedrock.
+  await expect(page.getByTestId('scene').locator('canvas')).toBeVisible();
   await expect(page.getByTestId('telemetry')).toContainText('VOID_SYNC: [PRESSURE_HIGH]');
   await expect(page.getByTestId('coherence')).toHaveText('94%'); // 100: the corridor and back, the breach, leave, the lobby, the descent
   await expectTouchable(page, 'Layer -1');
@@ -178,7 +179,8 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await expect(page.getByTestId('coherence')).toHaveText('92%');
 
   await press(page, /enter corridor/i, hasTouch);
-  await expect(page.locator('.diag')).toHaveText('TRAFFIC: [PRESSURE_HIGH] | THEME: [ABYSSAL]');
+  // The Artery walked (U04), its doors in the perspective.
+  await expect(page.getByTestId('scene').locator('canvas')).toBeVisible();
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('SHARD');

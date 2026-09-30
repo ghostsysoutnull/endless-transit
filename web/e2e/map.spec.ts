@@ -145,7 +145,7 @@ test('in a building MAP plots the doors of the floor; below 30 Coherence the map
   expect(problems).toEqual([]);
 });
 
-test('below the bedrock every node is ☠ in the void’s frame; TRACE draws the thread from the universe down to the Shard, BREACHED on the building, and lists it for a reader', async ({
+test('below the bedrock every node is ☠ in the void’s frame; TRACE opens the column from the universe down to the Layer, a band each, its picture drawn', async ({
   page,
   hasTouch,
 }) => {
@@ -175,15 +175,14 @@ test('below the bedrock every node is ☠ in the void’s frame; TRACE draws the
   await expect(page.getByTestId('map')).toHaveCount(0);
   const trace = page.getByTestId('trace');
   await expect(trace).toBeVisible();
-  await expect(trace.locator('.heading')).toHaveText('[NEURAL_LATTICE_TRACE_INITIATED]');
-  // In the corridor the traveller stands on the Layer (the Artery is where its doors are listed): ten levels.
-  await expect(trace.locator('.vh li')).toHaveCount(10);
-  await expect(trace.locator('.vh li').nth(0)).toHaveText('[00] ∞ UNIVERSE : The Endless Universe');
-  await expect(trace.locator('.vh li').nth(8)).toHaveText('[08] ⌂ BUILDING : Ornate Sanctum [BREACHED]');
-  await expect(trace.locator('.vh li').nth(9)).toHaveText('>> [09] ▤ LAYER : Layer -0x1');
-  await expectDrawn(trace.locator('.cv'), 'the trace', 'top');
+  // In the corridor the traveller stands on the Layer (the Artery is where its doors are listed): ten levels, a band each.
+  const bands = trace.getByRole('button', { name: /^Depth / });
+  await expect(bands).toHaveCount(10);
+  await expect(bands.nth(0)).toHaveAccessibleName('Depth 00, Universe: The Endless Universe');
+  await expect(bands.nth(9)).toHaveAccessibleName('Depth 09, Layer: Layer -0x1, you are here');
+  await expectDrawn(trace.locator('[data-level]').nth(9), 'the Layer’s band', 'bottom');
   await expectTouchable(page, 'the trace below the bedrock');
-  await shoot(page, '5-trace-void', trace);
+  await shoot(page, '5-trace-void');
   expect(problems).toEqual([]);
 });
 
@@ -204,12 +203,15 @@ test('TRACE on a street, from the universe down; the dock’s MORE opens, the st
   // The step folds the dock again.
   await expect(more).toHaveText('MORE');
   const trace = page.getByTestId('trace');
-  await expect(trace.locator('.vh li')).toHaveCount(8);
-  await expect(trace.locator('.vh li').nth(4)).toHaveText('[04] ⊕ PLANET : Auraea [SURFACE | ERA: FUTURE]');
-  await expect(trace.locator('.vh li').nth(7)).toHaveText('>> [07] ═ STREET : Bright Boulevard');
-  await expectDrawn(trace.locator('.cv'), 'the street trace', 'top');
+  const bands = trace.getByRole('button', { name: /^Depth / });
+  await expect(bands).toHaveCount(8);
+  await expect(bands.nth(4)).toHaveAccessibleName('Depth 04, Planet: Auraea');
+  await expect(bands.nth(7)).toHaveAccessibleName('Depth 07, Street: Bright Boulevard, you are here');
+  await expectDrawn(trace.locator('[data-level]').nth(7), 'the street’s band', 'bottom');
   await expectTouchable(page, 'street with the trace');
-  await shoot(page, '6-trace-street', trace);
+  await shoot(page, '6-trace-street');
+  await press(page, /^close$/i, hasTouch);
+  await expect(trace).toHaveCount(0);
   await (hasTouch ? more.tap() : more.click());
   await expect(more).toHaveText('LESS');
   await expect(more).toHaveAttribute('aria-expanded', 'true');
@@ -244,8 +246,8 @@ test('on a phone at 360 px the map and the trace fit without sideways scroll, ev
   await expectTouchable(page, 'map at 360');
   await shoot(page, '7-map-360', page.getByTestId('map'));
   await press(page, /^trace$/i, hasTouch);
-  await expectDrawn(page.getByTestId('trace').locator('.cv'), 'the trace at 360', 'top');
+  await expectDrawn(page.getByTestId('trace').locator('[data-level]').last(), 'the trace at 360', 'bottom');
   await expectTouchable(page, 'trace at 360');
-  await shoot(page, '8-trace-360', page.getByTestId('trace'));
+  await shoot(page, '8-trace-360');
   expect(problems).toEqual([]);
 });

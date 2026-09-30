@@ -127,12 +127,16 @@ describe('what draws a floor, and what its picture is handed (U02)', () => {
     expect(towerOf(building.portrait()).rows.map((row) => row.level)).toEqual([...layers, ...floors]);
   });
 
-  test('a Layer keeps its own screen until U04: no picture draws it, not even the tower at its elevator', () => {
+  test('a Layer is drawn as its mode says (U04): the tower at its elevator, the Artery walked in the void in its corridor', () => {
     const building = buildingOf(2);
     expect(building.recall(JSON.stringify({ breached: true }))).toBe(true);
     const layer = must(building.floorNumbered(-1));
     layer.arrive();
-    expect(readPortrait(layer.portrait(() => true))).toEqual({ drawn: 'unseen' });
+    const tower = readPortrait(layer.portrait(() => true));
+    expect(tower.drawn === 'tower' && tower.tower.breached).toBe(true);
+    layer.move('corridor');
+    const artery = readPortrait(layer.portrait(() => true));
+    expect(artery.drawn === 'corridor' && artery.corridor.abyssal).toBe(true);
   });
 
   test('a door hands its picture its look and the word written on it', () => {

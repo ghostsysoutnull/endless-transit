@@ -10,7 +10,7 @@ import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
-import { type GameOption, VISITED_KEY } from './GameOption.ts';
+import { type GameOption, TRACE_ID, VISITED_KEY } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { HELP, HelpPrompt } from './HelpPrompt.ts';
 import { Journey } from './Journey.ts';
@@ -32,7 +32,7 @@ const MOVE = 'move:';
 const CAPTURE = 'capture:';
 const SCAN = 'scan';
 const MAP = 'map';
-const TRACE = 'trace';
+const TRACE = TRACE_ID;
 const ECHO = 'echo';
 const CAPTURE_ECHO = 'capture-echo';
 const BREACH = 'breach';
@@ -243,13 +243,27 @@ export class GameEngine {
         options: () => (this.#atTitle() ? [] : [systemOption(TRACE, '', 'Trace')]),
         run: () => {
           const trail = this.#journey.here()?.trail() ?? [];
+          const player = this.#journey.player();
+          const seen = (place: Location): boolean => player.visited(place);
           this.#trace = {
             steps: trail.map((step, depth) => ({
+              address: step.address().toString(),
+              portrait: step.bandPortrait(seen, trail[depth + 1]),
+              children: step.listing().map((child) => ({
+                address: child.address().toString(),
+                name: child.name(),
+                ordinal: String(child.ordinal()),
+                landmark: child.landmark(),
+                visited: player.visited(child),
+                sealed: child.sealed(),
+              })),
+              facts: step.facts(),
+              words: step.description()[0] ?? '',
+              scale: step.kind().scale(),
               depth,
               icon: step.kind().icon(),
               kind: step.kind().title(),
               name: step.name(),
-              meta: step.meta(),
               current: depth === trail.length - 1,
               abyssal: step.abyssal(),
             })),

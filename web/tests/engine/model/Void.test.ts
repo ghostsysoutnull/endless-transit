@@ -78,10 +78,9 @@ describe('the Null Reach echo (Guide:116, 192-195; NullSector.groovy:25-30, 84-1
     expect(echo.locked()).toBe(false);
     expect(echo.found()).toBe(false);
     expect(echo.capture()).toBeUndefined();
-    expect(void_.status()).toBe('SIGNAL: [SCAN_REQUIRED]');
-    expect(void_.facts()).toEqual([
-      { key: 'signal', label: 'VOID_STATUS', value: 'Searching for signals...' },
-    ]);
+    // The hunt is a chip (U04), no diagnostic line.
+    expect(void_.status()).toBe('');
+    expect(void_.facts()).toEqual([{ key: 'signal', label: 'Signal', value: 'scan to search' }]);
     const twin = must((reach() as Location).echo());
     const readings: number[] = [];
     for (let step = 0; !echo.locked(); step++) {
@@ -92,14 +91,12 @@ describe('the Null Reach echo (Guide:116, 192-195; NullSector.groovy:25-30, 84-1
       expect(after - before <= 39 || after === 100).toBe(true);
       readings.push(after);
       expect(twin.scan(step)).toBe(after);
-      expect(void_.status()).toBe(`SIGNAL: ${String(after)}%`);
+      expect(void_.facts()[0]?.value).toBe(`${String(after)}%`);
     }
     expect(readings.length).toBeGreaterThanOrEqual(3);
     expect(readings.length).toBeLessThanOrEqual(10);
     expect(echo.signal()).toBe(100);
-    expect(void_.facts()[0]?.value).toBe(
-      `SIGNAL_STRENGTH: 100% | FREQ_DRIFT: ${String(echo.fragment().frequency().hertz())}Hz`,
-    );
+    expect(void_.facts()[0]?.value).toBe('100%');
     expect(echo.scan(99)).toBe(100);
     const capture = must(echo.capture());
     expect(capture.fresh).toBe(true);
@@ -114,7 +111,7 @@ describe('the Null Reach echo (Guide:116, 192-195; NullSector.groovy:25-30, 84-1
     expect(echo.capture()).toBeUndefined();
     expect(echo.scan(5)).toBe(0);
     expect(void_.description()).toEqual(['A silent void. The spectral resonance has been harvested.']);
-    expect(void_.status()).toBe('SIGNAL: [HARVESTED]');
+    expect(void_.facts()).toEqual([{ key: 'signal', label: 'Echo taken', value: '' }]);
     // Every other kind has no echo.
     expect(street.echo()).toBeUndefined();
     expect(universe.echo()).toBeUndefined();

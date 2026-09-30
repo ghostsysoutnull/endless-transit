@@ -8,6 +8,9 @@ const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
 const LOBBY = `${BUILDING}.0`;
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
+/** Layer −1 below Ornate Sanctum's sixteen floors, reached once the bedrock is breached (U04 draws it). */
+const LAYER = `${BUILDING}.16`;
+const BREACHED = '{"elevator":-1,"breached":true}';
 /** The lobby's second door: an apartment of one room — no move, eighteen relics; its first button is a relic's tile (U03). */
 const ONLY_ROOM = `${LOBBY}.0.1.0`;
 /** The narrowest phone we promise (Decision 1). */
@@ -137,6 +140,7 @@ const KINDS: readonly {
   /** A room: judged by the room's own first screen (U03d). */
   readonly room?: true;
 }[] = [
+  { kind: 'universe', save: saveText(SEED, '0'), expectKind: 'UNIVERSE' },
   { kind: 'street', save: saveText(SEED, STREET), expectKind: 'STREET' },
   { kind: 'building', save: saveText(SEED, BUILDING), expectKind: 'BUILDING' },
   { kind: 'elevator', save: saveText(SEED, LOBBY), expectKind: 'FLOOR' },
@@ -162,12 +166,11 @@ const KINDS: readonly {
     panel: 'map',
     expectKind: 'STREET',
   },
+  { kind: 'layer', save: saveText(SEED, LAYER, { [BUILDING]: BREACHED }), expectKind: 'LAYER' },
   {
-    kind: 'trace',
-    save: saveText(SEED, STREET),
-    reach: (page, hasTouch) => press(page, /^trace$/i, hasTouch),
-    panel: 'trace',
-    expectKind: 'STREET',
+    kind: 'artery',
+    save: saveText(SEED, LAYER, { [BUILDING]: BREACHED, [LAYER]: 'corridor' }),
+    expectKind: 'LAYER',
   },
 ];
 

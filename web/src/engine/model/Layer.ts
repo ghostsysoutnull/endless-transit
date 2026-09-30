@@ -4,11 +4,15 @@ import type { LevelKind } from './LevelKind.ts';
 import { Floor } from './Floor.ts';
 import type { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
-import { NoPortrait } from './NoPortrait.ts';
 import type { Origin } from './Origin.ts';
-import type { Portrait } from './Portrait.ts';
 
-export const LAYER_KIND = new LocationKind({ key: 'layer', title: 'Layer', icon: '▤', indexLabel: 'STRATA' });
+export const LAYER_KIND = new LocationKind({
+  key: 'layer',
+  title: 'Layer',
+  scale: '60 m',
+  icon: '▤',
+  indexLabel: 'STRATA',
+});
 
 /** Every Layer is the substrate (Building.groovy:79). */
 const ZONE = 'ABYSSAL_SUBSTRATE';
@@ -22,7 +26,7 @@ const DRAIN = 2;
  * A floor below a building's bedrock (Guide:277-284; Floor.groovy:88-124): Layer −k, named in hex, reached
  * from the lobby once the breach is made. A Layer is a floor in every mechanical sense — its elevator, its
  * corridor mode, its one child (an Artery) — and answers for what differs: its name, its zone, the pressure
- * where a floor has integrity, the abyssal diagnostic, double drain, and that everything under it is abyssal.
+ * where a floor has integrity, double drain, and that everything under it is abyssal.
  * Its own screens read the street's era for the drain (Guide:138): the Artery below it does not.
  */
 export class Layer extends Floor {
@@ -36,11 +40,6 @@ export class Layer extends Floor {
 
   override levelKind(): LevelKind {
     return 'layer';
-  }
-
-  /** A Layer keeps its own screen until U04 draws it, whatever its mode — never the tower the floors are drawn as. */
-  override portrait(): Portrait {
-    return new NoPortrait();
   }
 
   /** `Layer -0x1` … (Floor.groovy:110-112). */
@@ -61,10 +60,6 @@ export class Layer extends Floor {
   /** Sealed until the bedrock is breached: nowhere for the walker, so no save can stand on it (Building.groovy:255). */
   override sealed(): boolean {
     return !this.building().breached();
-  }
-
-  override diagnostic(): string {
-    return 'SYSTEM_STATUS: [ABYSS_SYNC]';
   }
 
   override abyssal(): boolean {

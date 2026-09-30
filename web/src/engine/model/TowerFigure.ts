@@ -9,5 +9,7 @@ export interface TowerFigure {
   readonly address: string;
   readonly landmark: boolean;
   readonly car: number;
+  /** Whether the bedrock is open (U04): the one owner the picture asks. */
+  readonly breached: boolean;
   readonly rows: readonly LevelRow[];
 }

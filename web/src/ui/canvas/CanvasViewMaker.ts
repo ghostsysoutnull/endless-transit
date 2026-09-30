@@ -6,10 +6,9 @@ import type { Canvases } from './Canvases.ts';
 import { CanvasView } from './CanvasView.ts';
 import type { MapPictureVM } from './MapPictureVM.ts';
 import type { Picture } from './Picture.ts';
-import type { TracePictureVM } from './TracePictureVM.ts';
 
 /** The pictures the world screen's canvases draw: the map (in the pane and under the narrative) and the trace. */
-type CanvasPictures = Readonly<{ map: Picture<MapPictureVM>; trace: Picture<TracePictureVM> }>;
+type CanvasPictures = Readonly<{ map: Picture<MapPictureVM> }>;
 
 /** Makes the world screen's canvas views (U02): the map and the trace, each on the page's clock. A factory, built in `main.ts`. */
 export class CanvasViewMaker implements CanvasViews {
@@ -31,9 +30,5 @@ export class CanvasViewMaker implements CanvasViews {
 
   map(): View<MapPictureVM> {
     return new CanvasView(this.#pictures.map, this.#clock, this.#motion, this.#canvases);
-  }
-
-  trace(): View<TracePictureVM> {
-    return new CanvasView(this.#pictures.trace, this.#clock, this.#motion, this.#canvases);
   }
 }
