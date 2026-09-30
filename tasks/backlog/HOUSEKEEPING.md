@@ -68,6 +68,17 @@ facts so only the floor's kind changed). `LocationKind`'s constructor builds `In
 **Found:** 2026-09-29, the design check of `b2db464` (U03a). `app.css`'s `.world[data-drawn]:has(.objects) > .scene`
 repeats `clamp(200px, …, 44dvh)` from the drawn scene's rule, changing only the space held back (395 px, not 363 px).
 **Fix:** one `height` rule reading `var(--scene-reserve, 363px)`; the room's rule sets only `--scene-reserve: 395px`.
+### HK-034 — the U03b design check's logged findings (tidying, one line each)
+**Found:** 2026-09-29, the one design check of U03b (`2f96607..5c736c0`); none is a bug or a fact in two places.
+- `DrawnInside.ts` furniture and snow cast their hash fractions to tuples (`as [number, …]`): ask one fraction per part.
+- An empty string stands for "none" in a room's `status()`, the Degraded fact's value and the door appearance's label:
+  a fact with no label or no value as its own union member when `Fact` is next touched.
+- `PlanScene.#go` reads "no stop" as "a relic, so it flies": let the picture say which ids fly.
+- `HelpPresenter.ts:59` quotes the leave button's words, which `Apartment.wayOut()` owns.
+- `e2e/plan.spec.ts` sees the flight mark within its 650 ms in real time: pause the page's animations first.
+- `HudPresenter.test.ts` (:89, :215) still feeds the old `RESONANCE [STABLE]` fact the engine no longer makes.
+- `Door.description()` now only returns `brief()`: `Apartment.name()` can ask `brief()` and `description()` go.
+- `PixelCanvas.onPage` and `SceneCanvas.onPage` spell out the point type instead of `Point`.
 
 ## 🟢 CLOSED
 

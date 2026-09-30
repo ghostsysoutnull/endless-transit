@@ -56,6 +56,11 @@ export class SceneCanvas implements PointerHold {
     return this.#canvas.pointAt(event);
   }
 
+  /** Where a point on it stands on the page, in CSS pixels from the viewport's top left. */
+  onPage(point: { readonly x: number; readonly y: number }): { readonly x: number; readonly y: number } {
+    return this.#canvas.onPage(point);
+  }
+
   capture(pointer: number): void {
     this.#canvas.capture(pointer);
   }

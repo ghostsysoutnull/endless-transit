@@ -4,7 +4,6 @@ Coherence: 100% stable
 stats: Steps 0 | Buffer 0/16
 tags: Way 1 of 8 (position) | Era Future (era) | Culture Baroque (culture)
   Buildings stand in pairs along both sides of the way.
-diag: 
 status: Entered Bright Boulevard.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Ornate Sanctum
@@ -20,7 +19,6 @@ Coherence: 99% stable
 stats: Steps 1 | Buffer 0/16
 tags: Building 1 of 4 (position) | Culture Baroque (culture) | Floors 16 (reading)
   An elevator runs the height of the building.
-diag: 
 status: Entered Ornate Sanctum.
 RIDE TO A FLOOR
   15 [] Ride to Peak
@@ -64,7 +62,6 @@ Coherence: 98% stable
 stats: Steps 2 | Buffer 0/16
 tags: Era Future (era) | Culture Baroque (culture) | Stability 77.00% (reading) | Trait Industrial (trait)
   Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.
-diag: 
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ ████ ██ ████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
@@ -76,57 +73,54 @@ Coherence: 97% stable
 stats: Steps 3 | Buffer 0/16
 tags: Culture Baroque (culture) | Doors 9 (reading)
   A curved gallery of doors beneath a single strip of light.
-diag: 
 status: Enter Corridor.
 moves: [B] BACK TO ELEVATOR
 DOORS
-  01 [1] Open _void_sink_ Brutalist Slab [PITTED]
-       APPEARANCE: A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.
-  02 [2] Open Lacquered Timber Gate [WEEPING]
-       APPEARANCE: A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
-  03 [3] Open ⟨RESONANCE⟩ Synth-Glass Slab [PITTED]
-       APPEARANCE: A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay. The word 'RESONANCE' is finely etched into the frame, appearing almost as a structural glyph.
-  04 [4] Open _quarantine_ Riveted Iron Hatch [FROZEN]
-       APPEARANCE: A hatch of riveted iron, its seams weeping orange. A rime of frost has sealed the edges shut. The word 'quarantine' is scrawled across the surface in jagged, desperate lines.
-  05 [5] Open Industrial Barrier [SCORCHED]
-       APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The surface is blackened in a fan shape, as if something burned its way out.
-  06 [6] Open Synth-Glass Slab [PITTED]
-       APPEARANCE: A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay.
-  07 [7] Open Frosted Crystal Pane [WEEPING]
-       APPEARANCE: A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
-  08 [8] Open Synth-Glass Slab [SCORCHED]
-       APPEARANCE: A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is blackened in a fan shape, as if something burned its way out.
-  09 [9] Open Reinforced Polymer [RUSTED]
-       APPEARANCE: A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
+  01 [1] Open Brutalist Slab, pitted
+       A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.
+  02 [2] Open Lacquered Timber Gate, weeping
+       A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
+  03 [3] Open Synth-Glass Slab, pitted
+       A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay. The word 'RESONANCE' is finely etched into the frame, appearing almost as a structural glyph.
+  04 [4] Open Riveted Iron Hatch, frozen
+       A hatch of riveted iron, its seams weeping orange. A rime of frost has sealed the edges shut. The word 'quarantine' is scrawled across the surface in jagged, desperate lines.
+  05 [5] Open Industrial Barrier, scorched
+       An industrial barrier of stamped steel and yellow chevrons. The surface is blackened in a fan shape, as if something burned its way out.
+  06 [6] Open Synth-Glass Slab, pitted
+       A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay.
+  07 [7] Open Frosted Crystal Pane, weeping
+       A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
+  08 [8] Open Synth-Glass Slab, scorched
+       A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is blackened in a fan shape, as if something burned its way out.
+  09 [9] Open Reinforced Polymer, rusted
+       A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ████ █████ ██ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Grand Power Plant  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 _void_sink_ Brutalist Slab [PITTED] > □ Grand Power Plant *
+path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Grand Power Plant *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 1/16
-tags: Cell 1 of 2 (position) | TEMPORAL_MARKER Future (era) | TYPE Power Plant (reading) | OXY 14% (reading) | TEMP 7°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+tags: Room 1 of 2 (position) | Era Future (era) | Type Power Plant (reading) | Oxygen 14% (reading) | Temp 7°C (reading) | Signal Clear (signal)
   You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.
   The space is illuminated by a soft holographic haze with no visible source.
-FURNITURE: half-dismantled stained glass shard, scorched funeral mask
-OBJECTS_DETECTED: 4
-diag: ATMOS: 14% | TEMP: 7°C
+Furniture: half-dismantled stained glass shard, scorched funeral mask
+Relics: 4
 status: Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.
 moves: [F] GO FORWARD
 IN THIS ROOM: plasma coil with reliquary box <with|reliquary box|plasma coil> | brass censer fused to laser cutter <fused|brass censer|laser cutter> | stone gargoyle infused with orbital beacon <infused|stone gargoyle|orbital beacon> | prayer bench infused with plasma coil <infused|prayer bench|plasma coil>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █████ █████ █████████ █████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ EXIT APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE THE APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Baroque Maintenance Bay  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 _void_sink_ Brutalist Slab [PITTED] > □ Baroque Maintenance Bay *
+path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Baroque Maintenance Bay *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 1/16
-tags: Cell 2 of 2 (position) | TEMPORAL_MARKER Future (era) | TYPE Maintenance Bay (reading) | OXY 19% (reading) | TEMP 20°C (reading) | SIGNAL [SHIELDED] (signal) | RESONANCE [STABLE] (stable)
+tags: Room 2 of 2 (position) | Era Future (era) | Type Maintenance Bay (reading) | Oxygen 19% (reading) | Temp 20°C (reading) | Signal Shielded (signal)
   You are in a pump room throbbing behind a steel grille. The walls are red gilt mouldings peeling from plaster.
   The space is illuminated by the violet corona of an idle plasma coil.
-FURNITURE: bolted-down velvet kneeling-rug, rewired stone gargoyle, flickering stained glass shard
-OBJECTS_DETECTED: 4
-diag: ATMOS: 19% | TEMP: 20°C
+Furniture: bolted-down velvet kneeling-rug, rewired stone gargoyle, flickering stained glass shard
+Relics: 4
 status: Entered Baroque Maintenance Bay.
 moves: [B] GO BACK
 IN THIS ROOM: velvet kneeling-rug fused to optic implant <fused|velvet kneeling-rug|optic implant> | reliquary box fused to drone dock <fused|reliquary box|drone dock> | nanotech mesh grafted onto carved choir stall <grafted|carved choir stall|nanotech mesh> | plasma coil with prayer bench <with|prayer bench|plasma coil>

@@ -5,6 +5,7 @@ import type { Diamond } from './Diamond.ts';
 import type { PictureFont } from './PictureFont.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { Point } from './Point.ts';
+import type { RoomInside } from './RoomInside.ts';
 import type { SightLook } from './SightLook.ts';
 
 /** A room's name shows once its box is this wide and tall; its number once this big. */
@@ -17,13 +18,14 @@ const LEADING = 15;
 
 /**
  * One room of the plan as the picture places it at a framing (U03): its box on the picture inside its walls, what
- * the engine says of it, how its sight looks, its number, and whether you stand in it. It paints its own floor and
- * its own words and marks. Immutable, made per frame.
+ * the engine says of it, how its sight looks, what its box holds, its number, and whether you stand in it. It paints
+ * its own floor and what lies inside, and its own words and marks. Immutable, made per frame.
  */
 export class PlacedRoom {
   readonly #room: PlanRoom;
   readonly #box: PlanBoxOnPicture;
   readonly #look: SightLook;
+  readonly #inside: RoomInside;
   readonly #number: string;
   readonly #here: boolean;
 
@@ -31,12 +33,14 @@ export class PlacedRoom {
     room: PlanRoom;
     box: PlanBoxOnPicture;
     look: SightLook;
+    inside: RoomInside;
     number: string;
     here: boolean;
   }) {
     this.#room = facts.room;
     this.#box = facts.box;
     this.#look = facts.look;
+    this.#inside = facts.inside;
     this.#number = facts.number;
     this.#here = facts.here;
   }
@@ -48,13 +52,14 @@ export class PlacedRoom {
     return { x: box.x + box.width / 2, y: box.y + box.height - Math.min(18, box.height / 4) };
   }
 
-  /** The ground under it, its floor as its sight paints it over that, outlined in yellow when you stand in it. */
-  paintFloor(painter: Painter, palette: Palette): void {
+  /** The ground under it, its floor as its sight paints it over that, what lies inside, outlined in yellow when you stand in it. */
+  paintFloor(painter: Painter, palette: Palette, time: number): void {
     const box = this.#box;
     painter.fillStyle = palette('ground');
     painter.globalAlpha = 1;
     painter.fillRect(box.x, box.y, box.width, box.height);
     this.#look.paintFloor(painter, palette, box);
+    this.#inside.paint(painter, palette, time);
     if (!this.#here) return;
     painter.strokeStyle = palette('yl');
     painter.globalAlpha = 1;
@@ -74,7 +79,7 @@ export class PlacedRoom {
     if (!this.#here) this.#look.paintDot(painter, palette, this.#box);
   }
 
-  /** Its name and number where they fit, in this ink, and the marks of the relics lying in it. */
+  /** Its name where its inside puts it and its number, where they fit, in this ink, and the marks of the relics lying in it. */
   #write(
     painter: Painter,
     palette: Palette,
@@ -83,16 +88,17 @@ export class PlacedRoom {
   ): void {
     const box = this.#box;
     const centre = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    const name = this.#inside.nameLine();
     painter.globalAlpha = 1;
     painter.textBaseline = 'middle';
     painter.font = parts.font.of(this.#here ? 'bold' : 'regular');
     const named = box.width >= NAMED.width && box.height >= NAMED.height;
-    const lines = named ? this.#lines(painter, box.width - 12) : [];
+    const lines = named ? this.#lines(painter, box.width - 12, name.lines) : [];
     if (lines.length > 0) {
       painter.textAlign = 'center';
       painter.fillStyle = palette(ink);
       lines.forEach((line, index) => {
-        painter.fillText(line, centre.x, centre.y + (index - (lines.length - 1) / 2) * LEADING);
+        painter.fillText(line, centre.x, name.y + (index - (lines.length - 1) / 2) * LEADING);
       });
       painter.textAlign = 'left';
       painter.fillStyle = palette('dim');
@@ -111,10 +117,11 @@ export class PlacedRoom {
     }
   }
 
-  /** Its name in at most two lines that fit this width; none when it will not fit. */
-  #lines(painter: Painter, width: number): readonly string[] {
+  /** Its name in at most this many lines (one or two) that fit this width; none when it will not fit. */
+  #lines(painter: Painter, width: number, most: number): readonly string[] {
     const name = this.#room.name;
     if (painter.measureText(name).width <= width) return [name];
+    if (most < 2) return [];
     const words = name.split(' ');
     for (let cut = Math.ceil(words.length / 2); cut > 0 && cut < words.length; cut++) {
       const lines = [words.slice(0, cut).join(' '), words.slice(cut).join(' ')];

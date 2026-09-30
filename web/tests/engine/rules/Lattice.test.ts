@@ -110,15 +110,15 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
     ]);
     expect(below.nodes.map((node) => node.glyph).join('')).toBe('☠☠☠☠☠☠☠X☠');
     expect(below.nodes.map((node) => node.name)).toEqual([
-      'Frosted Crystal Pane [HUMMING]',
-      'Bone-Lattice Aperture [HUMMING]',
+      'Frosted Crystal Pane, humming',
+      'Bone-Lattice Aperture, humming',
       'Heavy Bulkhead',
-      'Frosted Crystal Pane [POLISHED]',
-      'Bone-Lattice Aperture [PITTED]',
-      'Frosted Crystal Pane [RUSTED]',
-      'Pitted Concrete [STATIC]',
-      '[LATTICE] Reinforced Polymer [COLD]',
-      'Pitted Concrete [SCORCHED]',
+      'Frosted Crystal Pane, polished',
+      'Bone-Lattice Aperture, pitted',
+      'Frosted Crystal Pane, rusted',
+      'Pitted Concrete, static',
+      'Reinforced Polymer, cold',
+      'Pitted Concrete, scorched',
     ]);
     breached.step('leave');
     const building = lattice(breached.snapshot());
@@ -152,15 +152,15 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
     expect(corridor.place?.lattice?.nodes.map((node) => node.glyph)).toEqual(Array<string>(9).fill('🚪'));
     // A door is named as the corridor names it; the one walked through is the visited one.
     expect(corridor.place?.lattice?.nodes.map((node) => `${node.name}${node.visited ? ' *' : ''}`)).toEqual([
-      '_void_sink_ Brutalist Slab [PITTED] *',
-      'Lacquered Timber Gate [WEEPING]',
-      '⟨RESONANCE⟩ Synth-Glass Slab [PITTED]',
-      '_quarantine_ Riveted Iron Hatch [FROZEN]',
-      'Industrial Barrier [SCORCHED]',
-      'Synth-Glass Slab [PITTED]',
-      'Frosted Crystal Pane [WEEPING]',
-      'Synth-Glass Slab [SCORCHED]',
-      'Reinforced Polymer [RUSTED]',
+      'Brutalist Slab, pitted *',
+      'Lacquered Timber Gate, weeping',
+      'Synth-Glass Slab, pitted',
+      'Riveted Iron Hatch, frozen',
+      'Industrial Barrier, scorched',
+      'Synth-Glass Slab, pitted',
+      'Frosted Crystal Pane, weeping',
+      'Synth-Glass Slab, scorched',
+      'Reinforced Polymer, rusted',
     ]);
     expect(corridor.place?.telemetry).not.toBeNull();
     // The same doors at the elevator: a floor's map is its own rooms in either mode.
@@ -283,7 +283,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
       '⌂ Building : Ornate Sanctum [BREACHED]',
       '▤ Layer : Layer -0x1',
       '▅ Artery : Artery',
-      '🚪 Crypt : Frosted Crystal Pane [HUMMING]',
+      '🚪 Crypt : Frosted Crystal Pane, humming',
       '☠ Shard : Inverted Processing Core',
     ]);
     expect(shown.trace?.steps.map((step) => step.abyssal)).toEqual([

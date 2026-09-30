@@ -102,7 +102,7 @@ test(
     await press(page, /^scan$/i, hasTouch);
     await expect(page.getByTestId('scan')).toBeVisible();
     await expect(page.getByTestId('coherence')).toHaveText('99%');
-    await press(page, /exit apartment/i, hasTouch);
+    await press(page, /leave the apartment/i, hasTouch);
     await expect(page.getByTestId('scan')).toHaveCount(0);
     await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
     await press(page, /^map$/i, hasTouch);
@@ -130,7 +130,7 @@ test(
     await expect(page.getByTestId('coherence')).toHaveText('100%');
 
     // To the Peak: the breach spends the Keystone; floor 0 then descends.
-    await press(page, /exit apartment/i, hasTouch);
+    await press(page, /leave the apartment/i, hasTouch);
     await press(page, /back to elevator/i, hasTouch);
     for (let floor = 1; floor <= PEAK; floor++) {
       await press(page, /go up/i, hasTouch);

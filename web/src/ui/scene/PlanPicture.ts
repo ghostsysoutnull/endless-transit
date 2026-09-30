@@ -1,3 +1,4 @@
+import type { PlanRoom } from '#engine/model/PlanRoom.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
@@ -5,23 +6,29 @@ import type { ChildMark } from './ChildMark.ts';
 import type { Diamond } from './Diamond.ts';
 import type { FloorPlan } from './FloorPlan.ts';
 import type { Framing } from './Framing.ts';
+import type { Glow } from './Glow.ts';
 import type { PictureFont } from './PictureFont.ts';
 import { PlacedRoom } from './PlacedRoom.ts';
 import { PlanCamera } from './PlanCamera.ts';
 import type { PlanDoor } from './PlanDoor.ts';
 import type { PlanDrawing } from './PlanDrawing.ts';
+import type { PlanBox } from './PlanBox.ts';
+import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { PlanLayout } from './PlanLayout.ts';
 import { PlanPoint } from './PlanPoint.ts';
 import type { PlanVM } from './PlanVM.ts';
 import type { Point } from './Point.ts';
+import type { RelicSpot } from './RelicSpot.ts';
+import type { RoomInside } from './RoomInside.ts';
+import type { RoomInsides } from './RoomInsides.ts';
 import type { SceneChild } from './SceneChild.ts';
 import type { SceneHit } from './SceneHit.ts';
 import { SIGHT_LOOKS } from './SightLooks.ts';
 
 /** A thumb's reach: every tappable part of the plan is at least this big, in CSS pixels. */
 const HIT = 44;
-/** A relic's place in the room you stand in, a thumb's reach and a little air. */
-const SPOT = 52;
+/** A relic's label: at most this many words of its name, this far above it (the tile below the picture has it whole). */
+const LABEL = { words: 2, above: 20 };
 /** A doorway's gap in plan units (the mock's `min(.55, len * .6)`). */
 const GAP = 0.55;
 /** The walls' thickness: this share of a unit, between these pixels (the mock's `clamp(z * .07, 2, 8)`). */
@@ -33,18 +40,29 @@ const FINE_GRID = 60;
  * Draws a room as its apartment's plan (U03; the mock's `apartment`, `transit-reframed.html:865-906`): the rooms laid
  * out by `PlanLayout` in walking order, walls between them and a doorway only into the next, the entrance under the
  * first; each room as its sight shows it (`SIGHT_LOOKS`: fog, known, visited), the room you stand in outlined, you in
- * it, and its relics as things to tap; the minimap while the plan runs past the frame. A pure function of its
- * view-model, size, framing, time and lit option.
+ * it — drawn in full while its box is large enough (`RoomInsides`, U03b) — and its relics as things to tap, lit and
+ * labelled; the minimap while the plan runs past the frame. A pure function of its view-model, size, framing, time and
+ * lit option.
  */
 export class PlanPicture implements PlanDrawing<PlanVM> {
   readonly #layout: PlanLayout;
   readonly #font: PictureFont;
   readonly #diamond: Diamond;
+  readonly #insides: RoomInsides;
+  readonly #glow: Glow;
 
-  constructor(parts: { readonly layout: PlanLayout; readonly font: PictureFont; readonly diamond: Diamond }) {
+  constructor(parts: {
+    readonly layout: PlanLayout;
+    readonly font: PictureFont;
+    readonly diamond: Diamond;
+    readonly insides: RoomInsides;
+    readonly glow: Glow;
+  }) {
     this.#layout = parts.layout;
     this.#font = parts.font;
     this.#diamond = parts.diamond;
+    this.#insides = parts.insides;
+    this.#glow = parts.glow;
   }
 
   camera(vm: PlanVM, size: PictureSize): PlanCamera {
@@ -65,7 +83,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
   layout(vm: PlanVM, size: PictureSize, framing: Framing): readonly SceneHit[] {
     const plan = this.#plan(vm);
     return [
-      ...this.#relicSpots(vm, plan, size, framing).map(({ relic, at }) => this.#hit(relic.id, at)),
+      ...this.#relicSpots(vm, plan, size, framing).map(({ relic, spot }) => this.#hit(relic.id, spot.at)),
       ...vm.doors.flatMap((door) => {
         const doorway = this.#doorwayTo(vm, plan, door);
         return doorway === undefined ? [] : [this.#hit(door.id, framing.toPicture(doorway.middle(), size))];
@@ -85,8 +103,8 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
   ): void {
     const plan = this.#plan(vm);
     const scale = framing.scale();
-    const wall = Math.min(Math.max(scale * WALL.share, WALL.least), WALL.most);
-    const rooms = this.#place(vm, plan, size, framing, wall);
+    const wall = this.#wall(framing);
+    const rooms = this.#place(vm, plan, size, framing);
     painter.globalAlpha = 1;
     painter.shadowBlur = 0;
     painter.setLineDash([]);
@@ -102,7 +120,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
       plan.width() * scale + wall,
       plan.height() * scale + wall,
     );
-    for (const room of rooms) room.paintFloor(painter, palette);
+    for (const room of rooms) room.paintFloor(painter, palette, time);
     this.#doorways(painter, vm, plan, size, palette, framing, wall, lit);
     for (const room of rooms) room.paintMarks(painter, palette, { font: this.#font, diamond: this.#diamond });
     for (const room of rooms) this.#you(painter, room.you(), palette, time);
@@ -128,33 +146,45 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     return plan.doorBetween(this.#index(vm, vm.here), this.#index(vm, door.address));
   }
 
+  /** The walls' thickness at this framing, in CSS pixels. */
+  #wall(framing: Framing): number {
+    return Math.min(Math.max(framing.scale() * WALL.share, WALL.least), WALL.most);
+  }
+
+  /** A room's box on the picture, inside its walls. */
+  #onPicture(box: PlanBox, size: PictureSize, framing: Framing): PlanBoxOnPicture {
+    const wall = this.#wall(framing);
+    const from = framing.toPicture(box.topLeft(), size);
+    const to = framing.toPicture(box.bottomRight(), size);
+    return {
+      x: from.x + wall / 2,
+      y: from.y + wall / 2,
+      width: to.x - from.x - wall,
+      height: to.y - from.y - wall,
+    };
+  }
+
+  /** What a room's box holds: the room you stand in by its look, any other plain. */
+  #inside(vm: PlanVM, room: PlanRoom, box: PlanBoxOnPicture): RoomInside {
+    return room.address === vm.here ? this.#insides.here(box, vm.look, vm.here) : this.#insides.away(box);
+  }
+
   #hit(id: string, at: Point): SceneHit {
     return { id, x: at.x - HIT / 2, y: at.y - HIT / 2, width: HIT, height: HIT, anchor: at };
   }
 
-  /** Each room as the picture places it: its box inside its walls, its sight's look, its number, whether you are in it. */
-  #place(
-    vm: PlanVM,
-    plan: FloorPlan,
-    size: PictureSize,
-    framing: Framing,
-    wall: number,
-  ): readonly PlacedRoom[] {
+  /** Each room as the picture places it: its box inside its walls, its sight's look, what it holds, its number, whether you are in it. */
+  #place(vm: PlanVM, plan: FloorPlan, size: PictureSize, framing: Framing): readonly PlacedRoom[] {
     return plan.rooms().flatMap((box, index) => {
       const room = vm.rooms[index];
       if (room === undefined) return [];
-      const from = framing.toPicture(box.topLeft(), size);
-      const to = framing.toPicture(box.bottomRight(), size);
+      const onPicture = this.#onPicture(box, size, framing);
       return [
         new PlacedRoom({
           room,
-          box: {
-            x: from.x + wall / 2,
-            y: from.y + wall / 2,
-            width: to.x - from.x - wall,
-            height: to.y - from.y - wall,
-          },
+          box: onPicture,
           look: SIGHT_LOOKS[room.sight],
+          inside: this.#inside(vm, room, onPicture),
           number: String(index + 1),
           here: room.address === vm.here,
         }),
@@ -245,7 +275,10 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     painter.fill();
   }
 
-  /** The relics lying in the room you stand in, each in its spot: a diamond to tap, dim while the buffer is full. */
+  /**
+   * The relics lying in the room you stand in, each in its spot: a glowing diamond to tap, dim while the buffer is
+   * full, labelled with the first words of its name where they fit its spot — the one lit always, over the rest.
+   */
   #relics(
     painter: Painter,
     vm: PlanVM,
@@ -256,45 +289,66 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     lit: ChildMark,
     time: number,
   ): void {
-    for (const { relic, at } of this.#relicSpots(vm, plan, size, framing)) {
-      const bob = Math.sin(time / 600 + Number(relic.ordinal)) * 2;
-      if (lit.marks(relic.id)) {
+    const placed = this.#relicSpots(vm, plan, size, framing);
+    for (const { relic, spot } of placed) {
+      const at = { x: spot.at.x, y: spot.at.y + Math.sin(time / 600 + Number(relic.ordinal)) * 2 };
+      const shining = lit.marks(relic.id);
+      if (!relic.sealed) this.#glow.at(painter, at, shining ? 44 : 34, palette('yl'), shining ? 0.45 : 0.3);
+      if (shining) {
         painter.strokeStyle = palette('yl');
         painter.globalAlpha = 0.6;
         painter.lineWidth = 1.5;
         painter.beginPath();
-        painter.arc(at.x, at.y + bob, HIT / 2 - 4, 0, Math.PI * 2);
+        painter.arc(at.x, at.y, HIT / 2 - 4, 0, Math.PI * 2);
         painter.stroke();
       }
       painter.strokeStyle = palette(relic.sealed ? 'dim' : 'yl');
       painter.globalAlpha = 1;
       painter.lineWidth = 1.6;
-      this.#diamond.trace(painter, at.x, at.y + bob, 10);
+      this.#diamond.trace(painter, at.x, at.y, 10);
       painter.stroke();
+    }
+    painter.font = this.#font.of('regular');
+    painter.textAlign = 'center';
+    painter.textBaseline = 'middle';
+    painter.globalAlpha = 1;
+    const labelled = [
+      ...placed.filter(({ relic }) => !lit.marks(relic.id)),
+      ...placed.filter(({ relic }) => lit.marks(relic.id)),
+    ];
+    for (const { relic, spot } of labelled) {
+      const shining = lit.marks(relic.id);
+      const label = this.#label(painter, relic.name, shining ? Infinity : spot.reach);
+      if (label === '') continue;
+      painter.fillStyle = palette(shining ? 'wh' : relic.sealed ? 'dim' : 'yl');
+      painter.fillText(label, spot.at.x, spot.at.y - LABEL.above);
     }
   }
 
-  /** Where each relic lies in the room you stand in: a grid of spots in its box, as many as fit — the tiles hold the rest. */
+  /** A relic's label: the most of its first words that fit this width, two at most; nothing when one will not fit. */
+  #label(painter: Painter, name: string, width: number): string {
+    const words = name.split(' ');
+    for (let count = Math.min(LABEL.words, words.length); count > 0; count--) {
+      const label = words.slice(0, count).join(' ');
+      if (painter.measureText(label).width <= width) return label;
+    }
+    return '';
+  }
+
+  /** Where each relic lies in the room you stand in, as its inside places them — the tiles hold the rest. */
   #relicSpots(
     vm: PlanVM,
     plan: FloorPlan,
     size: PictureSize,
     framing: Framing,
-  ): readonly { readonly relic: SceneChild; readonly at: Point }[] {
+  ): readonly { readonly relic: SceneChild; readonly spot: RelicSpot }[] {
     const box = plan.rooms()[this.#index(vm, vm.here)];
-    if (box === undefined) return [];
-    const from = framing.toPicture(box.topLeft(), size);
-    const to = framing.toPicture(box.bottomRight(), size);
-    const columns = Math.floor((to.x - from.x) / SPOT);
-    const rows = Math.floor((to.y - from.y - SPOT / 2) / SPOT);
-    if (columns < 1 || rows < 1) return [];
-    const shown = vm.relics.slice(0, columns * rows);
-    const used = Math.min(columns, shown.length);
-    const left = (from.x + to.x) / 2 - (used * SPOT) / 2 + SPOT / 2;
-    const top = from.y + SPOT / 2 + 4;
-    return shown.map((relic, index) => ({
-      relic,
-      at: { x: left + (index % columns) * SPOT, y: top + Math.floor(index / columns) * SPOT },
-    }));
+    const room = vm.rooms.find((each) => each.address === vm.here);
+    if (box === undefined || room === undefined) return [];
+    const spots = this.#inside(vm, room, this.#onPicture(box, size, framing)).spots(vm.relics.length);
+    return spots.flatMap((spot, index) => {
+      const relic = vm.relics[index];
+      return relic === undefined ? [] : [{ relic, spot }];
+    });
   }
 }

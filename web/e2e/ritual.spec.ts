@@ -79,7 +79,7 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
   await plant(page, saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }));
   await page.goto('./?debug');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TEMPORAL_MARKER\s*Future/);
+  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/Era\s*Future/);
   await tapOption(page, 'debug:prime', hasTouch);
   await expect(page.getByTestId('status')).toHaveText(
     'Building primed: every floor sampled, seven merges in.',
@@ -183,7 +183,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('SHARD');
   await expect(page.locator('.crumb.you .ic')).toHaveText('☠');
-  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/TEMPORAL_MARKER\s*Atomic/);
+  await expect(page.locator('.tag[data-fact="era"]')).toHaveText(/Era\s*Atomic/);
   await expect(page.locator('button.tile')).toHaveCount(1);
   await expect(page.locator('button.tile').first()).toContainText('null reference infused with radar dish');
   await tapOption(page, 'capture:0', hasTouch);

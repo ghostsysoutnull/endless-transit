@@ -106,6 +106,12 @@ export class PixelCanvas implements BandCopy, PointerHold {
     return { x: event.clientX - box.left, y: event.clientY - box.top };
   }
 
+  /** Where a point on it stands on the page, in CSS pixels from the viewport's top left. */
+  onPage(point: { readonly x: number; readonly y: number }): { readonly x: number; readonly y: number } {
+    const box = this.#canvas.getBoundingClientRect();
+    return { x: point.x + box.left, y: point.y + box.top };
+  }
+
   /** Keeps this finger even when it leaves the canvas. */
   capture(pointer: number): void {
     this.#canvas.setPointerCapture(pointer);

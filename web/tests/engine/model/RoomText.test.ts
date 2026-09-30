@@ -90,21 +90,13 @@ describe('the glitch (Terminal.groovy:173-183, seeded here on the place instead 
 });
 
 describe('a room’s text (Room.groovy:116-134, 262-297)', () => {
-  test('the diagnostic: TEMPORAL_MARKER (the apartment’s era, Decision 7), TYPE, OXY, TEMP, SIGNAL and RESONANCE — [STABLE] in green, [DEGRADED] in red under an anomaly (Room.groovy:129)', () => {
+  test('the diagnostic in plain words: Era (the apartment’s, Decision 7), Type, Oxygen, Temp, Signal — and Degraded, in red, only under an anomaly (Room.groovy:129; U03b)', () => {
     expect(anomalies.length).toBeGreaterThan(20);
     for (const room of sound.slice(0, 200)) {
-      expect(room.facts().map((fact) => fact.label)).toEqual([
-        'TEMPORAL_MARKER',
-        'TYPE',
-        'OXY',
-        'TEMP',
-        'SIGNAL',
-        'RESONANCE',
-      ]);
-      expect(room.facts().at(-1)).toEqual({ key: 'stable', label: 'RESONANCE', value: '[STABLE]' });
+      expect(room.facts().map((fact) => fact.label)).toEqual(['Era', 'Type', 'Oxygen', 'Temp', 'Signal']);
     }
     for (const room of anomalies) {
-      expect(room.facts().at(-1)).toEqual({ key: 'alert', label: 'RESONANCE', value: '[DEGRADED]' });
+      expect(room.facts().at(-1)).toEqual({ key: 'alert', label: 'Degraded', value: '' });
     }
   });
 
@@ -211,7 +203,7 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
       new Seed(1, 1),
       new RoomCategory('Archive', undefined, must(Trace.of('stillness'))),
     );
-    expect(plain.brief()).toBe('Heavy Bulkhead [COLD]');
+    expect(plain.brief()).toBe('Heavy Bulkhead, cold');
     expect(plain.narrative()).toBe(
       plain.inscription() === undefined
         ? 'A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch.'
@@ -253,9 +245,7 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
       const door = apartment.door();
       const sentences = door.narrative().split('. ').length;
       expect(sentences, door.narrative()).toBe(door.inscription() === undefined ? 2 : 3);
-      expect(apartment.readings()).toEqual([
-        { key: 'narrative', label: 'APPEARANCE', value: door.narrative() },
-      ]);
+      expect(apartment.readings()).toEqual([{ key: 'narrative', label: '', value: door.narrative() }]);
     }
   });
 });

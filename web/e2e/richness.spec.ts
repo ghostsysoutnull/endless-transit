@@ -23,7 +23,7 @@ async function shoot(page: Page, name: string): Promise<void> {
   await page.screenshot({ path: test.info().outputPath(`${test.info().project.name}-${name}.png`) });
 }
 
-test('a room reads like the old game: its interpretation, furniture, the object count, the RESONANCE line, and its objects as tiles', async ({
+test('a room reads like the old game: its interpretation, furniture, the relic count, its readings in plain words, and its objects as tiles', async ({
   page,
   hasTouch,
 }) => {
@@ -38,12 +38,11 @@ test('a room reads like the old game: its interpretation, furniture, the object 
   await expect(page.locator('.desc p').nth(1)).toHaveText(
     'The space is illuminated by a soft holographic haze with no visible source.',
   );
-  await expect(page.locator('.tag')).toHaveCount(6); // TEMPORAL_MARKER (I07), TYPE, OXY, TEMP, SIGNAL, RESONANCE
-  await expect(page.locator('.tag[data-fact="stable"]')).toHaveText(/RESONANCE\s+\[STABLE\]/);
+  await expect(page.locator('.tag')).toHaveCount(5); // Era (I07), Type, Oxygen, Temp, Signal — no Degraded outside an anomaly
   await expect(page.locator('.prow').nth(0)).toHaveText(
-    /FURNITURE\s*half-dismantled stained glass shard, scorched funeral mask/,
+    /Furniture\s*half-dismantled stained glass shard, scorched funeral mask/,
   );
-  await expect(page.locator('.prow').nth(1)).toHaveText(/OBJECTS_DETECTED\s*4/);
+  await expect(page.locator('.prow').nth(1)).toHaveText(/Relics\s*4/);
   const tiles = page.locator('.tile');
   await expect(tiles).toHaveCount(4);
   await expect(tiles.first()).toContainText('plasma coil with reliquary box');
@@ -81,7 +80,6 @@ test('a door tells its full appearance under its name on the corridor list; one 
   await expect(doors.first().locator('.rd[data-fact="narrative"]')).toContainText(
     "A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.",
   );
-  await expect(doors.first().locator('.rd[data-fact="narrative"] .vh')).toHaveText('APPEARANCE');
   await expect(doors.nth(1).locator('.rd[data-fact="narrative"]')).toContainText(
     'A timber gate under many coats of black lacquer.',
   );

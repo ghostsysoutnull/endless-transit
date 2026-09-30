@@ -1,9 +1,8 @@
 # Handover
 
-- **Branch:** `ui/u03-apartment-and-room` (U03a merged into `master` and published; U03b continues here).
-- **Next:** U03b of the UI rework, the room drawn — its plan and state in `tasks/ui/U03.md` ("State at handover").
-  U03a is published as build `b2db464`; the user's phone check of it comes first, and what it finds is fixed first.
-  The design check runs once, on U03b finished, before it merges (the Codex's Verification).
+- **Branch:** `master` (U03 merged; its branch deleted).
+- **Next:** U04 of the UI rework, above, below and the trace — its row in `tasks/UI_QUEUE.md`. U03 is built and not
+  yet published: the publish waits for the user's word, then their phone check, and what it finds comes first.
 - **Open threads:**
   - the wall on picture taps and the minimap, a view control: `tasks/ui/U03.md`, "Asked, not answered";
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
@@ -13,4 +12,4 @@
   - the tester's findings, when they come: each becomes a fix under the queue's "Reported by the tester";
   - the rule reviews are closed; not reviewed: `.claude/commands/chronicle.md`;
   - `tasks/backlog/HOUSEKEEPING.md`: HK-025 (keep the keys in a phones-only game, or remove them — the user's call),
-    HK-026 to HK-033.
+    HK-026 to HK-034.

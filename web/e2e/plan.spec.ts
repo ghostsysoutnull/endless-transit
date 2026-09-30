@@ -110,6 +110,26 @@ test('a relic’s tile is taken at once, no glide', async ({ page, hasTouch }) =
   await expect(page.locator('button.tile')).toHaveCount(3);
 });
 
+// The first relic, a plasma coil with a reliquary box, is two fragments.
+test('a relic taken flies from where it lay to the Buffer count, which counts it', async ({
+  page,
+  hasTouch,
+}) => {
+  await inTheFirstRoom(page);
+  await tapOption(page, 'capture:0', hasTouch);
+  await expect(page.getByTestId('relic-flight')).toHaveCount(1);
+  await expect(page.getByTestId('relic-flight')).toHaveCount(0);
+  await expect(page.getByTestId('stat-buffer')).toHaveText('2/16');
+});
+
+test('reduced motion: a relic taken does not fly', async ({ page, hasTouch }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await inTheFirstRoom(page);
+  await tapOption(page, 'capture:0', hasTouch);
+  await expect(page.getByTestId('stat-buffer')).toHaveText('2/16');
+  await expect(page.getByTestId('relic-flight')).toHaveCount(0);
+});
+
 test('leaving the first room: the view pulls back to the whole plan first, then the corridor', async ({
   page,
   hasTouch,
@@ -118,7 +138,7 @@ test('leaving the first room: the view pulls back to the whole plan first, then 
   await inTheFirstRoom(page);
   await page.clock.runFor(1200);
   await holdTime(page);
-  await press(page, /exit apartment/i, hasTouch);
+  await press(page, /leave the apartment/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await page.clock.runFor(1200);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');

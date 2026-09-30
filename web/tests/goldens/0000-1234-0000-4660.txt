@@ -4,7 +4,6 @@ Coherence: 100% stable
 stats: Steps 0 | Buffer 0/16
 tags: Way 1 of 5 (position) | Era Analog (era) | Culture Shogun (culture)
   Buildings stand in pairs along both sides of the way.
-diag: 
 status: Entered Grand Avenue.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Vermilion Shrine
@@ -26,7 +25,6 @@ Coherence: 99% stable
 stats: Steps 1 | Buffer 0/16
 tags: Building 3 of 10 (position) | Culture Shogun (culture) | Floors 7 (reading)
   An elevator runs the height of the building.
-diag: 
 status: Entered Cedar Lantern.
 RIDE TO A FLOOR
   06 [6] Ride to Peak
@@ -52,7 +50,6 @@ Coherence: 98% stable
 stats: Steps 2 | Buffer 0/16
 tags: Era Analog (era) | Culture Shogun (culture) | Stability 90.00% (reading) | Trait Military (trait)
   Floor 0. Shogun geometry presses in from every wall; the elevator sighs shut behind you.
-diag: 
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ████ ██████ ███ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
@@ -64,43 +61,40 @@ Coherence: 97% stable
 stats: Steps 3 | Buffer 0/16
 tags: Culture Shogun (culture) | Doors 2 (reading)
   A narrow service corridor, doors set flush into either wall.
-diag: 
 status: Enter Corridor.
 moves: [B] BACK TO ELEVATOR
 DOORS
-  01 [1] Open [HOLLOW] Bone-Lattice Aperture [COLD]
-       APPEARANCE: An aperture of interlocking bone-white struts. The frame is ice-cold to the touch, pulling heat from your palm. The word 'HOLLOW' is stamped into the metal in block letters.
-  02 [2] Open Lacquered Timber Gate [RUSTED]
-       APPEARANCE: A timber gate under many coats of black lacquer. The metal hinges are fused by deep, flakey oxidation.
+  01 [1] Open Bone-Lattice Aperture, cold
+       An aperture of interlocking bone-white struts. The frame is ice-cold to the touch, pulling heat from your palm. The word 'HOLLOW' is stamped into the metal in block letters.
+  02 [2] Open Lacquered Timber Gate, rusted
+       A timber gate under many coats of black lacquer. The metal hinges are fused by deep, flakey oxidation.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ █████ ████████ █████████ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Lacquered Barracks  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 [HOLLOW] Bone-Lattice Aperture [COLD] > □ Lacquered Barracks *
+path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Lacquered Barracks *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 0/16
-tags: Cell 1 of 9 (position) | TEMPORAL_MARKER Analog (era) | TYPE Barracks (reading) | OXY 14% (reading) | TEMP 17°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+tags: Room 1 of 9 (position) | Era Analog (era) | Type Barracks (reading) | Oxygen 14% (reading) | Temp 17°C (reading) | Signal Clear (signal)
   You are in a drill floor marked in faded lines. The walls are blue sliding panels painted with pines.
   The space is illuminated by buzzing neon signage leaking green light.
-FURNITURE: flickering iron tea kettle, sealed bonsai tree
-OBJECTS_DETECTED: 2
-diag: ATMOS: 14% | TEMP: 17°C
+Furniture: flickering iron tea kettle, sealed bonsai tree
+Relics: 2
 status: Entered Lacquered Barracks.
 moves: [F] GO FORWARD
 IN THIS ROOM: answering machine grafted onto shoji screen <grafted|shoji screen|answering machine> | answering machine with straw sandal <with|straw sandal|answering machine>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ █ ███████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ EXIT APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE THE APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Paper Security Station  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 [HOLLOW] Bone-Lattice Aperture [COLD] > □ Paper Security Station *
+path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Paper Security Station *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 0/16
-tags: Cell 2 of 9 (position) | TEMPORAL_MARKER Analog (era) | TYPE Security Station (reading) | OXY 16% (reading) | TEMP 10°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+tags: Room 2 of 9 (position) | Era Analog (era) | Type Security Station (reading) | Oxygen 16% (reading) | Temp 10°C (reading) | Signal Clear (signal)
   You are in a magazine of empty racks and chains. The walls are purple black lacquer inlaid with mother-of-pearl.
   The space is illuminated by the amber glow of a radio dial.
-FURNITURE: upended katana rack, flickering paper lantern, bolted-down folding fan
-OBJECTS_DETECTED: 4
-diag: ATMOS: 16% | TEMP: 10°C
+Furniture: upended katana rack, flickering paper lantern, bolted-down folding fan
+Relics: 4
 status: Entered Paper Security Station.
 moves: [B] GO BACK | [F] GO FORWARD
 IN THIS ROOM: calligraphy scroll infused with oscilloscope <infused|calligraphy scroll|oscilloscope> | answering machine with tatami mat <with|tatami mat|answering machine> | kabuto helmet infused with rotary phone <infused|kabuto helmet|rotary phone> | hanging scroll infused with magnetic strip <infused|hanging scroll|magnetic strip>

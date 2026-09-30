@@ -115,8 +115,9 @@ export class HudPresenter implements Presenter<HudVM> {
         valueText: `${String(player.coherence)} percent, ${player.band}`,
       },
       stats: [
-        { label: 'Steps', value: String(player.steps) },
+        { key: 'steps', label: 'Steps', value: String(player.steps) },
         {
+          key: 'buffer',
           label: 'Buffer',
           value: `${String(snapshot.buffer?.size ?? 0)}/${String(snapshot.buffer?.capacity ?? 0)}`,
         },
@@ -226,10 +227,8 @@ export class HudPresenter implements Presenter<HudVM> {
     const contents = place.contents;
     if (contents === null) return [];
     return [
-      { label: 'FURNITURE', value: contents.furniture.join(', ') },
-      ...(contents.objects.length === 0
-        ? []
-        : [{ label: 'OBJECTS_DETECTED', value: String(contents.objects.length) }]),
+      { label: 'Furniture', value: contents.furniture.join(', ') },
+      ...(contents.objects.length === 0 ? [] : [{ label: 'Relics', value: String(contents.objects.length) }]),
     ];
   }
 
@@ -311,7 +310,7 @@ export class HudPresenter implements Presenter<HudVM> {
               label: 'In this room',
               heading: 'IN THIS ROOM',
               empty: contents.objects.length === 0 ? 'No objects detected.' : '',
-              note: full ? 'BUFFER FULL — merge or drop a fragment to take more.' : '',
+              note: full ? 'The buffer is full: merge or drop a fragment to take more.' : '',
               tiles: contents.objects.map((relic, index) => {
                 const ordinal = String(index + 1);
                 const take = takes.find((each) => each.ordinal === ordinal && !each.sealed);

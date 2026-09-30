@@ -63,7 +63,7 @@ test('take an object: every tile is a button; the status names the frequency; th
   await expect(stat(page, 'Steps')).toHaveText('1');
   await expect(page.getByTestId('coherence')).toHaveText('99%');
   await expect(page.locator('button.tile')).toHaveCount(3);
-  await expect(page.locator('.prow').nth(1)).toHaveText(/OBJECTS_DETECTED\s*3/);
+  await expect(page.locator('.prow').nth(1)).toHaveText(/Relics\s*3/);
   await expect(page.locator('button.tile').first()).toHaveText(/brass censer fused to laser cutter/);
   expect(problems).toEqual([]);
 });
@@ -167,7 +167,7 @@ test('a full buffer: the tiles are not buttons, the pane says why, and a merge o
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(stat(page, 'Buffer')).toHaveText('16/16');
   await expect(page.getByTestId('buffer-full')).toHaveText(
-    'BUFFER FULL — merge or drop a fragment to take more.',
+    'The buffer is full: merge or drop a fragment to take more.',
   );
   await expect(page.locator('.tile')).toHaveCount(4);
   await expect(page.locator('button.tile')).toHaveCount(0);

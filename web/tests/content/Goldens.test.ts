@@ -26,7 +26,8 @@ function page(vm: HudVM): string {
   if (chips.length > 0) lines.push(`tags: ${chips.join(' | ')}`);
   for (const paragraph of vm.place.description) lines.push(`  ${paragraph}`);
   for (const row of vm.place.rows) lines.push(`${row.label}: ${row.value}`);
-  lines.push(`diag: ${vm.place.diagnostic}`);
+  // As the screen: no diagnostic line when there is none, and a reading with no label is its value alone.
+  if (vm.place.diagnostic !== '') lines.push(`diag: ${vm.place.diagnostic}`);
   lines.push(`status: ${vm.status}`);
   if (vm.moves.length > 0)
     lines.push(`moves: ${vm.moves.map((move) => `[${move.key}] ${move.label}`).join(' | ')}`);
@@ -42,7 +43,8 @@ function page(vm: HudVM): string {
         .filter((mark) => mark !== '')
         .join(' ');
       lines.push(`  ${row.ordinal} [${row.key}] ${row.label}${marks === '' ? '' : ` ${marks}`}`);
-      for (const reading of row.readings) lines.push(`       ${reading.label}: ${reading.value}`);
+      for (const reading of row.readings)
+        lines.push(`       ${reading.label === '' ? '' : `${reading.label}: `}${reading.value}`);
     }
   }
   const { objects, telemetry, map } = vm.aside;

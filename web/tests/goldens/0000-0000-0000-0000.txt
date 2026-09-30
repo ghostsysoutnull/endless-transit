@@ -4,7 +4,6 @@ Coherence: 100% stable
 stats: Steps 0 | Buffer 0/16
 tags: Way 1 of 10 (position) | Era Future (era) | Culture Void (culture)
   Buildings stand in pairs along both sides of the way.
-diag: 
 status: Entered Broad Alley.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Drifting Field
@@ -36,7 +35,6 @@ Coherence: 99% stable
 stats: Steps 1 | Buffer 0/16
 tags: Building 2 of 20 (position) | Culture Void (culture) | Floors 18 (reading)
   An elevator runs the height of the building.
-diag: 
 status: Entered HorizonWell.
 RIDE TO A FLOOR
   17 [] Ride to Peak
@@ -84,7 +82,6 @@ Coherence: 98% stable
 stats: Steps 2 | Buffer 0/16
 tags: Era Future (era) | Culture Void (culture) | Stability 90.00% (reading) | Trait Research (trait)
   Floor 0. A landing of Void design, silent except for the lift cables ticking overhead.
-diag: 
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ █ ██ ████████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
@@ -96,59 +93,56 @@ Coherence: 97% stable
 stats: Steps 3 | Buffer 0/16
 tags: Culture Void (culture) | Doors 10 (reading)
   A curved gallery of doors beneath a single strip of light.
-diag: 
 status: Enter Corridor.
 moves: [B] BACK TO ELEVATOR
 DOORS
-  01 [1] Open Reinforced Polymer [WARPED]
-       APPEARANCE: A slab of reinforced polymer, dull and unscratched. The panel has bowed outward and no longer meets its frame.
-  02 [2] Open _keep_walking_ Brutalist Slab [POLISHED]
-       APPEARANCE: A massive brutalist slab of pitted concrete. The surface is perfectly smooth and sterile. The word 'keep_walking' is scrawled across the surface in jagged, desperate lines.
-  03 [3] Open Industrial Barrier [POLISHED]
-       APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The surface is perfectly smooth and sterile.
-  04 [4] Open Oxidized Metal Hatch [VIBRATING]
-       APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The surface is vibrating with a low-frequency thrum.
-  05 [5] Open _signal_lost_ Reinforced Polymer [WEEPING]
-       APPEARANCE: A slab of reinforced polymer, dull and unscratched. Moisture beads along the seams and runs in slow lines. The word 'signal_lost' is scrawled across the surface in jagged, desperate lines.
+  01 [1] Open Reinforced Polymer, warped
+       A slab of reinforced polymer, dull and unscratched. The panel has bowed outward and no longer meets its frame.
+  02 [2] Open Brutalist Slab, polished
+       A massive brutalist slab of pitted concrete. The surface is perfectly smooth and sterile. The word 'keep_walking' is scrawled across the surface in jagged, desperate lines.
+  03 [3] Open Industrial Barrier, polished
+       An industrial barrier of stamped steel and yellow chevrons. The surface is perfectly smooth and sterile.
+  04 [4] Open Oxidized Metal Hatch, vibrating
+       An oxidized metal hatch, its wheel-lock seized. The surface is vibrating with a low-frequency thrum.
+  05 [5] Open Reinforced Polymer, weeping
+       A slab of reinforced polymer, dull and unscratched. Moisture beads along the seams and runs in slow lines. The word 'signal_lost' is scrawled across the surface in jagged, desperate lines.
   06 [6] Open Industrial Barrier
-       APPEARANCE: An industrial barrier of stamped steel and yellow chevrons. The structure appears stable.
-  07 [7] Open [DATA_VAULT] Riveted Iron Hatch [WEEPING]
-       APPEARANCE: A hatch of riveted iron, its seams weeping orange. Moisture beads along the seams and runs in slow lines. The word 'DATA_VAULT' is stamped into the metal in block letters.
-  08 [8] Open Frosted Crystal Pane [WEEPING]
-       APPEARANCE: A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
-  09 [9] Open Lacquered Timber Gate [WEEPING]
-       APPEARANCE: A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
-  10 [A] Open Oxidized Metal Hatch [STATIC]
-       APPEARANCE: An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
+       An industrial barrier of stamped steel and yellow chevrons. The structure appears stable.
+  07 [7] Open Riveted Iron Hatch, weeping
+       A hatch of riveted iron, its seams weeping orange. Moisture beads along the seams and runs in slow lines. The word 'DATA_VAULT' is stamped into the metal in block letters.
+  08 [8] Open Frosted Crystal Pane, weeping
+       A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
+  09 [9] Open Lacquered Timber Gate, weeping
+       A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
+  10 [A] Open Oxidized Metal Hatch, static
+       An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ████████ █████████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
 dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Hollow Neural Link Array  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Hollow Neural Link Array *
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Hollow Neural Link Array *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 0/16
-tags: Cell 1 of 4 (position) | TEMPORAL_MARKER Future (era) | TYPE Neural Link Array (reading) | OXY 20% (reading) | TEMP 23°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+tags: Room 1 of 4 (position) | Era Future (era) | Type Neural Link Array (reading) | Oxygen 20% (reading) | Temp 23°C (reading) | Signal Clear (signal)
   You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
   The space is illuminated by a lattice of laser threads across the ceiling.
-FURNITURE: immaculate invisible support, dust-covered white light strip, sagging perfectly white tile
-OBJECTS_DETECTED: 6
-diag: ATMOS: 20% | TEMP: 23°C
+Furniture: immaculate invisible support, dust-covered white light strip, sagging perfectly white tile
+Relics: 6
 status: Entered Hollow Neural Link Array.
 moves: [F] GO FORWARD
 IN THIS ROOM: white light strip infused with smart glass <infused|white light strip|smart glass> | floating white sphere infused with plasma coil <infused|floating white sphere|plasma coil> | hovering disc fused to hologram projector <fused|hovering disc|hologram projector> | hologram projector grafted onto hidden speaker <grafted|hidden speaker|hologram projector> | empty frame infused with aerogel slab <infused|empty frame|aerogel slab> | quantum key <era|quantum key>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ██████ █████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0 > Resonant traces: 0
-dock: [L] ▲ EXIT APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE THE APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Abyssal Bio-Server  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 _keep_walking_ Brutalist Slab [POLISHED] > □ Abyssal Bio-Server *
+path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Abyssal Bio-Server *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 0/16
-tags: Cell 2 of 4 (position) | TEMPORAL_MARKER Future (era) | TYPE Bio-Server (reading) | OXY 16% (reading) | TEMP 15°C (reading) | SIGNAL [CLEAR] (signal) | RESONANCE [STABLE] (stable)
+tags: Room 2 of 4 (position) | Era Future (era) | Type Bio-Server (reading) | Oxygen 16% (reading) | Temp 15°C (reading) | Signal Clear (signal)
   You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
   The space is illuminated by light bent around a gravity plate.
-FURNITURE: upended white light strip
-OBJECTS_DETECTED: 5
-diag: ATMOS: 16% | TEMP: 15°C
+Furniture: upended white light strip
+Relics: 5
 status: Entered Abyssal Bio-Server.
 moves: [B] GO BACK | [F] GO FORWARD
 IN THIS ROOM: neural link grafted onto silent fan <grafted|silent fan|neural link> | neural link with hidden speaker <with|hidden speaker|neural link> | neural link with floating white sphere <with|floating white sphere|neural link> | quantum key with silent fan <with|silent fan|quantum key> | white noise emitter infused with smart glass <infused|white noise emitter|smart glass>

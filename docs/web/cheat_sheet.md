@@ -27,7 +27,7 @@ draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Ev
 | `▲ LEAVE …` | up one level (from a corridor: to the building, skipping the elevator) |
 | Elevator | **GO UP**, **GO DOWN**, **ENTER CORRIDOR** |
 | Corridor | doors, **BACK TO ELEVATOR** |
-| Room | an object takes it; **GO FORWARD**, **GO BACK**; **EXIT APARTMENT** in the first room only |
+| Room | an object takes it (it flies to the Buffer count); **GO FORWARD**, **GO BACK**; **LEAVE THE APARTMENT** in the first room only |
 | Null Reach | **SCAN FOR SPECTRAL ECHOES** until 100, then **CAPTURE SPECTRAL ECHO** |
 
 | The dock (`▲ LEAVE` and **MORE** stay under your thumb) | |

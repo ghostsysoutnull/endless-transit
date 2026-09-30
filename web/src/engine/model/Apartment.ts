@@ -174,7 +174,7 @@ export class Apartment extends Location {
 
   /** On the corridor's list a door shows its full appearance under its name. */
   override readings(): readonly Fact[] {
-    return [{ key: 'narrative', label: 'APPEARANCE', value: this.#door.narrative() }];
+    return [{ key: 'narrative', label: '', value: this.#door.narrative() }];
   }
 
   /** The corridor's door table reads the door: trace, words, material, state and what is behind (ScanCommand.groovy:87-111). */
@@ -223,6 +223,11 @@ export class Apartment extends Location {
 
   status(): string {
     return this.#anomaly ? 'ATMOS: [UNSTABLE]' : 'ATMOS: [NOMINAL]';
+  }
+
+  /** How its first room names the way out through it (U03b): `Leave the apartment`, `Leave the crypt`. */
+  wayOut(): string {
+    return `Leave the ${this.kind().title().toLowerCase()}`;
   }
 
   childrenHeading(): string {

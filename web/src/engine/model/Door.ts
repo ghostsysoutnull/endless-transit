@@ -51,9 +51,9 @@ export class Door {
     return this.#trace;
   }
 
-  /** `Heavy Bulkhead [COLD]`; a stable door is just its material (DoorAppearance.groovy:22-27). */
+  /** `Heavy Bulkhead, cold`; a stable door is just its material (DoorAppearance.groovy:22-27, in plain words, U03b). */
   brief(): string {
-    return this.state() === STABLE ? this.material() : `${this.material()} [${this.state().toUpperCase()}]`;
+    return this.state() === STABLE ? this.material() : `${this.material()}, ${this.state().toLowerCase()}`;
   }
 
   /** The full appearance: the material's sentence, the state's, and how the words were applied (Door.groovy:79-92). */
@@ -68,10 +68,11 @@ export class Door {
     return this.#inscription === undefined ? seen : `${seen} ${this.#inscription.narrative()}`;
   }
 
-  /** The line on the door list: the inscription, if any, then the brief (Door.groovy:62-70). */
+  /**
+   * The door's name on the door list (Door.groovy:62-70): its brief. Its words are not part of it (U03b): they are
+   * drawn on the door and told in its appearance.
+   */
   description(): string {
-    return this.#inscription === undefined
-      ? this.brief()
-      : `${this.#inscription.formatted()} ${this.brief()}`;
+    return this.brief();
   }
 }

@@ -108,7 +108,7 @@ test('headings are in order on every screen: the title, a street with the map an
   expectSane(await headings(page), 'title');
   await expectNamed(page, 'title');
   await press(page, /continue/i, hasTouch);
-  for (const level of ['exit apartment', 'leave floor', 'leave building'])
+  for (const level of ['leave the apartment', 'leave floor', 'leave building'])
     await press(page, new RegExp(level, 'i'), hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await press(page, /^map$/i, hasTouch);

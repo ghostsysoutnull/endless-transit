@@ -14,7 +14,7 @@ import type { FurnitureDeal } from './FurnitureDeal.ts';
 const ADJECTIVES = 'names/buildings/adj';
 const OXYGEN = { min: 12, max: 21 };
 const TEMPERATURE = { min: 5, max: 25 };
-const SIGNALS = ['[SHIELDED]', '[CLEAR]'] as const;
+const SIGNALS = ['shielded', 'clear'] as const;
 /** One to three pieces of furniture (Guide:171; RoomFactory.groovy:57). */
 const FURNITURE = { min: 1, max: 3 };
 /** The shape above the bedrock: a room. */
