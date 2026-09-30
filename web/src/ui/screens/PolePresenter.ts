@@ -3,6 +3,7 @@ import { Phrase } from '#engine/model/Phrase.ts';
 import type { VibeFigure } from '#engine/model/VibeFigure.ts';
 import type { TraceStep } from '#engine/rules/TraceStep.ts';
 import type { TraceSummary } from '#engine/rules/TraceSummary.ts';
+import { DepthNumber } from './DepthNumber.ts';
 import type { DriftLane, PoleLane, PoleLevelVM, PoleVM } from './PoleVM.ts';
 import type { PoleWords } from './PoleWords.ts';
 
@@ -38,7 +39,7 @@ export class PolePresenter implements PoleWords {
       ...(vibe.drift.era || vibe.drift.culture ? [DRIFT] : []),
       ...step.signs.map((sign) => ({ word: sign.word, look: sign.look })),
     ];
-    const depth = String(step.depth).padStart(2, '0');
+    const depth = new DepthNumber(step.depth).text();
     const heard = [
       `Level ${depth}, ${step.kind}: ${step.name}`,
       ...(vibe.values.era === '' ? [] : [`era ${vibe.values.era}`]),

@@ -121,6 +121,22 @@ of these is a bug or a fact in two places.
 - `trace.spec.ts` finds `.rail .crumb` and `.col-head` by class: by role or a stable id.
 - `Void.test.ts` and `Descent.test.ts` both pin the signal chip's values: one layer.
 
+### HK-038 — the U05 design check's logged findings (tidying, one line each)
+**Found:** 2026-09-30, the one design check of U05 (`0e5ef9b..a192c11`); its three fixes are in (a door's state word
+from `Door.stateWord()`, one `DepthNumber` for the column and the pole, every Era and Culture chip from `Era.fact()` /
+`Culture.fact()`) and two test lines that caught nothing went; none of these is a bug or a fact in two places.
+- `TracePole` takes the concrete `PolePicture`, `HudView` the concrete `TracePole`: small interfaces (with HK-037's).
+- `HudView` branches on its view (`#view === 'pole'`) in its logic and its template: one object a view (with
+  HK-037's `TraceColumnView`).
+- `PolePresenter`'s `BERTHS` is a table keyed by glyph: the kind could own whether it has a berth, as it owns its glyph.
+- `PolePresenter` asks `figure.held === 'country'` three times: the figure's member could answer its own ribbons.
+- `PoleLayout` compares display words for runs and the current's start, `''` meaning none: stable keys and a union
+  (with HK-030, HK-034).
+- `PolePicture` holds geometry (`last + 60`, the lanes' `+ 32`, the berth's 18 × 14): the layout's to answer.
+- `VibeFigure.stability` has no reader but its tests: shown on the pole, or dropped.
+- `Lattice.test.ts` lists every kind's glyph: a step carries its kind's glyph, the twins below the bedrock by name.
+- `trace.spec.ts` finds `.seg`, `.pole-level` by class; reduced motion's pole is not tested as still.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators

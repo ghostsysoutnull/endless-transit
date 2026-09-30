@@ -270,7 +270,7 @@ export class Building extends Location {
   override facts(): readonly Fact[] {
     const culture = this.vibe()?.culture();
     return [
-      ...(culture === undefined ? [] : [{ key: 'culture', label: 'Culture', value: culture.key() } as const]),
+      ...(culture === undefined ? [] : [culture.fact()]),
       { key: 'reading', label: 'Floors', value: String(this.#floors) },
       ...(this.#landmark ? [{ key: 'alert', label: 'Landmark', value: '' } as const] : []),
     ];

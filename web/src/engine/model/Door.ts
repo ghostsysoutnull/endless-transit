@@ -56,9 +56,14 @@ export class Door {
     return this.state() === STABLE;
   }
 
+  /** Its state as a word in a line: `cold`. */
+  stateWord(): string {
+    return this.state().toLowerCase();
+  }
+
   /** `Heavy Bulkhead, cold`; a stable door is just its material (DoorAppearance.groovy:22-27, in plain words, U03b). */
   brief(): string {
-    return this.stable() ? this.material() : `${this.material()}, ${this.state().toLowerCase()}`;
+    return this.stable() ? this.material() : `${this.material()}, ${this.stateWord()}`;
   }
 
   /** The full appearance: the material's sentence, the state's, and how the words were applied (Door.groovy:79-92). */

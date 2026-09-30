@@ -353,7 +353,7 @@ export class Room extends Location {
       ? [{ key: 'alert', label: 'Degraded', value: '' }]
       : [];
     return [
-      { key: 'era', label: 'Era', value: this.#apartment.era().key() },
+      this.#apartment.era().fact(),
       { key: 'reading', label: 'Type', value: this.type() },
       { key: 'reading', label: 'Oxygen', value: `${String(this.#traits.oxygen)}%` },
       { key: 'reading', label: 'Temp', value: `${String(this.#traits.temperature)}°C` },

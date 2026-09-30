@@ -115,7 +115,7 @@ export class Apartment extends Location {
   /** Its door's state when the door is not stable, and a temporal anomaly (U05). */
   override poleSigns(): readonly PoleSign[] {
     return [
-      ...(this.#door.stable() ? [] : [{ look: 'door', word: this.#door.state().toLowerCase() } as const]),
+      ...(this.#door.stable() ? [] : [{ look: 'door', word: this.#door.stateWord() } as const]),
       ...(this.#anomaly ? [{ look: 'anomaly', word: 'anomaly' } as const] : []),
     ];
   }
@@ -236,8 +236,8 @@ export class Apartment extends Location {
   override facts(): readonly Fact[] {
     const drifted = this.#drifted();
     return [
-      { key: 'era', label: 'Era', value: this.#era.key() },
-      { key: 'culture', label: 'Culture', value: this.#culture.key() },
+      this.#era.fact(),
+      this.#culture.fact(),
       ...(drifted === '' ? [] : [{ key: 'drift', label: 'Drift', value: drifted } as const]),
       ...(this.#anomaly ? [{ key: 'alert', label: 'Temporal anomaly', value: '' } as const] : []),
     ];

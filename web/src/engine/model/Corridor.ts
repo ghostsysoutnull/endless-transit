@@ -89,7 +89,7 @@ export class Corridor extends Location {
   override facts(): readonly Fact[] {
     const culture = this.vibe()?.culture();
     return [
-      ...(culture === undefined ? [] : [{ key: 'culture', label: 'Culture', value: culture.key() } as const]),
+      ...(culture === undefined ? [] : [culture.fact()]),
       { key: 'reading', label: 'Doors', value: String(this.#floor.building().doorsPerFloor()) },
     ];
   }

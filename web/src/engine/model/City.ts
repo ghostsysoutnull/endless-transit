@@ -57,8 +57,8 @@ export class City extends Location {
     if (this.#rebelVibe === undefined) return [];
     return [
       { key: 'alert', label: 'Rebel district', value: '' },
-      { key: 'era', label: 'Era', value: this.#rebelVibe.era().key() },
-      { key: 'culture', label: 'Culture', value: this.#rebelVibe.culture().key() },
+      this.#rebelVibe.era().fact(),
+      this.#rebelVibe.culture().fact(),
     ];
   }
 

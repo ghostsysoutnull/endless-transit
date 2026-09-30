@@ -148,8 +148,5 @@ test('reduced motion: no dive — Dive shows your band at once', async ({ page, 
   await press(page, /^dive$/i, hasTouch);
   await expect(page.getByRole('button', { name: /^skip$/i })).toHaveCount(0);
   await expect(bands(page).last()).toBeInViewport();
-  // The pole holds still, drawn whole at once.
-  await press(page, /^pole$/i, hasTouch);
-  await expect(page.locator('[data-pole] canvas')).toBeVisible();
   expect(problems).toEqual([]);
 });

@@ -72,8 +72,8 @@ export class ElevatorState implements FloorState {
     const vibe = floor.vibe();
     if (vibe === undefined) return [];
     return [
-      { key: 'era', label: 'Era', value: vibe.era().key() },
-      { key: 'culture', label: 'Culture', value: vibe.culture().key() },
+      vibe.era().fact(),
+      vibe.culture().fact(),
       {
         key: 'reading',
         label: 'Stability',

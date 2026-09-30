@@ -16,6 +16,7 @@ import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+import { DepthNumber } from './DepthNumber.ts';
 import type { Drawings } from './Drawings.ts';
 import type { Pads } from './Pads.ts';
 import type { PoleWords } from './PoleWords.ts';
@@ -295,7 +296,7 @@ export class HudPresenter implements Presenter<HudVM> {
       skip: 'Skip',
       bands: steps.map((step, index) => {
         const next = steps[index + 1];
-        const depth = String(step.depth).padStart(2, '0');
+        const depth = new DepthNumber(step.depth).text();
         const visited = step.children.filter((child) => child.visited).length;
         const facts = [
           ...(step.children.length === 0
