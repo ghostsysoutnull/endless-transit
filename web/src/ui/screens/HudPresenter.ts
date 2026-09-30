@@ -301,17 +301,17 @@ export class HudPresenter implements Presenter<HudVM> {
     };
   }
 
-  /**
-   * The objects as tiles when the place is one that holds things — each with the take the engine offers
-   * for its number — the telemetry block when it
-   * is indoors, and the map when it is not (Guide:339) and the place has one.
-   */
   /** The way down to the room's words and relics, with how many relics lie there. */
   #peek(relics: number): string {
     if (relics === 0) return 'About this room';
     return `About this room · ${String(relics)} ${relics === 1 ? 'relic' : 'relics'}`;
   }
 
+  /**
+   * The objects as tiles when the place is one that holds things — each with the take the engine offers
+   * for its number — the telemetry block when it is indoors, and the map when it is not (Guide:339) and the place
+   * has one.
+   */
   #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number, sync: string): AsideVM {
     const contents = place.contents;
     return {

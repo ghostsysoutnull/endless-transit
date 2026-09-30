@@ -11,12 +11,21 @@ export class OverPlan implements ViewMode {
     return camera.whole();
   }
 
+  room(camera: PlanCamera, index: number): Framing {
+    return camera.room(index);
+  }
+
   stop(sketch: PlanSketch, camera: PlanCamera, id: string): Framing | undefined {
-    return sketch.stopOf(camera, id);
+    return sketch.stopOf(camera, id, this);
   }
 
   kept(camera: PlanCamera, framing: Framing): Framing {
     return camera.clamp(framing);
+  }
+
+  /** The view stays where it was looked at; `kept` holds it in range. */
+  refit(_sketch: PlanSketch, _camera: PlanCamera, framing: Framing): Framing {
+    return framing;
   }
 
   corner(camera: PlanCamera, framing: Framing): MinimapView {

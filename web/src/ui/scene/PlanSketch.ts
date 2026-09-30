@@ -3,8 +3,10 @@ import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Framing } from './Framing.ts';
+import type { MapKey } from './MapKey.ts';
 import type { MinimapView } from './MinimapView.ts';
 import type { PlanCamera } from './PlanCamera.ts';
+import type { RoomFrame } from './RoomFrame.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { Sketch } from './Sketch.ts';
 
@@ -21,10 +23,8 @@ export interface PlanSketch extends Sketch {
     corner: MinimapView,
   ): void;
   camera(size: PictureSize): PlanCamera;
-  stopOf(camera: PlanCamera, id: string): Framing | undefined;
-  rest(camera: PlanCamera): Framing;
-  home(camera: PlanCamera): Framing;
+  stopOf(camera: PlanCamera, id: string, frame: RoomFrame): Framing | undefined;
+  rest(camera: PlanCamera, frame: RoomFrame): Framing;
   /** The words of the key that flips between the room and the plan. */
-  mapKey(): { readonly text: string; readonly label: string };
-  inside(camera: PlanCamera, id: string): Framing | undefined;
+  mapKey(): MapKey;
 }

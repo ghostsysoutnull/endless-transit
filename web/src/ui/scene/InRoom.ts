@@ -8,16 +8,25 @@ import type { ViewMode } from './ViewMode.ts';
 
 /** Standing in the room (U03d): it fills the picture, a doorway walks you into the next one filling it too; the view holds still. */
 export class InRoom implements ViewMode {
+  room(camera: PlanCamera, index: number): Framing {
+    return camera.inside(index);
+  }
+
   rest(sketch: PlanSketch, camera: PlanCamera): Framing {
-    return sketch.home(camera);
+    return sketch.rest(camera, this);
   }
 
   stop(sketch: PlanSketch, camera: PlanCamera, id: string): Framing | undefined {
-    return sketch.inside(camera, id);
+    return sketch.stopOf(camera, id, this);
   }
 
   kept(_camera: PlanCamera, framing: Framing): Framing {
     return framing;
+  }
+
+  /** The room fills the picture at its new size. */
+  refit(sketch: PlanSketch, camera: PlanCamera): Framing {
+    return this.rest(sketch, camera);
   }
 
   corner(): MinimapView {

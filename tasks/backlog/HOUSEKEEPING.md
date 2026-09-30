@@ -89,6 +89,19 @@ or a fact in two places.
 - `HudPresenter.test.ts` and `SceneDrawing.test.ts` build a `PlanPortrait` and `RoomLook` inline: one builder in
   `tests/support`.
 
+### HK-036 — the U03d design check's logged findings (tidying, one line each)
+**Found:** 2026-09-30, the one design check of U03d (`357969b..08e9c94`); its two fixes are in (one stop rule for both
+views, fingers wait for a flip's glide), with the resize refit it pointed at; none of these is a bug or a fact in two
+places.
+- `PlanScene.#down` asks `mode.moves()`: the mode could answer the gesture a finger starts (none standing in a room).
+- The starting mode is written twice (`#mode`'s `new InRoom()` and `render`'s reset): one place says it.
+- `PlanScene` builds the MAP key's button with `createElement`, beside an injected canvas: mount it through the parts.
+- `ViewMode` takes the concrete `PlanCamera`: extends HK-035's first line (a small interface the users own).
+- `InRoom.stop` returns nothing for a relic, which `#go` reads as "it flies": extends HK-034's line on `#go`.
+- `GameEngine.test.ts` ("past the old sixteen") and `items.spec.ts` repeat `Buffer.test.ts`'s check that a take lands
+  past sixteen: the engine test keeps "takes open" on a planted buffer, the browser test only the long buffer on a phone.
+- `HudPresenter.test.ts` pins the peek's exact words inside a whole-object `toEqual`: assert it carries the count.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators

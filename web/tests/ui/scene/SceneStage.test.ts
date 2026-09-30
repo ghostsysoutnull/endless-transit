@@ -36,8 +36,6 @@ function aPlanPicture(): PlanDrawing<PlanVM> {
     camera,
     stopOf: () => undefined,
     rest: () => camera().whole(),
-    home: () => camera().whole(),
-    inside: () => undefined,
   };
 }
 

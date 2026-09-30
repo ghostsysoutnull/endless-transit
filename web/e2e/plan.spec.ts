@@ -297,3 +297,22 @@ test('reduced motion: the MAP key, a pinch and the corner map move the view at o
   await tapTheCornerMap(page);
   expect(await pointOf(page, 'capture:0')).toEqual(whole);
 });
+
+test('standing in the room, a picture that changes height (the phone’s address bar) keeps the room filling it (U03d)', async ({
+  page,
+}) => {
+  await page.clock.install();
+  await inARoomOfNine(page);
+  await page.clock.runFor(1500);
+  const share = async (): Promise<number> => {
+    const box = await page.getByTestId('scene').boundingBox();
+    if (box === null) throw new Error('no picture');
+    return ((await pointOf(page, 'capture:0')).y - box.y) / box.height;
+  };
+  const before = await share();
+  const size = page.viewportSize();
+  if (size === null) throw new Error('no viewport');
+  await page.setViewportSize({ width: size.width, height: size.height - 200 });
+  await page.clock.runFor(500);
+  expect(await share()).toBeCloseTo(before, 1);
+});

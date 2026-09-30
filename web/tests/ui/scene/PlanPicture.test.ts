@@ -11,9 +11,14 @@ import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 import { NoMinimap } from '#ui/scene/NoMinimap.ts';
+import { InRoom } from '#ui/scene/InRoom.ts';
+import { OverPlan } from '#ui/scene/OverPlan.ts';
 
 const PHONE = { width: 360, height: 277 };
 const picture = new ScenePictures().plan();
+/** How a room is framed standing in it and over the plan (U03d). */
+const IN_ROOM = new InRoom();
+const OVER_PLAN = new OverPlan();
 /** One word each, so a test can tell which room a word was written in. */
 const NAMES = ['Kitchen', 'Pantry', 'Vault', 'Chapel'];
 const addressOf = (index: number): string => `0.0.0.0.0.0.0.0.0.0.0.3.${String(index)}`;
@@ -70,7 +75,7 @@ function palette(record: Set<string>): (token: string) => string {
 describe('the apartment’s plan (U03): what can be tapped', () => {
   test('at rest in the first room: each doorway, the way out and the relics are there to tap, a thumb wide, inside the picture', () => {
     const vm = plan({ sights: ['visited', 'known', 'fog'], here: 0, relics: 2 });
-    const rest = picture.rest(vm, picture.camera(vm, PHONE));
+    const rest = picture.rest(vm, picture.camera(vm, PHONE), OVER_PLAN);
     const hits = picture.layout(vm, PHONE, rest);
     expect(hits.map((hit) => hit.id).sort()).toEqual(['capture:0', 'capture:1', 'leave', 'move:forward']);
     for (const hit of hits) {
@@ -85,31 +90,31 @@ describe('the apartment’s plan (U03): what can be tapped', () => {
 
   test('in a middle room: a doorway back and one on, no way out', () => {
     const vm = plan({ sights: ['visited', 'visited', 'known'], here: 1 });
-    const hits = picture.layout(vm, PHONE, picture.rest(vm, picture.camera(vm, PHONE)));
+    const hits = picture.layout(vm, PHONE, picture.rest(vm, picture.camera(vm, PHONE), OVER_PLAN));
     expect(hits.map((hit) => hit.id).sort()).toEqual(['move:back', 'move:forward']);
   });
 
   test('where the view goes before a pick: through a doorway into its room, back to the whole plan to leave, nowhere for a relic', () => {
     const vm = plan({ sights: ['visited', 'known', 'fog'], here: 0, relics: 1 });
     const camera = picture.camera(vm, PHONE);
-    expect(picture.stopOf(vm, camera, 'move:forward')?.equals(camera.room(1))).toBe(true);
-    expect(picture.stopOf(vm, camera, 'leave')?.equals(camera.whole())).toBe(true);
-    expect(picture.stopOf(vm, camera, 'capture:0')).toBeUndefined();
-    expect(picture.rest(vm, camera).equals(camera.room(0))).toBe(true);
+    expect(picture.stopOf(vm, camera, 'move:forward', OVER_PLAN)?.equals(camera.room(1))).toBe(true);
+    expect(picture.stopOf(vm, camera, 'leave', OVER_PLAN)?.equals(camera.whole())).toBe(true);
+    expect(picture.stopOf(vm, camera, 'capture:0', OVER_PLAN)).toBeUndefined();
+    expect(picture.rest(vm, camera, OVER_PLAN).equals(camera.room(0))).toBe(true);
   });
 
   test('standing in the room (U03d): it fills the picture; a doorway walks into the next room filling it, the way out pulls back to the whole plan, a relic goes nowhere', () => {
     const vm = plan({ sights: ['visited', 'known', 'fog'], here: 0, relics: 1 });
     const camera = picture.camera(vm, PHONE);
-    expect(picture.home(vm, camera).equals(camera.inside(0))).toBe(true);
-    expect(picture.inside(vm, camera, 'move:forward')?.equals(camera.inside(1))).toBe(true);
-    expect(picture.inside(vm, camera, 'leave')?.equals(camera.whole())).toBe(true);
-    expect(picture.inside(vm, camera, 'capture:0')).toBeUndefined();
+    expect(picture.rest(vm, camera, IN_ROOM).equals(camera.inside(0))).toBe(true);
+    expect(picture.stopOf(vm, camera, 'move:forward', IN_ROOM)?.equals(camera.inside(1))).toBe(true);
+    expect(picture.stopOf(vm, camera, 'leave', IN_ROOM)?.equals(camera.whole())).toBe(true);
+    expect(picture.stopOf(vm, camera, 'capture:0', IN_ROOM)).toBeUndefined();
   });
 
   test('standing in a middle room (U03d): both doorways and every relic lie in the picture, to be tapped', () => {
     const vm = plan({ sights: ['visited', 'visited', 'known'], here: 1, relics: 3 });
-    const hits = picture.layout(vm, PHONE, picture.home(vm, picture.camera(vm, PHONE)));
+    const hits = picture.layout(vm, PHONE, picture.rest(vm, picture.camera(vm, PHONE), IN_ROOM));
     expect(hits.map((hit) => hit.id).sort()).toEqual([
       'capture:0',
       'capture:1',
@@ -172,7 +177,7 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
       child('capture:1', { ordinal: '2', name: 'Salt Lamp' }),
     ];
     const vm: PlanVM = { ...base, relics, children: [...base.doors, ...relics] };
-    const rest = picture.rest(vm, picture.camera(vm, PHONE));
+    const rest = picture.rest(vm, picture.camera(vm, PHONE), OVER_PLAN);
     const painter = new RecordingPainter();
     picture.paint(
       painter,

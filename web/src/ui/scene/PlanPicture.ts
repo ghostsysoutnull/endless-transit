@@ -20,6 +20,7 @@ import { PlanPoint } from './PlanPoint.ts';
 import type { PlanVM } from './PlanVM.ts';
 import type { Point } from './Point.ts';
 import type { RelicSpot } from './RelicSpot.ts';
+import type { RoomFrame } from './RoomFrame.ts';
 import type { RoomInside } from './RoomInside.ts';
 import type { RoomInsides } from './RoomInsides.ts';
 import type { SceneChild } from './SceneChild.ts';
@@ -70,25 +71,15 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     return new PlanCamera(this.#plan(vm), size);
   }
 
-  rest(vm: PlanVM, camera: PlanCamera): Framing {
-    return camera.room(this.#index(vm, vm.here));
-  }
-
-  home(vm: PlanVM, camera: PlanCamera): Framing {
-    return camera.inside(this.#index(vm, vm.here));
-  }
-
-  inside(vm: PlanVM, camera: PlanCamera, id: string): Framing | undefined {
-    if (vm.exits.some((exit) => exit.id === id)) return camera.whole();
-    const door = vm.doors.find((each) => each.id === id);
-    return door === undefined ? undefined : camera.inside(this.#index(vm, door.address));
+  rest(vm: PlanVM, camera: PlanCamera, frame: RoomFrame): Framing {
+    return frame.room(camera, this.#index(vm, vm.here));
   }
 
   /** A doorway leads the view into its room; the way out pulls back to the whole plan; a relic is taken where it lies. */
-  stopOf(vm: PlanVM, camera: PlanCamera, id: string): Framing | undefined {
+  stopOf(vm: PlanVM, camera: PlanCamera, id: string, frame: RoomFrame): Framing | undefined {
     if (vm.exits.some((exit) => exit.id === id)) return camera.whole();
     const door = vm.doors.find((each) => each.id === id);
-    return door === undefined ? undefined : camera.room(this.#index(vm, door.address));
+    return door === undefined ? undefined : frame.room(camera, this.#index(vm, door.address));
   }
 
   layout(vm: PlanVM, size: PictureSize, framing: Framing): readonly SceneHit[] {

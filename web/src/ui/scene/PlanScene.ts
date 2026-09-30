@@ -55,6 +55,8 @@ export class PlanScene implements StagedScene<PlanSketch> {
     | undefined;
   /** In the room or over the plan. */
   #mode: ViewMode = new InRoom();
+  /** The glide of the last flip between the room and the plan: while it is the view's glide, fingers wait, as for a trip. */
+  #flipGlide: PlanGlide | undefined;
   /** What is shown, once a sketch has been drawn at a size. */
   #shown: Shown | undefined;
   #hits = new SceneHits([]);
@@ -96,7 +98,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
       },
       resized: () => {
         const shown = this.#shown;
-        if (shown !== undefined) this.#show(shown.sketch, shown.framing);
+        if (shown !== undefined) this.#refit(shown.sketch);
         if (this.#leave === undefined) this.#paint(STILL);
       },
     });
@@ -116,6 +118,18 @@ export class PlanScene implements StagedScene<PlanSketch> {
     return key;
   }
 
+  /** The picture changed size: the view stands where its mode puts it at the new size, unless it is on its way somewhere. */
+  #refit(sketch: PlanSketch): void {
+    const shown = this.#shown;
+    const canvas = this.#mounted?.canvas;
+    if (shown === undefined || canvas === undefined) return;
+    const moving = this.#trip !== undefined || this.#glide !== undefined;
+    this.#show(
+      sketch,
+      moving ? shown.framing : this.#mode.refit(sketch, sketch.camera(canvas.hostSize()), shown.framing),
+    );
+  }
+
   #flip(): void {
     const shown = this.#shown;
     if (this.#trip !== undefined || shown === undefined) return;
@@ -124,6 +138,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     this.#setMode(this.#mode.flipped());
     const to = this.#mode.rest(shown.sketch, shown.camera);
     this.#glideTo(to, shown.camera.pace(shown.framing, to), this.#parts.ride);
+    this.#flipGlide = this.#glide;
   }
 
   #setMode(mode: ViewMode): void {
@@ -344,7 +359,8 @@ export class PlanScene implements StagedScene<PlanSketch> {
   #down(event: PointerEvent): void {
     const canvas = this.#mounted?.canvas;
     const shown = this.#shown;
-    if (this.#trip !== undefined || canvas === undefined || shown === undefined) return;
+    const flipping = this.#glide !== undefined && this.#glide === this.#flipGlide;
+    if (this.#trip !== undefined || flipping || canvas === undefined || shown === undefined) return;
     const point = canvas.pointAt(event);
     this.#pointAt(this.#markAt(point));
     if (!this.#mode.moves()) return;
@@ -399,7 +415,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
       gesture.release({
         camera: shown.camera,
         framing: shown.framing,
-        rest: shown.sketch.rest(shown.camera),
+        rest: shown.sketch.rest(shown.camera, this.#mode),
         now: this.#parts.clock.now(),
         still: this.#parts.motion.reduced(),
         ride: this.#parts.ride,

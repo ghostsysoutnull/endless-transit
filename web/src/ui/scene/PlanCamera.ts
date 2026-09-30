@@ -122,7 +122,12 @@ export class PlanCamera {
   /** Where a view let go moving at this speed (plan units a second, on each axis) comes to rest. */
   landing(framing: Framing, speed: { readonly x: number; readonly y: number }): Framing {
     return this.clamp(
-      new Framing(framing.x() + speed.x * COAST, framing.y() + speed.y * COAST, framing.scale()),
+      new Framing(
+        framing.x() + speed.x * COAST,
+        framing.y() + speed.y * COAST,
+        framing.scale(),
+        framing.stretch(),
+      ),
     );
   }
 
