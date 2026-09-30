@@ -86,9 +86,13 @@ stand in: its rooms in rows walked like a snake, a doorway only into the room be
 under the first. A room you have not reached is in fog until you visit the room next to it; a scan in any room clears
 the whole plan for good, and marks the objects in every room. Drag the plan or pinch it; when it is bigger than the
 picture a small map in its corner shows where you look, and a tap on it goes there. Tap a doorway (or **GO FORWARD** /
-**GO BACK**) to glide into that room, an object's diamond (or its button) to take it, and the entrance (or **EXIT
-APARTMENT**) in the first room to pull back and leave. If your phone asks for reduced motion, nothing rides, walks,
-glides or zooms: a tap goes straight in. <!-- src/engine/model/Location.ts, src/ui/scene/SceneView.ts,
+**GO BACK**) to glide into that room, an object's diamond (or its button) to take it, and the entrance (or **LEAVE
+THE APARTMENT**) in the first room to pull back and leave. The room you stand in is drawn inside its walls when it is
+big enough on the picture: its back wall patterned by the culture that built it, lit by its era, its furniture on the
+floor, snow falling when it is cold; each object lies on the floor as a lit diamond with the first words of its name,
+and a taken one flies to the **Buffer** count. <!-- src/ui/scene/RoomInsides.ts:11, src/ui/scene/ScenePictures.ts,
+src/ui/RelicFlight.ts:5 --> If your phone asks for reduced motion, nothing rides, walks, glides, zooms or flies: a
+tap goes straight in. <!-- src/engine/model/Location.ts, src/ui/scene/SceneView.ts,
 src/ui/scene/PlanScene.ts:48, src/ui/scene/PlanLayout.ts:26, src/engine/model/Apartment.ts:136-169,
 src/engine/rules/GameEngine.ts:210 -->
 
@@ -103,7 +107,7 @@ src/engine/rules/GameEngine.ts:210 -->
 3. You are in the **elevator** for that floor: **GO UP**, **GO DOWN**, **ENTER CORRIDOR**.
 4. The corridor lists doors. Tap one. You are dropped straight into the first room behind it.
 5. The room is drawn as its apartment's plan. If the room has objects, each one is a diamond in the picture and a button
-   under it: tap either to take it. **GO FORWARD** walks to the next room, **GO BACK** to the previous; **EXIT
+   under it: tap either to take it. **GO FORWARD** walks to the next room, **GO BACK** to the previous; **LEAVE THE
    APARTMENT** is offered in the first room only.
 
 Congratulations, you have played the game. Everything below is how to play it well. Short of time? The
@@ -127,8 +131,8 @@ offer changes nothing and costs nothing.
 | **GO UP** / **GO DOWN** | Ride the elevator one floor. The top floor drops GO UP, the ground floor drops GO DOWN. <!-- src/engine/model/ElevatorState.ts:16-21 --> |
 | **ENTER CORRIDOR** / **BACK TO ELEVATOR** | The corridor lists the floor's doors; a door opens an apartment's first room. |
 | **GO FORWARD** / **GO BACK** | Walk an apartment's rooms. |
-| **EXIT APARTMENT** | Back to the corridor, from the first room only. <!-- src/engine/model/Room.ts:282-284 --> |
-| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`BUFFER FULL — merge or drop a fragment to take more`). <!-- src/ui/screens/HudPresenter.ts:305 --> |
+| **LEAVE THE APARTMENT** | Back to the corridor, from the first room only (below the bedrock, **LEAVE THE CRYPT**). <!-- src/engine/model/Room.ts:316-318, src/engine/model/Apartment.ts:229-231 --> |
+| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`The buffer is full: merge or drop a fragment to take more.`). <!-- src/ui/screens/HudPresenter.ts:313 --> |
 | **BREACH THE BEDROCK** | On the top floor of a primed building whose Keystone you hold, in the elevator or the corridor. Spends the Keystone. |
 | **DESCEND INTO THE SUBSTRATE** | On floor 0 of a breached building, where GO DOWN used to be. |
 | **SCAN FOR SPECTRAL ECHOES** / **CAPTURE SPECTRAL ECHO** | In a Null Reach: scan until the signal reaches 100, then capture. <!-- src/engine/rules/GameEngine.ts:487-501 --> |
@@ -227,8 +231,9 @@ your step count — then **CAPTURE SPECTRAL ECHO**. One echo per reach, until a 
 
 ## Reading doors before you open them
 
-The door list in a corridor shows each door's inscription if it has one, what it is made of and its state, like
-`_void_sink_ Brutalist Slab [PITTED]`, with a sentence about its look under it. Reading all of that is free.
+The door list in a corridor shows what each door is made of and its state, like `Brutalist Slab, pitted`, with a
+sentence about its look under it that tells the words written on it, if any. Reading all of that is free.
+<!-- src/engine/model/Door.ts:54-57, 71-78 -->
 
 Every door also carries a **trace**, a line of sensory text, and a **room type**, but you only see them when you scan:
 tap **SCAN** in the corridor. The trace is decided by the type of the first room behind the door, and it never lies.
@@ -318,7 +323,7 @@ frequency bonus lands on the *other* culture there, and it swaps the planet's tw
 (and the Entropic drain) can differ from the rest of the planet. <!-- src/engine/procgen/CityFactory.ts:12, 29 -->
 
 **Apartments drift in time.** Some apartments carry the planet's *second* era: their objects and lighting are of that
-era, and the room's `TEMPORAL_MARKER` tag says so. The drain cost still follows the street header.
+era, and the room's `Era` chip says so. The drain cost still follows the street header.
 
 **Stability.** The `Stability` chip at an elevator is the share of the country's apartments that follow the planet's
 main culture: 85% shifted by up to a tenth either way, kept between 10% and 90%. <!-- src/engine/model/Vibe.ts:6-8, src/engine/procgen/CountryFactory.ts:13-14 -->
@@ -433,8 +438,9 @@ port's iteration notes (`tasks/port/I02.md` to `I09.md`).
     apartment you stood in, so a drifted apartment could change the cost.
 15. **A footprint marks every ancestor**, streets, countries, systems and filaments included, so the twenty-place
     ending counts what the guide says it counts. The terminal code skipped those levels.
-16. **The room shows its apartment's `TEMPORAL_MARKER`.** The terminal game generated the tag and never showed it.
-17. **A door's full appearance is on the door list**, under its name; the terminal game shows it only in a scan.
+16. **The room shows its apartment's era** (the `Era` chip). The terminal game generated the tag and never showed it.
+17. **A door's full appearance is on the door list**, under its name; the terminal game shows it only in a scan. The
+    words on a door are told there and drawn on it, not written into its name.
 18. **The echo hunt and the tally are saved.** The terminal save forgets whether you took a reach's echo and resets the
     resonance counter to 0 on reload.
 19. **Planets draw from nine cultures.** The terminal code could give a planet the abyssal culture (white frame); here

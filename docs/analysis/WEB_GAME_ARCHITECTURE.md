@@ -231,8 +231,12 @@ not one number, so it has its own host: `PlanScene` shows a `PlanSketch` (`Plann
 the shared `SceneCanvas`; its `PlanCamera` keeps the framing in range, frames a room, coasts and shows the `Minimap`;
 a `PlanGesture` is a `PlanDrag` or a `Pinch`; a `PlanGlide` moves the view and a `PlanTrip` moves it then picks. The
 picture places each room (`PlacedRoom`) and paints it by its sight (`SIGHT_LOOKS`: a `SeenLook` or the `FogLook`, in
-`Tint`s). `SceneDrawing` joins the doorways' moves to their rooms by address, the leave and the takes; `HudView`
-sends every drawn button through the picture and lights its twin with one delegated listener each.
+`Tint`s), with what its box holds (`RoomInsides` → a `RoomInside`: the room stood in, when large enough, a
+`DrawnInside` — its back wall a `RoomWall` (a `WallPattern` in its culture's ink, by the look's walls key), a
+`RoomLight` by the look's light key, furniture and snow, its relics on the floor; any other room a `PlainInside`; a
+key with no entry is plain). A relic taken flies to the HUD's Buffer count (`RelicFlight`, behind the plan's `Flight`
+port, built in `main.ts`). `SceneDrawing` joins the doorways' moves to their rooms by address, the leave and the
+takes; `HudView` sends every drawn button through the picture and lights its twin with one delegated listener each.
 
 **Debug mode.** `?debug` on the address, read only in `main.ts`, puts the debug commands on offer (INTEGRITY ladder,
 PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `debug: true`.
