@@ -176,7 +176,10 @@ the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a discl
 buffer, trace, help, title, end session) that the next step folds again, and a panel the player asked for (scan,
 map, trace) comes after the list; every screen shows a move without scrolling at 360 × 640. A drawn place (U01b: the
 street) shows the name, then the picture, then the list, then the rest of the card, the picture sized so the first
-row stays above the dock at 360 × 640.
+row stays above the dock at 360 × 640; its HUD is one thin row. A room (U03c) is one screen: the picture, the room's
+words, the tiles, the rest of the card — its moves in the dock's row after the way out (the drawing says where a
+place's moves sit: `Drawing.arrange`, a `MovesPlace` — `MovesInDock` for the plan, `MovesInStrip` for the rest — into
+a `MovesLayout`, strip or row; the presenter owns the dock's order, and the view marks the way out by its role).
 `prefers-reduced-motion` stops the bar, the canvas pulse, the scene's motion and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
 **Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`, `TracePicture`) is a pure function
@@ -228,8 +231,10 @@ room stood in, its `RoomLook`); a scan surveys the apartment, which remembers it
 serpentine rows (`FloorPlan`: `PlanBox`es in plan units, a `PlanDoor` — `SideDoor` or `LevelDoor` — between each room
 and the next, the entrance under the first). The plan's view is a `Framing` (a centre in `PlanPoint`s and a scale),
 not one number, so it has its own host: `PlanScene` shows a `PlanSketch` (`Planned`: `PlanPicture` + `PlanVM`) on
-the shared `SceneCanvas`; its `PlanCamera` keeps the framing in range, frames a room, coasts and shows the `Minimap`;
-a `PlanGesture` is a `PlanDrag` or a `Pinch`; a `PlanGlide` moves the view and a `PlanTrip` moves it then picks. The
+the shared `SceneCanvas`; its `PlanCamera` keeps the framing in range, rests on a room filling the picture (U03c), coasts, settles a pinch on the
+room or the whole plan and shows the `Minimap`, whose tap pulls back to the whole plan (an option's hit wins over it);
+a `PlanGesture` is a `PlanDrag` or a `Pinch`, and says how it lets go (`release`, told a `LetGo`: a drag coasts, a
+pinch settles); a `PlanGlide` moves the view and a `PlanTrip` moves it then picks. The
 picture places each room (`PlacedRoom`) and paints it by its sight (`SIGHT_LOOKS`: a `SeenLook` or the `FogLook`, in
 `Tint`s), with what its box holds (`RoomInsides` → a `RoomInside`: the room stood in, when large enough, a
 `DrawnInside` — its back wall a `RoomWall` (a `WallPattern` in its culture's ink, by the look's walls key), a

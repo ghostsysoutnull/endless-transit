@@ -66,8 +66,9 @@ facts so only the floor's kind changed). `LocationKind`'s constructor builds `In
 
 ### HK-033 — the room's picture repeats the scene's height floor and ceiling
 **Found:** 2026-09-29, the design check of `b2db464` (U03a). `app.css`'s `.world[data-drawn]:has(.objects) > .scene`
-repeats `clamp(200px, …, 44dvh)` from the drawn scene's rule, changing only the space held back (395 px, not 363 px).
-**Fix:** one `height` rule reading `var(--scene-reserve, 363px)`; the room's rule sets only `--scene-reserve: 395px`.
+repeats the drawn scene's `clamp(…)` height rule with its own floor, reserve and ceiling (since U03c: 180 px, 400 px,
+38 %; the drawn scene's 200 px, 363 px, 44 %).
+**Fix:** one `height` rule reading custom properties for the three; the room's rule sets only its own values.
 ### HK-034 — the U03b design check's logged findings (tidying, one line each)
 **Found:** 2026-09-29, the one design check of U03b (`2f96607..5c736c0`); none is a bug or a fact in two places.
 - `DrawnInside.ts` furniture and snow cast their hash fractions to tuples (`as [number, …]`): ask one fraction per part.
@@ -79,6 +80,14 @@ repeats `clamp(200px, …, 44dvh)` from the drawn scene's rule, changing only th
 - `HudPresenter.test.ts` (:89, :215) still feeds the old `RESONANCE [STABLE]` fact the engine no longer makes.
 - `Door.description()` now only returns `brief()`: `Apartment.name()` can ask `brief()` and `description()` go.
 - `PixelCanvas.onPage` and `SceneCanvas.onPage` spell out the point type instead of `Point`.
+### HK-035 — the U03c design check's logged findings (tidying, one line each)
+**Found:** 2026-09-30, the one design check of U03c (`master..382e9a6`); its two fixes are in, none of these is a bug
+or a fact in two places.
+- `LetGo` hands the gestures the concrete `PlanCamera`: a small interface the gestures own (`settle`, `pace`, `landing`).
+- The dock's way out is marked by position (`fold.out ≤ fold.after ≤ dock.length`, unchecked): a row of `{ option, role }`.
+- `Pinch.test.ts` repeats `PlanCamera.test.ts`'s two settle cases: keep one showing `release` ends where `settle` says.
+- `HudPresenter.test.ts` and `SceneDrawing.test.ts` build a `PlanPortrait` and `RoomLook` inline: one builder in
+  `tests/support`.
 
 ## 🟢 CLOSED
 

@@ -4,16 +4,20 @@ import { Framing } from './Framing.ts';
 import { Minimap } from './Minimap.ts';
 import type { MinimapView } from './MinimapView.ts';
 import { NoMinimap } from './NoMinimap.ts';
+import type { PlanBox } from './PlanBox.ts';
 
 /** Room kept clear around the whole plan when it fits, in CSS pixels (the mock's `aptLimits`, `transit-reframed.html:610`). */
 const FIT_MARGIN = { width: 36, height: 44 };
-/** How far out and in a finger may zoom: below the whole plan by this share, in to this many pixels a unit at least. */
+/**
+ * How far out and in a finger may zoom: below the whole plan by this share, in to this many pixels a unit at least —
+ * and never short of a room at rest (U03c: further in than the mock's `aptLimits`, so the smallest room fills the picture).
+ */
 const LOOSE = 0.85;
 const TIGHT = { share: 1.2, pixels: 280 };
 /** The plan may be pushed this far past the frame's edge, in CSS pixels (the mock's `clampAc`). */
 const OVERSHOOT = 24;
-/** A room glided to fills this share of the picture's shorter side (the mock's `roomView`). */
-const ROOM_SHARE = 0.62;
+/** A room at rest fills the picture but for this margin on each side, in CSS pixels: its walls and doorways stay in (U03c). */
+const ROOM_MARGIN = 12;
 /** A let-go view coasts on for this long, in seconds of its speed (the mock's `vel * .3`). */
 const COAST = 0.3;
 /** A glide's time: the mock's 460 ms through a doorway; each factor of e in zoom adds `perZoom`, up to `most` (the pull back, about 760 ms). */
@@ -48,7 +52,7 @@ export class PlanCamera {
   /** A framing kept within the scale range, the plan kept in the frame (centred on an axis it fits along). */
   clamp(framing: Framing): Framing {
     const fit = this.#fit();
-    const scale = Math.min(Math.max(framing.scale(), fit * LOOSE), Math.max(fit * TIGHT.share, TIGHT.pixels));
+    const scale = Math.min(Math.max(framing.scale(), fit * LOOSE), this.#tightest(fit));
     const halfWidth = this.#size.width / 2 / scale;
     const halfHeight = this.#size.height / 2 / scale;
     const margin = OVERSHOOT / scale;
@@ -68,16 +72,32 @@ export class PlanCamera {
     return new Framing(this.#plan.width() / 2, this.#plan.height() / 2, this.#fit());
   }
 
-  /** The room at this index, glided to: centred, filling most of the picture's shorter side. */
+  /** The room at this index, at rest: centred, filling the picture but for a margin (U03c; the mock's `roomView` framed less). */
   room(index: number): Framing {
     const box = this.#plan.rooms()[index];
     if (box === undefined) return this.whole();
-    const scale = Math.max(
-      (Math.min(this.#size.width, this.#size.height) * ROOM_SHARE) / Math.max(box.width(), box.height()),
-      this.#fit(),
-    );
     const centre = box.centre();
-    return this.clamp(new Framing(centre.x(), centre.y(), scale));
+    return this.clamp(new Framing(centre.x(), centre.y(), Math.max(this.#filling(box), this.#fit())));
+  }
+
+  /** Where a pinch let go comes to rest: the room at rest or the whole plan, whichever scale it is nearer by ratio. */
+  settle(framing: Framing, rest: Framing): Framing {
+    const whole = this.whole();
+    const from = (to: Framing): number => Math.abs(Math.log(framing.scale() / to.scale()));
+    return from(rest) <= from(whole) ? rest : whole;
+  }
+
+  /** The scale a room's box fills the picture at, but for the margin. */
+  #filling(box: PlanBox): number {
+    return Math.min(
+      (this.#size.width - ROOM_MARGIN * 2) / box.width(),
+      (this.#size.height - ROOM_MARGIN * 2) / box.height(),
+    );
+  }
+
+  /** The zoom's inmost scale: the mock's, or further in when a room at rest needs it. */
+  #tightest(fit: number): number {
+    return Math.max(fit * TIGHT.share, TIGHT.pixels, ...this.#plan.rooms().map((box) => this.#filling(box)));
   }
 
   /** Where a view let go moving at this speed (plan units a second, on each axis) comes to rest. */

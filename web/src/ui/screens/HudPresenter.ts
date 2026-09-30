@@ -91,15 +91,30 @@ export class HudPresenter implements Presenter<HudVM> {
     const rows = travel.map((option) => this.#row(option));
     const moveOptions = snapshot.options.filter((option) => option.role === 'move');
     const leaveOptions = snapshot.options.filter((option) => option.role === 'return');
-    const moves = moveOptions.map((option) => this.#docked(option));
-    const dock = snapshot.options
-      .filter((option) => option.role === 'return' || option.role === 'system')
-      .map((option) => this.#docked(option));
     const takes = snapshot.options.filter((option) => option.role === 'take');
     const debug = snapshot.options
       .filter((option) => option.role === 'debug')
       .map((option) => this.#docked(option));
     const labels = place.abyssal ? LABELS.void : LABELS.lattice;
+    const drawing = this.#drawings.of(
+      place,
+      {
+        travel,
+        moves: moveOptions,
+        leave: leaveOptions,
+        takes,
+      },
+      player.decay,
+    );
+    // Where the moves sit is the drawing's to say (U03c): under the picture, or in the dock's row. The dock's order is
+    // this presenter's: the way out, the moves it holds, then the game's own behind MORE.
+    const leave = leaveOptions.map((option) => this.#docked(option));
+    const { strip: moves, row } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
+    const dock = [
+      ...leave,
+      ...row,
+      ...snapshot.options.filter((option) => option.role === 'system').map((option) => this.#docked(option)),
+    ];
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
@@ -164,16 +179,7 @@ export class HudPresenter implements Presenter<HudVM> {
           ? { shown: false }
           : { shown: true, ...this.#mapPanel(snapshot.map, MAP_HEADING) },
       trace: snapshot.trace === null ? { shown: false } : this.#tracePanel(snapshot.trace),
-      drawing: this.#drawings.of(
-        place,
-        {
-          travel,
-          moves: moveOptions,
-          leave: leaveOptions,
-          takes,
-        },
-        player.decay,
-      ),
+      drawing,
       pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows,
@@ -183,9 +189,10 @@ export class HudPresenter implements Presenter<HudVM> {
         : { shown: false },
       sealedTag: 'SEALED',
       dock,
-      // On a phone only the way out stays out of the fold (I09): one row, LEAVE and MORE, under the thumb.
+      // On a phone the way out stays out of the fold (I09), and the moves when the dock holds them (U03c): one row under the thumb.
       fold: {
-        after: leaveOptions.length,
+        after: leave.length + row.length,
+        out: leave.length,
         more: 'MORE',
         less: 'LESS',
         label: 'More of the dock',
@@ -213,7 +220,7 @@ export class HudPresenter implements Presenter<HudVM> {
         travel: 'Places to enter',
         moves: 'Moves',
         aside: 'Readouts',
-        dock: 'Leave and game',
+        dock: 'Actions',
         debug: 'Debug tools',
       },
     };

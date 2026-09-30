@@ -25,16 +25,16 @@ type Slot = 'pane' | 'map' | 'trace';
  * panel, the list of places to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel. The coherence meter is a
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel, or sit in the dock (a room, U03c). The coherence meter is a
  * `role="meter"` whose fill is a width the stylesheet animates (nodes survive a render). The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again. The
- * dock folds after `fold.after` buttons behind one MORE button — a disclosure of this view, not of the game,
+ * dock folds after `fold.after` buttons (the way out, marked, and a room's moves) behind one MORE button — a disclosure of this view, not of the game,
  * folded again by the next step (I09); every button is always in the markup, so a key always works. The depth rail (U01a) is a list, not buttons: a glyph per
  * level, its kind and name read out (the glyphs are shown). The moves a place
- * offers sit under its title, so the first screen of a phone shows one (I09). The debug strip (Decision 8)
+ * offers sit under its title, so the first screen of a phone shows one (I09), or in the dock's row (U03c). The debug strip (Decision 8)
  * sits last, folded behind one DEBUG button, every one of its buttons out of the tab order. The drawn map and trace
  * are canvases mounted into host elements the template keeps alive (`CanvasSlots`); their words sit beside
  * them for a reader. A place whose drawing key has a registered picture is drawn (U01b): the scene host sits
@@ -350,7 +350,12 @@ export class HudView implements View<HudVM> {
         </div>
         <nav class="dock" aria-label=${vm.regions.dock} data-open=${this.#more ? 'true' : 'false'}>
           ${repeat(
-            vm.dock.slice(0, vm.fold.after),
+            vm.dock.slice(0, vm.fold.out),
+            (option) => option.id,
+            (option) => this.#docked(option, undefined, true),
+          )}
+          ${repeat(
+            vm.dock.slice(vm.fold.out, vm.fold.after),
             (option) => option.id,
             (option) => this.#docked(option),
           )}
@@ -659,13 +664,14 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  /** A dock-style button; a `tabIndex` of −1 keeps it out of the tab order (the debug tools, I09). */
-  #docked(option: OptionVM, tabIndex?: number): TemplateResult {
+  /** A dock-style button; a `tabIndex` of −1 keeps it out of the tab order (the debug tools, I09); the way out is marked (U03c). */
+  #docked(option: OptionVM, tabIndex?: number, out = false): TemplateResult {
     return html`
       <button
         type="button"
         class="pb"
         data-option=${option.id}
+        data-role=${out ? 'out' : nothing}
         ?data-lit=${this.#lit.marks(option.id)}
         tabindex=${tabIndex ?? nothing}
       >

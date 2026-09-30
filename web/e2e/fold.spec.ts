@@ -67,6 +67,27 @@ async function expectAnActionOnTheFirstScreen(page: Page, where: string): Promis
   expect(bottom, `${where}: the action is above the dock`).toBeLessThanOrEqual(dockTop + 1);
 }
 
+/**
+ * A room on one screen (U03c): with the page at its top, the picture, the first line of the room's words and every
+ * move are inside the viewport, the words above the dock — the relics are tapped in the picture, the moves sit in the
+ * dock.
+ */
+async function expectTheRoomOnTheFirstScreen(page: Page, where: string): Promise<void> {
+  expect(await page.evaluate(() => window.scrollY), `${where}: the page is at its top`).toBe(0);
+  await expect(page.getByTestId('scene'), `${where}: the picture`).toBeInViewport({ ratio: 1 });
+  for (const move of await page.locator('.dock > button[data-option]').all())
+    await expect(move, `${where}: a move in the dock`).toBeInViewport({ ratio: 1 });
+  const words = await page.locator('.desc').boundingBox();
+  const line = await page.locator('.desc').evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+  const dockTop = (await page.locator('.dock').boundingBox())?.y ?? 0;
+  console.log(
+    `[fold] ${test.info().project.name} ${where}: words from y=${String(Math.round(words?.y ?? -1))}, dock from y=${String(Math.round(dockTop))}`,
+  );
+  expect((words?.y ?? Infinity) + line, `${where}: the words' first line above the dock`).toBeLessThanOrEqual(
+    dockTop,
+  );
+}
+
 /** Waits for a smooth scroll to end: the same scroll position twice, a frame apart. */
 async function settled(page: Page): Promise<void> {
   await expect
@@ -109,13 +130,20 @@ const KINDS: readonly {
   /** The panel the reach opens, if one. */
   readonly panel?: string;
   readonly expectKind: string;
+  /** A room: judged by the room's own first screen (U03c). */
+  readonly room?: true;
 }[] = [
   { kind: 'street', save: saveText(SEED, STREET), expectKind: 'STREET' },
   { kind: 'building', save: saveText(SEED, BUILDING), expectKind: 'BUILDING' },
   { kind: 'elevator', save: saveText(SEED, LOBBY), expectKind: 'FLOOR' },
   { kind: 'corridor', save: saveText(SEED, LOBBY, { [LOBBY]: 'corridor' }), expectKind: 'FLOOR' },
-  { kind: 'room', save: saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }), expectKind: 'ROOM' },
-  { kind: 'one-room', save: saveText(SEED, ONLY_ROOM, { [LOBBY]: 'corridor' }), expectKind: 'ROOM' },
+  { kind: 'room', save: saveText(SEED, FIRST_ROOM, { [LOBBY]: 'corridor' }), expectKind: 'ROOM', room: true },
+  {
+    kind: 'one-room',
+    save: saveText(SEED, ONLY_ROOM, { [LOBBY]: 'corridor' }),
+    expectKind: 'ROOM',
+    room: true,
+  },
   {
     kind: 'scan',
     save: saveText(SEED, LOBBY, { [LOBBY]: 'corridor' }),
@@ -155,7 +183,9 @@ for (const each of KINDS) {
       await page.evaluate(() => {
         window.scrollTo(0, 0);
       });
-      await expectAnActionOnTheFirstScreen(page, each.kind);
+      await (each.room === true
+        ? expectTheRoomOnTheFirstScreen(page, each.kind)
+        : expectAnActionOnTheFirstScreen(page, each.kind));
       await expectTouchable(page, each.kind);
       if (size.width === NARROW.width) await shoot(page, `1-${each.kind}-360`);
       await replant(page);

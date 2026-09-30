@@ -19,10 +19,6 @@ import { Zoom } from './Zoom.ts';
 
 /** A still is painted at this moment of the clock. */
 const STILL = 0;
-/** A coast comes to rest in this long, in milliseconds (the mock's 620). */
-const COAST = 620;
-/** A minimap tap glides the view there in this long (the mock's 480). */
-const MINIMAP = 480;
 /** The plan is drawn at its own scale: the host never grows it (a scale-1 zoom; `SceneCanvas` paints under one). */
 const UNZOOMED = new Zoom({ scale: 1, anchor: { x: 0, y: 0 }, full: 2 });
 
@@ -37,7 +33,8 @@ interface Shown {
 /**
  * The plan's host (U03): a canvas the size of its host element, drawn by the plan's picture on the page's one clock,
  * with the coherence tear over it, and the framing the view stands at. One finger pans the plan one to one and coasts
- * when let go; two pinch it about their midpoint; a tap on the minimap glides there. A tap on a doorway, the entrance
+ * when let go; two pinch it about their midpoint and, let go, settle on the room or the whole plan (U03c); a tap on the
+ * corner map pulls back to the whole plan, unless it falls on an option. A tap on a doorway, the entrance
  * or a relic — or its button in the list, the moves or the dock (`enter`) — glides where the picture says (into the
  * next room, back to the whole plan) and only then asks for it to be picked; a relic is picked at once and flies to
  * the buffer (`Flight`). A new
@@ -222,19 +219,21 @@ export class PlanScene implements StagedScene<PlanSketch> {
   #glideTo(to: Framing, duration: number, easing: PlanSceneParts['ride']): void {
     const shown = this.#shown;
     if (shown === undefined) return;
-    if (this.#parts.motion.reduced() || shown.framing.equals(to)) {
+    this.#ride(new PlanGlide({ from: shown.framing, to, start: this.#parts.clock.now(), duration, easing }));
+  }
+
+  /** The view on its way, as a glide says; under reduced motion, or a glide that goes nowhere, it is there at once. */
+  #ride(glide: PlanGlide): void {
+    const shown = this.#shown;
+    if (shown === undefined) return;
+    const end = glide.at(Number.POSITIVE_INFINITY);
+    if (this.#parts.motion.reduced() || shown.framing.equals(end)) {
       this.#glide = undefined;
-      this.#show(shown.sketch, to);
+      this.#show(shown.sketch, end);
       if (this.#leave === undefined) this.#paint(STILL);
       return;
     }
-    this.#glide = new PlanGlide({
-      from: shown.framing,
-      to,
-      start: this.#parts.clock.now(),
-      duration,
-      easing,
-    });
+    this.#glide = glide;
     this.#run();
   }
 
@@ -337,7 +336,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     if (this.#leave === undefined) this.#paint(STILL);
   }
 
-  /** A finger lifted: the gesture it ends coasts on its speed (still under reduced motion), and hides the click after it. */
+  /** A finger lifted: the gesture it ends says how the view goes on (a drag coasts, a pinch settles), and hides the click after it. */
   #up(event: PointerEvent): void {
     this.#fingers.delete(event.pointerId);
     const gesture = this.#gesture;
@@ -346,11 +345,23 @@ export class PlanScene implements StagedScene<PlanSketch> {
     this.#gesture = undefined;
     if (!gesture.moved()) return;
     this.#dragged = true;
-    const speed = this.#parts.motion.reduced() ? { x: 0, y: 0 } : gesture.speed(this.#parts.clock.now());
-    this.#glideTo(shown.camera.landing(shown.framing, speed), COAST, this.#parts.coast);
+    this.#ride(
+      gesture.release({
+        camera: shown.camera,
+        framing: shown.framing,
+        rest: shown.sketch.rest(shown.camera),
+        now: this.#parts.clock.now(),
+        still: this.#parts.motion.reduced(),
+        ride: this.#parts.ride,
+        coast: this.#parts.coast,
+      }),
+    );
   }
 
-  /** A tap: on the minimap the view glides there; on an open option, the trip to it. Not when it ends a drag, nor in a trip. */
+  /**
+   * A tap: on an open option, the trip to it; else on the corner map, the pull back to the whole plan — an option's
+   * hit wins, so a doorway under the map still takes its tap. Not when it ends a drag, nor in a trip.
+   */
   #tap(event: MouseEvent): void {
     if (this.#dragged) {
       this.#dragged = false;
@@ -360,12 +371,14 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const shown = this.#shown;
     if (this.#trip !== undefined || canvas === undefined || shown === undefined) return;
     const point = canvas.pointAt(event);
-    const minimap = shown.camera.minimap(shown.framing);
-    if (minimap.holds(point)) {
-      this.#glideTo(shown.camera.clamp(minimap.framingAt(point, shown.framing)), MINIMAP, this.#parts.ride);
+    const hit = this.#hits.at(point);
+    if (hit !== undefined && this.leads(hit.id)) {
+      this.#go(hit.id);
       return;
     }
-    const hit = this.#hits.at(point);
-    if (hit !== undefined && this.leads(hit.id)) this.#go(hit.id);
+    if (shown.camera.minimap(shown.framing).holds(point)) {
+      const whole = shown.camera.whole();
+      this.#glideTo(whole, shown.camera.pace(shown.framing, whole), this.#parts.ride);
+    }
   }
 }

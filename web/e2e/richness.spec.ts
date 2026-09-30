@@ -88,7 +88,7 @@ test('a door tells its full appearance under its name on the corridor list; one 
   expect(problems).toEqual([]);
 });
 
-test('on a phone the objects sit under the moves, before the way out, and every tile reads at 360 px', async ({
+test('on a phone the objects sit under the room’s words, and every tile reads at 360 px', async ({
   page,
 }) => {
   const problems = watchForErrors(page);
@@ -96,9 +96,10 @@ test('on a phone the objects sit under the moves, before the way out, and every 
   await plant(page, FIRST_ROOM, { [LOBBY]: 'corridor' });
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  const moves = await page.locator('.moves').boundingBox();
+  const words = await page.locator('.desc').boundingBox();
   const objects = await page.getByTestId('objects').boundingBox();
-  expect(objects?.y ?? 0).toBeGreaterThan((moves?.y ?? 0) + (moves?.height ?? 0));
+  expect(words).not.toBeNull();
+  expect(objects?.y ?? 0).toBeGreaterThan((words?.y ?? Infinity) + (words?.height ?? 0));
   for (const tile of await page.locator('.tile').all()) {
     const box = await tile.boundingBox();
     expect(box?.width ?? 0).toBeLessThanOrEqual(360 - 32);

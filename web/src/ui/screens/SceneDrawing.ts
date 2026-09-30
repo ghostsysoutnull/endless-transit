@@ -10,10 +10,16 @@ import { DrawnPlan } from './DrawnPlan.ts';
 import { DrawnStreet } from './DrawnStreet.ts';
 import { DrawnTower } from './DrawnTower.ts';
 import { ListedParts } from './ListedParts.ts';
+import { MovesInDock } from './MovesInDock.ts';
+import { MovesInStrip } from './MovesInStrip.ts';
 import { Undrawn } from './Undrawn.ts';
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
+  /** Where each picture's moves sit (U03c): in the dock for the plan, under the picture for every other. */
+  readonly #strip = new MovesInStrip();
+  readonly #docked = new MovesInDock();
+
   /**
    * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,
    * in the list's order (`ListedParts`), with what the part adds; and the words a reader hears instead of the picture.
@@ -32,31 +38,38 @@ export class SceneDrawing implements Drawings {
               doors: building.doors,
             })),
           ),
+          this.#strip,
         ),
       tower: (tower) =>
-        new DrawnTower({
-          ...this.#frame(
-            place,
-            decay,
-            new ListedParts(tower.rows).drawn(travel, (option, row) => ({
-              ...this.#child(option),
-              level: row.level,
-            })),
-          ),
-          tower,
-        }),
+        new DrawnTower(
+          {
+            ...this.#frame(
+              place,
+              decay,
+              new ListedParts(tower.rows).drawn(travel, (option, row) => ({
+                ...this.#child(option),
+                level: row.level,
+              })),
+            ),
+            tower,
+          },
+          this.#strip,
+        ),
       corridor: (corridor) =>
-        new DrawnCorridor({
-          ...this.#frame(
-            place,
-            decay,
-            new ListedParts(corridor.doors).drawn(travel, (option, door) => ({
-              ...this.#child(option),
-              door: { look: door.look, words: door.words },
-            })),
-          ),
-          shape: corridor.shape,
-        }),
+        new DrawnCorridor(
+          {
+            ...this.#frame(
+              place,
+              decay,
+              new ListedParts(corridor.doors).drawn(travel, (option, door) => ({
+                ...this.#child(option),
+                door: { look: door.look, words: door.words },
+              })),
+            ),
+            shape: corridor.shape,
+          },
+          this.#strip,
+        ),
       plan: (plan) => {
         // Each doorway's move by the room it leads to; the way out; the relics by their take (U03).
         const doors = options.moves
@@ -64,15 +77,18 @@ export class SceneDrawing implements Drawings {
           .map((move) => this.#child(move));
         const exits = options.leave.map((leave) => this.#child(leave));
         const relics = options.takes.map((take) => this.#child(take));
-        return new DrawnPlan({
-          ...this.#frame(place, decay, [...doors, ...exits, ...relics]),
-          rooms: plan.rooms,
-          here: plan.here,
-          look: plan.look,
-          doors,
-          exits,
-          relics,
-        });
+        return new DrawnPlan(
+          {
+            ...this.#frame(place, decay, [...doors, ...exits, ...relics]),
+            rooms: plan.rooms,
+            here: plan.here,
+            look: plan.look,
+            doors,
+            exits,
+            relics,
+          },
+          this.#docked,
+        );
       },
       unseen: () => this.#undrawn(place, travel, decay),
     });
@@ -86,6 +102,7 @@ export class SceneDrawing implements Drawings {
         decay,
         travel.map((option) => this.#child(option)),
       ),
+      this.#strip,
     );
   }
 

@@ -66,7 +66,8 @@ Each wall is shown RED on a scratch file when it is added; a new invariant ships
    a view carries no literal text or aria-label — words live in the presenter
    (`tests/ui/screens/ViewsCarryNoWords.test.ts`); every button and image is named, and reduced motion is respected
    (`e2e/a11y.spec.ts`); every tappable thing is a real `button[data-option]` and a tap in a picture resolves to an
-   option id (no test names this wall yet).
+   option id, or is a view control that only moves the view and picks nothing (the plan's corner map pulls back to the
+   whole plan) (no test names this wall yet).
 
 ## Code rules
 

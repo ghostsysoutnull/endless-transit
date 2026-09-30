@@ -62,18 +62,19 @@ type one in. <!-- src/engine/rules/GameEngine.ts:104-126, src/platform/CryptoEnt
 in the world puts you straight back where you stood — the game saves itself after every tap, in this browser only.
 See [Saving](#saving-seeds-and-the-debug-tools).
 
-**The screen.** The top box is the HUD: the game's name, **Steps**, **Buffer** (what you carry, out of
-16) and the Coherence bar (Integrity below the bedrock). Under it runs the **depth rail**: one glyph for each level from
-the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:24-35, 102-123 --> Under the
-rail is the place: its kind and its name. On a street, in a building, at an elevator, in a corridor and in a room a
+**The screen.** The top box is the HUD: the Coherence bar (Integrity below the bedrock), **Steps** and **Buffer** (what
+you carry, out of 16); where a place is drawn it is one thin row. Under it runs the **depth rail**: one glyph for each
+level from the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:27-38, 122-139 -->
+Under the rail is the place: its kind and its name. On a street, in a building, at an elevator and in a corridor a
 **picture** comes next (below), then the **moves** as buttons, then the list of what lies one level down, then the place's chips
 (your position among your neighbours, such as `Orbit 2 of 5` on a planet or `Building 2 of 20` in a building — a floor
-has none, its name and the tower say its height — then its tags) and its description. Elsewhere the chips, the moves
-and the description come first and the list after them. <!-- src/ui/screens/HudPresenter.ts:124-143 --> The list is one
-button per place, except a building's floors, which are a pad of numbers. At the bottom, always in reach of your
-thumb, is the **dock**: the way out (`▲ LEAVE …`) and **MORE**. MORE opens the rest of the dock above it — SCAN, MAP,
-BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again after your next tap.
-<!-- src/ui/screens/HudPresenter.ts:176-182 -->
+has none, its name and the tower say its height — then its tags) and its description. In a room the picture is followed
+by the room's words, then its objects, then its chips. Elsewhere the chips, the moves and the description come first and
+the list after them. <!-- src/ui/screens/HudPresenter.ts:140-159 --> The list is one button per place, except a
+building's floors, which are a pad of numbers. At the bottom, always in reach of your thumb, is the **dock**: the way
+out (`▲ LEAVE …`) and **MORE** — and in a room its moves, **GO BACK** and **GO FORWARD**. MORE opens the rest of the
+dock above it — SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again after your next tap.
+<!-- src/ui/screens/HudPresenter.ts:109-118, 191-200, src/ui/screens/MovesInDock.ts -->
 
 **The pictures.** A street, a building and a corridor are drawn above their list, and the two light each other: touch
 a place in the picture and its button lights, touch a button and its place lights. On the street, tap a building in
@@ -81,11 +82,13 @@ the picture to zoom into it. In a building the picture is the **tower**, a row p
 shaft: drag the tower, or the slider down its right side, to ride the car, and tap a floor — on the tower or on the
 pad — to ride there and step out. At an elevator the tower stands still, the car at your floor. In a **corridor** you
 look down the hall: drag it, or the slider along its foot, to walk, and tap a door to walk to it and open it; the door
-you came back out of is drawn yellow. In a **room** the picture is the apartment's **plan**, framed on the room you
-stand in: its rooms in rows walked like a snake, a doorway only into the room before and the room after, the entrance
+you came back out of is drawn yellow. In a **room** the picture is the apartment's **plan**, the room you stand in
+filling it: its rooms in rows walked like a snake, a doorway only into the room before and the room after, the entrance
 under the first. A room you have not reached is in fog until you visit the room next to it; a scan in any room clears
-the whole plan for good, and marks the objects in every room. Drag the plan or pinch it; when it is bigger than the
-picture a small map in its corner shows where you look, and a tap on it goes there. Tap a doorway (or **GO FORWARD** /
+the whole plan for good, and marks the objects in every room. Pinch out and the view settles on the whole plan; pinch
+in and it settles back in your room; drag to look around. When the plan is bigger than the picture a small map in its
+corner shows where you look, and a tap on it pulls back to the whole plan. <!-- src/ui/scene/PlanCamera.ts:76-89,
+src/ui/scene/PlanScene.ts:381 --> Tap a doorway (or **GO FORWARD** /
 **GO BACK**) to glide into that room, an object's diamond (or its button) to take it, and the entrance (or **LEAVE
 THE APARTMENT**) in the first room to pull back and leave. The room you stand in is drawn inside its walls when it is
 big enough on the picture: its back wall patterned by the culture that built it, lit by its era, its furniture on the
@@ -107,8 +110,8 @@ src/engine/rules/GameEngine.ts:210 -->
 3. You are in the **elevator** for that floor: **GO UP**, **GO DOWN**, **ENTER CORRIDOR**.
 4. The corridor lists doors. Tap one. You are dropped straight into the first room behind it.
 5. The room is drawn as its apartment's plan. If the room has objects, each one is a diamond in the picture and a button
-   under it: tap either to take it. **GO FORWARD** walks to the next room, **GO BACK** to the previous; **LEAVE THE
-   APARTMENT** is offered in the first room only.
+   under its words: tap either to take it. **GO FORWARD** walks to the next room, **GO BACK** to the previous — both in
+   the dock; **LEAVE THE APARTMENT** is offered in the first room only.
 
 Congratulations, you have played the game. Everything below is how to play it well. Short of time? The
 [cheat sheet]({{ "/web/cheat_sheet.html" | relative_url }}) is one screen, and **HELP** in the dock is the same manual
@@ -132,7 +135,7 @@ offer changes nothing and costs nothing.
 | **ENTER CORRIDOR** / **BACK TO ELEVATOR** | The corridor lists the floor's doors; a door opens an apartment's first room. |
 | **GO FORWARD** / **GO BACK** | Walk an apartment's rooms. |
 | **LEAVE THE APARTMENT** | Back to the corridor, from the first room only (below the bedrock, **LEAVE THE CRYPT**). <!-- src/engine/model/Room.ts:316-318, src/engine/model/Apartment.ts:229-231 --> |
-| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`The buffer is full: merge or drop a fragment to take more.`). <!-- src/ui/screens/HudPresenter.ts:313 --> |
+| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`The buffer is full: merge or drop a fragment to take more.`). <!-- src/ui/screens/HudPresenter.ts:320 --> |
 | **BREACH THE BEDROCK** | On the top floor of a primed building whose Keystone you hold, in the elevator or the corridor. Spends the Keystone. |
 | **DESCEND INTO THE SUBSTRATE** | On floor 0 of a breached building, where GO DOWN used to be. |
 | **SCAN FOR SPECTRAL ECHOES** / **CAPTURE SPECTRAL ECHO** | In a Null Reach: scan until the signal reaches 100, then capture. <!-- src/engine/rules/GameEngine.ts:487-501 --> |

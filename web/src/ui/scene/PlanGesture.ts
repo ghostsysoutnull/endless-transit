@@ -1,4 +1,6 @@
 import type { Framing } from './Framing.ts';
+import type { LetGo } from './LetGo.ts';
+import type { PlanGlide } from './PlanGlide.ts';
 import type { Point } from './Point.ts';
 
 /** Fingers on the plan (U03): one dragging it (`PlanDrag`) or two pinching it (`Pinch`) — the host tells it where they are. */
@@ -13,6 +15,6 @@ export interface PlanGesture {
   endsWith(pointer: number, fingers: ReadonlyMap<number, Point>): boolean;
   /** Whether it moved the plan: the click that ends it is then no tap. */
   moved(): boolean;
-  /** How fast it was moving the plan when it ended, in plan units a second on each axis. */
-  speed(now: number): Point;
+  /** How the view goes on once it has ended (U03c): a drag coasts, a pinch settles. */
+  release(letGo: LetGo): PlanGlide;
 }

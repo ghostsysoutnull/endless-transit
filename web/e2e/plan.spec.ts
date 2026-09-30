@@ -7,6 +7,9 @@ const LOBBY = '0.0.0.0.0.0.0.0.0.0';
 /** Grand Power Plant, the apartment's first room: four relics, the way out, a doorway on to the second room. */
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
 
+/** Another world: its apartment of nine rooms, standing in the second — the plan runs past the picture (U03c). */
+const NINE = { seed: '0000-1234-0000-4660', floor: '0.0.0.0.0.0.0.0.2.0', room: '0.0.0.0.0.0.0.0.2.0.0.0.1' };
+
 async function shoot(page: Page, name: string): Promise<void> {
   await page.getByTestId('scene').scrollIntoViewIfNeeded();
   await page.screenshot({ path: test.info().outputPath(`${test.info().project.name}-${name}.png`) });
@@ -170,4 +173,97 @@ test('back from the help screen, the plan still takes the taps: Go forward glide
   await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
   await page.clock.runFor(1000);
   await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+});
+
+async function inARoomOfNine(page: Page): Promise<void> {
+  await plant(page, saveText(NINE.seed, NINE.room, { [NINE.floor]: 'corridor' }));
+  await page.goto('./');
+  await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
+  await expect(page.getByTestId('scene').locator('canvas')).toHaveCount(1);
+}
+
+/** Two real fingers on the middle of the picture, moved from `from` to `to` CSS pixels apart, then lifted. */
+async function pinch(page: Page, from: number, to: number): Promise<void> {
+  const box = await page.getByTestId('scene').boundingBox();
+  if (box === null) throw new Error('no picture');
+  const middle = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  const apart = (gap: number) => [
+    { x: middle.x - gap / 2, y: middle.y, id: 0 },
+    { x: middle.x + gap / 2, y: middle.y, id: 1 },
+  ];
+  const touch = await page.context().newCDPSession(page);
+  await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: apart(from) });
+  for (let step = 1; step <= 8; step++)
+    await touch.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: apart(from + ((to - from) * step) / 8),
+    });
+  await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+}
+
+/** A tap on the corner map, in the picture's top right. */
+async function tapTheCornerMap(page: Page): Promise<void> {
+  const box = await page.getByTestId('scene').boundingBox();
+  if (box === null) throw new Error('no picture');
+  await page.touchscreen.tap(box.x + box.width - 24, box.y + 24);
+}
+
+function apart(one: { x: number; y: number }, other: { x: number; y: number }): number {
+  return Math.hypot(one.x - other.x, one.y - other.y);
+}
+
+test('pinched out, the view settles on the whole plan; pinched in, it settles back in the room (U03c)', async ({
+  page,
+}) => {
+  const problems = watchForErrors(page);
+  await page.clock.install();
+  await inARoomOfNine(page);
+  await page.clock.runFor(1500);
+  await holdTime(page);
+  const inside = await pointOf(page, 'capture:0');
+  await shoot(page, 'plan-nine-rest');
+  await pinch(page, 200, 60);
+  await page.clock.runFor(1500);
+  const whole = await pointOf(page, 'capture:0');
+  expect(apart(whole, inside)).toBeGreaterThan(20);
+  await shoot(page, 'plan-nine-whole');
+  await pinch(page, 60, 200);
+  await page.clock.runFor(1500);
+  expect(await pointOf(page, 'capture:0')).toEqual(inside);
+  // The tap after a pinch is a tap: the corner map pulls back to the same whole plan.
+  await tapTheCornerMap(page);
+  await page.clock.runFor(1500);
+  expect(await pointOf(page, 'capture:0')).toEqual(whole);
+  expect(problems).toEqual([]);
+});
+
+test('the corner map, tapped, pulls the view back to the whole plan (U03c)', async ({ page }) => {
+  await page.clock.install();
+  await inARoomOfNine(page);
+  await page.clock.runFor(1500);
+  await holdTime(page);
+  const inside = await pointOf(page, 'capture:0');
+  await tapTheCornerMap(page);
+  await page.clock.runFor(1500);
+  const pulledBack = await pointOf(page, 'capture:0');
+  expect(apart(pulledBack, inside)).toBeGreaterThan(20);
+  await expect(page.getByTestId('place-name')).toHaveText('Paper Security Station');
+  // It is the whole plan: pinching out from there settles where it is.
+  await pinch(page, 200, 60);
+  await page.clock.runFor(1500);
+  expect(await pointOf(page, 'capture:0')).toEqual(pulledBack);
+});
+
+test('reduced motion: the corner map and a pinch move the view at once (U03c)', async ({ page }) => {
+  await page.clock.install();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await inARoomOfNine(page);
+  await holdTime(page);
+  // No frame runs from here on: a view that waited for a glide would never move.
+  const inside = await pointOf(page, 'capture:0');
+  await tapTheCornerMap(page);
+  const whole = await pointOf(page, 'capture:0');
+  expect(apart(whole, inside)).toBeGreaterThan(20);
+  await pinch(page, 60, 200);
+  expect(await pointOf(page, 'capture:0')).toEqual(inside);
 });

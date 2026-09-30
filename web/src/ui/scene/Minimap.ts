@@ -3,7 +3,7 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { FloorPlan } from './FloorPlan.ts';
-import { Framing } from './Framing.ts';
+import type { Framing } from './Framing.ts';
 import type { MinimapView } from './MinimapView.ts';
 import type { Point } from './Point.ts';
 import { SIGHT_LOOKS } from './SightLooks.ts';
@@ -42,14 +42,6 @@ export class Minimap implements MinimapView {
       point.x <= this.#left + this.#plan.width() * this.#scale + REACH &&
       point.y >= this.#top - REACH &&
       point.y <= this.#top + this.#plan.height() * this.#scale + REACH
-    );
-  }
-
-  framingAt(point: Point, from: Framing): Framing {
-    return new Framing(
-      (point.x - this.#left) / this.#scale,
-      (point.y - this.#top) / this.#scale,
-      from.scale(),
     );
   }
 

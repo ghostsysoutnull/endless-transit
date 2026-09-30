@@ -1,6 +1,8 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { Framing } from './Framing.ts';
+import type { LetGo } from './LetGo.ts';
 import type { PlanGesture } from './PlanGesture.ts';
+import { PlanGlide } from './PlanGlide.ts';
 import type { PlanPoint } from './PlanPoint.ts';
 import type { Point } from './Point.ts';
 
@@ -10,7 +12,8 @@ type Fingers = readonly [Point, Point];
 /**
  * Two fingers zooming the plan (U03, the mock's pinch): the framing they found and what they held. As they spread
  * the plan grows by the same ratio, and the plan point first under their midpoint stays under it; it ends when fewer
- * than two fingers are left, and never coasts. Made per pinch; it follows the fingers.
+ * than two fingers are left, and never coasts: let go, it settles on the room at rest or on the whole plan (U03c).
+ * Made per pinch; it follows the fingers.
  */
 export class Pinch implements PlanGesture {
   readonly #framing: Framing;
@@ -59,8 +62,16 @@ export class Pinch implements PlanGesture {
     return true;
   }
 
-  speed(): Point {
-    return { x: 0, y: 0 };
+  /** Let go, the view glides to the room at rest or to the whole plan, whichever it is nearer. */
+  release(letGo: LetGo): PlanGlide {
+    const to = letGo.camera.settle(letGo.framing, letGo.rest);
+    return new PlanGlide({
+      from: letGo.framing,
+      to,
+      start: letGo.now,
+      duration: letGo.camera.pace(letGo.framing, to),
+      easing: letGo.ride,
+    });
   }
 
   /** Halfway between two fingers. */

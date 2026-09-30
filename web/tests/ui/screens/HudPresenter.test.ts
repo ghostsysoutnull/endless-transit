@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'vitest';
+import { PlanPortrait } from '#engine/model/PlanPortrait.ts';
+import { RoomLook } from '#engine/model/RoomLook.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import { hudPresenter } from '#tests/support/hudPresenter.ts';
 import { option, PLANET, STREET, towerSnapshot } from '#tests/support/hudSnapshots.ts';
@@ -519,7 +521,7 @@ describe('HudPresenter.toViewModel — the rest', () => {
       travel: 'Places to enter',
       moves: 'Moves',
       aside: 'Readouts',
-      dock: 'Leave and game',
+      dock: 'Actions',
       debug: 'Debug tools',
     });
   });
@@ -762,7 +764,7 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
       'to-title',
       'recap',
     ]);
-    expect(vm.fold).toEqual({ after: 1, more: 'MORE', less: 'LESS', label: 'More of the dock' });
+    expect(vm.fold).toEqual({ after: 1, out: 1, more: 'MORE', less: 'LESS', label: 'More of the dock' });
     // Every dock option is on offer to the router whether folded or not: a key still works.
     expect(vm.options.map((option) => option.id)).toEqual(expect.arrayContaining(['to-title', 'recap']));
     // The universe has no way out: nothing stays out of the fold.
@@ -772,5 +774,76 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
     });
     expect(top.fold.after).toBe(0);
     expect(top.dock.map((each) => each.id)).toEqual(['scan']);
+  });
+});
+
+/** A room of three drawn as its apartment's plan (U03), standing in the room at `here`, offered these moves and way out. */
+function drawnRoom(here: number, offered: readonly GameSnapshot['options'][number][]): GameSnapshot {
+  const rooms = ['0.0.0.0.1.0.0.0.0.0.0.0.0', '0.0.0.0.1.0.0.0.0.0.0.0.1', '0.0.0.0.1.0.0.0.0.0.0.0.2'];
+  return {
+    ...ROOM,
+    place: {
+      ...placeOf(ROOM),
+      address: rooms[here] ?? '',
+      portrait: new PlanPortrait({
+        rooms: rooms.map((address, index) => ({
+          address,
+          name: `Room ${String(index)}`,
+          sight: 'visited',
+          relics: 0,
+        })),
+        here: rooms[here] ?? '',
+        look: new RoomLook({ walls: 'rust', light: 'analog', cold: false, furniture: 1, anomaly: false }),
+      }),
+    },
+    options: [
+      ...offered,
+      option({ id: 'buffer', key: 'i', label: 'Buffer', role: 'system' }),
+      option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
+    ],
+  };
+}
+
+describe('HudPresenter.toViewModel — where a place’s moves sit (U03c)', () => {
+  const BACK = option({
+    id: 'move:back',
+    key: 'b',
+    label: 'Go back',
+    role: 'move',
+    opposite: 'move:forward',
+  });
+  const FORWARD = option({
+    id: 'move:forward',
+    key: 'f',
+    label: 'Go forward',
+    role: 'move',
+    opposite: 'move:back',
+  });
+  const LEAVE = option({ id: 'leave', key: 'l', label: 'Leave the apartment', role: 'return' });
+
+  test('in the first room of a drawn apartment the moves stand in the dock’s row after the way out, the rest behind MORE', () => {
+    const vm = presenter.toViewModel(drawnRoom(0, [FORWARD, LEAVE]));
+    expect(vm.moves).toEqual([]);
+    expect(vm.dock.map((each) => each.id)).toEqual(['leave', 'move:forward', 'buffer', 'to-title']);
+    expect(vm.fold.after).toBe(2);
+    expect(vm.fold.out).toBe(1);
+    expect(vm.options.filter((each) => each.id === 'move:forward')).toHaveLength(1);
+  });
+
+  test('in a middle room there is no way out: the row is the moves, back then forward', () => {
+    const vm = presenter.toViewModel(drawnRoom(1, [BACK, FORWARD]));
+    expect(vm.dock.map((each) => each.id)).toEqual(['move:back', 'move:forward', 'buffer', 'to-title']);
+    expect(vm.fold.after).toBe(2);
+    expect(vm.fold.out).toBe(0);
+  });
+
+  test('a place not drawn as a plan keeps its moves in the strip, out of the dock', () => {
+    const tower = towerSnapshot(10, 3);
+    const vm = presenter.toViewModel({
+      ...tower,
+      options: [...tower.options, option({ id: 'move:up', key: 'u', label: 'Go Up', role: 'move' })],
+    });
+    expect(vm.moves.map((each) => each.id)).toEqual(['move:up']);
+    expect(vm.dock.map((each) => each.id)).not.toContain('move:up');
   });
 });

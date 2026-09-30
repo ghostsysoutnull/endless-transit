@@ -1,11 +1,15 @@
 import { Fling } from './Fling.ts';
 import type { Framing } from './Framing.ts';
+import type { LetGo } from './LetGo.ts';
+import { PlanGlide } from './PlanGlide.ts';
 import type { PlanGesture } from './PlanGesture.ts';
 import type { PointerHold } from './PointerHold.ts';
 import type { Point } from './Point.ts';
 
 /** A finger that moves less than this is a tap, not a drag (the mock's 6 px). */
 const SLOP = 6;
+/** A coast comes to rest in this long, in milliseconds (the mock's 620). */
+const COAST = 620;
 
 /**
  * One finger on the plan (U03): where it went down on the page and the framing then; a tap until it goes past the
@@ -60,8 +64,17 @@ export class PlanDrag implements PlanGesture {
     this.#down.sample(time, framing.y());
   }
 
-  /** How fast it was moving the plan when it let go, in plan units a second on each axis. */
-  speed(now: number): Point {
-    return { x: this.#across.speed(now), y: this.#down.speed(now) };
+  /** Let go, the plan coasts on the way it was moving and slows to a stop; under reduced motion it stays. */
+  release(letGo: LetGo): PlanGlide {
+    const speed = letGo.still
+      ? { x: 0, y: 0 }
+      : { x: this.#across.speed(letGo.now), y: this.#down.speed(letGo.now) };
+    return new PlanGlide({
+      from: letGo.framing,
+      to: letGo.camera.landing(letGo.framing, speed),
+      start: letGo.now,
+      duration: COAST,
+      easing: letGo.coast,
+    });
   }
 }
