@@ -40,6 +40,7 @@ import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
 import { HelpView } from '#ui/screens/HelpView.ts';
 import { FloorPad } from '#ui/screens/FloorPad.ts';
 import { FloorsByTen } from '#ui/screens/FloorsByTen.ts';
+import { PolePresenter } from '#ui/screens/PolePresenter.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { LayersTogether } from '#ui/screens/LayersTogether.ts';
 import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
@@ -101,6 +102,7 @@ new Shell(
         frame,
         new SceneDrawing(),
         new FloorPad({ floor: new FloorsByTen(), layer: new LayersTogether() }),
+        new PolePresenter(),
       ),
       new HudView(
         scenes,

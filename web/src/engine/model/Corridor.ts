@@ -58,7 +58,7 @@ export class Corridor extends Location {
 
   /** A corridor that bends out of sight says so on the pole (U05). */
   override poleSigns(): readonly PoleSign[] {
-    return this.#shape === 'curved' ? [{ look: 'curved' }] : [];
+    return this.#shape === 'curved' ? [{ look: 'curved', word: 'curved' }] : [];
   }
 
   /**

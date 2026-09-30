@@ -11,20 +11,20 @@ function corridorOf(seed: Seed): Location {
 
 describe('PoleSign — the states the pole tags a level with (U05, Decision 13)', () => {
   test('a corridor that curves away is tagged curved; a straight one is not', () => {
-    expect(corridorOf(new Seed(5, 1)).poleSigns()).toEqual([{ look: 'curved' }]);
+    expect(corridorOf(new Seed(5, 1)).poleSigns()).toEqual([{ look: 'curved', word: 'curved' }]);
     expect(corridorOf(new Seed(5, 2)).poleSigns()).toEqual([]);
   });
 
   test('an apartment whose door is not stable is tagged with the door’s state; a stable one is not', () => {
     expect(must(corridorOf(new Seed(5, 2)).children()[8]).poleSigns()).toEqual([
-      { look: 'door', state: 'Cold' },
+      { look: 'door', word: 'cold' },
     ]);
     expect(must(corridorOf(new Seed(5, 3)).children()[2]).poleSigns()).toEqual([]);
   });
 
   test('an apartment out of time is tagged an anomaly', () => {
     const anomaly = must(corridorOf(new Seed(5, 16)).children()[2]);
-    expect(anomaly.poleSigns()).toContainEqual({ look: 'anomaly' });
+    expect(anomaly.poleSigns()).toContainEqual({ look: 'anomaly', word: 'anomaly' });
   });
 
   test('a place of no such state carries no tag', () => {

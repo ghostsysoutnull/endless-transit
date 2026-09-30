@@ -360,7 +360,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     ]);
     const artery = must(steps[10]).vibe;
     expect(artery.held === 'country' && artery.main).toEqual({ era: 'atomic', culture: 'abyssal' });
-    expect(must(steps[11]).signs).toContainEqual({ look: 'door', state: 'Humming' });
+    expect(must(steps[11]).signs).toContainEqual({ look: 'door', word: 'humming' });
   });
 
   test('MAP and TRACE are on offer everywhere in the world, never at the title; MAP is keyed m, TRACE has no key', () => {

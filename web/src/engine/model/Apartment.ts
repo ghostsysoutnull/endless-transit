@@ -115,8 +115,8 @@ export class Apartment extends Location {
   /** Its door's state when the door is not stable, and a temporal anomaly (U05). */
   override poleSigns(): readonly PoleSign[] {
     return [
-      ...(this.#door.stable() ? [] : [{ look: 'door', state: this.#door.state() } as const]),
-      ...(this.#anomaly ? [{ look: 'anomaly' } as const] : []),
+      ...(this.#door.stable() ? [] : [{ look: 'door', word: this.#door.state().toLowerCase() } as const]),
+      ...(this.#anomaly ? [{ look: 'anomaly', word: 'anomaly' } as const] : []),
     ];
   }
 
