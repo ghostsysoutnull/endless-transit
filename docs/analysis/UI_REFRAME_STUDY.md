@@ -47,7 +47,8 @@ Read today (all as strings inside `facts` / `readings` / trace `meta`):
   elevator's ATMOS_SHIFT (`ElevatorState.ts:73`); a rebel city only as an alert fact and a VOLATILE status
   (`City.ts:41-54`); a room's era as TEMPORAL_MARKER (`Room.ts:304-315`).
 
-**Missing, and needed** (U05 for the vibe, earlier where a scene needs a count):
+**Missing, and needed** (U05 for the vibe, earlier where a scene needs a count; the vibe handed over since U05 as
+`VibeFigure`, `tasks/ui/U05.md`):
 - the **second culture and era** (`Vibe.ts:46,50` are read only inside the engine) and the **stability** as a number;
 - **rebel** as a boolean, not an alert string;
 - the **apartment's own culture, era and anomaly** (`Apartment.ts:80-85`; an apartment is never stood in —
