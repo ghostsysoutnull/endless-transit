@@ -1,7 +1,8 @@
+import type { Fact } from '#engine/model/Fact.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
-import { type GameOption, VISITED_KEY } from '#engine/rules/GameOption.ts';
+import { type GameOption, TRACE_ID, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
@@ -146,11 +147,7 @@ export class HudPresenter implements Presenter<HudVM> {
               label: new Phrase(place.position.label).plain(),
               value: `${String(place.position.index)} of ${String(place.position.total)}`,
             },
-        tags: place.facts.map((fact) => ({
-          key: fact.key,
-          label: fact.label,
-          value: new Phrase(fact.value).capitalised(),
-        })),
+        tags: this.#tags(place.facts),
         description: place.description,
         rows: this.#rows(place),
         diagnostic: place.status,
@@ -178,8 +175,8 @@ export class HudPresenter implements Presenter<HudVM> {
           : { shown: true, ...this.#mapPanel(snapshot.map, MAP_HEADING) },
       trace:
         snapshot.trace === null ? { shown: false } : this.#column(snapshot.trace, place.noise, player.decay),
-      railTrace: snapshot.options.some((option) => option.id === 'trace')
-        ? { id: 'trace', label: 'Trace: every level from the universe down to here' }
+      railTrace: snapshot.options.some((option) => option.id === TRACE_ID)
+        ? { id: TRACE_ID, label: 'Trace: every level from the universe down to here' }
         : null,
       drawing,
       pad: this.#pads.of(place.portrait, travel, rows),
@@ -310,11 +307,7 @@ export class HudPresenter implements Presenter<HudVM> {
           label: `Depth ${depth}, ${step.kind}: ${step.name}${step.current ? ', you are here' : ''}`,
           here: step.current,
           hereText: 'You are here',
-          tags: step.facts.map((fact) => ({
-            key: fact.key,
-            label: fact.label,
-            value: new Phrase(fact.value).capitalised(),
-          })),
+          tags: this.#tags(step.facts),
           words: step.words,
           facts,
           scale: step.scale,
@@ -324,6 +317,15 @@ export class HudPresenter implements Presenter<HudVM> {
         };
       }),
     };
+  }
+
+  /** A place's facts as its chips: the value written as a phrase. */
+  #tags(facts: readonly Fact[]): HudVM['place']['tags'] {
+    return facts.map((fact) => ({
+      key: fact.key,
+      label: fact.label,
+      value: new Phrase(fact.value).capitalised(),
+    }));
   }
 
   /** The way down to the room's words and relics, with how many relics lie there. */

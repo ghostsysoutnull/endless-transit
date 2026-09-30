@@ -34,6 +34,8 @@ Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work
   question a habit before codifying it into a command.
 - **Weigh a review against what it can find before running it**: a plan too big to review cheaply is cut, not reviewed
   twice.
+- **An estimate scaled from an earlier wave first takes out what that wave built that now exists**: a new picture on a
+  finished host costs its drawing, not the host.
 - **A record never restates the size of a list it points to**: a count beside the list's owner goes stale with
   every edit; the owner's check boxes are the progress.
 - **A plan note holds decisions, picks and pointers**: numbers and details the code and its comments already hold

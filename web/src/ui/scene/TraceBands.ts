@@ -85,12 +85,6 @@ export class TraceBands {
     });
   }
 
-  /** A band changed size (opened larger): painted again at its new size. */
-  resized(host: HTMLElement): void {
-    const band = this.#bands.find((each) => each.band.host === host);
-    if (band !== undefined) this.#paint(band, this.#clock.now());
-  }
-
   clear(): void {
     this.#stop?.();
     this.#stop = undefined;

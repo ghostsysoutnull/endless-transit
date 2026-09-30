@@ -102,6 +102,23 @@ places.
   past sixteen: the engine test keeps "takes open" on a planted buffer, the browser test only the long buffer on a phone.
 - `HudPresenter.test.ts` pins the peek's exact words inside a whole-object `toEqual`: assert it carries the count.
 
+### HK-037 — the U04 design check's logged findings (tidying, one line each)
+**Found:** 2026-09-30, the one design check of U04 (`527ee99..b7a52de`); its three fixes are in (the floor owns its
+walked corridor, the engine owns TRACE's id, one `#tags` for the chips) and the unused `TraceBands.resized` went; none
+of these is a bug or a fact in two places.
+- `HudView` also owns the column (open state, open bands, the dive, the rail's finger, the swipe): a `TraceColumnView`.
+- `HudView` takes the concrete `TraceBands` and `Dive`: small interfaces the view owns.
+- "Went down into nothing" is `into: ''`, written by the presenter and read by `BandStage`; `railTrace` is `… | null`:
+  a union of the two shapes each.
+- `CorridorPicture` branches on `vm.abyssal` and reassigns its palette: a look entry, as the plan's abyssal wall.
+- A null reach's signal is a bare 0–100 number, clamped again in `ReachScene`: a value type.
+- `ScenePictures`: `plan()`'s doc comment sits above `area()`.
+- `HudView` writes the ` · ` before `hereText`: the presenter's words.
+- No test below the browser for `SceneDrawing.band`, `BandStage`'s view at `into` and its spot, or the dive's landing;
+  the tower test ties `breached` to having Layers, so the bedrock line's new condition is not told from the old one.
+- `trace.spec.ts` finds `.rail .crumb` and `.col-head` by class: by role or a stable id.
+- `Void.test.ts` and `Descent.test.ts` both pin the signal chip's values: one layer.
+
 ## 🟢 CLOSED
 
 ### HK-022 — `NameGenerator` was eleven static generators

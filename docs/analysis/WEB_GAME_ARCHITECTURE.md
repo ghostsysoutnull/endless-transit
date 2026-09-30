@@ -163,8 +163,8 @@ word**, casing and aria label; a `*View.ts` carries no literal (`tests/ui/ViewsC
 working). Screens: Title, Hud (the world), Buffer, Help, Reboot, Recap.
 
 **Shell's four rules for every screen:** where the focus goes after a render (the option that held it; if it vanished,
-never its `opposite` move — the panel instead); a newly opened panel (scan, map, trace) is scrolled into view and
-given the focus; one live region, mounted once, whose text changes (the status; a screen's headline when the engine
+never its `opposite` move — the panel instead; only a shown button in the tab order takes it, so the rail, U04, never
+does); a newly opened panel (scan, map) is scrolled into view and given the focus; one live region, mounted once, whose text changes (the status; a screen's headline when the engine
 has no message); the previous scene's focused option gets the focus back on the way back.
 
 **Input.** `InputRouter` maps a tap, a click or a key to an option id and calls `engine.step`. Every action
@@ -174,7 +174,7 @@ is a real `<button>` at least 44 × 44 CSS px; nothing depends on hover or a key
 glyphs under it (U01a: the terminal's readouts, the address, its hash and the seed are gone from the world screen);
 the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a disclosure holding scan, map,
 buffer, trace, help, title, end session) that the next step folds again, and a panel the player asked for (scan,
-map, trace) comes after the list; every screen shows a move without scrolling at 360 × 640. A drawn place (U01b: the
+map) comes after the list; every screen shows a move without scrolling at 360 × 640. A drawn place (U01b: the
 street) shows the name, then the picture, then the list, then the rest of the card, the picture sized so the first
 row stays above the dock at 360 × 640; its HUD is one thin row. A room (U03c) is one screen: the picture, the room's
 words, the tiles, the rest of the card — its moves in the dock's row after the way out (the drawing says where a
@@ -182,7 +182,7 @@ place's moves sit: `Drawing.arrange`, a `MovesPlace` — `MovesInDock` for the p
 a `MovesLayout`, strip or row; the presenter owns the dock's order, and the view marks the way out by its role).
 `prefers-reduced-motion` stops the bar, the canvas pulse, the scene's motion and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
-**Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`, `TracePicture`) is a pure function
+**Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`) is a pure function
 of a plain view-model into `Painter` calls, so a stub painter tests it in Node; `CanvasView` draws it into a host
 with the stylesheet's tokens (`Inks`: the ones it may paint text with) at device pixel ratio and stays still under reduced motion. The map's marks
 (dim/bright, the `X` glitch marks below 30, `☠` below the bedrock) and the spectrogram bars are seeded from
@@ -192,7 +192,7 @@ Every canvas moves on the page's one `MotionClock` (behind a `FrameSource` the c
 pixel, ≤ 1.3 million pixels).
 
 **Scenes (U01b).** `src/ui/scene/` draws a place: the engine hands over the place's portrait (`Location.portrait()`:
-the street, the tower, the corridor, or none), which tells its reader which it is and carries each drawn child's part by
+an area above the street, the street, the tower, the corridor, the plan, or none), which tells its reader which it is and carries each drawn child's part by
 its address (`onStreet()`, `onTower()`, `onCorridor()`), and the frame's seed; the presenter's `SceneDrawing` reads the
 portrait into a `Drawing` — one member per picture, holding that picture's own view model (`StreetVM`, `TowerVM`,
 `CorridorVM`, each a `SceneVM` frame with the tear's strength from `Coherence.decay()`), its listed children matched to
@@ -206,6 +206,23 @@ the picture stay, else makes one through `SceneHosts`. `SceneView` hosts a `Line
 dispose drops a zoom in flight; the child pointed at is told to `HudView`, which lights the list's twin through
 `data-lit`; `CoherenceFx` plans the tear from the seed; under reduced motion a still, no
 zoom.
+
+**Above and below the street (U04).** The eight levels from the universe to the city answer an `AreaPortrait`
+(`AreaFigure`: the level's `AreaLook`, each listed child's part by address with its `MarkLook` — `onArea()` — and a null
+reach's signal); `SceneDrawing` reads it into `DrawnArea` (`AreaVM`), drawn by `AreaPicture` on the line host with a
+`StillCamera`: the level's `AreaScene` (one class a level) says where its children stand and paints its backdrop, each
+child's `AreaMark` (one class a child kind) paints its mark — both tables keyed by the look, built in `ScenePictures`
+with the shared `AreaInk` and `AreaSpots`. A Layer draws as its mode says, the tower or its Artery; the Artery's
+corridor is tinted by `VoidTint`; `TowerFigure.breached` tells the tower the bedrock is open.
+
+**The trace column (U04).** TRACE's step carries each level's band (`TraceSummary`: its `bandPortrait` — its own
+picture, a floor its building's tower, a corridor its corridor, an apartment its plan at the room below — its listed
+places, chips, first words and its kind's `scale`). `HudPresenter` makes the `TraceColumnVM`, each band's drawing from
+`SceneDrawing.band` (the same pictures, the children keyed by address); `HudView` shows the column over the screen and
+hands its hosts to `TraceBands` (a canvas a band, painted through the sketch's own stage call by a `BandStage`, only the
+band in the middle of the view moving, and the thread through each band's spot) and `Dive` (the levels full screen,
+zooming into each spot, landing on your band); both built in `main.ts`. The rail is one button (`railTrace`) running
+TRACE, out of the tab order; the view keeps the level nearest the finger to open the column there.
 
 **The building and the corridor (U02).** A picture's view moves: it answers a `SceneCamera` for its view model at a
 size — `TravelCamera` (the tower's car, the corridor's walk: range, pace, coast, the stops, and a `CameraTrack`) or
