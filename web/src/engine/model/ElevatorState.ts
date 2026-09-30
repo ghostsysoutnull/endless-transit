@@ -31,7 +31,6 @@ const MOVES = new MoveTable<Floor>([
     },
   },
 ]);
-const STABILITY_DECIMALS = 2;
 
 /**
  * At the elevator: vertical moves and the way into the corridor, and the floor diagnostic suite. Nothing
@@ -78,7 +77,7 @@ export class ElevatorState implements FloorState {
       {
         key: 'reading',
         label: 'Stability',
-        value: `${(vibe.stability() * 100).toFixed(STABILITY_DECIMALS)}%`,
+        value: vibe.stabilityText(),
       },
       { key: 'trait', label: 'Trait', value: vibe.mutation()?.key() ?? 'Standard' },
     ];

@@ -21,6 +21,7 @@ import { RelicFragment } from './RelicFragment.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 import { RoomLook } from './RoomLook.ts';
 import type { ScanReport } from './ScanReport.ts';
+import type { VibeFigure } from './VibeFigure.ts';
 
 export const ROOM_KIND = new LocationKind({
   key: 'room',
@@ -334,6 +335,11 @@ export class Room extends Location {
       `You are in ${read('structure', structure)}. The walls are ${colour} ${read('walls', walls)}.`,
       `The space is illuminated by ${read('lighting', lighting)}.`,
     ];
+  }
+
+  /** Its apartment's vibe: a room is always its apartment's culture and era (U05). */
+  override vibeFigure(): VibeFigure {
+    return this.#apartment.vibeFigure();
   }
 
   /**

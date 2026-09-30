@@ -12,6 +12,7 @@ import type { Relic } from './Relic.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Portrait } from './Portrait.ts';
+import type { VibeFigure } from './VibeFigure.ts';
 
 export const APARTMENT_KIND = new LocationKind({
   key: 'apartment',
@@ -107,6 +108,11 @@ export class Apartment extends Location {
 
   anomaly(): boolean {
     return this.#anomaly;
+  }
+
+  /** Its own pair, drifting in each value it drew from the second one (U05). */
+  override vibeFigure(): VibeFigure {
+    return this.vibe()?.figure({ drawn: { era: this.#era, culture: this.#culture } }) ?? super.vibeFigure();
   }
 
   /** How many rooms it has — decided when it was made, so a room can ask before the rooms exist. */

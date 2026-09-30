@@ -5,6 +5,7 @@ import type { Origin } from './Origin.ts';
 import type { Vibe } from './Vibe.ts';
 import type { Portrait } from './Portrait.ts';
 import type { AreaPart } from './AreaPart.ts';
+import type { VibeFigure } from './VibeFigure.ts';
 
 export const CITY_KIND = new LocationKind({
   key: 'city',
@@ -36,6 +37,11 @@ export class City extends Location {
 
   override vibe(): Vibe | undefined {
     return this.#rebelVibe ?? super.vibe();
+  }
+
+  /** A rebel district says it swapped the pairs here (U05). */
+  override vibeFigure(): VibeFigure {
+    return this.#rebelVibe?.figure({ rebel: true }) ?? super.vibeFigure();
   }
 
   description(): readonly string[] {
