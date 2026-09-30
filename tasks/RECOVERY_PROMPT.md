@@ -1,8 +1,8 @@
 # Handover
 
 - **Branch:** `master` (U03 merged; its branch deleted).
-- **Next:** U04 of the UI rework, above, below and the trace — its row in `tasks/UI_QUEUE.md`. U03 is built and not
-  yet published: the publish waits for the user's word, then their phone check, and what it finds comes first.
+- **Next:** U04 of the UI rework, above, below and the trace — its row in `tasks/UI_QUEUE.md`. U03 is published as
+  build `19212f5`; the user's phone check of it comes first, and what it finds is fixed first.
 - **Open threads:**
   - the wall on picture taps and the minimap, a view control: `tasks/ui/U03.md`, "Asked, not answered";
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
