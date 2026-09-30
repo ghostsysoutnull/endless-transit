@@ -63,11 +63,10 @@ export class Player {
     return this.#resonant;
   }
 
-  /** What a room handed over goes into the buffer; a fresh resonant capture counts. False, counting nothing, when the buffer is full. */
-  capture(capture: Capture): boolean {
-    if (!this.#buffer.add(capture.fragment)) return false;
+  /** What a room handed over goes into the buffer; a fresh resonant capture counts. */
+  capture(capture: Capture): void {
+    this.#buffer.add(capture.fragment);
     if (capture.fresh && capture.fragment.resonant()) this.#resonant += 1;
-    return true;
   }
 
   /**

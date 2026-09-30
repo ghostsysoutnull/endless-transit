@@ -108,9 +108,9 @@ export class Journey {
     return true;
   }
 
-  /** What lies here at `index`, into the buffer (Guide:120), and the floor above sampled for the ritual; nothing — and the place untouched — when the buffer is full or nothing lies there. */
+  /** What lies here at `index`, into the buffer (Guide:120), and the floor above sampled for the ritual; nothing — and the place untouched — when nothing lies there. */
   capture(index: number): Fragment | undefined {
-    if (this.#here === undefined || this.#player.buffer().full()) return undefined;
+    if (this.#here === undefined) return undefined;
     const capture = this.#here.capture(index);
     if (capture === undefined) return undefined;
     this.#player.capture(capture);
@@ -118,9 +118,9 @@ export class Journey {
     return capture.fragment;
   }
 
-  /** The free lottery on the move that landed here (Guide:186-190): the prize into the buffer, the floor sampled (any capture counts, Guide:264); nothing when the place rolls nothing, lost, or the buffer is full. */
+  /** The free lottery on the move that landed here (Guide:186-190): the prize into the buffer, the floor sampled (any capture counts, Guide:264); nothing when the place rolls nothing, or lost. */
   lottery(): Fragment | undefined {
-    if (this.#here === undefined || this.#player.buffer().full()) return undefined;
+    if (this.#here === undefined) return undefined;
     const prize = this.#here.lottery(this.#player.steps());
     if (prize === undefined) return undefined;
     this.#player.capture({ fragment: prize, fresh: true });
@@ -135,9 +135,8 @@ export class Journey {
     return echo.scan(this.#player.steps());
   }
 
-  /** The echo, once locked, into the buffer (Guide:194-195); nothing when it is not locked, already taken, or the buffer is full. */
+  /** The echo, once locked, into the buffer (Guide:194-195); nothing when it is not locked or already taken. */
   captureEcho(): Fragment | undefined {
-    if (this.#player.buffer().full()) return undefined;
     const capture = this.#here?.echo()?.capture();
     if (capture === undefined) return undefined;
     this.#player.capture(capture);
@@ -183,10 +182,10 @@ export class Journey {
     return this.#here?.prime() ?? false;
   }
 
-  /** The debug KEYSTONE (Guide:439): the building's Keystone straight into the buffer; nothing outside a building or with a full buffer. */
+  /** The debug KEYSTONE (Guide:439): the building's Keystone straight into the buffer; nothing outside a building. */
   spawnKeystone(): Fragment | undefined {
     const keystone = this.#here?.keystone();
-    if (keystone === undefined || this.#player.buffer().full()) return undefined;
+    if (keystone === undefined) return undefined;
     this.#player.capture({ fragment: keystone, fresh: false });
     return keystone;
   }
@@ -271,7 +270,7 @@ export class Journey {
       if (below !== undefined && !above.admits(below)) return false;
     }
     const buffer = READER.readAll(saved.buffer(), universe);
-    if (buffer === undefined || buffer.length > this.#player.buffer().capacity()) return false;
+    if (buffer === undefined) return false;
     this.#seed = saved.seed();
     this.#universe = universe;
     this.#here = place;

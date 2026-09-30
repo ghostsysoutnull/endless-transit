@@ -519,7 +519,7 @@ export class HudView implements View<HudVM> {
     button.closest('.world')?.querySelector('.desc')?.scrollIntoView({ block: 'start' });
   }
 
-  /** The objects of a room as tiles — a button each while the buffer has room, a plain tile otherwise — the telemetry block, or the map. */
+  /** The objects of a room as tiles — a button each while the engine offers its take, a plain tile otherwise — the telemetry block, or the map. */
   #aside(vm: HudVM): TemplateResult | typeof nothing {
     const { objects, telemetry, map } = vm.aside;
     if (objects === null && telemetry === null && map === null) return nothing;
@@ -532,7 +532,6 @@ export class HudView implements View<HudVM> {
                 <section class="objects" data-testid="objects" aria-label=${objects.label}>
                   <h3 class="heading">${objects.heading}</h3>
                   ${objects.empty === '' ? nothing : html`<p class="empty">${objects.empty}</p>`}
-                  ${objects.note === '' ? nothing : html`<p class="empty" data-testid="buffer-full">${objects.note}</p>`}
                   ${
                     objects.tiles.length === 0
                       ? nothing
