@@ -2,9 +2,8 @@
 
 - **Branch:** `master` (U03c merged; its branch deleted).
 - **Next:** U04 of the UI rework, above, below and the trace — its row in `tasks/UI_QUEUE.md`. U03c (the room on one
-  screen) is built, merged and published as build `f2d0dd0`, for the user's phone check; its note is `tasks/ui/U03c.md`.
+  screen) is published as build `f2d0dd0` and passed the user's phone check; its note is `tasks/ui/U03c.md`.
 - **Open threads:**
-  - U03c's phone check, and the corner map covering the end of a room's name: `tasks/ui/U03c.md`, "As built";
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
   - ships (CONCEPT-001): the verdicts in `docs/analysis/SHIPS_CONCEPT.md`, section 7, none judged;
   - `docs/analysis/WORKFLOW_BACKLOG.md`: WF-011, WF-006 (moot — close at the next review), WF-013 (needs the user's
