@@ -6,6 +6,11 @@ import { PlanPoint } from '#ui/scene/PlanPoint.ts';
 import { SceneHash } from '#ui/scene/SceneHash.ts';
 
 const PHONE = { width: 360, height: 277 };
+/** The room's picture on the smallest phone and on a tall one (U03c). */
+const ROOM_PICTURES = [
+  { width: 358, height: 243 },
+  { width: 410, height: 348 },
+] as const;
 const layout = new PlanLayout(new SceneHash());
 
 describe('the plan’s camera on a picture of one size (U03)', () => {
@@ -38,6 +43,41 @@ describe('the plan’s camera on a picture of one size (U03)', () => {
         expect(framing.scale(), where).toBeGreaterThanOrEqual(camera.whole().scale());
       });
     }
+  });
+
+  test('at rest a room fills the picture (U03c): nearly edge to edge on one side, within it on both', () => {
+    for (const size of ROOM_PICTURES) {
+      for (const count of [1, 2, 10, 48]) {
+        const plan = layout.of(count, '0.4.1');
+        const camera = new PlanCamera(plan, size);
+        plan.rooms().forEach((room, index) => {
+          const framing = camera.room(index);
+          const topLeft = framing.toPicture(room.topLeft(), size);
+          const bottomRight = framing.toPicture(room.bottomRight(), size);
+          const where = `${String(size.width)} × ${String(size.height)}, ${String(count)} rooms, room ${String(index)}`;
+          expect(topLeft.x, where).toBeGreaterThanOrEqual(0);
+          expect(topLeft.y, where).toBeGreaterThanOrEqual(0);
+          expect(bottomRight.x, where).toBeLessThanOrEqual(size.width);
+          expect(bottomRight.y, where).toBeLessThanOrEqual(size.height);
+          const filled = Math.max(
+            (bottomRight.x - topLeft.x) / size.width,
+            (bottomRight.y - topLeft.y) / size.height,
+          );
+          expect(filled, where).toBeGreaterThanOrEqual(0.85);
+        });
+      }
+    }
+  });
+
+  test('a pinch let go settles on the room or on the whole plan, whichever it is nearer', () => {
+    const plan = layout.of(10, '0.1.2');
+    const camera = new PlanCamera(plan, PHONE);
+    const rest = camera.room(3);
+    const whole = camera.whole();
+    const nearRoom = new Framing(rest.x(), rest.y(), rest.scale() * 0.8);
+    const nearWhole = new Framing(rest.x(), rest.y(), whole.scale() * 1.1);
+    expect(camera.settle(nearRoom, rest).equals(rest)).toBe(true);
+    expect(camera.settle(nearWhole, rest).equals(whole)).toBe(true);
   });
 
   test('a finger cannot zoom far past the whole plan nor push the plan out of the frame', () => {
