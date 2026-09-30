@@ -62,14 +62,15 @@ type one in. <!-- src/engine/rules/GameEngine.ts:104-126, src/platform/CryptoEnt
 in the world puts you straight back where you stood — the game saves itself after every tap, in this browser only.
 See [Saving](#saving-seeds-and-the-debug-tools).
 
-**The screen.** The top box is the HUD: the Coherence bar (Integrity below the bedrock), **Steps** and **Buffer** (what
-you carry, out of 16); where a place is drawn it is one thin row. Under it runs the **depth rail**: one glyph for each
+**The screen.** The top box is the HUD: the Coherence bar (Integrity below the bedrock), **Steps** and **Buffer** (how many
+fragments you carry); where a place is drawn it is one thin row. Under it runs the **depth rail**: one glyph for each
 level from the universe down to where you stand, which is ringed. <!-- src/ui/screens/HudPresenter.ts:27-38, 122-139 -->
 Under the rail is the place: its kind and its name. On a street, in a building, at an elevator and in a corridor a
 **picture** comes next (below), then the **moves** as buttons, then the list of what lies one level down, then the place's chips
 (your position among your neighbours, such as `Orbit 2 of 5` on a planet or `Building 2 of 20` in a building — a floor
-has none, its name and the tower say its height — then its tags) and its description. In a room the picture is followed
-by the room's words, then its objects, then its chips. Elsewhere the chips, the moves and the description come first and
+has none, its name and the tower say its height — then its tags) and its description. In a room the picture takes most
+of the screen, with a button under it — `About this room · 4 relics ↓` — that takes you down to the room's words, then
+its objects, then its chips. <!-- src/ui/screens/HudPresenter.ts:310-313 --> Elsewhere the chips, the moves and the description come first and
 the list after them. <!-- src/ui/screens/HudPresenter.ts:140-159 --> The list is one button per place, except a
 building's floors, which are a pad of numbers. At the bottom, always in reach of your thumb, is the **dock**: the way
 out (`▲ LEAVE …`) and **MORE** — and in a room its moves, **GO BACK** and **GO FORWARD**. MORE opens the rest of the
@@ -82,13 +83,15 @@ the picture to zoom into it. In a building the picture is the **tower**, a row p
 shaft: drag the tower, or the slider down its right side, to ride the car, and tap a floor — on the tower or on the
 pad — to ride there and step out. At an elevator the tower stands still, the car at your floor. In a **corridor** you
 look down the hall: drag it, or the slider along its foot, to walk, and tap a door to walk to it and open it; the door
-you came back out of is drawn yellow. In a **room** the picture is the apartment's **plan**, the room you stand in
-filling it: its rooms in rows walked like a snake, a doorway only into the room before and the room after, the entrance
-under the first. A room you have not reached is in fog until you visit the room next to it; a scan in any room clears
-the whole plan for good, and marks the objects in every room. Pinch out and the view settles on the whole plan; pinch
-in and it settles back in your room; drag to look around. When the plan is bigger than the picture a small map in its
-corner shows where you look, and a tap on it pulls back to the whole plan. <!-- src/ui/scene/PlanCamera.ts:76-89,
-src/ui/scene/PlanScene.ts:381 --> Tap a doorway (or **GO FORWARD** /
+you came back out of is drawn yellow. In a **room** you stand in it: the room fills the picture, every room the same
+size, its doorways on its walls. The **MAP** key in the picture's corner glides out to the apartment's **plan** and
+back; every new room starts with you standing in it. <!-- src/ui/scene/PlanCamera.ts:88-100,
+src/ui/scene/PlanScene.ts:119-127, 144 --> The plan: its rooms in rows walked like a snake, a doorway only into the room
+before and the room after, the entrance under the first. A room you have not reached is in fog until you visit the room
+next to it; a scan in any room clears the whole plan for good, and marks the objects in every room. On the plan, drag to
+look around and pinch: let go, the view settles on the whole plan or on your room, whichever is nearer. When the plan is
+bigger than the picture a small map in its corner shows where you look, and a tap on it pulls back to the whole plan.
+<!-- src/ui/scene/InRoom.ts:27-29, src/ui/scene/OverPlan.ts:26-28, src/ui/scene/PlanCamera.ts:102-107 --> Tap a doorway (or **GO FORWARD** /
 **GO BACK**) to glide into that room, an object's diamond (or its button) to take it, and the entrance (or **LEAVE
 THE APARTMENT**) in the first room to pull back and leave. The room you stand in is drawn inside its walls when it is
 big enough on the picture: its back wall patterned by the culture that built it, lit by its era, its furniture on the
@@ -109,7 +112,7 @@ src/engine/rules/GameEngine.ts:210 -->
    floors the pad shows ten at a time, with a tab for each ten. Tap a floor. <!-- src/ui/screens/FloorPad.ts:12, 29-37, 48-49 -->
 3. You are in the **elevator** for that floor: **GO UP**, **GO DOWN**, **ENTER CORRIDOR**.
 4. The corridor lists doors. Tap one. You are dropped straight into the first room behind it.
-5. The room is drawn as its apartment's plan. If the room has objects, each one is a diamond in the picture and a button
+5. The room fills the picture, as if you stood in it. If the room has objects, each one is a diamond in the picture and a button
    under its words: tap either to take it. **GO FORWARD** walks to the next room, **GO BACK** to the previous — both in
    the dock; **LEAVE THE APARTMENT** is offered in the first room only.
 
@@ -135,7 +138,7 @@ offer changes nothing and costs nothing.
 | **ENTER CORRIDOR** / **BACK TO ELEVATOR** | The corridor lists the floor's doors; a door opens an apartment's first room. |
 | **GO FORWARD** / **GO BACK** | Walk an apartment's rooms. |
 | **LEAVE THE APARTMENT** | Back to the corridor, from the first room only (below the bedrock, **LEAVE THE CRYPT**). <!-- src/engine/model/Room.ts:316-318, src/engine/model/Apartment.ts:229-231 --> |
-| An object | Takes it into the buffer. The tiles stop being buttons when the buffer is full (`The buffer is full: merge or drop a fragment to take more.`). <!-- src/ui/screens/HudPresenter.ts:320 --> |
+| An object | Takes it into the buffer, which holds as many as you take. <!-- src/engine/rules/Buffer.ts:24-26 --> |
 | **BREACH THE BEDROCK** | On the top floor of a primed building whose Keystone you hold, in the elevator or the corridor. Spends the Keystone. |
 | **DESCEND INTO THE SUBSTRATE** | On floor 0 of a breached building, where GO DOWN used to be. |
 | **SCAN FOR SPECTRAL ECHOES** / **CAPTURE SPECTRAL ECHO** | In a Null Reach: scan until the signal reaches 100, then capture. <!-- src/engine/rules/GameEngine.ts:487-501 --> |
@@ -255,9 +258,8 @@ come from the planet's culture and era.
 
 ## The buffer: merging and keystones
 
-The buffer is your inventory. It holds **sixteen** fragments; the HUD's `n/16` means it. When it is full the room's
-tiles are shown but not tappable, the echo cannot be captured, and the lottery pays nothing — merge or drop to make
-room. <!-- src/engine/rules/Buffer.ts:4-5, 34-43 -->
+The buffer is your inventory. It has no limit: every object you take goes in, and so do the echo and the lottery's
+prize. <!-- src/engine/rules/Buffer.ts:24-26 -->
 
 **Merging** takes two fragments out and puts one in. The new fragment's frequency is the sum of the two. Its name is the
 first word of each parent joined with a dash, plus "Hybrid", in the order you selected them, so selecting "Rusted
@@ -404,8 +406,7 @@ the top and breach. <!-- src/main.ts:57-58, src/engine/rules/GameEngine.ts:283-3
 7. **Take the Null Reach detour** at least once. The echo is free, and landmarks are twice as common.
 8. **Drop freely.** A dropped fragment lies in the room exactly as it was — a hybrid, a Keystone, a Hidden Frequency
    too — and comes back the same. Rooms are lockers.
-9. **Make room before the lottery.** A full buffer pays nothing: sixteen is the cap.
-10. **Open HELP once.** It is the manual, inside the game, and it costs one.
+9. **Open HELP once.** It is the manual, inside the game, and it costs one.
 
 ## How the web game differs from the terminal game
 
@@ -421,8 +422,8 @@ port's iteration notes (`tasks/port/I02.md` to `I09.md`).
    building; a dropped hybrid or Hidden Frequency comes back worth what it held. The terminal game keeps only the name.
 4. **The tally counts once.** A resonant object counts when taken fresh from its room, not again after a drop and a
    retake. A Keystone (0 Hz) never counts; a Hidden Frequency or an Echo never counts.
-5. **The buffer holds sixteen.** The terminal HUD says `n/16` and means nothing by it; here the cap is real, a full
-   buffer seals the tiles, and the lottery and the echo pay nothing until you make room.
+5. **The buffer has no limit.** The terminal HUD says `n/16` and means nothing by it; here the HUD counts what you carry,
+   and nothing is ever refused for want of room.
 6. **Nothing is ever destroyed.** The terminal buffer's `d 3` is gone; DROP HERE lays the fragment in the room instead,
    and it costs nothing (the terminal `t` menu charged a prompt and a step for a drop).
 7. **No auto-take.** A lone object in a room is one tap, like any other.

@@ -27,7 +27,7 @@ draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Ev
 | `▲ LEAVE …` | up one level (from a corridor: to the building, skipping the elevator) |
 | Elevator | **GO UP**, **GO DOWN**, **ENTER CORRIDOR** |
 | Corridor | doors, **BACK TO ELEVATOR** |
-| Room | an object takes it (it flies to the Buffer count); **GO FORWARD**, **GO BACK** in the dock; **LEAVE THE APARTMENT** in the first room only; pinch out for the whole plan |
+| Room | an object takes it (it flies to the Buffer count); **GO FORWARD**, **GO BACK** in the dock; **LEAVE THE APARTMENT** in the first room only; **MAP** in the picture for the whole plan |
 | Null Reach | **SCAN FOR SPECTRAL ECHOES** until 100, then **CAPTURE SPECTRAL ECHO** |
 
 | The dock (`▲ LEAVE`, a room's moves and **MORE** stay under your thumb) | |
@@ -70,7 +70,7 @@ below 30 with an empty buffer.
 * A room whose culture matches the street's `Culture` chip gives +10% and a `[RESONANT]` badge when the hertz divide by 11.
 * The door list is free to read, but only **inscriptions** mean anything: `[DATA_VAULT]` is a Laboratory or Bio-Server,
   `!! DANGER !!` is a Security Station or Armory. Room types and traces show only in the scan.
-* The buffer holds **16**. Full means the tiles stop being buttons: merge or drop.
+* The buffer has **no limit**.
 * **Drop freely.** A dropped fragment lies in the room exactly as it was and comes back the same — Keystones and hybrids
   too.
 
