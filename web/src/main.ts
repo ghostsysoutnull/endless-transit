@@ -79,6 +79,7 @@ const scenes = new SceneRegistry({
   tower: pictures.tower(),
   corridor: pictures.corridor(),
   plan: pictures.plan(),
+  area: pictures.area(),
 });
 // The world screen's canvases: the map and the trace, drawn in the pictures' one font (U02).
 const font = new CanvasFont();

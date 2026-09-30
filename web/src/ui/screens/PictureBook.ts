@@ -1,3 +1,4 @@
+import type { AreaVM } from '#ui/scene/AreaVM.ts';
 import type { CorridorVM } from '#ui/scene/CorridorVM.ts';
 import type { PlanVM } from '#ui/scene/PlanVM.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
@@ -10,4 +11,5 @@ export interface PictureBook {
   tower(vm: TowerVM): Sketch;
   corridor(vm: CorridorVM): Sketch;
   plan(vm: PlanVM): Sketch;
+  area(vm: AreaVM): Sketch;
 }

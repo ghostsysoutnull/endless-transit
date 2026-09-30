@@ -3,6 +3,8 @@ import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { Vibe } from './Vibe.ts';
+import type { Portrait } from './Portrait.ts';
+import type { AreaPart } from './AreaPart.ts';
 
 export const CITY_KIND = new LocationKind({ key: 'city', title: 'City', icon: '🏙', indexLabel: 'DISTRICT' });
 
@@ -39,13 +41,12 @@ export class City extends Location {
   }
 
   override facts(): readonly Fact[] {
-    return this.#rebelVibe === undefined
-      ? []
-      : [{ key: 'alert', label: 'UNAUTHORIZED_ZONE', value: 'UNAUTHORIZED_RESONANCE_DETECTED' }];
+    return this.#rebelVibe === undefined ? [] : [{ key: 'alert', label: 'Rebel district', value: '' }];
   }
 
+  /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
   status(): string {
-    return this.#rebelVibe === undefined ? 'STABILITY: [STABLE]' : 'STABILITY: [VOLATILE]';
+    return '';
   }
 
   /** The trace's note (City.groovy:30-32): a rebel district says so. */
@@ -59,5 +60,15 @@ export class City extends Location {
 
   approachVerb(): string {
     return 'Go to';
+  }
+
+  /** Drawn as an area of its children (U04). */
+  override portrait(): Portrait {
+    return this.area('city');
+  }
+
+  /** Marked in its parent's area (U04). */
+  override onArea(): readonly AreaPart[] {
+    return [{ address: this.address().toString(), mark: 'city' }];
   }
 }

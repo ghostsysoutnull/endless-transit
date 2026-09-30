@@ -11,11 +11,14 @@ import type { Fragment } from './Fragment.ts';
 import type { LevelRow } from './LevelRow.ts';
 import type { LocationKind } from './LocationKind.ts';
 import type { Move } from './Move.ts';
+import type { AreaPart } from './AreaPart.ts';
 import { NoPortrait } from './NoPortrait.ts';
 import type { Origin } from './Origin.ts';
 import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Vibe } from './Vibe.ts';
+import { AreaPortrait } from './AreaPortrait.ts';
+import type { AreaLook } from './AreaLook.ts';
 
 /** Below the bedrock every node of the map is this (Guide:279; Room.groovy:143-146). */
 const VOID_GLYPH = '☠';
@@ -75,6 +78,16 @@ export abstract class Location {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- the default draws nothing; a room reads it
   portrait(_seen: (place: Location) => boolean): Portrait {
     return new NoPortrait();
+  }
+
+  /** A level above the street drawn as an area of its listed children (U04), with its hunt's signal if it has one. */
+  protected area(look: AreaLook, signal = 0): Portrait {
+    return new AreaPortrait({ look, parts: this.listing().flatMap((child) => child.onArea()), signal });
+  }
+
+  /** What this place adds to its parent's area: nothing, unless the kind is a child of a level above the street (U04). */
+  onArea(): readonly AreaPart[] {
+    return [];
   }
 
   /** What this place adds to its street's picture: nothing, unless the kind stands on a street (a building). */

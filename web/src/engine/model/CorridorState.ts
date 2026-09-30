@@ -32,6 +32,7 @@ export class CorridorState implements FloorState {
   portrait(floor: Floor): Portrait {
     return new CorridorPortrait({
       shape: floor.shape(),
+      abyssal: floor.corridor().abyssal(),
       doors: this.listing(floor).flatMap((apartment) => apartment.onCorridor()),
     });
   }

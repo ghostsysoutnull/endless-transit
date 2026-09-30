@@ -4,6 +4,8 @@ import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { Trait } from './Trait.ts';
 import type { Vibe } from './Vibe.ts';
+import type { Portrait } from './Portrait.ts';
+import type { AreaPart } from './AreaPart.ts';
 
 export const COUNTRY_KIND = new LocationKind({
   key: 'country',
@@ -42,11 +44,12 @@ export class Country extends Location {
   }
 
   override facts(): readonly Fact[] {
-    return [{ key: 'trait', label: 'Sector Mutation', value: this.#trait.key() }];
+    return [{ key: 'trait', label: 'Trait', value: this.#trait.key() }];
   }
 
+  /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
   status(): string {
-    return `TRAIT: [${this.#trait.key().toUpperCase()}]`;
+    return '';
   }
 
   /** The trace's note (Country.groovy:30-32). */
@@ -60,5 +63,15 @@ export class Country extends Location {
 
   approachVerb(): string {
     return 'Travel to';
+  }
+
+  /** Drawn as an area of its children (U04). */
+  override portrait(): Portrait {
+    return this.area('country');
+  }
+
+  /** Marked in its parent's area (U04). */
+  override onArea(): readonly AreaPart[] {
+    return [{ address: this.address().toString(), mark: 'country' }];
   }
 }

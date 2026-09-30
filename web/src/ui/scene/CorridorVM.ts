@@ -8,4 +8,6 @@ export interface CorridorVM extends SceneVM<
   SceneChild & { readonly door: { readonly look: DoorLook; readonly words: string } }
 > {
   readonly shape: CorridorShape;
+  /** Below the bedrock (U04): the Artery, drawn in the void's red. */
+  readonly abyssal: boolean;
 }

@@ -4,6 +4,7 @@ import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { Drawing } from './Drawing.ts';
 import type { Drawings } from './Drawings.ts';
+import { DrawnArea } from './DrawnArea.ts';
 import { DrawnCorridor } from './DrawnCorridor.ts';
 import type { DrawnOptions } from './DrawnOptions.ts';
 import { DrawnPlan } from './DrawnPlan.ts';
@@ -67,6 +68,7 @@ export class SceneDrawing implements Drawings {
               })),
             ),
             shape: corridor.shape,
+            abyssal: corridor.abyssal,
           },
           this.#strip,
         ),
@@ -91,6 +93,22 @@ export class SceneDrawing implements Drawings {
           this.#docked,
         );
       },
+      area: (area) =>
+        new DrawnArea(
+          {
+            ...this.#frame(
+              place,
+              decay,
+              new ListedParts(area.parts).drawn(travel, (option, part) => ({
+                ...this.#child(option),
+                mark: part.mark,
+              })),
+            ),
+            look: area.look,
+            signal: area.signal,
+          },
+          this.#strip,
+        ),
       unseen: () => this.#undrawn(place, travel, decay),
     });
   }

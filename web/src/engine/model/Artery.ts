@@ -1,3 +1,4 @@
+import type { Fact } from './Fact.ts';
 import { Corridor } from './Corridor.ts';
 import type { Floor } from './Floor.ts';
 import { LocationKind } from './LocationKind.ts';
@@ -38,7 +39,8 @@ export class Artery extends Corridor {
     return this.#vibe;
   }
 
-  override status(): string {
-    return `TRAFFIC: [PRESSURE_HIGH] | THEME: [${this.#vibe.culture().key().toUpperCase()}]`;
+  /** Its culture, a chip (U04): the bedrock's own. */
+  override facts(): readonly Fact[] {
+    return [{ key: 'culture', label: 'Culture', value: this.#vibe.culture().key() }];
   }
 }

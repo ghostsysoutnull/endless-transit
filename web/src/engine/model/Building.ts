@@ -86,6 +86,7 @@ export class Building extends Location {
       address: this.address().toString(),
       landmark: this.#landmark,
       car: this.#elevatorAt,
+      breached: this.#breached,
       rows: [...layers, ...children.slice(0, this.#floors)].flatMap((level) => level.onTower()),
     });
   }

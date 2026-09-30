@@ -1,3 +1,4 @@
+import { VoidTint } from './VoidTint.ts';
 import type { DoorStateLook } from '#engine/model/DoorStateLook.ts';
 import type { MaterialFamily } from '#engine/model/MaterialFamily.ts';
 import type { Painter } from '#ui/canvas/Painter.ts';
@@ -84,6 +85,7 @@ export class CorridorPicture implements ScenePicture<CorridorVM> {
     view: number,
     here: ChildMark,
   ): void {
+    palette = vm.abyssal ? new VoidTint(palette).palette() : palette;
     const seconds = time / 1000;
     painter.globalAlpha = 1;
     painter.shadowBlur = 0;

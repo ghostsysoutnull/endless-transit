@@ -147,13 +147,13 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     if (frame === undefined) return;
     const seconds = time / 1000;
     this.#top(painter, frame, palette);
-    this.#foot(painter, frame, size, palette);
+    this.#foot(painter, frame, size, palette, vm.tower.breached, seconds);
     painter.save();
     painter.beginPath();
     painter.rect(0, frame.top, size.width, frame.bottom - frame.top);
     painter.clip();
     for (const level of this.#levels(frame)) this.#floor(painter, vm, frame, level, palette, seconds, lit);
-    this.#bedrockLine(painter, frame, palette);
+    if (vm.tower.breached) this.#bedrockLine(painter, frame, palette, seconds);
     this.#car(painter, frame, palette, view);
     painter.restore();
     painter.globalAlpha = 0.8;
@@ -264,7 +264,14 @@ export class TowerPicture implements ScenePicture<TowerVM> {
   }
 
   /** The bedrock when the foot is in view — the substrate's end once breached — else how many levels are below. */
-  #foot(painter: Painter, frame: Frame, size: PictureSize, palette: Palette): void {
+  #foot(
+    painter: Painter,
+    frame: Frame,
+    size: PictureSize,
+    palette: Palette,
+    breached: boolean,
+    seconds: number,
+  ): void {
     if (frame.base > frame.min + 0.01) {
       this.#count(
         painter,
@@ -272,6 +279,8 @@ export class TowerPicture implements ScenePicture<TowerVM> {
         frame.middle,
         frame.bottom + 16,
         palette,
+        // Once breached, the count below throbs in the void's red: the way down is open (U04).
+        breached ? { ink: 'rd', alpha: 0.65 + 0.35 * Math.sin(seconds * 3) } : { ink: 'dim', alpha: 1 },
       );
       return;
     }
@@ -291,13 +300,21 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     painter.globalAlpha = 1;
   }
 
-  #count(painter: Painter, text: string, x: number, y: number, palette: Palette): void {
-    painter.globalAlpha = 1;
+  #count(
+    painter: Painter,
+    text: string,
+    x: number,
+    y: number,
+    palette: Palette,
+    look: { readonly ink: string; readonly alpha: number } = { ink: 'dim', alpha: 1 },
+  ): void {
+    painter.globalAlpha = look.alpha;
     painter.font = this.#parts.font.of('regular');
     painter.textAlign = 'center';
     painter.textBaseline = 'middle';
-    painter.fillStyle = palette('dim');
+    painter.fillStyle = palette(look.ink);
     painter.fillText(text, x, y);
+    painter.globalAlpha = 1;
   }
 
   /** One floor's row: its ground, its windows, its corridor in its shape with a tick per door, its number. */
@@ -408,12 +425,14 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     }
   }
 
-  /** Once breached, a broken red line between the lowest floor and the first Layer: the bedrock, open. */
-  #bedrockLine(painter: Painter, frame: Frame, palette: Palette): void {
+  /** Once breached (the figure says so), a broken red line between the lowest floor and the first Layer, throbbing: the bedrock, open. */
+  #bedrockLine(painter: Painter, frame: Frame, palette: Palette, seconds: number): void {
     const above = [...frame.rows.values()].filter((row) => !row.level.belowBedrock());
-    if (above.length === frame.rows.size) return;
     const y = this.#y(frame, Math.min(...above.map((row) => row.level.number()))) + frame.row;
     if (y < frame.top || y > frame.bottom) return;
+    painter.globalAlpha = 0.25 * (0.6 + 0.4 * Math.sin(seconds * 3));
+    painter.fillStyle = palette('rd');
+    painter.fillRect(frame.left, y - 4, frame.width, 8);
     painter.globalAlpha = 0.7;
     painter.strokeStyle = palette('rd');
     painter.lineWidth = 1.5;

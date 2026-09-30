@@ -1,5 +1,6 @@
 import { Location } from './Location.ts';
 import { LocationKind } from './LocationKind.ts';
+import type { Portrait } from './Portrait.ts';
 
 /** The one place of its seed: not counted among siblings, having none. */
 export const UNIVERSE_KIND = new LocationKind({ key: 'universe', title: 'Universe', icon: '∞' });
@@ -18,8 +19,9 @@ export class Universe extends Location {
     return ['A neural web of infinite complexity.'];
   }
 
+  /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
   status(): string {
-    return 'UNIMATRIX_STABLE';
+    return '';
   }
 
   childrenHeading(): string {
@@ -28,5 +30,10 @@ export class Universe extends Location {
 
   approachVerb(): string {
     return 'Synchronize with';
+  }
+
+  /** Drawn as an area of its children (U04). */
+  override portrait(): Portrait {
+    return this.area('universe');
   }
 }
