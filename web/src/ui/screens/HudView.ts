@@ -322,6 +322,20 @@ export class HudView implements View<HudVM> {
               ></div>`
             : nothing
         }
+        ${
+          drawn && vm.aside.objects !== null
+            ? html`<button
+                type="button"
+                class="peek"
+                data-testid="peek"
+                @click=${(event: Event) => {
+                  this.#toWords(event);
+                }}
+              >
+                ${vm.aside.objects.peek} <span aria-hidden="true">↓</span>
+              </button>`
+            : nothing
+        }
         ${this.#scan(vm)} ${vm.map.shown ? this.#map(vm.map, 'map', 'map', vm.regions.map) : nothing}
         ${this.#trace(vm)}
         <div class="side">
@@ -496,6 +510,13 @@ export class HudView implements View<HudVM> {
         </ol>
       </section>
     `;
+  }
+
+  /** Down to the room's words, under the picture (U03d). */
+  #toWords(event: Event): void {
+    const button = event.currentTarget;
+    if (!(button instanceof HTMLElement)) return;
+    button.closest('.world')?.querySelector('.desc')?.scrollIntoView({ block: 'start' });
   }
 
   /** The objects of a room as tiles — a button each while the buffer has room, a plain tile otherwise — the telemetry block, or the map. */

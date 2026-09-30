@@ -3,6 +3,7 @@ import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Framing } from './Framing.ts';
+import type { MinimapView } from './MinimapView.ts';
 import type { PlanCamera } from './PlanCamera.ts';
 import type { PlanDrawing } from './PlanDrawing.ts';
 import type { PlanSketch } from './PlanSketch.ts';
@@ -54,8 +55,9 @@ export class Planned implements PlanSketch {
     time: number,
     lit: ChildMark,
     framing: Framing,
+    corner: MinimapView,
   ): void {
-    this.#picture.paint(painter, this.#vm, size, palette, time, lit, framing);
+    this.#picture.paint(painter, this.#vm, size, palette, time, lit, framing, corner);
   }
 
   camera(size: PictureSize): PlanCamera {
@@ -68,5 +70,13 @@ export class Planned implements PlanSketch {
 
   rest(camera: PlanCamera): Framing {
     return this.#picture.rest(this.#vm, camera);
+  }
+
+  home(camera: PlanCamera): Framing {
+    return this.#picture.home(this.#vm, camera);
+  }
+
+  inside(camera: PlanCamera, id: string): Framing | undefined {
+    return this.#picture.inside(this.#vm, camera, id);
   }
 }

@@ -1,6 +1,7 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Framing } from './Framing.ts';
+import { InRoom } from './InRoom.ts';
 import { MarkedChild } from './MarkedChild.ts';
 import { NoChild } from './NoChild.ts';
 import { Pinch } from './Pinch.ts';
@@ -15,6 +16,7 @@ import type { Point } from './Point.ts';
 import type { SceneCanvas } from './SceneCanvas.ts';
 import { SceneHits } from './SceneHits.ts';
 import type { StagedScene } from './StagedScene.ts';
+import type { ViewMode } from './ViewMode.ts';
 import { Zoom } from './Zoom.ts';
 
 /** A still is painted at this moment of the clock. */
@@ -32,7 +34,9 @@ interface Shown {
 
 /**
  * The plan's host (U03): a canvas the size of its host element, drawn by the plan's picture on the page's one clock,
- * with the coherence tear over it, and the framing the view stands at. One finger pans the plan one to one and coasts
+ * with the coherence tear over it, and the framing the view stands at. Standing in a room, the room fills the picture
+ * and holds still (U03d, `InRoom`); the MAP key over it flips to the plan (`OverPlan`) and back, and every new room
+ * starts standing in it. Over the plan, one finger pans the plan one to one and coasts
  * when let go; two pinch it about their midpoint and, let go, settle on the room or the whole plan (U03c); a tap on the
  * corner map pulls back to the whole plan, unless it falls on an option. A tap on a doorway, the entrance
  * or a relic — or its button in the list, the moves or the dock (`enter`) — glides where the picture says (into the
@@ -46,7 +50,11 @@ interface Shown {
 export class PlanScene implements StagedScene<PlanSketch> {
   readonly #parts: PlanSceneParts;
   readonly #onLight: (mark: ChildMark) => void;
-  #mounted: { readonly host: HTMLElement; readonly canvas: SceneCanvas } | undefined;
+  #mounted:
+    | { readonly host: HTMLElement; readonly canvas: SceneCanvas; readonly mapKey: HTMLButtonElement }
+    | undefined;
+  /** In the room or over the plan. */
+  #mode: ViewMode = new InRoom();
   /** What is shown, once a sketch has been drawn at a size. */
   #shown: Shown | undefined;
   #hits = new SceneHits([]);
@@ -92,7 +100,37 @@ export class PlanScene implements StagedScene<PlanSketch> {
         if (this.#leave === undefined) this.#paint(STILL);
       },
     });
-    this.#mounted = { host, canvas };
+    this.#mounted = { host, canvas, mapKey: this.#mapKey(host) };
+  }
+
+  /** The MAP key over the picture (U03d): pressed over the plan; a tap flips the view and glides there. */
+  #mapKey(host: HTMLElement): HTMLButtonElement {
+    const key = host.ownerDocument.createElement('button');
+    key.type = 'button';
+    key.className = 'mapkey';
+    key.textContent = 'MAP';
+    key.setAttribute('aria-label', 'Apartment plan');
+    key.setAttribute('aria-pressed', String(this.#mode.pressed()));
+    key.addEventListener('click', () => {
+      this.#flip();
+    });
+    host.append(key);
+    return key;
+  }
+
+  #flip(): void {
+    const shown = this.#shown;
+    if (this.#trip !== undefined || shown === undefined) return;
+    this.#gesture = undefined;
+    this.#fingers.clear();
+    this.#setMode(this.#mode.flipped());
+    const to = this.#mode.rest(shown.sketch, shown.camera);
+    this.#glideTo(to, shown.camera.pace(shown.framing, to), this.#parts.ride);
+  }
+
+  #setMode(mode: ViewMode): void {
+    this.#mode = mode;
+    this.#mounted?.mapKey.setAttribute('aria-pressed', String(mode.pressed()));
   }
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
@@ -104,8 +142,10 @@ export class PlanScene implements StagedScene<PlanSketch> {
     this.#fingers.clear();
     this.#mounted?.canvas.frameChanged();
     const size = this.#mounted?.canvas.hostSize() ?? { width: 0, height: 0 };
-    const rest = sketch.rest(sketch.camera(size));
-    if (before?.sketch.frame().address === sketch.frame().address) {
+    const same = before?.sketch.frame().address === sketch.frame().address;
+    if (!same) this.#setMode(new InRoom());
+    const rest = this.#mode.rest(sketch, sketch.camera(size));
+    if (before !== undefined && same) {
       this.#show(sketch, before.framing);
     } else if (this.#parts.motion.reduced()) {
       this.#show(sketch, rest);
@@ -148,6 +188,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     this.#gesture = undefined;
     this.#stop();
     this.#mounted?.canvas.remove();
+    this.#mounted?.mapKey.remove();
     this.#mounted = undefined;
     this.#shown = undefined;
   }
@@ -196,7 +237,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const size = canvas.hostSize();
     canvas.fit(size);
     const camera = sketch.camera(size);
-    const kept = camera.clamp(framing);
+    const kept = this.#mode.kept(camera, framing);
     this.#shown = { sketch, size, camera, framing: kept };
     this.#hits = new SceneHits(sketch.layout(size, kept));
   }
@@ -210,7 +251,15 @@ export class PlanScene implements StagedScene<PlanSketch> {
     canvas.paint(
       { size: shown.size, zoom: UNZOOMED, noise: frame.noise, decay: frame.decay, time },
       (context, palette) => {
-        shown.sketch.paint(context, shown.size, palette, time, this.#lit, shown.framing);
+        shown.sketch.paint(
+          context,
+          shown.size,
+          palette,
+          time,
+          this.#lit,
+          shown.framing,
+          this.#mode.corner(shown.camera, shown.framing),
+        );
       },
     );
   }
@@ -243,7 +292,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
    */
   #go(id: string): void {
     const shown = this.#shown;
-    const stop = shown?.sketch.stopOf(shown.camera, id);
+    const stop = shown === undefined ? undefined : this.#mode.stop(shown.sketch, shown.camera, id);
     if (this.#parts.motion.reduced() || shown === undefined) {
       this.#pick(id);
       return;
@@ -297,9 +346,10 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const shown = this.#shown;
     if (this.#trip !== undefined || canvas === undefined || shown === undefined) return;
     const point = canvas.pointAt(event);
+    this.#pointAt(this.#markAt(point));
+    if (!this.#mode.moves()) return;
     this.#fingers.set(event.pointerId, point);
     this.#glide = undefined;
-    this.#pointAt(this.#markAt(point));
     const [one, other] = [...this.#fingers.values()];
     if (one !== undefined && other !== undefined) {
       this.#gesture = new Pinch(shown.framing, [one, other], shown.size);
@@ -376,7 +426,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
       this.#go(hit.id);
       return;
     }
-    if (shown.camera.minimap(shown.framing).holds(point)) {
+    if (this.#mode.corner(shown.camera, shown.framing).holds(point)) {
       const whole = shown.camera.whole();
       this.#glideTo(whole, shown.camera.pace(shown.framing, whole), this.#parts.ride);
     }

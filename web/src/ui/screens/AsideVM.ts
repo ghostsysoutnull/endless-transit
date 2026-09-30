@@ -7,6 +7,8 @@ export interface AsideVM {
     /** The pane's accessible name. */
     readonly label: string;
     readonly heading: string;
+    /** The button under the picture that goes down to the room's words and relics (U03d). */
+    readonly peek: string;
     /** What to say when there are no tiles; empty when there are. */
     readonly empty: string;
     /** Why the tiles cannot be taken right now (the buffer is full); empty when they can. */

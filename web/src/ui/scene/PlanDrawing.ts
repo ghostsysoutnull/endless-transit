@@ -3,6 +3,7 @@ import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Framing } from './Framing.ts';
+import type { MinimapView } from './MinimapView.ts';
 import type { PlanCamera } from './PlanCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 
@@ -21,9 +22,14 @@ export interface PlanDrawing<VM> {
     time: number,
     lit: ChildMark,
     framing: Framing,
+    corner: MinimapView,
   ): void;
   camera(vm: VM, size: PictureSize): PlanCamera;
   stopOf(vm: VM, camera: PlanCamera, id: string): Framing | undefined;
   /** Where the view rests: the room you stand in. */
   rest(vm: VM, camera: PlanCamera): Framing;
+  /** The room you stand in, filling the picture (U03d). */
+  home(vm: VM, camera: PlanCamera): Framing;
+  /** Where the view goes from inside a room before an option is picked: the next room filling the picture, the whole plan before leaving; nothing for a relic. */
+  inside(vm: VM, camera: PlanCamera, id: string): Framing | undefined;
 }

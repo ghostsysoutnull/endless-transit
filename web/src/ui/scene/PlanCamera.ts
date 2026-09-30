@@ -54,7 +54,7 @@ export class PlanCamera {
     const fit = this.#fit();
     const scale = Math.min(Math.max(framing.scale(), fit * LOOSE), this.#tightest(fit));
     const halfWidth = this.#size.width / 2 / scale;
-    const halfHeight = this.#size.height / 2 / scale;
+    const halfHeight = this.#size.height / 2 / (scale * framing.stretch());
     const margin = OVERSHOOT / scale;
     const along = (at: number, length: number, half: number): number =>
       length + 2 * margin <= 2 * half
@@ -64,6 +64,7 @@ export class PlanCamera {
       along(framing.x(), this.#plan.width(), halfWidth),
       along(framing.y(), this.#plan.height(), halfHeight),
       scale,
+      framing.stretch(),
     );
   }
 
@@ -78,6 +79,24 @@ export class PlanCamera {
     if (box === undefined) return this.whole();
     const centre = box.centre();
     return this.clamp(new Framing(centre.x(), centre.y(), Math.max(this.#filling(box), this.#fit())));
+  }
+
+  /**
+   * The room at this index as you stand in it (U03d): its box, walls included, stretched to fill the picture but for
+   * the margin — every room the same size on the screen, whatever its shape on the plan.
+   */
+  inside(index: number): Framing {
+    const box = this.#plan.rooms()[index];
+    if (box === undefined) return this.whole();
+    const centre = box.centre();
+    const across = (this.#size.width - ROOM_MARGIN * 2) / box.width();
+    const down = (this.#size.height - ROOM_MARGIN * 2) / box.height();
+    return new Framing(
+      centre.x(),
+      centre.y(),
+      Math.max(across, Number.MIN_VALUE),
+      Math.max(down / across, Number.MIN_VALUE),
+    );
   }
 
   /** Where a pinch let go comes to rest: the room at rest or the whole plan, whichever scale it is nearer by ratio. */

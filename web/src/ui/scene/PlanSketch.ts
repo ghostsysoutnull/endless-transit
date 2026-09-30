@@ -3,6 +3,7 @@ import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Framing } from './Framing.ts';
+import type { MinimapView } from './MinimapView.ts';
 import type { PlanCamera } from './PlanCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { Sketch } from './Sketch.ts';
@@ -17,8 +18,11 @@ export interface PlanSketch extends Sketch {
     time: number,
     lit: ChildMark,
     framing: Framing,
+    corner: MinimapView,
   ): void;
   camera(size: PictureSize): PlanCamera;
   stopOf(camera: PlanCamera, id: string): Framing | undefined;
   rest(camera: PlanCamera): Framing;
+  home(camera: PlanCamera): Framing;
+  inside(camera: PlanCamera, id: string): Framing | undefined;
 }

@@ -10,6 +10,7 @@ import type { PlanVM } from '#ui/scene/PlanVM.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
+import { NoMinimap } from '#ui/scene/NoMinimap.ts';
 
 const PHONE = { width: 360, height: 277 };
 const picture = new ScenePictures().plan();
@@ -104,8 +105,26 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
     for (const framing of [camera.whole(), camera.room(1), camera.room(3)]) {
       const one = new RecordingPainter();
       const two = new RecordingPainter();
-      picture.paint(one, vm, PHONE, palette(one.asked), 700, new MarkedChild('capture:0'), framing);
-      picture.paint(two, vm, PHONE, palette(two.asked), 700, new MarkedChild('capture:0'), framing);
+      picture.paint(
+        one,
+        vm,
+        PHONE,
+        palette(one.asked),
+        700,
+        new MarkedChild('capture:0'),
+        framing,
+        camera.minimap(framing),
+      );
+      picture.paint(
+        two,
+        vm,
+        PHONE,
+        palette(two.asked),
+        700,
+        new MarkedChild('capture:0'),
+        framing,
+        camera.minimap(framing),
+      );
       expect(one.calls).toEqual(two.calls);
       expect([...one.asked].filter((ink) => !TEXT_INKS.includes(ink) && !SURFACE_INKS.includes(ink))).toEqual(
         [],
@@ -127,7 +146,16 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
     const vm: PlanVM = { ...base, relics, children: [...base.doors, ...relics] };
     const rest = picture.rest(vm, picture.camera(vm, PHONE));
     const painter = new RecordingPainter();
-    picture.paint(painter, vm, PHONE, palette(painter.asked), 0, new MarkedChild('capture:0'), rest);
+    picture.paint(
+      painter,
+      vm,
+      PHONE,
+      palette(painter.asked),
+      0,
+      new MarkedChild('capture:0'),
+      rest,
+      new NoMinimap(),
+    );
     const words = painter.calls.filter((call) => call.startsWith('fillText('));
     const name = words.find((call) => call.startsWith('fillText(Pantry,'));
     const nameY = Number(name?.split(',')[2]);
@@ -152,6 +180,7 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
       0,
       new NoChild(),
       picture.camera(vm, PHONE).whole(),
+      new NoMinimap(),
     );
     const words = painter.calls.filter((call) => call.startsWith('fillText(')).join('\n');
     expect(words).toContain('Pantry');

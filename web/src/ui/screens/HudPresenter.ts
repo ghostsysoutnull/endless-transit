@@ -306,6 +306,12 @@ export class HudPresenter implements Presenter<HudVM> {
    * for its number, none while the buffer is full (the takes come sealed) — the telemetry block when it
    * is indoors, and the map when it is not (Guide:339) and the place has one.
    */
+  /** The way down to the room's words and relics, with how many relics lie there. */
+  #peek(relics: number): string {
+    if (relics === 0) return 'About this room';
+    return `About this room · ${String(relics)} ${relics === 1 ? 'relic' : 'relics'}`;
+  }
+
   #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number, sync: string): AsideVM {
     const contents = place.contents;
     const full = takes.some((take) => take.sealed);
@@ -316,6 +322,7 @@ export class HudPresenter implements Presenter<HudVM> {
           : {
               label: 'In this room',
               heading: 'IN THIS ROOM',
+              peek: this.#peek(contents.objects.length),
               empty: contents.objects.length === 0 ? 'No objects detected.' : '',
               note: full ? 'The buffer is full: merge or drop a fragment to take more.' : '',
               tiles: contents.objects.map((relic, index) => {
