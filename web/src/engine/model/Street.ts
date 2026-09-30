@@ -8,6 +8,7 @@ import type { AreaPart } from './AreaPart.ts';
 
 export const STREET_KIND = new LocationKind({
   key: 'street',
+  glyph: 'street',
   title: 'Street',
   scale: '10³ m',
   icon: '═',

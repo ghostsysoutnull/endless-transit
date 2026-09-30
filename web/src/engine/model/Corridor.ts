@@ -6,9 +6,11 @@ import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Portrait } from './Portrait.ts';
+import type { PoleSign } from './PoleSign.ts';
 
 export const CORRIDOR_KIND = new LocationKind({
   key: 'corridor',
+  glyph: 'corridor',
   title: 'Corridor',
   scale: '40 m',
   icon: '▅',
@@ -52,6 +54,11 @@ export class Corridor extends Location {
   /** How it runs: the key its sentence carries. */
   shape(): CorridorShape {
     return this.#shape;
+  }
+
+  /** A corridor that bends out of sight says so on the pole (U05). */
+  override poleSigns(): readonly PoleSign[] {
+    return this.#shape === 'curved' ? [{ look: 'curved' }] : [];
   }
 
   /**

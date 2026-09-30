@@ -5,6 +5,7 @@ import type { Portrait } from './Portrait.ts';
 /** The one place of its seed: not counted among siblings, having none. */
 export const UNIVERSE_KIND = new LocationKind({
   key: 'universe',
+  glyph: 'universe',
   title: 'Universe',
   scale: '10²⁶ m',
   icon: '∞',

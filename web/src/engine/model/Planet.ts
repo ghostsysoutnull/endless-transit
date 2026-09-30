@@ -8,6 +8,7 @@ import type { AreaPart } from './AreaPart.ts';
 
 export const PLANET_KIND = new LocationKind({
   key: 'planet',
+  glyph: 'planet',
   title: 'Planet',
   scale: '10⁷ m',
   icon: '⊕',

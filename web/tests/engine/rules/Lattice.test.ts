@@ -330,6 +330,38 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     expect(crypt.drawn === 'plan' && crypt.plan.here).toBe(must(shown.trace?.steps[12]).address);
   });
 
+  test('each level of the trace carries what its row on the pole reads (U05): its glyph, its vibe and its states', () => {
+    const engine = engineOn(
+      new MemorySaveStore(
+        saveText(`${LAYER}.0.0.0`, { [BUILDING]: '{"elevator":-1,"breached":true}', [LAYER]: 'corridor' }),
+      ),
+    );
+    const steps = must(engine.step('trace').trace ?? undefined).steps;
+    expect(steps.map((step) => step.glyph)).toEqual([
+      'universe',
+      'filament',
+      'sector',
+      'system',
+      'planet',
+      'country',
+      'city',
+      'street',
+      'building',
+      'floor',
+      'corridor',
+      'apartment',
+      'room',
+    ]);
+    expect(steps.map((step) => step.vibe.held)).toEqual([
+      ...Array<string>(4).fill('none'),
+      'planet',
+      ...Array<string>(8).fill('country'),
+    ]);
+    const artery = must(steps[10]).vibe;
+    expect(artery.held === 'country' && artery.main).toEqual({ era: 'atomic', culture: 'abyssal' });
+    expect(must(steps[11]).signs).toContainEqual({ look: 'door', state: 'Humming' });
+  });
+
   test('MAP and TRACE are on offer everywhere in the world, never at the title; MAP is keyed m, TRACE has no key', () => {
     const engine = engineOn();
     expect(engine.snapshot().options.map((option) => option.id)).toEqual(['new-world']);

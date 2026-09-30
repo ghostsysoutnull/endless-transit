@@ -88,6 +88,7 @@ describe('LocationRegistry — a kind is a registry entry', () => {
   test('a kind nobody registered fails loud', () => {
     const stranger = new LocationKind({
       key: 'dyson-sphere',
+      glyph: 'sector',
       title: 'Dyson sphere',
       scale: '10¹¹ m',
       icon: '?',

@@ -1,3 +1,4 @@
+import type { GlyphLook } from './GlyphLook.ts';
 import type { IndexLabel } from './IndexLabel.ts';
 import { Indexed } from './Indexed.ts';
 import type { Position } from './Position.ts';
@@ -5,11 +6,12 @@ import { Unindexed } from './Unindexed.ts';
 
 /**
  * What sort of place a location is — a value whose identity is its stable key (`planet`), never its
- * title. The title, the path icon and how its places are counted among their siblings ride along, so nobody
+ * title. The title, the path icon, the pole's glyph and how its places are counted among their siblings ride along, so nobody
  * keeps a table keyed by kind. A kind made without an index label does not count its places (a floor).
  */
 export class LocationKind {
   readonly #key: string;
+  readonly #glyph: GlyphLook;
   readonly #title: string;
   readonly #icon: string;
   readonly #scale: string;
@@ -17,10 +19,11 @@ export class LocationKind {
 
   constructor(
     facts:
-      | { key: string; title: string; scale: string; icon: string; indexLabel: string }
-      | { key: string; title: string; scale: string; icon: string },
+      | { key: string; glyph: GlyphLook; title: string; scale: string; icon: string; indexLabel: string }
+      | { key: string; glyph: GlyphLook; title: string; scale: string; icon: string },
   ) {
     this.#key = facts.key;
+    this.#glyph = facts.glyph;
     this.#title = facts.title;
     this.#icon = facts.icon;
     this.#scale = facts.scale;
@@ -42,6 +45,11 @@ export class LocationKind {
 
   icon(): string {
     return this.#icon;
+  }
+
+  /** The small live drawing its plate carries on the pole (U05). */
+  glyph(): GlyphLook {
+    return this.#glyph;
   }
 
   /** A place of this kind at `index` (one-based) of `total` siblings, as the HUD writes it (`ORBIT 02/05`), or not counted. */

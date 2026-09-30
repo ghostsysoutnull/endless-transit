@@ -7,6 +7,7 @@ import type { AreaPart } from './AreaPart.ts';
 
 export const FILAMENT_KIND = new LocationKind({
   key: 'filament',
+  glyph: 'filament',
   title: 'Cosmic filament',
   scale: '10²⁴ m',
   icon: '»',

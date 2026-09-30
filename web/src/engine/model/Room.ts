@@ -25,6 +25,7 @@ import type { VibeFigure } from './VibeFigure.ts';
 
 export const ROOM_KIND = new LocationKind({
   key: 'room',
+  glyph: 'room',
   title: 'Room',
   scale: '5 m',
   icon: '□',

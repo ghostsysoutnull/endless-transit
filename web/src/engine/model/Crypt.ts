@@ -4,6 +4,7 @@ import { LocationKind } from './LocationKind.ts';
 
 export const CRYPT_KIND = new LocationKind({
   key: 'crypt',
+  glyph: 'apartment',
   title: 'Crypt',
   scale: '15 m',
   icon: '🚪',

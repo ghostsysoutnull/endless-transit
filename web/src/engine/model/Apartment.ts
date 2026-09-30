@@ -13,9 +13,11 @@ import type { RoomCategory } from './RoomCategory.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Portrait } from './Portrait.ts';
 import type { VibeFigure } from './VibeFigure.ts';
+import type { PoleSign } from './PoleSign.ts';
 
 export const APARTMENT_KIND = new LocationKind({
   key: 'apartment',
+  glyph: 'apartment',
   title: 'Apartment',
   scale: '15 m',
   icon: '🚪',
@@ -108,6 +110,14 @@ export class Apartment extends Location {
 
   anomaly(): boolean {
     return this.#anomaly;
+  }
+
+  /** Its door's state when the door is not stable, and a temporal anomaly (U05). */
+  override poleSigns(): readonly PoleSign[] {
+    return [
+      ...(this.#door.stable() ? [] : [{ look: 'door', state: this.#door.state() } as const]),
+      ...(this.#anomaly ? [{ look: 'anomaly' } as const] : []),
+    ];
   }
 
   /** Its own pair, drifting in each value it drew from the second one (U05). */

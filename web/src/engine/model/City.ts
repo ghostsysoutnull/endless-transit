@@ -9,6 +9,7 @@ import type { VibeFigure } from './VibeFigure.ts';
 
 export const CITY_KIND = new LocationKind({
   key: 'city',
+  glyph: 'city',
   title: 'City',
   scale: '10⁴ m',
   icon: '🏙',

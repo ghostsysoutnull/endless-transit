@@ -51,9 +51,14 @@ export class Door {
     return this.#trace;
   }
 
+  /** Whether it is in the stable state — asked by its name, which HK-027 records. */
+  stable(): boolean {
+    return this.state() === STABLE;
+  }
+
   /** `Heavy Bulkhead, cold`; a stable door is just its material (DoorAppearance.groovy:22-27, in plain words, U03b). */
   brief(): string {
-    return this.state() === STABLE ? this.material() : `${this.material()}, ${this.state().toLowerCase()}`;
+    return this.stable() ? this.material() : `${this.material()}, ${this.state().toLowerCase()}`;
   }
 
   /** The full appearance: the material's sentence, the state's, and how the words were applied (Door.groovy:79-92). */
