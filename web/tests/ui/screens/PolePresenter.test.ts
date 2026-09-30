@@ -42,7 +42,7 @@ const country = (rebel: boolean, drift: { era: boolean; culture: boolean }) =>
 describe('PolePresenter — the pole’s words, read from the vibe the engine handed over (U05)', () => {
   const pole = (steps: readonly TraceStep[]) => new PolePresenter().of({ steps });
 
-  test('above the planet no ribbon is set; the planet sets era and culture and its current, not yet a trait', () => {
+  test('above the planet no value is set; the planet sets era and culture and its current, not yet a trait', () => {
     const [universe, planet] = pole([
       step(),
       step({
@@ -55,15 +55,14 @@ describe('PolePresenter — the pole’s words, read from the vibe the engine ha
       }),
     ]).levels;
     expect(universe?.values).toEqual({ era: '', culture: '', trait: '' });
-    expect(universe?.current).toEqual({ era: '', culture: '' });
+    expect(universe?.current).toBe('');
     expect(planet?.values).toEqual({ era: 'Atomic', culture: 'Rust', trait: '' });
-    expect(planet?.current).toEqual({ era: 'drift · ancient', culture: 'drift · monolith' });
-    expect(planet?.scale).toBe('10⁷ m');
+    expect(planet?.current).toBe('Ancient · Monolith');
     expect(planet?.berth).toBe(true);
     expect(universe?.berth).toBe(false);
   });
 
-  test('a rebel district is tagged rebel and breaks its ribbons; a drifted apartment is tagged drift, then its own states', () => {
+  test('a rebel district is tagged rebel; a drifted apartment is tagged drift, then its own states', () => {
     const [city, apartment] = pole([
       step({ glyph: 'city', vibe: country(true, { era: false, culture: false }) }),
       step({

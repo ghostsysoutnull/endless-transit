@@ -32,14 +32,13 @@ function pole(): PoleVM {
     abyssal: glyph === 'room',
     here: index === GLYPHS.length - 1,
     kind: 'Galactic sector',
-    scale: '10²¹ m',
     name: 'A name far too long to fit beside its plate on a phone',
     label: `Level ${String(index)}`,
     values:
       index < 5
         ? { era: '', culture: '', trait: '' }
         : { era: 'Atomic', culture: 'Rust', trait: 'Commercial' },
-    current: index < 5 ? { era: '', culture: '' } : { era: 'drift · ancient', culture: 'drift · monolith' },
+    current: index < 5 ? '' : 'Ancient · Monolith',
     rebel: glyph === 'city',
     drift: { era: false, culture: glyph === 'apartment' },
     berth: glyph === 'planet',
@@ -56,6 +55,8 @@ function pole(): PoleVM {
     pole: 'Pole',
     column: 'Column',
     heads: { era: 'Era', culture: 'Culture', trait: 'Trait' },
+    currentHead: 'Drift current',
+    looks: { rebel: 'rebel', drift: 'drift' },
     levels,
   };
 }
@@ -67,7 +68,18 @@ function palette(record: Set<string>): (token: string) => string {
   };
 }
 
-describe('PolePicture — the pole painted (U05)', () => {
+/** The moment: the clock, whether it holds still, the pole seen from the top, the focus settled on a level. */
+function at(seconds: number, still: boolean, level = 7) {
+  return {
+    seconds,
+    still,
+    reveal: 1,
+    window: { top: 0, height: PHONE.height },
+    focus: { level, from: level, progress: 1 },
+  };
+}
+
+describe('PolePicture — the pole painted (U05, reworked)', () => {
   const picture = new ScenePictures().pole();
   const vm = pole();
   const layout = PoleLayout.of(vm.levels, PHONE);
@@ -75,8 +87,8 @@ describe('PolePicture — the pole painted (U05)', () => {
   test('painted the same way twice; every word at 12 px or more, in a text ink; every ink one the pictures may use', () => {
     const one = new RecordingPainter();
     const two = new RecordingPainter();
-    picture.paint(one, vm, layout, palette(one.asked), { seconds: 3.2, still: false, reveal: 1 });
-    picture.paint(two, vm, layout, palette(two.asked), { seconds: 3.2, still: false, reveal: 1 });
+    picture.paint(one, vm, layout, palette(one.asked), at(3.2, false));
+    picture.paint(two, vm, layout, palette(two.asked), at(3.2, false));
     expect(one.calls).toEqual(two.calls);
     const written = one.calls.filter((call) => call.startsWith('fillText('));
     expect(written.length).toBeGreaterThan(GLYPHS.length * 3);
@@ -92,17 +104,29 @@ describe('PolePicture — the pole painted (U05)', () => {
 
   test('a name too long for its row is cut with an ellipsis', () => {
     const painter = new RecordingPainter();
-    picture.paint(painter, vm, layout, palette(painter.asked), { seconds: 0, still: true, reveal: 1 });
+    picture.paint(painter, vm, layout, palette(painter.asked), at(0, true));
     const names = painter.calls.filter((call) => call.startsWith('fillText(A name'));
     expect(names).toHaveLength(GLYPHS.length);
     for (const name of names) expect(name).toContain('…');
   });
 
+  test('the backdrop writes the vibe in force at the level in focus, big; above the planet, nothing held', () => {
+    const big = (level: number) => {
+      const painter = new RecordingPainter();
+      picture.paint(painter, vm, layout, palette(painter.asked), at(0, true, level));
+      return painter.calls
+        .filter((call) => Number(/(\d+(?:\.\d+)?)px/.exec(call)?.[1]) > 40)
+        .map((call) => /^fillText\(([^,]+),/.exec(call)?.[1]);
+    };
+    expect(big(7)).toEqual(['ATOMIC', 'RUST', 'COMMERCIAL']);
+    expect(big(2)).toEqual(['—', '—', '—']);
+  });
+
   test('held still, the clock moves nothing', () => {
     const early = new RecordingPainter();
     const late = new RecordingPainter();
-    picture.paint(early, vm, layout, palette(early.asked), { seconds: 0, still: true, reveal: 1 });
-    picture.paint(late, vm, layout, palette(late.asked), { seconds: 5.7, still: true, reveal: 1 });
+    picture.paint(early, vm, layout, palette(early.asked), at(0, true));
+    picture.paint(late, vm, layout, palette(late.asked), at(5.7, true));
     expect(early.calls).toEqual(late.calls);
   });
 });

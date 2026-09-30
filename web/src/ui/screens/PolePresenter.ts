@@ -13,13 +13,12 @@ const BERTHS: ReadonlySet<GlyphLook> = new Set(['planet', 'city']);
 const REBEL = { word: 'rebel', look: 'rebel' } as const;
 const DRIFT = { word: 'drift', look: 'drift' } as const;
 const NOTHING: Readonly<Record<PoleLane, string>> = { era: '', culture: '', trait: '' };
-const NO_CURRENT: Readonly<Record<DriftLane, string>> = { era: '', culture: '' };
 const NO_DRIFT: Readonly<Record<DriftLane, boolean>> = { era: false, culture: false };
 
 /**
- * Owns the pole's words (U05): the switch's, the ribbons' heads, and a row a traced level — its kind and scale, its
- * name, the values its ribbons carry, the drift current's words, its tags and what a reader hears for it. It reads
- * the vibe the engine handed over; it never works one out.
+ * Owns the pole's words (U05): the switch's, the values' heads, and a row a traced level — its kind, its name, the
+ * values it holds, the drift current's words, its tags and what a reader hears for it. It reads the vibe the engine
+ * handed over; it never works one out.
  */
 export class PolePresenter implements PoleWords {
   of(trace: TraceSummary): PoleVM {
@@ -28,6 +27,8 @@ export class PolePresenter implements PoleWords {
       pole: 'Pole',
       column: 'Column',
       heads: { era: 'Era', culture: 'Culture', trait: 'Trait' },
+      currentHead: 'Drift current',
+      looks: { rebel: REBEL.word, drift: DRIFT.word },
       levels: trace.steps.map((step) => this.#level(step)),
     };
   }
@@ -54,7 +55,6 @@ export class PolePresenter implements PoleWords {
       abyssal: step.abyssal,
       here: step.current,
       kind: step.kind,
-      scale: step.scale,
       name: step.name,
       label: heard.join(', '),
       berth: BERTHS.has(step.glyph),
@@ -63,10 +63,9 @@ export class PolePresenter implements PoleWords {
     };
   }
 
-  /** The ribbons' values, the current's words, the rebel break and the drift, from the level's vibe. */
+  /** The values, the current's words, the rebel swap and the drift, from the level's vibe. */
   #vibe(figure: VibeFigure): Pick<PoleLevelVM, 'values' | 'current' | 'rebel' | 'drift'> {
-    if (figure.held === 'none')
-      return { values: NOTHING, current: NO_CURRENT, rebel: false, drift: NO_DRIFT };
+    if (figure.held === 'none') return { values: NOTHING, current: '', rebel: false, drift: NO_DRIFT };
     const word = (key: string) => new Phrase(key).capitalised();
     return {
       values: {
@@ -74,7 +73,7 @@ export class PolePresenter implements PoleWords {
         culture: word(figure.main.culture),
         trait: figure.held === 'country' ? word(figure.trait) : '',
       },
-      current: { era: `drift · ${figure.second.era}`, culture: `drift · ${figure.second.culture}` },
+      current: `${word(figure.second.era)} · ${word(figure.second.culture)}`,
       rebel: figure.held === 'country' && figure.rebel,
       drift: figure.held === 'country' ? figure.drift : NO_DRIFT,
     };
