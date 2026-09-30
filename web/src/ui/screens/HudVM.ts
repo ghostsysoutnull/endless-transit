@@ -5,6 +5,7 @@ import type { AsideVM } from './AsideVM.ts';
 import type { Drawing } from './Drawing.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { Panel } from './Panel.ts';
+import type { StatKey } from './StatKey.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 
 /** The world screen as readonly data — plain data and the engine's value objects, framework-free. */
@@ -37,7 +38,7 @@ export interface HudVM extends Screen {
   };
   /** The readouts beside the meter, in plain words (U01a, Decision 1): the steps and the buffer. */
   /** Each stat by its key (`steps`, `buffer`: what the relic's flight lands on), its label and its value. */
-  readonly stats: readonly { readonly key: string; readonly label: string; readonly value: string }[];
+  readonly stats: readonly { readonly key: StatKey; readonly label: string; readonly value: string }[];
   readonly place: {
     readonly eyebrow: string;
     readonly icon: string;

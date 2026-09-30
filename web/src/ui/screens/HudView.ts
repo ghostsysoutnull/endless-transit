@@ -15,6 +15,7 @@ import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import type { PictureBook } from './PictureBook.ts';
 import { Retrace } from './Retrace.ts';
+import { statTestId } from './StatKey.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
 type Slot = 'pane' | 'map' | 'trace';
@@ -238,7 +239,7 @@ export class HudView implements View<HudVM> {
               (stat) => html`
                 <div class="stat">
                   <dt>${stat.label}</dt>
-                  <dd data-testid=${`stat-${stat.key}`}>${stat.value}</dd>
+                  <dd data-testid=${statTestId(stat.key)}>${stat.value}</dd>
                 </div>
               `,
             )}

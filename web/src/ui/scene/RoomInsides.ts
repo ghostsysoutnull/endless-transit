@@ -9,6 +9,8 @@ import type { RoomWall } from './RoomWall.ts';
 
 /** The room you stand in is drawn in full once its box on the picture is at least this big. */
 const FULL = { width: 100, height: 80 };
+/** How far apart relics lie, centre to centre, in any room: a thumb's reach (the picture's 44 px tap) and a little air. */
+const SPOT = 52;
 
 /**
  * Owns one fact: what a room's box holds on the plan (U03b) — the room you stand in drawn in full when its box is large
@@ -38,9 +40,10 @@ export class RoomInsides {
 
   /** The room you stand in: in full by its look when its box is large enough, else plain. */
   here(box: PlanBoxOnPicture, look: RoomLook, address: string): RoomInside {
-    if (box.width < FULL.width || box.height < FULL.height) return new PlainInside(box);
+    if (box.width < FULL.width || box.height < FULL.height) return new PlainInside(box, SPOT);
     return new DrawnInside({
       box,
+      spot: SPOT,
       wall: this.#walls[look.walls()] ?? this.#plainWall,
       light: this.#lights[look.light()] ?? this.#noLight,
       furniture: look.furniture(),
@@ -52,6 +55,6 @@ export class RoomInsides {
 
   /** A room you do not stand in: plain. */
   away(box: PlanBoxOnPicture): RoomInside {
-    return new PlainInside(box);
+    return new PlainInside(box, SPOT);
   }
 }

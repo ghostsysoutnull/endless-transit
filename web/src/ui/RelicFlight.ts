@@ -1,11 +1,12 @@
 import type { Flight } from '#ui/scene/Flight.ts';
 import type { Point } from '#ui/scene/Point.ts';
+import { statTestId } from '#ui/screens/StatKey.ts';
 
 /** The flight's length in milliseconds, and the count's bump after it. */
 const FLIGHT = 650;
 const BUMP = 260;
 /** Where it lands: the HUD's Buffer count (on a phone the dock's Buffer button is folded behind MORE). */
-const LANDING = '[data-testid="stat-buffer"]';
+const LANDING = `[data-testid="${statTestId('buffer')}"]`;
 
 /**
  * Owns one fact: how a taken relic reaches the buffer on screen (U03b, departure 4) — a small diamond flies from where

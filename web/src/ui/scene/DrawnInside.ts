@@ -11,8 +11,8 @@ import type { RoomWall } from './RoomWall.ts';
 
 /** The back wall's place in the room's box, in shares of it (the mock's `room`, `transit-reframed.html:910`, a floor a little deeper). */
 const BACK = { left: 0.24, right: 0.76, top: 0.14, bottom: 0.55 };
-/** Relics lie this far down the floor, across this share of the room's width, at least this far apart. */
-const RELICS = { down: 0.35, across: 0.7, apart: 52 };
+/** Relics lie this far down the floor, across this share of the room's width. */
+const RELICS = { down: 0.35, across: 0.7 };
 /** At most this many pieces of furniture are drawn; the words name them all. */
 const FURNITURE = 3;
 /** How many flakes fall in a cold room, and how fast, in pixels a second. */
@@ -26,6 +26,8 @@ const SNOW = { flakes: 30, fall: 12 };
  */
 export class DrawnInside implements RoomInside {
   readonly #frame: InsideFrame;
+  /** How far apart relics lie at least, centre to centre. */
+  readonly #spot: number;
   readonly #wall: RoomWall;
   readonly #light: RoomLight;
   readonly #furniture: number;
@@ -35,6 +37,7 @@ export class DrawnInside implements RoomInside {
 
   constructor(facts: {
     box: PlanBoxOnPicture;
+    spot: number;
     wall: RoomWall;
     light: RoomLight;
     furniture: number;
@@ -53,6 +56,7 @@ export class DrawnInside implements RoomInside {
         height: box.height * (BACK.bottom - BACK.top),
       },
     };
+    this.#spot = facts.spot;
     this.#wall = facts.wall;
     this.#light = facts.light;
     this.#furniture = facts.furniture;
@@ -64,7 +68,7 @@ export class DrawnInside implements RoomInside {
   spots(count: number): readonly RelicSpot[] {
     const { room } = this.#frame;
     const span = room.width * RELICS.across;
-    const shown = Math.min(count, Math.floor(span / RELICS.apart) + 1);
+    const shown = Math.min(count, Math.floor(span / this.#spot) + 1);
     const y = this.#floorTop() + (room.y + room.height - this.#floorTop()) * RELICS.down;
     if (shown === 1) return [{ at: { x: room.x + room.width / 2, y }, reach: span }];
     const apart = span / (shown - 1);
