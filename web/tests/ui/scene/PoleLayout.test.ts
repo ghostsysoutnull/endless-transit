@@ -1,38 +1,13 @@
 import { describe, expect, test } from 'vitest';
 import { PoleLayout } from '#ui/scene/PoleLayout.ts';
 import type { PoleLevelVM } from '#ui/screens/PoleVM.ts';
+import { heldPoleLevel, poleLevel } from '#tests/support/poleLevel.ts';
 
 /** The phone's pole: the trace's body at 360 × 640. */
 const PHONE = { width: 360, height: 560 };
 
-/** A level with nothing set: tests say only what they are about. */
-function level(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
-  return {
-    key: '0',
-    glyph: 'universe',
-    abyssal: false,
-    here: false,
-    kind: 'Universe',
-    name: 'The Endless Universe',
-    label: 'Level 00',
-    values: { era: '', culture: '', trait: '' },
-    current: '',
-    rebel: false,
-    drift: { era: false, culture: false },
-    berth: false,
-    tags: [],
-    ...overrides,
-  };
-}
-
-/** A level under the country: its three values and its current set. */
-function held(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
-  return level({
-    values: { era: 'Atomic', culture: 'Rust', trait: 'Commercial' },
-    current: 'Ancient · Monolith',
-    ...overrides,
-  });
-}
+const level = poleLevel;
+const held = heldPoleLevel;
 
 /** The universe down to a room: four levels above the planet, the planet, the country, then eight under it. */
 function room(): readonly PoleLevelVM[] {

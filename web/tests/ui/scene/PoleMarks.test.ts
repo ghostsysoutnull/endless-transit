@@ -1,35 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { PoleMarks } from '#ui/scene/PoleMarks.ts';
 import type { PoleLevelVM } from '#ui/screens/PoleVM.ts';
+import { heldPoleLevel, poleLevel } from '#tests/support/poleLevel.ts';
 
-/** A level with nothing set: tests say only what they are about. */
-function level(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
-  return {
-    key: '0',
-    glyph: 'universe',
-    abyssal: false,
-    here: false,
-    kind: 'Universe',
-    name: 'The Endless Universe',
-    label: 'Level 00',
-    values: { era: '', culture: '', trait: '' },
-    current: '',
-    rebel: false,
-    drift: { era: false, culture: false },
-    berth: false,
-    tags: [],
-    ...overrides,
-  };
-}
-
-/** A level under the country: its three values and its current set. */
-function held(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
-  return level({
-    values: { era: 'Atomic', culture: 'Rust', trait: 'Commercial' },
-    current: 'Ancient · Monolith',
-    ...overrides,
-  });
-}
+const level = poleLevel;
+const held = heldPoleLevel;
 
 /** The universe, the planet (era and culture, no trait yet), the country, then what is given. */
 function path(under: readonly PoleLevelVM[] = []): readonly PoleLevelVM[] {

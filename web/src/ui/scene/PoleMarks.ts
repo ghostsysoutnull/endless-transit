@@ -10,7 +10,8 @@ export interface PoleMark {
   readonly look: MarkLook;
 }
 
-const LANES: readonly PoleLane[] = ['era', 'culture', 'trait'];
+/** The pole's values, in the order they are written and stacked. */
+export const POLE_LANES: readonly PoleLane[] = ['era', 'culture', 'trait'];
 
 /**
  * Where the pole writes a value: a level writes a lane where it sets the value anew — a word the level above did not
@@ -26,7 +27,7 @@ export class PoleMarks {
   private constructor(levels: readonly PoleLevelVM[]) {
     this.#levels = levels;
     this.#marks = levels.map((level, index) =>
-      LANES.flatMap((lane) => this.#mark(level, levels[index - 1], lane)),
+      POLE_LANES.flatMap((lane) => this.#mark(level, levels[index - 1], lane)),
     );
   }
 

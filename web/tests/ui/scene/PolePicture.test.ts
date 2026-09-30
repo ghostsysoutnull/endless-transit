@@ -4,6 +4,7 @@ import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
 import { PoleLayout } from '#ui/scene/PoleLayout.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import type { PoleLevelVM, PoleVM } from '#ui/screens/PoleVM.ts';
+import { heldPoleLevel, poleLevel } from '#tests/support/poleLevel.ts';
 import { RecordingPainter } from '#tests/support/RecordingPainter.ts';
 
 const PHONE = { width: 360, height: 560 };
@@ -26,30 +27,27 @@ const GLYPHS: readonly GlyphLook[] = [
 
 /** Every glyph once, the vibe set from the planet down, a rebel, a drift, tags and berths: all the pole draws. */
 function pole(): PoleVM {
-  const levels = GLYPHS.map((glyph, index): PoleLevelVM => ({
-    key: String(index),
-    glyph,
-    abyssal: glyph === 'room',
-    here: index === GLYPHS.length - 1,
-    kind: 'Galactic sector',
-    name: 'A name far too long to fit beside its plate on a phone',
-    label: `Level ${String(index)}`,
-    values:
-      index < 5
-        ? { era: '', culture: '', trait: '' }
-        : { era: 'Atomic', culture: 'Rust', trait: 'Commercial' },
-    current: index < 5 ? '' : 'Ancient · Monolith',
-    rebel: glyph === 'city',
-    drift: { era: false, culture: glyph === 'apartment' },
-    berth: glyph === 'planet',
-    tags:
-      glyph === 'apartment'
-        ? [
-            { word: 'drift', look: 'drift' },
-            { word: 'cold', look: 'door' },
-          ]
-        : [],
-  }));
+  const levels = GLYPHS.map((glyph, index): PoleLevelVM =>
+    (index < 5 ? poleLevel : heldPoleLevel)({
+      key: String(index),
+      glyph,
+      abyssal: glyph === 'room',
+      here: index === GLYPHS.length - 1,
+      kind: 'Galactic sector',
+      name: 'A name far too long to fit beside its plate on a phone',
+      label: `Level ${String(index)}`,
+      rebel: glyph === 'city',
+      drift: { era: false, culture: glyph === 'apartment' },
+      berth: glyph === 'planet',
+      tags:
+        glyph === 'apartment'
+          ? [
+              { word: 'drift', look: 'drift' },
+              { word: 'cold', look: 'door' },
+            ]
+          : [],
+    }),
+  );
   return {
     group: 'View',
     pole: 'Pole',

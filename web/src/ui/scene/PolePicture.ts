@@ -147,8 +147,7 @@ export class PolePicture {
     const word = mark.look === 'none' ? '—' : mark.word.toLocaleUpperCase();
     painter.font = this.#parts.font.of('bold', GHOST_PX.measured);
     const measured = Math.max(1, painter.measureText(word).width);
-    const px = Math.max(
-      12,
+    const px = this.#parts.font.atLeast(
       Math.min(GHOST_PX.largest, Math.floor((GHOST_PX.measured * row.width) / measured)),
     );
     painter.font = this.#parts.font.of('bold', px);
@@ -157,7 +156,7 @@ export class PolePicture {
     const y = row.word.y + (mark.look === 'drift' && moving ? Math.sin(moment.seconds * 1.3) * 3 : 0);
     painter.globalAlpha = GHOST[mark.look] * slide.share;
     painter.fillStyle = palette(
-      mark.look === 'rebel' ? 'rd' : mark.look === 'none' ? 'dim' : LANE_INKS[row.lane].text,
+      mark.look === 'rebel' ? TAG_INKS.rebel : mark.look === 'none' ? 'dim' : LANE_INKS[row.lane].text,
     );
     painter.fillText(word, x, y);
     if (mark.look === 'drift') {
@@ -219,7 +218,7 @@ export class PolePicture {
       painter.globalAlpha = 0.85;
       painter.fillRect(label.x, label.y, label.width, label.height);
       painter.globalAlpha = 1;
-      painter.strokeStyle = palette(label.look === 'rebel' ? 'rd' : inks.line);
+      painter.strokeStyle = palette(label.look === 'rebel' ? TAG_INKS.rebel : inks.line);
       painter.lineWidth = 1;
       painter.setLineDash(label.look === 'drift' ? [4, 3] : []);
       painter.strokeRect(label.x + 0.5, label.y + 0.5, label.width - 1, label.height - 1);

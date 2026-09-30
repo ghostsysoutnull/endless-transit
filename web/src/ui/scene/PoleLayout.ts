@@ -1,6 +1,6 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { PoleLane, PoleLevelVM } from '#ui/screens/PoleVM.ts';
-import { type MarkLook, type PoleMark, PoleMarks } from './PoleMarks.ts';
+import { type MarkLook, POLE_LANES, type PoleMark, PoleMarks } from './PoleMarks.ts';
 import type { Point } from './Point.ts';
 
 /** How far apart the levels stand: a node, its labels and the current's words each clear of the next. */
@@ -21,7 +21,6 @@ const CURRENT_FROM = 16;
 const BERTH = { from: 23, drop: 47 } as const;
 /** The backdrop's words, in from the picture's edge. */
 const INSET = 14;
-const LANES: readonly PoleLane[] = ['era', 'culture', 'trait'];
 
 /** One level's row: where it stands, its node, where its words end (right-aligned toward the node), and its button's box. */
 export interface PoleRow {
@@ -165,7 +164,7 @@ export class PoleLayout {
     readonly word: Point;
     readonly width: number;
   }[] {
-    return LANES.map((lane, index) => {
+    return POLE_LANES.map((lane, index) => {
       const middle = window.top + (window.height * (index * 2 + 1)) / 6;
       return {
         lane,

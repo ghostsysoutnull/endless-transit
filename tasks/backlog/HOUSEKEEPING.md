@@ -130,12 +130,25 @@ from `Door.stateWord()`, one `DepthNumber` for the column and the pole, every Er
   HK-037's `TraceColumnView`).
 - `PolePresenter`'s `BERTHS` is a table keyed by glyph: the kind could own whether it has a berth, as it owns its glyph.
 - `PolePresenter` asks `figure.held === 'country'` three times: the figure's member could answer its own ribbons.
-- `PoleLayout` compares display words for runs and the current's start, `''` meaning none: stable keys and a union
-  (with HK-030, HK-034).
-- `PolePicture` holds geometry (`last + 60`, the lanes' `+ 32`, the berth's 18 × 14): the layout's to answer.
+- `PoleMarks` compares display words for where a value is written and the current's start, `''` meaning none: stable
+  keys and a union (with HK-030, HK-034).
+- `PolePicture` holds geometry (the berth's 22 × 14, the words' and tags' offsets): the layout's to answer.
 - `VibeFigure.stability` has no reader but its tests: shown on the pole, or dropped.
 - `Lattice.test.ts` lists every kind's glyph: a step carries its kind's glyph, the twins below the bedrock by name.
 - `trace.spec.ts` finds `.seg`, `.pole-level` by class; reduced motion's pole is not tested as still.
+
+### HK-039 — the pole rework's design check: logged findings (tidying, one line each)
+**Found:** 2026-09-30, the one design check of the pole rework (`ui/u05-pole-centred`); its four fixes are in (the
+font's floor asked of `PictureFont.atLeast`, one `POLE_LANES`, a rebel's ink from `TAG_INKS`, one `poleLevel` test
+builder); none of these is a bug or a fact in two places.
+- `PolePicture` branches on `mark.look` eight times: one `Record<MarkLook, …>` row a look (ink, dash, motion, faintness).
+- `TracePole`'s `moment` closure both moves the focus and answers the moment: the focus slide as its own small class.
+- `PoleLayout.inForce` passes its marks' answer through: hand `PolePicture` the marks, or their answer.
+- The backdrop row's shape is written inline in `PoleLayout.backdrop` and again in `PolePicture.#ghost`: one interface.
+- `PolePicture` compares two marks field by field: a `sameMark` beside `PoleMark`.
+- `PoleLayout.test.ts` checks again which level writes which word and the current's words: keep only the geometry.
+- `PolePicture.test.ts` expects upper case and `—`; `PoleMarks.test.ts` reads `inForce` by key order: read by lane.
+- No test covers `TracePole`'s focus slide or its repaint on scroll under reduced motion.
 
 ## 🟢 CLOSED
 
