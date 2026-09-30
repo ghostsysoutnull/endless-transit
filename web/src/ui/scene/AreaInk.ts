@@ -70,6 +70,16 @@ export class AreaInk {
     painter.globalAlpha = 1;
   }
 
+  /** A filled dot, never smaller than a pixel's reach. */
+  dot(painter: Painter, at: Point, radius: number, ink: string, alpha = 1): void {
+    painter.fillStyle = ink;
+    painter.globalAlpha = alpha;
+    painter.beginPath();
+    painter.arc(at.x, at.y, Math.max(0.8, radius), 0, Math.PI * 2);
+    painter.fill();
+    painter.globalAlpha = 1;
+  }
+
   /** A path through the points, not stroked. */
   line(painter: Painter, points: readonly Point[]): void {
     painter.beginPath();

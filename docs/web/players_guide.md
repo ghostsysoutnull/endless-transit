@@ -155,7 +155,7 @@ offer changes nothing and costs nothing.
 | **SCAN** | `S` | What is behind the doors, which floors are near you (two either side), or the rooms of the apartment — which also clears the apartment's plan of fog for good. Costs 1, no step. <!-- src/engine/model/Building.ts:20-21 --> |
 | **MAP** | `M` | Draws the places you can enter from here, you at the centre; dim is unvisited. Nothing inside a room. Costs 1, no step. |
 | **BUFFER** | `I` | Your inventory. Costs 1 to open; everything inside is free. |
-| **TRACE** | none | Opens the trace over the screen: a band for each level from the universe down to you, each the level's own picture with the place you went down into marked, a thread running through them to you. Tap a band to open it larger; **DIVE** zooms from the universe down to you and lands on your band; ✕, Esc or a swipe down its header closes it. The rail opens it too. Costs 1. <!-- src/ui/screens/HudPresenter.ts:286, src/ui/screens/HudView.ts:206-219 --> |
+| **TRACE** | none | Opens the trace over the screen: a band for each level from the universe down to you, each the level's own picture with the place you went down into marked, a thread running through them to you. Tap a band to open it larger; **DIVE** zooms from the universe down to you and lands on your band; ✕, Esc or a swipe down its header closes it. **POLE \| COLUMN** in its header switches to the pole (every level at a glance, see *Reading the screen*) and back; the game remembers your pick, after a reload too. The rail opens it too. Costs 1. <!-- src/ui/screens/HudPresenter.ts:286, src/ui/screens/HudView.ts:213-252, 260, src/platform/LocalStorageTraceViewMemory.ts:17-32 --> |
 | **HELP** | `H` | The operator's manual: what every button does and how not to die. Costs 1. |
 | **TITLE SCREEN** | `T` | Back to the title; the world waits behind CONTINUE. Costs 1. |
 | **END SESSION** | `Q` | The recap of this run. **RESUME** comes back for free; END SESSION again goes to the title with your place kept. |
@@ -330,13 +330,16 @@ costs less. <!-- src/engine/rules/Drain.ts:10 -->
 
 **Rebel districts.** One city in ten is a rebel district. It swaps the planet's main and secondary culture, so the
 frequency bonus lands on the *other* culture there, and it swaps the planet's two eras the same way, so the street era
-(and the Entropic drain) can differ from the rest of the planet. <!-- src/engine/procgen/CityFactory.ts:12, 29 -->
+(and the Entropic drain) can differ from the rest of the planet. Its card says `Rebel district` with the `Era` and
+`Culture` it swapped in; on the pole both ribbons break there in red. <!-- src/engine/procgen/CityFactory.ts:12, 29; src/engine/model/City.ts:56-63 -->
 
-**Apartments drift in time.** Some apartments carry the planet's *second* era: their objects and lighting are of that
-era, and the room's `Era` chip says so. The drain cost still follows the street header.
+**Apartments drift.** The planet's `Drift` chip names its *second* era and culture. Each apartment draws its era and
+its culture apart: each is the main one with the stability's chance, else the second. A drifted apartment's objects
+and lighting are of what it drew, and the room's `Era` chip says so. The drain cost still follows the street header.
+On the pole the drifted ribbon hooks in from the drift current, and the apartment and its rooms carry a `drift` tag. <!-- src/engine/procgen/ApartmentFactory.ts:69-70, src/engine/model/Vibe.ts:76-85, src/engine/model/Planet.ts:45-55 -->
 
-**Stability.** The `Stability` chip at an elevator is the share of the country's apartments that follow the planet's
-main culture: 85% shifted by up to a tenth either way, kept between 10% and 90%. <!-- src/engine/model/Vibe.ts:6-8, src/engine/procgen/CountryFactory.ts:13-14 -->
+**Stability.** The `Stability` chip on a country and at an elevator is the share of the country's apartments that
+follow the planet's main culture and era: 85% shifted by up to a tenth either way, kept between 10% and 90%. <!-- src/engine/model/Vibe.ts:7-9, src/engine/procgen/CountryFactory.ts:13-14, src/engine/model/Country.ts:48-56 -->
 
 **Building size odds.** Small 41% (3 to 10 floors, 2 to 6 doors a corridor), medium 30% (10 to 25, 4 to 10), large
 20% (30 to 50, 8 to 16), massive 9% (50 to 100, 10 to 20). <!-- src/engine/procgen/BuildingSizes.ts:6-11 -->
@@ -352,6 +355,12 @@ even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/
 `▤` floor, `▅` corridor, `🚪` apartment, `□` room; below bedrock the shard is `☠`. Its length is how deep you are: one
 glyph at the universe, thirteen in a room. The rail shows the glyphs, and a screen reader reads each level's kind and
 name. Tap it to open the trace; a keyboard opens it with TRACE in the dock.
+
+**The pole** (POLE in the trace's header) is every level at a glance: a plate and a small moving drawing a level on
+one spine, its size on the ruler at the left, and three ribbons on the right — `Era`, `Culture` and `Trait` — that
+break where a level changes them. Beside the era and culture ribbons runs the planet's second pair as a dashed drift
+current. Tags name what is unusual: `rebel`, `drift`, a `curved` corridor, a door's state, an `anomaly`. The dashed
+boxes at the planet and the city are empty berths, kept for ships. Tap a level to see its band in the column. <!-- src/ui/scene/PolePicture.ts, src/ui/screens/PolePresenter.ts -->
 
 **Steps** is how many steps the game accepted: moves, places and takes alike. It carries over when you reload.
 Commands cost Coherence but do not count here.
@@ -470,6 +479,8 @@ port's iteration notes (`tasks/port/I02.md` to `I09.md`).
     PRIME and KEYSTONE.
 27. **The drain runs on a Layer's own screens at ×4 under an entropic era** exactly as the guide says; below bedrock a
     scan costs 2, and never rolls the lottery.
+28. **The world's vibe is on screen.** The terminal game never showed a planet's second pair, a country's stability
+    outside the elevator, or which apartment drifted; here the chips and the pole do.
 
 ## FAQ
 

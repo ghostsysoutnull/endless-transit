@@ -21,9 +21,11 @@ import { RelicFragment } from './RelicFragment.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 import { RoomLook } from './RoomLook.ts';
 import type { ScanReport } from './ScanReport.ts';
+import type { VibeFigure } from './VibeFigure.ts';
 
 export const ROOM_KIND = new LocationKind({
   key: 'room',
+  glyph: 'room',
   title: 'Room',
   scale: '5 m',
   icon: '□',
@@ -336,6 +338,11 @@ export class Room extends Location {
     ];
   }
 
+  /** Its apartment's vibe: a room is always its apartment's culture and era (U05). */
+  override vibeFigure(): VibeFigure {
+    return this.#apartment.vibeFigure();
+  }
+
   /**
    * The local cell diagnostic (Room.groovy:124-130), in plain words (U03b): the apartment's era first, which the
    * old game wrote on a screen nobody ever saw (Apartment.groovy:44; Decision 7: a label that never showed is made
@@ -346,7 +353,7 @@ export class Room extends Location {
       ? [{ key: 'alert', label: 'Degraded', value: '' }]
       : [];
     return [
-      { key: 'era', label: 'Era', value: this.#apartment.era().key() },
+      this.#apartment.era().fact(),
       { key: 'reading', label: 'Type', value: this.type() },
       { key: 'reading', label: 'Oxygen', value: `${String(this.#traits.oxygen)}%` },
       { key: 'reading', label: 'Temp', value: `${String(this.#traits.temperature)}°C` },

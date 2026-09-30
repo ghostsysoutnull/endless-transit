@@ -2,10 +2,13 @@ import type { Seed } from '#engine/rng/Seed.ts';
 import type { Culture } from './Culture.ts';
 import type { Era } from './Era.ts';
 import type { Trait } from './Trait.ts';
+import type { VibeFigure } from './VibeFigure.ts';
 
 const PLANET_STABILITY = 0.85;
 const MIN_STABILITY = 0.1;
 const MAX_STABILITY = 0.9;
+/** The stability as a player reads it: a percentage with two decimals. */
+const STABILITY_DECIMALS = 2;
 
 interface VibeFacts {
   readonly era: Era;
@@ -56,6 +59,11 @@ export class Vibe {
     return this.#facts.stability;
   }
 
+  /** The stability as the player reads it: `85.00%`. */
+  stabilityText(): string {
+    return `${(this.#facts.stability * 100).toFixed(STABILITY_DECIMALS)}%`;
+  }
+
   /** The country trait that mutated this vibe; none above country level. */
   mutation(): Trait | undefined {
     return this.#facts.mutation;
@@ -73,6 +81,32 @@ export class Vibe {
   /** The era a place below draws, by the same rule (VibeCapsule.groovy:43-45). */
   pickEra(seed: Seed): Era {
     return seed.probability(this.#facts.stability) ? this.#facts.era : this.#facts.secondEra;
+  }
+
+  /**
+   * This vibe as a level shows it (U05): `drawn` is the pair the level holds — the main one unless an apartment drew
+   * otherwise, and it drifts in each value it drew from the second pair; `rebel` says the level swapped the pairs.
+   */
+  figure(
+    level: {
+      readonly drawn?: { readonly era: Era; readonly culture: Culture };
+      readonly rebel?: boolean;
+    } = {},
+  ): VibeFigure {
+    const facts = this.#facts;
+    const second = { era: facts.secondEra.key(), culture: facts.secondCulture.key() };
+    const drawn = level.drawn ?? { era: facts.era, culture: facts.culture };
+    const main = { era: drawn.era.key(), culture: drawn.culture.key() };
+    if (facts.mutation === undefined) return { held: 'planet', main, second, stability: facts.stability };
+    return {
+      held: 'country',
+      main,
+      second,
+      stability: facts.stability,
+      trait: facts.mutation.key(),
+      rebel: level.rebel ?? false,
+      drift: { era: !drawn.era.equals(facts.era), culture: !drawn.culture.equals(facts.culture) },
+    };
   }
 
   /** A country's copy: its trait recorded, stability shifted and kept inside 0.1 … 0.9. */

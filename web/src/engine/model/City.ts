@@ -5,9 +5,11 @@ import type { Origin } from './Origin.ts';
 import type { Vibe } from './Vibe.ts';
 import type { Portrait } from './Portrait.ts';
 import type { AreaPart } from './AreaPart.ts';
+import type { VibeFigure } from './VibeFigure.ts';
 
 export const CITY_KIND = new LocationKind({
   key: 'city',
+  glyph: 'city',
   title: 'City',
   scale: '10⁴ m',
   icon: '🏙',
@@ -38,6 +40,11 @@ export class City extends Location {
     return this.#rebelVibe ?? super.vibe();
   }
 
+  /** A rebel district says it swapped the pairs here (U05). */
+  override vibeFigure(): VibeFigure {
+    return this.#rebelVibe?.figure({ rebel: true }) ?? super.vibeFigure();
+  }
+
   description(): readonly string[] {
     return [
       this.#rebelVibe === undefined
@@ -47,7 +54,12 @@ export class City extends Location {
   }
 
   override facts(): readonly Fact[] {
-    return this.#rebelVibe === undefined ? [] : [{ key: 'alert', label: 'Rebel district', value: '' }];
+    if (this.#rebelVibe === undefined) return [];
+    return [
+      { key: 'alert', label: 'Rebel district', value: '' },
+      this.#rebelVibe.era().fact(),
+      this.#rebelVibe.culture().fact(),
+    ];
   }
 
   /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */

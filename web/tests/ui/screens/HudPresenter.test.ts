@@ -1,3 +1,4 @@
+import type { TraceStep } from '#engine/rules/TraceStep.ts';
 import { describe, expect, test } from 'vitest';
 import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { PlanPortrait } from '#engine/model/PlanPortrait.ts';
@@ -653,7 +654,7 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
 
   test('the TRACE command’s column (U04): a band a level in the trail’s order, its depth and kind, its chips and words, its counts, the place you went down into; you are the last', () => {
     expect(presenter.toViewModel(OUTDOORS).trace).toEqual({ shown: false });
-    const step = (depth: number, kind: string, name: string, address: string) => ({
+    const step = (depth: number, kind: string, name: string, address: string): TraceStep => ({
       depth,
       icon: '∞',
       kind,
@@ -666,6 +667,9 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
       facts: [],
       words: '',
       scale: '10²⁶ m',
+      glyph: 'universe',
+      vibe: { held: 'none' },
+      signs: [],
     });
     const traced = shown(
       presenter.toViewModel({

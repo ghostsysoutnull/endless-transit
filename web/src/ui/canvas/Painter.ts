@@ -31,6 +31,9 @@ export interface Painter {
   measureText(text: string): { readonly width: number };
   save(): void;
   restore(): void;
+  /** Moves and turns what follows, until the `restore` that matches the last `save` (the pole's upright words, U05). */
+  translate(x: number, y: number): void;
+  rotate(angle: number): void;
   /** The current transform; `a` is how many of the canvas's pixels a unit spans across. */
   getTransform(): { readonly a: number };
 }

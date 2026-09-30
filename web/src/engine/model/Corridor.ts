@@ -6,9 +6,11 @@ import { LocationKind } from './LocationKind.ts';
 import type { Origin } from './Origin.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Portrait } from './Portrait.ts';
+import type { PoleSign } from './PoleSign.ts';
 
 export const CORRIDOR_KIND = new LocationKind({
   key: 'corridor',
+  glyph: 'corridor',
   title: 'Corridor',
   scale: '40 m',
   icon: '▅',
@@ -54,6 +56,11 @@ export class Corridor extends Location {
     return this.#shape;
   }
 
+  /** A corridor that bends out of sight says so on the pole (U05). */
+  override poleSigns(): readonly PoleSign[] {
+    return this.#shape === 'curved' ? [{ look: 'curved', word: 'curved' }] : [];
+  }
+
   /**
    * The door table a scan reads (Guide:227-231; ScanCommand.groovy:60-134): per door its trace, its words,
    * its material and state, and the kind of the first room behind it, with the sensory line under each.
@@ -82,7 +89,7 @@ export class Corridor extends Location {
   override facts(): readonly Fact[] {
     const culture = this.vibe()?.culture();
     return [
-      ...(culture === undefined ? [] : [{ key: 'culture', label: 'Culture', value: culture.key() } as const]),
+      ...(culture === undefined ? [] : [culture.fact()]),
       { key: 'reading', label: 'Doors', value: String(this.#floor.building().doorsPerFloor()) },
     ];
   }

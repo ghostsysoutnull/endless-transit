@@ -16,8 +16,10 @@ import type { AsideVM } from './AsideVM.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
+import { DepthNumber } from './DepthNumber.ts';
 import type { Drawings } from './Drawings.ts';
 import type { Pads } from './Pads.ts';
+import type { PoleWords } from './PoleWords.ts';
 
 const RETURN_MARK = '▲ ';
 /** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
@@ -69,12 +71,14 @@ export class HudPresenter implements Presenter<HudVM> {
   readonly #masthead: Masthead;
   readonly #drawings: Drawings;
   readonly #pads: Pads;
+  readonly #pole: PoleWords;
 
-  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings, pads: Pads) {
+  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings, pads: Pads, pole: PoleWords) {
     this.#masthead = masthead;
     this.#frame = frame;
     this.#drawings = drawings;
     this.#pads = pads;
+    this.#pole = pole;
   }
 
   /** The world screen: a place, and no prompt in the way. */
@@ -292,7 +296,7 @@ export class HudPresenter implements Presenter<HudVM> {
       skip: 'Skip',
       bands: steps.map((step, index) => {
         const next = steps[index + 1];
-        const depth = String(step.depth).padStart(2, '0');
+        const depth = new DepthNumber(step.depth).text();
         const visited = step.children.filter((child) => child.visited).length;
         const facts = [
           ...(step.children.length === 0
@@ -316,6 +320,7 @@ export class HudPresenter implements Presenter<HudVM> {
           into: next?.address ?? '',
         };
       }),
+      pole: this.#pole.of(trace),
     };
   }
 

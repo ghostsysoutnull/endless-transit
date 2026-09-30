@@ -8,6 +8,7 @@ import type { Origin } from './Origin.ts';
 
 export const LAYER_KIND = new LocationKind({
   key: 'layer',
+  glyph: 'floor',
   title: 'Layer',
   scale: '60 m',
   icon: '▤',

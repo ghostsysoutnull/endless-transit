@@ -3,6 +3,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import type { Dive } from '#ui/scene/Dive.ts';
 import type { TraceBands } from '#ui/scene/TraceBands.ts';
+import type { TracePole } from '#ui/scene/TracePole.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { ChildMark } from '#ui/scene/ChildMark.ts';
 import { MarkedChild } from '#ui/scene/MarkedChild.ts';
@@ -17,9 +18,19 @@ import type { TravelRowVM } from './TravelRowVM.ts';
 import type { PictureBook } from './PictureBook.ts';
 import { Retrace } from './Retrace.ts';
 import { statTestId } from './StatKey.ts';
+import type { TraceView } from './TraceView.ts';
+import type { TraceViewMemory } from './TraceViewMemory.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
 type Slot = 'pane' | 'map';
+
+/** What the trace draws with: the column's bands, the dive, the pole, and where the pick of view is kept (U04, U05). */
+interface TraceParts {
+  readonly bands: TraceBands;
+  readonly dive: Dive;
+  readonly pole: TracePole;
+  readonly views: TraceViewMemory;
+}
 
 /**
  * Draws the world screen with lit-html: the HUD (the meter and the readouts), the depth rail, the narrative
@@ -66,8 +77,10 @@ export class HudView implements View<HudVM> {
   #came = new Retrace([]);
   /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
   #group: number | undefined;
-  /** The trace column's pictures and its dive (U04). */
-  readonly #column: { readonly bands: TraceBands; readonly dive: Dive };
+  /** The trace column's pictures and its dive (U04), the pole and the view the player picked last (U05). */
+  readonly #column: TraceParts;
+  /** Which view the open trace shows: the one the player picked last, read when it opens (U05). */
+  #view: TraceView = 'column';
   /** Whether the column the last TRACE opened is on screen: shown by the step, closed by ✕, Esc or a swipe. */
   #columnOpen = false;
   /** The column's bands opened larger, by key. */
@@ -80,12 +93,7 @@ export class HudView implements View<HudVM> {
   #pull: number | undefined;
 
   /** The registry binds a drawing to its picture (U01b); the stage shows its scene (U03); the makers make each canvas the screen carries (U02). */
-  constructor(
-    book: PictureBook,
-    stage: DrawnStage,
-    canvases: CanvasViews,
-    column: { readonly bands: TraceBands; readonly dive: Dive },
-  ) {
+  constructor(book: PictureBook, stage: DrawnStage, canvases: CanvasViews, column: TraceParts) {
     this.#book = book;
     this.#stage = stage;
     this.#column = column;
@@ -155,6 +163,7 @@ export class HudView implements View<HudVM> {
     // A step closes the column the last TRACE opened; the step that is a TRACE opens a new one.
     this.#closeColumn();
     this.#columnOpen = vm.trace.shown;
+    if (this.#columnOpen) this.#view = this.#column.views.recall();
     this.#openBands = new Set();
     if (vm.scene !== this.#vm?.scene) {
       this.#lit = new NoChild();
@@ -171,11 +180,15 @@ export class HudView implements View<HudVM> {
     this.#railAt = undefined;
   }
 
-  /** The column's pictures shown in its bands, centred on the level the rail was tapped at, or on you. */
+  /** The trace's pictures shown in the view picked, centred on the level the rail was tapped at, or on you. */
   #showColumn(vm: HudVM): void {
     const trace = vm.trace;
     const container = this.#container;
     if (!trace.shown || container === undefined) return;
+    if (this.#view === 'pole') {
+      this.#showPole(vm);
+      return;
+    }
     const scroller = this.#element('.col-scroll');
     const thread = this.#element('[data-thread]');
     if (scroller === undefined || thread === undefined) return;
@@ -196,10 +209,38 @@ export class HudView implements View<HudVM> {
     this.#element('.col-close')?.focus({ preventScroll: true });
   }
 
+  /** The pole shown, the level the rail was tapped at, or you, in the middle of it (U05). */
+  #showPole(vm: HudVM): void {
+    const trace = vm.trace;
+    const host = this.#element('[data-pole]');
+    const scroller = this.#element('.pole-scroll');
+    if (!trace.shown || host === undefined || scroller === undefined) return;
+    const levels = this.#elements('.pole-level');
+    this.#column.pole.show({ host, scroller, levels, vm: trace.pole, at: this.#railAt ?? levels.length - 1 });
+    this.#element('.col-close')?.focus({ preventScroll: true });
+  }
+
   #closeColumn(): void {
     this.#column.dive.skip();
     this.#column.bands.clear();
+    this.#column.pole.clear();
     this.#diving = false;
+  }
+
+  /**
+   * The switch: the other view shown and kept for next time; a level tapped on the pole opens the column at its band.
+   * A view control — it moves the view and picks nothing.
+   */
+  #switchTo(view: TraceView, at?: number): void {
+    const vm = this.#vm;
+    if (vm === undefined || !this.#columnOpen || (view === this.#view && at === undefined)) return;
+    this.#column.views.remember(view);
+    this.#closeColumn();
+    this.#view = view;
+    this.#paint(vm);
+    this.#railAt = at;
+    this.#showColumn(vm);
+    this.#railAt = undefined;
   }
 
   /** ✕, Esc or a swipe down the header: the column goes, the screen under it as it was. */
@@ -660,6 +701,28 @@ export class HudView implements View<HudVM> {
           }}
         >
           <h2>${trace.title}</h2>
+          <span class="seg" role="group" aria-label=${trace.pole.group}>
+            <button
+              type="button"
+              class="seg-pole"
+              aria-pressed=${this.#view === 'pole' ? 'true' : 'false'}
+              @click=${() => {
+                this.#switchTo('pole');
+              }}
+            >
+              ${trace.pole.pole}
+            </button>
+            <button
+              type="button"
+              class="seg-column"
+              aria-pressed=${this.#view === 'column' ? 'true' : 'false'}
+              @click=${() => {
+                this.#switchTo('column');
+              }}
+            >
+              ${trace.pole.column}
+            </button>
+          </span>
           <button
             type="button"
             class="col-dive"
@@ -681,46 +744,71 @@ export class HudView implements View<HudVM> {
           </button>
         </header>
         <div class="col-body">
-          <div class="col-scroll">
-            <ol class="bands">
-              ${repeat(
-                trace.bands,
-                (band) => band.key,
-                (band) => html`
-                  <li
-                    class=${`${band.here ? 'band-li here' : 'band-li'}${band.abyssal ? ' abyssal' : ''}${this.#openBands.has(band.key) ? ' open' : ''}`}
-                  >
-                    <button
-                      type="button"
-                      class="band"
-                      aria-expanded=${this.#openBands.has(band.key) ? 'true' : 'false'}
-                      aria-label=${band.label}
-                      @click=${() => {
-                        this.#toggleBand(band.key);
-                      }}
-                    >
-                      <span class="b-pic"
-                        ><span class="b-cv" data-level=${band.key}></span
-                        ><span class="b-scale">${band.scale}</span></span
-                      >
-                      <span class="b-info">
-                        <span class="eyebrow"
-                          >${band.eyebrow}${band.here ? html` · <b>${band.hereText}</b>` : nothing}</span
-                        >
-                        <span class="b-name">${band.name}</span>
-                        <span class="b-tags">
-                          ${band.tags.map((tag) => html`<span class="chip" data-fact=${tag.key}>${tag.label}${tag.value === '' ? nothing : html` <b>${tag.value}</b>`}</span>`)}
-                        </span>
-                        <span class="b-words">${band.words}</span>
-                        ${band.facts.map((fact) => html`<span class="b-fact">${fact}</span>`)}
-                      </span>
-                    </button>
-                  </li>
-                `,
-              )}
-            </ol>
-          </div>
-          <div class="col-thread" data-thread></div>
+          ${
+            this.#view === 'pole'
+              ? html`<div class="pole-scroll">
+                  <div class="pole-sheet">
+                    <div class="pole-cv" data-pole></div>
+                    <ol class="pole-levels">
+                      ${repeat(
+                        trace.pole.levels,
+                        (level) => level.key,
+                        (level, index) =>
+                          html`<li>
+                            <button
+                              type="button"
+                              class=${level.here ? 'pole-level here' : 'pole-level'}
+                              aria-label=${level.label}
+                              @click=${() => {
+                                this.#switchTo('column', index);
+                              }}
+                            ></button>
+                          </li>`,
+                      )}
+                    </ol>
+                  </div>
+                </div>`
+              : html`<div class="col-scroll">
+                    <ol class="bands">
+                      ${repeat(
+                        trace.bands,
+                        (band) => band.key,
+                        (band) => html`
+                          <li
+                            class=${`${band.here ? 'band-li here' : 'band-li'}${band.abyssal ? ' abyssal' : ''}${this.#openBands.has(band.key) ? ' open' : ''}`}
+                          >
+                            <button
+                              type="button"
+                              class="band"
+                              aria-expanded=${this.#openBands.has(band.key) ? 'true' : 'false'}
+                              aria-label=${band.label}
+                              @click=${() => {
+                                this.#toggleBand(band.key);
+                              }}
+                            >
+                              <span class="b-pic"
+                                ><span class="b-cv" data-level=${band.key}></span
+                                ><span class="b-scale">${band.scale}</span></span
+                              >
+                              <span class="b-info">
+                                <span class="eyebrow"
+                                  >${band.eyebrow}${band.here ? html` · <b>${band.hereText}</b>` : nothing}</span
+                                >
+                                <span class="b-name">${band.name}</span>
+                                <span class="b-tags">
+                                  ${band.tags.map((tag) => html`<span class="chip" data-fact=${tag.key}>${tag.label}${tag.value === '' ? nothing : html` <b>${tag.value}</b>`}</span>`)}
+                                </span>
+                                <span class="b-words">${band.words}</span>
+                                ${band.facts.map((fact) => html`<span class="b-fact">${fact}</span>`)}
+                              </span>
+                            </button>
+                          </li>
+                        `,
+                      )}
+                    </ol>
+                  </div>
+                  <div class="col-thread" data-thread></div>`
+          }
         </div>
         ${
           this.#diving

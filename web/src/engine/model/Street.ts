@@ -8,6 +8,7 @@ import type { AreaPart } from './AreaPart.ts';
 
 export const STREET_KIND = new LocationKind({
   key: 'street',
+  glyph: 'street',
   title: 'Street',
   scale: '10³ m',
   icon: '═',
@@ -38,10 +39,7 @@ export class Street extends Location {
   override facts(): readonly Fact[] {
     const vibe = this.vibe();
     if (vibe === undefined) return [];
-    return [
-      { key: 'era', label: 'Era', value: vibe.era().key() },
-      { key: 'culture', label: 'Culture', value: vibe.culture().key() },
-    ];
+    return [vibe.era().fact(), vibe.culture().fact()];
   }
 
   /** No diagnostic line: the street is drawn (U01b, Decision 1 — the terminal's jargon goes). */

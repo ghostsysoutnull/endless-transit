@@ -8,6 +8,7 @@ import type { AreaPart } from './AreaPart.ts';
 
 export const NULL_REACH_KIND = new LocationKind({
   key: 'null-reach',
+  glyph: 'null-reach',
   title: 'Null reach',
   scale: '10²¹ m',
   icon: '○',

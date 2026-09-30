@@ -34,6 +34,8 @@ resilience, richness, ritual, scene, survival, world; some with `path`/`states` 
 state out when it equals `'Stable'`, the name shown to the player, while every other rule about a door's state now
 goes by the list's key column. Stable's key is `plain`, like eight other states, so no key tells it apart. **Fix:** a
 key that says the state is worth naming (a fourth column, or Stable's own look key), and `brief()` asks the look.
+**Extended** 2026-09-30 (U05): the comparison moved into `Door.stable()`, which `brief()` and the pole's door tag
+(`Apartment.poleSigns()`) both ask — one place to fix.
 
 ### HK-028 — `Shell` builds its `InputRouter`, and `InputRouter` its `SceneEvents`
 **Found:** 2026-09-28, the plan for U02's `built-collaborators` (`tasks/ui/U02-fixes.md`). Both build a collaborator
@@ -118,6 +120,22 @@ of these is a bug or a fact in two places.
   the tower test ties `breached` to having Layers, so the bedrock line's new condition is not told from the old one.
 - `trace.spec.ts` finds `.rail .crumb` and `.col-head` by class: by role or a stable id.
 - `Void.test.ts` and `Descent.test.ts` both pin the signal chip's values: one layer.
+
+### HK-038 — the U05 design check's logged findings (tidying, one line each)
+**Found:** 2026-09-30, the one design check of U05 (`0e5ef9b..a192c11`); its three fixes are in (a door's state word
+from `Door.stateWord()`, one `DepthNumber` for the column and the pole, every Era and Culture chip from `Era.fact()` /
+`Culture.fact()`) and two test lines that caught nothing went; none of these is a bug or a fact in two places.
+- `TracePole` takes the concrete `PolePicture`, `HudView` the concrete `TracePole`: small interfaces (with HK-037's).
+- `HudView` branches on its view (`#view === 'pole'`) in its logic and its template: one object a view (with
+  HK-037's `TraceColumnView`).
+- `PolePresenter`'s `BERTHS` is a table keyed by glyph: the kind could own whether it has a berth, as it owns its glyph.
+- `PolePresenter` asks `figure.held === 'country'` three times: the figure's member could answer its own ribbons.
+- `PoleLayout` compares display words for runs and the current's start, `''` meaning none: stable keys and a union
+  (with HK-030, HK-034).
+- `PolePicture` holds geometry (`last + 60`, the lanes' `+ 32`, the berth's 18 × 14): the layout's to answer.
+- `VibeFigure.stability` has no reader but its tests: shown on the pole, or dropped.
+- `Lattice.test.ts` lists every kind's glyph: a step carries its kind's glyph, the twins below the bedrock by name.
+- `trace.spec.ts` finds `.seg`, `.pole-level` by class; reduced motion's pole is not tested as still.
 
 ## 🟢 CLOSED
 

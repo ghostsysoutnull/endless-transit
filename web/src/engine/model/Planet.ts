@@ -8,6 +8,7 @@ import type { AreaPart } from './AreaPart.ts';
 
 export const PLANET_KIND = new LocationKind({
   key: 'planet',
+  glyph: 'planet',
   title: 'Planet',
   scale: '10⁷ m',
   icon: '⊕',
@@ -43,8 +44,13 @@ export class Planet extends Location {
 
   override facts(): readonly Fact[] {
     return [
-      { key: 'culture', label: 'Culture', value: this.#vibe.culture().key() },
-      { key: 'era', label: 'Era', value: this.#vibe.era().key() },
+      this.#vibe.culture().fact(),
+      this.#vibe.era().fact(),
+      {
+        key: 'drift',
+        label: 'Drift',
+        value: `${this.#vibe.secondEra().key()} · ${this.#vibe.secondCulture().key()}`,
+      },
     ];
   }
 

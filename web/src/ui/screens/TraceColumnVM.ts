@@ -1,4 +1,5 @@
 import type { Drawing } from './Drawing.ts';
+import type { PoleVM } from './PoleVM.ts';
 
 /** One level's band in the trace column (U04): its picture and its words. */
 export interface BandVM {
@@ -23,7 +24,7 @@ export interface BandVM {
   readonly into: string;
 }
 
-/** The trace column (U04): a band a level from the universe down to you, over everything. */
+/** The trace column (U04): a band a level from the universe down to you, over everything; or the pole (U05). */
 export interface TraceColumnVM {
   readonly label: string;
   readonly title: string;
@@ -33,4 +34,6 @@ export interface TraceColumnVM {
   readonly dive: string;
   readonly skip: string;
   readonly bands: readonly BandVM[];
+  /** The same levels as the pole (U05). */
+  readonly pole: PoleVM;
 }

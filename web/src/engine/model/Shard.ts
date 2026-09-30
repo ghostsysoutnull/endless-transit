@@ -3,6 +3,7 @@ import { Room } from './Room.ts';
 
 export const SHARD_KIND = new LocationKind({
   key: 'shard',
+  glyph: 'room',
   title: 'Shard',
   scale: '5 m',
   icon: '☠',

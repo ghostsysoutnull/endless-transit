@@ -12,9 +12,12 @@ import type { Relic } from './Relic.ts';
 import type { RoomCategory } from './RoomCategory.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Portrait } from './Portrait.ts';
+import type { VibeFigure } from './VibeFigure.ts';
+import type { PoleSign } from './PoleSign.ts';
 
 export const APARTMENT_KIND = new LocationKind({
   key: 'apartment',
+  glyph: 'apartment',
   title: 'Apartment',
   scale: '15 m',
   icon: '🚪',
@@ -107,6 +110,19 @@ export class Apartment extends Location {
 
   anomaly(): boolean {
     return this.#anomaly;
+  }
+
+  /** Its door's state when the door is not stable, and a temporal anomaly (U05). */
+  override poleSigns(): readonly PoleSign[] {
+    return [
+      ...(this.#door.stable() ? [] : [{ look: 'door', word: this.#door.stateWord() } as const]),
+      ...(this.#anomaly ? [{ look: 'anomaly', word: 'anomaly' } as const] : []),
+    ];
+  }
+
+  /** Its own pair, drifting in each value it drew from the second one (U05). */
+  override vibeFigure(): VibeFigure {
+    return this.vibe()?.figure({ drawn: { era: this.#era, culture: this.#culture } }) ?? super.vibeFigure();
   }
 
   /** How many rooms it has — decided when it was made, so a room can ask before the rooms exist. */
@@ -216,11 +232,22 @@ export class Apartment extends Location {
     return [];
   }
 
-  /** The era marker, or the anomaly warning (Apartment.groovy:44). */
+  /** Its era and culture, what of them drifted, and the anomaly warning (Apartment.groovy:44; plain words, U05). */
   override facts(): readonly Fact[] {
-    return this.#anomaly
-      ? [{ key: 'alert', label: 'TEMPORAL_ANOMALY_DETECTED', value: '[!]' }]
-      : [{ key: 'era', label: 'TEMPORAL_MARKER', value: this.#era.key() }];
+    const drifted = this.#drifted();
+    return [
+      this.#era.fact(),
+      this.#culture.fact(),
+      ...(drifted === '' ? [] : [{ key: 'drift', label: 'Drift', value: drifted } as const]),
+      ...(this.#anomaly ? [{ key: 'alert', label: 'Temporal anomaly', value: '' } as const] : []),
+    ];
+  }
+
+  /** What it drew from the second pair, as its chip writes it: `era · culture`, one of them, or nothing. */
+  #drifted(): string {
+    const figure = this.vibeFigure();
+    if (figure.held !== 'country') return '';
+    return [...(figure.drift.era ? ['era'] : []), ...(figure.drift.culture ? ['culture'] : [])].join(' · ');
   }
 
   status(): string {

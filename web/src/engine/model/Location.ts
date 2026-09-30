@@ -17,6 +17,8 @@ import type { Origin } from './Origin.ts';
 import type { Portrait } from './Portrait.ts';
 import type { ScanReport } from './ScanReport.ts';
 import type { Vibe } from './Vibe.ts';
+import type { VibeFigure } from './VibeFigure.ts';
+import type { PoleSign } from './PoleSign.ts';
 import { AreaPortrait } from './AreaPortrait.ts';
 import type { AreaLook } from './AreaLook.ts';
 
@@ -361,6 +363,16 @@ export abstract class Location {
   /** What the planet above decided; nothing above planet level. */
   vibe(): Vibe | undefined {
     return this.parent()?.vibe();
+  }
+
+  /** This level's vibe as the pole reads it (U05): the vibe above as it stands, nothing above the planet. */
+  vibeFigure(): VibeFigure {
+    return this.vibe()?.figure() ?? { held: 'none' };
+  }
+
+  /** The states the pole tags this level with (U05): none unless a kind says otherwise. */
+  poleSigns(): readonly PoleSign[] {
+    return [];
   }
 
   /**
