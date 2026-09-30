@@ -81,10 +81,9 @@ tags: Room 1 of 9 (position) | Era Analog (era) | Type Barracks (reading) | Oxyg
 Furniture: flickering iron tea kettle, sealed bonsai tree
 Relics: 2
 status: Entered Lacquered Barracks.
-moves: [F] GO FORWARD
 IN THIS ROOM: answering machine grafted onto shoji screen <grafted|shoji screen|answering machine> | answering machine with straw sandal <with|straw sandal|answering machine>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ █ ███████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE THE APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE THE APARTMENT | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Paper Security Station  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Paper Security Station *
@@ -96,7 +95,6 @@ tags: Room 2 of 9 (position) | Era Analog (era) | Type Security Station (reading
 Furniture: upended katana rack, flickering paper lantern, bolted-down folding fan
 Relics: 4
 status: Entered Paper Security Station.
-moves: [B] GO BACK | [F] GO FORWARD
 IN THIS ROOM: calligraphy scroll infused with oscilloscope <infused|calligraphy scroll|oscilloscope> | answering machine with tatami mat <with|tatami mat|answering machine> | kabuto helmet infused with rotary phone <infused|kabuto helmet|rotary phone> | hanging scroll infused with magnetic strip <infused|hanging scroll|magnetic strip>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ ████████ ████████ ██████ █████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.1 > Resonant traces: 0
-dock: [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [B] GO BACK | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION

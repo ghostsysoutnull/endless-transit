@@ -102,7 +102,7 @@ export interface HudVM extends Screen {
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
-  /** The moves the place offers (up, down, into the corridor, on to the next room): a strip of buttons above the list. */
+  /** The moves the place offers (up, down, into the corridor): a strip of buttons above the list; a room's sit in the dock (U03c). */
   readonly moves: readonly OptionVM[];
   /** Why some rows are closed; not shown when none is. */
   readonly sealedNote: Panel<{ readonly text: string }>;
@@ -110,9 +110,13 @@ export interface HudVM extends Screen {
   readonly sealedTag: string;
   /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button. */
   readonly dock: readonly OptionVM[];
-  /** How the dock folds: how many stay out (the way out), and the words of the button that opens and closes the rest. */
+  /**
+   * How the dock folds: how many stay out (the way out, and a room's moves, U03c), how many of those are the way out
+   * (the first ones), and the words of the button that opens and closes the rest.
+   */
   readonly fold: {
     readonly after: number;
+    readonly out: number;
     readonly more: string;
     readonly less: string;
     readonly label: string;

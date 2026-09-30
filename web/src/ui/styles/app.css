@@ -1498,7 +1498,7 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* The moves a place offers — up, down, into the corridor, on to the next room — sit under its title (I09), never sticky. */
+/* The moves a place offers — up, down, into the corridor — sit under its title (I09), never sticky; a room's sit in the dock (U03c). */
 .moves {
   display: flex;
   flex-wrap: wrap;
@@ -1523,7 +1523,7 @@ body {
   display: contents;
 }
 
-/* Leave and the game's own options stay at the bottom edge, however long the list above them is. */
+/* Leave, a room's moves and the game's own options stay at the bottom edge, however long the list above them is. */
 .dock {
   position: sticky;
   bottom: 0;
@@ -1541,7 +1541,7 @@ body {
   font-size: 13px;
 }
 
-.dock .pb:first-child {
+.dock .pb[data-role='out'] {
   border-color: var(--yl);
 }
 
@@ -1623,9 +1623,18 @@ body {
 }
 
 /* The dock's row: the way out takes the wider share, MORE the rest; the fold is hidden until MORE, then its
-   buttons rise above that row, sharing rows by their width. */
-.dock > .pb:first-child {
+   buttons rise above that row, sharing rows by their width. A room's moves (U03c) are narrower, so back, forward and
+   MORE share one row at 360 px; in the first room the way out takes a row of its own above them. */
+.dock > .pb[data-role='out'] {
   flex: 2 1 160px;
+}
+
+.dock > .pb:not([data-role='out'], .more) {
+  flex: 1 1 88px;
+}
+
+.dock > .pb[data-role='out']:has(+ .pb:not(.more)) {
+  flex-basis: 100%;
 }
 
 .dock .pb.more {

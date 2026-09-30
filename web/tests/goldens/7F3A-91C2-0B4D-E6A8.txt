@@ -107,10 +107,9 @@ tags: Room 1 of 2 (position) | Era Future (era) | Type Power Plant (reading) | O
 Furniture: half-dismantled stained glass shard, scorched funeral mask
 Relics: 4
 status: Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.
-moves: [F] GO FORWARD
 IN THIS ROOM: plasma coil with reliquary box <with|reliquary box|plasma coil> | brass censer fused to laser cutter <fused|brass censer|laser cutter> | stone gargoyle infused with orbital beacon <infused|stone gargoyle|orbital beacon> | prayer bench infused with plasma coil <infused|prayer bench|plasma coil>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █████ █████ █████████ █████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE THE APARTMENT | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE THE APARTMENT | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Baroque Maintenance Bay  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Baroque Maintenance Bay *
@@ -122,7 +121,6 @@ tags: Room 2 of 2 (position) | Era Future (era) | Type Maintenance Bay (reading)
 Furniture: bolted-down velvet kneeling-rug, rewired stone gargoyle, flickering stained glass shard
 Relics: 4
 status: Entered Baroque Maintenance Bay.
-moves: [B] GO BACK
 IN THIS ROOM: velvet kneeling-rug fused to optic implant <fused|velvet kneeling-rug|optic implant> | reliquary box fused to drone dock <fused|reliquary box|drone dock> | nanotech mesh grafted onto carved choir stall <grafted|carved choir stall|nanotech mesh> | plasma coil with prayer bench <with|prayer bench|plasma coil>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ███ ███████ ██████ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.1 > Resonant traces: 0
-dock: [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [B] GO BACK | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION

@@ -1,6 +1,8 @@
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
+import type { DockLayout } from './DockLayout.ts';
+import type { DockParts } from './DockParts.ts';
 import type { PictureBook } from './PictureBook.ts';
 
 /**
@@ -12,4 +14,6 @@ export interface Drawing {
   frame(): SceneVM<SceneChild>;
   /** Its view model bound to the picture of its kind. */
   sketchedBy(book: PictureBook): Sketch;
+  /** Where its place's moves sit (U03c): under the picture, or in the dock. */
+  arrange(parts: DockParts): DockLayout;
 }
