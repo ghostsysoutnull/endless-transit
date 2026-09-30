@@ -11,7 +11,8 @@ import { TowerPortrait } from './TowerPortrait.ts';
 export const BUILDING_KIND = new LocationKind({
   key: 'building',
   title: 'Building',
-  scale: '10² m', icon: '⌂',
+  scale: '10² m',
+  icon: '⌂',
   indexLabel: 'Building',
 });
 
@@ -285,11 +286,6 @@ export class Building extends Location {
   /** From the building down, the traveller is indoors. */
   override indoors(): boolean {
     return true;
-  }
-
-  /** The trace's note (Building.groovy:120-124): the breach once made, the floor count before it. */
-  override meta(): string {
-    return this.#breached ? ' [BREACHED]' : ` [FLOORS: ${String(this.#floors)}]`;
   }
 
   childrenHeading(): string {

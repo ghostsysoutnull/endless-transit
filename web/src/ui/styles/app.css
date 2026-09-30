@@ -1729,7 +1729,7 @@ body {
 /* A room, large (U03d): the picture runs from the top bar down to the button that leads to its words, just above a
    one-row dock; the words and the relics' tiles are a scroll below. */
 .world[data-drawn]:has(.objects) > .scene {
-  height: max(260px, calc(100dvh - 264px));
+  height: max(260px, calc(100dvh - 286px));
 }
 
 /* The way down to the room's words and relics, right under the picture. */

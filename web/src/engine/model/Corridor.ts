@@ -11,7 +11,8 @@ import type { Portrait } from './Portrait.ts';
 export const CORRIDOR_KIND = new LocationKind({
   key: 'corridor',
   title: 'Corridor',
-  scale: '40 m', icon: '▅',
+  scale: '40 m',
+  icon: '▅',
   indexLabel: 'CONDUIT',
 });
 

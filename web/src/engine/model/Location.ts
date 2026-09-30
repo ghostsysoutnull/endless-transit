@@ -353,11 +353,6 @@ export abstract class Location {
     return { x: spot.branch('x').range(0, width - 1), y: spot.branch('y').range(0, height - 1) };
   }
 
-  /** What the lattice trace says beside this place's name (`[FLOORS: 16]`, LatticeTraceComponent.groovy:67); empty for most kinds. */
-  meta(): string {
-    return '';
-  }
-
   /** How much more a prompt costs here than at the surface: the parent's, 1 at the top — the bedrock (I07) answers 2 (Guide:137-139). */
   drainFactor(): number {
     return this.parent()?.drainFactor() ?? 1;

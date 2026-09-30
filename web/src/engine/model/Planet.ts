@@ -9,7 +9,8 @@ import type { AreaPart } from './AreaPart.ts';
 export const PLANET_KIND = new LocationKind({
   key: 'planet',
   title: 'Planet',
-  scale: '10⁷ m', icon: '⊕',
+  scale: '10⁷ m',
+  icon: '⊕',
   indexLabel: 'ORBIT',
 });
 
@@ -50,11 +51,6 @@ export class Planet extends Location {
   /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
   status(): string {
     return '';
-  }
-
-  /** The trace's note (Planet.groovy:30-34): a planet is always the surface. */
-  override meta(): string {
-    return ` [SURFACE | ERA: ${this.#vibe.era().key().toUpperCase()}]`;
   }
 
   childrenHeading(): string {

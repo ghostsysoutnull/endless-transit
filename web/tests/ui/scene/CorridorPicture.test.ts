@@ -62,6 +62,7 @@ function corridor(
 ): CorridorVM {
   return {
     label: 'Picture of a corridor',
+    abyssal: false,
     address: '0.0.0.0.0.0.0.0.2.3',
     children: Array.from({ length: doors }, (_, index) => ({
       id: `enter:${String(index)}`,

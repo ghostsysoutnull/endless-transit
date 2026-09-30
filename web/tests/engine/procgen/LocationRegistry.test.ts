@@ -89,6 +89,7 @@ describe('LocationRegistry — a kind is a registry entry', () => {
     const stranger = new LocationKind({
       key: 'dyson-sphere',
       title: 'Dyson sphere',
+      scale: '10¹¹ m',
       icon: '?',
       indexLabel: '?',
     });

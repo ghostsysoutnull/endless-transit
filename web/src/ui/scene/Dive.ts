@@ -47,7 +47,8 @@ export class Dive {
     let spot: Point | undefined;
     let shown = -1;
     this.#stop = this.#clock.subscribe((time) => {
-      const elapsed = time - start;
+      // A frame's time can be a moment before the tap that started the dive: never before its start.
+      const elapsed = Math.max(0, time - start);
       const index = Math.floor(elapsed / LEVEL);
       const level = levels[index];
       if (level === undefined) {

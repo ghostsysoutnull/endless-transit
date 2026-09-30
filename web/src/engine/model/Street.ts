@@ -6,7 +6,13 @@ import type { Portrait } from './Portrait.ts';
 import { StreetPortrait } from './StreetPortrait.ts';
 import type { AreaPart } from './AreaPart.ts';
 
-export const STREET_KIND = new LocationKind({ key: 'street', title: 'Street', scale: '10³ m', icon: '═', indexLabel: 'WAY' });
+export const STREET_KIND = new LocationKind({
+  key: 'street',
+  title: 'Street',
+  scale: '10³ m',
+  icon: '═',
+  indexLabel: 'WAY',
+});
 
 /** A street: its header tells the era and the culture of this part of the world. */
 export class Street extends Location {

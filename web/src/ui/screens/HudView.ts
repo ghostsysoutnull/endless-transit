@@ -176,10 +176,10 @@ export class HudView implements View<HudVM> {
     const trace = vm.trace;
     const container = this.#container;
     if (!trace.shown || container === undefined) return;
-    const scroller = container.querySelector<HTMLElement>('.col-scroll');
-    const thread = container.querySelector<HTMLElement>('[data-thread]');
-    if (scroller === null || thread === null) return;
-    const hosts = [...container.querySelectorAll<HTMLElement>('[data-level]')];
+    const scroller = this.#element('.col-scroll');
+    const thread = this.#element('[data-thread]');
+    if (scroller === undefined || thread === undefined) return;
+    const hosts = this.#elements('[data-level]');
     this.#column.bands.show({
       scroller,
       thread,
@@ -193,7 +193,7 @@ export class HudView implements View<HudVM> {
     });
     const at = hosts[this.#railAt ?? hosts.length - 1];
     at?.closest('li')?.scrollIntoView({ block: 'center' });
-    container.querySelector<HTMLElement>('.col-close')?.focus({ preventScroll: true });
+    this.#element('.col-close')?.focus({ preventScroll: true });
   }
 
   #closeColumn(): void {
@@ -221,8 +221,8 @@ export class HudView implements View<HudVM> {
     if (!vm?.trace.shown) return;
     this.#diving = true;
     this.#paint(vm);
-    const host = this.#container?.querySelector<HTMLElement>('[data-dive]');
-    if (host === null || host === undefined) return;
+    const host = this.#element('[data-dive]');
+    if (host === undefined) return;
     this.#column.dive.play(
       host,
       vm.trace.bands.map((band) => ({ sketch: band.drawing.sketchedBy(this.#book), into: band.into })),
@@ -235,9 +235,22 @@ export class HudView implements View<HudVM> {
     );
   }
 
+  /** The screen's first element a selector finds, when it is an HTML element. */
+  #element(selector: string): HTMLElement | undefined {
+    const found = this.#container?.querySelector(selector);
+    return found instanceof HTMLElement ? found : undefined;
+  }
+
+  /** Every HTML element of the screen a selector finds, in the page's order. */
+  #elements(selector: string): HTMLElement[] {
+    return [...(this.#container?.querySelectorAll(selector) ?? [])].filter(
+      (found): found is HTMLElement => found instanceof HTMLElement,
+    );
+  }
+
   /** Which rail level lies nearest the finger: the column opens there. */
   #railFrom(event: PointerEvent): void {
-    const crumbs = [...(this.#container?.querySelectorAll<HTMLElement>('.rail .crumb') ?? [])];
+    const crumbs = this.#elements('.rail .crumb');
     let best: number | undefined;
     let distance = Infinity;
     crumbs.forEach((crumb, index) => {
@@ -364,6 +377,7 @@ export class HudView implements View<HudVM> {
               : html`<button
                   type="button"
                   class="rail-hit"
+                  tabindex="-1"
                   data-option=${vm.railTrace.id}
                   aria-label=${vm.railTrace.label}
                   @pointerdown=${(event: PointerEvent) => {
@@ -636,6 +650,9 @@ export class HudView implements View<HudVM> {
           @pointerdown=${(event: PointerEvent) => {
             if (event.target instanceof Element && event.target.closest('button') !== null) return;
             this.#pull = event.clientY;
+            // The header keeps the finger until it lifts, wherever it goes.
+            if (event.currentTarget instanceof Element)
+              event.currentTarget.setPointerCapture(event.pointerId);
           }}
           @pointerup=${(event: PointerEvent) => {
             if (this.#pull !== undefined && event.clientY - this.#pull > 60) this.#close();

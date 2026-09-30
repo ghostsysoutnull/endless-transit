@@ -7,7 +7,8 @@ import type { AreaPart } from './AreaPart.ts';
 export const SOLAR_SYSTEM_KIND = new LocationKind({
   key: 'solar-system',
   title: 'Solar system',
-  scale: '10¹³ m', icon: '☼',
+  scale: '10¹³ m',
+  icon: '☼',
   indexLabel: 'RADII',
 });
 

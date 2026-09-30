@@ -126,7 +126,7 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     ).toEqual(['down', 'corridor']);
   });
 
-  test('a Layer: its name in hex, the ABYSSAL_SUBSTRATE zone, the pressure reading that saturates at −10 (Building.groovy:93-97), the abyssal diagnostic, double drain', () => {
+  test('a Layer: its name in hex, the ABYSSAL_SUBSTRATE zone, the pressure reading that saturates at −10 (Building.groovy:93-97), no diagnostic line (U04), double drain', () => {
     const { building } = sanctum();
     breach(building);
     const layer = floorOf(building, -1);
@@ -145,7 +145,8 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     expect(layer.description()).toEqual([
       'Layer -0x1. The air is thick with oily static and the hum of abyssal substrate.',
     ]);
-    expect(layer.status()).toBe('SYSTEM_STATUS: [ABYSS_SYNC]');
+    // No diagnostic line (U04): the Layer is drawn.
+    expect(layer.status()).toBe('');
     expect(layer.abyssal()).toBe(true);
     expect(floorOf(building, 0).abyssal()).toBe(false);
     expect(building.abyssal()).toBe(false);
@@ -165,7 +166,8 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     expect(artery.kind().title()).toBe('Artery');
     expect(artery.name()).toBe('Artery');
     expect(artery.description()).toEqual(['A pulsing, organic artery of data.']);
-    expect(artery.status()).toBe('TRAFFIC: [PRESSURE_HIGH] | THEME: [ABYSSAL]');
+    // No diagnostic line (U04): the Artery is drawn, walked as a corridor.
+    expect(artery.status()).toBe('');
     // An Artery shares the corridor's facts (U02): its culture and how many ways lead off it.
     expect(artery.facts()).toEqual([
       { key: 'culture', label: 'Culture', value: 'abyssal' },

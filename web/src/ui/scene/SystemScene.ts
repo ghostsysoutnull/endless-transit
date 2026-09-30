@@ -5,8 +5,8 @@ import type { Point } from './Point.ts';
 
 /** The orbits' squash: a system seen a little from above. */
 const SQUASH = 0.8;
-/** How far above and below the sun's line the planets alternate, in radians. */
-const TILT = 0.42;
+/** The rows the planets take in turn — on the sun's line, above it, below it — so neighbours stay a tap apart. */
+const ROWS = [0, -1, 1];
 
 /**
  * A solar system (U04; the mock's `system`, `:690-696`): a pale sun at the left edge, its orbits sweeping out
@@ -21,10 +21,11 @@ export class SystemScene implements AreaScene {
 
   spots(count: number, size: PictureSize): readonly Point[] {
     const sun = this.#sun(size);
-    return this.#radii(count, size).map((radius, index) => {
-      const angle = index % 2 === 0 ? -TILT : TILT;
-      return { x: sun.x + Math.cos(angle) * radius, y: sun.y + Math.sin(angle) * radius * SQUASH };
-    });
+    const lift = Math.min(size.height * 0.3, 80);
+    return this.#radii(count, size).map((reach, index) => ({
+      x: sun.x + reach,
+      y: sun.y + (ROWS[index % ROWS.length] ?? 0) * lift,
+    }));
   }
 
   backdrop(moment: AreaMoment): void {
@@ -35,7 +36,11 @@ export class SystemScene implements AreaScene {
     const sun = this.#sun(size);
     painter.strokeStyle = palette('cy');
     painter.lineWidth = 1;
-    this.#radii(Math.max(spots.length, 1), size).forEach((radius, index) => {
+    // Each orbit the ellipse about the sun that runs through its planet.
+    spots.forEach((spot, index) => {
+      const dx = spot.x - sun.x;
+      const dy = (spot.y - sun.y) / SQUASH;
+      const radius = Math.sqrt(dx * dx + dy * dy);
       painter.globalAlpha = index % 2 === 0 ? 0.3 : 0.18;
       painter.setLineDash(index % 2 === 0 ? [] : [2, 4]);
       ink.line(painter, ink.ellipse(sun, radius, radius * SQUASH, 0, 72));
@@ -55,7 +60,7 @@ export class SystemScene implements AreaScene {
     return { x: size.width * 0.06, y: size.height * 0.5 };
   }
 
-  /** Each planet's orbit, from a tap out from the sun to near the far edge. */
+  /** How far out from the sun each planet stands, from a tap away to near the far edge. */
   #radii(count: number, size: PictureSize): readonly number[] {
     const first = 64;
     const last = Math.max(first, size.width * 0.86);

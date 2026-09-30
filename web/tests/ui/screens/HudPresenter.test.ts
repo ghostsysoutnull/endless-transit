@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { PlanPortrait } from '#engine/model/PlanPortrait.ts';
 import { RoomLook } from '#engine/model/RoomLook.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
@@ -650,81 +651,75 @@ describe('HudPresenter.toViewModel — the map and the trace (I08): drawn panels
     expect(below.heading).toBe('[NEURAL_LATTICE_PROJECTION]');
   });
 
-  test('the TRACE command’s panel: one row per level with the depth, the kind in capitals, the name with its note, the current one last; the rows as words for a reader', () => {
+  test('the TRACE command’s column (U04): a band a level in the trail’s order, its depth and kind, its chips and words, its counts, the place you went down into; you are the last', () => {
     expect(presenter.toViewModel(OUTDOORS).trace).toEqual({ shown: false });
-    const traced = presenter.toViewModel({
-      ...OUTDOORS,
-      trace: {
-        steps: [
-          {
-            depth: 0,
-            icon: '∞',
-            kind: 'Universe',
-            name: 'The Endless Universe',
-            meta: '',
-            current: false,
-            abyssal: false,
-          },
-          {
-            depth: 8,
-            icon: '⌂',
-            kind: 'Building',
-            name: 'Ornate Sanctum',
-            meta: ' [BREACHED]',
-            current: false,
-            abyssal: false,
-          },
-          {
-            depth: 12,
-            icon: '☠',
-            kind: 'Shard',
-            name: 'Inverted Processing Core',
-            meta: '',
-            current: true,
-            abyssal: true,
-          },
-        ],
-      },
+    const step = (depth: number, kind: string, name: string, address: string) => ({
+      depth,
+      icon: '∞',
+      kind,
+      name,
+      current: false,
+      abyssal: false,
+      address,
+      portrait: new NoPortrait(),
+      children: [],
+      facts: [],
+      words: '',
+      scale: '10²⁶ m',
     });
-    expect(traced.trace).toEqual({
-      shown: true,
-      label: 'Lattice trace',
-      heading: '[NEURAL_LATTICE_TRACE_INITIATED]',
-      picture: {
-        rows: [
-          {
-            depth: '[00]',
-            glyph: '∞',
-            kind: 'UNIVERSE',
-            name: 'The Endless Universe',
-            current: false,
-            abyssal: false,
-          },
-          {
-            depth: '[08]',
-            glyph: '⌂',
-            kind: 'BUILDING',
-            name: 'Ornate Sanctum [BREACHED]',
-            current: false,
-            abyssal: false,
-          },
-          {
-            depth: '[12]',
-            glyph: '☠',
-            kind: 'SHARD',
-            name: 'Inverted Processing Core',
-            current: true,
-            abyssal: true,
-          },
-        ],
-      },
-      lines: [
-        '[00] ∞ UNIVERSE : The Endless Universe',
-        '[08] ⌂ BUILDING : Ornate Sanctum [BREACHED]',
-        '>> [12] ☠ SHARD : Inverted Processing Core',
-      ],
-    });
-    expect(traced.regions.trace).toBe('Trace');
+    const traced = shown(
+      presenter.toViewModel({
+        ...OUTDOORS,
+        trace: {
+          steps: [
+            { ...step(0, 'Universe', 'The Endless Universe', '0'), words: 'A neural web.' },
+            {
+              ...step(4, 'Planet', 'Auraea', '0.1'),
+              facts: [{ key: 'era', label: 'Era', value: 'future' }],
+              children: [
+                {
+                  address: '0.1.0',
+                  name: 'Glacier',
+                  ordinal: '1',
+                  landmark: false,
+                  visited: true,
+                  sealed: false,
+                },
+                {
+                  address: '0.1.1',
+                  name: 'Dunes',
+                  ordinal: '2',
+                  landmark: false,
+                  visited: false,
+                  sealed: false,
+                },
+              ],
+            },
+            { ...step(12, 'Shard', 'Inverted Processing Core', '0.1.0'), current: true, abyssal: true },
+          ],
+        },
+      }).trace,
+    );
+    expect(traced.bands.map((band) => band.eyebrow)).toEqual([
+      'Depth 00 · Universe',
+      'Depth 04 · Planet',
+      'Depth 12 · Shard',
+    ]);
+    expect(traced.bands.map((band) => band.here)).toEqual([false, false, true]);
+    expect(traced.bands.map((band) => band.label)).toEqual([
+      'Depth 00, Universe: The Endless Universe',
+      'Depth 04, Planet: Auraea',
+      'Depth 12, Shard: Inverted Processing Core, you are here',
+    ]);
+    expect(traced.bands.map((band) => band.into)).toEqual(['0.1', '0.1.0', '']);
+    expect(traced.bands[1]?.facts).toEqual([
+      '2 inside · 1 visited',
+      'You went down into Inverted Processing Core',
+    ]);
+    expect(traced.bands[2]?.facts).toEqual([]);
+    expect(traced.bands[1]?.tags).toEqual([{ key: 'era', label: 'Era', value: 'Future' }]);
+    expect(traced.bands[0]?.words).toBe('A neural web.');
+    expect(traced.bands.map((band) => band.abyssal)).toEqual([false, false, true]);
   });
 
   test('the dock folds after the way out (I09): on a phone LEAVE stays in reach and every other option opens behind MORE; the fold is empty of LEAVE at the universe', () => {

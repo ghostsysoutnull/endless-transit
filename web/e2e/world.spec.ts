@@ -113,8 +113,8 @@ test('a long street: twenty buildings, every one a button, two of them landmarks
   await expect(page.getByTestId('sealed-note')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
   await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
-  // Twenty buildings and the dock: LEAVE and MORE (I09), the rest folded — the HUD's readout button is gone (U01a).
-  await expect(page.getByRole('button')).toHaveCount(20 + 2);
+  // Twenty buildings, the dock's LEAVE and MORE (I09), the rest folded, and the rail that opens the trace (U04).
+  await expect(page.getByRole('button')).toHaveCount(20 + 2 + 1);
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);

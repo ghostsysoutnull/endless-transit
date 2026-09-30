@@ -7,7 +7,8 @@ import type { AreaPart } from './AreaPart.ts';
 export const SECTOR_KIND = new LocationKind({
   key: 'sector',
   title: 'Galactic sector',
-  scale: '10²¹ m', icon: '○',
+  scale: '10²¹ m',
+  icon: '○',
   indexLabel: 'SECTOR',
 });
 

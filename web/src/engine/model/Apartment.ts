@@ -16,7 +16,8 @@ import type { Portrait } from './Portrait.ts';
 export const APARTMENT_KIND = new LocationKind({
   key: 'apartment',
   title: 'Apartment',
-  scale: '15 m', icon: '🚪',
+  scale: '15 m',
+  icon: '🚪',
   indexLabel: 'UNIT',
 });
 

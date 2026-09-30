@@ -113,15 +113,15 @@ export class Shell {
    * the one that undoes it is on offer, the ride has reached its end (the Peak, the last room) and the
    * focus rests on the screen's resting place (`[data-rest]`) — never on the way back, where the next Enter
    * would undo the ride; anywhere else, to the first option that is not that way back. Which option undoes
-   * which is data the option carries; the shell matches no label. Only a button that is shown can take the
-   * focus (a folded dock hides some, I09): back in the scene just left with that button folded away, the
+   * which is data the option carries; the shell matches no label. Only a button that is shown and in the tab
+   * order can take the focus (the rail, U04, repeats the dock's TRACE out of it) (a folded dock hides some, I09): back in the scene just left with that button folded away, the
    * focus rests on the screen rather than on a button that would go a step deeper. Focus that was not
    * inside the screen is never taken. The page is not scrolled to it: that is the next rule's business.
    */
   #focusAnOption(scene: string, pressed: OptionVM | undefined): void {
     const container = this.#container;
     const options = [...(container?.querySelectorAll<HTMLElement>('button[data-option]') ?? [])].filter(
-      (each) => each.offsetParent !== null,
+      (each) => each.offsetParent !== null && each.tabIndex >= 0,
     );
     const rest = container?.querySelector<HTMLElement>('[data-rest]');
     const left = this.#left;

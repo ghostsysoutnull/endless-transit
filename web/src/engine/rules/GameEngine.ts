@@ -264,7 +264,6 @@ export class GameEngine {
               icon: step.kind().icon(),
               kind: step.kind().title(),
               name: step.name(),
-              meta: step.meta(),
               current: depth === trail.length - 1,
               abyssal: step.abyssal(),
             })),

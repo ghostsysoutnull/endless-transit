@@ -156,7 +156,7 @@ export class TraceBands {
       };
     });
     const reduced = this.#motion.reduced();
-    const reveal = reduced ? 1 : Math.min(1, (time - this.#opened) / REVEAL);
+    const reveal = reduced ? 1 : Math.min(1, Math.max(0, time - this.#opened) / REVEAL);
     thread.paint((context) => {
       context.clearRect(0, 0, size.width, size.height);
       const first = points[0];

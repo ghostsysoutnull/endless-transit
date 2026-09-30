@@ -108,6 +108,7 @@ describe('the building (U02): the tower drawn', () => {
       address: '0.0.0.0.1.0.0.0.0',
       landmark: true,
       car: 5,
+      breached: false,
       rows: Array.from({ length: 16 }, (_, number) => ({
         address: `0.0.0.0.1.0.0.0.0.${String(number)}`,
         level: new Level(number, 'floor'),
@@ -147,6 +148,7 @@ describe('the corridor (U02): its doors drawn', () => {
           childrenHeading: 'Doors',
           portrait: new CorridorPortrait({
             shape: 'curved',
+            abyssal: false,
             doors: [
               { address: '0.9.1', look: PLAIN, words: '' },
               { address: '0.9.0', look: FROZEN, words: 'KEEP_WALKING' },

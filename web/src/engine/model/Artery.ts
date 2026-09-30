@@ -1,4 +1,3 @@
-import type { Fact } from './Fact.ts';
 import { Corridor } from './Corridor.ts';
 import type { Floor } from './Floor.ts';
 import { LocationKind } from './LocationKind.ts';
@@ -8,7 +7,8 @@ import type { Vibe } from './Vibe.ts';
 export const ARTERY_KIND = new LocationKind({
   key: 'artery',
   title: 'Artery',
-  scale: '40 m', icon: '▅',
+  scale: '40 m',
+  icon: '▅',
   indexLabel: 'CONDUIT',
 });
 
@@ -37,10 +37,5 @@ export class Artery extends Corridor {
   /** The bedrock's vibe: what its Crypts and Shards draw from, and what the drain reads below it. */
   override vibe(): Vibe {
     return this.#vibe;
-  }
-
-  /** Its culture, a chip (U04): the bedrock's own. */
-  override facts(): readonly Fact[] {
-    return [{ key: 'culture', label: 'Culture', value: this.#vibe.culture().key() }];
   }
 }

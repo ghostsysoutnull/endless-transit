@@ -200,9 +200,9 @@ describe('GameEngine — walking the big world', () => {
       'recap',
     ]);
     const snapshot = walkedDown(engine, 0);
-    // No picture draws the universe: the screen stays as it was.
+    // The universe is drawn as an area of its filaments (U04).
     const { portrait, ...place } = must(snapshot.place ?? undefined);
-    expect(readPortrait(portrait)).toEqual({ drawn: 'unseen' });
+    expect(readPortrait(portrait).drawn).toBe('area');
     expect(place).toEqual({
       kind: 'Universe',
       icon: '∞',
@@ -210,7 +210,7 @@ describe('GameEngine — walking the big world', () => {
       address: '0',
       position: { counted: false },
       trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' }],
-      status: 'UNIMATRIX_STABLE',
+      status: '',
       description: ['A neural web of infinite complexity.'],
       facts: [],
       noise: new Seed(0xd7f5c533, 0xb7fc1498),

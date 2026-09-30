@@ -10,7 +10,8 @@ import type { AreaPart } from './AreaPart.ts';
 export const COUNTRY_KIND = new LocationKind({
   key: 'country',
   title: 'Country',
-  scale: '10⁶ m', icon: '⬚',
+  scale: '10⁶ m',
+  icon: '⬚',
   indexLabel: 'REGION',
 });
 
@@ -50,11 +51,6 @@ export class Country extends Location {
   /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
   status(): string {
     return '';
-  }
-
-  /** The trace's note (Country.groovy:30-32). */
-  override meta(): string {
-    return ` [TRAIT: ${this.#trait.key().toUpperCase()}]`;
   }
 
   childrenHeading(): string {
