@@ -11,6 +11,11 @@ const ROOM_PICTURES = [
   { width: 358, height: 243 },
   { width: 410, height: 348 },
 ] as const;
+/** The room's picture standing in it (U03d), measured on the smallest phone and on a Pixel 7. */
+const STANDING_PICTURES = [
+  { width: 326, height: 374 },
+  { width: 378, height: 573 },
+] as const;
 const layout = new PlanLayout(new SceneHash());
 
 describe('the plan’s camera on a picture of one size (U03)', () => {
@@ -64,6 +69,25 @@ describe('the plan’s camera on a picture of one size (U03)', () => {
             (bottomRight.y - topLeft.y) / size.height,
           );
           expect(filled, where).toBeGreaterThanOrEqual(0.85);
+        });
+      }
+    }
+  });
+
+  test('standing in a room (U03d): every room fills the picture edge to edge but for the margin, whatever its shape', () => {
+    for (const size of STANDING_PICTURES) {
+      for (const count of [1, 2, 10, 48]) {
+        const plan = layout.of(count, '0.4.1');
+        const camera = new PlanCamera(plan, size);
+        plan.rooms().forEach((room, index) => {
+          const framing = camera.inside(index);
+          const topLeft = framing.toPicture(room.topLeft(), size);
+          const bottomRight = framing.toPicture(room.bottomRight(), size);
+          const where = `${String(size.width)} × ${String(size.height)}, ${String(count)} rooms, room ${String(index)}`;
+          expect(topLeft.x, where).toBeCloseTo(12, 6);
+          expect(topLeft.y, where).toBeCloseTo(12, 6);
+          expect(bottomRight.x, where).toBeCloseTo(size.width - 12, 6);
+          expect(bottomRight.y, where).toBeCloseTo(size.height - 12, 6);
         });
       }
     }

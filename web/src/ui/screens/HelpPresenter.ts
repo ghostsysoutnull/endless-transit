@@ -60,7 +60,7 @@ export class HelpPresenter implements Presenter<HelpVM> {
             },
             {
               term: 'An object',
-              what: 'Tap one in a room to take it into the buffer. Sixteen fit; the tiles stop being buttons when it is full.',
+              what: 'Tap one in a room to take it into the buffer; it holds as many as you take.',
             },
           ],
         },

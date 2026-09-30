@@ -474,37 +474,7 @@ describe('Journey — where the traveller stands', () => {
     expect(trip.capture(0)).toBeUndefined();
   });
 
-  test('a capture is refused, touching nothing, when the buffer is full', () => {
-    const trip = inTheFirstRoom();
-    const room = must(trip.here());
-    for (let n = 0; n < 4; n++) expect(trip.capture(0), String(n)).toBeDefined();
-    expect(trip.move('forward')).toBe(true);
-    for (let n = 0; n < 4; n++) expect(trip.capture(0), String(n)).toBeDefined();
-    expect(trip.player().buffer().size()).toBe(8);
-    for (let n = 0; n < 4; n++) trip.merge(0, 1);
-    expect(trip.player().buffer().size()).toBe(4);
-    // Fill up from the second apartment's rooms.
-    expect(trip.move('back')).toBe(true);
-    expect(trip.leave()).toBe(true);
-    expect(trip.descend(1)).toBe(true);
-    while (!trip.player().buffer().full()) {
-      if (trip.capture(0) === undefined)
-        expect(trip.move('forward'), 'a room with something left').toBe(true);
-    }
-    expect(trip.player().buffer().size()).toBe(16);
-    if ((trip.here()?.contents()?.objects.length ?? 0) === 0) expect(trip.move('forward')).toBe(true);
-    const here = must(trip.here());
-    const objects = here.contents()?.objects.length ?? 0;
-    expect(objects).toBeGreaterThan(0);
-    const memento = here.remember();
-    expect(trip.capture(0)).toBeUndefined();
-    expect(here.contents()?.objects).toHaveLength(objects);
-    expect(here.remember()).toBe(memento);
-    expect(trip.player().buffer().size()).toBe(16);
-    expect(room.remember()).toContain('taken');
-  });
-
-  test('restore refuses a buffer the world could not have filled — a fragment from a room that never dealt it, from nowhere, a hybrid with a bad part, seventeen fragments — and a tally that is no count is no save at all', () => {
+  test('restore refuses a buffer the world could not have filled — a fragment from a room that never dealt it, from nowhere, a hybrid with a bad part — and a tally that is no count is no save at all; a buffer past the old sixteen is fine (U03d)', () => {
     const building = `${STREET}.0`;
     const room = `${building}.0.0.0.0`;
     const good = { kind: 'relic', from: room, key: 'with|reliquary box|plasma coil' };
@@ -520,7 +490,6 @@ describe('Journey — where the traveller stands', () => {
         'a hybrid with a bad part',
         [{ kind: 'hybrid', parts: [good, { kind: 'relic', from: room, key: 'x' }] }],
       ],
-      ['seventeen fragments', Array.from({ length: 17 }, () => good)],
     ];
     for (const [what, buffer] of cases) {
       const trip = journey();
@@ -533,21 +502,21 @@ describe('Journey — where the traveller stands', () => {
       expect(trip.restore(saved), what).toBe(false);
       expect(trip.world(), what).toBeUndefined();
     }
-    const sixteen = journey();
+    const many = journey();
     expect(
-      sixteen.restore(
+      many.restore(
         new SavedGame({
           seed: SEED,
           address: must(Address.parse(STREET)),
           visited: trailOf(STREET),
-          buffer: Array.from({ length: 16 }, () => good),
+          buffer: Array.from({ length: 40 }, () => good),
           resonant: 16,
         }),
       ),
     ).toBe(true);
-    expect(sixteen.player().buffer().size()).toBe(16);
-    expect(sixteen.player().resonantTraces()).toBe(16);
-    expect(sixteen.player().buffer().fragments()[0]?.frequency().hertz()).toBe(3194);
+    expect(many.player().buffer().size()).toBe(40);
+    expect(many.player().resonantTraces()).toBe(16);
+    expect(many.player().buffer().fragments()[0]?.frequency().hertz()).toBe(3194);
   });
 
   test('restore then saved() gives back exactly the save with a buffer of a relic and a hybrid, and a room that remembers a take and a drop', () => {

@@ -77,7 +77,7 @@ export const PLANET: GameSnapshot = {
     option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
   ],
   player: playerSummary({ coherence: 87, steps: 12 }),
-  buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
+  buffer: { size: 0, resonant: 0, fragments: [] },
   prompt: null,
   message: 'Entered Auraea.',
   scan: null,

@@ -134,7 +134,7 @@ options on offer and answers with a `Reply` that settles it or keeps it open; an
 
 **The traveller.** `Journey` owns the place the traveller stands in and the `Player`: `Coherence` (bands at 70/30,
 corruption below 40), steps (only moves count), the visited path (every ancestor of every place entered — the source
-of `[V]` marks), the `Buffer` (sixteen fragments; a merge of two makes their hybrid and restores 15), the resonance
+of `[V]` marks), the `Buffer` (no limit, U03d; a merge of two makes their hybrid and restores 15), the resonance
 tally (a fresh resonant capture counts once). Death rebuilds the world from the same seed on the starting street with
 100 Coherence; steps, visited places and the buffer are kept, every per-place memory is gone.
 
@@ -229,10 +229,13 @@ twenty, else by tens (`FloorsByTen`, the Layers together first, `LayersTogether`
 in walking order with its `RoomSight` — visited, known, fog, which `Apartment.plan` owns — and its relic marks, the
 room stood in, its `RoomLook`); a scan surveys the apartment, which remembers it. `PlanLayout` lays the rooms out in
 serpentine rows (`FloorPlan`: `PlanBox`es in plan units, a `PlanDoor` — `SideDoor` or `LevelDoor` — between each room
-and the next, the entrance under the first). The plan's view is a `Framing` (a centre in `PlanPoint`s and a scale),
-not one number, so it has its own host: `PlanScene` shows a `PlanSketch` (`Planned`: `PlanPicture` + `PlanVM`) on
-the shared `SceneCanvas`; its `PlanCamera` keeps the framing in range, rests on a room filling the picture (U03c), coasts, settles a pinch on the
-room or the whole plan and shows the `Minimap`, whose tap pulls back to the whole plan (an option's hit wins over it);
+and the next, the entrance under the first). The plan's view is a `Framing` (a centre in `PlanPoint`s, a scale and a
+vertical stretch), not one number, so it has its own host: `PlanScene` shows a `PlanSketch` (`Planned`: `PlanPicture` +
+`PlanVM`) on the shared `SceneCanvas`, in a `ViewMode` (U03d): `InRoom` — the room you stand in stretched to fill the
+picture (`PlanCamera.inside`), still, every new room starting there — or `OverPlan`, which a MAP key over the picture
+flips to and back (its words in the `PlanVM`). Over the plan, the `PlanCamera` keeps the framing in range, rests on a
+room filling the picture (U03c), coasts, settles a pinch on the room or the whole plan and shows the `Minimap`, whose
+tap pulls back to the whole plan (an option's hit wins over it); the mode hands the picture its corner map;
 a `PlanGesture` is a `PlanDrag` or a `Pinch`, and says how it lets go (`release`, told a `LetGo`: a drag coasts, a
 pinch settles); a `PlanGlide` moves the view and a `PlanTrip` moves it then picks. The
 picture places each room (`PlacedRoom`) and paints it by its sight (`SIGHT_LOOKS`: a `SeenLook` or the `FogLook`, in

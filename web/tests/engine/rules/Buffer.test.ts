@@ -2,19 +2,14 @@ import { describe, expect, test } from 'vitest';
 import { Buffer } from '#engine/rules/Buffer.ts';
 import { fragment } from '#tests/support/fragment.ts';
 
-describe('Buffer — the quantum trace buffer (Guide:236-243; the HUD’s n/16 made true, Decision 7)', () => {
-  test('empty at birth, holds sixteen, refuses the seventeenth', () => {
+describe('Buffer — the quantum trace buffer (Guide:236-243; no limit, U03d)', () => {
+  test('empty at birth; holds every fragment added, past the old sixteen, in the order they came', () => {
     const buffer = new Buffer();
     expect(buffer.size()).toBe(0);
-    expect(buffer.capacity()).toBe(16);
-    expect(buffer.full()).toBe(false);
-    for (let n = 0; n < 16; n++)
-      expect(buffer.add(fragment(`Item ${String(n)}`, n + 1)), String(n)).toBe(true);
-    expect(buffer.size()).toBe(16);
-    expect(buffer.full()).toBe(true);
-    expect(buffer.add(fragment('One More', 99))).toBe(false);
-    expect(buffer.size()).toBe(16);
-    expect(() => new Buffer(Array.from({ length: 17 }, (_, n) => fragment('x', n)))).toThrow(RangeError);
+    for (let n = 0; n < 40; n++) buffer.add(fragment(`Item ${String(n)}`, n + 1));
+    expect(buffer.size()).toBe(40);
+    expect(buffer.fragments()[39]?.name()).toBe('Item 39');
+    expect(new Buffer(Array.from({ length: 40 }, (_, n) => fragment('x', n))).size()).toBe(40);
   });
 
   test('take removes the fragment at that position and hands it over; nothing at a position nobody holds', () => {
@@ -44,13 +39,5 @@ describe('Buffer — the quantum trace buffer (Guide:236-243; the HUD’s n/16 m
     expect(buffer.merge(0, 1)?.name()).toBe('Bone-Paper-Rusted Hybrid'); // a hybrid's first word is its whole dash-joined head (SynthesisService.groovy:21)
     expect(buffer.size()).toBe(1);
     expect(buffer.merge(0, 1)).toBeUndefined();
-  });
-
-  test('a full buffer merges (two out, one in) and takes again after', () => {
-    const buffer = new Buffer(Array.from({ length: 16 }, (_, n) => fragment(`Item ${String(n)}`, n + 1)));
-    expect(buffer.merge(0, 15)?.name()).toBe('Item-Item Hybrid');
-    expect(buffer.size()).toBe(15);
-    expect(buffer.add(fragment('One More', 99))).toBe(true);
-    expect(buffer.full()).toBe(true);
   });
 });

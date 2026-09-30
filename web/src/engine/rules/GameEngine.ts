@@ -465,40 +465,27 @@ export class GameEngine {
 
   /**
    * One take per object lying here, in the room's order, keyed by the digits (the old `t` menu's numbers,
-   * Guide:120); listed sealed while the buffer is full — shown, not tappable — so the room still reads whole.
+   * Guide:120).
    */
   #takeOptions(): readonly GameOption[] {
     const here = this.#journey.here();
     const contents = here?.contents();
     if (contents === undefined || contents === null) return [];
-    const full = this.#journey.player().buffer().full();
     return contents.objects.map((fragment, index) => ({
-      ...systemOption(
-        `${CAPTURE}${String(index)}`,
-        full ? '' : (DIGITS[index] ?? ''),
-        `Take ${fragment.name()}`,
-      ),
+      ...systemOption(`${CAPTURE}${String(index)}`, DIGITS[index] ?? '', `Take ${fragment.name()}`),
       place: fragment.name(),
       role: 'take',
-      sealed: full,
       ordinal: String(index + 1),
     }));
   }
 
-  /** The echo hunt of a Null Reach (Guide:116, 192-195): scan until the signal locks, then capture — sealed while the buffer is full. */
+  /** The echo hunt of a Null Reach (Guide:116, 192-195): scan until the signal locks, then capture. */
   #echoOptions(): readonly GameOption[] {
     const echo = this.#journey.here()?.echo();
     if (echo === undefined || echo.found()) return [];
     const scan: GameOption = { ...systemOption(ECHO, ECHO_KEY, 'Scan for spectral echoes'), role: 'move' };
     if (!echo.locked()) return [scan];
-    return [
-      scan,
-      {
-        ...systemOption(CAPTURE_ECHO, CAPTURE_KEY, 'Capture Spectral Echo'),
-        role: 'move',
-        sealed: this.#journey.player().buffer().full(),
-      },
-    ];
+    return [scan, { ...systemOption(CAPTURE_ECHO, CAPTURE_KEY, 'Capture Spectral Echo'), role: 'move' }];
   }
 
   /** One option per move the place offers, with the key the Guide gives it and the option that undoes it. */
@@ -560,7 +547,6 @@ export class GameEngine {
     const buffer = player.buffer();
     return {
       size: buffer.size(),
-      capacity: buffer.capacity(),
       resonant: player.resonantTraces(),
       fragments: buffer.fragments().map((fragment) => ({
         key: fragment.key(),

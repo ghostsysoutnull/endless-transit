@@ -7,6 +7,7 @@ import type { Diamond } from './Diamond.ts';
 import type { FloorPlan } from './FloorPlan.ts';
 import type { Framing } from './Framing.ts';
 import type { Glow } from './Glow.ts';
+import type { MinimapView } from './MinimapView.ts';
 import type { PictureFont } from './PictureFont.ts';
 import { PlacedRoom } from './PlacedRoom.ts';
 import { PlanCamera } from './PlanCamera.ts';
@@ -19,6 +20,7 @@ import { PlanPoint } from './PlanPoint.ts';
 import type { PlanVM } from './PlanVM.ts';
 import type { Point } from './Point.ts';
 import type { RelicSpot } from './RelicSpot.ts';
+import type { RoomFrame } from './RoomFrame.ts';
 import type { RoomInside } from './RoomInside.ts';
 import type { RoomInsides } from './RoomInsides.ts';
 import type { SceneChild } from './SceneChild.ts';
@@ -41,7 +43,7 @@ const FINE_GRID = 60;
  * out by `PlanLayout` in walking order, walls between them and a doorway only into the next, the entrance under the
  * first; each room as its sight shows it (`SIGHT_LOOKS`: fog, known, visited), the room you stand in outlined, you in
  * it — drawn in full while its box is large enough (`RoomInsides`, U03b) — and its relics as things to tap, lit and
- * labelled; the minimap while the plan runs past the frame. A pure function of its view-model, size, framing, time and
+ * labelled; the corner map it is handed. A pure function of its view-model, size, framing, time and
  * lit option.
  */
 export class PlanPicture implements PlanDrawing<PlanVM> {
@@ -69,15 +71,15 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     return new PlanCamera(this.#plan(vm), size);
   }
 
-  rest(vm: PlanVM, camera: PlanCamera): Framing {
-    return camera.room(this.#index(vm, vm.here));
+  rest(vm: PlanVM, camera: PlanCamera, frame: RoomFrame): Framing {
+    return frame.room(camera, this.#index(vm, vm.here));
   }
 
   /** A doorway leads the view into its room; the way out pulls back to the whole plan; a relic is taken where it lies. */
-  stopOf(vm: PlanVM, camera: PlanCamera, id: string): Framing | undefined {
+  stopOf(vm: PlanVM, camera: PlanCamera, id: string, frame: RoomFrame): Framing | undefined {
     if (vm.exits.some((exit) => exit.id === id)) return camera.whole();
     const door = vm.doors.find((each) => each.id === id);
-    return door === undefined ? undefined : camera.room(this.#index(vm, door.address));
+    return door === undefined ? undefined : frame.room(camera, this.#index(vm, door.address));
   }
 
   layout(vm: PlanVM, size: PictureSize, framing: Framing): readonly SceneHit[] {
@@ -100,6 +102,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     time: number,
     lit: ChildMark,
     framing: Framing,
+    corner: MinimapView,
   ): void {
     const plan = this.#plan(vm);
     const scale = framing.scale();
@@ -125,7 +128,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     for (const room of rooms) room.paintMarks(painter, palette, { font: this.#font, diamond: this.#diamond });
     for (const room of rooms) this.#you(painter, room.you(), palette, time);
     this.#relics(painter, vm, plan, size, palette, framing, lit, time);
-    this.camera(vm, size).minimap(framing).paint(painter, palette, vm.rooms, framing);
+    corner.paint(painter, palette, vm.rooms, framing);
     painter.globalAlpha = 1;
   }
 

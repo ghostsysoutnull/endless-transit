@@ -103,7 +103,6 @@ const ROOM: GameSnapshot = {
   },
   buffer: {
     size: 1,
-    capacity: 16,
     resonant: 2,
     fragments: [{ key: 'culture|tatami mat', name: 'tatami mat', hertz: 1188, resonant: true }],
   },
@@ -175,7 +174,7 @@ describe('HudPresenter.toViewModel — the header: what, which, where', () => {
   test('the readouts in plain words (U01a): the steps and the buffer — the depth is the rail; the locus, its hash, the seed and the readout fold are gone', () => {
     expect(vm.stats).toEqual([
       { key: 'steps', label: 'Steps', value: '12' },
-      { key: 'buffer', label: 'Buffer', value: '0/16' },
+      { key: 'buffer', label: 'Buffer', value: '0' },
     ]);
     expect(vm).not.toHaveProperty('readout');
     expect(vm).not.toHaveProperty('crumbs');
@@ -218,8 +217,8 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(vm.aside.objects).toEqual({
       label: 'In this room',
       heading: 'IN THIS ROOM',
+      peek: 'About this room · 2 relics',
       empty: '',
-      note: '',
       tiles: [
         {
           key: 'with|tatami mat|floppy disk',
@@ -235,7 +234,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
         },
       ],
     });
-    expect(vm.stats[1]).toEqual({ key: 'buffer', label: 'Buffer', value: '1/16' });
+    expect(vm.stats[1]).toEqual({ key: 'buffer', label: 'Buffer', value: '1' });
     expect(vm.options.map((each) => each.id)).toEqual([
       'capture:0',
       'capture:1',
@@ -245,20 +244,6 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
       'to-title',
     ]);
     expect(vm.dock.map((each) => each.label)).toEqual(['▲ LEAVE THE APARTMENT', 'BUFFER', 'TITLE SCREEN']);
-  });
-
-  test('a full buffer: the takes come sealed, so the tiles have no action and the pane says why; nothing of it is on offer', () => {
-    const full = presenter.toViewModel({
-      ...ROOM,
-      buffer: { size: 16, capacity: 16, resonant: 0, fragments: [] },
-      options: ROOM.options.map((option) =>
-        option.role === 'take' ? { ...option, key: '', sealed: true } : option,
-      ),
-    });
-    expect(full.aside.objects?.note).toBe('The buffer is full: merge or drop a fragment to take more.');
-    expect(full.aside.objects?.tiles.map((tile) => tile.action)).toEqual([null, null]);
-    expect(full.options.map((each) => each.id)).toEqual(['move:forward', 'leave', 'buffer', 'to-title']);
-    expect(full.stats[1]).toEqual({ key: 'buffer', label: 'Buffer', value: '16/16' });
   });
 
   test('an empty room says so in words and has no Relics row (Room.groovy:287); a place that holds nothing (a planet) has no objects pane at all', () => {
@@ -273,8 +258,8 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(bare.aside.objects).toEqual({
       label: 'In this room',
       heading: 'IN THIS ROOM',
+      peek: 'About this room',
       empty: 'No objects detected.',
-      note: '',
       tiles: [],
     });
     expect(bare.place.rows).toEqual([

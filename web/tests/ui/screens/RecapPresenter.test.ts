@@ -52,7 +52,7 @@ const RECAP: GameSnapshot = {
     noise: new Seed(0, 0),
   },
   player: playerSummary({ coherence: 61, band: 'degraded', steps: 33, decay: 0.1 }),
-  buffer: { size: 2, capacity: 16, resonant: 1, fragments: [] },
+  buffer: { size: 2, resonant: 1, fragments: [] },
   prompt: {
     id: 'recap',
     outcome: 'expedition',

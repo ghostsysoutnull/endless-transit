@@ -122,14 +122,14 @@ test('a relic taken flies from where it lay to the Buffer count, which counts it
   await tapOption(page, 'capture:0', hasTouch);
   await expect(page.getByTestId('relic-flight')).toHaveCount(1);
   await expect(page.getByTestId('relic-flight')).toHaveCount(0);
-  await expect(page.getByTestId('stat-buffer')).toHaveText('2/16');
+  await expect(page.getByTestId('stat-buffer')).toHaveText('2');
 });
 
 test('reduced motion: a relic taken does not fly', async ({ page, hasTouch }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await inTheFirstRoom(page);
   await tapOption(page, 'capture:0', hasTouch);
-  await expect(page.getByTestId('stat-buffer')).toHaveText('2/16');
+  await expect(page.getByTestId('stat-buffer')).toHaveText('2');
   await expect(page.getByTestId('relic-flight')).toHaveCount(0);
 });
 
@@ -212,7 +212,12 @@ function apart(one: { x: number; y: number }, other: { x: number; y: number }): 
   return Math.hypot(one.x - other.x, one.y - other.y);
 }
 
-test('pinched out, the view settles on the whole plan; pinched in, it settles back in the room (U03c)', async ({
+/** The key over the picture that flips between standing in the room and the apartment's plan (U03d). */
+function theMapKey(page: Page) {
+  return page.getByTestId('scene').getByRole('button', { name: 'Apartment plan' });
+}
+
+test('standing in the room (U03d): the MAP key starts off; no pinch and no corner map move the view', async ({
   page,
 }) => {
   const problems = watchForErrors(page);
@@ -220,50 +225,94 @@ test('pinched out, the view settles on the whole plan; pinched in, it settles ba
   await inARoomOfNine(page);
   await page.clock.runFor(1500);
   await holdTime(page);
+  await expect(theMapKey(page)).toHaveAttribute('aria-pressed', 'false');
   const inside = await pointOf(page, 'capture:0');
-  await shoot(page, 'plan-nine-rest');
+  await shoot(page, 'plan-nine-inside');
   await pinch(page, 200, 60);
+  await page.clock.runFor(1500);
+  await tapTheCornerMap(page);
+  await page.clock.runFor(1500);
+  expect(await pointOf(page, 'capture:0')).toEqual(inside);
+  expect(problems).toEqual([]);
+});
+
+test('the MAP key glides out to the plan and back in (U03d); over the plan a pinch settles and the corner map pulls back (U03c)', async ({
+  page,
+  hasTouch,
+}) => {
+  const problems = watchForErrors(page);
+  await page.clock.install();
+  await inARoomOfNine(page);
+  await page.clock.runFor(1500);
+  await holdTime(page);
+  const inside = await pointOf(page, 'capture:0');
+  await (hasTouch ? theMapKey(page).tap() : theMapKey(page).click());
+  await expect(theMapKey(page)).toHaveAttribute('aria-pressed', 'true');
   await page.clock.runFor(1500);
   const whole = await pointOf(page, 'capture:0');
   expect(apart(whole, inside)).toBeGreaterThan(20);
   await shoot(page, 'plan-nine-whole');
   await pinch(page, 60, 200);
   await page.clock.runFor(1500);
-  expect(await pointOf(page, 'capture:0')).toEqual(inside);
+  const room = await pointOf(page, 'capture:0');
+  expect(apart(room, whole)).toBeGreaterThan(20);
   // The tap after a pinch is a tap: the corner map pulls back to the same whole plan.
   await tapTheCornerMap(page);
   await page.clock.runFor(1500);
   expect(await pointOf(page, 'capture:0')).toEqual(whole);
+  await (hasTouch ? theMapKey(page).tap() : theMapKey(page).click());
+  await expect(theMapKey(page)).toHaveAttribute('aria-pressed', 'false');
+  await page.clock.runFor(1500);
+  expect(await pointOf(page, 'capture:0')).toEqual(inside);
   expect(problems).toEqual([]);
 });
 
-test('the corner map, tapped, pulls the view back to the whole plan (U03c)', async ({ page }) => {
+test('a move made from the plan lands standing in the next room (U03d)', async ({ page, hasTouch }) => {
   await page.clock.install();
   await inARoomOfNine(page);
   await page.clock.runFor(1500);
-  await holdTime(page);
-  const inside = await pointOf(page, 'capture:0');
-  await tapTheCornerMap(page);
+  await (hasTouch ? theMapKey(page).tap() : theMapKey(page).click());
   await page.clock.runFor(1500);
-  const pulledBack = await pointOf(page, 'capture:0');
-  expect(apart(pulledBack, inside)).toBeGreaterThan(20);
-  await expect(page.getByTestId('place-name')).toHaveText('Paper Security Station');
-  // It is the whole plan: pinching out from there settles where it is.
-  await pinch(page, 200, 60);
+  await tapOption(page, 'move:forward', hasTouch);
   await page.clock.runFor(1500);
-  expect(await pointOf(page, 'capture:0')).toEqual(pulledBack);
+  await expect(page.getByTestId('place-name')).not.toHaveText('Paper Security Station');
+  await expect(theMapKey(page)).toHaveAttribute('aria-pressed', 'false');
 });
 
-test('reduced motion: the corner map and a pinch move the view at once (U03c)', async ({ page }) => {
+test('reduced motion: the MAP key, a pinch and the corner map move the view at once', async ({
+  page,
+  hasTouch,
+}) => {
   await page.clock.install();
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await inARoomOfNine(page);
   await holdTime(page);
   // No frame runs from here on: a view that waited for a glide would never move.
   const inside = await pointOf(page, 'capture:0');
-  await tapTheCornerMap(page);
+  await (hasTouch ? theMapKey(page).tap() : theMapKey(page).click());
   const whole = await pointOf(page, 'capture:0');
   expect(apart(whole, inside)).toBeGreaterThan(20);
   await pinch(page, 60, 200);
-  expect(await pointOf(page, 'capture:0')).toEqual(inside);
+  expect(apart(await pointOf(page, 'capture:0'), whole)).toBeGreaterThan(20);
+  await tapTheCornerMap(page);
+  expect(await pointOf(page, 'capture:0')).toEqual(whole);
+});
+
+test('standing in the room, a picture that changes height (the phone’s address bar) keeps the room filling it (U03d)', async ({
+  page,
+}) => {
+  await page.clock.install();
+  await inARoomOfNine(page);
+  await page.clock.runFor(1500);
+  const share = async (): Promise<number> => {
+    const box = await page.getByTestId('scene').boundingBox();
+    if (box === null) throw new Error('no picture');
+    return ((await pointOf(page, 'capture:0')).y - box.y) / box.height;
+  };
+  const before = await share();
+  const size = page.viewportSize();
+  if (size === null) throw new Error('no viewport');
+  await page.setViewportSize({ width: size.width, height: size.height - 200 });
+  await page.clock.runFor(500);
+  expect(await share()).toBeCloseTo(before, 1);
 });

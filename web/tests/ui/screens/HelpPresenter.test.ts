@@ -31,7 +31,7 @@ const HELP: GameSnapshot = {
     noise: new Seed(0, 0),
   },
   player: playerSummary({ coherence: 85, steps: 14 }),
-  buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
+  buffer: { size: 0, resonant: 0, fragments: [] },
   prompt: { id: 'help', outcome: '', figures: {} },
   options: [
     {

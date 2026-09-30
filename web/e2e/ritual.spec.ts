@@ -89,9 +89,9 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
   await expect(page.getByTestId('status')).toContainText(
     'SPECTRAL_DEVIATION: Extracted Frequency 3493777 Hz.',
   );
-  await expect(stat(page, 'Buffer')).toHaveText('2/16');
+  await expect(stat(page, 'Buffer')).toHaveText('2');
   await tapOption(page, 'capture:0', hasTouch);
-  await expect(stat(page, 'Buffer')).toHaveText('3/16');
+  await expect(stat(page, 'Buffer')).toHaveText('3');
   await press(page, /^buffer$/i, hasTouch);
   const rows = page.locator('.frag');
   await expect(rows).toHaveCount(3);
@@ -122,7 +122,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   );
   await page.goto('./');
   await expect(page.getByTestId('place-name')).toHaveText('Floor 15');
-  await expect(stat(page, 'Buffer')).toHaveText('1/16');
+  await expect(stat(page, 'Buffer')).toHaveText('1');
   const breach = page.getByRole('button', { name: /breach the bedrock/i });
   await expect(breach).toBeVisible();
   await expect(page.locator('.moves button')).toHaveCount(3);
@@ -134,7 +134,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await press(page, /back to elevator/i, hasTouch);
   await press(page, /breach the bedrock/i, hasTouch);
   await expect(page.getByTestId('status')).toContainText('HARMONIC_INVERSION_PROTOCOL_ENGAGED');
-  await expect(stat(page, 'Buffer')).toHaveText('0/16');
+  await expect(stat(page, 'Buffer')).toHaveText('0');
   await expect(page.getByRole('button', { name: /breach the bedrock/i })).toHaveCount(0);
   await expect(page.locator('.moves button')).toHaveCount(2);
 

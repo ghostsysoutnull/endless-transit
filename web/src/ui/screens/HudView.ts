@@ -322,6 +322,20 @@ export class HudView implements View<HudVM> {
               ></div>`
             : nothing
         }
+        ${
+          drawn && vm.aside.objects !== null
+            ? html`<button
+                type="button"
+                class="peek"
+                data-testid="peek"
+                @click=${(event: Event) => {
+                  this.#toWords(event);
+                }}
+              >
+                ${vm.aside.objects.peek} <span aria-hidden="true">↓</span>
+              </button>`
+            : nothing
+        }
         ${this.#scan(vm)} ${vm.map.shown ? this.#map(vm.map, 'map', 'map', vm.regions.map) : nothing}
         ${this.#trace(vm)}
         <div class="side">
@@ -498,7 +512,14 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  /** The objects of a room as tiles — a button each while the buffer has room, a plain tile otherwise — the telemetry block, or the map. */
+  /** Down to the room's words, under the picture (U03d). */
+  #toWords(event: Event): void {
+    const button = event.currentTarget;
+    if (!(button instanceof HTMLElement)) return;
+    button.closest('.world')?.querySelector('.desc')?.scrollIntoView({ block: 'start' });
+  }
+
+  /** The objects of a room as tiles — a button each while the engine offers its take, a plain tile otherwise — the telemetry block, or the map. */
   #aside(vm: HudVM): TemplateResult | typeof nothing {
     const { objects, telemetry, map } = vm.aside;
     if (objects === null && telemetry === null && map === null) return nothing;
@@ -511,7 +532,6 @@ export class HudView implements View<HudVM> {
                 <section class="objects" data-testid="objects" aria-label=${objects.label}>
                   <h3 class="heading">${objects.heading}</h3>
                   ${objects.empty === '' ? nothing : html`<p class="empty">${objects.empty}</p>`}
-                  ${objects.note === '' ? nothing : html`<p class="empty" data-testid="buffer-full">${objects.note}</p>`}
                   ${
                     objects.tiles.length === 0
                       ? nothing

@@ -3,10 +3,13 @@ import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Framing } from './Framing.ts';
+import type { MapKey } from './MapKey.ts';
+import type { MinimapView } from './MinimapView.ts';
 import type { PlanCamera } from './PlanCamera.ts';
 import type { PlanDrawing } from './PlanDrawing.ts';
 import type { PlanSketch } from './PlanSketch.ts';
 import type { PlanVM } from './PlanVM.ts';
+import type { RoomFrame } from './RoomFrame.ts';
 import type { SceneChild } from './SceneChild.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { SceneStages } from './SceneStages.ts';
@@ -54,19 +57,24 @@ export class Planned implements PlanSketch {
     time: number,
     lit: ChildMark,
     framing: Framing,
+    corner: MinimapView,
   ): void {
-    this.#picture.paint(painter, this.#vm, size, palette, time, lit, framing);
+    this.#picture.paint(painter, this.#vm, size, palette, time, lit, framing, corner);
   }
 
   camera(size: PictureSize): PlanCamera {
     return this.#picture.camera(this.#vm, size);
   }
 
-  stopOf(camera: PlanCamera, id: string): Framing | undefined {
-    return this.#picture.stopOf(this.#vm, camera, id);
+  stopOf(camera: PlanCamera, id: string, frame: RoomFrame): Framing | undefined {
+    return this.#picture.stopOf(this.#vm, camera, id, frame);
   }
 
-  rest(camera: PlanCamera): Framing {
-    return this.#picture.rest(this.#vm, camera);
+  rest(camera: PlanCamera, frame: RoomFrame): Framing {
+    return this.#picture.rest(this.#vm, camera, frame);
+  }
+
+  mapKey(): MapKey {
+    return this.#vm.mapKey;
   }
 }

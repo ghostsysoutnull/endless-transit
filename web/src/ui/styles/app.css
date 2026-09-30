@@ -1644,7 +1644,12 @@ body {
 }
 
 .dock > .pb[data-role='out']:has(+ .pb:not(.more)) {
-  flex-basis: 100%;
+  flex: 1 1 88px;
+  padding-inline: 8px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
 }
 
 .dock .pb.more {
@@ -1702,10 +1707,66 @@ body {
   order: -1;
 }
 
-/* A room on one screen (U03c): the picture, then its words, then its relics' tiles — the moves are in the dock. The
-   picture leaves the words' first line above the dock at 360 × 640, and keeps at most 38 % of a tall phone. */
+/* A room, large (U03d): the picture runs from the top bar down to the button that leads to its words, just above a
+   one-row dock; the words and the relics' tiles are a scroll below. */
 .world[data-drawn]:has(.objects) > .scene {
-  height: clamp(180px, calc(100dvh - 400px), 38dvh);
+  height: max(260px, calc(100dvh - 264px));
+}
+
+/* The way down to the room's words and relics, right under the picture. */
+.peek {
+  all: unset;
+  box-sizing: border-box;
+  order: -2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tap);
+  margin-top: -6px;
+  border: 1px dashed var(--rule-hi);
+  border-top: 0;
+  color: var(--dim);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.peek:focus-visible {
+  outline: 2px solid var(--cy);
+  outline-offset: -2px;
+}
+
+/* The corner map's switch (U03d): a small key in the picture's bottom right corner, lit while the map shows. */
+.scene .mapkey {
+  all: unset;
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 1;
+  box-sizing: border-box;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  padding-inline: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule-hi);
+  background: var(--ground);
+  color: var(--dim);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.scene .mapkey[aria-pressed='true'] {
+  border-color: var(--cy);
+  color: var(--cy);
+}
+
+.scene .mapkey:focus-visible {
+  outline: 2px solid var(--cy);
 }
 
 /* The room's card gives up its box so its words can stand before the tiles; the chips, furniture and status follow. */

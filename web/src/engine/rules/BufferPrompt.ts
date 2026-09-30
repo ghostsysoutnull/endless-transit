@@ -19,7 +19,7 @@ const DIGITS = Array.from({ length: 9 }, (_, n) => String(n + 1));
  * another, merges them (Guide:241-243) and gives fifteen back (Guide:141); picking the selected one again
  * unselects it — or, inside a primed building, forges its Keystone (Guide:250-252, 271-274). In a room, every
  * fragment can be dropped where the traveller stands (Guide:120-121); the
- * old screen's destroy is not carried — with a capacity, a drop covers every use. Back to reality closes
+ * old screen's destroy is not carried — a drop covers every use. Back to reality closes
  * it. The selection is the prompt's own and is not saved: a reload lands in the world.
  */
 export class BufferPrompt implements Prompt {

@@ -73,7 +73,7 @@ export class BufferPresenter implements Presenter<BufferVM> {
       title: this.#masthead.name(),
       frame: this.#frame.of(snapshot.place),
       heading,
-      count: { label: 'TRACE_BUFFER', value: `${pad(buffer.size)}/${pad(buffer.capacity)} FRAGMENTS` },
+      count: { label: 'TRACE_BUFFER', value: `${pad(buffer.size)} FRAGMENTS` },
       tally: { label: 'RESONANT_TRACES', value: String(buffer.resonant) },
       empty: rows.length === 0 ? '(No spectral traces detected in local buffer)' : '',
       rows,

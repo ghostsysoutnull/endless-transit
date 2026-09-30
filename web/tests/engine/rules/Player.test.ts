@@ -83,11 +83,11 @@ describe('Player — the buffer and the resonance tally (Guide:141-142, 245-248;
     const player = new Player();
     expect(player.buffer().size()).toBe(0);
     expect(player.resonantTraces()).toBe(0);
-    expect(player.capture(found('Rusted Chain', 1032, false))).toBe(true);
+    player.capture(found('Rusted Chain', 1032, false));
     expect(player.resonantTraces()).toBe(0);
-    expect(player.capture(found('Paper Lantern', 1135, true))).toBe(true);
+    player.capture(found('Paper Lantern', 1135, true));
     expect(player.resonantTraces()).toBe(1);
-    expect(player.capture(found('Paper Lantern', 1135, true, false))).toBe(true);
+    player.capture(found('Paper Lantern', 1135, true, false));
     expect(player.resonantTraces()).toBe(1);
     expect(
       player
@@ -95,14 +95,6 @@ describe('Player — the buffer and the resonance tally (Guide:141-142, 245-248;
         .fragments()
         .map((each) => each.name()),
     ).toEqual(['Rusted Chain', 'Paper Lantern', 'Paper Lantern']);
-  });
-
-  test('a full buffer refuses a capture and counts nothing', () => {
-    const player = new Player();
-    for (let n = 0; n < 16; n++) player.capture(found(`Item ${String(n)}`, 1, false));
-    expect(player.capture(found('Late', 11, true))).toBe(false);
-    expect(player.buffer().size()).toBe(16);
-    expect(player.resonantTraces()).toBe(0);
   });
 
   test('a merge gives 15 coherence back, capped at 100, and counts when the hybrid resonates (a multiple of 11); a refused merge gives nothing (HK-015)', () => {

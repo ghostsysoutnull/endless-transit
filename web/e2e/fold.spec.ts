@@ -68,24 +68,28 @@ async function expectAnActionOnTheFirstScreen(page: Page, where: string): Promis
 }
 
 /**
- * A room on one screen (U03c): with the page at its top, the picture, the first line of the room's words and every
- * move are inside the viewport, the words above the dock — the relics are tapped in the picture, the moves sit in the
- * dock.
+ * A room, large (U03d): with the page at its top, the picture takes most of the screen and is wholly in it, every move
+ * sits in the dock, and the button down to the room's words stands above the dock — the words are a scroll away.
  */
 async function expectTheRoomOnTheFirstScreen(page: Page, where: string): Promise<void> {
   expect(await page.evaluate(() => window.scrollY), `${where}: the page is at its top`).toBe(0);
+  const viewport = page.viewportSize() ?? NARROW;
   await expect(page.getByTestId('scene'), `${where}: the picture`).toBeInViewport({ ratio: 1 });
+  const picture = await page.getByTestId('scene').boundingBox();
+  expect(picture?.height ?? 0, `${where}: the picture takes most of the screen`).toBeGreaterThanOrEqual(
+    viewport.height * 0.55,
+  );
   for (const move of await page.locator('.dock > button[data-option]').all())
     await expect(move, `${where}: a move in the dock`).toBeInViewport({ ratio: 1 });
-  const words = await page.locator('.desc').boundingBox();
-  const line = await page.locator('.desc').evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+  const peek = await page.getByTestId('peek').boundingBox();
   const dockTop = (await page.locator('.dock').boundingBox())?.y ?? 0;
   console.log(
-    `[fold] ${test.info().project.name} ${where}: words from y=${String(Math.round(words?.y ?? -1))}, dock from y=${String(Math.round(dockTop))}`,
+    `[fold] ${test.info().project.name} ${where}: picture ${String(Math.round(picture?.height ?? -1))} px, the way to the words to y=${String(Math.round((peek?.y ?? 0) + (peek?.height ?? 0)))}, dock from y=${String(Math.round(dockTop))}`,
   );
-  expect((words?.y ?? Infinity) + line, `${where}: the words' first line above the dock`).toBeLessThanOrEqual(
-    dockTop,
-  );
+  expect(
+    (peek?.y ?? Infinity) + (peek?.height ?? 0),
+    `${where}: the way to the words above the dock`,
+  ).toBeLessThanOrEqual(dockTop + 1);
 }
 
 /** Waits for a smooth scroll to end: the same scroll position twice, a frame apart. */
@@ -130,7 +134,7 @@ const KINDS: readonly {
   /** The panel the reach opens, if one. */
   readonly panel?: string;
   readonly expectKind: string;
-  /** A room: judged by the room's own first screen (U03c). */
+  /** A room: judged by the room's own first screen (U03d). */
   readonly room?: true;
 }[] = [
   { kind: 'street', save: saveText(SEED, STREET), expectKind: 'STREET' },
