@@ -72,6 +72,10 @@ export class Planned implements PlanSketch {
     return this.#picture.rest(this.#vm, camera);
   }
 
+  mapKey(): { readonly text: string; readonly label: string } {
+    return this.#vm.mapKey;
+  }
+
   home(camera: PlanCamera): Framing {
     return this.#picture.home(this.#vm, camera);
   }

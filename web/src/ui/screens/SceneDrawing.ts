@@ -86,6 +86,7 @@ export class SceneDrawing implements Drawings {
             doors,
             exits,
             relics,
+            mapKey: { text: 'MAP', label: 'Apartment plan' },
           },
           this.#docked,
         );

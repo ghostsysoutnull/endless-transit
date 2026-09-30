@@ -53,7 +53,6 @@ const OPEN: GameSnapshot = {
   player: playerSummary({ coherence: 54, band: 'degraded', steps: 6, decay: 0.2 }),
   buffer: {
     size: 2,
-    capacity: 16,
     resonant: 3,
     fragments: [
       {
@@ -93,7 +92,7 @@ describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groov
     expect(vm.scene).toBe('buffer');
     expect(vm.frame).toBe('yellow');
     expect(vm.heading).toBe('[QUANTUM_TRACE_BUFFER_SYNC...]');
-    expect(vm.count).toEqual({ label: 'TRACE_BUFFER', value: '02/16 FRAGMENTS' });
+    expect(vm.count).toEqual({ label: 'TRACE_BUFFER', value: '02 FRAGMENTS' });
     expect(vm.tally).toEqual({ label: 'RESONANT_TRACES', value: '3' });
     expect(vm.empty).toBe('');
     expect(vm.rows).toEqual([
@@ -143,13 +142,13 @@ describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groov
   test('an empty buffer says so in the old words; the engine’s message is the status and the note when it says something', () => {
     const vm = presenter.toViewModel({
       ...OPEN,
-      buffer: { size: 0, capacity: 16, resonant: 0, fragments: [] },
+      buffer: { size: 0, resonant: 0, fragments: [] },
       options: [option({ id: 'close', key: 'b', label: 'Back to reality', role: 'return' })],
       message: 'Dropped brass-plasma Hybrid here.',
     });
     expect(vm.rows).toEqual([]);
     expect(vm.empty).toBe('(No spectral traces detected in local buffer)');
-    expect(vm.count.value).toBe('00/16 FRAGMENTS');
+    expect(vm.count.value).toBe('00 FRAGMENTS');
     expect(vm.note).toBe('Dropped brass-plasma Hybrid here.');
     expect(vm.status).toBe('Dropped brass-plasma Hybrid here.');
   });
@@ -160,7 +159,6 @@ describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groov
         ...OPEN,
         buffer: {
           size: 1,
-          capacity: 16,
           resonant: 0,
           fragments: [{ key: 'k', name: 'x', hertz, resonant: false }],
         },

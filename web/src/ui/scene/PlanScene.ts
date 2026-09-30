@@ -108,8 +108,6 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const key = host.ownerDocument.createElement('button');
     key.type = 'button';
     key.className = 'mapkey';
-    key.textContent = 'MAP';
-    key.setAttribute('aria-label', 'Apartment plan');
     key.setAttribute('aria-pressed', String(this.#mode.pressed()));
     key.addEventListener('click', () => {
       this.#flip();
@@ -157,6 +155,8 @@ export class PlanScene implements StagedScene<PlanSketch> {
     }
     const canvas = this.#mounted?.canvas;
     canvas?.name(sketch.frame().label);
+    this.#mounted?.mapKey.replaceChildren(sketch.mapKey().text);
+    this.#mounted?.mapKey.setAttribute('aria-label', sketch.mapKey().label);
     canvas?.touch(true);
     this.#run();
   }

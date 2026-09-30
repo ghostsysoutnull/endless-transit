@@ -1113,7 +1113,7 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
       hertz: 1243085,
       resonant: false,
     };
-    expect(room.buffer).toEqual({ size: 1, capacity: 16, resonant: 0, fragments: [prize] });
+    expect(room.buffer).toEqual({ size: 1, resonant: 0, fragments: [prize] });
     expect(room.options.filter((option) => option.role === 'take')).toEqual([
       take(0, '1', 'plasma coil with reliquary box'),
       take(1, '2', 'brass censer fused to laser cutter'),
@@ -1127,7 +1127,6 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     expect(taken.player).toMatchObject({ coherence: 95, band: 'stable', steps: 5 });
     expect(taken.buffer).toEqual({
       size: 2,
-      capacity: 16,
       resonant: 1,
       fragments: [
         prize,
@@ -1315,13 +1314,13 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
     ]);
   });
 
-  test('a full buffer: the takes are listed sealed and a tap on one changes nothing; a merge makes room', () => {
+  test('past the old sixteen (U03d): the takes stay open and a take still goes into the buffer', () => {
     const engine = engineOn(new MemorySaveStore());
     inTheFirstRoom(engine);
     let snapshot = engine.snapshot();
     let door = 0;
-    for (let taps = 0; (snapshot.buffer?.size ?? 0) < 16; taps++) {
-      expect(taps, 'taps to fill the buffer').toBeLessThan(200);
+    for (let taps = 0; (snapshot.buffer?.size ?? 0) < 17; taps++) {
+      expect(taps, 'taps to take seventeen').toBeLessThan(200);
       if (snapshot.place?.kind === 'Floor') {
         door += 1;
         snapshot = engine.step(`enter:${String(door)}`);
@@ -1333,22 +1332,12 @@ describe('GameEngine — items: capture, the buffer, synthesis and drop (Guide:1
         );
       }
     }
-    expect(snapshot.buffer?.size).toBe(16);
+    expect(snapshot.buffer?.size).toBe(17);
     if (!snapshot.options.some((option) => option.role === 'take')) snapshot = engine.step('move:forward');
     const takes = snapshot.options.filter((option) => option.role === 'take');
     expect(takes.length).toBeGreaterThan(0);
-    expect(takes.every((option) => option.sealed)).toBe(true);
-    const coherence = snapshot.player?.coherence;
-    expect(engine.step(must(takes[0]).id).player?.coherence).toBe(coherence);
-    expect(engine.snapshot().buffer?.size).toBe(16);
-    engine.step('buffer');
-    engine.step('pick:0');
-    engine.step('pick:1');
-    const after = engine.step('close');
-    expect(after.buffer?.size).toBe(15);
-    expect(after.options.filter((option) => option.role === 'take').every((option) => !option.sealed)).toBe(
-      true,
-    );
+    expect(takes.every((option) => !option.sealed)).toBe(true);
+    expect(engine.step(must(takes[0]).id).buffer?.size).toBe(18);
   });
 
   test('the buffer and the tally survive a reboot (Guide:145) and a reload; the buffer prompt itself is not saved — a reload lands in the world', () => {

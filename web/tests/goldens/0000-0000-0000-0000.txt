@@ -1,7 +1,7 @@
 === STREET ═ Broad Alley  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley *
 Coherence: 100% stable
-stats: Steps 0 | Buffer 0/16
+stats: Steps 0 | Buffer 0
 tags: Way 1 of 10 (position) | Era Future (era) | Culture Void (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Broad Alley.
@@ -32,7 +32,7 @@ dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HE
 === BUILDING ⌂ HorizonWell  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
 Coherence: 99% stable
-stats: Steps 1 | Buffer 0/16
+stats: Steps 1 | Buffer 0
 tags: Building 2 of 20 (position) | Culture Void (culture) | Floors 18 (reading)
   An elevator runs the height of the building.
 status: Entered HorizonWell.
@@ -79,7 +79,7 @@ dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] 
 === FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
 Coherence: 98% stable
-stats: Steps 2 | Buffer 0/16
+stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Void (culture) | Stability 90.00% (reading) | Trait Research (trait)
   Floor 0. A landing of Void design, silent except for the lift cables ticking overhead.
 status: Entered Floor 0.
@@ -90,7 +90,7 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 === FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
 Coherence: 97% stable
-stats: Steps 3 | Buffer 0/16
+stats: Steps 3 | Buffer 0
 tags: Culture Void (culture) | Doors 10 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
@@ -122,7 +122,7 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 === ROOM □ Hollow Neural Link Array  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Hollow Neural Link Array *
 Coherence: 96% stable
-stats: Steps 4 | Buffer 0/16
+stats: Steps 4 | Buffer 0
 tags: Room 1 of 4 (position) | Era Future (era) | Type Neural Link Array (reading) | Oxygen 20% (reading) | Temp 23°C (reading) | Signal Clear (signal)
   You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
   The space is illuminated by a lattice of laser threads across the ceiling.
@@ -136,7 +136,7 @@ dock: [L] ▲ LEAVE THE APARTMENT | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BU
 === ROOM □ Abyssal Bio-Server  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Abyssal Bio-Server *
 Coherence: 95% stable
-stats: Steps 5 | Buffer 0/16
+stats: Steps 5 | Buffer 0
 tags: Room 2 of 4 (position) | Era Future (era) | Type Bio-Server (reading) | Oxygen 16% (reading) | Temp 15°C (reading) | Signal Clear (signal)
   You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
   The space is illuminated by light bent around a gravity plate.

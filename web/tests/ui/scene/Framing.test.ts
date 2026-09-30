@@ -26,6 +26,20 @@ describe('where the plan’s view stands (U03)', () => {
     expect(zoomed.scale()).toBe(250);
   });
 
+  test('stretched (U03d): a unit is drawn that much taller than wide; points map back and forth, and a finger still pans pixel for pixel', () => {
+    const framing = new Framing(2, 1, 100, 1.5);
+    expect(framing.toPicture(new PlanPoint(3, 2), SIZE)).toEqual({ x: 280, y: 290 });
+    expect(framing.toPlan({ x: 280, y: 290 }, SIZE).equals(new PlanPoint(3, 2))).toBe(true);
+    const moved = framing.panned(50, -30);
+    expect(moved.toPicture(new PlanPoint(3, 2), SIZE)).toEqual({ x: 330, y: 260 });
+  });
+
+  test('on the way to another framing: its ends are the two framings, the scale and the stretch grow evenly by ratio', () => {
+    const tall = new Framing(0, 0, 50, 4);
+    const drawnTrue = new Framing(0, 0, 50);
+    expect(tall.between(drawnTrue, 0.5).stretch()).toBe(2);
+  });
+
   test('on the way to another framing: its ends are the two framings, the scale grows evenly by ratio', () => {
     const near = new Framing(0, 0, 50);
     const far = new Framing(4, 2, 200);

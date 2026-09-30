@@ -1,7 +1,7 @@
 === STREET ═ Grand Avenue  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue *
 Coherence: 100% stable
-stats: Steps 0 | Buffer 0/16
+stats: Steps 0 | Buffer 0
 tags: Way 1 of 5 (position) | Era Analog (era) | Culture Shogun (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Grand Avenue.
@@ -22,7 +22,7 @@ dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HE
 === BUILDING ⌂ Cedar Lantern  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern *
 Coherence: 99% stable
-stats: Steps 1 | Buffer 0/16
+stats: Steps 1 | Buffer 0
 tags: Building 3 of 10 (position) | Culture Shogun (culture) | Floors 7 (reading)
   An elevator runs the height of the building.
 status: Entered Cedar Lantern.
@@ -47,7 +47,7 @@ dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] 
 === FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
 Coherence: 98% stable
-stats: Steps 2 | Buffer 0/16
+stats: Steps 2 | Buffer 0
 tags: Era Analog (era) | Culture Shogun (culture) | Stability 90.00% (reading) | Trait Military (trait)
   Floor 0. Shogun geometry presses in from every wall; the elevator sighs shut behind you.
 status: Entered Floor 0.
@@ -58,7 +58,7 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 === FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
 Coherence: 97% stable
-stats: Steps 3 | Buffer 0/16
+stats: Steps 3 | Buffer 0
 tags: Culture Shogun (culture) | Doors 2 (reading)
   A narrow service corridor, doors set flush into either wall.
 status: Enter Corridor.
@@ -74,7 +74,7 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 === ROOM □ Lacquered Barracks  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Lacquered Barracks *
 Coherence: 96% stable
-stats: Steps 4 | Buffer 0/16
+stats: Steps 4 | Buffer 0
 tags: Room 1 of 9 (position) | Era Analog (era) | Type Barracks (reading) | Oxygen 14% (reading) | Temp 17°C (reading) | Signal Clear (signal)
   You are in a drill floor marked in faded lines. The walls are blue sliding panels painted with pines.
   The space is illuminated by buzzing neon signage leaking green light.
@@ -88,7 +88,7 @@ dock: [L] ▲ LEAVE THE APARTMENT | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BU
 === ROOM □ Paper Security Station  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Paper Security Station *
 Coherence: 95% stable
-stats: Steps 5 | Buffer 0/16
+stats: Steps 5 | Buffer 0
 tags: Room 2 of 9 (position) | Era Analog (era) | Type Security Station (reading) | Oxygen 16% (reading) | Temp 10°C (reading) | Signal Clear (signal)
   You are in a magazine of empty racks and chains. The walls are purple black lacquer inlaid with mother-of-pearl.
   The space is illuminated by the amber glow of a radio dial.

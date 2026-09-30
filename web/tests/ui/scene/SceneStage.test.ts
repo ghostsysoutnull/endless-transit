@@ -50,6 +50,7 @@ function aPlanFrame(address: string): PlanVM {
     doors: [],
     exits: [],
     relics: [],
+    mapKey: { text: 'MAP', label: 'Apartment plan' },
   };
 }
 

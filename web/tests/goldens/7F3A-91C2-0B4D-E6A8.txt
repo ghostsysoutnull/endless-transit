@@ -1,7 +1,7 @@
 === STREET ═ Bright Boulevard  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard *
 Coherence: 100% stable
-stats: Steps 0 | Buffer 0/16
+stats: Steps 0 | Buffer 0
 tags: Way 1 of 8 (position) | Era Future (era) | Culture Baroque (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Bright Boulevard.
@@ -16,7 +16,7 @@ dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HE
 === BUILDING ⌂ Ornate Sanctum  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum *
 Coherence: 99% stable
-stats: Steps 1 | Buffer 0/16
+stats: Steps 1 | Buffer 0
 tags: Building 1 of 4 (position) | Culture Baroque (culture) | Floors 16 (reading)
   An elevator runs the height of the building.
 status: Entered Ornate Sanctum.
@@ -59,7 +59,7 @@ dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] 
 === FLOOR ▤ Floor 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
 Coherence: 98% stable
-stats: Steps 2 | Buffer 0/16
+stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Baroque (culture) | Stability 77.00% (reading) | Trait Industrial (trait)
   Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.
 status: Entered Floor 0.
@@ -70,7 +70,7 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 === FLOOR ▤ Floor 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
 Coherence: 97% stable
-stats: Steps 3 | Buffer 0/16
+stats: Steps 3 | Buffer 0
 tags: Culture Baroque (culture) | Doors 9 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
@@ -100,7 +100,7 @@ dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HEL
 === ROOM □ Grand Power Plant  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Grand Power Plant *
 Coherence: 96% stable
-stats: Steps 4 | Buffer 1/16
+stats: Steps 4 | Buffer 1
 tags: Room 1 of 2 (position) | Era Future (era) | Type Power Plant (reading) | Oxygen 14% (reading) | Temp 7°C (reading) | Signal Clear (signal)
   You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.
   The space is illuminated by a soft holographic haze with no visible source.
@@ -114,7 +114,7 @@ dock: [L] ▲ LEAVE THE APARTMENT | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BU
 === ROOM □ Baroque Maintenance Bay  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Baroque Maintenance Bay *
 Coherence: 95% stable
-stats: Steps 5 | Buffer 1/16
+stats: Steps 5 | Buffer 1
 tags: Room 2 of 2 (position) | Era Future (era) | Type Maintenance Bay (reading) | Oxygen 19% (reading) | Temp 20°C (reading) | Signal Shielded (signal)
   You are in a pump room throbbing behind a steel grille. The walls are red gilt mouldings peeling from plaster.
   The space is illuminated by the violet corona of an idle plasma coil.

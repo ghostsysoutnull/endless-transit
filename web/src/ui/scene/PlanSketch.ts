@@ -24,5 +24,7 @@ export interface PlanSketch extends Sketch {
   stopOf(camera: PlanCamera, id: string): Framing | undefined;
   rest(camera: PlanCamera): Framing;
   home(camera: PlanCamera): Framing;
+  /** The words of the key that flips between the room and the plan. */
+  mapKey(): { readonly text: string; readonly label: string };
   inside(camera: PlanCamera, id: string): Framing | undefined;
 }

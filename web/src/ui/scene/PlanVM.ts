@@ -17,4 +17,6 @@ export interface PlanVM extends SceneVM<SceneChild> {
   /** The way out, while it is offered: one or none. */
   readonly exits: readonly SceneChild[];
   readonly relics: readonly SceneChild[];
+  /** The key over the picture that flips between the room and the plan (U03d): what it shows and what a reader hears. */
+  readonly mapKey: { readonly text: string; readonly label: string };
 }

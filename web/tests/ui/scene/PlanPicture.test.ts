@@ -56,6 +56,7 @@ function plan(facts: {
     doors,
     exits,
     relics,
+    mapKey: { text: 'MAP', label: 'Apartment plan' },
   };
 }
 
@@ -95,6 +96,33 @@ describe('the apartment’s plan (U03): what can be tapped', () => {
     expect(picture.stopOf(vm, camera, 'leave')?.equals(camera.whole())).toBe(true);
     expect(picture.stopOf(vm, camera, 'capture:0')).toBeUndefined();
     expect(picture.rest(vm, camera).equals(camera.room(0))).toBe(true);
+  });
+
+  test('standing in the room (U03d): it fills the picture; a doorway walks into the next room filling it, the way out pulls back to the whole plan, a relic goes nowhere', () => {
+    const vm = plan({ sights: ['visited', 'known', 'fog'], here: 0, relics: 1 });
+    const camera = picture.camera(vm, PHONE);
+    expect(picture.home(vm, camera).equals(camera.inside(0))).toBe(true);
+    expect(picture.inside(vm, camera, 'move:forward')?.equals(camera.inside(1))).toBe(true);
+    expect(picture.inside(vm, camera, 'leave')?.equals(camera.whole())).toBe(true);
+    expect(picture.inside(vm, camera, 'capture:0')).toBeUndefined();
+  });
+
+  test('standing in a middle room (U03d): both doorways and every relic lie in the picture, to be tapped', () => {
+    const vm = plan({ sights: ['visited', 'visited', 'known'], here: 1, relics: 3 });
+    const hits = picture.layout(vm, PHONE, picture.home(vm, picture.camera(vm, PHONE)));
+    expect(hits.map((hit) => hit.id).sort()).toEqual([
+      'capture:0',
+      'capture:1',
+      'capture:2',
+      'move:back',
+      'move:forward',
+    ]);
+    for (const hit of hits) {
+      expect(hit.anchor.x, hit.id).toBeGreaterThanOrEqual(0);
+      expect(hit.anchor.x, hit.id).toBeLessThanOrEqual(PHONE.width);
+      expect(hit.anchor.y, hit.id).toBeGreaterThanOrEqual(0);
+      expect(hit.anchor.y, hit.id).toBeLessThanOrEqual(PHONE.height);
+    }
   });
 });
 
