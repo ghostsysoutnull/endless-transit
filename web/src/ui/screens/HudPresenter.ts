@@ -106,14 +106,15 @@ export class HudPresenter implements Presenter<HudVM> {
       },
       player.decay,
     );
-    // Where the moves sit is the drawing's to say (U03c): under the picture, or in the dock's row after the way out.
-    const { moves, dock, after, out } = drawing.arrange({
-      moves: moveOptions.map((option) => this.#docked(option)),
-      leave: leaveOptions.map((option) => this.#docked(option)),
-      system: snapshot.options
-        .filter((option) => option.role === 'system')
-        .map((option) => this.#docked(option)),
-    });
+    // Where the moves sit is the drawing's to say (U03c): under the picture, or in the dock's row. The dock's order is
+    // this presenter's: the way out, the moves it holds, then the game's own behind MORE.
+    const leave = leaveOptions.map((option) => this.#docked(option));
+    const { strip: moves, row } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
+    const dock = [
+      ...leave,
+      ...row,
+      ...snapshot.options.filter((option) => option.role === 'system').map((option) => this.#docked(option)),
+    ];
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
@@ -190,8 +191,8 @@ export class HudPresenter implements Presenter<HudVM> {
       dock,
       // On a phone the way out stays out of the fold (I09), and the moves when the dock holds them (U03c): one row under the thumb.
       fold: {
-        after,
-        out,
+        after: leave.length + row.length,
+        out: leave.length,
         more: 'MORE',
         less: 'LESS',
         label: 'More of the dock',

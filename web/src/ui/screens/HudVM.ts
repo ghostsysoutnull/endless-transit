@@ -108,7 +108,7 @@ export interface HudVM extends Screen {
   readonly sealedNote: Panel<{ readonly text: string }>;
   /** The word on a closed row. */
   readonly sealedTag: string;
-  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button. */
+  /** Leave, a room's moves (U03c) and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button. */
   readonly dock: readonly OptionVM[];
   /**
    * How the dock folds: how many stay out (the way out, and a room's moves, U03c), how many of those are the way out

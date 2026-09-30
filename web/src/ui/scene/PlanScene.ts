@@ -19,8 +19,6 @@ import { Zoom } from './Zoom.ts';
 
 /** A still is painted at this moment of the clock. */
 const STILL = 0;
-/** A tap on the corner map pulls the view back to the whole plan in this long (the mock's minimap glide, 480 ms). */
-const MINIMAP = 480;
 /** The plan is drawn at its own scale: the host never grows it (a scale-1 zoom; `SceneCanvas` paints under one). */
 const UNZOOMED = new Zoom({ scale: 1, anchor: { x: 0, y: 0 }, full: 2 });
 
@@ -378,7 +376,9 @@ export class PlanScene implements StagedScene<PlanSketch> {
       this.#go(hit.id);
       return;
     }
-    if (shown.camera.minimap(shown.framing).holds(point))
-      this.#glideTo(shown.camera.whole(), MINIMAP, this.#parts.ride);
+    if (shown.camera.minimap(shown.framing).holds(point)) {
+      const whole = shown.camera.whole();
+      this.#glideTo(whole, shown.camera.pace(shown.framing, whole), this.#parts.ride);
+    }
   }
 }

@@ -2,8 +2,8 @@ import type { SceneChild } from '#ui/scene/SceneChild.ts';
 import type { SceneVM } from '#ui/scene/SceneVM.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
 import { Unsketched } from '#ui/scene/Unsketched.ts';
-import type { DockLayout } from './DockLayout.ts';
-import type { DockParts } from './DockParts.ts';
+import type { OptionVM } from '#ui/OptionVM.ts';
+import type { MovesLayout } from './MovesLayout.ts';
 import type { Drawing } from './Drawing.ts';
 import type { MovesPlace } from './MovesPlace.ts';
 
@@ -25,7 +25,7 @@ export class Undrawn implements Drawing {
     return new Unsketched(this.#frame);
   }
 
-  arrange(parts: DockParts): DockLayout {
-    return this.#moves.arrange(parts);
+  arrange(moves: readonly OptionVM[]): MovesLayout {
+    return this.#moves.arrange(moves);
   }
 }
