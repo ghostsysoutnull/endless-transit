@@ -735,6 +735,10 @@ body {
   color: var(--rd);
 }
 
+.tag[data-fact='drift'] {
+  color: var(--mg);
+}
+
 .tag[data-fact='signal'] {
   color: var(--mg);
 }

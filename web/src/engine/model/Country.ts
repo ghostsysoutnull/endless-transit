@@ -46,7 +46,13 @@ export class Country extends Location {
   }
 
   override facts(): readonly Fact[] {
-    return [{ key: 'trait', label: 'Trait', value: this.#trait.key() }];
+    const vibe = this.vibe();
+    return [
+      { key: 'trait', label: 'Trait', value: this.#trait.key() },
+      ...(vibe === undefined
+        ? []
+        : [{ key: 'reading', label: 'Stability', value: vibe.stabilityText() } as const]),
+    ];
   }
 
   /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */

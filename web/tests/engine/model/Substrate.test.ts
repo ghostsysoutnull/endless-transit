@@ -186,7 +186,7 @@ describe('the substrate (Guide:277-284; Building.groovy:248-275, Floor.groovy:88
     for (const crypt of crypts) {
       expect(crypt.kind().key()).toBe('crypt');
       expect(crypt.kind().title()).toBe('Crypt');
-      expect(crypt.facts()).toEqual([{ key: 'alert', label: 'ABYSSAL_RESONANCE', value: 'DETECTED' }]);
+      expect(crypt.facts()).toContainEqual({ key: 'alert', label: 'Abyssal resonance', value: '' });
       expect(crypt.status()).toBe('ATMOS: [PRESSURE_HIGH]');
       expect(crypt.abyssal()).toBe(true);
       expect(crypt.drainFactor()).toBe(2);

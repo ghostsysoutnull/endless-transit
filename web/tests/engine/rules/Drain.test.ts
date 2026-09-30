@@ -79,7 +79,7 @@ describe('Drain — what one prompt costs where the traveller stands (Guide:133-
     expect(bright.vibe()?.era().key()).toBe('entropic');
     const apartment = must(bright.children()[0]?.children()[0]?.children()[0]?.children()[3]);
     const room = must(apartment.children()[0]);
-    expect(apartment.facts()).toEqual([{ key: 'era', label: 'TEMPORAL_MARKER', value: 'ancient' }]);
+    expect(apartment.facts().find((fact) => fact.key === 'era')?.value).toBe('ancient');
     // The place answers which era the drain reads: the header's, never its own.
     expect(apartment.drainEra()?.key()).toBe('entropic');
     expect(room.drainEra()?.key()).toBe('entropic');

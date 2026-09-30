@@ -299,6 +299,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     expect(must(steps[4]).facts.map((fact) => `${fact.label} ${fact.value}`)).toEqual([
       'Culture baroque',
       'Era future',
+      'Drift industrial · shogun',
     ]);
     expect(must(steps[7]).words).toBe('Buildings stand in pairs along both sides of the way.');
   });

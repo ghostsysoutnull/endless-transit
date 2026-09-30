@@ -232,11 +232,22 @@ export class Apartment extends Location {
     return [];
   }
 
-  /** The era marker, or the anomaly warning (Apartment.groovy:44). */
+  /** Its era and culture, what of them drifted, and the anomaly warning (Apartment.groovy:44; plain words, U05). */
   override facts(): readonly Fact[] {
-    return this.#anomaly
-      ? [{ key: 'alert', label: 'TEMPORAL_ANOMALY_DETECTED', value: '[!]' }]
-      : [{ key: 'era', label: 'TEMPORAL_MARKER', value: this.#era.key() }];
+    const drifted = this.#drifted();
+    return [
+      { key: 'era', label: 'Era', value: this.#era.key() },
+      { key: 'culture', label: 'Culture', value: this.#culture.key() },
+      ...(drifted === '' ? [] : [{ key: 'drift', label: 'Drift', value: drifted } as const]),
+      ...(this.#anomaly ? [{ key: 'alert', label: 'Temporal anomaly', value: '' } as const] : []),
+    ];
+  }
+
+  /** What it drew from the second pair, as its chip writes it: `era · culture`, one of them, or nothing. */
+  #drifted(): string {
+    const figure = this.vibeFigure();
+    if (figure.held !== 'country') return '';
+    return [...(figure.drift.era ? ['era'] : []), ...(figure.drift.culture ? ['culture'] : [])].join(' · ');
   }
 
   status(): string {

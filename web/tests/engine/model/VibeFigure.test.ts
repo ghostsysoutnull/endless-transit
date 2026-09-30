@@ -71,3 +71,31 @@ describe('VibeFigure — a level’s vibe handed over as data (U05, Decision 14)
     expect(at.room.vibeFigure()).toEqual(at.apartment.vibeFigure());
   });
 });
+
+describe('the vibe on the cards (U05): the chips a level shows of its vibe', () => {
+  const at = world();
+  const chips = (place: { facts(): readonly { key: string; value: string }[] }) =>
+    place.facts().map((fact) => `${fact.key} ${fact.value}`);
+
+  test('the planet names its second pair as its drift', () => {
+    expect(chips(at.planet)).toContain('drift ancient · monolith');
+  });
+
+  test('the country shows its stability', () => {
+    expect(chips(at.country)).toContain('reading 90.00%');
+  });
+
+  test('a rebel district shows the pair it swapped in', () => {
+    expect(chips(at.city)).toEqual(['alert ', 'era ancient', 'culture monolith']);
+  });
+
+  test('an apartment shows its own pair and what of it drifted', () => {
+    expect(chips(at.apartment)).toEqual(['era ancient', 'culture rust', 'drift culture']);
+  });
+
+  test('an apartment out of time says so', () => {
+    const street = must(toStreet(realRegistry().universe(new Seed(5, 16)), () => 0).at(-1));
+    const anomaly = must(street.children()[0]?.children()[0]?.children()[0]?.children()[2]);
+    expect(anomaly.facts()).toContainEqual({ key: 'alert', label: 'Temporal anomaly', value: '' });
+  });
+});

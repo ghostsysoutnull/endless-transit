@@ -54,7 +54,12 @@ export class City extends Location {
   }
 
   override facts(): readonly Fact[] {
-    return this.#rebelVibe === undefined ? [] : [{ key: 'alert', label: 'Rebel district', value: '' }];
+    if (this.#rebelVibe === undefined) return [];
+    return [
+      { key: 'alert', label: 'Rebel district', value: '' },
+      { key: 'era', label: 'Era', value: this.#rebelVibe.era().key() },
+      { key: 'culture', label: 'Culture', value: this.#rebelVibe.culture().key() },
+    ];
   }
 
   /** No diagnostic line: the level is drawn (U04, Decision 1 — the terminal's jargon goes). */
