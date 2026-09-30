@@ -6,7 +6,7 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
 ## The loop
 1. **Scope.** A wave starts from a scope the user accepted: the handover's next step after "hi", or a directive. A
    directive that names the change is its own go: it skips to the build (the user block).
-2. **Plan, review, show.** For a scope accepted without its how: I write the plan with its estimate in tokens; the
+2. **Plan, review, show.** For a scope accepted without its how: I write the plan; the
    plan review (`/grill`) reads it once in a subagent and only judges it, since the author is the worst judge of their
    own plan; an amendment it asks for is fixed, never reviewed again. I show the user the plan with the review's
    verdict and build on their go.
@@ -16,7 +16,7 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
 4. **The fast loop.** When there is something to try, the user tries it the way it is used and reports; I change it,
    they try again. Each round is quick.
 5. **The end.** With the user: the slow suites, the approved snapshot rewritten and its diff read, the tests that move
-   on purpose. A wave with a note records there the tokens spent beside the estimate. Then the Codex's close-out
+   on purpose. Then the Codex's close-out
    ("Closing a wave"), the queue's own where it names one, and a publish on the user's word.
 
 ## Ending a session
