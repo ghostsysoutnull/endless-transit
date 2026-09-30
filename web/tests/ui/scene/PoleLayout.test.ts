@@ -12,7 +12,8 @@ function level(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
     glyph: 'universe',
     abyssal: false,
     here: false,
-    kind: 'Universe · 10²⁶ m',
+    kind: 'Universe',
+    scale: '10²⁶ m',
     name: 'The Endless Universe',
     label: 'Level 00',
     values: { era: '', culture: '', trait: '' },
@@ -119,7 +120,7 @@ describe('PoleLayout — where the pole’s parts stand (U05, Decision 13)', () 
 
   test('the ships’ lane keeps an empty berth only where a level has one, inside the picture', () => {
     const layout = PoleLayout.of(path([held({ berth: true })]), PHONE);
-    expect(layout.berths().map((berth) => berth.y)).toEqual([layout.rows()[5]?.y]);
+    expect(layout.berths().map((berth) => berth.y - (layout.rows()[5]?.y ?? 0))).toEqual([16]);
     expect(layout.berths()[0]?.x).toBeGreaterThan(0);
   });
 });

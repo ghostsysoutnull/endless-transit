@@ -21,8 +21,11 @@ const WORDS_TO = 12;
 const REACH = 0.42;
 /** A hook leaves the current this share of a gap above its level. */
 const HOOK_FROM = 0.35;
-/** An empty berth stands left of the plate. */
+/** The ruler at the left edge: the scale written above its tick; an empty berth stands under it. */
+const RULER_X = 4;
+const RULER_GAP = 6;
 const BERTH_FROM = 28;
+const BERTH_DROP = 16;
 const LANES: readonly PoleLane[] = ['era', 'culture', 'trait'];
 const DRIFT_LANES: readonly DriftLane[] = ['era', 'culture'];
 
@@ -32,6 +35,8 @@ export interface PoleRow {
   readonly plate: Point;
   readonly radius: number;
   readonly words: { readonly x: number; readonly width: number };
+  /** The ruler's tick, from the left edge to the plate. */
+  readonly ruler: { readonly from: number; readonly to: number };
   readonly box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
 }
 
@@ -50,7 +55,7 @@ export interface PoleRun {
 
 /**
  * Where the pole's parts stand at a width (U05; the mock's `drawPole`, `transit-reframed.html:1152-1213`): a row a
- * level on the spine, the three ribbons as runs that break where a level changes the value or swaps the pairs, the
+ * level on the spine with its ruler's tick, the three ribbons as runs that break where a level changes the value or swaps the pairs, the
  * drift current beside the era and culture ribbons with its words where the second pair changes, a hook where a level
  * starts to drift, and the ships' empty berths. Value object: the one place the pole's geometry is decided.
  */
@@ -86,6 +91,7 @@ export class PoleLayout {
         plate: { x: SPINE_X, y },
         radius: PLATE_RADIUS,
         words: { x: wordsX, width: this.#laneX('era') - wordsX - WORDS_TO },
+        ruler: { from: RULER_X, to: SPINE_X - PLATE_RADIUS - RULER_GAP },
         box: { x: 0, y: y - GAP / 2, width: this.#width, height: GAP },
       };
     });
@@ -161,10 +167,10 @@ export class PoleLayout {
     );
   }
 
-  /** The ships' empty berths, left of their levels' plates. */
+  /** The ships' empty berths, under the ruler's tick left of their levels' plates. */
   berths(): readonly Point[] {
     return this.#levels.flatMap((level, index) =>
-      level.berth ? [{ x: SPINE_X - PLATE_RADIUS - BERTH_FROM, y: this.#y(index) }] : [],
+      level.berth ? [{ x: SPINE_X - PLATE_RADIUS - BERTH_FROM, y: this.#y(index) + BERTH_DROP }] : [],
     );
   }
 

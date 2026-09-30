@@ -12,6 +12,7 @@ import { ConsoleWarningSink } from '#platform/ConsoleWarningSink.ts';
 import { CryptoEntropySource } from '#platform/CryptoEntropySource.ts';
 import { BrowserFrameSource } from '#platform/BrowserFrameSource.ts';
 import { BrowserReducedMotion } from '#platform/BrowserReducedMotion.ts';
+import { LocalStorageTraceViewMemory } from '#platform/LocalStorageTraceViewMemory.ts';
 import { LocalStorageSaveStore } from '#platform/LocalStorageSaveStore.ts';
 import { BuildMasthead } from '#ui/BuildMasthead.ts';
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
@@ -28,6 +29,7 @@ import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { Dive } from '#ui/scene/Dive.ts';
 import { TraceBands } from '#ui/scene/TraceBands.ts';
+import { TracePole } from '#ui/scene/TracePole.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
 import { SceneStage } from '#ui/scene/SceneStage.ts';
 import { ScenePictures } from '#ui/scene/ScenePictures.ts';
@@ -127,6 +129,9 @@ new Shell(
         {
           bands: new TraceBands({ canvases: canvasMaker, clock, motion }),
           dive: new Dive({ canvases: canvasMaker, clock, motion }),
+          pole: new TracePole({ canvases: canvasMaker, clock, motion, picture: pictures.pole() }),
+          // The trace's view the player picked last (U05): kept in the browser like the save.
+          views: new LocalStorageTraceViewMemory(() => window.localStorage),
         },
       ),
     ),

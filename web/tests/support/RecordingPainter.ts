@@ -75,6 +75,12 @@ export class RecordingPainter implements Painter {
   restore(): void {
     this.#note('restore', []);
   }
+  translate(...args: number[]): void {
+    this.#note('translate', args);
+  }
+  rotate(...args: number[]): void {
+    this.#note('rotate', args);
+  }
   getTransform(): { a: number } {
     return { a: this.#scale };
   }

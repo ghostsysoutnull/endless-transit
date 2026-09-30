@@ -17,8 +17,10 @@ export interface PoleLevelVM {
   readonly abyssal: boolean;
   /** Where the traveller stands: the last row. */
   readonly here: boolean;
-  /** `Planet · 10⁷ m`: the kind and its scale — the pole's ruler. */
+  /** `Planet`. */
   readonly kind: string;
+  /** `10⁷ m`: how big a place of its kind is — the pole's ruler. */
+  readonly scale: string;
   readonly name: string;
   /** What a reader hears for the row's button. */
   readonly label: string;

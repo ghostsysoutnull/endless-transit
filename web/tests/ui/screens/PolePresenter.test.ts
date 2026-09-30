@@ -58,7 +58,7 @@ describe('PolePresenter — the pole’s words, read from the vibe the engine ha
     expect(universe?.current).toEqual({ era: '', culture: '' });
     expect(planet?.values).toEqual({ era: 'Atomic', culture: 'Rust', trait: '' });
     expect(planet?.current).toEqual({ era: 'drift · ancient', culture: 'drift · monolith' });
-    expect(planet?.kind).toBe('Planet · 10⁷ m');
+    expect(planet?.scale).toBe('10⁷ m');
     expect(planet?.berth).toBe(true);
     expect(universe?.berth).toBe(false);
   });

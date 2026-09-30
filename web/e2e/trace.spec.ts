@@ -84,6 +84,62 @@ test('Dive plays the levels full screen and lands back in the column on your ban
   expect(problems).toEqual([]);
 });
 
+function levels(page: Page) {
+  return page.getByTestId('trace').getByRole('button', { name: /^Level / });
+}
+
+test('the switch shows the pole, a level a button; a level tapped opens the column at its band; neither takes a step', async ({
+  page,
+  hasTouch,
+}) => {
+  const problems = watchForErrors(page);
+  await onTheStreet(page);
+  await press(page, /^trace$/i, hasTouch);
+  const steps = await page.getByTestId('stat-steps').textContent();
+  await expect(page.getByRole('button', { name: /^column$/i })).toHaveAttribute('aria-pressed', 'true');
+  await press(page, /^pole$/i, hasTouch);
+  await expect(page.getByRole('button', { name: /^pole$/i })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-pole] canvas')).toBeVisible();
+  await expect(levels(page)).toHaveCount(8);
+  await expect(bands(page)).toHaveCount(0);
+  await expect(levels(page).last()).toHaveAccessibleName(/, you are here$/);
+  // View controls: they move the view and pick nothing (the picture-tap wall).
+  await expect(page.locator('.seg button[data-option], .pole-level[data-option]')).toHaveCount(0);
+  await expectTouchable(page, 'the trace pole');
+  const planet = levels(page).nth(4);
+  await (hasTouch ? planet.tap() : planet.click());
+  await expect(page.getByRole('button', { name: /^column$/i })).toHaveAttribute('aria-pressed', 'true');
+  await expect(bands(page).nth(4)).toBeInViewport();
+  await expect(page.getByTestId('stat-steps')).toHaveText(steps ?? '');
+  expect(problems).toEqual([]);
+});
+
+test('the pole picked is the pole next time, after a reload too; the rail opens it at the level nearest the finger, the pole scrolling when it is taller than the screen', async ({
+  page,
+  hasTouch,
+}) => {
+  const problems = watchForErrors(page);
+  // A room: thirteen levels, taller than the phone's pole, so it scrolls.
+  await plant(page, saveText(SEED, `${STREET}.0.0.0.0.0`, { [`${STREET}.0.0`]: 'corridor' }));
+  await page.goto('./');
+  await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
+  await press(page, /^trace$/i, hasTouch);
+  await press(page, /^pole$/i, hasTouch);
+  await press(page, /^close$/i, hasTouch);
+  await page.reload();
+  await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
+  const rail = page.getByRole('button', { name: /^Trace: every level/ });
+  const box = await rail.boundingBox();
+  const universe = await page.locator('.rail .crumb').first().boundingBox();
+  if (box === null || universe === null) throw new Error('the rail is not on screen');
+  const at = { x: universe.x + universe.width / 2 - box.x, y: box.height / 2 };
+  await (hasTouch ? rail.tap({ position: at }) : rail.click({ position: at }));
+  await expect(page.getByRole('button', { name: /^pole$/i })).toHaveAttribute('aria-pressed', 'true');
+  await expect(levels(page).first()).toBeInViewport();
+  await expect(levels(page).last()).not.toBeInViewport();
+  expect(problems).toEqual([]);
+});
+
 test('reduced motion: no dive — Dive shows your band at once', async ({ page, hasTouch }) => {
   const problems = watchForErrors(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -92,5 +148,8 @@ test('reduced motion: no dive — Dive shows your band at once', async ({ page, 
   await press(page, /^dive$/i, hasTouch);
   await expect(page.getByRole('button', { name: /^skip$/i })).toHaveCount(0);
   await expect(bands(page).last()).toBeInViewport();
+  // The pole holds still, drawn whole at once.
+  await press(page, /^pole$/i, hasTouch);
+  await expect(page.locator('[data-pole] canvas')).toBeVisible();
   expect(problems).toEqual([]);
 });

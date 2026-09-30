@@ -1,3 +1,18 @@
+import { ApartmentGlyph } from './ApartmentGlyph.ts';
+import { BuildingGlyph } from './BuildingGlyph.ts';
+import { CityGlyph } from './CityGlyph.ts';
+import { CorridorGlyph } from './CorridorGlyph.ts';
+import { CountryGlyph } from './CountryGlyph.ts';
+import { FilamentGlyph } from './FilamentGlyph.ts';
+import { FloorGlyph } from './FloorGlyph.ts';
+import { PlanetGlyph } from './PlanetGlyph.ts';
+import { PolePicture } from './PolePicture.ts';
+import { ReachGlyph } from './ReachGlyph.ts';
+import { RoomGlyph } from './RoomGlyph.ts';
+import { SectorGlyph } from './SectorGlyph.ts';
+import { StreetGlyph } from './StreetGlyph.ts';
+import { SystemGlyph } from './SystemGlyph.ts';
+import { UniverseGlyph } from './UniverseGlyph.ts';
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import { AreaInk } from './AreaInk.ts';
 import { AreaPicture } from './AreaPicture.ts';
@@ -183,6 +198,31 @@ export class ScenePictures {
         country: new RegionMark(ink),
         city: new CityMark(ink),
         street: new LaneMark(ink),
+      },
+    });
+  }
+
+  /** The pole (U05): its glyphs, one a kind, drawn with the areas' ink. */
+  pole(): PolePicture {
+    const ink = new AreaInk(this.#noise);
+    return new PolePicture({
+      font: this.#font,
+      ink,
+      glyphs: {
+        universe: new UniverseGlyph(ink),
+        filament: new FilamentGlyph(ink),
+        sector: new SectorGlyph(ink),
+        'null-reach': new ReachGlyph(ink),
+        system: new SystemGlyph(ink),
+        planet: new PlanetGlyph(ink),
+        country: new CountryGlyph(ink),
+        city: new CityGlyph(ink),
+        street: new StreetGlyph(),
+        building: new BuildingGlyph(),
+        floor: new FloorGlyph(ink),
+        corridor: new CorridorGlyph(ink),
+        apartment: new ApartmentGlyph(),
+        room: new RoomGlyph(),
       },
     });
   }
