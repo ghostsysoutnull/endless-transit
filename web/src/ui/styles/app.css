@@ -56,8 +56,11 @@ body {
   display: none !important;
 }
 
-/* Visually hidden, read by screen readers: the shell's live region, the kind of each path crumb. */
-.vh {
+/* Visually hidden, read by screen readers: the shell's live region, the kind of each path crumb; on a drawn place the
+   game's name and the meter's label (U03c: the top bar thinner, the page keeps its h1). */
+.vh,
+.world[data-drawn] > .hud .brand,
+.world[data-drawn] > .hud .meter .ml {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1631,6 +1634,13 @@ body {
 
 .dock > .pb:not([data-role='out'], .more) {
   flex: 1 1 88px;
+  padding-inline: 8px;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+}
+
+.dock:has(> .pb:not([data-role='out'], .more)) > .pb.more {
+  flex: 0 1 76px;
 }
 
 .dock > .pb[data-role='out']:has(+ .pb:not(.more)) {
@@ -1692,11 +1702,20 @@ body {
   order: -1;
 }
 
-/* A room's relics come right after the picture and its moves (U03): in a room of one, with no move, a relic's tile is
-   the first thing to tap, and it shows above the dock — the picture a little shorter on a small phone to make room for
-   the tiles' heading (at 360 × 640 the first tile clears the dock by 8 px; a taller phone keeps 44 % of its height). */
+/* A room on one screen (U03c): the picture, then its words, then its relics' tiles — the moves are in the dock. The
+   picture leaves the words' first line above the dock at 360 × 640, and keeps at most 38 % of a tall phone. */
 .world[data-drawn]:has(.objects) > .scene {
-  height: clamp(200px, calc(100dvh - 395px), 44dvh);
+  height: clamp(180px, calc(100dvh - 400px), 38dvh);
+}
+
+/* The room's card gives up its box so its words can stand before the tiles; the chips, furniture and status follow. */
+.world[data-drawn]:has(.objects) .cap > .body {
+  display: contents;
+}
+
+.world[data-drawn]:has(.objects) .desc {
+  order: -1;
+  padding-inline: 2px;
 }
 
 .world[data-drawn] .aside {
@@ -1707,7 +1726,7 @@ body {
   order: -1;
 }
 
-/* The name stands over the picture as its caption; the rest of the card keeps the card's box. */
+/* The name stands over the picture as its caption; the rest of the card keeps the card's box (a room's gives it up). */
 .world[data-drawn] .cap > .head {
   padding-inline: 2px;
 }
@@ -1724,6 +1743,34 @@ body {
 
 .world .build {
   order: 4;
+}
+
+/* A drawn place's top bar, thinner (U03c): the meter, its percentage, Steps and Buffer on one row; the depth rail's
+   glyphs closer, on one row until the trail is longer than the width (deep below the bedrock). */
+.world[data-drawn] > .hud {
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding-block: 4px;
+}
+
+.world[data-drawn] > .hud .meter {
+  flex: 1 1 auto;
+  order: -1;
+}
+
+.world[data-drawn] > .hud .stats {
+  flex-wrap: nowrap;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.world[data-drawn] .crumb + .crumb::before {
+  width: 2px;
+}
+
+.world[data-drawn] .crumb .ic {
+  width: 22px;
+  height: 22px;
 }
 
 @media (max-width: 520px) {
