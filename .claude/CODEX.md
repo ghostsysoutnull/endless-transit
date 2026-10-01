@@ -37,7 +37,8 @@ A chronicle or a retro only when the user asks.
 
 ### Verification
 * Never mark a task complete without proving it works.
-* **AI-TDD**: reproduce every behavior bug with a test before fixing it; a change of wording or look is not a bug;
+* **AI-TDD**: reproduce every behavior bug with a test before fixing it (in a fast loop, the test comes at approval);
+  a change of wording or look is not a bug;
   when a UI bug's browser test runs is the process's call.
 * **Coverage Claim Protocol**: a plan statement of the form "test X guards behavior Y" cites the assertion lines of an
   enabled test that prove it, read in the current session; a file name, a grep hit, a disabled test or a remembered
