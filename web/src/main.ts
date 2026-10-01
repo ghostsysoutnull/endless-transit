@@ -50,7 +50,12 @@ import { HudView } from '#ui/screens/HudView.ts';
 import { RoomCardView } from '#ui/screens/RoomCardView.ts';
 import { StripSlot } from '#ui/screens/StripSlot.ts';
 import { CardTurns } from '#ui/card/CardTurns.ts';
+import { BlindsTurn } from '#ui/card/BlindsTurn.ts';
+import { DoorTurn } from '#ui/card/DoorTurn.ts';
 import { FlipTurn } from '#ui/card/FlipTurn.ts';
+import { PeelTurn } from '#ui/card/PeelTurn.ts';
+import { StaticTurn } from '#ui/card/StaticTurn.ts';
+import { TornTurn } from '#ui/card/TornTurn.ts';
 import { InstantTurn } from '#ui/card/InstantTurn.ts';
 import { RebootPresenter } from '#ui/screens/RebootPresenter.ts';
 import { RebootView } from '#ui/screens/RebootView.ts';
@@ -140,7 +145,11 @@ new Shell(
         },
         new RoomCardView({
           motion,
-          turns: new CardTurns({ clean: [new FlipTurn()], broken: [], still: new InstantTurn() }),
+          turns: new CardTurns({
+            clean: [new FlipTurn(), new DoorTurn(), new PeelTurn(), new BlindsTurn()],
+            broken: [new StaticTurn(), new TornTurn()],
+            still: new InstantTurn(),
+          }),
         }),
       ),
     ),

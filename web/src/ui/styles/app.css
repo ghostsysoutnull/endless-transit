@@ -1865,6 +1865,31 @@ html:has(.world[data-card]) {
   outline-offset: -3px;
 }
 
+/* The sheet of static a broken turn lays over the card (`StaticTurn`): fine crossed lines, shifting in steps. */
+.card > .card-static {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, var(--rule-hi) 2px 3px),
+    repeating-linear-gradient(90deg, transparent 0 3px, var(--dim) 3px 4px), var(--ground);
+  background-size:
+    100% 7px,
+    11px 100%,
+    auto;
+  animation: card-static 0.12s steps(3) infinite;
+}
+
+@keyframes card-static {
+  100% {
+    background-position:
+      0 7px,
+      11px 0,
+      0 0;
+  }
+}
+
 /* The back: the room in words, one column that scrolls inside the card when it runs long. */
 .card > .back {
   background: var(--panel);
