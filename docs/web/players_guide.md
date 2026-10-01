@@ -69,14 +69,21 @@ at the level nearest your finger (below). <!-- src/ui/screens/HudPresenter.ts:18
 Under the rail is the place: its kind and its name. Everywhere from the universe down to a corridor a
 **picture** comes next (below), then the **moves** as buttons, then the list of what lies one level down, then the place's chips
 (your position among your neighbours, such as `Orbit 2 of 5` on a planet or `Building 2 of 20` in a building — a floor
-has none, its name and the tower say its height — then its tags) and its description. In a room the picture takes most
-of the screen, with a button under it — `About this room · 4 relics ↓` — that takes you down to the room's words, then
-its objects, then its chips. <!-- src/ui/screens/HudPresenter.ts:310-313 --> Elsewhere the chips, the moves and the description come first and
-the list after them. <!-- src/ui/screens/HudPresenter.ts:140-159 --> The list is one button per place, except a
+has none, its name and the tower say its height — then its tags) and its description. Elsewhere the chips, the moves and the description come first and
+the list after them. The list is one button per place, except a
 building's floors, which are a pad of numbers. At the bottom, always in reach of your thumb, is the **dock**: the way
-out (`▲ LEAVE …`) and **MORE** — and in a room its moves, **GO BACK** and **GO FORWARD**. MORE opens the rest of the
+out (`▲ LEAVE …`) and **MORE**. MORE opens the rest of the
 dock above it — SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again after your next tap.
-<!-- src/ui/screens/HudPresenter.ts:109-118, 191-200, src/ui/screens/MovesInDock.ts -->
+
+A **room is a card**. Its front is the picture, filling the screen between the rail and a strip of four keys. As you
+walk in, the room's name and its first words show over the picture, then fade and leave the room to itself. The folded
+corner at the bottom right — or a sideways swipe — turns the card to its back: the room's name, its chips, its words,
+its objects as buttons, **GO FORWARD**, and the rest of the game's commands (SCAN, MAP, HELP, TITLE SCREEN, END
+SESSION); the corner there turns it back. The card turns in one of six ways, never the same twice running; as your
+Coherence falls, more of the turns come out broken, through static or in torn bands. Turning costs nothing and is not
+a step. The four keys stay in reach on both faces: **BUFFER** (with its count), **MAP** (the apartment's plan),
+**TRACE**, and **BACK** to the room before — which reads **LEAVE** in the first room. A scan's result shows on the back
+at once. <!-- src/ui/screens/HudPresenter.ts:66, 368, src/ui/screens/RoomCardView.ts:16, 52, src/ui/card/CardTurns.ts:5, 25 -->
 
 **The pictures.** Every place from the universe down to a corridor is drawn above its list, and the two light each
 other: touch a place in the picture and its button lights, touch a button and its place lights. Above the street each
@@ -89,20 +96,22 @@ shaft: drag the tower, or the slider down its right side, to ride the car, and t
 pad — to ride there and step out. At an elevator the tower stands still, the car at your floor. In a **corridor** you
 look down the hall: drag it, or the slider along its foot, to walk, and tap a door to walk to it and open it; the door
 you came back out of is drawn yellow. In a **room** you stand in it: the room fills the picture, every room the same
-size, its doorways on its walls. The **MAP** key in the picture's corner glides out to the apartment's **plan** and
+size, its doorways on its walls with no words on them: a doorway into a room you have not entered is a pale frame full
+of fog; one into a room you have entered spills that room's own light and carries its number; the way out glows
+orange. The **MAP** key, among the keys under the card, glides out to the apartment's **plan** and
 back; every new room starts with you standing in it. <!-- src/ui/scene/PlanCamera.ts:88-100,
-src/ui/scene/PlanScene.ts:119-127, 144 --> The plan: its rooms in rows walked like a snake, a doorway only into the room
+src/ui/scene/PlanScene.ts:117, src/ui/scene/PlanPicture.ts:43, 284, src/ui/scene/LitDoorway.ts:13, src/ui/scene/FoggedDoorway.ts:15 --> The plan: its rooms in rows walked like a snake, a doorway only into the room
 before and the room after, the entrance under the first. A room you have not reached is in fog until you visit the room
 next to it; a scan in any room clears the whole plan for good, and marks the objects in every room. On the plan, drag to
 look around and pinch: let go, the view settles on the whole plan or on your room, whichever is nearer. When the plan is
 bigger than the picture a small map in its corner shows where you look, and a tap on it pulls back to the whole plan.
-<!-- src/ui/scene/InRoom.ts:27-29, src/ui/scene/OverPlan.ts:26-28, src/ui/scene/PlanCamera.ts:102-107 --> Tap a doorway (or **GO FORWARD** /
-**GO BACK**) to glide into that room, an object's diamond (or its button) to take it, and the entrance (or **LEAVE
-THE APARTMENT**) in the first room to pull back and leave. The room you stand in is drawn inside its walls when it is
+<!-- src/ui/scene/InRoom.ts:27-29, src/ui/scene/OverPlan.ts:26-28, src/ui/scene/PlanCamera.ts:102-107 --> Tap a doorway (or **GO FORWARD** on the back of the card, or the
+**BACK** key) to glide into that room, an object's diamond (or its button on the back) to take it, and the entrance (or the **LEAVE**
+key) in the first room to pull back and leave. The room you stand in is drawn inside its walls when it is
 big enough on the picture: its back wall patterned by the culture that built it, lit by its era, its furniture on the
 floor, snow falling when it is cold; each object lies on the floor as a lit diamond with the first words of its name,
-and a taken one flies to the **Buffer** count. <!-- src/ui/scene/RoomInsides.ts:11, src/ui/scene/ScenePictures.ts,
-src/ui/RelicFlight.ts:5 --> If your phone asks for reduced motion, nothing rides, walks, glides, zooms or flies: a
+and a taken one flies to the **BUFFER** key. The name of the room you stand in is not written in the picture. <!-- src/ui/scene/RoomInsides.ts:11, src/ui/scene/ScenePictures.ts,
+src/ui/RelicFlight.ts:22 --> If your phone asks for reduced motion, nothing rides, walks, glides, zooms or flies: a
 tap goes straight in. <!-- src/engine/model/Location.ts, src/ui/scene/SceneView.ts,
 src/ui/scene/PlanScene.ts:48, src/ui/scene/PlanLayout.ts:26, src/engine/model/Apartment.ts:136-169,
 src/engine/rules/GameEngine.ts:210 -->
@@ -118,8 +127,9 @@ src/engine/rules/GameEngine.ts:210 -->
 3. You are in the **elevator** for that floor: **GO UP**, **GO DOWN**, **ENTER CORRIDOR**.
 4. The corridor lists doors. Tap one. You are dropped straight into the first room behind it.
 5. The room fills the picture, as if you stood in it. If the room has objects, each one is a diamond in the picture and a button
-   under its words: tap either to take it. **GO FORWARD** walks to the next room, **GO BACK** to the previous — both in
-   the dock; **LEAVE THE APARTMENT** is offered in the first room only.
+   on the back of the room's card (turn it by its folded corner): tap either to take it. A doorway — or **GO FORWARD**
+   on the back — walks to the next room, the **BACK** key to the previous; in the first room that key reads **LEAVE**
+   and takes you out of the apartment.
 
 Congratulations, you have played the game. Everything below is how to play it well. Short of time? The
 [cheat sheet]({{ "/web/cheat_sheet.html" | relative_url }}) is one screen, and **HELP** in the dock is the same manual

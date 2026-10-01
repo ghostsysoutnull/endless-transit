@@ -85,6 +85,11 @@ async function expectTheRoomOnTheFirstScreen(page: Page, where: string): Promise
   await expect(page.getByTestId('card-to-words'), `${where}: the way to the words`).toBeInViewport({
     ratio: 1,
   });
+  // The corner's size and the picture's at 360 × 640 are what `PlanPicture.test.ts` pins the corner's cover with.
+  const corner = await page.getByTestId('card-to-words').boundingBox();
+  expect([corner?.width, corner?.height], `${where}: the corner's box`).toEqual([60, 60]);
+  if (viewport.width === NARROW.width)
+    expect([picture?.width, picture?.height], `${where}: the picture at 360 × 640`).toEqual([326, 462]);
   const keys = page.getByRole('navigation', { name: 'Keys' }).getByRole('button');
   expect(await keys.count(), `${where}: the keys`).toBeGreaterThanOrEqual(3);
   for (const key of await keys.all()) await expect(key, `${where}: a key`).toBeInViewport({ ratio: 1 });

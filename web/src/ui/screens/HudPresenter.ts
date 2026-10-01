@@ -3,7 +3,7 @@ import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { BUFFER } from '#engine/rules/BufferPrompt.ts';
-import { type GameOption, TRACE_ID, VISITED_KEY } from '#engine/rules/GameOption.ts';
+import { BACK_MOVE_ID, type GameOption, TRACE_ID, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
@@ -362,8 +362,8 @@ export class HudPresenter implements Presenter<HudVM> {
 
   /**
    * The room's card (U03e): its keys — Buffer with its count, then Trace and the way back, which is the way out where
-   * it is offered and else the first move (the engine lists the move back first); every other move and every other
-   * option of the game goes on its back. No option stands twice.
+   * it is offered and else the engine's move back, found by its id; every other move and every other option of the
+   * game goes on its back. No option stands twice.
    */
   #card(parts: {
     readonly arrival: string;
@@ -382,7 +382,7 @@ export class HudPresenter implements Presenter<HudVM> {
       badge: '',
     });
     const out = parts.leave[0];
-    const back = out === undefined ? parts.moves[0] : undefined;
+    const back = out === undefined ? parts.moves.find((move) => move.id === BACK_MOVE_ID) : undefined;
     const keys = {
       lead: parts.system
         .filter((option) => option.id === BUFFER)

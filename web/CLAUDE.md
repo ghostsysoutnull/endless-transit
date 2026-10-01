@@ -62,13 +62,15 @@ Each wall is shown RED on a scratch file when it is added; a new invariant ships
    `performance`, no `globalThis` / `window` / `self`; everywhere no `innerHTML`, no `unsafeHTML`, no barrels, no `..`
    segment in an import (use `#engine/ #ui/ #platform/ #content/ #tests/`).
 3. **Design** — a move is visible without scrolling at 360 × 640 on every screen (`e2e/fold.spec.ts`); picture text
-   ≥ 12 px (`tests/ui/canvas/Pictures.test.ts`); text contrast and no faded text (`tests/ui/styles/Contrast.test.ts`);
+   ≥ 12 px (`tests/ui/canvas/Pictures.test.ts` for the map, `tests/ui/scene/PlanPicture.test.ts` for the plan); text contrast and no faded text (`tests/ui/styles/Contrast.test.ts`);
    a view carries no literal text or aria-label — words live in the presenter
    (`tests/ui/screens/ViewsCarryNoWords.test.ts`); every button and image is named, and reduced motion is respected
    (`e2e/a11y.spec.ts`); every tappable thing is a real `button[data-option]` and a tap in a picture resolves to an
    option id, or is a view control that only moves the view and picks nothing (the plan's corner map pulls back to the
-   whole plan; the MAP key over a room's picture flips it to the plan and back; the trace column's bands, Dive, Skip and
-   ✕; the trace's Pole | Column switch and the pole's levels) (no test names this wall yet).
+   whole plan; the MAP key among a room's keys flips its picture to the plan and back; the folded corner of a room's card
+   and a sideways swipe on it turn the card; the trace column's bands, Dive, Skip and
+   ✕; the trace's Pole | Column switch and the pole's levels) (`e2e/card.spec.ts` for the card's corner and swipe; no
+   test names the rest yet).
 
 ## Code rules
 
