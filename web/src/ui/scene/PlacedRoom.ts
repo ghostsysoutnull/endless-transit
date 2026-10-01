@@ -67,19 +67,23 @@ export class PlacedRoom {
     painter.strokeRect(box.x + 1, box.y + 1, box.width - 2, box.height - 2);
   }
 
-  /** Its name and number where they fit and its relic marks, as far as its sight lets them be written; the visited dot. */
+  /**
+   * Its name and number where they fit and its relic marks, as far as its sight lets them be written; the visited dot.
+   * The room you stand in carries none (U03e): its name is told on arrival and on its card.
+   */
   paintMarks(
     painter: Painter,
     palette: Palette,
     parts: { readonly font: PictureFont; readonly diamond: Diamond },
   ): void {
+    if (this.#here) return;
     this.#look.label((ink) => {
-      this.#write(painter, palette, parts, this.#here ? 'yl' : ink);
+      this.#write(painter, palette, parts, ink);
     });
-    if (!this.#here) this.#look.paintDot(painter, palette, this.#box);
+    this.#look.paintDot(painter, palette, this.#box);
   }
 
-  /** Its name where its inside puts it and its number, where they fit, in this ink, and the marks of the relics lying in it. */
+  /** Its name in its middle and its number, where they fit, in this ink, and the marks of the relics lying in it. */
   #write(
     painter: Painter,
     palette: Palette,
@@ -88,28 +92,26 @@ export class PlacedRoom {
   ): void {
     const box = this.#box;
     const centre = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
-    const name = this.#inside.nameLine();
     painter.globalAlpha = 1;
     painter.textBaseline = 'middle';
-    painter.font = parts.font.of(this.#here ? 'bold' : 'regular');
+    painter.font = parts.font.of('regular');
     const named = box.width >= NAMED.width && box.height >= NAMED.height;
-    const lines = named ? this.#lines(painter, box.width - 12, name.lines) : [];
+    const lines = named ? this.#lines(painter, box.width - 12) : [];
     if (lines.length > 0) {
       painter.textAlign = 'center';
       painter.fillStyle = palette(ink);
       lines.forEach((line, index) => {
-        painter.fillText(line, centre.x, name.y + (index - (lines.length - 1) / 2) * LEADING);
+        painter.fillText(line, centre.x, centre.y + (index - (lines.length - 1) / 2) * LEADING);
       });
       painter.textAlign = 'left';
       painter.fillStyle = palette('dim');
-      painter.font = parts.font.of('regular');
       painter.fillText(this.#number, box.x + 6, box.y + 12);
     } else if (box.width >= NUMBERED.width && box.height >= NUMBERED.height) {
       painter.textAlign = 'center';
       painter.fillStyle = palette(ink);
       painter.fillText(this.#number, centre.x, centre.y);
     }
-    if (this.#here || this.#room.relics === 0 || box.width <= MARKS.room) return;
+    if (this.#room.relics === 0 || box.width <= MARKS.room) return;
     painter.fillStyle = palette('yl');
     for (let mark = 0; mark < Math.min(this.#room.relics, MARKS.most); mark++) {
       parts.diamond.trace(painter, box.x + box.width - 9 - mark * 9, box.y + 9, 4);
@@ -117,11 +119,10 @@ export class PlacedRoom {
     }
   }
 
-  /** Its name in at most this many lines (one or two) that fit this width; none when it will not fit. */
-  #lines(painter: Painter, width: number, most: number): readonly string[] {
+  /** Its name in one line or two that fit this width; none when it will not fit. */
+  #lines(painter: Painter, width: number): readonly string[] {
     const name = this.#room.name;
     if (painter.measureText(name).width <= width) return [name];
-    if (most < 2) return [];
     const words = name.split(' ');
     for (let cut = Math.ceil(words.length / 2); cut > 0 && cut < words.length; cut++) {
       const lines = [words.slice(0, cut).join(' '), words.slice(cut).join(' ')];

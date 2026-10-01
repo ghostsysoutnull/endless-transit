@@ -4,6 +4,8 @@ import type { RoomSight } from '#engine/model/RoomSight.ts';
 import { RoomLook } from '#engine/model/RoomLook.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { SURFACE_INKS, TEXT_INKS } from '#ui/canvas/Inks.ts';
+import type { ChildMark } from '#ui/scene/ChildMark.ts';
+import type { Framing } from '#ui/scene/Framing.ts';
 import { MarkedChild } from '#ui/scene/MarkedChild.ts';
 import { NoChild } from '#ui/scene/NoChild.ts';
 import type { PlanVM } from '#ui/scene/PlanVM.ts';
@@ -33,13 +35,17 @@ function plan(facts: {
   here: number;
   relics?: number;
   sealed?: boolean;
+  /** The key of each room's light, in order; `analog` where none is given. */
+  lights?: readonly string[];
+  /** The keys the walls and the light of the room stood in came from. */
+  look?: { walls: string; light: string };
 }): PlanVM {
   const rooms: PlanRoom[] = facts.sights.map((sight, index) => ({
     address: addressOf(index),
     name: NAMES[index] ?? `Room ${String(index + 1)}`,
     sight,
     relics: sight === 'fog' ? 0 : 2,
-    light: 'analog',
+    light: facts.lights?.[index] ?? 'analog',
   }));
   const doors = [
     ...(facts.here > 0 ? [child('move:back', { address: addressOf(facts.here - 1) })] : []),
@@ -58,12 +64,33 @@ function plan(facts: {
     noise: new Seed(1, 2),
     rooms,
     here: addressOf(facts.here),
-    look: new RoomLook({ walls: 'rust', light: 'analog', cold: false, furniture: 2, anomaly: false }),
+    look: new RoomLook({
+      walls: facts.look?.walls ?? 'rust',
+      light: facts.look?.light ?? 'analog',
+      cold: false,
+      furniture: 2,
+      anomaly: false,
+    }),
     doors,
     exits,
     relics,
     mapKey: { text: 'MAP', label: 'Apartment plan' },
   };
+}
+
+/** The words a framing of the plan writes, as the painter's calls. */
+function wordsOf(vm: PlanVM, framing: Framing, lit: ChildMark = new NoChild()): readonly string[] {
+  const painter = new RecordingPainter();
+  picture.paint(painter, vm, PHONE, palette(painter.asked), 0, lit, framing, new NoMinimap());
+  return painter.calls.filter((call) => call.startsWith('fillText('));
+}
+
+/** The inks the plan asks for, standing in the room. */
+function inksOf(vm: PlanVM): readonly string[] {
+  const painter = new RecordingPainter();
+  const rest = picture.rest(vm, picture.camera(vm, PHONE), IN_ROOM);
+  picture.paint(painter, vm, PHONE, palette(painter.asked), 0, new NoChild(), rest, new NoMinimap());
+  return [...painter.asked];
 }
 
 function palette(record: Set<string>): (token: string) => string {
@@ -136,7 +163,7 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
   test('every ink is the stylesheet’s; every word at 12 px or more, unfaded, in a text ink; the same calls twice', () => {
     const vm = plan({ sights: ['visited', 'visited', 'known', 'fog'], here: 1, relics: 3 });
     const camera = picture.camera(vm, PHONE);
-    for (const framing of [camera.whole(), camera.room(1), camera.room(3)]) {
+    for (const framing of [camera.whole(), camera.room(1), camera.room(3), camera.inside(1)]) {
       const one = new RecordingPainter();
       const two = new RecordingPainter();
       picture.paint(
@@ -171,36 +198,53 @@ describe('the apartment’s plan (U03): how it is drawn', () => {
     }
   });
 
-  test('the room you stand in, drawn in full: its name above its relics, each relic labelled with two words of its name at most', () => {
+  test('the room you stand in, drawn in full: each relic labelled with two words of its name at most', () => {
     const base = plan({ sights: ['visited', 'visited', 'known', 'fog'], here: 1, relics: 2 });
     const relics = [
       child('capture:0', { ordinal: '1', name: 'Brass Astrolabe of Tides' }),
       child('capture:1', { ordinal: '2', name: 'Salt Lamp' }),
     ];
     const vm: PlanVM = { ...base, relics, children: [...base.doors, ...relics] };
-    const rest = picture.rest(vm, picture.camera(vm, PHONE), OVER_PLAN);
-    const painter = new RecordingPainter();
-    picture.paint(
-      painter,
+    const words = wordsOf(
       vm,
-      PHONE,
-      palette(painter.asked),
-      0,
+      picture.rest(vm, picture.camera(vm, PHONE), OVER_PLAN),
       new MarkedChild('capture:0'),
-      rest,
-      new NoMinimap(),
     );
-    const words = painter.calls.filter((call) => call.startsWith('fillText('));
-    const name = words.find((call) => call.startsWith('fillText(Pantry,'));
-    const nameY = Number(name?.split(',')[2]);
-    const tops = picture
-      .layout(vm, PHONE, rest)
-      .filter((hit) => hit.id.startsWith('capture:'))
-      .map((hit) => hit.y);
-    expect(tops).toHaveLength(2);
-    for (const top of tops) expect(nameY).toBeLessThan(top);
     expect(words.some((call) => call.startsWith('fillText(Brass Astrolabe,'))).toBe(true);
     expect(words.join('\n')).not.toContain('Tides');
+  });
+
+  test('the room you stand in carries no name in the picture (U03e); another room of the plan still does', () => {
+    const vm = plan({ sights: ['visited', 'visited', 'known'], here: 1 });
+    const camera = picture.camera(vm, PHONE);
+    const inside = wordsOf(vm, picture.rest(vm, camera, IN_ROOM)).join('\n');
+    const whole = wordsOf(vm, camera.whole()).join('\n');
+    expect(inside).not.toContain('Pantry');
+    expect(whole).not.toContain('Pantry');
+    expect(whole).toContain('Kitchen');
+  });
+
+  test('a doorway into a room already entered is lit by that room’s light and carries its number; one into a room not entered carries none (U03e)', () => {
+    const entered = plan({ sights: ['visited', 'visited'], here: 0, lights: ['analog', 'digital'] });
+    const other = plan({ sights: ['visited', 'visited'], here: 0, lights: ['analog', 'future'] });
+    const unknown = plan({ sights: ['visited', 'known'], here: 0, lights: ['analog', 'digital'] });
+    const numbered = (vm: PlanVM): boolean =>
+      wordsOf(vm, picture.rest(vm, picture.camera(vm, PHONE), IN_ROOM)).some(
+        (call) => call.startsWith('fillText(2,') && call.includes('<text>'),
+      );
+    expect(inksOf(entered)).toContain('bl');
+    expect(inksOf(other)).not.toContain('bl');
+    expect(inksOf(other)).toContain('bc');
+    expect(inksOf(unknown)).not.toContain('bl');
+    expect(numbered(entered)).toBe(true);
+    expect(numbered(unknown)).toBe(false);
+  });
+
+  test('the way out is drawn in its own ink (U03e)', () => {
+    const look = { walls: 'void', light: 'atomic' };
+    const lights = ['atomic', 'atomic'];
+    expect(inksOf(plan({ sights: ['visited', 'visited'], here: 0, lights, look }))).toContain('ab');
+    expect(inksOf(plan({ sights: ['visited', 'visited'], here: 1, lights, look }))).not.toContain('ab');
   });
 
   test('a room in fog shows neither its name nor its number; a known one shows them', () => {

@@ -52,6 +52,7 @@ import { GlassPanel } from './GlassPanel.ts';
 import { GlowLight } from './GlowLight.ts';
 import { LampLight } from './LampLight.ts';
 import { LatticeWall } from './LatticeWall.ts';
+import { LitDoorway } from './LitDoorway.ts';
 import { LongHall } from './LongHall.ts';
 import { LongRow } from './LongRow.ts';
 import { MastRoof } from './MastRoof.ts';
@@ -238,6 +239,7 @@ export class ScenePictures {
       font: this.#font,
       diamond: new Diamond(),
       glow,
+      exit: new LitDoorway(),
       insides: new RoomInsides({
         walls: {
           shogun: new RoomWall(lattice, 'ab'),

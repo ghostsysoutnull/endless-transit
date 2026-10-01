@@ -1,5 +1,7 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
+import type { DoorwayFrame } from './DoorwayFrame.ts';
+import type { DoorwayLook } from './DoorwayLook.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { SightLook } from './SightLook.ts';
 import type { Tint } from './Tint.ts';
@@ -10,6 +12,7 @@ export class SeenLook implements SightLook {
   readonly #ink: string;
   readonly #dot: boolean;
   readonly #small: Tint;
+  readonly #doorway: DoorwayLook;
 
   constructor(facts: {
     /** Its floor, over the ground. */
@@ -19,11 +22,14 @@ export class SeenLook implements SightLook {
     dot: boolean;
     /** How it shows on the minimap. */
     small: Tint;
+    /** How the doorway into it is drawn. */
+    doorway: DoorwayLook;
   }) {
     this.#floor = facts.floor;
     this.#ink = facts.ink;
     this.#dot = facts.dot;
     this.#small = facts.small;
+    this.#doorway = facts.doorway;
   }
 
   paintFloor(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void {
@@ -45,5 +51,9 @@ export class SeenLook implements SightLook {
 
   paintSmall(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void {
     this.#small.paint(painter, palette, box);
+  }
+
+  paintDoorway(painter: Painter, palette: Palette, frame: DoorwayFrame, time: number): void {
+    this.#doorway.paint(painter, palette, frame, time);
   }
 }

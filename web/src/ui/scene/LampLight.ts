@@ -14,6 +14,10 @@ export class LampLight implements RoomLight {
     this.#glow = glow;
   }
 
+  ink(): string {
+    return this.#ink;
+  }
+
   paint(painter: Painter, palette: Palette, frame: InsideFrame, time: number): void {
     const { room, back } = frame;
     const hook = { x: room.x + room.width / 2, y: room.y };
