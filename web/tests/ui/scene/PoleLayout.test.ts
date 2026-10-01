@@ -1,126 +1,114 @@
 import { describe, expect, test } from 'vitest';
 import { PoleLayout } from '#ui/scene/PoleLayout.ts';
 import type { PoleLevelVM } from '#ui/screens/PoleVM.ts';
+import { heldPoleLevel, poleLevel } from '#tests/support/poleLevel.ts';
 
 /** The phone's pole: the trace's body at 360 × 640. */
 const PHONE = { width: 360, height: 560 };
 
-/** A level with nothing set: tests say only what they are about. */
-function level(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
-  return {
-    key: '0',
-    glyph: 'universe',
-    abyssal: false,
-    here: false,
-    kind: 'Universe',
-    scale: '10²⁶ m',
-    name: 'The Endless Universe',
-    label: 'Level 00',
-    values: { era: '', culture: '', trait: '' },
-    current: { era: '', culture: '' },
-    rebel: false,
-    drift: { era: false, culture: false },
-    berth: false,
-    tags: [],
-    ...overrides,
-  };
-}
+const level = poleLevel;
+const held = heldPoleLevel;
 
-/** A level under the planet: its values and its current set. */
-function held(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
-  return level({
-    values: { era: 'Atomic', culture: 'Rust', trait: 'Commercial' },
-    current: { era: 'drift · ancient', culture: 'drift · monolith' },
-    ...overrides,
-  });
-}
-
-/** The universe down to a room: four levels above the planet, the planet, then nine under it. */
-function path(under: readonly PoleLevelVM[] = []): readonly PoleLevelVM[] {
+/** The universe down to a room: four levels above the planet, the planet, the country, then eight under it. */
+function room(): readonly PoleLevelVM[] {
   return [
     level(),
     level(),
     level(),
     level(),
     held({ values: { era: 'Atomic', culture: 'Rust', trait: '' } }),
-    ...under,
+    ...Array.from({ length: 9 }, () =>
+      held({ values: { era: 'Future', culture: 'Baroque', trait: 'Commercial' } }),
+    ),
   ];
 }
 
-describe('PoleLayout — where the pole’s parts stand (U05, Decision 13)', () => {
-  test('levels stand well apart, each row a button a thumb tall across the picture; nothing leaves a 360 px phone', () => {
-    const layout = PoleLayout.of(
-      path([held(), held(), held(), held(), held(), held(), held(), held()]),
-      PHONE,
-    );
+const inside = (box: { x: number; width: number }) => box.x >= 0 && box.x + box.width <= PHONE.width;
+
+describe('PoleLayout — where the pole’s parts stand', () => {
+  test('the pole runs down the middle; each node is big and stands clear of the next; each row a button a thumb tall', () => {
+    const layout = PoleLayout.of(room(), PHONE);
     const rows = layout.rows();
-    rows.slice(1).forEach((row, index) => {
-      expect(row.y - (rows[index]?.y ?? 0)).toBeGreaterThanOrEqual(76);
-    });
     for (const row of rows) {
+      expect(row.plate.x).toBe(PHONE.width / 2);
+      expect(row.radius).toBeGreaterThanOrEqual(36);
       expect(row.box.height).toBeGreaterThanOrEqual(44);
-      expect(row.box.width).toBe(360);
+      expect(row.box.width).toBe(PHONE.width);
+      expect(row.words.right).toBeLessThan(row.plate.x - row.radius);
       expect(row.words.width).toBeGreaterThan(100);
     }
-    for (const lane of layout.lanes()) expect(lane.x + lane.width).toBeLessThanOrEqual(360);
-    // Thirteen levels do not fit the phone's pole: it grows and scrolls.
+    rows.slice(1).forEach((row, index) => {
+      expect(row.y - (rows[index]?.y ?? 0)).toBeGreaterThan(row.radius * 3);
+    });
+    // Fourteen levels do not fit the phone's pole: it grows and scrolls.
     expect(layout.size().height).toBeGreaterThan(PHONE.height);
-    expect(layout.size().height).toBeGreaterThanOrEqual((rows.at(-1)?.y ?? 0) + 26);
   });
 
-  test('a value held from the planet down is one run; the trait’s run starts at the country that sets it', () => {
-    const runs = PoleLayout.of(path([held(), held(), held()]), PHONE).runs();
-    const rows = PoleLayout.of(path([held(), held(), held()]), PHONE).rows();
-    const culture = runs.filter((run) => run.lane === 'culture');
-    expect(culture.map((run) => run.word)).toEqual(['Rust']);
-    expect(culture[0]?.notch).toBe(rows[4]?.y);
-    const trait = runs.filter((run) => run.lane === 'trait');
-    expect(trait.map((run) => run.notch)).toEqual([rows[5]?.y]);
-  });
-
-  test('a rebel district breaks the era and culture ribbons in red, even where a value stays; the trait runs on', () => {
-    const rebel = held({ rebel: true, values: { era: 'Atomic', culture: 'Monolith', trait: 'Commercial' } });
-    const layout = PoleLayout.of(path([held(), rebel, held({ values: rebel.values })]), PHONE);
-    const city = layout.rows()[6]?.y;
-    const at = (lane: string) => layout.runs().filter((run) => run.lane === lane);
-    expect(at('era').map((run) => [run.notch, run.rebel])).toEqual([
-      [layout.rows()[4]?.y, false],
-      [city, true],
+  test('a value is written right of the node that sets it, inside the phone, the labels of one row never overlapping', () => {
+    const layout = PoleLayout.of(room(), PHONE);
+    const labels = layout.labels();
+    const planet = layout.rows()[4];
+    const country = layout.rows()[5];
+    expect(labels.map((label) => [label.word, label.row])).toEqual([
+      ['Atomic', 4],
+      ['Rust', 4],
+      ['Future', 5],
+      ['Baroque', 5],
+      ['Commercial', 5],
     ]);
-    expect(at('culture').map((run) => run.word)).toEqual(['Rust', 'Monolith']);
-    expect(at('trait')).toHaveLength(1);
+    for (const label of labels) {
+      expect(inside(label)).toBe(true);
+      expect(label.x).toBeGreaterThan((planet?.plate.x ?? 0) + (planet?.radius ?? 0));
+    }
+    const ofCountry = labels.filter((label) => label.row === 5);
+    ofCountry.slice(1).forEach((label, index) => {
+      const above = ofCountry[index];
+      expect(label.y).toBeGreaterThanOrEqual((above?.y ?? 0) + (above?.height ?? 0));
+    });
+    // The country's three labels stay closer to it than to the levels either side.
+    for (const label of ofCountry)
+      expect(Math.abs(label.y + label.height / 2 - (country?.y ?? 0))).toBeLessThan(
+        ((country?.y ?? 0) - (planet?.y ?? 0)) / 2,
+      );
   });
 
-  test('a hook comes in only on the ribbon that drifted, where the drift starts; the room under it does not hook again', () => {
-    const drifted = { era: false, culture: true };
-    const layout = PoleLayout.of(
-      path([held(), held(), held({ drift: drifted }), held({ drift: drifted })]),
-      PHONE,
-    );
-    expect(layout.hooks().map((hook) => [hook.lane, hook.to.y])).toEqual([['culture', layout.rows()[7]?.y]]);
+  test('the current’s words stand under the labels of the level where it shows, inside the phone', () => {
+    const layout = PoleLayout.of(room(), PHONE);
+    const [current] = layout.currents();
+    const planetLabels = layout.labels().filter((label) => label.row === 4);
+    expect(layout.currents().map((words) => words.word)).toEqual(['Ancient · Monolith']);
+    expect(current?.at.y).toBeGreaterThan(Math.max(...planetLabels.map((label) => label.y + label.height)));
+    expect(current?.at.x).toBeLessThan(PHONE.width);
   });
 
-  test('the current runs from the planet down; its words show where the second pair first shows and where it changes', () => {
-    const swapped = { era: 'drift · atomic', culture: 'drift · rust' };
-    const layout = PoleLayout.of(
-      path([held(), held({ current: swapped }), held({ current: swapped })]),
-      PHONE,
-    );
-    expect(layout.currents().map((current) => current.top)).toEqual([
-      layout.rows()[4]?.y,
-      layout.rows()[4]?.y,
-    ]);
-    expect(layout.currentWords().map((words) => words.word)).toEqual([
-      'drift · ancient',
-      'drift · atomic',
-      'drift · monolith',
-      'drift · rust',
-    ]);
-  });
-
-  test('the ships’ lane keeps an empty berth only where a level has one, inside the picture', () => {
-    const layout = PoleLayout.of(path([held({ berth: true })]), PHONE);
+  test('the ships’ empty berth stands left of its node, inside the picture, only where a level has one', () => {
+    const layout = PoleLayout.of([level(), level({ berth: true })], PHONE);
+    const [berth] = layout.berths();
     expect(layout.berths()).toHaveLength(1);
-    expect(layout.berths()[0]?.x).toBeGreaterThan(0);
+    expect(berth?.x).toBeGreaterThan(0);
+    expect(berth?.x).toBeLessThan((layout.rows()[1]?.plate.x ?? 0) - (layout.rows()[1]?.radius ?? 0));
+  });
+
+  test('the level in focus: the first at the top of the scroll, the last at the bottom, the one in the middle between', () => {
+    const layout = PoleLayout.of(room(), PHONE);
+    const height = layout.size().height;
+    const rows = layout.rows();
+    expect(layout.focus({ top: 0, height: PHONE.height })).toBe(0);
+    expect(layout.focus({ top: height - PHONE.height, height: PHONE.height })).toBe(rows.length - 1);
+    const middle = rows[7]?.y ?? 0;
+    expect(layout.focus({ top: middle - PHONE.height / 2, height: PHONE.height })).toBe(7);
+  });
+
+  test('the backdrop: a row for era, culture and trait, top down, inside the window the pole is seen through', () => {
+    const layout = PoleLayout.of(room(), PHONE);
+    const window = { top: 900, height: PHONE.height };
+    const rows = layout.backdrop(window);
+    expect(rows.map((row) => row.lane)).toEqual(['era', 'culture', 'trait']);
+    for (const row of rows) {
+      expect(row.head.y).toBeGreaterThanOrEqual(window.top);
+      expect(row.word.y).toBeLessThanOrEqual(window.top + window.height);
+      expect(row.word.y).toBeGreaterThan(row.head.y);
+      expect(row.head.x + row.width).toBeLessThanOrEqual(PHONE.width);
+    }
   });
 });
