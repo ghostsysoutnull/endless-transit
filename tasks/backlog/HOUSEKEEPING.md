@@ -97,7 +97,8 @@ views, fingers wait for a flip's glide), with the resize refit it pointed at; no
 places.
 - `PlanScene.#down` asks `mode.moves()`: the mode could answer the gesture a finger starts (none standing in a room).
 - The starting mode is written twice (`#mode`'s `new InRoom()` and `render`'s reset): one place says it.
-- `PlanScene` builds the MAP key's button with `createElement`, beside an injected canvas: mount it through the parts.
+- ✓ `PlanScene` builds the MAP key's button with `createElement`, beside an injected canvas: mounted through the
+  parts since U03e (`KeySlot`).
 - `ViewMode` takes the concrete `PlanCamera`: extends HK-035's first line (a small interface the users own).
 - `InRoom.stop` returns nothing for a relic, which `#go` reads as "it flies": extends HK-034's line on `#go`.
 - `GameEngine.test.ts` ("past the old sixteen") and `items.spec.ts` repeat `Buffer.test.ts`'s check that a take lands
@@ -151,6 +152,29 @@ builder); none of these is a bug or a fact in two places.
 - No test covers `TracePole`'s focus slide or its repaint on scroll under reduced motion.
 
 ## 🟢 CLOSED
+
+### HK-040 — the U03e design check's logged findings (tidying, one line each)
+**Found:** 2026-10-01, the one design check of U03e (`e328482..ui/u03e-room-card`); its five fixes are in; none of these
+is a bug the player meets today or a fact in two places.
+- `RoomCardView.#turn` has no `try/finally` round the turn: one that rejected would leave the card busy and the turn's
+  inline styles behind. No turn rejects today.
+- The MAP key tapped while a turn plays flips the plan, but its turn to the front is dropped: remember the face asked.
+- `RoomCardView.#swiped` reads the MAP key's `aria-pressed` out of the page to know the plan shows, and climbs to
+  `.world`: the stage could answer it through `CardParts`.
+- `RoomCardView` takes the concrete `CardTurns`: a two-method interface the view owns.
+- `RoomCardView.#swiped` clears `#down` and answers: clear it in the handler.
+- `SIGHT_LOOKS` builds the doorway looks inside a module constant, and `LitDoorway` is built at a second site
+  (`ScenePictures`): they hold no state.
+- `MovesLayout.ways.moves` is filled and read by nobody: the presenter reads only `shown`.
+- `HudPresenter` computes the buffer's count string twice in `toViewModel`.
+- `FlipTurn.ts`'s comment says every turn lasts `TURN`; `TornTurn` runs a tenth longer, and the constant sits in a
+  sibling's file.
+- `e2e/support/harness.ts` works out a hidden button's name by cloning it, with an inline cast.
+- `e2e/card.spec.ts` waits a fixed 900 ms to show a swipe did not turn, waits out the 5 s fade, and finds elements by
+  class (`.card`, `.desc`, `.keys .badge`, `.card .line`) where the regions' names would do.
+- `CardTurns.test.ts`'s "the still turn is its own" only reads back what the test handed in: delete.
+- Not done from the plan: a browser test that a step landing during a turn keeps its own face (the fix is in, unpinned),
+  and `GrainTile` — the static turn is drawn by the stylesheet, the torn bands are a fixed pattern.
 
 ### HK-022 — `NameGenerator` was eleven static generators
 **CLOSED 2026-09-20** — merge `9549527`, chronicle `0x9549527`, plan + record `tasks/completed/HK_022_PLAN.md`. One `NameGenerator` per `ProceduralFactory` (`nameGenerator`, final); the eleven factories ask `registry.nameGenerator`; no static methods; off the `NoNewStaticLogic` allow-list (16 → 15). No name moved. `NameGeneratorContractTest` 7 pins + wiring pin C3.

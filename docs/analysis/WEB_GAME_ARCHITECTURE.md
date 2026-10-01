@@ -176,10 +176,20 @@ the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a discl
 buffer, trace, help, title, end session) that the next step folds again, and a panel the player asked for (scan,
 map) comes after the list; every screen shows a move without scrolling at 360 × 640. A drawn place (U01b: the
 street) shows the name, then the picture, then the list, then the rest of the card, the picture sized so the first
-row stays above the dock at 360 × 640; its HUD is one thin row. A room (U03c) is one screen: the picture, the room's
-words, the tiles, the rest of the card — its moves in the dock's row after the way out (the drawing says where a
-place's moves sit: `Drawing.arrange`, a `MovesPlace` — `MovesInDock` for the plan, `MovesInStrip` for the rest — into
-a `MovesLayout`, strip or row; the presenter owns the dock's order, and the view marks the way out by its role).
+row stays above the dock at 360 × 640; its HUD is one thin row. A room is a card (U03e): the drawing says where a
+place's moves sit (`Drawing.arrange`, a `MovesPlace` — `MovesOnCard` for the plan, `MovesInStrip` for the rest — into
+a `MovesLayout`), and where they sit on a card the presenter builds `HudVM.card` (a `RoomCardVM`: the corner's words,
+the arrival's paragraph, the keys — Buffer, Trace, and the way back, which is the way out or the engine's move back by
+its id, `BACK_MOVE_ID` — the other moves and the game's other options) and leaves the dock empty. `HudView` hands its
+parts (`CardParts`) to a `RoomCard`, `RoomCardView`, which lays them out on two faces and owns which one shows: the
+picture with the place's heading, first words and status over it, fading; the back with the panels a step brought, the
+words, the lists, the ways and the game's options. The face turned away is hidden from everyone. The folded corner and
+a sideways swipe (not over the plan) turn it and pick nothing; a new room shows the front, a step that brought a panel
+the back. A turn is a `CardTurn` (`src/ui/card/`: `FlipTurn`, `DoorTurn`, `PeelTurn`, `BlindsTurn`, the broken
+`StaticTurn` and `TornTurn`, `InstantTurn` under reduced motion), played with the browser's own animations; `CardTurns`
+picks one from the frame's seed, the decay and the turn's count since the step, never the one just played. The keys
+under the card stay on both faces; the picture's MAP key is mounted in their slot (`KeySlot`, `StripSlot`), and the
+ids something outside the template looks up live in `CardSlots`.
 `prefers-reduced-motion` stops the bar, the canvas pulse, the scene's motion and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
 **Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`) is a pure function
@@ -264,8 +274,8 @@ serpentine rows (`FloorPlan`: `PlanBox`es in plan units, a `PlanDoor` — `SideD
 and the next, the entrance under the first). The plan's view is a `Framing` (a centre in `PlanPoint`s, a scale and a
 vertical stretch), not one number, so it has its own host: `PlanScene` shows a `PlanSketch` (`Planned`: `PlanPicture` +
 `PlanVM`) on the shared `SceneCanvas`, in a `ViewMode` (U03d): `InRoom` — the room you stand in stretched to fill the
-picture (`PlanCamera.inside`), still, every new room starting there — or `OverPlan`, which a MAP key over the picture
-flips to and back (its words in the `PlanVM`). Over the plan, the `PlanCamera` keeps the framing in range, rests on a
+picture (`PlanCamera.inside`), still, every new room starting there — or `OverPlan`, which the MAP key
+flips to and back (its words in the `PlanVM`; the host owns the key and mounts it where its `KeySlot` says, U03e). Over the plan, the `PlanCamera` keeps the framing in range, rests on a
 room filling the picture (U03c), coasts, settles a pinch on the room or the whole plan and shows the `Minimap`, whose
 tap pulls back to the whole plan (an option's hit wins over it); the mode hands the picture its corner map;
 a `PlanGesture` is a `PlanDrag` or a `Pinch`, and says how it lets go (`release`, told a `LetGo`: a drag coasts, a
@@ -274,7 +284,11 @@ picture places each room (`PlacedRoom`) and paints it by its sight (`SIGHT_LOOKS
 `Tint`s), with what its box holds (`RoomInsides` → a `RoomInside`: the room stood in, when large enough, a
 `DrawnInside` — its back wall a `RoomWall` (a `WallPattern` in its culture's ink, by the look's walls key), a
 `RoomLight` by the look's light key, furniture and snow, its relics on the floor; any other room a `PlainInside`; a
-key with no entry is plain). A relic taken flies to the HUD's Buffer count (`RelicFlight`, behind the plan's `Flight`
+key with no entry is plain). The doorways of the room stood in (U03e) are each a `DoorwayFrame` — the gap on the
+picture, the way in, the light's ink and the room's number — painted by the sight of the room it leads to
+(`SightLook.paintDoorway` → a `DoorwayLook`: `LitDoorway` once that room is visited, in its own light's ink, which the
+engine hands over as `PlanRoom.light`; `FoggedDoorway` before); the way out is a `LitDoorway` in its own ink; the room
+stood in carries no name. A relic taken flies to the card's Buffer key (`RelicFlight`, behind the plan's `Flight`
 port, built in `main.ts`). `SceneDrawing` joins the doorways' moves to their rooms by address, the leave and the
 takes; `HudView` sends every drawn button through the picture and lights its twin with one delegated listener each.
 

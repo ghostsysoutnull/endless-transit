@@ -27,10 +27,10 @@ draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Ev
 | `▲ LEAVE …` | up one level (from a corridor: to the building, skipping the elevator) |
 | Elevator | **GO UP**, **GO DOWN**, **ENTER CORRIDOR** |
 | Corridor | doors, **BACK TO ELEVATOR** |
-| Room | an object takes it (it flies to the Buffer count); **GO FORWARD**, **GO BACK** in the dock; **LEAVE THE APARTMENT** in the first room only; **MAP** in the picture for the whole plan |
+| Room | a card: the picture, and its back (the folded corner or a sideways swipe) with the words, the objects and **GO FORWARD**; a doorway walks through it; an object takes it (it flies to the **BUFFER** key); four keys under it: **BUFFER**, **MAP** (the whole plan), **TRACE**, **BACK** — **LEAVE** in the first room |
 | Null Reach | **SCAN FOR SPECTRAL ECHOES** until 100, then **CAPTURE SPECTRAL ECHO** |
 
-| The dock (`▲ LEAVE`, a room's moves and **MORE** stay under your thumb) | |
+| The dock (`▲ LEAVE` and **MORE** stay under your thumb; a room has its keys and the back of its card in its place) | |
 | :-- | :-- |
 | **SCAN** | doors and room types, nearby floors, or the apartment's rooms |
 | **MAP** | what is below you, drawn; dim is unvisited |
