@@ -131,7 +131,11 @@ Relics: 6
 status: Entered Hollow Neural Link Array.
 IN THIS ROOM: white light strip infused with smart glass <infused|white light strip|smart glass> | floating white sphere infused with plasma coil <infused|floating white sphere|plasma coil> | hovering disc fused to hologram projector <fused|hovering disc|hologram projector> | hologram projector grafted onto hidden speaker <grafted|hidden speaker|hologram projector> | empty frame infused with aerogel slab <infused|empty frame|aerogel slab> | quantum key <era|quantum key>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ██████ █████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE THE APARTMENT | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+arrival: You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment)
+ways: [F] GO FORWARD
+game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Abyssal Bio-Server  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Abyssal Bio-Server *
@@ -145,4 +149,8 @@ Relics: 5
 status: Entered Abyssal Bio-Server.
 IN THIS ROOM: neural link grafted onto silent fan <grafted|silent fan|neural link> | neural link with hidden speaker <with|hidden speaker|neural link> | neural link with floating white sphere <with|floating white sphere|neural link> | quantum key with silent fan <with|silent fan|quantum key> | white noise emitter infused with smart glass <infused|white noise emitter|smart glass>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████████ ████ ████████ █ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.1 > Resonant traces: 0
-dock: [B] GO BACK | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+arrival: You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] BACK (Go back)
+ways: [F] GO FORWARD
+game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)

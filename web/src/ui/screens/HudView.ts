@@ -16,6 +16,7 @@ import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import type { PictureBook } from './PictureBook.ts';
+import type { RoomCard } from './RoomCard.ts';
 import { Retrace } from './Retrace.ts';
 import { statTestId } from './StatKey.ts';
 import type { TraceView } from './TraceView.ts';
@@ -37,16 +38,16 @@ interface TraceParts {
  * panel, the list of places to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel, or sit in the dock (a room, U03c). The coherence meter is a
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel; a room is drawn as a card of its own (`RoomCard`, U03e), its keys in place of the dock. The coherence meter is a
  * `role="meter"` whose fill is a width the stylesheet animates (nodes survive a render). The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
  * scene, so a new place gets new nodes and the shell's focus rule applies. Dock buttons are keyed by their
  * option alone: LEAVE is the same button one level up, so it keeps the focus and Enter climbs again. The
- * dock folds after `fold.after` buttons (the way out, marked, and a room's moves) behind one MORE button — a disclosure of this view, not of the game,
+ * dock folds after `fold.after` buttons (the way out, marked) behind one MORE button — a disclosure of this view, not of the game,
  * folded again by the next step (I09); every button is always in the markup, so a key always works. The depth rail (U01a) is a list: a glyph per
  * level, its kind and name read out (the glyphs are shown), under one button that runs TRACE (U04), out of the tab order. The moves a place
- * offers sit under its title, so the first screen of a phone shows one (I09), or in the dock's row (U03c). The debug strip (Decision 8)
+ * offers sit under its title, so the first screen of a phone shows one (I09). The debug strip (Decision 8)
  * sits last, folded behind one DEBUG button, every one of its buttons out of the tab order. The drawn maps (the pane's and MAP's)
  * are canvases mounted into host elements the template keeps alive (`CanvasSlots`); their words sit beside
  * them for a reader. A place whose drawing key has a registered picture is drawn (U01b): the scene host sits
@@ -91,12 +92,21 @@ export class HudView implements View<HudVM> {
   #railAt: number | undefined;
   /** Where a swipe down the column's header started. */
   #pull: number | undefined;
+  /** The room's card (U03e): its markup and which face shows. */
+  readonly #card: RoomCard;
 
   /** The registry binds a drawing to its picture (U01b); the stage shows its scene (U03); the makers make each canvas the screen carries (U02). */
-  constructor(book: PictureBook, stage: DrawnStage, canvases: CanvasViews, column: TraceParts) {
+  constructor(
+    book: PictureBook,
+    stage: DrawnStage,
+    canvases: CanvasViews,
+    column: TraceParts,
+    card: RoomCard,
+  ) {
     this.#book = book;
     this.#stage = stage;
     this.#column = column;
+    this.#card = card;
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
       map: () => canvases.map(),
@@ -169,6 +179,7 @@ export class HudView implements View<HudVM> {
       this.#lit = new NoChild();
       this.#group = undefined;
     }
+    this.#card.step(vm);
     this.#paint(vm);
     // A scene kept from the last render is shown the new frame; one made just now already shows it.
     this.#stage.redraw();
@@ -350,6 +361,7 @@ export class HudView implements View<HudVM> {
     this.#vm = undefined;
     this.#more = false;
     this.#debugOpen = false;
+    this.#card.forget();
   }
 
   #host(slot: Slot | 'scene'): HTMLElement | null {
@@ -381,70 +393,33 @@ export class HudView implements View<HudVM> {
 
   #template(vm: HudVM): TemplateResult {
     const drawn = vm.drawing.sketchedBy(this.#book).drawn();
+    if (vm.card.shown) {
+      // A room (U03e): its picture, words and lists are the card's to lay out; the keys under it stand in for the dock.
+      return html`
+        <div class="app world" data-frame=${vm.frame} data-band=${vm.meter.band} data-drawn data-card>
+          ${this.#top(vm)}
+          ${this.#card.template(vm, vm.card, {
+            picture: this.#picture(),
+            head: this.#head(vm),
+            status: this.#status(vm),
+            words: this.#words(vm),
+            lists: this.#aside(vm),
+            panels: this.#panels(vm),
+            button: (option) => this.#docked(option),
+            lit: (id) => this.#lit.marks(id),
+            repaint: () => {
+              if (this.#vm !== undefined) this.#paint(this.#vm);
+            },
+          })}
+          ${this.#trace(vm)} ${this.#debug(vm)} ${this.#build(vm)}
+        </div>
+      `;
+    }
     return html`
       <div class="app world" data-frame=${vm.frame} data-band=${vm.meter.band} ?data-drawn=${drawn}>
-        <section class="hud" aria-label=${vm.regions.hud}>
-          <h1 class="brand">${vm.title}</h1>
-          <div class="meter" data-band=${vm.meter.band} data-testid="meter">
-            <span class="ml">${vm.meter.label}</span
-            ><span
-              class="cohbar"
-              role="meter"
-              aria-label=${vm.meter.label}
-              aria-valuemin=${vm.meter.min}
-              aria-valuemax=${vm.meter.max}
-              aria-valuenow=${vm.meter.value}
-              aria-valuetext=${vm.meter.valueText}
-              ><i style=${`width:${String(vm.meter.value)}%`}></i
-            ></span>
-            <b class="mv" data-testid="coherence">${vm.meter.text}</b>
-            <span class="mb" data-testid="band">${vm.meter.bandLabel}</span>
-          </div>
-          <dl class="stats">
-            ${vm.stats.map(
-              (stat) => html`
-                <div class="stat">
-                  <dt>${stat.label}</dt>
-                  <dd data-testid=${statTestId(stat.key)}>${stat.value}</dd>
-                </div>
-              `,
-            )}
-          </dl>
-        </section>
-        <nav class="rail" aria-label=${vm.regions.path}>
-          ${
-            vm.railTrace === null
-              ? nothing
-              : html`<button
-                  type="button"
-                  class="rail-hit"
-                  tabindex="-1"
-                  data-option=${vm.railTrace.id}
-                  aria-label=${vm.railTrace.label}
-                  @pointerdown=${(event: PointerEvent) => {
-                    this.#railFrom(event);
-                  }}
-                ></button>`
-          }
-          <ol data-testid="path">
-            ${vm.rail.map(
-              (level) => html`
-                <li class=${level.current ? 'crumb you' : 'crumb'}>
-                  <span class="vh">${level.kind}</span><span class="ic" aria-hidden="true">${level.icon}</span
-                  ><span class="cn" aria-current=${level.current ? 'location' : nothing}>${level.name}</span>
-                </li>
-              `,
-            )}
-          </ol>
-        </nav>
+        ${this.#top(vm)}
         <section class="cap" aria-label=${vm.regions.place} tabindex="-1" data-rest>
-          <div class="head">
-            <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
-            <h2>
-              <span class="ic" aria-hidden="true">${vm.place.icon}</span
-              ><span data-testid="place-name">${vm.place.name}</span>
-            </h2>
-          </div>
+          <div class="head">${this.#head(vm)}</div>
           ${
             vm.moves.length === 0
               ? nothing
@@ -458,66 +433,9 @@ export class HudView implements View<HudVM> {
                   </nav>
                 `
           }
-          <div class="body">
-            <ul class="tags">
-              ${
-                vm.place.position.shown
-                  ? html`<li class="chip pos">
-                      <span class="k">${vm.place.position.label}</span> ${vm.place.position.value}
-                    </li>`
-                  : nothing
-              }
-              ${vm.place.tags.map(
-                (tag) => html`
-                  <li class="tag" data-fact=${tag.key}><span class="k">${tag.label}</span> ${tag.value}</li>
-                `,
-              )}
-            </ul>
-            <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
-            ${
-              vm.place.rows.length === 0
-                ? nothing
-                : html`<dl class="prows">
-                    ${vm.place.rows.map(
-                      (row) => html`
-                        <div class="prow">
-                          <dt>${row.label}</dt>
-                          <dd>${row.value}</dd>
-                        </div>
-                      `,
-                    )}
-                  </dl>`
-            }
-            ${vm.place.diagnostic === '' ? nothing : html`<p class="diag">${vm.place.diagnostic}</p>`}
-            <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
-          </div>
+          <div class="body">${this.#words(vm)} ${this.#status(vm)}</div>
         </section>
-        ${
-          drawn
-            ? html`<div
-                class="scene"
-                data-testid="scene"
-                data-canvas="scene"
-                data-lit=${this.#lit.written()}
-              ></div>`
-            : nothing
-        }
-        ${
-          drawn && vm.aside.objects !== null
-            ? html`<button
-                type="button"
-                class="peek"
-                data-testid="peek"
-                @click=${(event: Event) => {
-                  this.#toWords(event);
-                }}
-              >
-                ${vm.aside.objects.peek} <span aria-hidden="true">↓</span>
-              </button>`
-            : nothing
-        }
-        ${this.#scan(vm)} ${vm.map.shown ? this.#map(vm.map, 'map', 'map', vm.regions.map) : nothing}
-        ${this.#trace(vm)}
+        ${drawn ? this.#picture() : nothing} ${this.#panels(vm)} ${this.#trace(vm)}
         <div class="side">
           ${
             vm.rows.length === 0
@@ -548,11 +466,6 @@ export class HudView implements View<HudVM> {
             (option) => option.id,
             (option) => this.#docked(option, undefined, true),
           )}
-          ${repeat(
-            vm.dock.slice(vm.fold.out, vm.fold.after),
-            (option) => option.id,
-            (option) => this.#docked(option),
-          )}
           ${
             vm.dock.length <= vm.fold.after
               ? nothing
@@ -580,42 +493,183 @@ export class HudView implements View<HudVM> {
                 `
           }
         </nav>
-        ${
-          vm.debug.length === 0
-            ? nothing
-            : html`
-                <nav
-                  class="debug"
-                  aria-label=${vm.regions.debug}
-                  data-testid="debug"
-                  data-open=${this.#debugOpen ? 'true' : 'false'}
-                >
-                  <button
-                    type="button"
-                    class="pb dbg"
-                    data-testid="debug-toggle"
-                    tabindex="-1"
-                    aria-expanded=${this.#debugOpen ? 'true' : 'false'}
-                    aria-controls="debug-fold"
-                    @click=${() => {
-                      this.#toggleDebug();
-                    }}
-                  >
-                    <span>${vm.debugToggle}</span>
-                  </button>
-                  <div class="fold" id="debug-fold">
-                    ${repeat(
-                      vm.debug,
-                      (option) => option.id,
-                      (option) => this.#docked(option, -1),
-                    )}
-                  </div>
-                </nav>
-              `
-        }
-        <footer class="build" data-testid="build">${vm.build}</footer>
+        ${this.#debug(vm)} ${this.#build(vm)}
       </div>
     `;
+  }
+
+  /** The top of the world screen: the HUD and the depth rail. */
+  #top(vm: HudVM): TemplateResult {
+    return html`
+      <section class="hud" aria-label=${vm.regions.hud}>
+        <h1 class="brand">${vm.title}</h1>
+        <div class="meter" data-band=${vm.meter.band} data-testid="meter">
+          <span class="ml">${vm.meter.label}</span
+          ><span
+            class="cohbar"
+            role="meter"
+            aria-label=${vm.meter.label}
+            aria-valuemin=${vm.meter.min}
+            aria-valuemax=${vm.meter.max}
+            aria-valuenow=${vm.meter.value}
+            aria-valuetext=${vm.meter.valueText}
+            ><i style=${`width:${String(vm.meter.value)}%`}></i
+          ></span>
+          <b class="mv" data-testid="coherence">${vm.meter.text}</b>
+          <span class="mb" data-testid="band">${vm.meter.bandLabel}</span>
+        </div>
+        <dl class="stats">
+          ${vm.stats.map(
+            (stat) => html`
+              <div class="stat">
+                <dt>${stat.label}</dt>
+                <dd data-testid=${statTestId(stat.key)}>${stat.value}</dd>
+              </div>
+            `,
+          )}
+        </dl>
+      </section>
+      <nav class="rail" aria-label=${vm.regions.path}>
+        ${
+          vm.railTrace === null
+            ? nothing
+            : html`<button
+                type="button"
+                class="rail-hit"
+                tabindex="-1"
+                data-option=${vm.railTrace.id}
+                aria-label=${vm.railTrace.label}
+                @pointerdown=${(event: PointerEvent) => {
+                  this.#railFrom(event);
+                }}
+              ></button>`
+        }
+        <ol data-testid="path">
+          ${vm.rail.map(
+            (level) => html`
+              <li class=${level.current ? 'crumb you' : 'crumb'}>
+                <span class="vh">${level.kind}</span><span class="ic" aria-hidden="true">${level.icon}</span
+                ><span class="cn" aria-current=${level.current ? 'location' : nothing}>${level.name}</span>
+              </li>
+            `,
+          )}
+        </ol>
+      </nav>
+    `;
+  }
+
+  /** The place's kind and name: the screen's heading. */
+  #head(vm: HudVM): TemplateResult {
+    return html`
+      <p class="eyebrow" data-testid="place-kind">${vm.place.eyebrow}</p>
+      <h2>
+        <span class="ic" aria-hidden="true">${vm.place.icon}</span
+        ><span data-testid="place-name">${vm.place.name}</span>
+      </h2>
+    `;
+  }
+
+  /** The place's chips, its words, its labelled rows and its diagnostic line. */
+  #words(vm: HudVM): TemplateResult {
+    return html`
+      <ul class="tags">
+        ${
+          vm.place.position.shown
+            ? html`<li class="chip pos">
+                <span class="k">${vm.place.position.label}</span> ${vm.place.position.value}
+              </li>`
+            : nothing
+        }
+        ${vm.place.tags.map(
+          (tag) => html`
+            <li class="tag" data-fact=${tag.key}><span class="k">${tag.label}</span> ${tag.value}</li>
+          `,
+        )}
+      </ul>
+      <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
+      ${
+        vm.place.rows.length === 0
+          ? nothing
+          : html`<dl class="prows">
+              ${vm.place.rows.map(
+                (row) => html`
+                  <div class="prow">
+                    <dt>${row.label}</dt>
+                    <dd>${row.value}</dd>
+                  </div>
+                `,
+              )}
+            </dl>`
+      }
+      ${vm.place.diagnostic === '' ? nothing : html`<p class="diag">${vm.place.diagnostic}</p>`}
+    `;
+  }
+
+  /** The line that says what just happened, for the eye. */
+  #status(vm: HudVM): TemplateResult {
+    return html`
+      <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
+    `;
+  }
+
+  /** The host the place's picture is drawn in. */
+  #picture(): TemplateResult {
+    return html`<div
+      class="scene"
+      data-testid="scene"
+      data-canvas="scene"
+      data-lit=${this.#lit.written()}
+    ></div>`;
+  }
+
+  /** The panels a step brings: the scan's and the map's. */
+  #panels(vm: HudVM): TemplateResult {
+    return html`
+      ${this.#scan(vm)} ${vm.map.shown ? this.#map(vm.map, 'map', 'map', vm.regions.map) : nothing}
+    `;
+  }
+
+  /** The debug tools, folded behind one button; nothing outside debug mode. */
+  #debug(vm: HudVM): TemplateResult {
+    return html`
+      ${
+        vm.debug.length === 0
+          ? nothing
+          : html`
+              <nav
+                class="debug"
+                aria-label=${vm.regions.debug}
+                data-testid="debug"
+                data-open=${this.#debugOpen ? 'true' : 'false'}
+              >
+                <button
+                  type="button"
+                  class="pb dbg"
+                  data-testid="debug-toggle"
+                  tabindex="-1"
+                  aria-expanded=${this.#debugOpen ? 'true' : 'false'}
+                  aria-controls="debug-fold"
+                  @click=${() => {
+                    this.#toggleDebug();
+                  }}
+                >
+                  <span>${vm.debugToggle}</span>
+                </button>
+                <div class="fold" id="debug-fold">
+                  ${repeat(
+                    vm.debug,
+                    (option) => option.id,
+                    (option) => this.#docked(option, -1),
+                  )}
+                </div>
+              </nav>
+            `
+      }
+    `;
+  }
+
+  #build(vm: HudVM): TemplateResult {
+    return html`<footer class="build" data-testid="build">${vm.build}</footer>`;
   }
 
   /** The last scan's panel: its title, its notes, one row per reading with labelled cells and the sensory line under it. */
@@ -828,13 +882,6 @@ export class HudView implements View<HudVM> {
         }
       </section>
     `;
-  }
-
-  /** Down to the room's words, under the picture (U03d). */
-  #toWords(event: Event): void {
-    const button = event.currentTarget;
-    if (!(button instanceof HTMLElement)) return;
-    button.closest('.world')?.querySelector('.desc')?.scrollIntoView({ block: 'start' });
   }
 
   /** The objects of a room as tiles — a button each while the engine offers its take, a plain tile otherwise — the telemetry block, or the map. */

@@ -4,6 +4,7 @@ import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { PlanPortrait } from '#engine/model/PlanPortrait.ts';
 import { RoomLook } from '#engine/model/RoomLook.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
+import type { HudVM } from '#ui/screens/HudVM.ts';
 import { hudPresenter } from '#tests/support/hudPresenter.ts';
 import { option, PLANET, STREET, towerSnapshot } from '#tests/support/hudSnapshots.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
@@ -219,7 +220,6 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(vm.aside.objects).toEqual({
       label: 'In this room',
       heading: 'IN THIS ROOM',
-      peek: 'About this room · 2 relics',
       empty: '',
       tiles: [
         {
@@ -260,7 +260,6 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(bare.aside.objects).toEqual({
       label: 'In this room',
       heading: 'IN THIS ROOM',
-      peek: 'About this room',
       empty: 'No objects detected.',
       tiles: [],
     });
@@ -806,20 +805,43 @@ describe('HudPresenter.toViewModel — where a place’s moves sit (U03c)', () =
   });
   const LEAVE = option({ id: 'leave', key: 'l', label: 'Leave the apartment', role: 'return' });
 
-  test('in the first room of a drawn apartment the moves stand in the dock’s row after the way out, the rest behind MORE', () => {
+  /** The ids of a shown card's parts. */
+  function cardOf(vm: HudVM): { keys: string[]; ways: string[]; game: string[] } {
+    if (!vm.card.shown) throw new Error('expected the room’s card');
+    return {
+      keys: [...vm.card.keys.lead, ...vm.card.keys.trail].map((key) => key.id),
+      ways: vm.card.ways.map((way) => way.id),
+      game: vm.card.game.map((each) => each.id),
+    };
+  }
+
+  test('a room drawn as a plan is a card (U03e): the keys are Buffer and the way back — the way out in the first room; the other move and the game’s options are on its back; no dock, no strip, no option twice', () => {
     const vm = presenter.toViewModel(drawnRoom(0, [FORWARD, LEAVE]));
+    expect(cardOf(vm)).toEqual({ keys: ['buffer', 'leave'], ways: ['move:forward'], game: ['to-title'] });
     expect(vm.moves).toEqual([]);
-    expect(vm.dock.map((each) => each.id)).toEqual(['leave', 'move:forward', 'buffer', 'to-title']);
-    expect(vm.fold.after).toBe(2);
-    expect(vm.fold.out).toBe(1);
-    expect(vm.options.filter((each) => each.id === 'move:forward')).toHaveLength(1);
+    expect(vm.dock).toEqual([]);
+    expect(vm.options.map((each) => each.id).sort()).toEqual(['buffer', 'leave', 'move:forward', 'to-title']);
   });
 
-  test('in a middle room there is no way out: the row is the moves, back then forward', () => {
-    const vm = presenter.toViewModel(drawnRoom(1, [BACK, FORWARD]));
-    expect(vm.dock.map((each) => each.id)).toEqual(['move:back', 'move:forward', 'buffer', 'to-title']);
-    expect(vm.fold.after).toBe(2);
-    expect(vm.fold.out).toBe(0);
+  test('past the first room the way back is the move back; Trace, when offered, is a key', () => {
+    const room = drawnRoom(1, [BACK, FORWARD]);
+    const vm = presenter.toViewModel({
+      ...room,
+      options: [...room.options, option({ id: 'trace', key: '', label: 'Trace', role: 'system' })],
+    });
+    expect(cardOf(vm)).toEqual({
+      keys: ['buffer', 'trace', 'move:back'],
+      ways: ['move:forward'],
+      game: ['to-title'],
+    });
+  });
+
+  test('the card’s keys are named by the engine’s words and the Buffer key counts the buffer; the arrival is the room’s first paragraph', () => {
+    const vm = presenter.toViewModel(drawnRoom(0, [FORWARD, LEAVE]));
+    if (!vm.card.shown) throw new Error('expected the room’s card');
+    expect(vm.card.keys.lead.map((key) => [key.label, key.badge])).toEqual([['Buffer', vm.stats[1]?.value]]);
+    expect(vm.card.keys.trail.map((key) => key.label)).toEqual(['Leave the apartment']);
+    expect(vm.card.arrival).toBe(vm.place.description[0]);
   });
 
   test('a place not drawn as a plan keeps its moves in the strip, out of the dock', () => {
@@ -830,5 +852,6 @@ describe('HudPresenter.toViewModel — where a place’s moves sit (U03c)', () =
     });
     expect(vm.moves.map((each) => each.id)).toEqual(['move:up']);
     expect(vm.dock.map((each) => each.id)).not.toContain('move:up');
+    expect(vm.card.shown).toBe(false);
   });
 });

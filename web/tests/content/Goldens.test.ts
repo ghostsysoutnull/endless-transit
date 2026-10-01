@@ -63,7 +63,21 @@ function page(vm: HudVM): string {
       `${telemetry.heading} ${telemetry.sync} ${telemetry.spectrogram.heading} ${telemetry.spectrogram.bars.join(' ')} ${telemetry.logs.heading} ${telemetry.logs.lines.join(' ')}`,
     );
   }
-  lines.push(`dock: ${vm.dock.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
+  if (vm.card.shown) {
+    const card = vm.card;
+    const keys = [...card.keys.lead, ...card.keys.trail];
+    lines.push(`arrival: ${card.arrival}`);
+    lines.push(
+      `keys: ${keys.map((key) => `[${key.key}] ${key.text} (${key.label}) ${key.badge}`.trim()).join(' | ')}`,
+    );
+    lines.push(`ways: ${card.ways.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
+    lines.push(`game: ${card.game.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
+    lines.push(
+      `corner: ${card.corner.toWords.text} (${card.corner.toWords.label}) | ${card.corner.toRoom.text} (${card.corner.toRoom.label})`,
+    );
+  } else {
+    lines.push(`dock: ${vm.dock.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
+  }
   return lines.join('\n');
 }
 

@@ -47,6 +47,11 @@ import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { LayersTogether } from '#ui/screens/LayersTogether.ts';
 import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
 import { HudView } from '#ui/screens/HudView.ts';
+import { RoomCardView } from '#ui/screens/RoomCardView.ts';
+import { StripSlot } from '#ui/screens/StripSlot.ts';
+import { CardTurns } from '#ui/card/CardTurns.ts';
+import { FlipTurn } from '#ui/card/FlipTurn.ts';
+import { InstantTurn } from '#ui/card/InstantTurn.ts';
 import { RebootPresenter } from '#ui/screens/RebootPresenter.ts';
 import { RebootView } from '#ui/screens/RebootView.ts';
 import { RecapPresenter } from '#ui/screens/RecapPresenter.ts';
@@ -122,7 +127,7 @@ new Shell(
               ride: new EaseInOut(),
               coast: new EaseOut(),
             },
-            new RelicFlight(document),
+            { flight: new RelicFlight(document), keys: new StripSlot() },
           ),
         ),
         canvases,
@@ -133,6 +138,10 @@ new Shell(
           // The trace's view the player picked last (U05): kept in the browser like the save.
           views: new LocalStorageTraceViewMemory(() => window.localStorage),
         },
+        new RoomCardView({
+          motion,
+          turns: new CardTurns({ clean: [new FlipTurn()], broken: [], still: new InstantTurn() }),
+        }),
       ),
     ),
   ],

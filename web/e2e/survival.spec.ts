@@ -1,5 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, saveText, tapOption, trailOf, watchForErrors } from './support/harness.ts';
+import {
+  expectTouchable,
+  press,
+  saveText,
+  tapOption,
+  trailOf,
+  turnCard,
+  watchForErrors,
+} from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world: its street is Bright Boulevard; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
@@ -76,18 +84,20 @@ test('debug mode: the bar changes with the thresholds — yellow from 69, static
   await page.goto('./?debug');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   const debug = page.getByTestId('debug');
-  // The strip is folded behind one DEBUG button (I09), below the dock and out of the tab order.
+  // The strip is folded behind one DEBUG button (I09), below the room's keys and out of the tab order.
   const toggle = page.getByTestId('debug-toggle');
   await expect(debug.getByRole('button')).toHaveCount(1);
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(toggle).toHaveAttribute('tabindex', '-1');
   expect((await debug.boundingBox())?.y ?? 0).toBeGreaterThanOrEqual(
-    (await page.locator('.dock').boundingBox())?.y ?? 0,
+    (await page.locator('.keys').boundingBox())?.y ?? 0,
   );
   await (hasTouch ? toggle.tap() : toggle.click());
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await expect(debug.getByRole('button')).toHaveCount(11); // DEBUG, the INTEGRITY ladder, PRIME and KEYSTONE (I07)
   await expect(page.locator('button[data-option^="debug:"]:not([tabindex="-1"])')).toHaveCount(0);
+  // The room's words are on the back of its card (U03e).
+  await turnCard(page, hasTouch);
   const clean = await page.locator('.desc').innerText();
   expect(clean).not.toMatch(STATIC);
 

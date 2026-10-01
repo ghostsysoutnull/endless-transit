@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { expectTouchable, press, saveText, tapOption, turnCard, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world: its street is Bright Boulevard; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
@@ -42,6 +42,7 @@ test('take an object: every tile is a button; the status names the frequency; th
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(stat(page, 'Buffer')).toHaveText('0');
   await expect(page.locator('button.tile')).toHaveCount(4);
+  await turnCard(page, hasTouch);
   await expect(page.getByRole('button', { name: 'Take plasma coil with reliquary box' })).toHaveAttribute(
     'data-relic',
     'with|reliquary box|plasma coil',

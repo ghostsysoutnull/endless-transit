@@ -109,7 +109,11 @@ Relics: 4
 status: Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.
 IN THIS ROOM: plasma coil with reliquary box <with|reliquary box|plasma coil> | brass censer fused to laser cutter <fused|brass censer|laser cutter> | stone gargoyle infused with orbital beacon <infused|stone gargoyle|orbital beacon> | prayer bench infused with plasma coil <infused|prayer bench|plasma coil>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █████ █████ █████████ █████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE THE APARTMENT | [F] GO FORWARD | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+arrival: You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.
+keys: [I] BUFFER (Buffer) 1 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment)
+ways: [F] GO FORWARD
+game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Baroque Maintenance Bay  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Baroque Maintenance Bay *
@@ -123,4 +127,8 @@ Relics: 4
 status: Entered Baroque Maintenance Bay.
 IN THIS ROOM: velvet kneeling-rug fused to optic implant <fused|velvet kneeling-rug|optic implant> | reliquary box fused to drone dock <fused|reliquary box|drone dock> | nanotech mesh grafted onto carved choir stall <grafted|carved choir stall|nanotech mesh> | plasma coil with prayer bench <with|prayer bench|plasma coil>
 [SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ███ ███████ ██████ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.1 > Resonant traces: 0
-dock: [B] GO BACK | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+arrival: You are in a pump room throbbing behind a steel grille. The walls are red gilt mouldings peeling from plaster.
+keys: [I] BUFFER (Buffer) 1 | [] TRACE (Trace) | [B] BACK (Go back)
+ways: 
+game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
