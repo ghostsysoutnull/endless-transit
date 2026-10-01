@@ -2,7 +2,6 @@ import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
 import type { Fractions } from './Fractions.ts';
 import type { InsideFrame } from './InsideFrame.ts';
-import type { NameLine } from './NameLine.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { RelicSpot } from './RelicSpot.ts';
 import type { RoomInside } from './RoomInside.ts';
@@ -21,7 +20,7 @@ const SNOW = { flakes: 30, fall: 12 };
 /**
  * The room you stand in, drawn in full (U03b; the mock's `room`, `transit-reframed.html:908-932`): its floor running
  * to its back wall, the wall patterned by its culture, lit by its era, its furniture standing on the floor, snow
- * falling when it is cold; its relics lie on the floor and its name is written high on the back wall, clear of them.
+ * falling when it is cold; its relics lie on the floor.
  * Value object, made per frame.
  */
 export class DrawnInside implements RoomInside {
@@ -77,10 +76,6 @@ export class DrawnInside implements RoomInside {
       at: { x: left + index * apart, y },
       reach: apart - 6,
     }));
-  }
-
-  nameLine(): NameLine {
-    return { y: this.#frame.back.y + 10, lines: 1 };
   }
 
   paint(painter: Painter, palette: Palette, time: number): void {

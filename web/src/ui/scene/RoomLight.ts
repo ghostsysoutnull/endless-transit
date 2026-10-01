@@ -8,4 +8,6 @@ import type { InsideFrame } from './InsideFrame.ts';
  */
 export interface RoomLight {
   paint(painter: Painter, palette: Palette, frame: InsideFrame, time: number): void;
+  /** The stylesheet token it lights in: what a doorway into its room is lit by (U03e). */
+  ink(): string;
 }

@@ -4,6 +4,8 @@ import type { Palette } from '#ui/canvas/Palette.ts';
 import type { PictureSize } from '#ui/canvas/Picture.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Diamond } from './Diamond.ts';
+import { DoorwayFrame } from './DoorwayFrame.ts';
+import type { DoorwayLook } from './DoorwayLook.ts';
 import type { FloorPlan } from './FloorPlan.ts';
 import type { Framing } from './Framing.ts';
 import type { Glow } from './Glow.ts';
@@ -37,6 +39,8 @@ const GAP = 0.55;
 const WALL = { share: 0.07, least: 2, most: 8 };
 /** The grid: a line a unit apart, or half a unit once a unit is wider than this. */
 const FINE_GRID = 60;
+/** The way out's own ink (U03e). */
+const EXIT_INK = 'ab';
 
 /**
  * Draws a room as its apartment's plan (U03; the mock's `apartment`, `transit-reframed.html:865-906`): the rooms laid
@@ -52,6 +56,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
   readonly #diamond: Diamond;
   readonly #insides: RoomInsides;
   readonly #glow: Glow;
+  readonly #exit: DoorwayLook;
 
   constructor(parts: {
     readonly layout: PlanLayout;
@@ -59,12 +64,15 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     readonly diamond: Diamond;
     readonly insides: RoomInsides;
     readonly glow: Glow;
+    /** How the way out is drawn. */
+    readonly exit: DoorwayLook;
   }) {
     this.#layout = parts.layout;
     this.#font = parts.font;
     this.#diamond = parts.diamond;
     this.#insides = parts.insides;
     this.#glow = parts.glow;
+    this.#exit = parts.exit;
   }
 
   camera(vm: PlanVM, size: PictureSize): PlanCamera {
@@ -125,6 +133,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     );
     for (const room of rooms) room.paintFloor(painter, palette, time);
     this.#doorways(painter, vm, plan, size, palette, framing, wall, lit);
+    this.#thresholds(painter, vm, plan, size, palette, framing, time);
     for (const room of rooms) room.paintMarks(painter, palette, { font: this.#font, diamond: this.#diamond });
     for (const room of rooms) this.#you(painter, room.you(), palette, time);
     this.#relics(painter, vm, plan, size, palette, framing, lit, time);
@@ -261,6 +270,58 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
       painter.arc(point.x, point.y, HIT / 2 - 4, 0, Math.PI * 2);
       painter.stroke();
     }
+  }
+
+  /**
+   * The doorways of the room you stand in (U03e), each drawn by the sight of the room it leads to — lit by that room's
+   * light and numbered once it is entered, in fog before — and the way out, while it is offered, in its own ink.
+   */
+  #thresholds(
+    painter: Painter,
+    vm: PlanVM,
+    plan: FloorPlan,
+    size: PictureSize,
+    palette: Palette,
+    framing: Framing,
+    time: number,
+  ): void {
+    const here = plan.rooms()[this.#index(vm, vm.here)];
+    if (here === undefined) return;
+    for (const door of vm.doors) {
+      const doorway = this.#doorwayTo(vm, plan, door);
+      const index = this.#index(vm, door.address);
+      const room = vm.rooms[index];
+      if (doorway === undefined || room === undefined) continue;
+      const frame = this.#frame(doorway, here, size, framing, {
+        ink: this.#insides.inkOf(room.light),
+        number: String(index + 1),
+      });
+      SIGHT_LOOKS[room.sight].paintDoorway(painter, palette, frame, time);
+    }
+    if (vm.exits.length > 0) {
+      const frame = this.#frame(plan.entry(), here, size, framing, { ink: EXIT_INK, number: '' });
+      this.#exit.paint(painter, palette, frame, time);
+    }
+    painter.globalAlpha = 1;
+  }
+
+  /** A doorway of this room as the framing places it: its gap on the picture and the way in, toward the room's middle. */
+  #frame(
+    door: PlanDoor,
+    room: PlanBox,
+    size: PictureSize,
+    framing: Framing,
+    beyond: { readonly ink: string; readonly number: string },
+  ): DoorwayFrame {
+    const [one, other] = door.gap(GAP);
+    const ends = [framing.toPicture(one, size), framing.toPicture(other, size)] as const;
+    const from = framing.toPicture(room.topLeft(), size);
+    const to = framing.toPicture(room.bottomRight(), size);
+    const level = Math.abs(ends[1].x - ends[0].x) > Math.abs(ends[1].y - ends[0].y);
+    const inward = level
+      ? { x: 0, y: Math.sign((from.y + to.y) / 2 - ends[0].y) }
+      : { x: Math.sign((from.x + to.x) / 2 - ends[0].x), y: 0 };
+    return new DoorwayFrame({ ends, inward, ...beyond, glow: this.#glow, font: this.#font });
   }
 
   /** You, a slow pulse where you stand; nothing in a room you do not stand in. */

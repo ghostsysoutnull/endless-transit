@@ -53,6 +53,11 @@ export class RoomInsides {
     });
   }
 
+  /** The ink a light's key lights in: the listed light's, or the plain one's for a key with none. */
+  inkOf(light: string): string {
+    return (this.#lights[light] ?? this.#noLight).ink();
+  }
+
   /** A room you do not stand in: plain. */
   away(box: PlanBoxOnPicture): RoomInside {
     return new PlainInside(box, SPOT);

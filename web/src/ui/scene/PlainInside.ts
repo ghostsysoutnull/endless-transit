@@ -1,9 +1,8 @@
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
-import type { NameLine } from './NameLine.ts';
 import type { RelicSpot } from './RelicSpot.ts';
 import type { RoomInside } from './RoomInside.ts';
 
-/** A room drawn plain (U03): nothing inside but its floor; its name in the middle; its relics in a grid from the top. Value object. */
+/** A room drawn plain (U03): nothing inside but its floor; its relics in a grid from the top. Value object. */
 export class PlainInside implements RoomInside {
   readonly #box: PlanBoxOnPicture;
   /** How far apart relics lie, centre to centre. */
@@ -28,10 +27,6 @@ export class PlainInside implements RoomInside {
       at: { x: left + (index % columns) * spot, y: top + Math.floor(index / columns) * spot },
       reach: spot - 4,
     }));
-  }
-
-  nameLine(): NameLine {
-    return { y: this.#box.y + this.#box.height / 2, lines: 2 };
   }
 
   paint(): void {

@@ -14,6 +14,10 @@ export class GlowLight implements RoomLight {
     this.#glow = glow;
   }
 
+  ink(): string {
+    return this.#ink;
+  }
+
   paint(painter: Painter, palette: Palette, frame: InsideFrame, time: number): void {
     const { room, back } = frame;
     const breath = 0.1 + 0.04 * Math.sin(time * 0.001);

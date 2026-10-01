@@ -1,5 +1,7 @@
 import type { Painter } from '#ui/canvas/Painter.ts';
 import type { Palette } from '#ui/canvas/Palette.ts';
+import type { DoorwayFrame } from './DoorwayFrame.ts';
+import type { DoorwayLook } from './DoorwayLook.ts';
 import type { PlanBoxOnPicture } from './PlanBoxOnPicture.ts';
 import type { SightLook } from './SightLook.ts';
 import { Tint } from './Tint.ts';
@@ -10,6 +12,12 @@ const SMALL = new Tint('cy', 0.08);
 
 /** A room not yet reached: the bare ground under a hatching of fog, no words, no marks, faint on the minimap. */
 export class FogLook implements SightLook {
+  readonly #doorway: DoorwayLook;
+
+  constructor(doorway: DoorwayLook) {
+    this.#doorway = doorway;
+  }
+
   paintFloor(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void {
     painter.save();
     painter.beginPath();
@@ -37,5 +45,9 @@ export class FogLook implements SightLook {
 
   paintSmall(painter: Painter, palette: Palette, box: PlanBoxOnPicture): void {
     SMALL.paint(painter, palette, box);
+  }
+
+  paintDoorway(painter: Painter, palette: Palette, frame: DoorwayFrame, time: number): void {
+    this.#doorway.paint(painter, palette, frame, time);
   }
 }

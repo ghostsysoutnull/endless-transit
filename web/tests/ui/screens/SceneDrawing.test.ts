@@ -179,8 +179,8 @@ describe('the plan (U03): a room drawn as its apartment, the options it draws jo
       address: ROOMS[0] ?? '',
       portrait: new PlanPortrait({
         rooms: [
-          { address: ROOMS[0] ?? '', name: 'Quiet Archive', sight: 'visited', relics: 1 },
-          { address: ROOMS[1] ?? '', name: 'Salt Pantry', sight: 'known', relics: 0 },
+          { address: ROOMS[0] ?? '', name: 'Quiet Archive', sight: 'visited', relics: 1, light: 'analog' },
+          { address: ROOMS[1] ?? '', name: 'Salt Pantry', sight: 'known', relics: 0, light: 'analog' },
         ],
         here: ROOMS[0] ?? '',
         look: new RoomLook({ walls: 'rust', light: 'analog', cold: true, furniture: 2, anomaly: false }),

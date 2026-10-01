@@ -11,6 +11,10 @@ export class BeamLight implements RoomLight {
     this.#ink = ink;
   }
 
+  ink(): string {
+    return this.#ink;
+  }
+
   paint(painter: Painter, palette: Palette, frame: InsideFrame, time: number): void {
     const { room } = frame;
     const sway = Math.sin(time * 0.0007) * 0.15;
