@@ -52,6 +52,9 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
   folded behind one DEBUG button (`data-testid="debug-toggle"`, `aria-expanded`), every button `tabindex="-1"` —
   never on the first screen, never in the tab order. Tests turn it on with `debug: true`; the browser harness opens the
   fold as a tester would.
+- **Phone check:** `npm run phone` type-checks and builds the working tree as it is (base `/`, stamp `dev`) and uploads it to
+  `https://endless-transit.surge.sh/`, a scratch address outside git for the user's phone; the real site moves only
+  through `publish:site`. Surge is logged in once per machine with `npx surge login`.
 
 ## The walls
 

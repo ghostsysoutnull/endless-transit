@@ -13,8 +13,14 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
 3. **Build.** The finished piece gets the design check once, before it merges (the Codex's Verification). Fast tests judge
    what a machine can; what the user judges by using it (the look, the feel, the words on screen) waits for them, and
    the slow suites and the approved snapshot wait for the end.
-4. **The fast loop.** When there is something to try, the user tries it the way it is used and reports; I change it,
-   they try again. Each round is quick.
+4. **The fast loop.** When the user asks for one (the block's rule 15), or when there is something to try. A round:
+   I plan for myself and edit, with no plan shown, reviewed or approved and no subagent; `npm run phone` type-checks,
+   builds the working tree and uploads it to the phone address (`web/CLAUDE.md`, "Phone check"); the user tries it
+   the way it is used and reports. Nothing else runs in a round — no test, lint,
+   design check or note; a bug met on the phone is fixed at once and gets its test at approval. Each look the user
+   keeps is a save-point commit on the branch, untested, so a dead end is one revert and a suite that fails at the end
+   is bisected over the save points. Nothing merges or publishes until the user approves; then the fast gate, the
+   touched tests, the design check, the record written from what was kept, and step 5.
 5. **The end.** With the user: the slow suites, the approved snapshot rewritten and its diff read, the tests that move
    on purpose. Then the Codex's close-out
    ("Closing a wave"), the queue's own where it names one, and a publish on the user's word.
@@ -41,7 +47,7 @@ asked first.
 
 ## What it sets that other rules leave open
 - **A bug the user sees on screen:** their report is the reproduction; its browser test waits for the end. A logic bug
-  still gets a unit test first.
+  still gets a unit test first, except in a fast loop, where its test comes at approval.
 - **A push:** I do not check the live site afterwards; the user does.
 - **Subagents only read:** the plan review, the design check and a wide search (the built-in `Explore` agent); the
   build is mine.

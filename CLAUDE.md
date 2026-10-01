@@ -41,6 +41,11 @@
     never the whole browser suite. What the user judges on the phone is published for them first; I do not test it in
     a browser in their place. The whole browser suite runs once, at the end, on the user's go. A run that fails is
     reported and stops there: I never fix and rerun on my own. A build that leaves its plan says so when it does.
+15. **Fast loop**, when the user asks for one, for any change: a round is edit, type check, build, upload to the phone
+    address, the user tries it and reports. I plan for myself and act: no plan shown, reviewed or approved, no subagent,
+    no test, lint, design check or note in a round; a bug met on the phone is fixed at once, its test written at
+    approval. Each look the user keeps is an untested save-point commit on the branch. At their approval the regular
+    process follows: tests, checks, records, merge and publish (@.claude/SOLO_LOOP.md).
 
 ## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
