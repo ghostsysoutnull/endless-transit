@@ -39,15 +39,17 @@ them; an iteration that proves too big is split into slices that each show the t
     Closes by ✕, Esc or a swipe down on its header.
 12. **The dive stays**, behind a Dive button in the trace header: the zoom from the universe to you, landing back in the
     column.
-13. **The pole** (option B): a Pole | Column switch in the trace header that remembers the last choice. The pole: a
-    spine with a pulse, a plate and a live glyph a level, levels well apart (≈ 76 px, it scrolls and keeps you in view),
-    era · culture · trait as ribbons that break where a level changes them, state tags (curved, frozen, drift, rebel),
-    the scale as a ruler.
+13. **The pole** (option B; reworked after U05's phone check, 2026-10-01): a Pole | Column switch in the trace header
+    that remembers the last choice. The pole: a spine with a pulse down the middle, a big live node a level (its kind
+    above, its name and tags under), levels well apart (it scrolls and keeps you in view), the values a level sets
+    written beside its node, the era · culture · trait in force pinned behind as huge faint words that follow the
+    scroll, state tags (curved, frozen, drift, rebel); no ribbons, no scale.
 14. **The vibe follows the game's rules exactly** (`web/src/engine/model/Vibe.ts` and the factories): the planet sets a
     main and a second culture and era; the country adds its trait and shifts the stability; one city in ten is a rebel
     district that swaps them; street to corridor only inherit; an apartment draws the main pair with the stability's
-    chance, else the second (the drift); a room is its apartment's. The pole shows the second pair as a faint drift
-    current, a drifted apartment hooking into it, a rebel city breaking both ribbons. Names come from the game's lists.
+    chance, else the second (the drift); a room is its apartment's. The pole writes the second pair as the drift
+    current where it first shows or changes, a drifted value underlined in dashes, a rebel city's values in red. Names
+    come from the game's lists.
 15. **Ships are not part of this run** (CONCEPT-001 decides them); the pole keeps their lane and their look — a hull
     diamond, a tow frame, a glowing tether, as the old mock drew them.
 16. **Tests change on purpose.** Only the approved snapshots and the lookups by accessible name hold the screen's words;
@@ -71,5 +73,6 @@ them; an iteration that proves too big is split into slices that each show the t
 | [x] | U03c | **The room on one screen** (built; `tasks/ui/U03c.md`, "As built"): the room fills the picture and the plan is a pinch out, the corner map pulls back, the moves in the dock, the room's words under the picture, a thinner top bar on every drawn place | stand in a room and see it, its words, its relics and every move without scrolling; pinch out to the plan and back in | the camera's rest and settle, the gesture's release, the drawing places its moves | plan ≈ 250k with its review; ≈ 350–500k (inferred) |
 | [x] | U03d | **The room, large** (built; `tasks/ui/U03d.md`, "As built"): standing in a room it fills the picture, every room the same size; the plan behind a MAP key, off by default; a button down to the room's words and relics; the buffer without a limit (the user's asks, 2026-09-30) | stand in any room and see it large; tap MAP for the plan and back; take a seventeenth relic | a stretched framing, the host's view mode, the buffer's cap gone | built in a fast loop, published per try, then hardened; not measured |
 | [x] | U04 | **Above, below and the trace** (built; `tasks/ui/U04.md`, "As built"): the universe down to the city drawn as places (their children as tappable marks), the null reach, the breach and the layers below the bedrock; the trace column over everything, its bands the same drawings, a band opened larger, the dive landing back in the column | walk from the universe to a street in pictures; breach and descend; open Trace, scroll the column, dive and land back | one drawing a level, shared by the place and its band; the trail rides on every step | plan ≈ 138k with its grill; built in one piece in a fast loop, published as a try, then hardened; not measured |
-| [x] | U05 | **The pole and the vibe** (built; `tasks/ui/U05.md`, "As built"): the engine hands over the second pair, the stability, the rebel city, the drift; the Pole / Column switch; the ships lane kept empty in its look | read a world's vibe in a glance; find a rebel city or a drifted apartment | a vibe summary on the place, read by the pole, never re-derived | built in one session, published as a try, checked on the phone; not measured |
+| [x] | U05 | **The pole and the vibe** (built; `tasks/ui/U05.md`, "As built", then "The rework" after the phone check: the pole centred, big nodes, the values beside them, the vibe behind): the engine hands over the second pair, the stability, the rebel city, the drift; the Pole / Column switch; the ships lane kept empty in its look | read a world's vibe in a glance; find a rebel city or a drifted apartment | a vibe summary on the place, read by the pole, never re-derived | built in one session, published as a try, checked on the phone; not measured |
+| [ ] | U05b | **The node pictures**: the fourteen glyphs redrawn richer and livelier for the bigger nodes, each with its own motion; a mock first, judged on the phone | open the pole and watch each level's node | none | not measured |
 | [ ] | U06 | **Wrap-up**: title, help, buffer, map and recap in the new look or retired with a reason; accessibility, reduced motion and a phone performance check; the player docs and the architecture document true; the full playthrough on both profiles | play the finished game from the site | words and styles; its reading is broad (all of `src/ui` and the specs), so its plan splits it if it runs long | plan ≈ 222k; ≈ 310–420k+, best split (inferred) |

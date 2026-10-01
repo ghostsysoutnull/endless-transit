@@ -129,7 +129,7 @@ from `Door.stateWord()`, one `DepthNumber` for the column and the pole, every Er
 - `HudView` branches on its view (`#view === 'pole'`) in its logic and its template: one object a view (with
   HK-037's `TraceColumnView`).
 - `PolePresenter`'s `BERTHS` is a table keyed by glyph: the kind could own whether it has a berth, as it owns its glyph.
-- `PolePresenter` asks `figure.held === 'country'` three times: the figure's member could answer its own ribbons.
+- `PolePresenter` asks `figure.held === 'country'` three times: the figure's member could answer its own values.
 - `PoleMarks` compares display words for where a value is written and the current's start, `''` meaning none: stable
   keys and a union (with HK-030, HK-034).
 - `PolePicture` holds geometry (the berth's 22 × 14, the words' and tags' offsets): the layout's to answer.
