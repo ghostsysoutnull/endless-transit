@@ -1,8 +1,9 @@
 # Handover
 
 - **Branch:** `master` (the pole rework merged; its branch deleted).
-- **Next:** U05b of the UI rework, the node pictures — its row in `tasks/UI_QUEUE.md`; a mock first. The pole rework
-  passed the user's phone check as the try build `51628fe`; its record is `tasks/ui/U05.md`, "The rework". U06 after.
+- **Next:** U06 of the UI rework, the wrap-up (the title, the buffer, the map, the telemetry pane, the scan tables) —
+  its row in `tasks/UI_QUEUE.md`. Then U06b, the node pictures (a mock first), then U07. The pole rework passed the
+  user's phone check as the try build `51628fe`; its record is `tasks/ui/U05.md`, "The rework".
 - **Open threads:**
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
   - ships (CONCEPT-001): the verdicts in `docs/analysis/SHIPS_CONCEPT.md`, section 7, none judged;
