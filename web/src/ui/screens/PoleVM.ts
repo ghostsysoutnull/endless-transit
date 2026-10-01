@@ -24,8 +24,8 @@ export interface PoleLevelVM {
   readonly label: string;
   /** Each value here, `''` where no level above has set it. */
   readonly values: Readonly<Record<PoleLane, string>>;
-  /** The second pair the drift current carries here (`Ancient · Monolith`), `''` above the planet. */
-  readonly current: string;
+  /** The second pair the drift current carries here (`Ancient`, `Monolith`), `''` above the planet. */
+  readonly current: Readonly<Record<DriftLane, string>>;
   /** It swapped the pairs here: its era and culture are written in red. */
   readonly rebel: boolean;
   /** Which values it drew from the second pair. */

@@ -13,6 +13,7 @@ const BERTHS: ReadonlySet<GlyphLook> = new Set(['planet', 'city']);
 const REBEL = { word: 'rebel', look: 'rebel' } as const;
 const DRIFT = { word: 'drift', look: 'drift' } as const;
 const NOTHING: Readonly<Record<PoleLane, string>> = { era: '', culture: '', trait: '' };
+const NO_CURRENT: Readonly<Record<DriftLane, string>> = { era: '', culture: '' };
 const NO_DRIFT: Readonly<Record<DriftLane, boolean>> = { era: false, culture: false };
 
 /**
@@ -65,7 +66,8 @@ export class PolePresenter implements PoleWords {
 
   /** The values, the current's words, the rebel swap and the drift, from the level's vibe. */
   #vibe(figure: VibeFigure): Pick<PoleLevelVM, 'values' | 'current' | 'rebel' | 'drift'> {
-    if (figure.held === 'none') return { values: NOTHING, current: '', rebel: false, drift: NO_DRIFT };
+    if (figure.held === 'none')
+      return { values: NOTHING, current: NO_CURRENT, rebel: false, drift: NO_DRIFT };
     const word = (key: string) => new Phrase(key).capitalised();
     return {
       values: {
@@ -73,7 +75,7 @@ export class PolePresenter implements PoleWords {
         culture: word(figure.main.culture),
         trait: figure.held === 'country' ? word(figure.trait) : '',
       },
-      current: `${word(figure.second.era)} · ${word(figure.second.culture)}`,
+      current: { era: word(figure.second.era), culture: word(figure.second.culture) },
       rebel: figure.held === 'country' && figure.rebel,
       drift: figure.held === 'country' ? figure.drift : NO_DRIFT,
     };

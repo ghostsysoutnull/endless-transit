@@ -59,16 +59,15 @@ describe('PoleMarks — where the pole writes a value, and the vibe in force at 
     expect(force(4)).toEqual(['Atomic set', 'Rust set', 'Commercial set']);
   });
 
-  test('the drift current’s words show where it first shows and where it changes', () => {
-    const marks = PoleMarks.of(
-      path([held({ current: 'Atomic · Rust' }), held({ current: 'Atomic · Rust' })]),
-    );
+  test('the drift current’s pair shows where it first shows and where it changes', () => {
+    const swapped = { era: 'Atomic', culture: 'Rust' };
+    const marks = PoleMarks.of(path([held({ current: swapped }), held({ current: swapped })]));
     expect([0, 1, 2, 3, 4].map((index) => marks.current(index))).toEqual([
-      '',
-      'Ancient · Monolith',
-      '',
-      'Atomic · Rust',
-      '',
+      [],
+      ['Ancient', 'Monolith'],
+      [],
+      ['Atomic', 'Rust'],
+      [],
     ]);
   });
 });

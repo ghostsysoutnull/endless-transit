@@ -22,10 +22,14 @@ const TAG_INKS: Readonly<Record<TagLook, string>> = {
   door: 'ab',
   anomaly: 'yl',
 };
-/** A tag's box around its word, the gap between tags, and how far under the row its middle stands. */
-const TAG = { pad: 5, height: 18, gap: 5, drop: 23 } as const;
-/** The words left of a node: the kind above the name, the name bigger. */
-const WORDS = { kind: -16, name: 4, namePx: 14 } as const;
+/** A tag's box around its word, and the gap between tags. */
+const TAG = { pad: 5, height: 18, gap: 5 } as const;
+/** The ground cleared either side of words on the pole. */
+const CLEAR = 6;
+/** The name under a node, bigger than the kind above it. */
+const NAME_PX = 16;
+/** A label's lines: the word on top, bigger, its head under it; the current's pair a line each, over its head. */
+const LABEL = { px: 16, word: 10, head: 29, pairPx: 14, pair: 8, line: 17, under: 20 } as const;
 /** The backdrop: how faint each look's word is, the biggest it grows, and how far it slides as it changes (shares of its row). */
 const GHOST: Readonly<Record<MarkLook, number>> = { set: 0.2, rebel: 0.26, drift: 0.16, none: 0.12 };
 const GHOST_PX = { measured: 100, largest: 96 } as const;
@@ -208,47 +212,53 @@ export class PolePicture {
     }
   }
 
-  /** Each value written right of the node that sets it: its head, then its word, in a frame of its ink. */
+  /** Each value written right of the node that sets it: its word on top, in its ink; its head under it. */
   #labels(painter: Painter, vm: PoleVM, layout: PoleLayout, palette: Palette): void {
     painter.textAlign = 'left';
     painter.textBaseline = 'middle';
     for (const label of layout.labels()) {
       const inks = LANE_INKS[label.lane];
-      painter.fillStyle = palette('ground');
-      painter.globalAlpha = 0.85;
-      painter.fillRect(label.x, label.y, label.width, label.height);
-      painter.globalAlpha = 1;
-      painter.strokeStyle = palette(label.look === 'rebel' ? TAG_INKS.rebel : inks.line);
-      painter.lineWidth = 1;
-      painter.setLineDash(label.look === 'drift' ? [4, 3] : []);
-      painter.strokeRect(label.x + 0.5, label.y + 0.5, label.width - 1, label.height - 1);
-      painter.setLineDash([]);
-      const middle = label.y + label.height / 2;
-      const head = vm.heads[label.lane];
+      const y = label.y + LABEL.word;
+      painter.font = this.#parts.font.of('bold', LABEL.px);
+      painter.fillStyle = palette(label.look === 'rebel' ? TAG_INKS.rebel : inks.text);
+      const word = this.#fit(painter, label.word, label.width);
+      painter.fillText(word, label.x, y);
+      if (label.look === 'drift') {
+        painter.strokeStyle = palette(inks.line);
+        painter.lineWidth = 1.5;
+        painter.setLineDash([4, 3]);
+        painter.beginPath();
+        painter.moveTo(label.x, label.y + LABEL.under);
+        painter.lineTo(label.x + painter.measureText(word).width, label.y + LABEL.under);
+        painter.stroke();
+        painter.setLineDash([]);
+      }
       painter.font = this.#parts.font.of('regular');
       painter.fillStyle = palette('dim');
-      painter.fillText(head, label.x + 7, middle);
-      const from = label.x + 7 + painter.measureText(`${head} `).width;
-      painter.font = this.#parts.font.of('bold');
-      painter.fillStyle = palette(inks.text);
-      painter.fillText(this.#fit(painter, label.word, label.x + label.width - 6 - from), from, middle);
+      painter.fillText(this.#fit(painter, vm.heads[label.lane], label.width), label.x, label.y + LABEL.head);
     }
   }
 
-  /** The drift current's words: its head, then the pair it carries. */
+  /** The drift current's pair, a line each, over its head. */
   #currents(painter: Painter, vm: PoleVM, layout: PoleLayout, palette: Palette): void {
-    painter.font = this.#parts.font.of('regular');
     painter.textAlign = 'left';
     painter.textBaseline = 'middle';
-    const width = layout.size().width;
     for (const current of layout.currents()) {
-      painter.fillStyle = palette('dim');
-      painter.fillText(vm.currentHead, current.at.x + 2, current.at.y);
+      painter.font = this.#parts.font.of('bold', LABEL.pairPx);
       painter.fillStyle = palette('mg');
+      current.words.forEach((word, index) => {
+        painter.fillText(
+          this.#fit(painter, word, current.width),
+          current.x,
+          current.y + LABEL.pair + index * LABEL.line,
+        );
+      });
+      painter.font = this.#parts.font.of('regular');
+      painter.fillStyle = palette('dim');
       painter.fillText(
-        this.#fit(painter, current.word, width - current.at.x - 10),
-        current.at.x + 2,
-        current.at.y + 16,
+        this.#fit(painter, vm.currentHead, current.width),
+        current.x,
+        current.y + LABEL.pair + current.words.length * LABEL.line,
       );
     }
   }
@@ -299,7 +309,7 @@ export class PolePicture {
         painter.globalAlpha = 1;
       }
       // The glyph, living in it.
-      painter.lineWidth = 2.2;
+      painter.lineWidth = 2.4;
       this.#parts.glyphs[level.glyph].paint({
         painter,
         at: plate,
@@ -308,24 +318,29 @@ export class PolePicture {
         ink,
         accent: palette('yl'),
       });
-      // The kind, the name, the tags: right-aligned toward the node.
-      painter.textAlign = 'right';
+      // The kind above the node; the name and the tags under it.
+      const words = row.words;
+      painter.textAlign = 'center';
       painter.textBaseline = 'middle';
       painter.font = this.#parts.font.of('regular');
+      const kind = this.#fit(painter, level.kind, words.width);
+      this.#clear(painter, palette, words.kind, painter.measureText(kind).width, 12);
       painter.fillStyle = palette(level.here ? 'yl' : 'dim');
-      painter.fillText(this.#fit(painter, level.kind, row.words.width), row.words.right, row.y + WORDS.kind);
-      painter.font = this.#parts.font.of('bold', WORDS.namePx);
+      painter.fillText(kind, words.kind.x, words.kind.y);
+      painter.font = this.#parts.font.of('bold', NAME_PX);
+      const name = this.#fit(painter, level.name, words.width);
+      this.#clear(painter, palette, words.name, painter.measureText(name).width, NAME_PX);
       painter.fillStyle = palette(level.here ? 'yl' : 'text');
-      painter.fillText(this.#fit(painter, level.name, row.words.width), row.words.right, row.y + WORDS.name);
-      this.#tags(painter, level.tags, row, palette);
+      painter.fillText(name, words.name.x, words.name.y);
+      this.#tags(painter, level.tags, words, palette);
     });
   }
 
-  /** A level's tags in a line under its name, ending at its words' edge; those that do not fit are left out. */
+  /** A level's tags in a line under its name, centred on the pole; those that do not fit are left out. */
   #tags(
     painter: Painter,
     tags: readonly { readonly word: string; readonly look: TagLook }[],
-    row: { readonly y: number; readonly words: { readonly right: number; readonly width: number } },
+    words: { readonly tags: { readonly x: number; readonly y: number }; readonly width: number },
     palette: Palette,
   ): void {
     painter.font = this.#parts.font.of('regular');
@@ -334,13 +349,14 @@ export class PolePicture {
     for (const tag of tags) {
       const width = painter.measureText(tag.word).width + TAG.pad * 2;
       const next = total + (fitting.length > 0 ? TAG.gap : 0) + width;
-      if (next > row.words.width) break;
+      if (next > words.width) break;
       fitting.push({ ...tag, width });
       total = next;
     }
     painter.textAlign = 'left';
-    let x = row.words.right - total;
-    const middle = row.y + TAG.drop;
+    if (fitting.length > 0) this.#clear(painter, palette, words.tags, total, TAG.height);
+    let x = words.tags.x - total / 2;
+    const middle = words.tags.y;
     for (const tag of fitting) {
       painter.strokeStyle = palette(TAG_INKS[tag.look]);
       painter.lineWidth = 1;
@@ -349,6 +365,19 @@ export class PolePicture {
       painter.fillText(tag.word, x + TAG.pad, middle);
       x += tag.width + TAG.gap;
     }
+  }
+
+  /** The ground cleared behind words centred on the pole, so the spine stops short of them. */
+  #clear(
+    painter: Painter,
+    palette: Palette,
+    at: { readonly x: number; readonly y: number },
+    width: number,
+    height: number,
+  ): void {
+    if (width <= 0) return;
+    painter.fillStyle = palette('ground');
+    painter.fillRect(at.x - width / 2 - CLEAR, at.y - height / 2 - 3, width + CLEAR * 2, height + 6);
   }
 
   /** The text as it fits the width in the painter's font, cut with `…` when it does not; nothing when not even a letter fits. */
