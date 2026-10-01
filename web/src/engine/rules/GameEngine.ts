@@ -10,7 +10,7 @@ import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
-import { type GameOption, TRACE_ID, VISITED_KEY } from './GameOption.ts';
+import { type GameOption, TRACE_ID, VISITED_KEY, MOVE_PREFIX } from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { HELP, HelpPrompt } from './HelpPrompt.ts';
 import { Journey } from './Journey.ts';
@@ -28,7 +28,7 @@ import type { TraceSummary } from './TraceSummary.ts';
 import { FREE, GLOBAL, STEP } from './Turn.ts';
 
 const TRAVEL = 'enter:';
-const MOVE = 'move:';
+const MOVE = MOVE_PREFIX;
 const CAPTURE = 'capture:';
 const SCAN = 'scan';
 const MAP = 'map';

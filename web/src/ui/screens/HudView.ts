@@ -179,7 +179,7 @@ export class HudView implements View<HudVM> {
       this.#lit = new NoChild();
       this.#group = undefined;
     }
-    this.#card.step(vm);
+    this.#card.step(vm, this.#bringsPanel(vm));
     this.#paint(vm);
     // A scene kept from the last render is shown the new frame; one made just now already shows it.
     this.#stage.redraw();
@@ -620,6 +620,11 @@ export class HudView implements View<HudVM> {
       data-canvas="scene"
       data-lit=${this.#lit.written()}
     ></div>`;
+  }
+
+  /** Whether this step brought a panel: the same two `#panels` draws. */
+  #bringsPanel(vm: HudVM): boolean {
+    return vm.scan !== null || vm.map.shown;
   }
 
   /** The panels a step brings: the scan's and the map's. */

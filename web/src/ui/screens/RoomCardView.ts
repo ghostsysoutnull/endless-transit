@@ -39,6 +39,8 @@ export class RoomCardView implements RoomCard {
   /** The turns made since the step, and the last one's key. */
   #count = 0;
   #last = '';
+  /** The steps of the game seen so far: a turn that ends after a new one leaves the face that step chose. */
+  #steps = 0;
   /** Where a finger went down on the card. */
   #down: Point | undefined;
 
@@ -47,18 +49,20 @@ export class RoomCardView implements RoomCard {
     this.#turns = parts.turns;
   }
 
-  step(vm: HudVM): void {
+  step(vm: HudVM, panel: boolean): void {
     this.#arrived = vm.scene !== this.#scene;
     this.#scene = vm.scene;
     if (this.#arrived) this.#back = false;
-    if (vm.scan !== null || vm.map.shown) this.#back = true;
+    if (panel) this.#back = true;
     this.#count = 0;
+    this.#steps += 1;
   }
 
   forget(): void {
     this.#scene = '';
     this.#back = false;
     this.#busy = false;
+    this.#steps += 1;
   }
 
   template(vm: HudVM, card: RoomCardVM, parts: CardParts): TemplateResult {
@@ -226,10 +230,13 @@ export class RoomCardView implements RoomCard {
     this.#last = turn.key();
     this.#busy = true;
     const faces = toBack ? { out: front, into: back } : { out: back, into: front };
+    const steps = this.#steps;
     faces.into.style.visibility = 'visible';
     await turn.play(faces, toBack);
     for (const face of [front, back]) face.style.visibility = '';
     this.#busy = false;
+    // A step of the game landed while the turn played: the face it chose stands, and its focus.
+    if (steps !== this.#steps) return;
     this.#back = toBack;
     parts.repaint();
     faces.into.focus({ preventScroll: true });

@@ -5,8 +5,8 @@ import type { RoomCardVM } from './RoomCardVM.ts';
 
 /** What the world screen asks of the room's card (U03e): told each step, forgotten with the screen, and drawn. */
 export interface RoomCard {
-  /** A step of the game: a new room shows its picture, a step that brings a panel shows the back. */
-  step(vm: HudVM): void;
+  /** A step of the game: a new room shows its picture; one that brought a `panel` shows the back, where panels are. */
+  step(vm: HudVM, panel: boolean): void;
   /** The screen is gone: the next room starts on its picture. */
   forget(): void;
   /** The card and the strip of keys under it. */

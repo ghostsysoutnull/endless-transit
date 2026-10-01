@@ -158,6 +158,11 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
     return plan.doorBetween(this.#index(vm, vm.here), this.#index(vm, door.address));
   }
 
+  /** A room's number on the plan: its place in walking order, from 1. */
+  #numberOf(index: number): string {
+    return String(index + 1);
+  }
+
   /** The walls' thickness at this framing, in CSS pixels. */
   #wall(framing: Framing): number {
     return Math.min(Math.max(framing.scale() * WALL.share, WALL.least), WALL.most);
@@ -197,7 +202,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
           box: onPicture,
           look: SIGHT_LOOKS[room.sight],
           inside: this.#inside(vm, room, onPicture),
-          number: String(index + 1),
+          number: this.#numberOf(index),
           here: room.address === vm.here,
         }),
       ];
@@ -294,7 +299,7 @@ export class PlanPicture implements PlanDrawing<PlanVM> {
       if (doorway === undefined || room === undefined) continue;
       const frame = this.#frame(doorway, here, size, framing, {
         ink: this.#insides.inkOf(room.light),
-        number: String(index + 1),
+        number: this.#numberOf(index),
       });
       SIGHT_LOOKS[room.sight].paintDoorway(painter, palette, frame, time);
     }
