@@ -26,16 +26,20 @@ function room(): readonly PoleLevelVM[] {
 const inside = (box: { x: number; width: number }) => box.x >= 0 && box.x + box.width <= PHONE.width;
 
 describe('PoleLayout — where the pole’s parts stand', () => {
-  test('the pole runs down the middle; each node is big and stands clear of the next; each row a button a thumb tall', () => {
+  test('the pole runs down the middle; each node is big, its kind above it, its name and tags under it, nearly as wide as the phone', () => {
     const layout = PoleLayout.of(room(), PHONE);
     const rows = layout.rows();
     for (const row of rows) {
       expect(row.plate.x).toBe(PHONE.width / 2);
-      expect(row.radius).toBeGreaterThanOrEqual(36);
+      expect(row.radius).toBeGreaterThanOrEqual(44);
       expect(row.box.height).toBeGreaterThanOrEqual(44);
       expect(row.box.width).toBe(PHONE.width);
-      expect(row.words.right).toBeLessThan(row.plate.x - row.radius);
-      expect(row.words.width).toBeGreaterThan(100);
+      expect(row.words.kind.y).toBeLessThan(row.plate.y - row.radius);
+      expect(row.words.name.y).toBeGreaterThan(row.plate.y + row.radius);
+      expect(row.words.tags.y).toBeGreaterThan(row.words.name.y);
+      for (const words of [row.words.kind, row.words.name, row.words.tags]) expect(words.x).toBe(row.plate.x);
+      expect(row.words.width).toBeGreaterThan(300);
+      expect(row.words.width).toBeLessThanOrEqual(PHONE.width);
     }
     rows.slice(1).forEach((row, index) => {
       expect(row.y - (rows[index]?.y ?? 0)).toBeGreaterThan(row.radius * 3);
@@ -65,20 +69,25 @@ describe('PoleLayout — where the pole’s parts stand', () => {
       const above = ofCountry[index];
       expect(label.y).toBeGreaterThanOrEqual((above?.y ?? 0) + (above?.height ?? 0));
     });
-    // The country's three labels stay closer to it than to the levels either side.
-    for (const label of ofCountry)
-      expect(Math.abs(label.y + label.height / 2 - (country?.y ?? 0))).toBeLessThan(
-        ((country?.y ?? 0) - (planet?.y ?? 0)) / 2,
-      );
+    // The country's three labels stand beside its node, clear of its name under it.
+    for (const label of ofCountry) {
+      expect(label.y).toBeGreaterThan((country?.y ?? 0) - (country?.radius ?? 0) * 2);
+      expect(label.y + label.height).toBeLessThan((country?.words.name.y ?? 0) - 8);
+    }
   });
 
-  test('the current’s words stand under the labels of the level where it shows, inside the phone', () => {
+  test('the current’s words stand under the labels of the level where it shows, in their column, clear of its name', () => {
     const layout = PoleLayout.of(room(), PHONE);
     const [current] = layout.currents();
+    const planet = layout.rows()[4];
     const planetLabels = layout.labels().filter((label) => label.row === 4);
-    expect(layout.currents().map((words) => words.word)).toEqual(['Ancient · Monolith']);
-    expect(current?.at.y).toBeGreaterThan(Math.max(...planetLabels.map((label) => label.y + label.height)));
-    expect(current?.at.x).toBeLessThan(PHONE.width);
+    expect(layout.currents().map((current) => current.words)).toEqual([['Ancient', 'Monolith']]);
+    expect(current?.y).toBeGreaterThanOrEqual(
+      Math.max(...planetLabels.map((label) => label.y + label.height)),
+    );
+    expect(current?.x).toBe(planetLabels[0]?.x);
+    expect(inside(current ?? { x: -1, width: 0 })).toBe(true);
+    expect((current?.y ?? 0) + (current?.height ?? 0)).toBeLessThan((planet?.words.name.y ?? 0) - 8);
   });
 
   test('the ships’ empty berth stands left of its node, inside the picture, only where a level has one', () => {

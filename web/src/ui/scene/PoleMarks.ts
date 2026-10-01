@@ -51,10 +51,12 @@ export class PoleMarks {
     return { era: held('era'), culture: held('culture'), trait: held('trait') };
   }
 
-  /** The drift current's words, where they first show or change; `''` elsewhere. */
-  current(index: number): string {
-    const words = this.#levels[index]?.current ?? '';
-    return words === this.#levels[index - 1]?.current ? '' : words;
+  /** The drift current's pair, era then culture, where it first shows or changes; nothing elsewhere. */
+  current(index: number): readonly string[] {
+    const here = this.#levels[index]?.current;
+    const above = this.#levels[index - 1]?.current;
+    if (here === undefined || here.era === '') return [];
+    return here.era === above?.era && here.culture === above.culture ? [] : [here.era, here.culture];
   }
 
   #mark(level: PoleLevelVM, above: PoleLevelVM | undefined, lane: PoleLane): readonly PoleMark[] {

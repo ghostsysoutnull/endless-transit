@@ -3,35 +3,42 @@ import type { PoleLane, PoleLevelVM } from '#ui/screens/PoleVM.ts';
 import { type MarkLook, POLE_LANES, type PoleMark, PoleMarks } from './PoleMarks.ts';
 import type { Point } from './Point.ts';
 
-/** How far apart the levels stand: a node, its labels and the current's words each clear of the next. */
-const GAP = 156;
+/** How far apart the levels stand: a node with its kind above, its name and tags under, clear of the next. */
+const GAP = 200;
 /** Room above the first level and below the last, for their words. */
-const TOP = 88;
-const FOOT = 100;
+const TOP = 84;
+const FOOT = 120;
 /** A node: the pole's main feature, big enough for its glyph to live in. */
-const RADIUS = 38;
-/** From a node's edge to the words beside it; from the picture's edge to the words. */
-const SIDE = 16;
+const RADIUS = 46;
+/** Its kind's middle above the node's edge; its name's and its tags' under it. */
+const WORDS = { kind: 18, name: 26, tags: 50 } as const;
+/** From a node's edge to the labels beside it; from the picture's edge to any words. */
+const SIDE = 14;
 const EDGE = 8;
-/** A value's label right of its node, one under another. */
-const LABEL = { height: 22, step: 26 } as const;
-/** The current's words under the labels. */
-const CURRENT_FROM = 16;
-/** The ships' empty berth: left of the node, under its tags. */
-const BERTH = { from: 23, drop: 47 } as const;
+/** A label right of its node — a value over its head — one under another; the current's, its pair over its head. */
+const LABEL = { height: 36, step: 40, current: 52 } as const;
+/** The labels' lowest edge stays this far above the name's middle. */
+const CLEAR = 18;
+/** The ships' empty berth: left of the node. */
+const BERTH_FROM = 34;
 /** The backdrop's words, in from the picture's edge. */
 const INSET = 14;
 
-/** One level's row: where it stands, its node, where its words end (right-aligned toward the node), and its button's box. */
+/** One level's row: where it stands, its node, the middles of its kind, name and tags (each centred on the pole) and how wide they may run, and its button's box. */
 export interface PoleRow {
   readonly y: number;
   readonly plate: Point;
   readonly radius: number;
-  readonly words: { readonly right: number; readonly width: number };
+  readonly words: {
+    readonly kind: Point;
+    readonly name: Point;
+    readonly tags: Point;
+    readonly width: number;
+  };
   readonly box: { readonly x: number; readonly y: number; readonly width: number; readonly height: number };
 }
 
-/** A value written right of the node whose level sets it: its box, its row, its lane, its word and how it came. */
+/** A value written right of the node whose level sets it, its word over its head: its box, its row, its lane, its word and how it came. */
 export interface PoleLabel {
   readonly row: number;
   readonly lane: PoleLane;
@@ -51,8 +58,8 @@ export interface PoleWindow {
 
 /**
  * Where the pole's parts stand at a width (the pole reworked after U05): the pole down the middle, a big node a level,
- * its kind, name and tags left of it, the values it sets written right of it with the drift current's words under
- * them, the ships' empty berths, the level in focus as the pole scrolls, and the backdrop's three rows pinned in the
+ * its kind above it, its name and tags under it, the values it sets written right of it with the drift current's
+ * words under them, the ships' empty berths, the level in focus as the pole scrolls, and the backdrop's three rows pinned in the
  * window. Value object: the one place the pole's geometry is decided; where a value is written is its marks' to say.
  */
 export class PoleLayout {
@@ -82,14 +89,19 @@ export class PoleLayout {
   }
 
   rows(): readonly PoleRow[] {
-    const right = this.#spineX() - RADIUS - SIDE;
+    const x = this.#spineX();
     return this.#levels.map((_level, index) => {
       const y = this.#y(index);
       return {
         y,
-        plate: { x: this.#spineX(), y },
+        plate: { x, y },
         radius: RADIUS,
-        words: { right, width: right - EDGE },
+        words: {
+          kind: { x, y: y - RADIUS - WORDS.kind },
+          name: { x, y: y + RADIUS + WORDS.name },
+          tags: { x, y: y + RADIUS + WORDS.tags },
+          width: this.#width - EDGE * 2,
+        },
         box: { x: 0, y: y - GAP / 2, width: this.#width, height: GAP },
       };
     });
@@ -105,7 +117,7 @@ export class PoleLayout {
     const x = this.#labelX();
     return this.#levels.flatMap((_level, row) => {
       const marks = this.#marks.at(row);
-      const top = this.#y(row) - (marks.length * LABEL.step - (LABEL.step - LABEL.height)) / 2;
+      const top = this.#stackTop(row);
       return marks.map((mark, index) => ({
         row,
         lane: mark.lane,
@@ -119,21 +131,36 @@ export class PoleLayout {
     });
   }
 
-  /** The drift current's words, under the labels of the level where they first show or change. */
-  currents(): readonly { readonly at: Point; readonly word: string }[] {
+  /** The drift current's pair, a label under the values of the level where it first shows or changes. */
+  currents(): readonly {
+    readonly row: number;
+    readonly words: readonly string[];
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  }[] {
+    const x = this.#labelX();
     return this.#levels.flatMap((_level, row) => {
-      const word = this.#marks.current(row);
-      if (word === '') return [];
-      const labels = this.#marks.at(row).length;
-      const under = labels * LABEL.step - (LABEL.step - LABEL.height);
-      return [{ at: { x: this.#labelX(), y: this.#y(row) + under / 2 + CURRENT_FROM }, word }];
+      const words = this.#marks.current(row);
+      if (words.length === 0) return [];
+      return [
+        {
+          row,
+          words,
+          x,
+          y: this.#stackTop(row) + this.#marks.at(row).length * LABEL.step,
+          width: this.#width - EDGE - x,
+          height: LABEL.current,
+        },
+      ];
     });
   }
 
   /** The ships' empty berths, left of their levels' nodes. */
   berths(): readonly Point[] {
     return this.#levels.flatMap((level, index) =>
-      level.berth ? [{ x: this.#spineX() - RADIUS - BERTH.from, y: this.#y(index) + BERTH.drop }] : [],
+      level.berth ? [{ x: this.#spineX() - RADIUS - BERTH_FROM, y: this.#y(index) }] : [],
     );
   }
 
@@ -181,6 +208,15 @@ export class PoleLayout {
 
   #labelX(): number {
     return this.#spineX() + RADIUS + SIDE;
+  }
+
+  /** Where a row's labels start: centred on it, raised when there are so many they would reach its name. */
+  #stackTop(row: number): number {
+    const values = this.#marks.at(row).length * LABEL.step;
+    const tall =
+      this.#marks.current(row).length > 0 ? values + LABEL.current : values - (LABEL.step - LABEL.height);
+    const y = this.#y(row);
+    return Math.min(y - tall / 2, y + RADIUS + WORDS.name - CLEAR - tall);
   }
 
   #y(index: number): number {

@@ -11,7 +11,7 @@ export function poleLevel(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
     name: 'The Endless Universe',
     label: 'Level 00',
     values: { era: '', culture: '', trait: '' },
-    current: '',
+    current: { era: '', culture: '' },
     rebel: false,
     drift: { era: false, culture: false },
     berth: false,
@@ -24,7 +24,7 @@ export function poleLevel(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
 export function heldPoleLevel(overrides: Partial<PoleLevelVM> = {}): PoleLevelVM {
   return poleLevel({
     values: { era: 'Atomic', culture: 'Rust', trait: 'Commercial' },
-    current: 'Ancient · Monolith',
+    current: { era: 'Ancient', culture: 'Monolith' },
     ...overrides,
   });
 }
