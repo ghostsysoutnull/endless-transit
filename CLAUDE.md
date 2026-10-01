@@ -37,6 +37,10 @@
 13. Before repeating work (another round, another fix, another review) I name its category: a bug the player meets,
     a fact kept in two places, or tidying. Then I weigh its proportion: what it costs in tokens and the user's waiting
     time against what it changes for the player. Tidying, or a cost out of proportion, stops there, said in one line.
+14. Tests during a build: after a change I run the fast gate and, at most, the one test file the change touches —
+    never the whole browser suite. What the user judges on the phone is published for them first; I do not test it in
+    a browser in their place. The whole browser suite runs once, at the end, on the user's go. A run that fails is
+    reported and stops there: I never fix and rerun on my own. A build that leaves its plan says so when it does.
 
 ## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
