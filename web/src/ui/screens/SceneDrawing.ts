@@ -14,7 +14,7 @@ import { DrawnPlan } from './DrawnPlan.ts';
 import { DrawnStreet } from './DrawnStreet.ts';
 import { DrawnTower } from './DrawnTower.ts';
 import { ListedParts } from './ListedParts.ts';
-import { MovesInDock } from './MovesInDock.ts';
+import { MovesOnCard } from './MovesOnCard.ts';
 import { MovesInStrip } from './MovesInStrip.ts';
 import { Undrawn } from './Undrawn.ts';
 
@@ -36,9 +36,9 @@ interface DrawnChildren {
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
-  /** Where each picture's moves sit (U03c): in the dock for the plan, under the picture for every other. */
+  /** Where each picture's moves sit (U03c, U03e): on the card for the plan, under the picture for every other. */
   readonly #strip = new MovesInStrip();
-  readonly #docked = new MovesInDock();
+  readonly #carded = new MovesOnCard();
 
   /**
    * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,
@@ -146,7 +146,7 @@ export class SceneDrawing implements Drawings {
             relics,
             mapKey: { text: 'MAP', label: 'Apartment plan' },
           },
-          this.#docked,
+          this.#carded,
         );
       },
       area: (area) =>

@@ -71,8 +71,8 @@ async function expectAnActionOnTheFirstScreen(page: Page, where: string): Promis
 }
 
 /**
- * A room, large (U03d): with the page at its top, the picture takes most of the screen and is wholly in it, every move
- * sits in the dock, and the button down to the room's words stands above the dock — the words are a scroll away.
+ * A room is a card (U03e): with the page at its top, the picture takes most of the screen and is wholly in it, and the
+ * corner that turns the card to its words and every key under it — the way back among them — are on the screen.
  */
 async function expectTheRoomOnTheFirstScreen(page: Page, where: string): Promise<void> {
   expect(await page.evaluate(() => window.scrollY), `${where}: the page is at its top`).toBe(0);
@@ -82,17 +82,15 @@ async function expectTheRoomOnTheFirstScreen(page: Page, where: string): Promise
   expect(picture?.height ?? 0, `${where}: the picture takes most of the screen`).toBeGreaterThanOrEqual(
     viewport.height * 0.55,
   );
-  for (const move of await page.locator('.dock > button[data-option]').all())
-    await expect(move, `${where}: a move in the dock`).toBeInViewport({ ratio: 1 });
-  const peek = await page.getByTestId('peek').boundingBox();
-  const dockTop = (await page.locator('.dock').boundingBox())?.y ?? 0;
+  await expect(page.getByTestId('card-to-words'), `${where}: the way to the words`).toBeInViewport({
+    ratio: 1,
+  });
+  const keys = page.getByRole('navigation', { name: 'Keys' }).getByRole('button');
+  expect(await keys.count(), `${where}: the keys`).toBeGreaterThanOrEqual(3);
+  for (const key of await keys.all()) await expect(key, `${where}: a key`).toBeInViewport({ ratio: 1 });
   console.log(
-    `[fold] ${test.info().project.name} ${where}: picture ${String(Math.round(picture?.height ?? -1))} px, the way to the words to y=${String(Math.round((peek?.y ?? 0) + (peek?.height ?? 0)))}, dock from y=${String(Math.round(dockTop))}`,
+    `[fold] ${test.info().project.name} ${where}: picture ${String(Math.round(picture?.height ?? -1))} px of ${String(viewport.height)}`,
   );
-  expect(
-    (peek?.y ?? Infinity) + (peek?.height ?? 0),
-    `${where}: the way to the words above the dock`,
-  ).toBeLessThanOrEqual(dockTop + 1);
 }
 
 /** Waits for a smooth scroll to end: the same scroll position twice, a frame apart. */

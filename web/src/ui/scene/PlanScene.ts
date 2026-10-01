@@ -35,7 +35,7 @@ interface Shown {
 /**
  * The plan's host (U03): a canvas the size of its host element, drawn by the plan's picture on the page's one clock,
  * with the coherence tear over it, and the framing the view stands at. Standing in a room, the room fills the picture
- * and holds still (U03d, `InRoom`); the MAP key over it flips to the plan (`OverPlan`) and back, and every new room
+ * and holds still (U03d, `InRoom`); the MAP key flips to the plan (`OverPlan`) and back, and every new room
  * starts standing in it. Over the plan, one finger pans the plan one to one and coasts
  * when let go; two pinch it about their midpoint and, let go, settle on the room or the whole plan (U03c); a tap on the
  * corner map pulls back to the whole plan, unless it falls on an option. A tap on a doorway, the entrance
@@ -105,7 +105,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     this.#mounted = { host, canvas, mapKey: this.#mapKey(host) };
   }
 
-  /** The MAP key over the picture (U03d): pressed over the plan; a tap flips the view and glides there. */
+  /** The MAP key (U03d), mounted where the parts say (U03e): pressed over the plan; a tap flips the view and glides there. */
   #mapKey(host: HTMLElement): HTMLButtonElement {
     const key = host.ownerDocument.createElement('button');
     key.type = 'button';
@@ -114,7 +114,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     key.addEventListener('click', () => {
       this.#flip();
     });
-    host.append(key);
+    this.#parts.keys.hold(key, host);
     return key;
   }
 

@@ -30,10 +30,16 @@ export function watchForErrors(page: Page): string[] {
 }
 
 /**
- * The dock folds on a phone (I08, I09) and the debug strip folds everywhere (I09): a button that is not shown
- * may be behind MORE or DEBUG, as it is for a player — open the fold it is in, as a player would.
+ * The dock folds on a phone (I08, I09), the debug strip folds everywhere (I09) and a room's card has two faces
+ * (U03e): a button that is not shown may be behind MORE or DEBUG or on the card's other face, as it is for a player —
+ * open the fold it is in, or turn the card, as a player would.
  */
-async function unfold(page: Page, button: Locator, hasTouch: boolean): Promise<void> {
+async function unfold(
+  page: Page,
+  button: Locator,
+  hasTouch: boolean,
+  there: () => Promise<boolean> = async () => (await button.count()) > 0,
+): Promise<void> {
   if ((await button.count()) > 0 && (await button.first().isVisible())) return;
   for (const fold of ['more', 'debug-toggle']) {
     const toggle = page.getByTestId(fold);
@@ -42,12 +48,45 @@ async function unfold(page: Page, button: Locator, hasTouch: boolean): Promise<v
     await (hasTouch ? toggle.tap() : toggle.click());
     if ((await button.count()) > 0 && (await button.first().isVisible())) return;
   }
+  // A room is a card (U03e): a button that is there but not on the face shown is on the other — turn the card by its
+  // corner, as a player would. One that is not there at all (the screen is on its way) is left for the tap to wait for.
+  if (!(await there()) || (await page.getByTestId('card-to-words').count()) === 0) return;
+  await turnCard(page, hasTouch);
+  await expect(button.first()).toBeVisible();
+}
+
+/** Turns a room's card to its other face by its folded corner and waits for the turn to end; nothing where no card shows. */
+export async function turnCard(page: Page, hasTouch: boolean): Promise<void> {
+  for (const [corner, other] of [
+    ['card-to-words', 'card-to-room'],
+    ['card-to-room', 'card-to-words'],
+  ] as const) {
+    const ear = page.getByTestId(corner);
+    if ((await ear.count()) === 0 || !(await ear.isVisible())) continue;
+    // The corner is a triangle in its box's outer half: the finger lands on it, not on the box's middle.
+    const position = { x: corner === 'card-to-words' ? 44 : 16, y: 44 };
+    await (hasTouch ? ear.tap({ position }) : ear.click({ position }));
+    await expect(page.getByTestId(other)).toBeVisible();
+    await expect(ear).toBeHidden();
+    return;
+  }
 }
 
 /** Tap on a touch device, click on a desktop — what a player's hand would do. */
 export async function press(page: Page, name: RegExp, hasTouch: boolean): Promise<void> {
   const button = page.getByRole('button', { name });
-  await unfold(page, button, hasTouch);
+  // A button on a hidden face has no accessible name to be found by: its label or its words are read instead.
+  const there = (): Promise<boolean> =>
+    page.locator('button').evaluateAll(
+      (buttons, [source, flags]) =>
+        buttons.some((each) => {
+          const said = each.cloneNode(true) as Element;
+          for (const unsaid of said.querySelectorAll('[aria-hidden="true"]')) unsaid.remove();
+          return new RegExp(source, flags).test(each.getAttribute('aria-label') ?? said.textContent.trim());
+        }),
+      [name.source, name.flags] as const,
+    );
+  await unfold(page, button, hasTouch, there);
   await (hasTouch ? button.tap() : button.click());
 }
 

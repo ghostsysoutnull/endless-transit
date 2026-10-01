@@ -1,16 +1,14 @@
 import type { Flight } from '#ui/scene/Flight.ts';
 import type { Point } from '#ui/scene/Point.ts';
-import { statTestId } from '#ui/screens/StatKey.ts';
+import { BUFFER_LANDING } from '#ui/screens/CardSlots.ts';
 
 /** The flight's length in milliseconds, and the count's bump after it. */
 const FLIGHT = 650;
 const BUMP = 260;
-/** Where it lands: the HUD's Buffer count (on a phone the dock's Buffer button is folded behind MORE). */
-const LANDING = `[data-testid="${statTestId('buffer')}"]`;
 
 /**
  * Owns one fact: how a taken relic reaches the buffer on screen (U03b, departure 4) — a small diamond flies from where
- * the relic lay to the HUD's Buffer count, then the count bumps. It is only for the eye (`aria-hidden`); nothing waits
+ * the relic lay to the Buffer key of the room's card (U03e), then the key bumps. It is only for the eye (`aria-hidden`); nothing waits
  * on it. Built in `main.ts`; the plan's host does not ask for it under reduced motion.
  */
 export class RelicFlight implements Flight {
@@ -21,7 +19,7 @@ export class RelicFlight implements Flight {
   }
 
   fly(from: Point): void {
-    const landing = this.#document.querySelector(LANDING);
+    const landing = this.#document.getElementById(BUFFER_LANDING);
     if (landing === null) return;
     const box = landing.getBoundingClientRect();
     const to = { x: box.left + box.width / 2, y: box.top + box.height / 2 };
@@ -46,7 +44,7 @@ export class RelicFlight implements Flight {
       mark.remove();
       // The screen was drawn afresh by the take: the count is asked for again.
       this.#document
-        .querySelector(LANDING)
+        .getElementById(BUFFER_LANDING)
         ?.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], BUMP);
     };
   }

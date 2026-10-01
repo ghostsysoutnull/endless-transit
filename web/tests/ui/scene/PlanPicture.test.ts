@@ -159,6 +159,38 @@ describe('the apartment’s plan (U03): what can be tapped', () => {
   });
 });
 
+describe('the room’s card (U03e): its folded corner covers nothing to tap', () => {
+  /** The corner: the bottom right triangle of the picture, this many CSS pixels a side (`app.css`, `.card .ear`). */
+  const CORNER = 60;
+  /** The card's picture at 360 × 640 and on the device (measured on the page). */
+  const SIZES = [
+    { width: 326, height: 462 },
+    { width: 378, height: 661 },
+  ];
+
+  test('standing in any room of an apartment of 1 to 48, no doorway, way out or relic has its middle under the corner', () => {
+    const under: string[] = [];
+    for (const size of SIZES) {
+      for (let count = 1; count <= 48; count++) {
+        for (let here = 0; here < count; here++) {
+          const vm = plan({
+            sights: Array.from({ length: count }, () => 'visited' as const),
+            here,
+            relics: 4,
+          });
+          const hits = picture.layout(vm, size, picture.rest(vm, picture.camera(vm, size), IN_ROOM));
+          for (const hit of hits) {
+            const into = hit.anchor.x - (size.width - CORNER) + (hit.anchor.y - (size.height - CORNER));
+            if (into > CORNER)
+              under.push(`${String(size.width)}: room ${String(here + 1)} of ${String(count)}: ${hit.id}`);
+          }
+        }
+      }
+    }
+    expect(under).toEqual([]);
+  });
+});
+
 describe('the apartment’s plan (U03): how it is drawn', () => {
   test('every ink is the stylesheet’s; every word at 12 px or more, unfaded, in a text ink; the same calls twice', () => {
     const vm = plan({ sights: ['visited', 'visited', 'known', 'fog'], here: 1, relics: 3 });

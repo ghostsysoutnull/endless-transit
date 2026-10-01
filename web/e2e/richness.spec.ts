@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { expectTouchable, press, saveText, tapOption, turnCard, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world: Bright Boulevard; Ornate Sanctum, 16 floors, 9 doors; the first door opens on Grand Power Plant. */
@@ -32,6 +32,8 @@ test('a room reads like the old game: its interpretation, furniture, the relic c
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+  // The room's words, its tiles and its readouts are on the back of its card (U03e).
+  await turnCard(page, hasTouch);
   await expect(page.locator('.desc p').nth(0)).toHaveText(
     'You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.',
   );

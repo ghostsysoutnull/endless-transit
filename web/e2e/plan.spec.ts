@@ -212,9 +212,9 @@ function apart(one: { x: number; y: number }, other: { x: number; y: number }): 
   return Math.hypot(one.x - other.x, one.y - other.y);
 }
 
-/** The key over the picture that flips between standing in the room and the apartment's plan (U03d). */
+/** The key that flips between standing in the room and the apartment's plan (U03d), in the strip under the card (U03e). */
 function theMapKey(page: Page) {
-  return page.getByTestId('scene').getByRole('button', { name: 'Apartment plan' });
+  return page.getByRole('navigation', { name: 'Keys' }).getByRole('button', { name: 'Apartment plan' });
 }
 
 test('standing in the room (U03d): the MAP key starts off; no pinch and no corner map move the view', async ({

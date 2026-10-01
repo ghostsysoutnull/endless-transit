@@ -120,8 +120,13 @@ export class Shell {
    */
   #focusAnOption(scene: string, pressed: OptionVM | undefined): void {
     const container = this.#container;
+    const view = container?.ownerDocument.defaultView;
+    // Shown: laid out, and not on a face turned away (the room's card hides one, U03e).
     const options = [...(container?.querySelectorAll<HTMLElement>('button[data-option]') ?? [])].filter(
-      (each) => each.offsetParent !== null && each.tabIndex >= 0,
+      (each) =>
+        each.offsetParent !== null &&
+        each.tabIndex >= 0 &&
+        view?.getComputedStyle(each).visibility !== 'hidden',
     );
     const rest = container?.querySelector<HTMLElement>('[data-rest]');
     const left = this.#left;

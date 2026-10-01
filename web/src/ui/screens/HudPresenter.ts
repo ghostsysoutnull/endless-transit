@@ -2,6 +2,7 @@ import type { Fact } from '#engine/model/Fact.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
+import { BUFFER } from '#engine/rules/BufferPrompt.ts';
 import { type GameOption, TRACE_ID, VISITED_KEY } from '#engine/rules/GameOption.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { MapSummary } from '#engine/rules/MapSummary.ts';
@@ -13,6 +14,8 @@ import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { AsideVM } from './AsideVM.ts';
+import type { CardKeyVM } from './CardKeyVM.ts';
+import { BUFFER_LANDING } from './CardSlots.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
@@ -20,6 +23,7 @@ import { DepthNumber } from './DepthNumber.ts';
 import type { Drawings } from './Drawings.ts';
 import type { Pads } from './Pads.ts';
 import type { PoleWords } from './PoleWords.ts';
+import type { RoomCardVM } from './RoomCardVM.ts';
 
 const RETURN_MARK = '▲ ';
 /** The scan's mark on the row about where the traveller stands (ScanCommand.groovy:148), and what a reader hears. */
@@ -58,6 +62,15 @@ const LEGEND: Readonly<Record<LegendTone, string>> = {
   mark: 'GLITCH',
 };
 const MAP_HEADING = '[NEURAL_LATTICE_PROJECTION]';
+/** The room card's words (U03e): its corner on each face, its regions and the headings of its back, the short words on its keys. */
+const CARD = {
+  corner: {
+    toWords: { text: 'WORDS', label: 'Turn the card: the room in words' },
+    toRoom: { text: 'ROOM', label: 'Turn the card: the picture' },
+  },
+  regions: { front: 'The room', back: 'The room in words', keys: 'Keys', ways: 'WAYS', game: 'GAME' },
+  keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: 'BACK' },
+} as const;
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -109,15 +122,27 @@ export class HudPresenter implements Presenter<HudVM> {
       },
       player.decay,
     );
-    // Where the moves sit is the drawing's to say (U03c): under the picture, or in the dock's row. The dock's order is
-    // this presenter's: the way out, the moves it holds, then the game's own behind MORE.
+    // Where the moves sit is the drawing's to say (U03c, U03e): under the picture, or on the room's card. The dock's
+    // order is this presenter's: the way out, then the game's own behind MORE; a card has no dock.
     const leave = leaveOptions.map((option) => this.#docked(option));
-    const { strip: moves, row } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
-    const dock = [
-      ...leave,
-      ...row,
-      ...snapshot.options.filter((option) => option.role === 'system').map((option) => this.#docked(option)),
-    ];
+    const system = snapshot.options.filter((option) => option.role === 'system');
+    const { strip: moves, ways } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
+    const card: HudVM['card'] = ways.shown
+      ? {
+          shown: true,
+          ...this.#card({
+            arrival: place.description[0] ?? '',
+            buffer: String(snapshot.buffer?.size ?? 0),
+            leave: leaveOptions,
+            moves: moveOptions,
+            system,
+          }),
+        }
+      : { shown: false };
+    const dock = card.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
+    const carded = card.shown
+      ? [...this.#keyed(card.keys.lead), ...this.#keyed(card.keys.trail), ...card.ways, ...card.game]
+      : [];
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
       title: this.#masthead.name(),
@@ -183,6 +208,7 @@ export class HudPresenter implements Presenter<HudVM> {
         ? { id: TRACE_ID, label: 'Trace: every level from the universe down to here' }
         : null,
       drawing,
+      card,
       pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows,
@@ -192,10 +218,10 @@ export class HudPresenter implements Presenter<HudVM> {
         : { shown: false },
       sealedTag: 'SEALED',
       dock,
-      // On a phone the way out stays out of the fold (I09), and the moves when the dock holds them (U03c): one row under the thumb.
+      // On a phone the way out stays out of the fold (I09): one row under the thumb.
       fold: {
-        after: leave.length + row.length,
-        out: leave.length,
+        after: card.shown ? 0 : leave.length,
+        out: card.shown ? 0 : leave.length,
         more: 'MORE',
         less: 'LESS',
         label: 'More of the dock',
@@ -209,6 +235,7 @@ export class HudPresenter implements Presenter<HudVM> {
           .map((row) => ({ id: row.id, key: row.key, label: row.label, opposite: '' })),
         ...moves,
         ...dock,
+        ...carded,
         ...debug,
       ],
       status: snapshot.message,
@@ -333,10 +360,62 @@ export class HudPresenter implements Presenter<HudVM> {
     }));
   }
 
-  /** The way down to the room's words and relics, with how many relics lie there. */
-  #peek(relics: number): string {
-    if (relics === 0) return 'About this room';
-    return `About this room · ${String(relics)} ${relics === 1 ? 'relic' : 'relics'}`;
+  /**
+   * The room's card (U03e): its keys — Buffer with its count, then Trace and the way back, which is the way out where
+   * it is offered and else the first move (the engine lists the move back first); every other move and every other
+   * option of the game goes on its back. No option stands twice.
+   */
+  #card(parts: {
+    readonly arrival: string;
+    readonly buffer: string;
+    readonly leave: readonly GameOption[];
+    readonly moves: readonly GameOption[];
+    readonly system: readonly GameOption[];
+  }): RoomCardVM {
+    const key = (option: GameOption, text: string, icon: string): CardKeyVM => ({
+      id: option.id,
+      key: option.key.toUpperCase(),
+      anchor: '',
+      text,
+      label: option.label,
+      icon,
+      badge: '',
+    });
+    const out = parts.leave[0];
+    const back = out === undefined ? parts.moves[0] : undefined;
+    const keys = {
+      lead: parts.system
+        .filter((option) => option.id === BUFFER)
+        // The Buffer key counts the buffer, and a taken relic flies to it.
+        .map((option) => ({
+          ...key(option, CARD.keys.buffer, 'buffer'),
+          badge: parts.buffer,
+          anchor: BUFFER_LANDING,
+        })),
+      trail: [
+        ...parts.system
+          .filter((option) => option.id === TRACE_ID)
+          .map((option) => key(option, CARD.keys.trace, 'trace')),
+        ...(out === undefined ? [] : [key(out, CARD.keys.out, 'out')]),
+        ...(back === undefined ? [] : [key(back, CARD.keys.back, 'back')]),
+      ],
+    };
+    const held = new Set([...keys.lead, ...keys.trail].map((each) => each.id));
+    return {
+      corner: CARD.corner,
+      arrival: parts.arrival,
+      keys,
+      ways: [...parts.leave, ...parts.moves]
+        .filter((option) => !held.has(option.id))
+        .map((option) => this.#docked(option)),
+      game: parts.system.filter((option) => !held.has(option.id)).map((option) => this.#docked(option)),
+      regions: CARD.regions,
+    };
+  }
+
+  /** A card's keys as the router's options. */
+  #keyed(keys: readonly CardKeyVM[]): readonly OptionVM[] {
+    return keys.map((each) => ({ id: each.id, key: each.key, label: each.label, opposite: '' }));
   }
 
   /**
@@ -353,7 +432,6 @@ export class HudPresenter implements Presenter<HudVM> {
           : {
               label: 'In this room',
               heading: 'IN THIS ROOM',
-              peek: this.#peek(contents.objects.length),
               empty: contents.objects.length === 0 ? 'No objects detected.' : '',
               tiles: contents.objects.map((relic, index) => {
                 const ordinal = String(index + 1);

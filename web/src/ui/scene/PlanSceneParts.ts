@@ -2,10 +2,11 @@ import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { Clock } from './Clock.ts';
 import type { Easing } from './Easing.ts';
 import type { Flight } from './Flight.ts';
+import type { KeySlot } from './KeySlot.ts';
 import type { SceneCanvases } from './SceneCanvases.ts';
 import type { ScenePick } from './ScenePick.ts';
 
-/** What the plan's host works with (U03), built in `main.ts`: the clock, the reduced-motion wish, its canvas, how it picks, how a glide and a coast ease, how a taken relic flies. */
+/** What the plan's host works with (U03), built in `main.ts`: the clock, the reduced-motion wish, its canvas, how it picks, how a glide and a coast ease, how a taken relic flies, where its MAP key sits. */
 export interface PlanSceneParts {
   readonly clock: Clock;
   readonly motion: ReducedMotion;
@@ -14,4 +15,6 @@ export interface PlanSceneParts {
   readonly ride: Easing;
   readonly coast: Easing;
   readonly flight: Flight;
+  /** Where the MAP key is mounted (U03e). */
+  readonly keys: KeySlot;
 }

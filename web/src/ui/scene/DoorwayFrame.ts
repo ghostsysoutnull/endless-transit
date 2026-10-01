@@ -9,8 +9,8 @@ const POST = { share: 0.2, least: 3, most: 6 };
 const BEYOND = { share: 0.47, most: 14 };
 const SPILL = { steps: [0.5, 1.3, 2.1], radius: 1.5 };
 const FOG = { reach: 1.8, radius: 0.5 };
-/** The number sits this far in, and shows once half the gap is this wide, in CSS pixels. */
-const NUMBER = { in: 0.45, least: 20 };
+/** The number sits this many CSS pixels in, and shows once half the gap is this wide. */
+const NUMBER = { in: 14, least: 20 };
 
 /**
  * A doorway of the room you stand in as the picture places it at a framing (U03e): the two ends of its gap, the way
@@ -103,7 +103,7 @@ export class DoorwayFrame {
   /** The number of the room it leads to, just inside the sill, where the gap is wide enough to carry it. */
   number(painter: Painter, colour: string): void {
     if (this.#number === '' || this.#half() < NUMBER.least) return;
-    const at = this.#at(NUMBER.in, 0);
+    const at = this.#at(NUMBER.in / this.#half(), 0);
     painter.font = this.#font.of('regular');
     painter.textAlign = 'center';
     painter.textBaseline = 'middle';
