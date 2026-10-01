@@ -259,11 +259,15 @@ export class Room extends Location {
   look(): RoomLook {
     return new RoomLook({
       walls: this.#atmosphere.keys.walls,
-      light: this.#atmosphere.keys.light,
+      light: this.light(),
       cold: this.#traits.temperature < COLD,
       furniture: this.#furniture.length,
       anomaly: this.#apartment.anomaly(),
     });
+  }
+
+  override light(): string {
+    return this.#atmosphere.keys.light;
   }
 
   /** A scan in a room resolves its apartment's plan (U03). */

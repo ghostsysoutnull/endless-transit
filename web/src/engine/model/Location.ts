@@ -219,6 +219,11 @@ export abstract class Location {
     return false;
   }
 
+  /** The key of the list its lighting came from, for a kind that is lit (a room); the empty key for every other. */
+  light(): string {
+    return '';
+  }
+
   /** What lies here — relics and furniture — for a kind that holds things (a room); nothing for every other kind. */
   contents(): Contents | null {
     return null;

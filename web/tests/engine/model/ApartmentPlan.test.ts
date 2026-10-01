@@ -66,6 +66,12 @@ describe('a room is drawn as its apartment’s plan (U03)', () => {
     ]);
   });
 
+  test('every room carries the key of the list its lighting came from, whatever its sight', () => {
+    const rooms = roomsOf(apartmentWith(4));
+    const plan = planOf(must(rooms[0]), seenOnly(must(rooms[0])));
+    expect(plan.rooms.map((room) => room.light)).toEqual(rooms.map((room) => room.atmosphere().keys.light));
+  });
+
   test('relic marks: what lies in a visited room, nothing shown in a room not visited; a take lowers them', () => {
     const rooms = roomsOf(apartmentWith(3, (apartment) => apartment.relicsIn(0).length > 0));
     const first = must(rooms[0]);

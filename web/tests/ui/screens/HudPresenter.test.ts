@@ -775,6 +775,7 @@ function drawnRoom(here: number, offered: readonly GameSnapshot['options'][numbe
           name: `Room ${String(index)}`,
           sight: 'visited',
           relics: 0,
+          light: 'analog',
         })),
         here: rooms[here] ?? '',
         look: new RoomLook({ walls: 'rust', light: 'analog', cold: false, furniture: 1, anomaly: false }),

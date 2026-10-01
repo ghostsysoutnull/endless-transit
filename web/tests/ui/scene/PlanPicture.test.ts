@@ -39,6 +39,7 @@ function plan(facts: {
     name: NAMES[index] ?? `Room ${String(index + 1)}`,
     sight,
     relics: sight === 'fog' ? 0 : 2,
+    light: 'analog',
   }));
   const doors = [
     ...(facts.here > 0 ? [child('move:back', { address: addressOf(facts.here - 1) })] : []),

@@ -166,6 +166,7 @@ export class Apartment extends Location {
         name: room.name(),
         sight: visited ? 'visited' : this.#surveyed || reached.has(address) ? 'known' : 'fog',
         relics: visited || this.#surveyed ? (room.contents()?.objects.length ?? 0) : 0,
+        light: room.light(),
       };
     });
   }
