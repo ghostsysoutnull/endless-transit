@@ -35,7 +35,7 @@ draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Ev
 | **SCAN** | doors and room types, nearby floors, or the apartment's rooms |
 | **MAP** | what is below you, drawn; dim is unvisited |
 | **BUFFER** | inventory: **SELECT** one, **SELECT** another = merge; **DROP HERE** lays it in the room; **▲ BACK TO REALITY** |
-| **TRACE** | your whole path: a band a level, each drawn; tap a band to open it larger; **DIVE** zooms down to you; **POLE** shows every level at a glance — era, culture and trait as ribbons, a rebel city's red break, a drifted apartment's hook (your pick is remembered) |
+| **TRACE** | your whole path: a band a level, each drawn; tap a band to open it larger; **DIVE** zooms down to you; **POLE** shows every level at a glance — a live node a level, the era, culture and trait it sets beside it, those in force written huge behind as you scroll; a rebel city's in red, a drifted apartment's underlined (your pick is remembered) |
 | **HELP** | the manual, inside the game |
 | **TITLE SCREEN** · **END SESSION** | the title (the world waits behind **CONTINUE**) · the recap (**RESUME** comes back) |
 

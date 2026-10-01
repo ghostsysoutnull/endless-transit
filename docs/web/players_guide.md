@@ -331,12 +331,12 @@ costs less. <!-- src/engine/rules/Drain.ts:10 -->
 **Rebel districts.** One city in ten is a rebel district. It swaps the planet's main and secondary culture, so the
 frequency bonus lands on the *other* culture there, and it swaps the planet's two eras the same way, so the street era
 (and the Entropic drain) can differ from the rest of the planet. Its card says `Rebel district` with the `Era` and
-`Culture` it swapped in; on the pole both ribbons break there in red. <!-- src/engine/procgen/CityFactory.ts:12, 29; src/engine/model/City.ts:56-63 -->
+`Culture` it swapped in; on the pole they are written beside it in red. <!-- src/engine/procgen/CityFactory.ts:12, 29; src/engine/model/City.ts:56-63 -->
 
 **Apartments drift.** The planet's `Drift` chip names its *second* era and culture. Each apartment draws its era and
 its culture apart: each is the main one with the stability's chance, else the second. A drifted apartment's objects
 and lighting are of what it drew, and the room's `Era` chip says so. The drain cost still follows the street header.
-On the pole the drifted ribbon hooks in from the drift current, and the apartment and its rooms carry a `drift` tag. <!-- src/engine/procgen/ApartmentFactory.ts:69-70, src/engine/model/Vibe.ts:76-85, src/engine/model/Planet.ts:45-55 -->
+On the pole the drifted value is written beside the apartment, underlined in dashes, and the apartment and its rooms carry a `drift` tag. <!-- src/engine/procgen/ApartmentFactory.ts:69-70, src/engine/model/Vibe.ts:76-85, src/engine/model/Planet.ts:45-55 -->
 
 **Stability.** The `Stability` chip on a country and at an elevator is the share of the country's apartments that
 follow the planet's main culture and era: 85% shifted by up to a tenth either way, kept between 10% and 90%. <!-- src/engine/model/Vibe.ts:7-9, src/engine/procgen/CountryFactory.ts:13-14, src/engine/model/Country.ts:48-56 -->
@@ -356,11 +356,13 @@ even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/
 glyph at the universe, thirteen in a room. The rail shows the glyphs, and a screen reader reads each level's kind and
 name. Tap it to open the trace; a keyboard opens it with TRACE in the dock.
 
-**The pole** (POLE in the trace's header) is every level at a glance: a plate and a small moving drawing a level on
-one spine, its size on the ruler at the left, and three ribbons on the right — `Era`, `Culture` and `Trait` — that
-break where a level changes them. Beside the era and culture ribbons runs the planet's second pair as a dashed drift
-current. Tags name what is unusual: `rebel`, `drift`, a `curved` corridor, a door's state, an `anomaly`. The dashed
-boxes at the planet and the city are empty berths, kept for ships. Tap a level to see its band in the column. <!-- src/ui/scene/PolePicture.ts, src/ui/screens/PolePresenter.ts -->
+**The pole** (POLE in the trace's header) is every level at a glance: one spine down the middle, a big node a level
+with its small moving drawing, its kind above it and its name under it. Beside a node are the values its level sets —
+`Era`, `Culture`, `Trait` — and, where the planet's second pair first shows or changes, the `Drift current`. Behind
+the pole, huge and faint, are the era, culture and trait in force at the level in the middle of the screen; they
+change as you scroll. Tags name what is unusual: `rebel`, `drift`, a `curved` corridor, a door's state, an `anomaly`.
+The dashed boxes at the planet and the city are empty berths, kept for ships. Tap a level to see its band in the
+column. <!-- src/ui/scene/PolePicture.ts, src/ui/scene/PoleMarks.ts, src/ui/screens/PolePresenter.ts -->
 
 **Steps** is how many steps the game accepted: moves, places and takes alike. It carries over when you reload.
 Commands cost Coherence but do not count here.

@@ -228,12 +228,16 @@ TRACE, out of the tab order; the view keeps the level nearest the finger to open
 (nothing above the planet; the planet's main and second pairs and stability; from the country down the trait, whether
 the level rebelled — `City` — and which values it drew from the second pair — `Apartment`, its rooms asking it), made by
 `Vibe.figure()`, which owns the drift rule and the stability's words (`stabilityText()`). `Location.poleSigns()` names
-a level's states (a curved corridor, a door not stable, an anomaly), and `LocationKind.glyph()` its plate's drawing;
+a level's states (a curved corridor, a door not stable, an anomaly), and `LocationKind.glyph()` its node's drawing;
 the trace step carries all three. `PolePresenter` (injected into `HudPresenter` as `PoleWords`) makes the `PoleVM`;
-`PoleLayout` places the rows, the ribbons' runs (broken where a value changes or a rebel district swaps), the drift
-current, its hooks and the ships' empty berths; `PolePicture` paints them, each plate's glyph from a
-`Record<GlyphLook, PoleGlyph>` built in `ScenePictures`. `TracePole` shows it in the trace, a button over each level's
-row, and `HudView` switches Pole | Column, the pick kept by a `TraceViewMemory` (`LocalStorageTraceViewMemory`).
+`PoleMarks` decides where a level writes a value (a word the level above did not hold, a rebel district's swap, a
+drift's start) and the vibe in force at each level; `PoleLayout` places the rows (the pole down the middle, a big node
+a level, its kind above and its name and tags under), the values beside the node that sets them with the drift
+current's pair under them, the ships' empty berths, the level in focus through the scroll window and the backdrop's
+three rows; `PolePicture` paints them — behind the pole, pinned, the vibe in force at the level in focus, huge and
+faint — each node's glyph from a `Record<GlyphLook, PoleGlyph>` built in `ScenePictures`. `TracePole` shows it in the
+trace, a button over each level's row, following the level in focus as it scrolls, and `HudView` switches
+Pole | Column, the pick kept by a `TraceViewMemory` (`LocalStorageTraceViewMemory`).
 
 **The building and the corridor (U02).** A picture's view moves: it answers a `SceneCamera` for its view model at a
 size — `TravelCamera` (the tower's car, the corridor's walk: range, pace, coast, the stops, and a `CameraTrack`) or

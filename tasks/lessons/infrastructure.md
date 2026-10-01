@@ -41,4 +41,6 @@ Process lessons, in the form the Codex's Self-Improvement Loop sets. How to work
 - **A reviewer's suggested fix to a test is judged by the testing principles first**: a line that catches nothing
   another test doesn't is deleted, never rewritten.
 - **A tool that fails is reported when it fails**: never silently replaced by a weaker one; every agent's brief says so.
+- **A mock's stand-in for something the game already draws says so on the mock**, or the mock uses the real one: the
+  user judges what they see.
 - **`git mv` stages at once**: `git diff --cached --name-only` is empty before a commit's own `git add`.
