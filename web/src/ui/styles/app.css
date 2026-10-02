@@ -1811,10 +1811,11 @@ html:has(.world[data-card]) {
   }
 }
 
-/* The folded corner: turns the card. Bottom right on the picture, bottom left on its back. */
+/* The folded corner: turns the card. Bottom right on both faces, so the thumb finds it where it left it. */
 .card .ear {
   all: unset;
   position: absolute;
+  right: 0;
   bottom: 0;
   z-index: 2;
   box-sizing: border-box;
@@ -1833,31 +1834,18 @@ html:has(.world[data-card]) {
 }
 
 /* The button is the triangle itself: a tap beside it goes to what lies under. */
-.card .front > .ear {
-  right: 0;
+.card .ear {
   clip-path: polygon(100% 0, 0 100%, 100% 100%);
-}
-
-.card .back > .ear {
-  left: 0;
-  clip-path: polygon(0 0, 0 100%, 100% 100%);
 }
 
 .card .ear span {
   position: absolute;
+  right: 5px;
   bottom: 7px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--ground);
-}
-
-.card .front > .ear span {
-  right: 5px;
-}
-
-.card .back > .ear span {
-  left: 5px;
 }
 
 .card .ear:focus-visible {
