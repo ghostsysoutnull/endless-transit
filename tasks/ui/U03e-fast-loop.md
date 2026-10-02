@@ -41,6 +41,7 @@ per kept look, closed at the user's approval under the Solo loop's step 4 and 5.
 | `KeyWords`, `MapKey` (two faces) | value objects | `ui/scene` | the MAP key's words, one face per view mode | none |
 | `ViewMode.keyWords` | method on an existing kind | `InRoom`, `OverPlan` | which face of the MAP key this mode shows | none |
 | `RoomCard.reveal` | method on an existing kind | `RoomCardView` | the picture is shown before what must be seen on it | none |
+| `Curtain` | type (a function) | `ui/scene` | what a scene draws aside before a ride, handed in by the screen; the card answers it | none |
 | `FORWARD_MOVE`, `SCAN_ID`, `LATTICE_ID`, `TO_TITLE_ID` | constants | `engine/model/ForwardMove`, `engine/rules/GameOption` | each option id's one owner, so a screen finds it by id | none |
 | `GAME_KEYS` | table (a constant) | `HudPresenter` | the MORE sheet's short word and icon by option id | none |
 
@@ -50,4 +51,7 @@ Tests: the presenters' and the engine's unit tests brought to the new words and 
 `MapKeyFaces`; the browser tests of the card (five keys in the first room, the MAP key's two names, MORE, the turn
 before the ride), the buffer (tiles, the fresh hybrid), the telemetry's words and the relic's ticket. The goldens
 rewritten and read: the dock's LATTICE, the telemetry's plain line, the card's FORWARD key, the game keys' words.
-The design check's findings and the browser suite's run: in the commits that close the loop.
+The design check found eight breaks, all fixed (two owners for the axis's top, the decades, BACK, Resonant and the
+sync's shape; a pick that also remembered; a turn kept across rooms; a seed share dealt outside `Seed`). The browser
+suite found one regression of the loop: a take from the card's back turned the card, since every pick the scene led
+went through the card's reveal — the scene now asks the card only before a ride (`Curtain`).

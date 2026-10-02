@@ -195,8 +195,9 @@ keys under the card stay on both faces, icons only (their words stay in the mark
 forward is a key beside the way back (`FORWARD_MOVE_ID`), shown where the room offers it; the picture's MAP key is
 mounted in their slot (`KeySlot`, `StripSlot`) and carries two faces of words (`MapKey`, `KeyWords`), the `ViewMode`
 choosing which — MAP in the room, ROOM over the plan; the ids something outside the template looks up live in
-`CardSlots`. A key that travels, tapped on the back, first turns the card to its picture (`RoomCard.reveal`), then
-`HudView` sends it through the scene.
+`CardSlots`. A key that travels is sent through the scene with a `Curtain` (`src/ui/scene/Curtain.ts`): the scene
+calls it only before a ride, and the card answers it by showing its picture first (`RoomCard.reveal`) — a take, which
+does not ride, leaves the back where it is.
 `prefers-reduced-motion` stops the bar, the canvas pulse, the scene's motion and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
 **Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`; `SpectrumPicture`, the
