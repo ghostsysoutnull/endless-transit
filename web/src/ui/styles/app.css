@@ -603,15 +603,34 @@ body {
 
 /* A taken relic's flight to the Buffer count (U03b, RelicFlight): a small diamond, moved by the script. */
 
+/* A taken relic's ticket (`RelicFlight`): its gem and its full name where it lay, then flown to the Buffer key. */
 .relic-flight {
   position: fixed;
   z-index: 50;
-  width: 12px;
-  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 72vw;
+  padding: 6px 10px;
+  border: 1px solid var(--yl);
+  background: var(--ground);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  box-shadow: 0 0 12px rgb(0 0 0 / 0.6);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.relic-flight .gem {
+  flex: none;
+  width: 10px;
+  height: 10px;
   border: 2px solid var(--yl);
   background: var(--ground);
-  pointer-events: none;
-  transform: translate(-50%, -50%) rotate(45deg);
+  transform: rotate(45deg);
 }
 
 .world .cap {

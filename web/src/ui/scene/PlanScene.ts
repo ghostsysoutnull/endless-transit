@@ -315,18 +315,22 @@ export class PlanScene implements StagedScene<PlanSketch> {
   }
 
   /**
-   * Where the picture sends the view for this option, then its pick; a relic (no stop) is picked at once and flies to
-   * the buffer from where it lies; under reduced motion anything is picked at once, and nothing flies.
+   * Where the picture sends the view for this option, then its pick; a relic (no stop) is picked at once and its name
+   * flies to the buffer from where it lies (the flight knows reduced motion); under reduced motion a stop is skipped.
    */
   #go(id: string): void {
     const shown = this.#shown;
-    const stop = shown === undefined ? undefined : this.#mode.stop(shown.sketch, shown.camera, id);
-    if (this.#parts.motion.reduced() || shown === undefined) {
+    if (shown === undefined) {
       this.#pick(id);
       return;
     }
+    const stop = this.#mode.stop(shown.sketch, shown.camera, id);
     if (stop === undefined) {
-      this.#fly(id);
+      this.#fly(id, shown.sketch.nameOf(id));
+      this.#pick(id);
+      return;
+    }
+    if (this.#parts.motion.reduced()) {
       this.#pick(id);
       return;
     }
@@ -344,11 +348,11 @@ export class PlanScene implements StagedScene<PlanSketch> {
     this.#run();
   }
 
-  /** A relic's flight from where the picture lays it out, when it does. */
-  #fly(id: string): void {
+  /** A relic's flight, by name, from where the picture lays it out, when it does. */
+  #fly(id: string, name: string): void {
     const canvas = this.#mounted?.canvas;
     const hit = this.#hits.of(id);
-    if (canvas !== undefined && hit !== undefined) this.#parts.flight.fly(canvas.onPage(hit.anchor));
+    if (canvas !== undefined && hit !== undefined) this.#parts.flight.fly(canvas.onPage(hit.anchor), name);
   }
 
   #pick(id: string): void {

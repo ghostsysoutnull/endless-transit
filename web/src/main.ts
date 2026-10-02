@@ -138,7 +138,7 @@ new Shell(
               ride: new EaseInOut(),
               coast: new EaseOut(),
             },
-            { flight: new RelicFlight(document), keys: new StripSlot() },
+            { flight: new RelicFlight(document, motion), keys: new StripSlot() },
           ),
         ),
         canvases,
