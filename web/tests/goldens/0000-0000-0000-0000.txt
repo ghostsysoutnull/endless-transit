@@ -27,7 +27,7 @@ BUILDINGS ON THIS STREET
   19 [] Enter Building: Unmarked Gravity
   20 [] Enter Building: CellFall
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Broad Alley | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited)
-dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ HorizonWell  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
@@ -73,8 +73,8 @@ RIDE TO A FLOOR
        Zone: Power relay
   00 [0] Ride to Lobby [>X<]
        Zone: Transit lobby
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███ █ ███████ ██████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1 > Resonant traces: 0
-dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 3 1 7 6 1 Resonant traces 0
+dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
@@ -84,8 +84,8 @@ tags: Era Future (era) | Culture Void (culture) | Stability 90.00% (reading) | T
   Floor 0. A landing of Void design, silent except for the lift cables ticking overhead.
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ █ ██ ████████ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 7 1 2 8 4 Resonant traces 0
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
@@ -116,8 +116,8 @@ DOORS
        A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
   10 [A] Open Oxidized Metal Hatch, static
        An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ████████ █████████ █ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 6 6 8 9 1 Resonant traces 0
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Hollow Neural Link Array  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Hollow Neural Link Array *
@@ -130,11 +130,11 @@ Furniture: immaculate invisible support, dust-covered white light strip, sagging
 Relics: 6
 status: Entered Hollow Neural Link Array.
 IN THIS ROOM: white light strip infused with smart glass <infused|white light strip|smart glass> | floating white sphere infused with plasma coil <infused|floating white sphere|plasma coil> | hovering disc fused to hologram projector <fused|hovering disc|hologram projector> | hologram projector grafted onto hidden speaker <grafted|hidden speaker|hologram projector> | empty frame infused with aerogel slab <infused|empty frame|aerogel slab> | quantum key <era|quantum key>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ ██████ ██████ █████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.0 > Resonant traces: 0
+TELEMETRY NOMINAL Quantum spectrogram 6 6 6 9 8 Resonant traces 0
 arrival: You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
-keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment)
-ways: [F] GO FORWARD
-game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment) | [F] FORWARD (Go forward)
+ways: 
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Abyssal Bio-Server  [frame grey]
@@ -148,9 +148,9 @@ Furniture: upended white light strip
 Relics: 5
 status: Entered Abyssal Bio-Server.
 IN THIS ROOM: neural link grafted onto silent fan <grafted|silent fan|neural link> | neural link with hidden speaker <with|hidden speaker|neural link> | neural link with floating white sphere <with|floating white sphere|neural link> | quantum key with silent fan <with|silent fan|quantum key> | white noise emitter infused with smart glass <infused|white noise emitter|smart glass>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████████ ████ ████████ █ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.1.0.0.1.1 > Resonant traces: 0
+TELEMETRY NOMINAL Quantum spectrogram 8 4 8 1 3 Resonant traces 0
 arrival: You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
-keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] BACK (Go back)
-ways: [F] GO FORWARD
-game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] BACK (Go back) | [F] FORWARD (Go forward)
+ways: 
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)

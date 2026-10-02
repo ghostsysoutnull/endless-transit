@@ -45,7 +45,7 @@ const OPEN: GameSnapshot = {
     abyssal: false,
     childrenHeading: '',
     contents: { objects: [], furniture: [] },
-    telemetry: { spectrogram: [1, 1, 1, 1, 1], voice: null },
+    telemetry: { spectrogram: [1, 1, 1, 1, 1], peaks: [], glitched: false, voice: null },
     lattice: null,
     portrait: new NoPortrait(),
     noise: new Seed(0, 0),
@@ -91,49 +91,46 @@ describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groov
     const vm = presenter.toViewModel(OPEN);
     expect(vm.scene).toBe('buffer');
     expect(vm.frame).toBe('yellow');
-    expect(vm.heading).toBe('[QUANTUM_TRACE_BUFFER_SYNC...]');
-    expect(vm.count).toEqual({ label: 'TRACE_BUFFER', value: '02 FRAGMENTS' });
-    expect(vm.tally).toEqual({ label: 'RESONANT_TRACES', value: '3' });
+    expect(vm.heading).toBe('BUFFER');
+    expect(vm.count).toEqual({ label: 'Fragments', value: '2' });
+    expect(vm.tally).toEqual({ label: 'Resonant', value: '3' });
     expect(vm.empty).toBe('');
     expect(vm.rows).toEqual([
       {
         key: 'with|reliquary box|plasma coil',
-        ordinal: '01',
-        hertz: '3194Hz',
-        bar: '██████████', // 94 → ten cells
+        ordinal: '1',
+        hertz: '3194 Hz',
+        signal: { lit: 10, cells: 10 }, // 94 → ten cells
         phase: 'STABLE',
         phaseKey: 'stable',
         name: 'plasma coil with reliquary box',
-        badge: { text: '[RESONANT]', label: 'Resonant' },
+        resonant: true,
+        resonantLabel: 'Resonant',
         selected: true,
         selectedLabel: 'Selected',
-        actions: [
-          { id: 'pick:0', key: '1', label: 'UNSELECT', opposite: '' },
-          { id: 'drop:0', key: '', label: 'DROP HERE', opposite: '' },
-        ],
+        pick: { id: 'pick:0', key: '1', label: 'Unselect: plasma coil with reliquary box', opposite: '' },
+        drop: { id: 'drop:0', key: '', label: 'Drop here: plasma coil with reliquary box', opposite: '' },
       },
       {
         key: 'hybrid(a+b)',
-        ordinal: '02',
-        hertz: '6771Hz',
-        bar: '████████░░', // 71 → eight cells
+        ordinal: '2',
+        hertz: '6771 Hz',
+        signal: { lit: 8, cells: 10 }, // 71 → eight cells
         phase: 'SHIFTING',
         phaseKey: 'shifting',
         name: 'brass-plasma Hybrid',
-        badge: null,
+        resonant: false,
+        resonantLabel: '',
         selected: false,
         selectedLabel: '',
-        actions: [
-          { id: 'pick:1', key: '2', label: 'MERGE', opposite: '' },
-          { id: 'drop:1', key: '', label: 'DROP HERE', opposite: '' },
-        ],
+        pick: { id: 'pick:1', key: '2', label: 'Merge: brass-plasma Hybrid', opposite: '' },
+        drop: { id: 'drop:1', key: '', label: 'Drop here: brass-plasma Hybrid', opposite: '' },
       },
     ]);
     expect(vm.hint).toBe(
-      'Select one fragment, then another: they merge into a hybrid and give 15 Coherence back.',
+      'Tap one fragment, then another: they merge into a hybrid and give 15 Coherence back.',
     );
-    expect(vm.sync).toBe('SYNC_STATUS: NOMINAL');
-    expect(vm.dock).toEqual([{ id: 'close', key: 'B', label: '▲ BACK TO REALITY', opposite: '' }]);
+    expect(vm.dock).toEqual([{ id: 'close', key: 'B', label: 'BACK', opposite: '' }]);
     expect(vm.options.map((each) => each.id)).toEqual(['pick:0', 'drop:0', 'pick:1', 'drop:1', 'close']);
     expect(vm.status).toBe(vm.heading);
     expect(vm.regions).toEqual({ buffer: 'Quantum trace buffer', actions: 'Back' });
@@ -147,14 +144,14 @@ describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groov
       message: 'Dropped brass-plasma Hybrid here.',
     });
     expect(vm.rows).toEqual([]);
-    expect(vm.empty).toBe('(No spectral traces detected in local buffer)');
-    expect(vm.count.value).toBe('00 FRAGMENTS');
+    expect(vm.empty).toBe('Nothing carried yet.');
+    expect(vm.count.value).toBe('0');
     expect(vm.note).toBe('Dropped brass-plasma Hybrid here.');
     expect(vm.status).toBe('Dropped brass-plasma Hybrid here.');
   });
 
   test('the signal bar and the phase follow the old arithmetic: hertz mod 100 over ten plus one cells, even is STABLE', () => {
-    const at = (hertz: number): { bar: string; phase: string } => {
+    const at = (hertz: number): { lit: number; phase: string } => {
       const vm = presenter.toViewModel({
         ...OPEN,
         buffer: {
@@ -167,12 +164,12 @@ describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groov
       });
       const row = vm.rows[0];
       if (row === undefined) throw new Error('a row');
-      return { bar: row.bar, phase: row.phase };
+      return { lit: row.signal.lit, phase: row.phase };
     };
-    expect(at(0)).toEqual({ bar: '█░░░░░░░░░', phase: 'STABLE' });
-    expect(at(9)).toEqual({ bar: '█░░░░░░░░░', phase: 'SHIFTING' });
-    expect(at(10)).toEqual({ bar: '██░░░░░░░░', phase: 'STABLE' });
-    expect(at(199)).toEqual({ bar: '██████████', phase: 'SHIFTING' });
+    expect(at(0)).toEqual({ lit: 1, phase: 'STABLE' });
+    expect(at(9)).toEqual({ lit: 1, phase: 'SHIFTING' });
+    expect(at(10)).toEqual({ lit: 2, phase: 'STABLE' });
+    expect(at(199)).toEqual({ lit: 10, phase: 'SHIFTING' });
   });
 
   test('the frame is the place’s; the scene is the prompt’s key, so opening the buffer is a new scene and closing it goes back', () => {

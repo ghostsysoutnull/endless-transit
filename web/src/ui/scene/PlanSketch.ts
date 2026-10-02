@@ -27,4 +27,6 @@ export interface PlanSketch extends Sketch {
   rest(camera: PlanCamera, frame: RoomFrame): Framing;
   /** The words of the key that flips between the room and the plan. */
   mapKey(): MapKey;
+  /** The name of what an option id stands for in this plan (a relic, a doorway's room, the way out); empty when nothing does. */
+  nameOf(id: string): string;
 }

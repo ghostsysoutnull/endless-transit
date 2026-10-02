@@ -1,6 +1,7 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
+import type { SpectrumVM } from '#ui/canvas/SpectrumVM.ts';
 import type { Dive } from '#ui/scene/Dive.ts';
 import type { TraceBands } from '#ui/scene/TraceBands.ts';
 import type { TracePole } from '#ui/scene/TracePole.ts';
@@ -23,7 +24,7 @@ import type { TraceView } from './TraceView.ts';
 import type { TraceViewMemory } from './TraceViewMemory.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
-type Slot = 'pane' | 'map';
+type Slot = 'pane' | 'map' | 'spectrum';
 
 /** What the trace draws with: the column's bands, the dive, the pole, and where the pick of view is kept (U04, U05). */
 interface TraceParts {
@@ -66,6 +67,7 @@ export class HudView implements View<HudVM> {
   readonly #canvases: CanvasSlots<{
     pane: MapPanelVM['picture'];
     map: MapPanelVM['picture'];
+    spectrum: SpectrumVM;
   }>;
   readonly #book: PictureBook;
   /** The screen's own listeners: made at each mount (the shell mounts the screen again after a prompt), taken away with it. */
@@ -110,6 +112,7 @@ export class HudView implements View<HudVM> {
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
       map: () => canvases.map(),
+      spectrum: () => canvases.spectrum(),
     });
   }
 
@@ -325,6 +328,7 @@ export class HudView implements View<HudVM> {
     render(this.#template(vm), this.#container);
     this.#canvases.bind('pane', this.#host('pane'), vm.aside.map?.picture ?? null);
     this.#canvases.bind('map', this.#host('map'), vm.map.shown ? vm.map.picture : null);
+    this.#canvases.bind('spectrum', this.#host('spectrum'), vm.aside.telemetry?.spectrogram.picture ?? null);
     this.#bindScene(vm.drawing.sketchedBy(this.#book));
   }
 
@@ -379,11 +383,13 @@ export class HudView implements View<HudVM> {
     if (this.#vm !== undefined) this.#paint(this.#vm);
   }
 
-  /** A row or key tapped on a drawn place whose picture travels: the picture rides there first, and picks it (U02). */
+  /** A row or key tapped on a drawn place whose picture travels: the picture rides there first, and picks it (U02); the room's card is the ride's curtain — it shows its picture before one (U03e). */
   #through(event: Event, id: string): void {
     if (!this.#stage.leads(id)) return;
     event.stopPropagation();
-    this.#stage.enter(id);
+    this.#stage.enter(id, (then) => {
+      this.#card.reveal(event.target, then);
+    });
   }
 
   #toggleDebug(): void {
@@ -939,13 +945,17 @@ export class HudView implements View<HudVM> {
             : html`
                 <section class="tele" data-testid="telemetry" aria-label=${telemetry.label}>
                   <p class="th">${telemetry.heading}</p>
-                  <p class="tl">${telemetry.sync}</p>
-                  <p class="th">${telemetry.spectrogram.heading}</p>
-                  <p class="bars" aria-hidden="true">
-                    ${telemetry.spectrogram.bars.map((bar) => html`<span>${bar}</span>`)}
+                  <p class="sync" data-band=${telemetry.sync.band}>
+                    <i class="light" aria-hidden="true"></i>${telemetry.sync.text}
                   </p>
-                  <p class="th">${telemetry.logs.heading}</p>
-                  ${telemetry.logs.lines.map((line) => html`<p class="tl">${line}</p>`)}
+                  <div
+                    class="bars"
+                    role="img"
+                    aria-label=${telemetry.spectrogram.label}
+                    data-canvas="spectrum"
+                  ></div>
+                  ${telemetry.lines.map((line) => html`<p class="tl">${line}</p>`)}
+                  ${telemetry.voice === '' ? nothing : html`<p class="voice">${telemetry.voice}</p>`}
                 </section>
               `
         }

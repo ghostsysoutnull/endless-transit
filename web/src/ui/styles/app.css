@@ -603,15 +603,34 @@ body {
 
 /* A taken relic's flight to the Buffer count (U03b, RelicFlight): a small diamond, moved by the script. */
 
+/* A taken relic's ticket (`RelicFlight`): its gem and its full name where it lay, then flown to the Buffer key. */
 .relic-flight {
   position: fixed;
   z-index: 50;
-  width: 12px;
-  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 72vw;
+  padding: 6px 10px;
+  border: 1px solid var(--yl);
+  background: var(--ground);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  box-shadow: 0 0 12px rgb(0 0 0 / 0.6);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.relic-flight .gem {
+  flex: none;
+  width: 10px;
+  height: 10px;
   border: 2px solid var(--yl);
   background: var(--ground);
-  pointer-events: none;
-  transform: translate(-50%, -50%) rotate(45deg);
+  transform: rotate(45deg);
 }
 
 .world .cap {
@@ -1165,21 +1184,32 @@ body {
   outline-offset: 2px;
 }
 
-/* The buffer screen: the old [QUANTUM_TRACE_BUFFER_SYNC...] block, one line per fragment with its buttons under it. */
+/* The buffer screen (U03e): the shelf of what you carry — a heading with its chips, a tile per fragment, the tile its
+   pick, the drop a small key in its corner. */
 .trace .rh {
   font-size: 15px;
   letter-spacing: 0.1em;
   color: var(--cy);
 }
 
-.bcount {
+.chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 12px;
-  font-size: 12.5px;
+  gap: 6px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 
-.bcount .k {
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--rule-hi);
+  background: var(--panel2);
+}
+
+.chip .k {
   color: var(--dim);
 }
 
@@ -1187,84 +1217,215 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 8px;
 }
 
 .frag {
-  border: 1px solid var(--rule-hi);
-  background: var(--panel2);
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  position: relative;
   min-width: 0;
 }
 
-.frag.selected {
-  border-color: var(--yl);
-  box-shadow: inset 0 0 0 1px var(--yl);
-}
-
-.frag p {
-  margin: 0;
-}
-
-.fline {
+.frag .pick {
+  all: unset;
+  box-sizing: border-box;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  font-size: 12px;
-  color: var(--dim);
-  letter-spacing: 0.04em;
-}
-
-.fline .ord {
-  color: var(--yl);
-  font-variant-numeric: tabular-nums;
-}
-
-.fline .hz {
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid var(--rule-hi);
+  background: var(--panel2);
   color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.frag .pick:focus-visible {
+  outline: 2px solid var(--cy);
+  outline-offset: 2px;
+}
+
+.frag[data-selected] .pick {
+  border-color: var(--yl);
+  box-shadow:
+    inset 0 0 0 1px var(--yl),
+    0 0 10px var(--yl);
+}
+
+/* The hybrid a merge just made arrives lit: a yellow flash, then its frame beats twice before it settles. */
+.frag[data-fresh] .pick {
+  animation: frag-in 1600ms ease-out;
+}
+
+.frag[data-fresh] .gem {
+  animation: gem-in 1600ms ease-out;
+}
+
+@keyframes frag-in {
+  0% {
+    transform: scale(0.85);
+    border-color: var(--yl);
+    background: var(--yl);
+    color: var(--ground);
+    box-shadow: 0 0 28px var(--yl);
+  }
+  20% {
+    transform: scale(1.04);
+    border-color: var(--yl);
+    background: var(--panel2);
+    color: var(--text);
+    box-shadow: 0 0 20px var(--yl);
+  }
+  45% {
+    transform: scale(1);
+    border-color: var(--rule-hi);
+    box-shadow: 0 0 0 transparent;
+  }
+  65% {
+    border-color: var(--yl);
+    box-shadow: 0 0 16px var(--yl);
+  }
+  85% {
+    border-color: var(--rule-hi);
+    box-shadow: 0 0 0 transparent;
+  }
+  100% {
+    border-color: var(--yl);
+    box-shadow: 0 0 12px var(--yl);
+  }
+}
+
+@keyframes gem-in {
+  0%,
+  20% {
+    transform: rotate(45deg) scale(2.2);
+    border-color: var(--ground);
+    background: var(--ground);
+  }
+  45% {
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+.frag .ftop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.frag .gem {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--cy);
+  background: var(--ground);
+  transform: rotate(45deg);
+}
+
+.frag[data-resonant] .gem {
+  border-color: var(--yl);
+  background: var(--yl);
+  box-shadow: 0 0 8px var(--yl);
+}
+
+.frag .ord {
+  color: var(--dim);
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
-.sig[data-phase='stable'],
-.ph[data-phase='stable'] {
-  color: var(--cy);
-}
-
-.sig[data-phase='shifting'],
-.ph[data-phase='shifting'] {
-  color: var(--mg);
-}
-
-.fname {
+.frag .fname {
+  flex: 1;
   font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
-.badge {
-  color: var(--gn);
-  font-size: 12px;
-  margin-left: 8px;
-}
-
-.facts {
+.frag .meter {
   display: flex;
-  flex-wrap: wrap;
+  gap: 2px;
+  height: 5px;
+}
+
+.frag .meter i {
+  flex: 1;
+  border: 1px solid currentColor;
+}
+
+.frag .meter i[data-lit] {
+  background: currentColor;
+}
+
+.frag[data-phase='stable'] .meter,
+.frag[data-phase='stable'] .dot,
+.frag[data-phase='stable'] .ph {
+  color: var(--cy);
+}
+
+.frag[data-phase='shifting'] .meter,
+.frag[data-phase='shifting'] .dot,
+.frag[data-phase='shifting'] .ph {
+  color: var(--mg);
+}
+
+.frag .dot {
+  background: currentColor;
+}
+
+.frag .fmeta {
+  display: flex;
+  align-items: center;
   gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
 }
 
-.fb {
-  flex: 1 1 140px;
-  border-color: var(--rule-hi);
-  font-size: 12.5px;
+.frag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
 }
 
-.frag.selected .fb:first-child {
-  border-color: var(--yl);
+/* The drop: a small key in the tile's corner, a tray with an arrow into it; its tap area the full 44 px. */
+.frag .drop {
+  all: unset;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--tap);
+  height: var(--tap);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.frag .drop::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  color: var(--dim);
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M10 2v10M6 8l4 4 4-4M3 13v4h14v-4'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.frag .drop:active::before {
+  color: var(--yl);
+}
+
+.frag .drop:focus-visible {
+  outline: 2px solid var(--cy);
+  outline-offset: -4px;
 }
 
 .hint {
@@ -1356,23 +1517,53 @@ body {
   color: var(--cy);
 }
 
-.tele .th + .th,
-.tele .tl + .th,
-.tele .bars + .th {
-  margin-top: 6px;
-}
-
 .tele .tl {
   color: var(--dim);
 }
 
-.tele .bars {
+/* The sync row: a light tinted by the coherence band, then the word. */
+.tele .sync {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  color: var(--cy);
-  line-height: 1.1;
-  font-size: 11px;
+  align-items: center;
+  gap: 8px;
+}
+
+.tele .sync .light {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.tele .sync[data-band='stable'] .light {
+  color: var(--gn);
+}
+
+.tele .sync[data-band='degraded'] .light {
+  color: var(--yl);
+}
+
+.tele .sync[data-band='critical'] .light {
+  color: var(--rd);
+}
+
+/* The spectrogram: the canvas's live strip (`SpectrumPicture`), as tall as the picture asks. */
+.tele .bars {
+  display: block;
+  margin-block: 2px;
+  margin-inline: -12px;
+  line-height: 0;
+}
+
+.tele .bars canvas {
+  display: block;
+}
+
+/* The void's voice: speech, not a reading. */
+.tele .voice {
+  color: var(--yl);
+  font-style: italic;
 }
 
 /* The last scan's panel (I07): a titled list of readings under the narrative, never a modal. */
@@ -1806,15 +1997,25 @@ html:has(.world[data-card]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .frag[data-fresh] .pick,
+  .frag[data-fresh] .gem {
+    animation: none;
+  }
+
+  .frag[data-fresh] .pick {
+    border-color: var(--yl);
+  }
+
   .card .line {
     animation-timing-function: step-end;
   }
 }
 
-/* The folded corner: turns the card. Bottom right on the picture, bottom left on its back. */
+/* The folded corner: turns the card. Bottom right on both faces, so the thumb finds it where it left it. */
 .card .ear {
   all: unset;
   position: absolute;
+  right: 0;
   bottom: 0;
   z-index: 2;
   box-sizing: border-box;
@@ -1833,18 +2034,13 @@ html:has(.world[data-card]) {
 }
 
 /* The button is the triangle itself: a tap beside it goes to what lies under. */
-.card .front > .ear {
-  right: 0;
+.card .ear {
   clip-path: polygon(100% 0, 0 100%, 100% 100%);
-}
-
-.card .back > .ear {
-  left: 0;
-  clip-path: polygon(0 0, 0 100%, 100% 100%);
 }
 
 .card .ear span {
   position: absolute;
+  right: 5px;
   bottom: 7px;
   font-size: 10px;
   font-weight: 700;
@@ -1852,17 +2048,26 @@ html:has(.world[data-card]) {
   color: var(--ground);
 }
 
-.card .front > .ear span {
-  right: 5px;
-}
-
-.card .back > .ear span {
-  left: 5px;
-}
-
 .card .ear:focus-visible {
   outline: 2px solid var(--wh);
   outline-offset: -3px;
+}
+
+/* The MORE sheet (the game's own options) rises over the foot of the card; the veil above it closes it on a tap. */
+.card > .veil {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: rgb(0 0 0 / 0.35);
+}
+
+.card > .more {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 4;
+  padding: 8px;
+  border-top: 1px solid var(--rule-hi);
+  background: var(--panel);
 }
 
 /* The sheet of static a broken turn lays over the card (`StaticTurn`): fine crossed lines, shifting in steps. */
@@ -1994,12 +2199,18 @@ html:has(.world[data-card]) {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The keys are pictures: their words stay in the markup for a reader and are not shown. */
+.keys .key > span,
+.keys .mapkey > span {
+  display: none;
+}
+
 /* Each key's drawn icon: a shape cut out of its own ink. */
 .keys .key::before,
 .keys .mapkey::before {
   content: '';
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   color: var(--cy);
   background: currentColor;
   mask: var(--icon) center / contain no-repeat;
@@ -2017,9 +2228,63 @@ html:has(.world[data-card]) {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M10 2v16'/%3E%3Ccircle cx='10' cy='5' r='1.8'/%3E%3Ccircle cx='10' cy='10' r='1.8'/%3E%3Ccircle cx='10' cy='15' r='1.8'/%3E%3C/svg%3E");
 }
 
-.keys .key[data-icon='back'],
 .keys .key[data-icon='out'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M8 3H3v14h5'/%3E%3Cpath d='M17 10H7M10.5 6.5 7 10l3.5 3.5'/%3E%3C/svg%3E");
+}
+
+/* MORE: three dots, dashed like the dock's fold, to say it is not a move. */
+.keys .key[data-icon='more'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='black'%3E%3Ccircle cx='4' cy='10' r='2'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='16' cy='10' r='2'/%3E%3C/svg%3E");
+  border-style: dashed;
+}
+
+.keys .key[aria-expanded='true'] {
+  border-style: solid;
+  border-color: var(--cy);
+}
+
+/* The MORE sheet's keys: the game's own, each a picture with its word under it; TITLE and END stand a little apart. */
+.keys .key[data-icon='scan'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='10' cy='10' r='7.5'/%3E%3Ccircle cx='10' cy='10' r='3.5'/%3E%3Cpath d='M10 10 16 4'/%3E%3C/svg%3E");
+}
+
+.keys .key[data-icon='lattice'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M4 4h12v12H4zM10 4v12M4 10h12'/%3E%3C/svg%3E");
+}
+
+.keys .key[data-icon='help'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='10' cy='10' r='7.5'/%3E%3Cpath d='M7.5 8a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7'/%3E%3Ccircle cx='10' cy='14.5' r='.6' fill='black'/%3E%3C/svg%3E");
+}
+
+.keys .key[data-icon='title'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M3 9.5 10 3l7 6.5M5 8.5V17h10V8.5'/%3E%3C/svg%3E");
+}
+
+.keys .key[data-icon='end'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M10 3v7M5.5 6.5a6.5 6.5 0 1 0 9 0'/%3E%3C/svg%3E");
+}
+
+.keys .key[data-icon='game'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E");
+}
+
+.card > .more .keys .key > span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.card > .more .keys .key[data-icon='title'] {
+  margin-inline-start: 8px;
+}
+
+/* The way back and the way forward: plain arrows, one the mirror of the other. */
+.keys .key[data-icon='back'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M17 10H3M8.5 4.5 3 10l5.5 5.5'/%3E%3C/svg%3E");
+}
+
+.keys .key[data-icon='forward'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M3 10h14M11.5 4.5 17 10l-5.5 5.5'/%3E%3C/svg%3E");
 }
 
 .keys .key[data-icon='out'] {
@@ -2027,7 +2292,8 @@ html:has(.world[data-card]) {
 }
 
 .keys .key[data-icon='out']::before,
-.keys .key[data-icon='back']::before {
+.keys .key[data-icon='back']::before,
+.keys .key[data-icon='forward']::before {
   color: var(--ab);
 }
 
@@ -2045,7 +2311,9 @@ html:has(.world[data-card]) {
   color: var(--yl);
 }
 
+/* Over the plan the key is the way back in: a magnifier with a plus, to zoom into the room. */
 .keys .mapkey[aria-pressed='true'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='8.5' cy='8.5' r='5.5'/%3E%3Cpath d='M12.5 12.5 17.5 17.5M8.5 5.5v6M5.5 8.5h6'/%3E%3C/svg%3E");
   border-color: var(--cy);
   color: var(--cy);
 }

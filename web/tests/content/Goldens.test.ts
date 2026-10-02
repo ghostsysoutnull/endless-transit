@@ -60,7 +60,7 @@ function page(vm: HudVM): string {
   }
   if (telemetry !== null) {
     lines.push(
-      `${telemetry.heading} ${telemetry.sync} ${telemetry.spectrogram.heading} ${telemetry.spectrogram.bars.join(' ')} ${telemetry.logs.heading} ${telemetry.logs.lines.join(' ')}`,
+      `${telemetry.heading} ${telemetry.sync.text} ${telemetry.spectrogram.label} ${telemetry.spectrogram.picture.anchors.join(' ')} ${telemetry.lines.join(' ')}${telemetry.voice === '' ? '' : ` ${telemetry.voice}`}`,
     );
   }
   if (vm.card.shown) {
@@ -71,7 +71,7 @@ function page(vm: HudVM): string {
       `keys: ${keys.map((key) => `[${key.key}] ${key.text} (${key.label}) ${key.badge}`.trim()).join(' | ')}`,
     );
     lines.push(`ways: ${card.ways.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
-    lines.push(`game: ${card.game.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
+    lines.push(`game: ${card.game.map((key) => `[${key.key}] ${key.text} (${key.label})`).join(' | ')}`);
     lines.push(
       `corner: ${card.corner.toWords.text} (${card.corner.toWords.label}) | ${card.corner.toRoom.text} (${card.corner.toRoom.label})`,
     );

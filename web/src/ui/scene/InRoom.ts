@@ -1,4 +1,6 @@
 import type { Framing } from './Framing.ts';
+import type { KeyWords } from './KeyWords.ts';
+import type { MapKey } from './MapKey.ts';
 import type { MinimapView } from './MinimapView.ts';
 import { NoMinimap } from './NoMinimap.ts';
 import { OverPlan } from './OverPlan.ts';
@@ -39,6 +41,10 @@ export class InRoom implements ViewMode {
 
   pressed(): boolean {
     return false;
+  }
+
+  keyWords(key: MapKey): KeyWords {
+    return key.toPlan;
   }
 
   flipped(): ViewMode {

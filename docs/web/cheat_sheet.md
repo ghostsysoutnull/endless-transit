@@ -27,14 +27,14 @@ draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Ev
 | `▲ LEAVE …` | up one level (from a corridor: to the building, skipping the elevator) |
 | Elevator | **GO UP**, **GO DOWN**, **ENTER CORRIDOR** |
 | Corridor | doors, **BACK TO ELEVATOR** |
-| Room | a card: the picture, and its back (the folded corner or a sideways swipe) with the words, the objects and **GO FORWARD**; a doorway walks through it; an object takes it (it flies to the **BUFFER** key); four keys under it: **BUFFER**, **MAP** (the whole plan), **TRACE**, **BACK** — **LEAVE** in the first room |
+| Room | a card: the picture, and its back (the folded corner or a sideways swipe) with the words, the objects and the telemetry; a doorway walks through it; an object takes it (its name flies to the **BUFFER** key); icon keys under it: **MORE** (the game's commands), **BUFFER**, **MAP** (the whole plan; **ROOM** to come back), **TRACE**, **←** back — **LEAVE** in the first room — and **→** forward |
 | Null Reach | **SCAN FOR SPECTRAL ECHOES** until 100, then **CAPTURE SPECTRAL ECHO** |
 
 | The dock (`▲ LEAVE` and **MORE** stay under your thumb; a room has its keys and the back of its card in its place) | |
 | :-- | :-- |
 | **SCAN** | doors and room types, nearby floors, or the apartment's rooms |
-| **MAP** | what is below you, drawn; dim is unvisited |
-| **BUFFER** | inventory: **SELECT** one, **SELECT** another = merge; **DROP HERE** lays it in the room; **▲ BACK TO REALITY** |
+| **LATTICE** | what is below you, drawn; dim is unvisited |
+| **BUFFER** | inventory as tiles: tap one, tap another = merge; the tile's tray key drops it in the room; **BACK** |
 | **TRACE** | your whole path: a band a level, each drawn; tap a band to open it larger; **DIVE** zooms down to you; **POLE** shows every level at a glance — a live node a level, the era, culture and trait it sets beside it, those in force written huge behind as you scroll; a rebel city's in red, a drifted apartment's underlined (your pick is remembered) |
 | **HELP** | the manual, inside the game |
 | **TITLE SCREEN** · **END SESSION** | the title (the world waits behind **CONTINUE**) · the recap (**RESUME** comes back) |
@@ -67,7 +67,7 @@ below 30 with an empty buffer.
 * Objects live in **apartments**: 5 to 19 of them, spread over 1 to 10 rooms. They never restock.
 * Every step inside an apartment is a 30% shot at a **Hidden Frequency** worth millions of hertz. Dock buttons roll
   nothing.
-* A room whose culture matches the street's `Culture` chip gives +10% and a `[RESONANT]` badge when the hertz divide by 11.
+* A room whose culture matches the street's `Culture` chip gives +10% and a yellow gem (resonant) when the hertz divide by 11.
 * The door list is free to read, but only **inscriptions** mean anything: `[DATA_VAULT]` is a Laboratory or Bio-Server,
   `!! DANGER !!` is a Security Station or Armory. Room types and traces show only in the scan.
 * The buffer has **no limit**.

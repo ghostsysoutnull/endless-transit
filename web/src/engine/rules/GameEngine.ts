@@ -10,7 +10,15 @@ import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
-import { type GameOption, TRACE_ID, VISITED_KEY, MOVE_PREFIX } from './GameOption.ts';
+import {
+  type GameOption,
+  LATTICE_ID,
+  MOVE_PREFIX,
+  SCAN_ID,
+  TO_TITLE_ID,
+  TRACE_ID,
+  VISITED_KEY,
+} from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { HELP, HelpPrompt } from './HelpPrompt.ts';
 import { Journey } from './Journey.ts';
@@ -30,8 +38,8 @@ import { FREE, GLOBAL, STEP } from './Turn.ts';
 const TRAVEL = 'enter:';
 const MOVE = MOVE_PREFIX;
 const CAPTURE = 'capture:';
-const SCAN = 'scan';
-const MAP = 'map';
+const SCAN = SCAN_ID;
+const MAP = LATTICE_ID;
 const TRACE = TRACE_ID;
 const ECHO = 'echo';
 const CAPTURE_ECHO = 'capture-echo';
@@ -219,7 +227,7 @@ export class GameEngine {
       {
         keys: [MAP_KEY],
         turn: GLOBAL,
-        options: () => (this.#atTitle() ? [] : [systemOption(MAP, MAP_KEY, 'Map')]),
+        options: () => (this.#atTitle() ? [] : [systemOption(MAP, MAP_KEY, 'Lattice')]),
         run: () => {
           const here = this.#journey.here();
           const map = here === undefined ? null : this.#latticeOf(here, this.#journey.player());
@@ -286,7 +294,7 @@ export class GameEngine {
       {
         keys: ['t'],
         turn: GLOBAL,
-        options: () => (this.#atTitle() ? [] : [systemOption('to-title', 't', 'Title screen')]),
+        options: () => (this.#atTitle() ? [] : [systemOption(TO_TITLE_ID, 't', 'Title screen')]),
         run: () => this.#moved(this.#journey.toTitle(), ''),
       },
       {

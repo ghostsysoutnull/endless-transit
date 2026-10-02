@@ -1,3 +1,4 @@
+import type { SpectrumVM } from '#ui/canvas/SpectrumVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 
@@ -22,9 +23,14 @@ export interface AsideVM {
     /** The pane's accessible name. */
     readonly label: string;
     readonly heading: string;
-    readonly sync: string;
-    readonly spectrogram: { readonly heading: string; readonly bars: readonly string[] };
-    readonly logs: { readonly heading: string; readonly lines: readonly string[] };
+    /** The lattice's or the void's sync: its word, and the coherence band that tints its light. */
+    readonly sync: { readonly text: string; readonly band: string };
+    /** The quantum spectrogram: what a reader hears, and the picture the canvas draws. */
+    readonly spectrogram: { readonly label: string; readonly picture: SpectrumVM };
+    /** The readouts, in plain words. */
+    readonly lines: readonly string[];
+    /** What the void says this frame; empty above the bedrock, and when it is silent. */
+    readonly voice: string;
   } | null;
   /** The map of the place, from street level upward (Guide:339); nothing where the telemetry is, nothing for a kind with no map. */
   readonly map: MapPanelVM | null;

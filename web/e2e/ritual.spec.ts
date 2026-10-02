@@ -102,11 +102,11 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
     'Critical waveform collapse: KEYSTONE_STABILIZED. The fragments merge into a silent, heavy anchor: Ornate Sanctum Keystone. Coherence +15.',
   );
   await expect(rows).toHaveCount(2);
-  await expect(rows.nth(1)).toContainText('0Hz');
+  await expect(rows.nth(1)).toContainText('0 Hz');
   await expect(rows.nth(1)).toContainText('Ornate Sanctum Keystone');
   await expect(rows.nth(1).locator('.badge')).toHaveCount(0);
   await shoot(page, '2-keystone-forged');
-  await press(page, /back to reality/i, hasTouch);
+  await press(page, /^back$/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   expect(problems).toEqual([]);
 });
@@ -164,7 +164,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await expect(page.locator('.chip.pos')).toHaveText(/Strata\s+1 of 10/);
   // Drawn (U04): the tower, the car below the bedrock.
   await expect(page.getByTestId('scene').locator('canvas')).toBeVisible();
-  await expect(page.getByTestId('telemetry')).toContainText('VOID_SYNC: [PRESSURE_HIGH]');
+  await expect(page.getByTestId('telemetry')).toContainText('PRESSURE HIGH');
   await expect(page.getByTestId('coherence')).toHaveText('94%'); // 100: the corridor and back, the breach, leave, the lobby, the descent
   await expectTouchable(page, 'Layer -1');
   await shoot(page, '4-layer-hud');

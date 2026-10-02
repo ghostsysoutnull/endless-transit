@@ -17,7 +17,7 @@ BUILDINGS ON THIS STREET
   09 [9] Enter Building: BridgeGate
   10 [A] Enter Building: TowerSpire
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Grand Avenue | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited)
-dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ Cedar Lantern  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern *
@@ -41,8 +41,8 @@ RIDE TO A FLOOR
        Zone: Mechanical sump
   00 [0] Ride to Lobby [>X<]
        Zone: Transit lobby
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ███ ████████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2 > Resonant traces: 0
-dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 5 3 8 7 6 Resonant traces 0
+dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
@@ -52,8 +52,8 @@ tags: Era Analog (era) | Culture Shogun (culture) | Stability 90.00% (reading) |
   Floor 0. Shogun geometry presses in from every wall; the elevator sighs shut behind you.
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ████ ██████ ███ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 4 4 6 3 3 Resonant traces 0
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
@@ -68,8 +68,8 @@ DOORS
        An aperture of interlocking bone-white struts. The frame is ice-cold to the touch, pulling heat from your palm. The word 'HOLLOW' is stamped into the metal in block letters.
   02 [2] Open Lacquered Timber Gate, rusted
        A timber gate under many coats of black lacquer. The metal hinges are fused by deep, flakey oxidation.
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ █████ ████████ █████████ ██ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 9 5 8 9 2 Resonant traces 0
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Lacquered Barracks  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Lacquered Barracks *
@@ -82,11 +82,11 @@ Furniture: flickering iron tea kettle, sealed bonsai tree
 Relics: 2
 status: Entered Lacquered Barracks.
 IN THIS ROOM: answering machine grafted onto shoji screen <grafted|shoji screen|answering machine> | answering machine with straw sandal <with|straw sandal|answering machine>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ██████ █ ███████ ███████ ██████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.0 > Resonant traces: 0
+TELEMETRY NOMINAL Quantum spectrogram 6 1 7 7 6 Resonant traces 0
 arrival: You are in a drill floor marked in faded lines. The walls are blue sliding panels painted with pines.
-keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment)
-ways: [F] GO FORWARD
-game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment) | [F] FORWARD (Go forward)
+ways: 
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Paper Security Station  [frame magenta]
@@ -100,9 +100,9 @@ Furniture: upended katana rack, flickering paper lantern, bolted-down folding fa
 Relics: 4
 status: Entered Paper Security Station.
 IN THIS ROOM: calligraphy scroll infused with oscilloscope <infused|calligraphy scroll|oscilloscope> | answering machine with tatami mat <with|tatami mat|answering machine> | kabuto helmet infused with rotary phone <infused|kabuto helmet|rotary phone> | hanging scroll infused with magnetic strip <infused|hanging scroll|magnetic strip>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████████ ████████ ████████ ██████ █████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.2.0.0.0.1 > Resonant traces: 0
+TELEMETRY NOMINAL Quantum spectrogram 9 8 8 6 5 Resonant traces 0
 arrival: You are in a magazine of empty racks and chains. The walls are purple black lacquer inlaid with mother-of-pearl.
-keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] BACK (Go back)
-ways: [F] GO FORWARD
-game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] BACK (Go back) | [F] FORWARD (Go forward)
+ways: 
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)

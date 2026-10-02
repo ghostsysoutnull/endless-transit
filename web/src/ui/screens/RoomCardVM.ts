@@ -15,11 +15,13 @@ export interface RoomCardVM {
   /** The room's first paragraph, shown over the picture on arrival. */
   readonly arrival: string;
   readonly keys: { readonly lead: readonly CardKeyVM[]; readonly trail: readonly CardKeyVM[] };
+  /** The last key: it opens the sheet of the game's own options over the picture. */
+  readonly more: { readonly text: string; readonly label: string };
   /** The moves that are not a key, on the back. */
   readonly ways: readonly OptionVM[];
-  /** The game's own options that are not a key, on the back. */
-  readonly game: readonly OptionVM[];
-  /** Names of the card's regions, read by screen readers only, and the headings of its back. */
+  /** The game's own options that are not a key: the MORE sheet's keys. */
+  readonly game: readonly CardKeyVM[];
+  /** Names of the card's regions, read by screen readers only, the heading of its back's ways and of the MORE sheet. */
   readonly regions: {
     readonly front: string;
     readonly back: string;

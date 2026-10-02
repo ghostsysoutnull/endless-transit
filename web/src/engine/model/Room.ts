@@ -1,4 +1,5 @@
 import { BACK_MOVE } from './BackMove.ts';
+import { FORWARD_MOVE } from './ForwardMove.ts';
 import type { Apartment } from './Apartment.ts';
 import type { Atmosphere } from './Atmosphere.ts';
 import type { Capture } from './Capture.ts';
@@ -42,7 +43,7 @@ const READER = new FragmentReader();
 /** The free lottery (Guide:187-188; Room.groovy:71-72): three moves in ten win, one to ten million hertz; rolled on the old game's own branch key. */
 const LOTTERY = 'action';
 const WIN = 0.3;
-const PRIZE = { min: 1_000_000, max: 9_999_999 };
+export const PRIZE = { min: 1_000_000, max: 9_999_999 };
 /** Below this many degrees a room is drawn cold (U03; the mock's line). */
 const COLD = 8;
 /** The scan's WAVE column (ScanCommand.groovy:188-189): resonant, plain, and degraded under an anomaly. */
@@ -50,8 +51,8 @@ const WAVES = { resonant: '≈≈≈', plain: '~~~', degraded: '###' } as const;
 
 /** Back to the previous room unless this is the first, forward to the next unless it is the last. */
 const MOVES = new MoveTable<Room>([
-  { move: { id: BACK_MOVE, label: 'Go back', opposite: 'forward' }, to: (room) => room.neighbour(-1) },
-  { move: { id: 'forward', label: 'Go forward', opposite: BACK_MOVE }, to: (room) => room.neighbour(1) },
+  { move: { id: BACK_MOVE, label: 'Go back', opposite: FORWARD_MOVE }, to: (room) => room.neighbour(-1) },
+  { move: { id: FORWARD_MOVE, label: 'Go forward', opposite: BACK_MOVE }, to: (room) => room.neighbour(1) },
 ]);
 
 /**
@@ -141,6 +142,11 @@ export class Room extends Location {
   /** A room is the kind that holds things: its relics and its furniture. */
   override contents(): Contents {
     return { objects: this.objects(), furniture: this.furniture() };
+  }
+
+  /** The apartment's anomaly glitches every reading taken in its rooms. */
+  override glitched(): boolean {
+    return this.#apartment.anomaly();
   }
 
   /** The relic the apartment dealt here under this key, at what it is worth in this room — taken or not. */

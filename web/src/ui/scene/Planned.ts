@@ -77,4 +77,10 @@ export class Planned implements PlanSketch {
   mapKey(): MapKey {
     return this.#vm.mapKey;
   }
+
+  nameOf(id: string): string {
+    return (
+      [...this.#vm.relics, ...this.#vm.doors, ...this.#vm.exits].find((child) => child.id === id)?.name ?? ''
+    );
+  }
 }

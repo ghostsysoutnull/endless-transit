@@ -258,7 +258,7 @@ describe('GameEngine — walking the big world', () => {
     expect(ids(snapshot)).not.toContain('leave');
     expect(snapshot.options.slice(-7)).toEqual([
       system('scan', 's', 'Scan'),
-      system('map', 'm', 'Map'),
+      system('map', 'm', 'Lattice'),
       system('buffer', 'i', 'Buffer'),
       system('trace', '', 'Trace'),
       system('help', 'h', 'Help'),
@@ -437,7 +437,7 @@ describe('GameEngine — walking the big world', () => {
       }),
       { ...system('leave', 'l', 'Leave Floor'), role: 'return' },
       system('scan', 's', 'Scan'),
-      system('map', 'm', 'Map'),
+      system('map', 'm', 'Lattice'),
       system('buffer', 'i', 'Buffer'),
       system('trace', '', 'Trace'),
       system('help', 'h', 'Help'),
@@ -548,7 +548,14 @@ describe('GameEngine — walking the big world', () => {
       ],
       furniture: ['half-dismantled stained glass shard', 'scorched funeral mask'],
     });
-    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], voice: null });
+    // The spectrogram's floor is the frame's; a peak per object, each a share of the log axis; nothing glitched here.
+    expect(room.place?.telemetry).toMatchObject({
+      spectrogram: [5, 5, 5, 9, 9],
+      glitched: false,
+      voice: null,
+    });
+    expect(room.place?.telemetry?.peaks.map((peak) => peak.resonant)).toEqual([true, true, true, true]);
+    for (const peak of room.place?.telemetry?.peaks ?? []) expect(peak.position).toBeGreaterThan(0);
     expect(engine.snapshot().place?.telemetry).toEqual(room.place?.telemetry);
     expect(room.options.filter((option) => option.role !== 'take')).toEqual([
       move('forward', 'f', 'Go forward', 'back', {
@@ -557,7 +564,7 @@ describe('GameEngine — walking the big world', () => {
       }),
       { ...system('leave', 'l', 'Leave the apartment'), role: 'return' },
       system('scan', 's', 'Scan'),
-      system('map', 'm', 'Map'),
+      system('map', 'm', 'Lattice'),
       system('buffer', 'i', 'Buffer'),
       system('trace', '', 'Trace'),
       system('help', 'h', 'Help'),
@@ -907,7 +914,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     const saves = new MemorySaveStore();
     const engine = engineOn(saves, true);
     const room = inTheFirstRoom(engine);
-    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], voice: null });
+    expect(room.place?.telemetry).toMatchObject({ spectrogram: [5, 5, 5, 9, 9], voice: null });
     engine.step('move:forward');
     const back = engine.step('move:back');
     expect(back.place?.address).toBe(room.place?.address);

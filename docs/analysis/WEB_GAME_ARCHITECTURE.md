@@ -183,16 +183,26 @@ the arrival's paragraph, the keys — Buffer, Trace, and the way back, which is 
 its id, `BACK_MOVE_ID` — the other moves and the game's other options) and leaves the dock empty. `HudView` hands its
 parts (`CardParts`) to a `RoomCard`, `RoomCardView`, which lays them out on two faces and owns which one shows: the
 picture with the place's heading, first words and status over it, fading; the back with the panels a step brought, the
-words, the lists, the ways and the game's options. The face turned away is hidden from everyone. The folded corner and
-a sideways swipe (not over the plan) turn it and pick nothing; a new room shows the front, a step that brought a panel
-the back. A turn is a `CardTurn` (`src/ui/card/`: `FlipTurn`, `DoorTurn`, `PeelTurn`, `BlindsTurn`, the broken
-`StaticTurn` and `TornTurn`, `InstantTurn` under reduced motion), played with the browser's own animations; `CardTurns`
-picks one from the frame's seed, the decay and the turn's count since the step, never the one just played. The keys
-under the card stay on both faces; the picture's MAP key is mounted in their slot (`KeySlot`, `StripSlot`), and the
-ids something outside the template looks up live in `CardSlots`.
+words, the lists (the objects and the telemetry) and the ways the keys do not carry. The game's own options are not on
+the back: the strip's first key, MORE, opens a sheet of them over the card's foot, keyed like the strip (`GAME_KEYS` in
+`HudPresenter` names each by its option id), closed by a tap on the veil or a step. The face turned away is hidden from
+everyone. The folded corner — bottom right on both faces — and a sideways swipe (not over the plan) turn it and pick
+nothing; a new room shows the front, a step that brought a panel the back. A turn is a `CardTurn` (`src/ui/card/`:
+`FlipTurn`, `DoorTurn`, `PeelTurn`, `BlindsTurn`, the broken `StaticTurn` and `TornTurn`, `InstantTurn` under reduced
+motion), played with the browser's own animations; `CardTurns` picks one from the frame's seed, the decay and the
+turn's count since the step, never the one just drawn, and the turn back to the picture replays the turn there. The
+keys under the card stay on both faces, icons only (their words stay in the markup for a reader); the engine's way
+forward is a key beside the way back (`FORWARD_MOVE_ID`), shown where the room offers it; the picture's MAP key is
+mounted in their slot (`KeySlot`, `StripSlot`) and carries two faces of words (`MapKey`, `KeyWords`), the `ViewMode`
+choosing which — MAP in the room, ROOM over the plan; the ids something outside the template looks up live in
+`CardSlots`. A key that travels is sent through the scene with a `Curtain` (`src/ui/scene/Curtain.ts`): the scene
+calls it only before a ride, and the card answers it by showing its picture first (`RoomCard.reveal`) — a take, which
+does not ride, leaves the back where it is.
 `prefers-reduced-motion` stops the bar, the canvas pulse, the scene's motion and the spotlight; `viewport-fit=cover` pads the dock for a home bar.
 
-**Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`) is a pure function
+**Canvas.** `src/ui/canvas/` and `src/ui/scene/` are the only hand-drawn code: a `Picture` (`MapPicture`; `SpectrumPicture`, the
+telemetry pane's spectrogram as a scope, from the engine's `TelemetrySummary` — the floor's anchors, a peak per object
+of the room by its frequency on a log axis, whether the apartment's anomaly glitches it — and the frame's seed) is a pure function
 of a plain view-model into `Painter` calls, so a stub painter tests it in Node; `CanvasView` draws it into a host
 with the stylesheet's tokens (`Inks`: the ones it may paint text with) at device pixel ratio and stays still under reduced motion. The map's marks
 (dim/bright, the `X` glitch marks below 30, `☠` below the bedrock) and the spectrogram bars are seeded from
@@ -288,8 +298,8 @@ key with no entry is plain). The doorways of the room stood in (U03e) are each a
 picture, the way in, the light's ink and the room's number — painted by the sight of the room it leads to
 (`SightLook.paintDoorway` → a `DoorwayLook`: `LitDoorway` once that room is visited, in its own light's ink, which the
 engine hands over as `PlanRoom.light`; `FoggedDoorway` before); the way out is a `LitDoorway` in its own ink; the room
-stood in carries no name. A relic taken flies to the card's Buffer key (`RelicFlight`, behind the plan's `Flight`
-port, built in `main.ts`). `SceneDrawing` joins the doorways' moves to their rooms by address, the leave and the
+stood in carries no name. A relic taken raises a ticket with its full name where it lay and flies it to the card's
+Buffer key (`RelicFlight`, behind the plan's `Flight` port, built in `main.ts`; in place under reduced motion). `SceneDrawing` joins the doorways' moves to their rooms by address, the leave and the
 takes; `HudView` sends every drawn button through the picture and lights its twin with one delegated listener each.
 
 **Debug mode.** `?debug` on the address, read only in `main.ts`, puts the debug commands on offer (INTEGRITY ladder,

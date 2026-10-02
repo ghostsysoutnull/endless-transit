@@ -372,7 +372,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     const system = street.options.filter((option) => option.role === 'system');
     expect(system.map((option) => `${option.id}:${option.key}:${option.label}`)).toEqual([
       'scan:s:Scan',
-      'map:m:Map',
+      'map:m:Lattice',
       'buffer:i:Buffer',
       'trace::Trace',
       'help:h:Help',

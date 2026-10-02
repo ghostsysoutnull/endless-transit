@@ -94,7 +94,7 @@ test(
     await expect(page.locator('.frag')).toHaveCount(held - 1);
     await expectTouchable(page, 'buffer after the merge');
     await shoot(page, '3-buffer-merged');
-    await press(page, /back to reality/i, hasTouch);
+    await press(page, /^back$/i, hasTouch);
     await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
     await expect(page.getByTestId('coherence')).toHaveText('100%'); // 92, the buffer's one, fifteen back, capped
 
@@ -105,7 +105,7 @@ test(
     await press(page, /leave the apartment/i, hasTouch);
     await expect(page.getByTestId('scan')).toHaveCount(0);
     await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
-    await press(page, /^map$/i, hasTouch);
+    await press(page, /^lattice$/i, hasTouch);
     await expect(page.getByTestId('map')).toBeVisible();
     await expect(page.getByTestId('status')).toHaveText(/^NEURAL_LATTICE_PROJECTION: 9 nodes plotted from /);
     await expect(page.getByTestId('coherence')).toHaveText('97%');
@@ -126,7 +126,7 @@ test(
     await tapOption(page, 'pick:1', hasTouch);
     await expect(page.getByTestId('status')).toContainText('KEYSTONE_STABILIZED');
     await expect(page.locator('.frag', { hasText: 'Ornate Sanctum Keystone' })).toHaveCount(1);
-    await press(page, /back to reality/i, hasTouch);
+    await press(page, /^back$/i, hasTouch);
     await expect(page.getByTestId('coherence')).toHaveText('100%');
 
     // To the Peak: the breach spends the Keystone; floor 0 then descends.

@@ -1,4 +1,6 @@
 import type { Framing } from './Framing.ts';
+import type { KeyWords } from './KeyWords.ts';
+import type { MapKey } from './MapKey.ts';
 import { InRoom } from './InRoom.ts';
 import type { MinimapView } from './MinimapView.ts';
 import type { PlanCamera } from './PlanCamera.ts';
@@ -38,6 +40,10 @@ export class OverPlan implements ViewMode {
 
   pressed(): boolean {
     return true;
+  }
+
+  keyWords(key: MapKey): KeyWords {
+    return key.toRoom;
   }
 
   flipped(): ViewMode {

@@ -24,6 +24,17 @@ describe('Seed — identity', () => {
 });
 
 describe('Seed — determinism', () => {
+  test('a fraction is a share in [0, 1), the seed’s own: the same seed deals the same one, a branch another', () => {
+    const seed = new Seed(7, 11);
+    const share = seed.fraction();
+    expect(share).toBeGreaterThanOrEqual(0);
+    expect(share).toBeLessThan(1);
+    expect(new Seed(7, 11).fraction()).toBe(share);
+    expect(seed.branch('other').fraction()).not.toBe(share);
+    // Its draw is its own, not the range's: the share and a range from the same seed do not move together.
+    expect(seed.range(0, 999) / 1000).not.toBe(share);
+  });
+
   test('a branch is a pure function of (parent seed, key)', () => {
     expect(ROOT.branch('planet').equals(ROOT.branch('planet'))).toBe(true);
     expect(ROOT.branch(7).equals(new Seed(0x7f3a91c2, 0x0b4de6a8).branch(7))).toBe(true);

@@ -41,12 +41,14 @@ async function unfold(
   there: () => Promise<boolean> = async () => (await button.count()) > 0,
 ): Promise<void> {
   if ((await button.count()) > 0 && (await button.first().isVisible())) return;
-  for (const fold of ['more', 'debug-toggle']) {
+  for (const fold of ['more', 'card-more', 'debug-toggle']) {
     const toggle = page.getByTestId(fold);
     if ((await toggle.count()) === 0 || !(await toggle.isVisible())) continue;
     if ((await toggle.getAttribute('aria-expanded')) === 'true') continue;
     await (hasTouch ? toggle.tap() : toggle.click());
     if ((await button.count()) > 0 && (await button.first().isVisible())) return;
+    // The card's sheet lies over the card: left open, it would take the taps meant for what lies under it.
+    if (fold === 'card-more') await (hasTouch ? toggle.tap() : toggle.click());
   }
   // A room is a card (U03e): a button that is there but not on the face shown is on the other — turn the card by its
   // corner, as a player would. One that is not there at all (the screen is on its way) is left for the tap to wait for.
@@ -63,8 +65,8 @@ export async function turnCard(page: Page, hasTouch: boolean): Promise<void> {
   ] as const) {
     const ear = page.getByTestId(corner);
     if ((await ear.count()) === 0 || !(await ear.isVisible())) continue;
-    // The corner is a triangle in its box's outer half: the finger lands on it, not on the box's middle.
-    const position = { x: corner === 'card-to-words' ? 44 : 16, y: 44 };
+    // The corner is a triangle in its box's lower right half on both faces: the finger lands on it, not on the box's middle.
+    const position = { x: 44, y: 44 };
     await (hasTouch ? ear.tap({ position }) : ear.click({ position }));
     await expect(page.getByTestId(other)).toBeVisible();
     await expect(ear).toBeHidden();

@@ -1,3 +1,4 @@
+import type { Curtain } from './Curtain.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Sketch } from './Sketch.ts';
 import type { StagedScene } from './StagedScene.ts';
@@ -43,8 +44,8 @@ export class ShownScene<S extends Sketch> {
     return this.#view.leads(id);
   }
 
-  enter(id: string): void {
-    this.#view.enter(id);
+  enter(id: string, curtain: Curtain): void {
+    this.#view.enter(id, curtain);
   }
 
   light(mark: ChildMark): void {

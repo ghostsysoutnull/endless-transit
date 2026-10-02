@@ -92,7 +92,7 @@ test('headings are in order on every screen: the title, a street with the map an
   await expect(page.getByTestId('buffer-heading')).toBeVisible();
   expectSane(await headings(page), 'buffer');
   await expectNamed(page, 'buffer');
-  await press(page, /back to reality/i, hasTouch);
+  await press(page, /^back$/i, hasTouch);
   await press(page, /^help$/i, hasTouch);
   await expect(page.getByTestId('help-heading')).toBeVisible();
   expectSane(await headings(page), 'help');
@@ -111,7 +111,7 @@ test('headings are in order on every screen: the title, a street with the map an
   for (const level of ['leave the apartment', 'leave floor', 'leave building'])
     await press(page, new RegExp(level, 'i'), hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   await expect(page.getByTestId('map')).toBeVisible();
   expectSane(await headings(page), 'street with the map');
   await expectNamed(page, 'street with the map');
@@ -185,7 +185,7 @@ test('reduced motion: no animation runs — the sigil, the meter, the canvas pul
   await page.waitForTimeout(450);
   expect(await frame()).toBe(still);
   // The spotlight lands at once: the scroll position right after the tap is the one it keeps.
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   const at = await page.evaluate(() => window.scrollY);
   await page.waitForTimeout(400);
   expect(await page.evaluate(() => window.scrollY)).toBe(at);

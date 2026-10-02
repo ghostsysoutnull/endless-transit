@@ -334,6 +334,11 @@ export abstract class Location {
     return this.parent()?.root() ?? this;
   }
 
+  /** Whether an anomaly glitches every reading taken here (a room's, under its apartment's anomaly); false elsewhere. */
+  glitched(): boolean {
+    return false;
+  }
+
   /** Whether this place is inside a building — where the HUD's map gives way to telemetry (TelemetryComponent.groovy:48-55). */
   indoors(): boolean {
     return this.parent()?.indoors() ?? false;

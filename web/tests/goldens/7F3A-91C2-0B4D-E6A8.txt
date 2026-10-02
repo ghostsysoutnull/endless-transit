@@ -11,7 +11,7 @@ BUILDINGS ON THIS STREET
   03 [3] Enter Building: ArchiveRoot
   04 [4] Enter Building: SpireFall
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Bright Boulevard | ⌂ Ornate Sanctum (unvisited) | ⌂ The Spire of Static (unvisited) | ⌂ ArchiveRoot (unvisited) | ⌂ SpireFall (unvisited)
-dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === BUILDING ⌂ Ornate Sanctum  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum *
@@ -53,8 +53,8 @@ RIDE TO A FLOOR
        Zone: Power relay
   00 [0] Ride to Lobby [>X<]
        Zone: Transit lobby
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █ █████ ██████ ████████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 1 5 6 8 8 Resonant traces 0
+dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ Floor 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
@@ -64,8 +64,8 @@ tags: Era Future (era) | Culture Baroque (culture) | Stability 77.00% (reading) 
   Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.
 status: Entered Floor 0.
 moves: [U] GO UP | [C] ENTER CORRIDOR
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ███████ ████ ██ ████ ████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 7 4 2 4 8 Resonant traces 0
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === FLOOR ▤ Floor 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
@@ -94,8 +94,8 @@ DOORS
        A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is blackened in a fan shape, as if something burned its way out.
   09 [9] Open Reinforced Polymer, rusted
        A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ ████ █████ ██ ████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] MAP | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+TELEMETRY NOMINAL Quantum spectrogram 5 4 5 2 4 Resonant traces 0
+dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
 
 === ROOM □ Grand Power Plant  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Grand Power Plant *
@@ -108,11 +108,11 @@ Furniture: half-dismantled stained glass shard, scorched funeral mask
 Relics: 4
 status: Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.
 IN THIS ROOM: plasma coil with reliquary box <with|reliquary box|plasma coil> | brass censer fused to laser cutter <fused|brass censer|laser cutter> | stone gargoyle infused with orbital beacon <infused|stone gargoyle|orbital beacon> | prayer bench infused with plasma coil <infused|prayer bench|plasma coil>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] █████ █████ █████ █████████ █████████ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0 > Resonant traces: 0
+TELEMETRY NOMINAL Quantum spectrogram 5 5 5 9 9 Resonant traces 0
 arrival: You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.
-keys: [I] BUFFER (Buffer) 1 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment)
-ways: [F] GO FORWARD
-game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 1 | [] TRACE (Trace) | [L] LEAVE (Leave the apartment) | [F] FORWARD (Go forward)
+ways: 
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Baroque Maintenance Bay  [frame yellow]
@@ -126,9 +126,9 @@ Furniture: bolted-down velvet kneeling-rug, rewired stone gargoyle, flickering s
 Relics: 4
 status: Entered Baroque Maintenance Bay.
 IN THIS ROOM: velvet kneeling-rug fused to optic implant <fused|velvet kneeling-rug|optic implant> | reliquary box fused to drone dock <fused|reliquary box|drone dock> | nanotech mesh grafted onto carved choir stall <grafted|carved choir stall|nanotech mesh> | plasma coil with prayer bench <with|prayer bench|plasma coil>
-[SYSTEM_TELEMETRY] LATTICE_SYNC: [NOMINAL] [QUANTUM_SPECTROGRAM] ████ ███ ███████ ██████ ███ [DECODE_LOGS] > Trace: 0.0.0.0.0.0.0.0.0.0.0.0.1 > Resonant traces: 0
+TELEMETRY NOMINAL Quantum spectrogram 4 3 7 6 3 Resonant traces 0
 arrival: You are in a pump room throbbing behind a steel grille. The walls are red gilt mouldings peeling from plaster.
 keys: [I] BUFFER (Buffer) 1 | [] TRACE (Trace) | [B] BACK (Go back)
 ways: 
-game: [S] SCAN | [M] MAP | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)

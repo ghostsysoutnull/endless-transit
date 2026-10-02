@@ -100,7 +100,7 @@ const ROOM: GameSnapshot = {
       ],
       furniture: ['overturned tatami mat', 'cracked shoji screen'],
     },
-    telemetry: { spectrogram: [3, 1, 9, 4, 2], voice: null },
+    telemetry: { spectrogram: [3, 1, 9, 4, 2], peaks: [], glitched: false, voice: null },
     lattice: null,
     childrenHeading: '',
   },
@@ -271,16 +271,24 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
     expect(planet.place.rows).toEqual([]);
   });
 
-  test('inside a building the aside carries the system telemetry: sync, a spectrogram of five bars, the decode log with the trace (TelemetryComponent.groovy:127-143)', () => {
+  test('inside a building the aside carries the telemetry: the sync with its band, the spectrogram drawn from the frame, the resonant count, the voice (TelemetryComponent.groovy:127-143)', () => {
     expect(vm.aside.telemetry).toEqual({
       label: 'System telemetry',
-      heading: '[SYSTEM_TELEMETRY]',
-      sync: 'LATTICE_SYNC: [NOMINAL]',
-      spectrogram: { heading: '[QUANTUM_SPECTROGRAM]', bars: ['███', '█', '█████████', '████', '██'] },
-      logs: {
-        heading: '[DECODE_LOGS]',
-        lines: ['> Trace: 0.0.0.0.1.0.0.0.0.0.0.0.0', '> Resonant traces: 2'],
+      heading: 'TELEMETRY',
+      sync: { text: 'NOMINAL', band: 'stable' },
+      spectrogram: {
+        label: 'Quantum spectrogram',
+        picture: {
+          anchors: [3, 1, 9, 4, 2],
+          tallest: 9,
+          decades: 7,
+          noise: ROOM.place?.noise,
+          peaks: [],
+          glitched: false,
+        },
       },
+      lines: ['Resonant traces 2'],
+      voice: '',
     });
     expect(vm.regions.aside).toBe('Readouts');
   });
@@ -386,7 +394,7 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
       kind: 'Room',
       name: 'Grand Power Plant',
       contents: { objects: [], furniture: ['overturned pew'] },
-      telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: null },
+      telemetry: { spectrogram: [1, 2, 3, 4, 5], peaks: [], glitched: false, voice: null },
       lattice: null,
     },
     options: [],
@@ -451,15 +459,15 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
     expect(above.meter.label).toBe('Coherence');
     expect(above.stats.map((stat) => stat.label)).toEqual(['Steps', 'Buffer']);
     expect(above.regions.path).toBe('Path from the universe');
-    expect(above.aside.telemetry?.sync).toBe('LATTICE_SYNC: [NOMINAL]');
-    expect(above.aside.telemetry?.logs.lines).toHaveLength(2);
+    expect(above.aside.telemetry?.sync).toEqual({ text: 'NOMINAL', band: 'stable' });
+    expect(above.aside.telemetry?.voice).toBe('');
     const below = presenter.toViewModel({
       ...room,
       place: {
         ...placeOf(room),
         kind: 'Shard',
         abyssal: true,
-        telemetry: { spectrogram: [1, 2, 3, 4, 5], voice: 'We see you.' },
+        telemetry: { spectrogram: [1, 2, 3, 4, 5], peaks: [], glitched: false, voice: 'We see you.' },
         lattice: null,
       },
     });
@@ -467,8 +475,8 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
     expect(below.meter.label).toBe('Integrity');
     expect(below.stats.map((stat) => stat.label)).toEqual(['Steps', 'Buffer']);
     expect(below.regions.path).toBe('Void trace from the universe');
-    expect(below.aside.telemetry?.sync).toBe('VOID_SYNC: [PRESSURE_HIGH]');
-    expect(below.aside.telemetry?.logs.lines.at(-1)).toBe('[VOID] We see you.');
+    expect(below.aside.telemetry?.sync.text).toBe('PRESSURE HIGH');
+    expect(below.aside.telemetry?.voice).toBe('We see you.');
     expect(below.place.eyebrow).toBe('SHARD');
   });
 });
@@ -815,32 +823,55 @@ describe('HudPresenter.toViewModel — where a place’s moves sit (U03c)', () =
     };
   }
 
-  test('a room drawn as a plan is a card (U03e): the keys are Buffer and the way back — the way out in the first room; the other move and the game’s options are on its back; no dock, no strip, no option twice', () => {
+  test('a room drawn as a plan is a card (U03e): the keys are Buffer, the way back — the way out in the first room — and the way forward; the game’s options are the MORE sheet’s keys; no dock, no strip, no option twice', () => {
     const vm = presenter.toViewModel(drawnRoom(0, [FORWARD, LEAVE]));
-    expect(cardOf(vm)).toEqual({ keys: ['buffer', 'leave'], ways: ['move:forward'], game: ['to-title'] });
+    expect(cardOf(vm)).toEqual({ keys: ['buffer', 'leave', 'move:forward'], ways: [], game: ['to-title'] });
     expect(vm.moves).toEqual([]);
     expect(vm.dock).toEqual([]);
     expect(vm.options.map((each) => each.id).sort()).toEqual(['buffer', 'leave', 'move:forward', 'to-title']);
   });
 
-  test('past the first room the way back is the move back; Trace, when offered, is a key', () => {
+  test('past the first room the way back is the move back; Trace, when offered, is a key; in the last room there is no forward key', () => {
     const room = drawnRoom(1, [BACK, FORWARD]);
     const vm = presenter.toViewModel({
       ...room,
       options: [...room.options, option({ id: 'trace', key: '', label: 'Trace', role: 'system' })],
     });
     expect(cardOf(vm)).toEqual({
-      keys: ['buffer', 'trace', 'move:back'],
-      ways: ['move:forward'],
+      keys: ['buffer', 'trace', 'move:back', 'move:forward'],
+      ways: [],
       game: ['to-title'],
     });
+    expect(cardOf(presenter.toViewModel(drawnRoom(1, [BACK]))).keys).toEqual(['buffer', 'move:back']);
+  });
+
+  test('the MORE sheet’s keys carry a short word and an icon by the option’s id; an option it does not know keeps its label', () => {
+    const room = drawnRoom(0, [FORWARD, LEAVE]);
+    const vm = presenter.toViewModel({
+      ...room,
+      options: [
+        ...room.options,
+        option({ id: 'map', key: 'm', label: 'Lattice', role: 'system' }),
+        option({ id: 'new-thing', key: '', label: 'New thing', role: 'system' }),
+      ],
+    });
+    if (!vm.card.shown) throw new Error('expected the room’s card');
+    expect(vm.card.game.map((key) => [key.id, key.text, key.icon, key.label])).toEqual([
+      ['to-title', 'TITLE', 'title', 'Title screen'],
+      ['map', 'LATTICE', 'lattice', 'Lattice'],
+      ['new-thing', 'NEW THING', 'game', 'New thing'],
+    ]);
+    expect(vm.card.more).toEqual({ text: 'MORE', label: 'More: the game itself' });
   });
 
   test('the card’s keys are named by the engine’s words and the Buffer key counts the buffer; the arrival is the room’s first paragraph', () => {
     const vm = presenter.toViewModel(drawnRoom(0, [FORWARD, LEAVE]));
     if (!vm.card.shown) throw new Error('expected the room’s card');
     expect(vm.card.keys.lead.map((key) => [key.label, key.badge])).toEqual([['Buffer', vm.stats[1]?.value]]);
-    expect(vm.card.keys.trail.map((key) => key.label)).toEqual(['Leave the apartment']);
+    expect(vm.card.keys.trail.map((key) => [key.label, key.icon])).toEqual([
+      ['Leave the apartment', 'out'],
+      ['Go forward', 'forward'],
+    ]);
     expect(vm.card.arrival).toBe(vm.place.description[0]);
   });
 

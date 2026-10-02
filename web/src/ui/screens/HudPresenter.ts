@@ -2,8 +2,20 @@ import type { Fact } from '#engine/model/Fact.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
+import { SPECTROGRAM_DECADES, SPECTROGRAM_TALLEST } from '#engine/rules/Telemetry.ts';
 import { BUFFER } from '#engine/rules/BufferPrompt.ts';
-import { BACK_MOVE_ID, type GameOption, TRACE_ID, VISITED_KEY } from '#engine/rules/GameOption.ts';
+import {
+  BACK_MOVE_ID,
+  FORWARD_MOVE_ID,
+  type GameOption,
+  LATTICE_ID,
+  SCAN_ID,
+  TO_TITLE_ID,
+  TRACE_ID,
+  VISITED_KEY,
+} from '#engine/rules/GameOption.ts';
+import { HELP } from '#engine/rules/HelpPrompt.ts';
+import { RECAP } from '#engine/rules/RecapPrompt.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
@@ -15,6 +27,7 @@ import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { CardKeyVM } from './CardKeyVM.ts';
+import { BACK_KEY_WORD } from './BackKeyWord.ts';
 import { BUFFER_LANDING } from './CardSlots.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
@@ -36,22 +49,18 @@ const LABELS = {
   lattice: {
     meter: 'Coherence',
     path: 'Path from the universe',
-    sync: 'LATTICE_SYNC: [NOMINAL]',
+    sync: 'NOMINAL',
   },
   void: {
     meter: 'Integrity',
     path: 'Void trace from the universe',
-    sync: 'VOID_SYNC: [PRESSURE_HIGH]',
+    sync: 'PRESSURE HIGH',
   },
 } as const;
-/** The void's line in the decode log (HUDHeaderComponent.groovy:87). */
-const VOID_PREFIX = '[VOID] ';
 /** The elevator column's current-floor mark (Building.groovy:198-201), and what a reader hears instead. */
 const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
 /** The visited mark of the old lists, drawn from the engine's letter (its one owner), and what a reader hears instead. */
 const SEEN_MARK = { text: `[${VISITED_KEY.toUpperCase()}]`, label: 'Visited' } as const;
-/** One cell of a spectrogram bar (TelemetryComponent.groovy:136). */
-const BAR = '█';
 /** The map's words (LatticeMapComponent.groovy:52-66, TelemetryComponent.groovy:80-82): the glitch mark's glyph and the legend. */
 const MARK_GLYPH = 'X';
 const LEGEND: Readonly<Record<LegendTone, string>> = {
@@ -69,8 +78,17 @@ const CARD = {
     toRoom: { text: 'ROOM', label: 'Turn the card: the picture' },
   },
   regions: { front: 'The room', back: 'The room in words', keys: 'Keys', ways: 'WAYS', game: 'GAME' },
-  keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: 'BACK' },
+  keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: BACK_KEY_WORD, forward: 'FORWARD' },
+  more: { text: 'MORE', label: 'More: the game itself' },
 } as const;
+/** The MORE sheet's keys (U03e): the short word and the drawn icon of each of the game's own options, by its id. */
+const GAME_KEYS: ReadonlyMap<string, { readonly text: string; readonly icon: string }> = new Map([
+  [SCAN_ID, { text: 'SCAN', icon: 'scan' }],
+  [LATTICE_ID, { text: 'LATTICE', icon: 'lattice' }],
+  [HELP, { text: 'HELP', icon: 'help' }],
+  [TO_TITLE_ID, { text: 'TITLE', icon: 'title' }],
+  [RECAP, { text: 'END', icon: 'end' }],
+]);
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -141,7 +159,12 @@ export class HudPresenter implements Presenter<HudVM> {
       : { shown: false };
     const dock = card.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
     const carded = card.shown
-      ? [...this.#keyed(card.keys.lead), ...this.#keyed(card.keys.trail), ...card.ways, ...card.game]
+      ? [
+          ...this.#keyed(card.keys.lead),
+          ...this.#keyed(card.keys.trail),
+          ...card.ways,
+          ...this.#keyed(card.game),
+        ]
       : [];
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
@@ -181,7 +204,10 @@ export class HudPresenter implements Presenter<HudVM> {
         rows: this.#rows(place),
         diagnostic: place.status,
       },
-      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0, labels.sync),
+      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0, {
+        text: labels.sync,
+        band: player.band,
+      }),
       scan:
         snapshot.scan === null
           ? null
@@ -361,9 +387,10 @@ export class HudPresenter implements Presenter<HudVM> {
   }
 
   /**
-   * The room's card (U03e): its keys — Buffer with its count, then Trace and the way back, which is the way out where
-   * it is offered and else the engine's move back, found by its id; every other move and every other option of the
-   * game goes on its back. No option stands twice.
+   * The room's card (U03e): its keys — Buffer with its count, then Trace, the way back, which is the way out where
+   * it is offered and else the engine's move back, and the way forward, each found by its id and shown only where the
+   * room offers it; every other move goes on its back, every other option of the game on the MORE sheet. No option
+   * stands twice.
    */
   #card(parts: {
     readonly arrival: string;
@@ -383,6 +410,7 @@ export class HudPresenter implements Presenter<HudVM> {
     });
     const out = parts.leave[0];
     const back = out === undefined ? parts.moves.find((move) => move.id === BACK_MOVE_ID) : undefined;
+    const forward = parts.moves.find((move) => move.id === FORWARD_MOVE_ID);
     const keys = {
       lead: parts.system
         .filter((option) => option.id === BUFFER)
@@ -398,6 +426,7 @@ export class HudPresenter implements Presenter<HudVM> {
           .map((option) => key(option, CARD.keys.trace, 'trace')),
         ...(out === undefined ? [] : [key(out, CARD.keys.out, 'out')]),
         ...(back === undefined ? [] : [key(back, CARD.keys.back, 'back')]),
+        ...(forward === undefined ? [] : [key(forward, CARD.keys.forward, 'forward')]),
       ],
     };
     const held = new Set([...keys.lead, ...keys.trail].map((each) => each.id));
@@ -405,10 +434,16 @@ export class HudPresenter implements Presenter<HudVM> {
       corner: CARD.corner,
       arrival: parts.arrival,
       keys,
+      more: CARD.more,
       ways: [...parts.leave, ...parts.moves]
         .filter((option) => !held.has(option.id))
         .map((option) => this.#docked(option)),
-      game: parts.system.filter((option) => !held.has(option.id)).map((option) => this.#docked(option)),
+      game: parts.system
+        .filter((option) => !held.has(option.id))
+        .map((option) => {
+          const words = GAME_KEYS.get(option.id) ?? { text: option.label.toUpperCase(), icon: 'game' };
+          return key(option, words.text, words.icon);
+        }),
       regions: CARD.regions,
     };
   }
@@ -423,7 +458,12 @@ export class HudPresenter implements Presenter<HudVM> {
    * for its number — the telemetry block when it is indoors, and the map when it is not (Guide:339) and the place
    * has one.
    */
-  #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number, sync: string): AsideVM {
+  #aside(
+    place: PlaceSummary,
+    takes: readonly GameOption[],
+    resonant: number,
+    sync: NonNullable<AsideVM['telemetry']>['sync'],
+  ): AsideVM {
     const contents = place.contents;
     return {
       objects:
@@ -449,20 +489,21 @@ export class HudPresenter implements Presenter<HudVM> {
           ? null
           : {
               label: 'System telemetry',
-              heading: '[SYSTEM_TELEMETRY]',
+              heading: 'TELEMETRY',
               sync,
               spectrogram: {
-                heading: '[QUANTUM_SPECTROGRAM]',
-                bars: place.telemetry.spectrogram.map((height) => BAR.repeat(height)),
+                label: 'Quantum spectrogram',
+                picture: {
+                  anchors: place.telemetry.spectrogram,
+                  tallest: SPECTROGRAM_TALLEST,
+                  decades: SPECTROGRAM_DECADES,
+                  noise: place.noise,
+                  peaks: place.telemetry.peaks,
+                  glitched: place.telemetry.glitched,
+                },
               },
-              logs: {
-                heading: '[DECODE_LOGS]',
-                lines: [
-                  `> Trace: ${place.address}`,
-                  `> Resonant traces: ${String(resonant)}`,
-                  ...(place.telemetry.voice === null ? [] : [`${VOID_PREFIX}${place.telemetry.voice}`]),
-                ],
-              },
+              lines: [`Resonant traces ${String(resonant)}`],
+              voice: place.telemetry.voice ?? '',
             },
       map:
         place.telemetry !== null || place.lattice === null

@@ -1,6 +1,8 @@
 import { html, nothing, type TemplateResult } from 'lit-html';
 import { keyed } from 'lit-html/directives/keyed.js';
 import { repeat } from 'lit-html/directives/repeat.js';
+import type { Seed } from '#engine/rng/Seed.ts';
+import type { CardTurn } from '#ui/card/CardTurn.ts';
 import type { CardTurns } from '#ui/card/CardTurns.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
@@ -31,18 +33,22 @@ export class RoomCardView implements RoomCard {
   readonly #motion: ReducedMotion;
   readonly #turns: CardTurns;
   #back = false;
+  /** Whether the MORE sheet, the game's own options, lies open over the card. */
+  #more = false;
   /** While a turn plays, taps on the corner wait. */
   #busy = false;
   #scene = '';
   /** Whether the last step came into this room: its first words show until the next one. */
   #arrived = false;
-  /** The turns made since the step, and the last one's key. */
+  /** The turns drawn since the step, and the turn that took the card to its back: the way back is the same way. */
   #count = 0;
-  #last = '';
+  #went: CardTurn | undefined;
   /** The steps of the game seen so far: a turn that ends after a new one leaves the face that step chose. */
   #steps = 0;
   /** Where a finger went down on the card. */
   #down: Point | undefined;
+  /** What the card was last drawn with: a turn asked for from outside the template plays on it. */
+  #drawn: { readonly vm: HudVM; readonly parts: CardParts } | undefined;
 
   constructor(parts: { motion: ReducedMotion; turns: CardTurns }) {
     this.#motion = parts.motion;
@@ -54,18 +60,32 @@ export class RoomCardView implements RoomCard {
     this.#scene = vm.scene;
     if (this.#arrived) this.#back = false;
     if (panel) this.#back = true;
+    this.#more = false;
     this.#count = 0;
+    this.#went = undefined;
     this.#steps += 1;
   }
 
   forget(): void {
     this.#scene = '';
     this.#back = false;
+    this.#more = false;
+    this.#went = undefined;
     this.#busy = false;
     this.#steps += 1;
   }
 
+  reveal(target: EventTarget | null, then: () => void): void {
+    const drawn = this.#drawn;
+    if (!this.#back || drawn === undefined) {
+      then();
+      return;
+    }
+    void this.#turn(target, drawn.vm, drawn.parts, false).then(then);
+  }
+
   template(vm: HudVM, card: RoomCardVM, parts: CardParts): TemplateResult {
+    this.#drawn = { vm, parts };
     const back = this.#back;
     const turn = (event: Event, toBack: boolean): void => {
       void this.#turn(event.target, vm, parts, toBack);
@@ -123,7 +143,6 @@ export class RoomCardView implements RoomCard {
             ${parts.panels}
             <p class="name" aria-hidden="true">${vm.place.name}</p>
             ${parts.words} ${parts.lists} ${this.#rows('ways', card.regions.ways, card.ways, parts)}
-            ${this.#rows('game', card.regions.game, card.game, parts)}
           </div>
           <button
             type="button"
@@ -138,6 +157,7 @@ export class RoomCardView implements RoomCard {
             <span aria-hidden="true">${card.corner.toRoom.text}</span>
           </button>
         </section>
+        ${this.#more ? this.#sheet(card, parts) : nothing}
       </div>
       <nav
         class="keys"
@@ -147,10 +167,40 @@ export class RoomCardView implements RoomCard {
             turn(event, false);
         }}
       >
+        <button
+          type="button"
+          class="key"
+          data-icon="more"
+          data-testid="card-more"
+          aria-expanded=${this.#more ? 'true' : 'false'}
+          aria-label=${card.more.label}
+          @click=${() => {
+            this.#more = !this.#more;
+            parts.repaint();
+          }}
+        >
+          <span aria-hidden="true">${card.more.text}</span>
+        </button>
         ${card.keys.lead.map((key) => this.#key(key, parts))}
         <span class="slot" id=${MAP_KEY_SLOT}></span>
         ${card.keys.trail.map((key) => this.#key(key, parts))}
       </nav>
+    `;
+  }
+
+  /** The MORE sheet: the game's own options as a second strip of keys over the foot of the card; a tap on the veil above it closes it. */
+  #sheet(card: RoomCardVM, parts: CardParts): TemplateResult {
+    const close = (): void => {
+      this.#more = false;
+      parts.repaint();
+    };
+    return html`
+      <div class="veil" @click=${close}></div>
+      <section class="more" aria-label=${card.regions.game} data-spot>
+        <nav class="keys" aria-label=${card.regions.game}>
+          ${card.game.map((key) => this.#key(key, parts))}
+        </nav>
+      </section>
     `;
   }
 
@@ -215,6 +265,12 @@ export class RoomCardView implements RoomCard {
     return face instanceof HTMLElement ? face : undefined;
   }
 
+  /** The turn to the back is drawn afresh; the turn back to the picture is the one the card went by. */
+  #turnFor(noise: Seed, decay: number, toBack: boolean): CardTurn {
+    if (!toBack && this.#went !== undefined) return this.#went;
+    return this.#turns.pick(noise, decay, this.#count, this.#went?.key() ?? '');
+  }
+
   /** Turns the card to the face asked for: both faces show while the turn plays, then the screen is drawn again. */
   async #turn(target: EventTarget | null, vm: HudVM, parts: CardParts, toBack: boolean): Promise<void> {
     if (this.#busy || toBack === this.#back || !(target instanceof Element)) return;
@@ -225,9 +281,12 @@ export class RoomCardView implements RoomCard {
     const frame = vm.drawing.frame();
     const turn = this.#motion.reduced()
       ? this.#turns.still()
-      : this.#turns.pick(frame.noise, frame.decay, this.#count, this.#last);
-    this.#count += 1;
-    this.#last = turn.key();
+      : this.#turnFor(frame.noise, frame.decay, toBack);
+    if (toBack && !this.#motion.reduced()) {
+      // A turn drawn to the back is counted, and remembered for the way back.
+      this.#count += 1;
+      this.#went = turn;
+    }
     this.#busy = true;
     const faces = toBack ? { out: front, into: back } : { out: back, into: front };
     const steps = this.#steps;

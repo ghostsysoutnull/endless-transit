@@ -86,7 +86,7 @@ test('on a street the pane beside the list is the drawn map; MAP draws it larger
   await expect(page.getByTestId('telemetry')).toHaveCount(0);
   await expectDrawn(pane.locator('.cv'), 'the pane map', 'bottom');
   await expect(page.getByTestId('map')).toHaveCount(0);
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   const map = page.getByTestId('map');
   await expect(map).toBeVisible();
   await expect(map.locator('.heading')).toHaveText('[NEURAL_LATTICE_PROJECTION]');
@@ -114,7 +114,7 @@ test('in a building MAP plots the doors of the floor; below 30 Coherence the map
   await plant(page, saveText(SEED, LOBBY, { [LOBBY]: 'corridor' }));
   await page.goto('./?debug');
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   const map = page.getByTestId('map');
   await expect(map.locator('.tl')).toHaveText('SCAN_ORIGIN: Floor 0');
   await expect(map.locator('.vh li')).toHaveCount(9);
@@ -127,13 +127,13 @@ test('in a building MAP plots the doors of the floor; below 30 Coherence the map
   // The ladder's lowest rung above failure is 29; MAP costs one each: 28 sprouts one mark, 22 four.
   await tapOption(page, 'debug:integrity:29', hasTouch);
   await expect(page.getByTestId('map')).toHaveCount(0);
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   await expect(page.getByTestId('coherence')).toHaveText('28%');
   await expect(map.locator('.cv')).toHaveAttribute(
     'aria-label',
     'Lattice map of Floor 0: 9 nodes, 0 visited, 1 glitch mark.',
   );
-  for (let more = 0; more < 6; more++) await press(page, /^map$/i, hasTouch);
+  for (let more = 0; more < 6; more++) await press(page, /^lattice$/i, hasTouch);
   await expect(page.getByTestId('coherence')).toHaveText('22%');
   await expect(map.locator('.cv')).toHaveAttribute(
     'aria-label',
@@ -158,14 +158,14 @@ test('below the bedrock every node is ☠ in the void’s frame; TRACE opens the
   await expect(page.getByTestId('place-kind')).toHaveText('SHARD');
   await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
   // A room has no map (Guide:92): MAP says so and still costs one.
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   await expect(page.getByTestId('status')).toHaveText(
     'SCAN_ERROR: Current location does not support spatial projection.',
   );
   await expect(page.getByTestId('map')).toHaveCount(0);
   await press(page, /exit crypt/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('LAYER');
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   const map = page.getByTestId('map');
   await expect(map.locator('.vh li')).toHaveCount(9);
   await expect(map.locator('.vh li').first()).toHaveText(/^☠ .*, visited$/);
@@ -241,7 +241,7 @@ test('on a phone at 360 px the map and the trace fit without sideways scroll, ev
   await page.setViewportSize({ width: 360, height: 640 });
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
-  await press(page, /^map$/i, hasTouch);
+  await press(page, /^lattice$/i, hasTouch);
   await expectDrawn(page.getByTestId('map').locator('.cv'), 'the map at 360', 'bottom');
   await expectTouchable(page, 'map at 360');
   await shoot(page, '7-map-360', page.getByTestId('map'));
