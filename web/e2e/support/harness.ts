@@ -47,6 +47,8 @@ async function unfold(
     if ((await toggle.getAttribute('aria-expanded')) === 'true') continue;
     await (hasTouch ? toggle.tap() : toggle.click());
     if ((await button.count()) > 0 && (await button.first().isVisible())) return;
+    // The card's sheet lies over the card: left open, it would take the taps meant for what lies under it.
+    if (fold === 'card-more') await (hasTouch ? toggle.tap() : toggle.click());
   }
   // A room is a card (U03e): a button that is there but not on the face shown is on the other — turn the card by its
   // corner, as a player would. One that is not there at all (the screen is on its way) is left for the tap to wait for.

@@ -92,7 +92,7 @@ test('headings are in order on every screen: the title, a street with the map an
   await expect(page.getByTestId('buffer-heading')).toBeVisible();
   expectSane(await headings(page), 'buffer');
   await expectNamed(page, 'buffer');
-  await press(page, /back to reality/i, hasTouch);
+  await press(page, /^back$/i, hasTouch);
   await press(page, /^help$/i, hasTouch);
   await expect(page.getByTestId('help-heading')).toBeVisible();
   expectSane(await headings(page), 'help');

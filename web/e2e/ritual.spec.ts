@@ -106,7 +106,7 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
   await expect(rows.nth(1)).toContainText('Ornate Sanctum Keystone');
   await expect(rows.nth(1).locator('.badge')).toHaveCount(0);
   await shoot(page, '2-keystone-forged');
-  await press(page, /back to reality/i, hasTouch);
+  await press(page, /^back$/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   expect(problems).toEqual([]);
 });
