@@ -82,40 +82,43 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
   await expect(stat(page, 'Buffer')).toHaveText('3');
 
   await press(page, /^buffer$/i, hasTouch);
-  await expect(page.getByTestId('buffer-heading')).toHaveText('[QUANTUM_TRACE_BUFFER_SYNC...]');
-  await expect(page.getByTestId('buffer-count')).toHaveText('03 FRAGMENTS');
+  await expect(page.getByTestId('buffer-heading')).toHaveText('BUFFER');
+  await expect(page.getByTestId('buffer-count')).toHaveText('3');
   await expect(page.getByTestId('resonant-traces')).toHaveText('2');
   const rows = page.locator('.frag');
   await expect(rows).toHaveCount(3);
-  await expect(rows.nth(0)).toContainText('3194Hz');
-  await expect(rows.nth(0)).toContainText('[STABLE]');
+  await expect(rows.nth(0)).toContainText('3194 Hz');
+  await expect(rows.nth(0)).toContainText('STABLE');
   await expect(rows.nth(0)).toContainText('plasma coil with reliquary box');
-  await expect(rows.nth(0).locator('.badge')).toHaveText('[RESONANT]');
-  await expect(rows.nth(1)).toContainText('3493777Hz');
+  await expect(rows.nth(0)).toHaveAttribute('data-resonant', '');
+  await expect(rows.nth(1)).toContainText('3493777 Hz');
   await expect(rows.nth(1)).toContainText('Hidden Frequency');
-  await expect(rows.nth(1).locator('.badge')).toHaveCount(0);
-  await expect(rows.nth(2)).toContainText('3577Hz');
-  await expect(rows.nth(2)).toContainText('[SHIFTING]');
-  await expect(page.getByRole('button', { name: /back to reality/i })).toBeInViewport({ ratio: 1 });
+  await expect(rows.nth(1)).not.toHaveAttribute('data-resonant');
+  await expect(rows.nth(2)).toContainText('3577 Hz');
+  await expect(rows.nth(2)).toContainText('SHIFTING');
+  await expect(page.getByRole('button', { name: /^back$/i })).toBeInViewport({ ratio: 1 });
   await expectTouchable(page, 'buffer with two fragments');
   await shoot(page, '2-buffer');
 
+  // The tile is its pick: a tap selects, a tap on another merges; the hybrid arrives marked fresh, where the focus lands.
   await tapOption(page, 'pick:0', hasTouch);
-  await expect(rows.nth(0)).toHaveClass(/selected/);
-  await expect(rows.nth(0).locator('button[data-option="pick:0"]')).toHaveText(/UNSELECT/);
-  await expect(rows.nth(2).locator('button[data-option="pick:2"]')).toHaveText(/MERGE/);
+  await expect(rows.nth(0)).toHaveAttribute('data-selected', '');
+  await expect(rows.nth(0).locator('button[data-option="pick:0"]')).toHaveAccessibleName(/^Unselect/);
+  await expect(rows.nth(2).locator('button[data-option="pick:2"]')).toHaveAccessibleName(/^Merge/);
   await shoot(page, '2a-buffer-selected');
   await tapOption(page, 'pick:2', hasTouch);
   await expect(page.getByTestId('status')).toHaveText(
     'Synthesis complete: plasma-brass Hybrid (6771 Hz). Coherence +15.',
   );
   await expect(rows).toHaveCount(2);
-  await expect(rows.nth(1)).toContainText('6771Hz');
+  await expect(rows.nth(1)).toContainText('6771 Hz');
   await expect(rows.nth(1)).toContainText('plasma-brass Hybrid');
-  await expect(page.getByTestId('buffer-count')).toHaveText('02 FRAGMENTS');
+  await expect(rows.nth(1)).toHaveAttribute('data-fresh', '');
+  await expect(rows.nth(0)).not.toHaveAttribute('data-fresh');
+  await expect(page.getByTestId('buffer-count')).toHaveText('2');
   await shoot(page, '2b-buffer-merged');
 
-  await press(page, /back to reality/i, hasTouch);
+  await press(page, /^back$/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await expect(page.getByTestId('coherence')).toHaveText('54%'); // 40, the buffer's own cost, fifteen back
   await expect(stat(page, 'Buffer')).toHaveText('2');
@@ -127,8 +130,8 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
   await tapOption(page, 'drop:1', hasTouch);
   await expect(page.getByTestId('status')).toHaveText('Dropped plasma-brass Hybrid here.');
   await expect(page.getByTestId('buffer-empty')).toHaveCount(0); // the prize stays
-  await expect(page.getByTestId('buffer-count')).toHaveText('01 FRAGMENTS');
-  await press(page, /back to reality/i, hasTouch);
+  await expect(page.getByTestId('buffer-count')).toHaveText('1');
+  await press(page, /^back$/i, hasTouch);
   await expect(page.locator('button.tile')).toHaveCount(5);
   await expect(page.locator('button.tile').last()).toHaveText(/plasma-brass Hybrid/);
 
@@ -139,12 +142,12 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
   await expect(page.locator('button.tile').last()).toHaveText(/plasma-brass Hybrid/);
   await expect(stat(page, 'Buffer')).toHaveText('1');
   await expect(page.getByTestId('coherence')).toHaveText('52%'); // 54, go forward, the buffer
-  await expect(page.getByTestId('telemetry')).toContainText('> Resonant traces: 2');
+  await expect(page.getByTestId('telemetry')).toContainText('Resonant traces 2');
   await shoot(page, '3-room-dropped');
 
   await tapOption(page, 'capture:4', hasTouch);
   await expect(page.getByTestId('status')).toHaveText('Captured plasma-brass Hybrid. Frequency: 6771 Hz.');
-  await expect(page.getByTestId('telemetry')).toContainText('> Resonant traces: 2');
+  await expect(page.getByTestId('telemetry')).toContainText('Resonant traces 2');
   // The first room has two relics left; a reload there too.
   await press(page, /go back/i, hasTouch);
   await expect(page.locator('button.tile')).toHaveCount(2);

@@ -43,8 +43,14 @@ export class BufferView implements View<BufferVM> {
         <section class="cap trace" aria-label=${vm.regions.buffer} tabindex="-1" data-rest>
           <h2 class="rh" data-testid="buffer-heading">${vm.heading}</h2>
           <p class="chips">
-            <span class="chip"><span class="k">${vm.count.label}</span> <b data-testid="buffer-count">${vm.count.value}</b></span>
-            <span class="chip"><span class="k">${vm.tally.label}</span> <b data-testid="resonant-traces">${vm.tally.value}</b></span>
+            <span class="chip"
+              ><span class="k">${vm.count.label}</span>
+              <b data-testid="buffer-count">${vm.count.value}</b></span
+            >
+            <span class="chip"
+              ><span class="k">${vm.tally.label}</span>
+              <b data-testid="resonant-traces">${vm.tally.value}</b></span
+            >
           </p>
           ${vm.empty === '' ? nothing : html`<p class="empty" data-testid="buffer-empty">${vm.empty}</p>`}
           ${
@@ -78,7 +84,7 @@ export class BufferView implements View<BufferVM> {
                           <span class="fname" aria-hidden="true">${row.name}</span>
                           <span class="meter" aria-hidden="true">
                             ${Array.from({ length: row.signal.cells }, (_, cell) =>
-                              cell < row.signal.lit ? html`<i data-lit></i>` : html`<i></i>`,
+                              row.signal.lit > cell ? html`<i data-lit></i>` : html`<i></i>`,
                             )}
                           </span>
                           <span class="fmeta" aria-hidden="true">

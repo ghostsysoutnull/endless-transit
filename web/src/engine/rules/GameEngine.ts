@@ -10,7 +10,15 @@ import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
-import { type GameOption, LATTICE_ID, MOVE_PREFIX, SCAN_ID, TO_TITLE_ID, TRACE_ID, VISITED_KEY } from './GameOption.ts';
+import {
+  type GameOption,
+  LATTICE_ID,
+  MOVE_PREFIX,
+  SCAN_ID,
+  TO_TITLE_ID,
+  TRACE_ID,
+  VISITED_KEY,
+} from './GameOption.ts';
 import type { GameSnapshot } from './GameSnapshot.ts';
 import { HELP, HelpPrompt } from './HelpPrompt.ts';
 import { Journey } from './Journey.ts';

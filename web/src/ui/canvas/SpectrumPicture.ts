@@ -88,7 +88,10 @@ export class SpectrumPicture implements Picture<SpectrumVM> {
       const y = Math.round(fraction(tear.branch('y')) * base);
       const tall = 3 + Math.round(fraction(tear.branch('tall')) * 6);
       const shift = Math.round(
-        (fraction(tear.branch('shift')) - 0.5) * 2 * TEAR_SHIFT * Math.sin(2 * Math.PI * pace * (phase + k / TEARS)),
+        (fraction(tear.branch('shift')) - 0.5) *
+          2 *
+          TEAR_SHIFT *
+          Math.sin(2 * Math.PI * pace * (phase + k / TEARS)),
       );
       painter.save();
       painter.beginPath();

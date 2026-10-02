@@ -127,7 +127,9 @@ describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groov
         drop: { id: 'drop:1', key: '', label: 'Drop here: brass-plasma Hybrid', opposite: '' },
       },
     ]);
-    expect(vm.hint).toBe('Tap one fragment, then another: they merge into a hybrid and give 15 Coherence back.');
+    expect(vm.hint).toBe(
+      'Tap one fragment, then another: they merge into a hybrid and give 15 Coherence back.',
+    );
     expect(vm.dock).toEqual([{ id: 'close', key: 'B', label: 'BACK', opposite: '' }]);
     expect(vm.options.map((each) => each.id)).toEqual(['pick:0', 'drop:0', 'pick:1', 'drop:1', 'close']);
     expect(vm.status).toBe(vm.heading);

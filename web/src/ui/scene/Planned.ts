@@ -79,6 +79,8 @@ export class Planned implements PlanSketch {
   }
 
   nameOf(id: string): string {
-    return [...this.#vm.relics, ...this.#vm.doors, ...this.#vm.exits].find((child) => child.id === id)?.name ?? '';
+    return (
+      [...this.#vm.relics, ...this.#vm.doors, ...this.#vm.exits].find((child) => child.id === id)?.name ?? ''
+    );
   }
 }

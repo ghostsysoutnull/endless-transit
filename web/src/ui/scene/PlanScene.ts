@@ -110,6 +110,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const key = host.ownerDocument.createElement('button');
     key.type = 'button';
     key.className = 'mapkey';
+    key.dataset.testid = 'map-key';
     key.setAttribute('aria-pressed', String(this.#mode.pressed()));
     key.addEventListener('click', () => {
       this.#flip();

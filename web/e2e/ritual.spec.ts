@@ -164,7 +164,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await expect(page.locator('.chip.pos')).toHaveText(/Strata\s+1 of 10/);
   // Drawn (U04): the tower, the car below the bedrock.
   await expect(page.getByTestId('scene').locator('canvas')).toBeVisible();
-  await expect(page.getByTestId('telemetry')).toContainText('VOID_SYNC: [PRESSURE_HIGH]');
+  await expect(page.getByTestId('telemetry')).toContainText('PRESSURE HIGH');
   await expect(page.getByTestId('coherence')).toHaveText('94%'); // 100: the corridor and back, the breach, leave, the lobby, the descent
   await expectTouchable(page, 'Layer -1');
   await shoot(page, '4-layer-hud');

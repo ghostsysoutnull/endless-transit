@@ -83,7 +83,7 @@ describe('HelpPresenter — the help screen (Guide:96; I09)', () => {
     // Every dock button of the world screen has its line, in the dock's order, MORE last.
     expect(vm.sections[1]?.entries.map((entry) => entry.term)).toEqual([
       'SCAN',
-      'MAP',
+      'LATTICE',
       'BUFFER',
       'TRACE',
       'HELP',

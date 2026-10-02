@@ -1354,25 +1354,27 @@ body {
 
 .frag .meter i {
   flex: 1;
-  background: var(--rule-hi);
+  border: 1px solid currentColor;
 }
 
-.frag[data-phase='stable'] .meter i[data-lit],
+.frag .meter i[data-lit] {
+  background: currentColor;
+}
+
+.frag[data-phase='stable'] .meter,
 .frag[data-phase='stable'] .dot,
 .frag[data-phase='stable'] .ph {
-  background: var(--cy);
   color: var(--cy);
 }
 
-.frag[data-phase='shifting'] .meter i[data-lit],
+.frag[data-phase='shifting'] .meter,
 .frag[data-phase='shifting'] .dot,
 .frag[data-phase='shifting'] .ph {
-  background: var(--mg);
   color: var(--mg);
 }
 
-.frag .ph {
-  background: none;
+.frag .dot {
+  background: currentColor;
 }
 
 .frag .fmeta {

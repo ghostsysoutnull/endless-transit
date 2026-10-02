@@ -158,7 +158,12 @@ export class HudPresenter implements Presenter<HudVM> {
       : { shown: false };
     const dock = card.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
     const carded = card.shown
-      ? [...this.#keyed(card.keys.lead), ...this.#keyed(card.keys.trail), ...card.ways, ...this.#keyed(card.game)]
+      ? [
+          ...this.#keyed(card.keys.lead),
+          ...this.#keyed(card.keys.trail),
+          ...card.ways,
+          ...this.#keyed(card.game),
+        ]
       : [];
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
@@ -198,7 +203,10 @@ export class HudPresenter implements Presenter<HudVM> {
         rows: this.#rows(place),
         diagnostic: place.status,
       },
-      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0, { text: labels.sync, band: player.band }),
+      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0, {
+        text: labels.sync,
+        band: player.band,
+      }),
       scan:
         snapshot.scan === null
           ? null

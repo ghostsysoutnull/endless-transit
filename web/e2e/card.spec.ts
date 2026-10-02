@@ -73,7 +73,7 @@ test('a sideways swipe turns the card and back; over the apartment’s plan it d
   await expect(toRoom(page)).toBeVisible();
   await swipe(page);
   await expect(toWords(page)).toBeVisible();
-  const map = page.getByRole('navigation', { name: 'Keys' }).getByRole('button', { name: 'Apartment plan' });
+  const map = page.getByTestId('map-key');
   await (hasTouch ? map.tap() : map.click());
   await expect(map).toHaveAttribute('aria-pressed', 'true');
   await swipe(page, 0.2);
@@ -82,7 +82,7 @@ test('a sideways swipe turns the card and back; over the apartment’s plan it d
   await expect(steps(page)).toHaveText(before ?? '');
 });
 
-test('the keys stay in reach on both faces; the Map key shows the picture again', async ({
+test('the keys stay in reach on both faces: MORE, Buffer, the plan, the way out and the way forward; the Map key shows the picture again', async ({
   page,
   hasTouch,
 }) => {
@@ -90,11 +90,63 @@ test('the keys stay in reach on both faces; the Map key shows the picture again'
   await turnCard(page, hasTouch);
   await expect(toRoom(page)).toBeVisible();
   const keys = page.getByRole('navigation', { name: 'Keys' });
-  await expect(keys.getByRole('button')).toHaveCount(4);
-  const map = keys.getByRole('button', { name: 'Apartment plan' });
+  await expect(keys.getByRole('button')).toHaveCount(6);
+  await expect(keys.getByRole('button', { name: /go forward/i })).toBeVisible();
+  const map = page.getByTestId('map-key');
   await (hasTouch ? map.tap() : map.click());
   await expect(toWords(page)).toBeVisible();
   await expect(page.getByTestId('scene')).toBeVisible();
+});
+
+test('over the plan the MAP key is the way back into the room: pressed, and named for its next tap', async ({
+  page,
+  hasTouch,
+}) => {
+  await inTheFirstRoom(page);
+  const map = page.getByTestId('map-key');
+  await expect(map).toHaveAccessibleName('Apartment plan');
+  await (hasTouch ? map.tap() : map.click());
+  await expect(map).toHaveAttribute('aria-pressed', 'true');
+  await expect(map).toHaveAccessibleName('Back into the room');
+  await (hasTouch ? map.tap() : map.click());
+  await expect(map).toHaveAttribute('aria-pressed', 'false');
+  await expect(map).toHaveAccessibleName('Apartment plan');
+});
+
+test('MORE opens the game’s own keys over the card and a pick closes it; the back has no game group', async ({
+  page,
+  hasTouch,
+}) => {
+  await inTheFirstRoom(page);
+  const more = page.getByTestId('card-more');
+  const sheet = page.getByRole('navigation', { name: 'GAME' });
+  await expect(sheet).toHaveCount(0);
+  await (hasTouch ? more.tap() : more.click());
+  await expect(more).toHaveAttribute('aria-expanded', 'true');
+  for (const name of ['Scan', 'Lattice', 'Help', 'Title screen', 'End session']) {
+    await expect(sheet.getByRole('button', { name })).toBeVisible();
+  }
+  const scan = sheet.getByRole('button', { name: 'Scan' });
+  await (hasTouch ? scan.tap() : scan.click());
+  await expect(page.getByTestId('scan')).toBeVisible();
+  await expect(sheet).toHaveCount(0);
+  await expect(more).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('.card .back .game')).toHaveCount(0);
+});
+
+test('a travelling key tapped on the back turns the card to its picture first, then rides into the next room', async ({
+  page,
+  hasTouch,
+}) => {
+  await inTheFirstRoom(page);
+  await turnCard(page, hasTouch);
+  await expect(toRoom(page)).toBeVisible();
+  await press(page, /go forward/i, hasTouch);
+  // The picture is up again while the first room is still the place: the ride plays where it can be seen.
+  await expect(toWords(page)).toBeVisible();
+  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+  await expect(toWords(page)).toBeVisible();
 });
 
 test('arriving, the line over the picture names the room and says its first words, then leaves the room to itself', async ({

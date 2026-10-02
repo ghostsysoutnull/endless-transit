@@ -73,17 +73,20 @@ has none, its name and the tower say its height — then its tags) and its descr
 the list after them. The list is one button per place, except a
 building's floors, which are a pad of numbers. At the bottom, always in reach of your thumb, is the **dock**: the way
 out (`▲ LEAVE …`) and **MORE**. MORE opens the rest of the
-dock above it — SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again after your next tap.
+dock above it — SCAN, LATTICE, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION — and folds again after your next tap.
 
-A **room is a card**. Its front is the picture, filling the screen between the rail and a strip of four keys. As you
+A **room is a card**. Its front is the picture, filling the screen between the rail and a strip of keys. As you
 walk in, the room's name and its first words show over the picture, then fade and leave the room to itself. The folded
 corner at the bottom right — or a sideways swipe — turns the card to its back: the room's name, its chips, its words,
-its objects as buttons, **GO FORWARD**, and the rest of the game's commands (SCAN, MAP, HELP, TITLE SCREEN, END
-SESSION); the corner there turns it back. The card turns in one of six ways, never the same twice running; as your
-Coherence falls, more of the turns come out broken, through static or in torn bands. Turning costs nothing and is not
-a step. The four keys stay in reach on both faces: **BUFFER** (with its count), **MAP** (the apartment's plan),
-**TRACE**, and **BACK** to the room before — which reads **LEAVE** in the first room. A scan's result shows on the back
-at once. <!-- src/ui/screens/HudPresenter.ts:66, 368, src/ui/screens/RoomCardView.ts:16, 52, src/ui/card/CardTurns.ts:5, 25 -->
+its objects as buttons, its telemetry, and any move the keys do not carry; the corner, at the bottom right there too,
+turns it back. The card turns in one of six ways, never the same twice running, and the turn back is the turn it came
+by; as your Coherence falls, more of the turns come out broken, through static or in torn bands. Turning costs nothing
+and is not a step. The keys stay in reach on both faces and show only their icons: **MORE** (⋯), **BUFFER** (with its
+count), **MAP** (the apartment's plan), **TRACE**, **←** back to the room before — which is **LEAVE** in the first room
+— and **→** forward to the room after, where there is one. MORE opens a second strip over the card's foot with the
+game's commands as keys with their words — SCAN, LATTICE, HELP, TITLE, END — and a tap on the dimmed card closes it. A
+scan's result shows on the back at once. A key that walks, tapped on the back, first turns the card to its picture, so
+the walk is seen. <!-- src/ui/screens/HudPresenter.ts:74-90, 394, src/ui/screens/RoomCardView.ts:18, 37, 76, 267, src/ui/card/CardTurns.ts:5, 25 -->
 
 **The pictures.** Every place from the universe down to a corridor is drawn above its list, and the two light each
 other: touch a place in the picture and its button lights, touch a button and its place lights. Above the street each
@@ -98,8 +101,8 @@ look down the hall: drag it, or the slider along its foot, to walk, and tap a do
 you came back out of is drawn yellow. In a **room** you stand in it: the room fills the picture, every room the same
 size, its doorways on its walls with no words on them: a doorway into a room you have not entered is a pale frame full
 of fog; one into a room you have entered spills that room's own light and carries its number; the way out glows
-orange. The **MAP** key, among the keys under the card, glides out to the apartment's **plan** and
-back; every new room starts with you standing in it. <!-- src/ui/scene/PlanCamera.ts:88-100,
+orange. The **MAP** key, among the keys under the card, glides out to the apartment's **plan**; over the plan it reads
+**ROOM** and glides back in; every new room starts with you standing in it. <!-- src/ui/screens/SceneDrawing.ts:149 --> <!-- src/ui/scene/PlanCamera.ts:88-100,
 src/ui/scene/PlanScene.ts:117, src/ui/scene/PlanPicture.ts:43, 284, src/ui/scene/LitDoorway.ts:13, src/ui/scene/FoggedDoorway.ts:15 --> The plan: its rooms in rows walked like a snake, a doorway only into the room
 before and the room after, the entrance under the first. A room you have not reached is in fog until you visit the room
 next to it; a scan in any room clears the whole plan for good, and marks the objects in every room. On the plan, drag to
@@ -138,7 +141,7 @@ inside the game.
 ## Every button
 
 A tap does one of three things: a **step** (a move, a place, a take) costs Coherence and counts on **Steps**;
-a **command** (SCAN, MAP, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION) costs Coherence and counts nothing; an
+a **command** (SCAN, LATTICE, BUFFER, TRACE, HELP, TITLE SCREEN, END SESSION) costs Coherence and counts nothing; an
 **answer** on a screen the game opened (the buffer, the recap, HELP, the link failure) costs nothing.
 <!-- src/engine/rules/Turn.ts, src/engine/rules/GameEngine.ts:331-370 --> A tap on something that is no longer on
 offer changes nothing and costs nothing.
@@ -163,7 +166,7 @@ offer changes nothing and costs nothing.
 | Button | Key | What it does |
 | :-- | :-- | :-- |
 | **SCAN** | `S` | What is behind the doors, which floors are near you (two either side), or the rooms of the apartment — which also clears the apartment's plan of fog for good. Costs 1, no step. <!-- src/engine/model/Building.ts:20-21 --> |
-| **MAP** | `M` | Draws the places you can enter from here, you at the centre; dim is unvisited. Nothing inside a room. Costs 1, no step. |
+| **LATTICE** | `M` | Draws the places you can enter from here, you at the centre; dim is unvisited. Nothing inside a room. Costs 1, no step. <!-- src/engine/rules/GameEngine.ts:222 --> |
 | **BUFFER** | `I` | Your inventory. Costs 1 to open; everything inside is free. |
 | **TRACE** | none | Opens the trace over the screen: a band for each level from the universe down to you, each the level's own picture with the place you went down into marked, a thread running through them to you. Tap a band to open it larger; **DIVE** zooms from the universe down to you and lands on your band; ✕, Esc or a swipe down its header closes it. **POLE \| COLUMN** in its header switches to the pole (every level at a glance, see *Reading the screen*) and back; the game remembers your pick, after a reload too. The rail opens it too. Costs 1. <!-- src/ui/screens/HudPresenter.ts:286, src/ui/screens/HudView.ts:213-252, 260, src/platform/LocalStorageTraceViewMemory.ts:17-32 --> |
 | **HELP** | `H` | The operator's manual: what every button does and how not to die. Costs 1. |
@@ -180,11 +183,13 @@ A phone shows no keys. With a keyboard attached, the buttons still answer to the
 
 ### The buffer screen
 
-Every fragment is a row with its frequency, its bar, its phase (`[STABLE]` or `[SHIFTING]`) and, when it has one, its
-`[RESONANT]` badge, then two buttons: **SELECT** and **DROP HERE**. Select one fragment, then a second (its button now
-reads **MERGE**): they merge. **DROP HERE** lays the fragment on the floor of the room you are standing in, where it stays;
-outside a room there is nothing to drop onto. **▲ BACK TO REALITY** closes the screen. Nothing on this screen costs
-anything. <!-- src/engine/rules/BufferPrompt.ts, src/engine/rules/Journey.ts:147-153 -->
+Under the heading, two chips: how many fragments you carry and the resonant tally. Every fragment is a tile: its gem
+— solid yellow when it resonates — its name, a ten-cell signal meter, its frequency, and its phase (STABLE in cyan,
+SHIFTING in magenta). The tile is its own button: tap one to select it (its frame lights), tap another to merge the two
+(the hybrid's tile arrives with a flash), tap the selected one again to unselect it. In a room each tile carries a small
+tray key in its corner: **drop**, which lays the fragment on the floor where you stand, where it stays; outside a room
+there is no tray. **BACK** closes the screen. Nothing on this screen costs anything.
+<!-- src/ui/screens/BufferPresenter.ts:40-90, src/engine/rules/BufferPrompt.ts, src/engine/rules/Journey.ts:147-153 -->
 
 ## How not to die
 
@@ -281,8 +286,8 @@ first word of each parent joined with a dash, plus "Hybrid", in the order you se
 Chain" then "Paper Lantern" gives `Rusted-Paper Hybrid`. Every merge gives you 15 Coherence.
 <!-- src/engine/model/Hybrid.ts:5-6, src/engine/rules/Player.ts:78-84 -->
 
-**"Resonance" is a badge, not a bonus.** A fragment whose frequency divides evenly by 11 wears `[RESONANT]`, and the
-tally (`RESONANT_TRACES` on the buffer screen, `> Resonant traces` in the telemetry pane, and in the ending) goes up
+**"Resonance" is a badge, not a bonus.** A fragment whose frequency divides evenly by 11 has a yellow gem, and the
+tally (the **Resonant** chip on the buffer screen, `Resonant traces` in the telemetry pane, and in the ending) goes up
 once for every resonant object you take fresh from a room and once for every resonant merge. 0 Hz never resonates, so
 a Keystone never counts; a Hidden Frequency or an Echo never counts either. Dropping a fragment and taking it back
 counts nothing. The tally does nothing else. <!-- src/engine/model/Frequency.ts:1-2, 36-38; src/engine/rules/Player.ts:61-71, 82 -->
@@ -450,7 +455,7 @@ port's iteration notes (`tasks/port/I02.md` to `I09.md`).
    retake. A Keystone (0 Hz) never counts; a Hidden Frequency or an Echo never counts.
 5. **The buffer has no limit.** The terminal HUD says `n/16` and means nothing by it; here the HUD counts what you carry,
    and nothing is ever refused for want of room.
-6. **Nothing is ever destroyed.** The terminal buffer's `d 3` is gone; DROP HERE lays the fragment in the room instead,
+6. **Nothing is ever destroyed.** The terminal buffer's `d 3` is gone; the tile's drop key lays the fragment in the room instead,
    and it costs nothing (the terminal `t` menu charged a prompt and a step for a drop).
 7. **No auto-take.** A lone object in a room is one tap, like any other.
 8. **The hybrid's name keeps your order**: the first fragment you select is first. The terminal game put the higher

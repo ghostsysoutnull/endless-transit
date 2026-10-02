@@ -120,16 +120,21 @@ test('a relic taken flies from where it lay to the Buffer count, which counts it
 }) => {
   await inTheFirstRoom(page);
   await tapOption(page, 'capture:0', hasTouch);
-  await expect(page.getByTestId('relic-flight')).toHaveCount(1);
+  // The ticket carries the relic's full name, then goes.
+  await expect(page.getByTestId('relic-flight')).toHaveText('plasma coil with reliquary box');
   await expect(page.getByTestId('relic-flight')).toHaveCount(0);
   await expect(page.getByTestId('stat-buffer')).toHaveText('2');
 });
 
-test('reduced motion: a relic taken does not fly', async ({ page, hasTouch }) => {
+test('reduced motion: a relic taken does not fly; its ticket shows where it lay, then fades', async ({
+  page,
+  hasTouch,
+}) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await inTheFirstRoom(page);
   await tapOption(page, 'capture:0', hasTouch);
   await expect(page.getByTestId('stat-buffer')).toHaveText('2');
+  await expect(page.getByTestId('relic-flight')).toHaveText('plasma coil with reliquary box');
   await expect(page.getByTestId('relic-flight')).toHaveCount(0);
 });
 
@@ -214,7 +219,7 @@ function apart(one: { x: number; y: number }, other: { x: number; y: number }): 
 
 /** The key that flips between standing in the room and the apartment's plan (U03d), in the strip under the card (U03e). */
 function theMapKey(page: Page) {
-  return page.getByRole('navigation', { name: 'Keys' }).getByRole('button', { name: 'Apartment plan' });
+  return page.getByTestId('map-key');
 }
 
 test('standing in the room (U03d): the MAP key starts off; no pinch and no corner map move the view', async ({

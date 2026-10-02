@@ -62,7 +62,10 @@ export class RelicFlight implements Flight {
         // The screen was drawn afresh by the take: the count is asked for again.
         this.#document
           .getElementById(BUFFER_LANDING)
-          ?.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], BUMP);
+          ?.animate(
+            [{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }],
+            BUMP,
+          );
       };
     };
   }

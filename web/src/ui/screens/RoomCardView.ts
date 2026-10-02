@@ -195,7 +195,9 @@ export class RoomCardView implements RoomCard {
     return html`
       <div class="veil" @click=${close}></div>
       <section class="more" aria-label=${card.regions.game} data-spot>
-        <nav class="keys" aria-label=${card.regions.game}>${card.game.map((key) => this.#key(key, parts))}</nav>
+        <nav class="keys" aria-label=${card.regions.game}>
+          ${card.game.map((key) => this.#key(key, parts))}
+        </nav>
       </section>
     `;
   }
@@ -278,7 +280,9 @@ export class RoomCardView implements RoomCard {
     const back = this.#face(card, 'back');
     if (front === undefined || back === undefined) return;
     const frame = vm.drawing.frame();
-    const turn = this.#motion.reduced() ? this.#turns.still() : this.#pickTurn(frame.noise, frame.decay, toBack);
+    const turn = this.#motion.reduced()
+      ? this.#turns.still()
+      : this.#pickTurn(frame.noise, frame.decay, toBack);
     this.#busy = true;
     const faces = toBack ? { out: front, into: back } : { out: back, into: front };
     const steps = this.#steps;

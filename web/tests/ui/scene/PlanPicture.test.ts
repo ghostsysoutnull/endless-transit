@@ -74,7 +74,10 @@ function plan(facts: {
     doors,
     exits,
     relics,
-    mapKey: { toPlan: { text: 'MAP', label: 'Apartment plan' }, toRoom: { text: 'ROOM', label: 'Back into the room' } },
+    mapKey: {
+      toPlan: { text: 'MAP', label: 'Apartment plan' },
+      toRoom: { text: 'ROOM', label: 'Back into the room' },
+    },
   };
 }
 
