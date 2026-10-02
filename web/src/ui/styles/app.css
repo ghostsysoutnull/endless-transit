@@ -1391,6 +1391,7 @@ body {
 .tele .bars {
   display: block;
   margin-block: 2px;
+  margin-inline: -12px;
   line-height: 0;
 }
 
