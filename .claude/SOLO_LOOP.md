@@ -17,8 +17,8 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
    I conceive the change on the OO and TypeScript principles before a line is written, the Shape row for anything new
    in the loop's note, then edit, with no plan shown, reviewed or approved and no subagent; `npm run phone` type-checks,
    builds the working tree and uploads it to the phone address (`web/CLAUDE.md`, "Phone check"); the user tries it
-   the way it is used and reports. Nothing else runs in a round — no test, lint,
-   design check or note; a bug met on the phone is fixed at once and gets its test at approval. Each look the user
+   the way it is used and reports. Nothing else runs in a round — no test, lint, design check or record; a bug met on
+   the phone is fixed at once and gets its test at approval. Each look the user
    keeps is a save-point commit on the branch, untested, so a dead end is one revert and a suite that fails at the end
    is bisected over the save points. Nothing merges or publishes until the user approves; then the fast gate, the
    touched tests, the design check (every shape break it finds is fixed, none logged: no plan judged the diff first),

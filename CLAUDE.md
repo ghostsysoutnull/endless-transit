@@ -44,11 +44,10 @@
 15. **Fast loop**, when the user asks for one, for any change: a round is edit, type check, build, upload to the phone
     address, the user tries it and reports. I plan for myself and act: each round is conceived on the OO and TypeScript
     principles before a line is written, with the Shape row for anything new in the loop's note; no plan shown, reviewed
-    or approved, no subagent,
-    no test, lint, design check or note in a round; a bug met on the phone is fixed at once, its test written at
-    approval. Each look the user keeps is an untested save-point commit on the branch. At their approval the regular
-    process follows: tests, checks, records, merge and publish (@.claude/SOLO_LOOP.md); a shape break the design
-    check finds in the loop's diff is fixed then, not logged, since no plan judged it first.
+    or approved, no subagent, no test, lint, design check or record in a round; a bug met on the phone is fixed at once,
+    its test written at approval. Each look the user keeps is an untested save-point commit on the branch. At their
+    approval the regular process follows: tests, checks, records, merge and publish (@.claude/SOLO_LOOP.md); a shape
+    break the design check finds in the loop's diff is fixed then, not logged, since no plan judged it first.
 
 ## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
