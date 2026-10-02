@@ -10,6 +10,12 @@ import type { Fact } from '#engine/model/Fact.ts';
 export const VISITED_KEY = 'v';
 /** The TRACE command's option id (U04): the rail runs it too. */
 export const TRACE_ID = 'trace';
+/** The SCAN command's option id: what a screen draws its key for. */
+export const SCAN_ID = 'scan';
+/** The lattice map command's option id: what a screen draws its key for. */
+export const LATTICE_ID = 'map';
+/** The option id of the way to the title screen: what a screen draws its key for. */
+export const TO_TITLE_ID = 'to-title';
 /** What a move's option id starts with, before the move's own id. */
 export const MOVE_PREFIX = 'move:';
 /** The option id of the move back (a room's): what a screen finds the way back by, never by its place in the list. */

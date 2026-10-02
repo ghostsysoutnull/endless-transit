@@ -3,7 +3,18 @@ import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 import { BUFFER } from '#engine/rules/BufferPrompt.ts';
-import { BACK_MOVE_ID, FORWARD_MOVE_ID, type GameOption, TRACE_ID, VISITED_KEY } from '#engine/rules/GameOption.ts';
+import {
+  BACK_MOVE_ID,
+  FORWARD_MOVE_ID,
+  type GameOption,
+  LATTICE_ID,
+  SCAN_ID,
+  TO_TITLE_ID,
+  TRACE_ID,
+  VISITED_KEY,
+} from '#engine/rules/GameOption.ts';
+import { HELP } from '#engine/rules/HelpPrompt.ts';
+import { RECAP } from '#engine/rules/RecapPrompt.ts';
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { MapSummary } from '#engine/rules/MapSummary.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
@@ -72,6 +83,14 @@ const CARD = {
   keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: 'BACK', forward: 'FORWARD' },
   more: { text: 'MORE', label: 'More: the game itself' },
 } as const;
+/** The MORE sheet's keys (U03e): the short word and the drawn icon of each of the game's own options, by its id. */
+const GAME_KEYS: ReadonlyMap<string, { readonly text: string; readonly icon: string }> = new Map([
+  [SCAN_ID, { text: 'SCAN', icon: 'scan' }],
+  [LATTICE_ID, { text: 'LATTICE', icon: 'lattice' }],
+  [HELP, { text: 'HELP', icon: 'help' }],
+  [TO_TITLE_ID, { text: 'TITLE', icon: 'title' }],
+  [RECAP, { text: 'END', icon: 'end' }],
+]);
 
 /**
  * Owns the words, the casing and the layout roles of the world screen: engine snapshot in, view-model
@@ -142,7 +161,7 @@ export class HudPresenter implements Presenter<HudVM> {
       : { shown: false };
     const dock = card.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
     const carded = card.shown
-      ? [...this.#keyed(card.keys.lead), ...this.#keyed(card.keys.trail), ...card.ways, ...card.game]
+      ? [...this.#keyed(card.keys.lead), ...this.#keyed(card.keys.trail), ...card.ways, ...this.#keyed(card.game)]
       : [];
     return {
       scene: `${snapshot.world?.seed ?? ''}/${place.address}`,
@@ -413,7 +432,12 @@ export class HudPresenter implements Presenter<HudVM> {
       ways: [...parts.leave, ...parts.moves]
         .filter((option) => !held.has(option.id))
         .map((option) => this.#docked(option)),
-      game: parts.system.filter((option) => !held.has(option.id)).map((option) => this.#docked(option)),
+      game: parts.system
+        .filter((option) => !held.has(option.id))
+        .map((option) => {
+          const words = GAME_KEYS.get(option.id) ?? { text: option.label.toUpperCase(), icon: 'game' };
+          return key(option, words.text, words.icon);
+        }),
       regions: CARD.regions,
     };
   }

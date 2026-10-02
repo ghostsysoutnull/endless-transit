@@ -19,8 +19,8 @@ export interface RoomCardVM {
   readonly more: { readonly text: string; readonly label: string };
   /** The moves that are not a key, on the back. */
   readonly ways: readonly OptionVM[];
-  /** The game's own options that are not a key, on the MORE sheet. */
-  readonly game: readonly OptionVM[];
+  /** The game's own options that are not a key: the MORE sheet's keys. */
+  readonly game: readonly CardKeyVM[];
   /** Names of the card's regions, read by screen readers only, the heading of its back's ways and of the MORE sheet. */
   readonly regions: {
     readonly front: string;
