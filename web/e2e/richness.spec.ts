@@ -51,8 +51,8 @@ test('a room reads like the old game: its interpretation, furniture, the relic c
   await expect(tiles.first()).toHaveAttribute('data-relic', 'with|reliquary box|plasma coil');
   // Every tile is a take (I06): a real button carrying the option.
   await expect(page.locator('button.tile[data-option="capture:0"]')).toHaveCount(1);
-  await expect(page.getByTestId('telemetry')).toContainText('[SYSTEM_TELEMETRY]');
-  await expect(page.getByTestId('telemetry')).toContainText('> Trace: 0.0.0.0.0.0.0.0.0.0.0.0.0');
+  await expect(page.getByTestId('telemetry')).toContainText('TELEMETRY');
+  await expect(page.getByTestId('telemetry')).toContainText('NOMINAL');
   // Each pane of the aside is a region with its own name (an aside called "Telemetry" that opens with IN THIS ROOM misleads).
   await expect(page.getByRole('region', { name: 'In this room' })).toHaveCount(1);
   await expect(page.getByRole('region', { name: 'System telemetry' })).toHaveCount(1);
@@ -134,6 +134,6 @@ test('the elevator screen at the street’s first building: TECH_ERA, RESONANCE,
   await expect(page.locator('.desc p').nth(0)).toHaveText(
     'Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.',
   );
-  await expect(page.getByTestId('telemetry').locator('.bars span')).toHaveCount(5);
+  await expect(page.getByTestId('telemetry').locator('.bars canvas')).toHaveCount(1);
   expect(problems).toEqual([]);
 });

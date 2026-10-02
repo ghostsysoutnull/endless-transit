@@ -1,3 +1,4 @@
+import type { Curtain } from './Curtain.ts';
 import type { DrawnStage } from '#ui/screens/DrawnStage.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { LineSketch } from './LineSketch.ts';
@@ -77,8 +78,8 @@ export class SceneStage implements DrawnStage, SceneStages {
     return this.#shown()?.leads(id) === true;
   }
 
-  enter(id: string): void {
-    this.#shown()?.enter(id);
+  enter(id: string, curtain: Curtain): void {
+    this.#shown()?.enter(id, curtain);
   }
 
   light(mark: ChildMark): void {

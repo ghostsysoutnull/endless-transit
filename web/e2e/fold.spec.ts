@@ -165,7 +165,7 @@ const KINDS: readonly {
   {
     kind: 'map',
     save: saveText(SEED, STREET),
-    reach: (page, hasTouch) => press(page, /^map$/i, hasTouch),
+    reach: (page, hasTouch) => press(page, /^lattice$/i, hasTouch),
     panel: 'map',
     expectKind: 'STREET',
   },
@@ -218,7 +218,7 @@ test('first screen: the buffer, the link failure and the recap show their action
     await press(page, /^buffer$/i, hasTouch);
     await expect(page.getByTestId('buffer-heading')).toBeVisible();
     await expectAnActionOnTheFirstScreen(page, 'buffer');
-    await press(page, /back to reality/i, hasTouch);
+    await press(page, /^back$/i, hasTouch);
     await press(page, /end session/i, hasTouch);
     await expect(page.getByTestId('recap-heading')).toBeVisible();
     await expectAnActionOnTheFirstScreen(page, 'recap');

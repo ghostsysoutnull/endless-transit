@@ -1,4 +1,5 @@
 import type { ChildMark } from '#ui/scene/ChildMark.ts';
+import type { Curtain } from '#ui/scene/Curtain.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
 
 /** What the world screen asks of the scene stage (`SceneStage`): its picture shown in its host, and the scene's calls. */
@@ -17,7 +18,7 @@ export interface DrawnStage {
   /** Whether a child picked from the list is the picture's to ride to. */
   leads(id: string): boolean;
   /** Ride to the child and pick it. Asked first: `leads`. */
-  enter(id: string): void;
+  enter(id: string, curtain: Curtain): void;
   /** The child lit from the list, or none. */
   light(mark: ChildMark): void;
   /** The scene taken down. */

@@ -238,7 +238,7 @@ test('on a phone the buffer screen reads at 360 px: no sideways scroll, every bu
   await expectTouchable(page, 'room at 360');
   await press(page, /^buffer$/i, hasTouch);
   await expect(page.locator('.frag')).toHaveCount(5);
-  await expect(page.getByRole('button', { name: /back to reality/i })).toBeInViewport({ ratio: 1 });
+  await expect(page.getByRole('button', { name: /^back$/i })).toBeInViewport({ ratio: 1 });
   await expectTouchable(page, 'buffer at 360');
   await shoot(page, '5-buffer-360');
   expect(problems).toEqual([]);

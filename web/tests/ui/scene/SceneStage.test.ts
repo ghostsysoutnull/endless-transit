@@ -151,7 +151,9 @@ describe('the scene stage: which scene host shows the picture now', () => {
     const { stage, made } = aStage();
     stage.show(aHost(), new Sketched(aPicture(), aFrame('0.1')), ignore);
     stage.arrive('enter:1');
-    stage.enter('enter:2');
+    stage.enter('enter:2', (then) => {
+      then();
+    });
     stage.light(new MarkedChild('enter:2'));
     expect(made[0]?.calls.slice(-3)).toEqual(['arrive enter:1', 'enter enter:2', 'light']);
   });

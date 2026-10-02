@@ -383,12 +383,12 @@ export class HudView implements View<HudVM> {
     if (this.#vm !== undefined) this.#paint(this.#vm);
   }
 
-  /** A row or key tapped on a drawn place whose picture travels: the picture rides there first, and picks it (U02); a room's card shows its picture before the ride (U03e). */
+  /** A row or key tapped on a drawn place whose picture travels: the picture rides there first, and picks it (U02); the room's card is the ride's curtain — it shows its picture before one (U03e). */
   #through(event: Event, id: string): void {
     if (!this.#stage.leads(id)) return;
     event.stopPropagation();
-    this.#card.reveal(event.target, () => {
-      this.#stage.enter(id);
+    this.#stage.enter(id, (then) => {
+      this.#card.reveal(event.target, then);
     });
   }
 

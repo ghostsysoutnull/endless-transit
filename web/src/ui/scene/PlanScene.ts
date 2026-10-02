@@ -1,4 +1,5 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import type { Curtain } from './Curtain.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Framing } from './Framing.ts';
 import { InRoom } from './InRoom.ts';
@@ -201,8 +202,8 @@ export class PlanScene implements StagedScene<PlanSketch> {
     return child !== undefined && !child.sealed;
   }
 
-  enter(id: string): void {
-    if (this.#trip === undefined && this.leads(id)) this.#go(id);
+  enter(id: string, curtain: Curtain): void {
+    if (this.#trip === undefined && this.leads(id)) this.#go(id, curtain);
   }
 
   light(mark: ChildMark): void {
@@ -317,9 +318,10 @@ export class PlanScene implements StagedScene<PlanSketch> {
 
   /**
    * Where the picture sends the view for this option, then its pick; a relic (no stop) is picked at once and its name
-   * flies to the buffer from where it lies (the flight knows reduced motion); under reduced motion a stop is skipped.
+   * flies to the buffer from where it lies (the flight knows reduced motion); under reduced motion a stop is skipped;
+   * a ride waits behind the curtain, so it plays where it is seen.
    */
-  #go(id: string): void {
+  #go(id: string, curtain: Curtain): void {
     const shown = this.#shown;
     if (shown === undefined) {
       this.#pick(id);
@@ -335,18 +337,23 @@ export class PlanScene implements StagedScene<PlanSketch> {
       this.#pick(id);
       return;
     }
-    this.#glide = undefined;
-    this.#trip = new PlanTrip(
-      new PlanGlide({
-        from: shown.framing,
-        to: stop,
-        start: this.#parts.clock.now(),
-        duration: shown.camera.pace(shown.framing, stop),
-        easing: this.#parts.ride,
-      }),
-      id,
-    );
-    this.#run();
+    // A ride is for the eye: the curtain shows the picture first, and the ride starts from where the view then stands.
+    curtain(() => {
+      const now = this.#shown;
+      if (now === undefined || this.#trip !== undefined) return;
+      this.#glide = undefined;
+      this.#trip = new PlanTrip(
+        new PlanGlide({
+          from: now.framing,
+          to: stop,
+          start: this.#parts.clock.now(),
+          duration: now.camera.pace(now.framing, stop),
+          easing: this.#parts.ride,
+        }),
+        id,
+      );
+      this.#run();
+    });
   }
 
   /** A relic's flight, by name, from where the picture lays it out, when it does. */
@@ -457,7 +464,9 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const point = canvas.pointAt(event);
     const hit = this.#hits.at(point);
     if (hit !== undefined && this.leads(hit.id)) {
-      this.#go(hit.id);
+      this.#go(hit.id, (then) => {
+        then();
+      });
       return;
     }
     if (this.#mode.corner(shown.camera, shown.framing).holds(point)) {

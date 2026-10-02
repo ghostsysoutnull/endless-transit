@@ -1,4 +1,5 @@
 import type { PictureSize } from '#ui/canvas/Picture.ts';
+import type { Curtain } from './Curtain.ts';
 import type { ChildMark } from './ChildMark.ts';
 import type { Drag } from './Drag.ts';
 import { MarkedChild } from './MarkedChild.ts';
@@ -214,8 +215,13 @@ export class SceneView implements LineScene {
   }
 
   /** The view rides to the child's stop and the pick follows; ignored while a trip runs. Asked first: `leads`. */
-  enter(id: string): void {
-    if (this.#trip === undefined && this.leads(id)) this.#go(id);
+  enter(id: string, curtain: Curtain): void {
+    // Nothing hides these pictures: the curtain opens at once; it is honoured all the same.
+    if (this.#trip === undefined && this.leads(id)) {
+      curtain(() => {
+        if (this.#trip === undefined) this.#go(id);
+      });
+    }
   }
 
   /** The child lit from the list, or none. */

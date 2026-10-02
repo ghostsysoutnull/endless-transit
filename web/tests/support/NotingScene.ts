@@ -1,4 +1,5 @@
 import type { ChildMark } from '#ui/scene/ChildMark.ts';
+import type { Curtain } from '#ui/scene/Curtain.ts';
 import type { Sketch } from '#ui/scene/Sketch.ts';
 import type { StagedScene } from '#ui/scene/StagedScene.ts';
 
@@ -27,8 +28,9 @@ export class NotingScene implements StagedScene<Sketch> {
     return true;
   }
 
-  enter(id: string): void {
+  enter(id: string, curtain: Curtain): void {
     this.calls.push(`enter ${id}`);
+    curtain(() => undefined);
   }
 
   light(): void {

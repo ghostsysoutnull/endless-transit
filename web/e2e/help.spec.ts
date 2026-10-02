@@ -39,7 +39,7 @@ test('HELP opens the manual — every button explained, the survival rules — c
   await expect(page.getByTestId('help-section')).toHaveCount(2);
   await expect(page.getByTestId('help-section').nth(1).locator('dt')).toHaveText([
     'SCAN',
-    'MAP',
+    'LATTICE',
     'BUFFER',
     'TRACE',
     'HELP',

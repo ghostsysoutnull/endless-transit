@@ -1,3 +1,4 @@
+import type { Curtain } from './Curtain.ts';
 import type { ChildMark } from './ChildMark.ts';
 
 /**
@@ -11,7 +12,7 @@ export interface DrawnScene {
   /** Whether a child picked from the list is the picture's to ride to. */
   leads(id: string): boolean;
   /** Ride to the child and pick it. Asked first: `leads`. */
-  enter(id: string): void;
+  enter(id: string, curtain: Curtain): void;
   /** The child lit from the list, or none. */
   light(mark: ChildMark): void;
   dispose(): void;
