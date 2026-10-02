@@ -140,6 +140,10 @@ export class Room extends Location {
   }
 
   /** A room is the kind that holds things: its relics and its furniture. */
+  override glitched(): boolean {
+    return this.#apartment.anomaly();
+  }
+
   override contents(): Contents {
     return { objects: this.objects(), furniture: this.furniture() };
   }

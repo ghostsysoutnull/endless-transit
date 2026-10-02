@@ -548,7 +548,7 @@ describe('GameEngine — walking the big world', () => {
       ],
       furniture: ['half-dismantled stained glass shard', 'scorched funeral mask'],
     });
-    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], voice: null });
+    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], peaks: [], glitched: false, voice: null });
     expect(engine.snapshot().place?.telemetry).toEqual(room.place?.telemetry);
     expect(room.options.filter((option) => option.role !== 'take')).toEqual([
       move('forward', 'f', 'Go forward', 'back', {
@@ -907,7 +907,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
     const saves = new MemorySaveStore();
     const engine = engineOn(saves, true);
     const room = inTheFirstRoom(engine);
-    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], voice: null });
+    expect(room.place?.telemetry).toEqual({ spectrogram: [5, 5, 5, 9, 9], peaks: [], glitched: false, voice: null });
     engine.step('move:forward');
     const back = engine.step('move:back');
     expect(back.place?.address).toBe(room.place?.address);

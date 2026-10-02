@@ -45,7 +45,7 @@ const OPEN: GameSnapshot = {
     abyssal: false,
     childrenHeading: '',
     contents: { objects: [], furniture: [] },
-    telemetry: { spectrogram: [1, 1, 1, 1, 1], voice: null },
+    telemetry: { spectrogram: [1, 1, 1, 1, 1], peaks: [], glitched: false, voice: null },
     lattice: null,
     portrait: new NoPortrait(),
     noise: new Seed(0, 0),

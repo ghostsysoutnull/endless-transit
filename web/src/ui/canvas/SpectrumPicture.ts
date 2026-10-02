@@ -9,17 +9,28 @@ const HEIGHT = 48;
 const BAR = 5;
 const GAP = 2;
 const GRID = 3;
-/** How far a bar may sit off the anchors' line, how far it swings each cycle, and the least it ever shows. */
+/** The floor's share of the strip, how far a bar may sit off its line, how far it swings each cycle, and the least it shows. */
+const FLOOR_SHARE = 0.3;
 const JITTER = 0.4;
 const SWING = 0.3;
 const FLOOR = 0.05;
+/** A peak's height when resonant and when plain, its half-width along the axis, and how much of a bar a peak must be to take the cap. */
+const RESONANT = 0.95;
+const PLAIN = 0.55;
+const PEAK_WIDTH = 0.035;
+const CAPPED = 0.5;
+/** Under an anomaly the swing is this many times wider and this many times faster. */
+const GLITCH_SWING = 2.5;
+const GLITCH_PACE = 3;
 /** A seed's draw as a fraction: the seed deals whole numbers, this many steps make the fraction. */
 const STEPS = 1000;
 
 /**
- * The quantum spectrogram as a live analyser (U03e): a strip of bars across the pane, their line the engine's five
- * anchor heights, each bar set off that line and swung between two heights by the frame's seed — the clock only paces
- * the swing (`phase`), it never picks a height. The same frame at the same phase is the same picture.
+ * The quantum spectrogram as a live analyser (U03e): a strip of bars across the pane. The floor's line is the engine's
+ * five anchor heights, kept low, each bar set off that line and swung between two heights by the frame's seed — the
+ * clock only paces the swing (`phase`), it never picks a height. The room's objects stand out of the floor as peaks
+ * where their frequency sits, the resonant ones tall and capped in white; an anomaly makes every bar shiver wider
+ * and faster. The same frame at the same phase is the same picture.
  */
 export class SpectrumPicture implements Picture<SpectrumVM> {
   height(): number {
@@ -39,13 +50,18 @@ export class SpectrumPicture implements Picture<SpectrumVM> {
       painter.fillRect(0, Math.round(height - (height * line) / (GRID + 1)), width, 1);
     }
     const noise = vm.noise.branch('spectrum');
+    const swing = vm.glitched ? SWING * GLITCH_SWING : SWING;
+    const pace = vm.glitched ? GLITCH_PACE : 1;
     for (let i = 0; i < bars; i++) {
       const bar = noise.branch(i);
-      const base = this.#onLine(vm, bars === 1 ? 0 : i / (bars - 1));
+      const t = bars === 1 ? 0 : i / (bars - 1);
+      const base = this.#onLine(vm, t) * FLOOR_SHARE;
       const from = clamp(base * (1 - JITTER / 2 + JITTER * fraction(bar.branch('off'))));
-      const to = clamp(from + (fraction(bar.branch('swing')) - 0.5) * SWING);
-      const wave = 0.5 - 0.5 * Math.cos(2 * Math.PI * (phase + fraction(bar.branch('phase'))));
-      const level = Math.max(FLOOR, from + (to - from) * wave);
+      const to = clamp(from + (fraction(bar.branch('swing')) - 0.5) * swing);
+      const wave = 0.5 - 0.5 * Math.cos(2 * Math.PI * pace * (phase + fraction(bar.branch('phase'))));
+      const floor = Math.max(FLOOR, from + (to - from) * wave);
+      const peak = this.#peakAt(vm, t);
+      const level = clamp(Math.max(floor, peak.height + floor * (1 - peak.height)));
       const x = Math.round(i * pitch);
       const top = Math.round(height - level * height);
       painter.fillStyle = palette('cy');
@@ -53,11 +69,24 @@ export class SpectrumPicture implements Picture<SpectrumVM> {
       painter.fillRect(x, top, BAR, height - top);
       painter.globalAlpha = 1;
       painter.fillRect(x, top, BAR, 2);
-      painter.fillStyle = palette('wh');
-      painter.globalAlpha = 0.85;
-      painter.fillRect(x, top, BAR, 1);
+      if (peak.resonant && peak.height >= CAPPED * level) {
+        painter.fillStyle = palette('wh');
+        painter.globalAlpha = 0.9;
+        painter.fillRect(x, top, BAR, 1);
+      }
     }
     painter.globalAlpha = 1;
+  }
+
+  /** The tallest peak standing at `t` on the axis, as a height and whether the object it stands for resonates. */
+  #peakAt(vm: SpectrumVM, t: number): { readonly height: number; readonly resonant: boolean } {
+    let best = { height: 0, resonant: false };
+    for (const peak of vm.peaks) {
+      const away = (t - peak.position) / PEAK_WIDTH;
+      const height = (peak.resonant ? RESONANT : PLAIN) * Math.exp(-away * away);
+      if (height > best.height) best = { height, resonant: peak.resonant };
+    }
+    return best;
   }
 
   /** The anchors' line at `t` (0 at the first anchor, 1 at the last), as a share of the tallest. */
