@@ -9,6 +9,8 @@ export interface RoomCard {
   step(vm: HudVM, panel: boolean): void;
   /** The screen is gone: the next room starts on its picture. */
   forget(): void;
+  /** Shows the picture, then runs `then`: at once when it is up, after the turn when the card lies on its back. */
+  reveal(target: EventTarget | null, then: () => void): void;
   /** The card and the strip of keys under it. */
   template(vm: HudVM, card: RoomCardVM, parts: CardParts): TemplateResult;
 }

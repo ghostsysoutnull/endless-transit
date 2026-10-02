@@ -47,6 +47,8 @@ export class RoomCardView implements RoomCard {
   #steps = 0;
   /** Where a finger went down on the card. */
   #down: Point | undefined;
+  /** What the card was last drawn with: a turn asked for from outside the template plays on it. */
+  #drawn: { readonly vm: HudVM; readonly parts: CardParts } | undefined;
 
   constructor(parts: { motion: ReducedMotion; turns: CardTurns }) {
     this.#motion = parts.motion;
@@ -71,7 +73,17 @@ export class RoomCardView implements RoomCard {
     this.#steps += 1;
   }
 
+  reveal(target: EventTarget | null, then: () => void): void {
+    const drawn = this.#drawn;
+    if (!this.#back || drawn === undefined) {
+      then();
+      return;
+    }
+    void this.#turn(target, drawn.vm, drawn.parts, false).then(then);
+  }
+
   template(vm: HudVM, card: RoomCardVM, parts: CardParts): TemplateResult {
+    this.#drawn = { vm, parts };
     const back = this.#back;
     const turn = (event: Event, toBack: boolean): void => {
       void this.#turn(event.target, vm, parts, toBack);
