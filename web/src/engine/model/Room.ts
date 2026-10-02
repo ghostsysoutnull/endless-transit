@@ -1,4 +1,5 @@
 import { BACK_MOVE } from './BackMove.ts';
+import { FORWARD_MOVE } from './ForwardMove.ts';
 import type { Apartment } from './Apartment.ts';
 import type { Atmosphere } from './Atmosphere.ts';
 import type { Capture } from './Capture.ts';
@@ -50,8 +51,8 @@ const WAVES = { resonant: '≈≈≈', plain: '~~~', degraded: '###' } as const;
 
 /** Back to the previous room unless this is the first, forward to the next unless it is the last. */
 const MOVES = new MoveTable<Room>([
-  { move: { id: BACK_MOVE, label: 'Go back', opposite: 'forward' }, to: (room) => room.neighbour(-1) },
-  { move: { id: 'forward', label: 'Go forward', opposite: BACK_MOVE }, to: (room) => room.neighbour(1) },
+  { move: { id: BACK_MOVE, label: 'Go back', opposite: FORWARD_MOVE }, to: (room) => room.neighbour(-1) },
+  { move: { id: FORWARD_MOVE, label: 'Go forward', opposite: BACK_MOVE }, to: (room) => room.neighbour(1) },
 ]);
 
 /**

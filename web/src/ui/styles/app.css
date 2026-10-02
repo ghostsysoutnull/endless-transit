@@ -2005,9 +2005,17 @@ html:has(.world[data-card]) {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M10 2v16'/%3E%3Ccircle cx='10' cy='5' r='1.8'/%3E%3Ccircle cx='10' cy='10' r='1.8'/%3E%3Ccircle cx='10' cy='15' r='1.8'/%3E%3C/svg%3E");
 }
 
-.keys .key[data-icon='back'],
 .keys .key[data-icon='out'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M8 3H3v14h5'/%3E%3Cpath d='M17 10H7M10.5 6.5 7 10l3.5 3.5'/%3E%3C/svg%3E");
+}
+
+/* The way back and the way forward: plain arrows, one the mirror of the other. */
+.keys .key[data-icon='back'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M17 10H3M8.5 4.5 3 10l5.5 5.5'/%3E%3C/svg%3E");
+}
+
+.keys .key[data-icon='forward'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M3 10h14M11.5 4.5 17 10l-5.5 5.5'/%3E%3C/svg%3E");
 }
 
 .keys .key[data-icon='out'] {
@@ -2015,7 +2023,8 @@ html:has(.world[data-card]) {
 }
 
 .keys .key[data-icon='out']::before,
-.keys .key[data-icon='back']::before {
+.keys .key[data-icon='back']::before,
+.keys .key[data-icon='forward']::before {
   color: var(--ab);
 }
 

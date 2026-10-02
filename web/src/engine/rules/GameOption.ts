@@ -1,4 +1,5 @@
 import { BACK_MOVE } from '#engine/model/BackMove.ts';
+import { FORWARD_MOVE } from '#engine/model/ForwardMove.ts';
 import type { Fact } from '#engine/model/Fact.ts';
 
 /**
@@ -13,6 +14,8 @@ export const TRACE_ID = 'trace';
 export const MOVE_PREFIX = 'move:';
 /** The option id of the move back (a room's): what a screen finds the way back by, never by its place in the list. */
 export const BACK_MOVE_ID = `${MOVE_PREFIX}${BACK_MOVE}`;
+/** The option id of the move forward (a room's): what a screen finds the way on by. */
+export const FORWARD_MOVE_ID = `${MOVE_PREFIX}${FORWARD_MOVE}`;
 
 /** A thing the player can do right now — data, never a closure. The engine resolves `id` to the action. */
 export interface GameOption {
