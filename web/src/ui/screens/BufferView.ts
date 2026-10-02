@@ -8,8 +8,8 @@ import type { BufferVM } from './BufferVM.ts';
  * Draws the buffer screen with lit-html: the heading with its chips, a tile per fragment — the tile is its pick, the
  * drop a small key in its corner — and a dock with the way back. Every word comes from the view-model
  * (`BufferPresenter` owns them); this file owns markup only. Tiles are keyed by their fragment and position, so a
- * merge removes two nodes and adds one, which arrives marked fresh for the stylesheet to greet, and the shell's focus
- * rule applies. The block is the resting place for the focus (`data-rest`). The note line here is for the eye; the
+ * merge removes two nodes and adds one, which arrives marked fresh for the stylesheet to greet and as the spot the
+ * shell scrolls to and focuses, so the hybrid is seen where it lands. The block is the resting place for the focus (`data-rest`). The note line here is for the eye; the
  * shell's own live region speaks the status.
  */
 export class BufferView implements View<BufferVM> {
@@ -69,6 +69,7 @@ export class BufferView implements View<BufferVM> {
                           data-option=${row.pick.id}
                           aria-pressed=${row.selected ? 'true' : 'false'}
                           aria-label=${row.pick.label}
+                          ?data-spot=${fresh.has(row.key)}
                         >
                           <span class="ftop" aria-hidden="true">
                             <i class="gem"></i>

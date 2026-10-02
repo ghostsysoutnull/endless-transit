@@ -1257,15 +1257,58 @@ body {
     0 0 10px var(--yl);
 }
 
-/* The hybrid a merge just made arrives with a flash. */
+/* The hybrid a merge just made arrives lit: a yellow flash, then its frame beats twice before it settles. */
 .frag[data-fresh] .pick {
-  animation: frag-in 420ms ease-out;
+  animation: frag-in 1600ms ease-out;
+}
+
+.frag[data-fresh] .gem {
+  animation: gem-in 1600ms ease-out;
 }
 
 @keyframes frag-in {
-  from {
-    transform: scale(0.9);
-    box-shadow: 0 0 18px var(--cy);
+  0% {
+    transform: scale(0.85);
+    border-color: var(--yl);
+    background: var(--yl);
+    color: var(--ground);
+    box-shadow: 0 0 28px var(--yl);
+  }
+  20% {
+    transform: scale(1.04);
+    border-color: var(--yl);
+    background: var(--panel2);
+    color: var(--text);
+    box-shadow: 0 0 20px var(--yl);
+  }
+  45% {
+    transform: scale(1);
+    border-color: var(--rule-hi);
+    box-shadow: 0 0 0 transparent;
+  }
+  65% {
+    border-color: var(--yl);
+    box-shadow: 0 0 16px var(--yl);
+  }
+  85% {
+    border-color: var(--rule-hi);
+    box-shadow: 0 0 0 transparent;
+  }
+  100% {
+    border-color: var(--yl);
+    box-shadow: 0 0 12px var(--yl);
+  }
+}
+
+@keyframes gem-in {
+  0%,
+  20% {
+    transform: rotate(45deg) scale(2.2);
+    border-color: var(--ground);
+    background: var(--ground);
+  }
+  45% {
+    transform: rotate(45deg) scale(1);
   }
 }
 
@@ -1952,8 +1995,13 @@ html:has(.world[data-card]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .frag[data-fresh] .pick {
+  .frag[data-fresh] .pick,
+  .frag[data-fresh] .gem {
     animation: none;
+  }
+
+  .frag[data-fresh] .pick {
+    border-color: var(--yl);
   }
 
   .card .line {
