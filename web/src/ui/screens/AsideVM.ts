@@ -1,3 +1,4 @@
+import type { SpectrumVM } from '#ui/canvas/SpectrumVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 
@@ -24,8 +25,8 @@ export interface AsideVM {
     readonly heading: string;
     /** The lattice's or the void's sync: its word, and the coherence band that tints its light. */
     readonly sync: { readonly text: string; readonly band: string };
-    /** The quantum spectrogram: what a reader hears, and its bars' heights against the tallest. */
-    readonly spectrogram: { readonly label: string; readonly heights: readonly number[]; readonly tallest: number };
+    /** The quantum spectrogram: what a reader hears, and the picture the canvas draws. */
+    readonly spectrogram: { readonly label: string; readonly picture: SpectrumVM };
     /** The readouts, in plain words. */
     readonly lines: readonly string[];
     /** What the void says this frame; empty above the bedrock, and when it is silent. */

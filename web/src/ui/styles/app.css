@@ -1387,20 +1387,15 @@ body {
   color: var(--rd);
 }
 
-/* The spectrogram: five drawn bars, each as tall as its share of the tallest. */
+/* The spectrogram: the canvas's live strip (`SpectrumPicture`), as tall as the picture asks. */
 .tele .bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 28px;
+  display: block;
   margin-block: 2px;
+  line-height: 0;
 }
 
-.tele .bars span {
-  flex: 1;
-  height: calc(var(--h) * 100%);
-  min-height: 2px;
-  background: var(--cy);
+.tele .bars canvas {
+  display: block;
 }
 
 /* The void's voice: speech, not a reading. */

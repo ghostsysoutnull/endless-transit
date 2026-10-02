@@ -1,6 +1,7 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
+import type { SpectrumVM } from '#ui/canvas/SpectrumVM.ts';
 import type { Dive } from '#ui/scene/Dive.ts';
 import type { TraceBands } from '#ui/scene/TraceBands.ts';
 import type { TracePole } from '#ui/scene/TracePole.ts';
@@ -23,7 +24,7 @@ import type { TraceView } from './TraceView.ts';
 import type { TraceViewMemory } from './TraceViewMemory.ts';
 
 /** The three canvases the screen may carry, each in a host `<div data-canvas>` the template keeps or drops. */
-type Slot = 'pane' | 'map';
+type Slot = 'pane' | 'map' | 'spectrum';
 
 /** What the trace draws with: the column's bands, the dive, the pole, and where the pick of view is kept (U04, U05). */
 interface TraceParts {
@@ -66,6 +67,7 @@ export class HudView implements View<HudVM> {
   readonly #canvases: CanvasSlots<{
     pane: MapPanelVM['picture'];
     map: MapPanelVM['picture'];
+    spectrum: SpectrumVM;
   }>;
   readonly #book: PictureBook;
   /** The screen's own listeners: made at each mount (the shell mounts the screen again after a prompt), taken away with it. */
@@ -110,6 +112,7 @@ export class HudView implements View<HudVM> {
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
       map: () => canvases.map(),
+      spectrum: () => canvases.spectrum(),
     });
   }
 
@@ -325,6 +328,7 @@ export class HudView implements View<HudVM> {
     render(this.#template(vm), this.#container);
     this.#canvases.bind('pane', this.#host('pane'), vm.aside.map?.picture ?? null);
     this.#canvases.bind('map', this.#host('map'), vm.map.shown ? vm.map.picture : null);
+    this.#canvases.bind('spectrum', this.#host('spectrum'), vm.aside.telemetry?.spectrogram.picture ?? null);
     this.#bindScene(vm.drawing.sketchedBy(this.#book));
   }
 
@@ -942,12 +946,12 @@ export class HudView implements View<HudVM> {
                   <p class="sync" data-band=${telemetry.sync.band}>
                     <i class="light" aria-hidden="true"></i>${telemetry.sync.text}
                   </p>
-                  <p class="bars" role="img" aria-label=${telemetry.spectrogram.label}>
-                    ${telemetry.spectrogram.heights.map(
-                      (height) =>
-                        html`<span style=${`--h: ${String(height / telemetry.spectrogram.tallest)}`}></span>`,
-                    )}
-                  </p>
+                  <div
+                    class="bars"
+                    role="img"
+                    aria-label=${telemetry.spectrogram.label}
+                    data-canvas="spectrum"
+                  ></div>
                   ${telemetry.lines.map((line) => html`<p class="tl">${line}</p>`)}
                   ${telemetry.voice === '' ? nothing : html`<p class="voice">${telemetry.voice}</p>`}
                 </section>

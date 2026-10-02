@@ -19,6 +19,7 @@ import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import { CanvasMaker } from '#ui/canvas/CanvasMaker.ts';
 import { CanvasViewMaker } from '#ui/canvas/CanvasViewMaker.ts';
 import { MapPicture } from '#ui/canvas/MapPicture.ts';
+import { SpectrumPicture } from '#ui/canvas/SpectrumPicture.ts';
 import { Frame } from '#ui/Frame.ts';
 import { MotionClock } from '#ui/scene/MotionClock.ts';
 import { CoherenceFx } from '#ui/scene/CoherenceFx.ts';
@@ -99,7 +100,12 @@ const scenes = new SceneRegistry({
 const font = new CanvasFont();
 // Every canvas on the page's one pixel budget (Decision 4).
 const canvasMaker = new CanvasMaker(new PixelBudget());
-const canvases = new CanvasViewMaker({ map: new MapPicture(font) }, clock, motion, canvasMaker);
+const canvases = new CanvasViewMaker(
+  { map: new MapPicture(font), spectrum: new SpectrumPicture() },
+  clock,
+  motion,
+  canvasMaker,
+);
 new Shell(
   engine,
   [

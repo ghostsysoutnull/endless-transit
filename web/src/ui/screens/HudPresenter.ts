@@ -484,8 +484,7 @@ export class HudPresenter implements Presenter<HudVM> {
               sync,
               spectrogram: {
                 label: 'Quantum spectrogram',
-                heights: place.telemetry.spectrogram,
-                tallest: SPECTROGRAM_TALLEST,
+                picture: { anchors: place.telemetry.spectrogram, tallest: SPECTROGRAM_TALLEST, noise: place.noise },
               },
               lines: [`Resonant traces ${String(resonant)}`],
               voice: place.telemetry.voice ?? '',
