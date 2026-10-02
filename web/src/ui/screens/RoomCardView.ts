@@ -1,6 +1,8 @@
 import { html, nothing, type TemplateResult } from 'lit-html';
 import { keyed } from 'lit-html/directives/keyed.js';
 import { repeat } from 'lit-html/directives/repeat.js';
+import type { Seed } from '#engine/rng/Seed.ts';
+import type { CardTurn } from '#ui/card/CardTurn.ts';
 import type { CardTurns } from '#ui/card/CardTurns.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
@@ -36,9 +38,9 @@ export class RoomCardView implements RoomCard {
   #scene = '';
   /** Whether the last step came into this room: its first words show until the next one. */
   #arrived = false;
-  /** The turns made since the step, and the last one's key. */
+  /** The turns drawn since the step, and the turn that took the card to its back: the way back is the same way. */
   #count = 0;
-  #last = '';
+  #went: CardTurn | undefined;
   /** The steps of the game seen so far: a turn that ends after a new one leaves the face that step chose. */
   #steps = 0;
   /** Where a finger went down on the card. */
@@ -215,6 +217,15 @@ export class RoomCardView implements RoomCard {
     return face instanceof HTMLElement ? face : undefined;
   }
 
+  /** The turn to the back is drawn afresh and remembered; the turn back to the picture replays it. */
+  #pickTurn(noise: Seed, decay: number, toBack: boolean): CardTurn {
+    if (!toBack && this.#went !== undefined) return this.#went;
+    const turn = this.#turns.pick(noise, decay, this.#count, this.#went?.key() ?? '');
+    this.#count += 1;
+    this.#went = turn;
+    return turn;
+  }
+
   /** Turns the card to the face asked for: both faces show while the turn plays, then the screen is drawn again. */
   async #turn(target: EventTarget | null, vm: HudVM, parts: CardParts, toBack: boolean): Promise<void> {
     if (this.#busy || toBack === this.#back || !(target instanceof Element)) return;
@@ -223,11 +234,7 @@ export class RoomCardView implements RoomCard {
     const back = this.#face(card, 'back');
     if (front === undefined || back === undefined) return;
     const frame = vm.drawing.frame();
-    const turn = this.#motion.reduced()
-      ? this.#turns.still()
-      : this.#turns.pick(frame.noise, frame.decay, this.#count, this.#last);
-    this.#count += 1;
-    this.#last = turn.key();
+    const turn = this.#motion.reduced() ? this.#turns.still() : this.#pickTurn(frame.noise, frame.decay, toBack);
     this.#busy = true;
     const faces = toBack ? { out: front, into: back } : { out: back, into: front };
     const steps = this.#steps;
