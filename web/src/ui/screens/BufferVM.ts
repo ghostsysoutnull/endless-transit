@@ -11,27 +11,29 @@ export interface BufferVM extends Screen {
   readonly tally: { readonly label: string; readonly value: string };
   /** What to say when there are no rows; empty when there are. */
   readonly empty: string;
-  /** One row per fragment, in the buffer's order (the old overlay's line: number, hertz, signal, phase, name). */
+  /** One tile per fragment, in the buffer's order: its gem, name, hertz, signal and phase; the tile is its pick. */
   readonly rows: readonly {
     readonly key: string;
     readonly ordinal: string;
     readonly hertz: string;
-    /** The signal bar, ten cells. */
-    readonly bar: string;
+    /** The signal meter: how many of its cells are lit. */
+    readonly signal: { readonly lit: number; readonly cells: number };
     readonly phase: string;
     /** `stable` or `shifting`: what the stylesheet colours by. */
     readonly phaseKey: string;
     readonly name: string;
-    /** The resonant badge: `text` shown, `label` read out; nothing on a fragment that does not resonate. */
-    readonly badge: { readonly text: string; readonly label: string } | null;
+    /** Whether the gem is lit as resonant, and what a reader hears for it; empty when it does not resonate. */
+    readonly resonant: boolean;
+    readonly resonantLabel: string;
     readonly selected: boolean;
-    /** What a reader hears on the selected row; empty elsewhere. */
+    /** What a reader hears on the selected tile; empty elsewhere. */
     readonly selectedLabel: string;
-    /** The row's buttons: the pick (select, merge, unselect) and, in a room, the drop. */
-    readonly actions: readonly OptionVM[];
+    /** The tile's own tap: select, merge or unselect, named with the fragment. */
+    readonly pick: OptionVM;
+    /** The drop, in a room; nothing elsewhere. */
+    readonly drop: OptionVM | null;
   }[];
   readonly hint: string;
-  readonly sync: string;
   /** The way back: always within reach of a thumb. */
   readonly dock: readonly OptionVM[];
   /** The engine's message, for the eye. */

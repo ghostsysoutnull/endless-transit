@@ -1184,21 +1184,32 @@ body {
   outline-offset: 2px;
 }
 
-/* The buffer screen: the old [QUANTUM_TRACE_BUFFER_SYNC...] block, one line per fragment with its buttons under it. */
+/* The buffer screen (U03e): the shelf of what you carry — a heading with its chips, a tile per fragment, the tile its
+   pick, the drop a small key in its corner. */
 .trace .rh {
   font-size: 15px;
   letter-spacing: 0.1em;
   color: var(--cy);
 }
 
-.bcount {
+.chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 12px;
-  font-size: 12.5px;
+  gap: 6px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 
-.bcount .k {
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--rule-hi);
+  background: var(--panel2);
+}
+
+.chip .k {
   color: var(--dim);
 }
 
@@ -1206,84 +1217,170 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 8px;
 }
 
 .frag {
-  border: 1px solid var(--rule-hi);
-  background: var(--panel2);
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  position: relative;
   min-width: 0;
 }
 
-.frag.selected {
-  border-color: var(--yl);
-  box-shadow: inset 0 0 0 1px var(--yl);
-}
-
-.frag p {
-  margin: 0;
-}
-
-.fline {
+.frag .pick {
+  all: unset;
+  box-sizing: border-box;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  font-size: 12px;
-  color: var(--dim);
-  letter-spacing: 0.04em;
-}
-
-.fline .ord {
-  color: var(--yl);
-  font-variant-numeric: tabular-nums;
-}
-
-.fline .hz {
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-height: 104px;
+  padding: 10px;
+  border: 1px solid var(--rule-hi);
+  background: var(--panel2);
   color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.frag .pick:focus-visible {
+  outline: 2px solid var(--cy);
+  outline-offset: 2px;
+}
+
+.frag[data-selected] .pick {
+  border-color: var(--yl);
+  box-shadow:
+    inset 0 0 0 1px var(--yl),
+    0 0 10px var(--yl);
+}
+
+/* The hybrid a merge just made arrives with a flash. */
+.frag[data-fresh] .pick {
+  animation: frag-in 420ms ease-out;
+}
+
+@keyframes frag-in {
+  from {
+    transform: scale(0.9);
+    box-shadow: 0 0 18px var(--cy);
+  }
+}
+
+.frag .ftop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.frag .gem {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--cy);
+  background: var(--ground);
+  transform: rotate(45deg);
+}
+
+.frag[data-resonant] .gem {
+  border-color: var(--yl);
+  background: var(--yl);
+  box-shadow: 0 0 8px var(--yl);
+}
+
+.frag .ord {
+  color: var(--dim);
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
-.sig[data-phase='stable'],
-.ph[data-phase='stable'] {
-  color: var(--cy);
-}
-
-.sig[data-phase='shifting'],
-.ph[data-phase='shifting'] {
-  color: var(--mg);
-}
-
-.fname {
+.frag .fname {
+  flex: 1;
   font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
-.badge {
-  color: var(--gn);
-  font-size: 12px;
-  margin-left: 8px;
-}
-
-.facts {
+.frag .meter {
   display: flex;
-  flex-wrap: wrap;
+  gap: 2px;
+  height: 5px;
+}
+
+.frag .meter i {
+  flex: 1;
+  background: var(--rule-hi);
+}
+
+.frag[data-phase='stable'] .meter i[data-lit],
+.frag[data-phase='stable'] .dot,
+.frag[data-phase='stable'] .ph {
+  background: var(--cy);
+  color: var(--cy);
+}
+
+.frag[data-phase='shifting'] .meter i[data-lit],
+.frag[data-phase='shifting'] .dot,
+.frag[data-phase='shifting'] .ph {
+  background: var(--mg);
+  color: var(--mg);
+}
+
+.frag .ph {
+  background: none;
+}
+
+.frag .fmeta {
+  display: flex;
+  align-items: center;
   gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
 }
 
-.fb {
-  flex: 1 1 140px;
-  border-color: var(--rule-hi);
-  font-size: 12.5px;
+.frag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
 }
 
-.frag.selected .fb:first-child {
-  border-color: var(--yl);
+/* The drop: a small key in the tile's corner, a tray with an arrow into it; its tap area the full 44 px. */
+.frag .drop {
+  all: unset;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--tap);
+  height: var(--tap);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.frag .drop::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  color: var(--dim);
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M10 2v10M6 8l4 4 4-4M3 13v4h14v-4'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.frag .drop:active::before {
+  color: var(--yl);
+}
+
+.frag .drop:focus-visible {
+  outline: 2px solid var(--cy);
+  outline-offset: -4px;
 }
 
 .hint {
@@ -1855,6 +1952,10 @@ html:has(.world[data-card]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .frag[data-fresh] .pick {
+    animation: none;
+  }
+
   .card .line {
     animation-timing-function: step-end;
   }
