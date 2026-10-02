@@ -14,7 +14,8 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
    what a machine can; what the user judges by using it (the look, the feel, the words on screen) waits for them, and
    the slow suites and the approved snapshot wait for the end.
 4. **The fast loop.** When the user asks for one (the block's rule 15), or when there is something to try. A round:
-   I plan for myself and edit, with no plan shown, reviewed or approved and no subagent; `npm run phone` type-checks,
+   I conceive the change on the OO and TypeScript principles before a line is written, the Shape row for anything new
+   in the loop's note, then edit, with no plan shown, reviewed or approved and no subagent; `npm run phone` type-checks,
    builds the working tree and uploads it to the phone address (`web/CLAUDE.md`, "Phone check"); the user tries it
    the way it is used and reports. Nothing else runs in a round — no test, lint,
    design check or note; a bug met on the phone is fixed at once and gets its test at approval. Each look the user
