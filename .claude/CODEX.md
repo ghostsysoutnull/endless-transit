@@ -48,7 +48,7 @@ A chronicle or a retro only when the user asks.
   them, the TypeScript and OO rules and the testing principles on the built code: the `design-check` agent
   (`.claude/agents/design-check.md`) runs them once on a finished piece's diff, before it merges, with the evidence
   named. I fix only a break that would cause a bug or leave a rule or value in two places, and log each other break in
-  one line in `tasks/backlog/HOUSEKEEPING.md`; the fix is not checked again.
+  one line in `tasks/backlog/HOUSEKEEPING.md` (after a fast loop, every break is fixed); the fix is not checked again.
 * **Shape Claim Protocol**: every plan that adds a class, a method on a new class, or a static carries a
   **Shape table** — one row per new thing: `what | kind | owner | the one fact it owns | statics + why`
   (`kind` ∈ value object / entity / service / listener / command / factory). It is the evidence for one owner per fact,

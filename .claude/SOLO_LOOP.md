@@ -20,7 +20,8 @@ How every wave runs (the Codex's unit: a queue iteration, a backlog item, a docs
    design check or note; a bug met on the phone is fixed at once and gets its test at approval. Each look the user
    keeps is a save-point commit on the branch, untested, so a dead end is one revert and a suite that fails at the end
    is bisected over the save points. Nothing merges or publishes until the user approves; then the fast gate, the
-   touched tests, the design check, the record written from what was kept, and step 5.
+   touched tests, the design check (every shape break it finds is fixed, none logged: no plan judged the diff first),
+   the record written from what was kept, and step 5.
 5. **The end.** With the user: the slow suites, the approved snapshot rewritten and its diff read, the tests that move
    on purpose. Then the Codex's close-out
    ("Closing a wave"), the queue's own where it names one, and a publish on the user's word.
