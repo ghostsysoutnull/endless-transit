@@ -451,8 +451,8 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
     expect(above.meter.label).toBe('Coherence');
     expect(above.stats.map((stat) => stat.label)).toEqual(['Steps', 'Buffer']);
     expect(above.regions.path).toBe('Path from the universe');
-    expect(above.aside.telemetry?.sync).toBe('LATTICE_SYNC: [NOMINAL]');
-    expect(above.aside.telemetry?.logs.lines).toHaveLength(2);
+    expect(above.aside.telemetry?.sync).toEqual({ text: 'NOMINAL', band: 'stable' });
+    expect(above.aside.telemetry?.voice).toBe('');
     const below = presenter.toViewModel({
       ...room,
       place: {
@@ -467,8 +467,8 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
     expect(below.meter.label).toBe('Integrity');
     expect(below.stats.map((stat) => stat.label)).toEqual(['Steps', 'Buffer']);
     expect(below.regions.path).toBe('Void trace from the universe');
-    expect(below.aside.telemetry?.sync).toBe('VOID_SYNC: [PRESSURE_HIGH]');
-    expect(below.aside.telemetry?.logs.lines.at(-1)).toBe('[VOID] We see you.');
+    expect(below.aside.telemetry?.sync.text).toBe('PRESSURE HIGH');
+    expect(below.aside.telemetry?.voice).toBe('We see you.');
     expect(below.place.eyebrow).toBe('SHARD');
   });
 });

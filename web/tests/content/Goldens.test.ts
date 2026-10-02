@@ -60,7 +60,7 @@ function page(vm: HudVM): string {
   }
   if (telemetry !== null) {
     lines.push(
-      `${telemetry.heading} ${telemetry.sync} ${telemetry.spectrogram.heading} ${telemetry.spectrogram.bars.join(' ')} ${telemetry.logs.heading} ${telemetry.logs.lines.join(' ')}`,
+      `${telemetry.heading} ${telemetry.sync.text} ${telemetry.spectrogram.label} ${telemetry.spectrogram.heights.join(' ')} ${telemetry.lines.join(' ')}${telemetry.voice === '' ? '' : ` ${telemetry.voice}`}`,
     );
   }
   if (vm.card.shown) {

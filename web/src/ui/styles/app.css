@@ -1356,23 +1356,57 @@ body {
   color: var(--cy);
 }
 
-.tele .th + .th,
-.tele .tl + .th,
-.tele .bars + .th {
-  margin-top: 6px;
-}
-
 .tele .tl {
   color: var(--dim);
 }
 
+/* The sync row: a light tinted by the coherence band, then the word. */
+.tele .sync {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tele .sync .light {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.tele .sync[data-band='stable'] .light {
+  color: var(--gn);
+}
+
+.tele .sync[data-band='degraded'] .light {
+  color: var(--yl);
+}
+
+.tele .sync[data-band='critical'] .light {
+  color: var(--rd);
+}
+
+/* The spectrogram: five drawn bars, each as tall as its share of the tallest. */
 .tele .bars {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  color: var(--cy);
-  line-height: 1.1;
-  font-size: 11px;
+  align-items: flex-end;
+  gap: 3px;
+  height: 28px;
+  margin-block: 2px;
+}
+
+.tele .bars span {
+  flex: 1;
+  height: calc(var(--h) * 100%);
+  min-height: 2px;
+  background: var(--cy);
+}
+
+/* The void's voice: speech, not a reading. */
+.tele .voice {
+  color: var(--yl);
+  font-style: italic;
 }
 
 /* The last scan's panel (I07): a titled list of readings under the narrative, never a modal. */

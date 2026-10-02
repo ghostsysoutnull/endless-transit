@@ -4,7 +4,9 @@ import type { Seed } from '#engine/rng/Seed.ts';
 const SPECTROGRAM = 'spectrogram';
 /** Five bars, each 1 to 9 high (TelemetryComponent.groovy:134-137 at the 38-column pane). */
 const BARS = 5;
-const TALLEST = 9;
+/** The tallest a bar gets: the scale a screen draws the bars against. */
+export const SPECTROGRAM_TALLEST = 9;
+const TALLEST = SPECTROGRAM_TALLEST;
 /** Below the bedrock the ticker adds a line about a third of the time (Guide:283; HUDHeaderComponent.groovy:85-88). */
 const VOID = 'void';
 const VOICE_CHANCE = 0.3;

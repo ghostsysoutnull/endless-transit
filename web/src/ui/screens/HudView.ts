@@ -939,13 +939,17 @@ export class HudView implements View<HudVM> {
             : html`
                 <section class="tele" data-testid="telemetry" aria-label=${telemetry.label}>
                   <p class="th">${telemetry.heading}</p>
-                  <p class="tl">${telemetry.sync}</p>
-                  <p class="th">${telemetry.spectrogram.heading}</p>
-                  <p class="bars" aria-hidden="true">
-                    ${telemetry.spectrogram.bars.map((bar) => html`<span>${bar}</span>`)}
+                  <p class="sync" data-band=${telemetry.sync.band}>
+                    <i class="light" aria-hidden="true"></i>${telemetry.sync.text}
                   </p>
-                  <p class="th">${telemetry.logs.heading}</p>
-                  ${telemetry.logs.lines.map((line) => html`<p class="tl">${line}</p>`)}
+                  <p class="bars" role="img" aria-label=${telemetry.spectrogram.label}>
+                    ${telemetry.spectrogram.heights.map(
+                      (height) =>
+                        html`<span style=${`--h: ${String(height / telemetry.spectrogram.tallest)}`}></span>`,
+                    )}
+                  </p>
+                  ${telemetry.lines.map((line) => html`<p class="tl">${line}</p>`)}
+                  ${telemetry.voice === '' ? nothing : html`<p class="voice">${telemetry.voice}</p>`}
                 </section>
               `
         }

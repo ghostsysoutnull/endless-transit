@@ -2,6 +2,7 @@ import type { Fact } from '#engine/model/Fact.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
+import { SPECTROGRAM_TALLEST } from '#engine/rules/Telemetry.ts';
 import { BUFFER } from '#engine/rules/BufferPrompt.ts';
 import {
   BACK_MOVE_ID,
@@ -47,22 +48,18 @@ const LABELS = {
   lattice: {
     meter: 'Coherence',
     path: 'Path from the universe',
-    sync: 'LATTICE_SYNC: [NOMINAL]',
+    sync: 'NOMINAL',
   },
   void: {
     meter: 'Integrity',
     path: 'Void trace from the universe',
-    sync: 'VOID_SYNC: [PRESSURE_HIGH]',
+    sync: 'PRESSURE HIGH',
   },
 } as const;
-/** The void's line in the decode log (HUDHeaderComponent.groovy:87). */
-const VOID_PREFIX = '[VOID] ';
 /** The elevator column's current-floor mark (Building.groovy:198-201), and what a reader hears instead. */
 const CURRENT_MARK = { text: '[>X<]', label: 'Elevator here' } as const;
 /** The visited mark of the old lists, drawn from the engine's letter (its one owner), and what a reader hears instead. */
 const SEEN_MARK = { text: `[${VISITED_KEY.toUpperCase()}]`, label: 'Visited' } as const;
-/** One cell of a spectrogram bar (TelemetryComponent.groovy:136). */
-const BAR = '█';
 /** The map's words (LatticeMapComponent.groovy:52-66, TelemetryComponent.groovy:80-82): the glitch mark's glyph and the legend. */
 const MARK_GLYPH = 'X';
 const LEGEND: Readonly<Record<LegendTone, string>> = {
@@ -201,7 +198,7 @@ export class HudPresenter implements Presenter<HudVM> {
         rows: this.#rows(place),
         diagnostic: place.status,
       },
-      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0, labels.sync),
+      aside: this.#aside(place, takes, snapshot.buffer?.resonant ?? 0, { text: labels.sync, band: player.band }),
       scan:
         snapshot.scan === null
           ? null
@@ -452,7 +449,12 @@ export class HudPresenter implements Presenter<HudVM> {
    * for its number — the telemetry block when it is indoors, and the map when it is not (Guide:339) and the place
    * has one.
    */
-  #aside(place: PlaceSummary, takes: readonly GameOption[], resonant: number, sync: string): AsideVM {
+  #aside(
+    place: PlaceSummary,
+    takes: readonly GameOption[],
+    resonant: number,
+    sync: { readonly text: string; readonly band: string },
+  ): AsideVM {
     const contents = place.contents;
     return {
       objects:
@@ -478,20 +480,15 @@ export class HudPresenter implements Presenter<HudVM> {
           ? null
           : {
               label: 'System telemetry',
-              heading: '[SYSTEM_TELEMETRY]',
+              heading: 'TELEMETRY',
               sync,
               spectrogram: {
-                heading: '[QUANTUM_SPECTROGRAM]',
-                bars: place.telemetry.spectrogram.map((height) => BAR.repeat(height)),
+                label: 'Quantum spectrogram',
+                heights: place.telemetry.spectrogram,
+                tallest: SPECTROGRAM_TALLEST,
               },
-              logs: {
-                heading: '[DECODE_LOGS]',
-                lines: [
-                  `> Trace: ${place.address}`,
-                  `> Resonant traces: ${String(resonant)}`,
-                  ...(place.telemetry.voice === null ? [] : [`${VOID_PREFIX}${place.telemetry.voice}`]),
-                ],
-              },
+              lines: [`Resonant traces ${String(resonant)}`],
+              voice: place.telemetry.voice ?? '',
             },
       map:
         place.telemetry !== null || place.lattice === null
