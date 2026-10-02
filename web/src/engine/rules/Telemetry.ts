@@ -1,4 +1,5 @@
 import type { Location } from '#engine/model/Location.ts';
+import { PRIZE } from '#engine/model/Room.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 
 const SPECTROGRAM = 'spectrogram';
@@ -7,8 +8,9 @@ const BARS = 5;
 /** The tallest a bar gets: the scale a screen draws the bars against. */
 export const SPECTROGRAM_TALLEST = 9;
 const TALLEST = SPECTROGRAM_TALLEST;
-/** The spectrogram's axis runs from one hertz to the lottery's top (Room.ts), log-scaled; a frequency past it sits at the edge. */
-const TOP_HERTZ = 10_000_000;
+/** The spectrogram's axis runs from one hertz up to the decade that holds the lottery's top prize, log-scaled; a frequency past it sits at the edge. */
+export const SPECTROGRAM_DECADES = Math.ceil(Math.log10(PRIZE.max));
+const TOP_HERTZ = 10 ** SPECTROGRAM_DECADES;
 /** Below the bedrock the ticker adds a line about a third of the time (Guide:283; HUDHeaderComponent.groovy:85-88). */
 const VOID = 'void';
 const VOICE_CHANCE = 0.3;

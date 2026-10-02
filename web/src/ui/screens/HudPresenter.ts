@@ -2,7 +2,7 @@ import type { Fact } from '#engine/model/Fact.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
 import { Phrase } from '#engine/model/Phrase.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
-import { SPECTROGRAM_TALLEST } from '#engine/rules/Telemetry.ts';
+import { SPECTROGRAM_DECADES, SPECTROGRAM_TALLEST } from '#engine/rules/Telemetry.ts';
 import { BUFFER } from '#engine/rules/BufferPrompt.ts';
 import {
   BACK_MOVE_ID,
@@ -27,6 +27,7 @@ import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { CardKeyVM } from './CardKeyVM.ts';
+import { BACK_KEY_WORD } from './BackKeyWord.ts';
 import { BUFFER_LANDING } from './CardSlots.ts';
 import type { HudVM } from './HudVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
@@ -77,7 +78,7 @@ const CARD = {
     toRoom: { text: 'ROOM', label: 'Turn the card: the picture' },
   },
   regions: { front: 'The room', back: 'The room in words', keys: 'Keys', ways: 'WAYS', game: 'GAME' },
-  keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: 'BACK', forward: 'FORWARD' },
+  keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: BACK_KEY_WORD, forward: 'FORWARD' },
   more: { text: 'MORE', label: 'More: the game itself' },
 } as const;
 /** The MORE sheet's keys (U03e): the short word and the drawn icon of each of the game's own options, by its id. */
@@ -461,7 +462,7 @@ export class HudPresenter implements Presenter<HudVM> {
     place: PlaceSummary,
     takes: readonly GameOption[],
     resonant: number,
-    sync: { readonly text: string; readonly band: string },
+    sync: NonNullable<AsideVM['telemetry']>['sync'],
   ): AsideVM {
     const contents = place.contents;
     return {
@@ -495,6 +496,7 @@ export class HudPresenter implements Presenter<HudVM> {
                 picture: {
                   anchors: place.telemetry.spectrogram,
                   tallest: SPECTROGRAM_TALLEST,
+                  decades: SPECTROGRAM_DECADES,
                   noise: place.noise,
                   peaks: place.telemetry.peaks,
                   glitched: place.telemetry.glitched,

@@ -11,6 +11,7 @@ function spectrum(parts: Partial<SpectrumVM> = {}): SpectrumVM {
   return {
     anchors: [3, 3, 3, 3, 3],
     tallest: 9,
+    decades: 7,
     noise: Seed.parse('7F3A-91C2-0B4D-E6A8') ?? new Seed(1, 2),
     peaks: [],
     glitched: false,

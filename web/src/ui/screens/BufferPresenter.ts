@@ -4,6 +4,7 @@ import type { FrameOf } from '#ui/FrameOf.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
+import { BACK_KEY_WORD } from './BackKeyWord.ts';
 import type { BufferVM } from './BufferVM.ts';
 
 /** The prompt this screen claims — the engine's stable key for it. */
@@ -70,7 +71,7 @@ export class BufferPresenter implements Presenter<BufferVM> {
       frame: this.#frame.of(snapshot.place),
       heading,
       count: { label: 'Fragments', value: String(buffer.size) },
-      tally: { label: 'Resonant', value: String(buffer.resonant) },
+      tally: { label: RESONANT, value: String(buffer.resonant) },
       empty: rows.length === 0 ? 'Nothing carried yet.' : '',
       rows,
       hint: 'Tap one fragment, then another: they merge into a hybrid and give 15 Coherence back.',
@@ -91,6 +92,6 @@ export class BufferPresenter implements Presenter<BufferVM> {
 
   /** The way back, as the card's keys name it. */
   #docked(option: GameOption): OptionVM {
-    return { id: option.id, key: option.key.toUpperCase(), label: 'BACK', opposite: '' };
+    return { id: option.id, key: option.key.toUpperCase(), label: BACK_KEY_WORD, opposite: '' };
   }
 }

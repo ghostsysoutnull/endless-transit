@@ -281,6 +281,7 @@ describe('HudPresenter.toViewModel — what a room shows (Room.groovy:278-295; t
         picture: {
           anchors: [3, 1, 9, 4, 2],
           tallest: 9,
+          decades: 7,
           noise: ROOM.place?.noise,
           peaks: [],
           glitched: false,

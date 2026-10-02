@@ -8,6 +8,8 @@ import type { SpectralPeak } from '#engine/rules/Telemetry.ts';
 export interface SpectrumVM {
   readonly anchors: readonly number[];
   readonly tallest: number;
+  /** How many decades the axis spans: the ticks under the baseline. */
+  readonly decades: number;
   readonly noise: Seed;
   readonly peaks: readonly SpectralPeak[];
   readonly glitched: boolean;

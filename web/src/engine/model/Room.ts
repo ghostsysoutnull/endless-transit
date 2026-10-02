@@ -43,7 +43,7 @@ const READER = new FragmentReader();
 /** The free lottery (Guide:187-188; Room.groovy:71-72): three moves in ten win, one to ten million hertz; rolled on the old game's own branch key. */
 const LOTTERY = 'action';
 const WIN = 0.3;
-const PRIZE = { min: 1_000_000, max: 9_999_999 };
+export const PRIZE = { min: 1_000_000, max: 9_999_999 };
 /** Below this many degrees a room is drawn cold (U03; the mock's line). */
 const COLD = 8;
 /** The scan's WAVE column (ScanCommand.groovy:188-189): resonant, plain, and degraded under an anomaly. */
@@ -140,12 +140,13 @@ export class Room extends Location {
   }
 
   /** A room is the kind that holds things: its relics and its furniture. */
-  override glitched(): boolean {
-    return this.#apartment.anomaly();
-  }
-
   override contents(): Contents {
     return { objects: this.objects(), furniture: this.furniture() };
+  }
+
+  /** The apartment's anomaly glitches every reading taken in its rooms. */
+  override glitched(): boolean {
+    return this.#apartment.anomaly();
   }
 
   /** The relic the apartment dealt here under this key, at what it is worth in this room — taken or not. */

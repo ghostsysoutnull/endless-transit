@@ -1,4 +1,3 @@
-import type { Seed } from '#engine/rng/Seed.ts';
 import type { Painter } from './Painter.ts';
 import type { Palette } from './Palette.ts';
 import type { Picture, PictureSize } from './Picture.ts';
@@ -9,9 +8,8 @@ const HEIGHT = 80;
 const BAR = 5;
 const GAP = 2;
 const BASELINE = 0.76;
-/** The faint lines behind the bars, and the decades of the axis (one hertz to ten million) marked under it. */
+/** The faint lines behind the bars. */
 const GRID = 3;
-const DECADES = 7;
 /** The floor's share of the strip, how far a bar may sit off its line, how far it swings each cycle, and the least it shows. */
 const FLOOR_SHARE = 0.3;
 const JITTER = 0.4;
@@ -38,8 +36,6 @@ const GLITCH_PACE = 3;
 const TEARS = 3;
 const TEAR_SHIFT = 10;
 const FLICKER = 0.7;
-/** A seed's draw as a fraction: the seed deals whole numbers, this many steps make the fraction. */
-const STEPS = 1000;
 
 /** One bar as the frame sets it: where it stands, how high, and whether a resonant peak owns it. */
 interface Bar {
@@ -75,8 +71,8 @@ export class SpectrumPicture implements Picture<SpectrumVM> {
     }
     painter.fillStyle = palette('rule-hi');
     painter.fillRect(0, base, width, 1);
-    for (let decade = 0; decade <= DECADES; decade++) {
-      painter.fillRect(Math.round(((width - 1) * decade) / DECADES), height - 4, 1, 4);
+    for (let decade = 0; decade <= vm.decades; decade++) {
+      painter.fillRect(Math.round(((width - 1) * decade) / vm.decades), height - 4, 1, 4);
     }
     const bars = this.#bars(vm, width, phase);
     const pace = vm.glitched ? GLITCH_PACE : 1;
@@ -85,10 +81,10 @@ export class SpectrumPicture implements Picture<SpectrumVM> {
     const tears = vm.noise.branch('tear');
     for (let k = 0; k < TEARS; k++) {
       const tear = tears.branch(k);
-      const y = Math.round(fraction(tear.branch('y')) * base);
-      const tall = 3 + Math.round(fraction(tear.branch('tall')) * 6);
+      const y = Math.round(tear.branch('y').fraction() * base);
+      const tall = 3 + Math.round(tear.branch('tall').fraction() * 6);
       const shift = Math.round(
-        (fraction(tear.branch('shift')) - 0.5) *
+        (tear.branch('shift').fraction() - 0.5) *
           2 *
           TEAR_SHIFT *
           Math.sin(2 * Math.PI * pace * (phase + k / TEARS)),
@@ -121,9 +117,9 @@ export class SpectrumPicture implements Picture<SpectrumVM> {
       const bar = noise.branch(i);
       const t = count === 1 ? 0 : i / (count - 1);
       const line = this.#onLine(vm, t) * FLOOR_SHARE;
-      const from = clamp(line * (1 - JITTER / 2 + JITTER * fraction(bar.branch('off'))));
-      const to = clamp(from + (fraction(bar.branch('swing')) - 0.5) * swing);
-      const wave = 0.5 - 0.5 * Math.cos(2 * Math.PI * pace * (phase + fraction(bar.branch('phase'))));
+      const from = clamp(line * (1 - JITTER / 2 + JITTER * bar.branch('off').fraction()));
+      const to = clamp(from + (bar.branch('swing').fraction() - 0.5) * swing);
+      const wave = 0.5 - 0.5 * Math.cos(2 * Math.PI * pace * (phase + bar.branch('phase').fraction()));
       const floor = Math.max(FLOOR, from + (to - from) * wave);
       const peak = this.#peakAt(vm, t);
       const level = clamp(Math.max(floor, peak.height + floor * (1 - peak.height)));
@@ -200,10 +196,6 @@ export class SpectrumPicture implements Picture<SpectrumVM> {
     const high = anchors[index + 1] ?? low;
     return (low + (high - low) * (span - index)) / vm.tallest;
   }
-}
-
-function fraction(seed: Seed): number {
-  return seed.range(0, STEPS) / STEPS;
 }
 
 function clamp(value: number): number {

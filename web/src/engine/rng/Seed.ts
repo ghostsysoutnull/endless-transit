@@ -5,6 +5,7 @@ const RESERVED = '#';
 const RANGE_DRAW = `${RESERVED}range`;
 const PICK_DRAW = `${RESERVED}pick`;
 const PROBABILITY_DRAW = `${RESERVED}probability`;
+const FRACTION_DRAW = `${RESERVED}fraction`;
 
 /**
  * A point in the generator's tree: 64 bits, held as two unsigned 32-bit halves.
@@ -88,6 +89,11 @@ export class Seed {
     const item = items[Math.floor(this.#derive(PICK_DRAW).#fraction() * items.length)];
     if (item === undefined) throw new RangeError('pick needs a list with at least one item');
     return item;
+  }
+
+  /** A share in [0, 1): where this seed falls, for a picture to place or scale something by. */
+  fraction(): number {
+    return this.#derive(FRACTION_DRAW).#fraction();
   }
 
   probability(chance: number): boolean {

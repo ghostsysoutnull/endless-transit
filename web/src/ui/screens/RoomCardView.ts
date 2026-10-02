@@ -62,6 +62,7 @@ export class RoomCardView implements RoomCard {
     if (panel) this.#back = true;
     this.#more = false;
     this.#count = 0;
+    this.#went = undefined;
     this.#steps += 1;
   }
 
@@ -69,6 +70,7 @@ export class RoomCardView implements RoomCard {
     this.#scene = '';
     this.#back = false;
     this.#more = false;
+    this.#went = undefined;
     this.#busy = false;
     this.#steps += 1;
   }
@@ -263,13 +265,10 @@ export class RoomCardView implements RoomCard {
     return face instanceof HTMLElement ? face : undefined;
   }
 
-  /** The turn to the back is drawn afresh and remembered; the turn back to the picture replays it. */
-  #pickTurn(noise: Seed, decay: number, toBack: boolean): CardTurn {
+  /** The turn to the back is drawn afresh; the turn back to the picture is the one the card went by. */
+  #turnFor(noise: Seed, decay: number, toBack: boolean): CardTurn {
     if (!toBack && this.#went !== undefined) return this.#went;
-    const turn = this.#turns.pick(noise, decay, this.#count, this.#went?.key() ?? '');
-    this.#count += 1;
-    this.#went = turn;
-    return turn;
+    return this.#turns.pick(noise, decay, this.#count, this.#went?.key() ?? '');
   }
 
   /** Turns the card to the face asked for: both faces show while the turn plays, then the screen is drawn again. */
@@ -282,7 +281,12 @@ export class RoomCardView implements RoomCard {
     const frame = vm.drawing.frame();
     const turn = this.#motion.reduced()
       ? this.#turns.still()
-      : this.#pickTurn(frame.noise, frame.decay, toBack);
+      : this.#turnFor(frame.noise, frame.decay, toBack);
+    if (toBack && !this.#motion.reduced()) {
+      // A turn drawn to the back is counted, and remembered for the way back.
+      this.#count += 1;
+      this.#went = turn;
+    }
     this.#busy = true;
     const faces = toBack ? { out: front, into: back } : { out: back, into: front };
     const steps = this.#steps;
