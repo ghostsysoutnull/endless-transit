@@ -219,7 +219,7 @@ export class GameEngine {
       {
         keys: [MAP_KEY],
         turn: GLOBAL,
-        options: () => (this.#atTitle() ? [] : [systemOption(MAP, MAP_KEY, 'Map')]),
+        options: () => (this.#atTitle() ? [] : [systemOption(MAP, MAP_KEY, 'Lattice')]),
         run: () => {
           const here = this.#journey.here();
           const map = here === undefined ? null : this.#latticeOf(here, this.#journey.player());

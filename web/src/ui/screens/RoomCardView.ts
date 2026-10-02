@@ -33,6 +33,8 @@ export class RoomCardView implements RoomCard {
   readonly #motion: ReducedMotion;
   readonly #turns: CardTurns;
   #back = false;
+  /** Whether the MORE sheet, the game's own options, lies open over the card. */
+  #more = false;
   /** While a turn plays, taps on the corner wait. */
   #busy = false;
   #scene = '';
@@ -56,6 +58,7 @@ export class RoomCardView implements RoomCard {
     this.#scene = vm.scene;
     if (this.#arrived) this.#back = false;
     if (panel) this.#back = true;
+    this.#more = false;
     this.#count = 0;
     this.#steps += 1;
   }
@@ -63,6 +66,7 @@ export class RoomCardView implements RoomCard {
   forget(): void {
     this.#scene = '';
     this.#back = false;
+    this.#more = false;
     this.#busy = false;
     this.#steps += 1;
   }
@@ -125,7 +129,6 @@ export class RoomCardView implements RoomCard {
             ${parts.panels}
             <p class="name" aria-hidden="true">${vm.place.name}</p>
             ${parts.words} ${parts.lists} ${this.#rows('ways', card.regions.ways, card.ways, parts)}
-            ${this.#rows('game', card.regions.game, card.game, parts)}
           </div>
           <button
             type="button"
@@ -140,6 +143,7 @@ export class RoomCardView implements RoomCard {
             <span aria-hidden="true">${card.corner.toRoom.text}</span>
           </button>
         </section>
+        ${this.#more ? this.#sheet(card, parts) : nothing}
       </div>
       <nav
         class="keys"
@@ -152,7 +156,42 @@ export class RoomCardView implements RoomCard {
         ${card.keys.lead.map((key) => this.#key(key, parts))}
         <span class="slot" id=${MAP_KEY_SLOT}></span>
         ${card.keys.trail.map((key) => this.#key(key, parts))}
+        <button
+          type="button"
+          class="key"
+          data-icon="more"
+          data-testid="card-more"
+          aria-expanded=${this.#more ? 'true' : 'false'}
+          aria-label=${card.more.label}
+          @click=${() => {
+            this.#more = !this.#more;
+            parts.repaint();
+          }}
+        >
+          <span aria-hidden="true">${card.more.text}</span>
+        </button>
       </nav>
+    `;
+  }
+
+  /** The MORE sheet: the game's own options, risen over the foot of the card; a tap on the veil above it closes it. */
+  #sheet(card: RoomCardVM, parts: CardParts): TemplateResult {
+    const close = (): void => {
+      this.#more = false;
+      parts.repaint();
+    };
+    return html`
+      <div class="veil" @click=${close}></div>
+      <section class="more" aria-label=${card.regions.game} data-spot>
+        <h3 class="heading">${card.regions.game}</h3>
+        <div class="rowset">
+          ${repeat(
+            card.game,
+            (option) => option.id,
+            (option) => parts.button(option),
+          )}
+        </div>
+      </section>
     `;
   }
 

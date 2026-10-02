@@ -70,6 +70,7 @@ const CARD = {
   },
   regions: { front: 'The room', back: 'The room in words', keys: 'Keys', ways: 'WAYS', game: 'GAME' },
   keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: 'BACK', forward: 'FORWARD' },
+  more: { text: 'MORE', label: 'More: the game itself' },
 } as const;
 
 /**
@@ -363,7 +364,8 @@ export class HudPresenter implements Presenter<HudVM> {
   /**
    * The room's card (U03e): its keys — Buffer with its count, then Trace, the way back, which is the way out where
    * it is offered and else the engine's move back, and the way forward, each found by its id and shown only where the
-   * room offers it; every other move and every other option of the game goes on its back. No option stands twice.
+   * room offers it; every other move goes on its back, every other option of the game on the MORE sheet. No option
+   * stands twice.
    */
   #card(parts: {
     readonly arrival: string;
@@ -407,6 +409,7 @@ export class HudPresenter implements Presenter<HudVM> {
       corner: CARD.corner,
       arrival: parts.arrival,
       keys,
+      more: CARD.more,
       ways: [...parts.leave, ...parts.moves]
         .filter((option) => !held.has(option.id))
         .map((option) => this.#docked(option)),

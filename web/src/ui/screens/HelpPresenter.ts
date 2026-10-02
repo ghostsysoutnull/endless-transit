@@ -72,7 +72,7 @@ export class HelpPresenter implements Presenter<HelpVM> {
               what: 'What is behind the doors, which floors are near you, or the rooms of the apartment. Costs 1, no step.',
             },
             {
-              term: 'MAP',
+              term: 'LATTICE',
               what: 'Draws the places you can enter from here, you at the centre; dim is unvisited. Nothing inside a room. Costs 1.',
             },
             {

@@ -152,8 +152,11 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const key = this.#mounted?.mapKey;
     if (key === undefined) return;
     const words = this.#mode.keyWords(sketch.mapKey());
+    const word = key.ownerDocument.createElement('span');
+    word.setAttribute('aria-hidden', 'true');
+    word.textContent = words.text;
     key.setAttribute('aria-pressed', String(this.#mode.pressed()));
-    key.replaceChildren(words.text);
+    key.replaceChildren(word);
     key.setAttribute('aria-label', words.label);
   }
 
