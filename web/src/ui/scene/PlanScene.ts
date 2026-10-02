@@ -143,7 +143,18 @@ export class PlanScene implements StagedScene<PlanSketch> {
 
   #setMode(mode: ViewMode): void {
     this.#mode = mode;
-    this.#mounted?.mapKey.setAttribute('aria-pressed', String(mode.pressed()));
+    const sketch = this.#shown?.sketch;
+    if (sketch !== undefined) this.#label(sketch);
+  }
+
+  /** The MAP key says what its next tap does: pressed over the plan, its words the mode's face of the sketch's key. */
+  #label(sketch: PlanSketch): void {
+    const key = this.#mounted?.mapKey;
+    if (key === undefined) return;
+    const words = this.#mode.keyWords(sketch.mapKey());
+    key.setAttribute('aria-pressed', String(this.#mode.pressed()));
+    key.replaceChildren(words.text);
+    key.setAttribute('aria-label', words.label);
   }
 
   /** A new view-model is a new frame of the game: whatever moves stops and a pick in flight is dropped. */
@@ -170,8 +181,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     }
     const canvas = this.#mounted?.canvas;
     canvas?.name(sketch.frame().label);
-    this.#mounted?.mapKey.replaceChildren(sketch.mapKey().text);
-    this.#mounted?.mapKey.setAttribute('aria-label', sketch.mapKey().label);
+    this.#label(sketch);
     canvas?.touch(true);
     this.#run();
   }

@@ -1,4 +1,6 @@
 import type { Framing } from './Framing.ts';
+import type { KeyWords } from './KeyWords.ts';
+import type { MapKey } from './MapKey.ts';
 import type { MinimapView } from './MinimapView.ts';
 import type { PlanCamera } from './PlanCamera.ts';
 import type { PlanSketch } from './PlanSketch.ts';
@@ -23,6 +25,8 @@ export interface ViewMode extends RoomFrame {
   moves(): boolean;
   /** Whether the MAP key stands pressed. */
   pressed(): boolean;
+  /** The MAP key's words in this mode: the face that names what its next tap does. */
+  keyWords(key: MapKey): KeyWords;
   /** The other mode. */
   flipped(): ViewMode;
 }

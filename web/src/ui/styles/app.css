@@ -2042,7 +2042,9 @@ html:has(.world[data-card]) {
   color: var(--yl);
 }
 
+/* Over the plan the key is the way back in: a magnifier with a plus, to zoom into the room. */
 .keys .mapkey[aria-pressed='true'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='8.5' cy='8.5' r='5.5'/%3E%3Cpath d='M12.5 12.5 17.5 17.5M8.5 5.5v6M5.5 8.5h6'/%3E%3C/svg%3E");
   border-color: var(--cy);
   color: var(--cy);
 }

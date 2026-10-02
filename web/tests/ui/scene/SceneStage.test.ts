@@ -48,7 +48,7 @@ function aPlanFrame(address: string): PlanVM {
     doors: [],
     exits: [],
     relics: [],
-    mapKey: { text: 'MAP', label: 'Apartment plan' },
+    mapKey: { toPlan: { text: 'MAP', label: 'Apartment plan' }, toRoom: { text: 'ROOM', label: 'Back into the room' } },
   };
 }
 
