@@ -218,9 +218,12 @@ body {
 }
 
 .pad {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 6px;
 }
 
 .pb {
@@ -881,70 +884,6 @@ details.desc[open] > summary {
   color: var(--dim);
   font-family: var(--sans);
   font-size: 12.5px;
-}
-
-/* The pad (U02, Decision 7): a list of places that go by their numbers — a building's floors — as keys of
-   numbers, a thumb each; past twenty, the tens' tabs under the keys (the first screen keeps a key in view). */
-.pad {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: 6px;
-}
-
-.pad .key,
-.tens .ten {
-  all: unset;
-  box-sizing: border-box;
-  width: 100%;
-  min-height: var(--tap);
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--rule-hi);
-  background: var(--panel);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 15px;
-  cursor: pointer;
-  user-select: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.pad .key.seen {
-  color: var(--dim);
-}
-
-.pad .key.you {
-  border-color: var(--yl);
-  color: var(--yl);
-}
-
-.pad .key[data-lit],
-.pad .key:focus-visible,
-.tens .ten:focus-visible {
-  border-color: var(--frame);
-  outline: 2px solid var(--frame);
-  outline-offset: -2px;
-}
-
-.tens {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.tens .ten {
-  font-size: 13px;
-  color: var(--dim);
-}
-
-.tens .ten[aria-pressed='true'] {
-  border-color: var(--frame);
-  color: var(--text);
 }
 
 /* The slider over a drawn place (U02): the picture draws it; this is the thumb-sized control a reader and a
@@ -2355,7 +2294,10 @@ html:has(.world[data-card]) {
   inset: auto 0 0;
   z-index: 1;
   box-sizing: border-box;
-  width: min(720px, calc(100% - max(16px, env(safe-area-inset-left)) - max(16px, env(safe-area-inset-right))));
+  width: min(
+    720px,
+    calc(100% - max(16px, env(safe-area-inset-left)) - max(16px, env(safe-area-inset-right)))
+  );
   margin-inline: auto;
   padding-block: 8px max(8px, env(safe-area-inset-bottom));
   background: linear-gradient(to bottom, rgba(8, 12, 13, 0), var(--ground) 10px);

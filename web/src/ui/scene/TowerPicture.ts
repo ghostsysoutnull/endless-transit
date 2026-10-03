@@ -202,8 +202,7 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     );
     const row = (bottom - top) / visible;
     const gauge = vm.children.length > 0;
-    const numbers =
-      Math.max(...tower.rows.map((each) => each.level.label().length)) * DIGIT + NUMBERS_ROOM;
+    const numbers = Math.max(...tower.rows.map((each) => each.level.label().length)) * DIGIT + NUMBERS_ROOM;
     const width = size.width - numbers - (gauge ? GAUGE_ROOM : MARGIN);
     const shaft = Math.min(GAUGE, width * 0.13);
     const inner = numbers + shaft;

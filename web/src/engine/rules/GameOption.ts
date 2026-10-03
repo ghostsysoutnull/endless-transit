@@ -1,11 +1,5 @@
 import { BACK_MOVE } from '#engine/model/BackMove.ts';
-import {
-  CORRIDOR_MOVE,
-  DESCEND_MOVE,
-  DOWN_MOVE,
-  ELEVATOR_MOVE,
-  UP_MOVE,
-} from '#engine/model/FloorMoves.ts';
+import { CORRIDOR_MOVE, DESCEND_MOVE, DOWN_MOVE, ELEVATOR_MOVE, UP_MOVE } from '#engine/model/FloorMoves.ts';
 import { FORWARD_MOVE } from '#engine/model/ForwardMove.ts';
 import type { Fact } from '#engine/model/Fact.ts';
 

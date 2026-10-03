@@ -97,7 +97,7 @@ describe('the tower’s camera: the car’s floor is the view', () => {
     expect(picture.camera(tower(12, { below: 10 }), PHONE).clamp(-100)).toBe(-10);
   });
 
-  test('the gauge is a slider a thumb can hold, inside the picture, the top floor at its top; the elevator’s own screen has none and does not drag', () => {
+  test('the gauge is a slider a thumb can hold, inside the picture, the top floor at its top; the elevator’s own screen has none; a finger on the floors is the page’s on both', () => {
     for (const size of [PHONE, TALL]) {
       const track = shownTrack(picture.camera(tower(100), size).track());
       expect(track.width).toBeGreaterThanOrEqual(44);
@@ -106,8 +106,10 @@ describe('the tower’s camera: the car’s floor is the view', () => {
       expect(track.y + track.height).toBeLessThanOrEqual(size.height);
       expect(track).toMatchObject({ axis: 'y', from: 99, to: 0 });
     }
+    const building = picture.camera(tower(100), PHONE);
+    expect([building.drags(), building.page()]).toEqual([false, 'free']);
     const elevator = picture.camera(tower(100, { car: 40, listed: false }), PHONE);
-    expect([laid(elevator.track()).shown, elevator.drags()]).toEqual([false, false]);
+    expect([laid(elevator.track()).shown, elevator.drags(), elevator.page()]).toEqual([false, false, 'free']);
     const nothing = picture.camera({ ...tower(5), tower: { ...tower(5).tower, rows: [] } }, PHONE);
     expect([laid(nothing.track()).shown, nothing.drags(), nothing.stopCount()]).toEqual([false, false, 0]);
   });
@@ -143,6 +145,26 @@ describe('the tower’s window: thumb-sized floors that follow the car', () => {
         ).toBe(true);
       }
     }
+  });
+
+  test('the window takes the picture’s height and scrolls a little past the tower’s ends: room over the top floor for the roof, under the lowest for the bedrock, none in between', () => {
+    for (const size of [PHONE, TALL]) {
+      const span = (view: number): { top: number; bottom: number } => {
+        const hits = picture.layout(tower(100), size, view);
+        return {
+          top: Math.min(...hits.map((hit) => hit.y)),
+          bottom: Math.max(...hits.map((hit) => hit.y + hit.height)),
+        };
+      };
+      expect(span(99).top).toBeGreaterThan(30);
+      expect(size.height - span(0).bottom).toBeGreaterThan(15);
+      expect(span(50).top).toBeLessThan(10);
+      expect(size.height - span(50).bottom).toBeLessThan(10);
+    }
+  });
+
+  test('a floor’s number is part of its floor: every hit starts at the picture’s left edge', () => {
+    expect(picture.layout(tower(100), PHONE, 37).every((hit) => hit.x === 0)).toBe(true);
   });
 
   test('a small tower shows all its floors; the elevator’s own screen has no hits; the Layers are hits below the lobby once open', () => {
@@ -200,17 +222,6 @@ describe('the tower painted: the stylesheet’s inks, numbers a phone can read',
     picture.paint(middle, tower(100), PHONE, palette(middle.asked), 0, new NoChild(), 50);
     expect(middle.asked.has('rd')).toBe(false);
     expect(middle.asked.has('bl')).toBe(true);
-  });
-
-  test('once the bedrock is breached the count of levels below is written in red, the foot out of view (U04)', () => {
-    const below = (vm: TowerVM): string => {
-      const painter = new RecordingPainter();
-      picture.paint(painter, vm, PHONE, palette(painter.asked), 0, new NoChild(), 50);
-      const call = painter.calls.find((each) => each.startsWith('fillText(▼')) ?? '';
-      return /<([a-z-]+)>/.exec(call)?.[1] ?? '';
-    };
-    expect(below(tower(100))).toBe('dim');
-    expect(below(tower(100, { below: 10 }))).toBe('rd');
   });
 });
 

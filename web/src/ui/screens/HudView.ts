@@ -83,8 +83,6 @@ export class HudView implements View<HudVM> {
   #lit: ChildMark = new NoChild();
   /** The path to the last place shown: the child on it is the one the picture zooms out of. */
   #came = new Retrace([]);
-  /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
-  #group: number | undefined;
   /** The trace column's pictures and its dive (U04), the pole and the view the player picked last (U05). */
   readonly #column: TraceParts;
   /** Which view the open trace shows: the one the player picked last, read when it opens (U05). */
@@ -126,7 +124,7 @@ export class HudView implements View<HudVM> {
   }
 
   /**
-   * Every button of the screen that is also drawn in the picture — a row, a pad key, a move, the way out, a relic's
+   * Every button of the screen that is also drawn in the picture — a row, a move, the way out, a relic's
    * tile — goes through the picture when tapped (U02, U03: it rides, walks or glides there first) and lights its twin
    * while pointed at or focused: one listener each on the screen, before the shell's own router hears the click.
    */
@@ -189,7 +187,6 @@ export class HudView implements View<HudVM> {
     this.#openBands = new Set();
     if (vm.scene !== this.#vm?.scene) {
       this.#lit = new NoChild();
-      this.#group = undefined;
     }
     this.#card.step(vm, this.#bringsPanel(vm));
     this.#keys.close();
@@ -354,12 +351,6 @@ export class HudView implements View<HudVM> {
   #light(mark: ChildMark): void {
     if (mark.equals(this.#lit) || !this.#stage.showing()) return;
     this.#lit = mark;
-    // The pad follows what is lit: dragging the car past a ten shows that ten's floors (the mock's `S.group`).
-    const group =
-      this.#vm?.pad.shown === true
-        ? this.#vm.pad.groups.findIndex((each) => each.keys.some((key) => mark.marks(key.id)))
-        : -1;
-    if (group >= 0) this.#group = group;
     this.#stage.light(mark);
     if (this.#vm !== undefined && this.#container !== undefined)
       render(this.#template(this.#vm), this.#container);
@@ -386,11 +377,6 @@ export class HudView implements View<HudVM> {
 
   #toggleMore(): void {
     this.#more = !this.#more;
-    if (this.#vm !== undefined) this.#paint(this.#vm);
-  }
-
-  #showGroup(index: number): void {
-    this.#group = index;
     if (this.#vm !== undefined) this.#paint(this.#vm);
   }
 
@@ -461,24 +447,20 @@ export class HudView implements View<HudVM> {
                   <section class="travel" aria-label=${vm.regions.travel}>
                     <h3 class="heading">${vm.heading}</h3>
                     ${vm.sealedNote.shown ? html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote.text}</p>` : nothing}
-                    ${
-                      vm.pad.shown
-                        ? this.#pad(vm, vm.pad, drawn)
-                        : html`<ol class="rows">
-                            ${repeat(
-                              vm.rows,
-                              (row) => `${vm.scene}/${row.id}`,
-                              (row) => this.#row(row, vm.sealedTag, drawn),
-                            )}
-                          </ol>`
-                    }
+                    <ol class="rows">
+                      ${repeat(
+                        vm.rows,
+                        (row) => `${vm.scene}/${row.id}`,
+                        (row) => this.#row(row, vm.sealedTag, drawn),
+                      )}
+                    </ol>
                   </section>
                 `
           }
           ${this.#aside(vm)}
         </div>
-        ${vm.keys.shown ? this.#keybar(vm.keys, vm.bar) : this.#dock(vm)}
-        ${this.#debug(vm)} ${this.#build(vm)}
+        ${vm.keys.shown ? this.#keybar(vm.keys, vm.bar) : this.#dock(vm)} ${this.#debug(vm)}
+        ${this.#build(vm)}
       </div>
     `;
   }
@@ -493,7 +475,9 @@ export class HudView implements View<HudVM> {
         data-icon=${move.icon === '' ? nothing : move.icon}
         ?data-lit=${this.#lit.marks(move.id)}
       >
-        ${move.key === '' ? nothing : html`<kbd aria-hidden="true">${move.key}</kbd>`}<span>${move.label}</span>
+        ${move.key === '' ? nothing : html`<kbd aria-hidden="true">${move.key}</kbd>`}<span
+          >${move.label}</span
+        >
       </button>
     `;
   }
@@ -653,7 +637,9 @@ export class HudView implements View<HudVM> {
 
   /** The place's description, whole. */
   #description(vm: HudVM): TemplateResult {
-    return html`<div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>`;
+    return html`<div class="desc">
+      ${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}
+    </div>`;
   }
 
   /** The place's description folded to its first line, which opens the rest on a tap — a view control; folded again at each new place. */
@@ -1041,55 +1027,6 @@ export class HudView implements View<HudVM> {
         }
         ${map === null ? nothing : this.#map(map, 'pane', 'pane-map', map.label)}
       </aside>
-    `;
-  }
-
-  /**
-   * The pad (U02): the shown group's keys — a real button each, its number shown and its row's words for a
-   * reader, lighting its floor like a row — then, past twenty, a tab per ten; a tab only shows its group.
-   */
-  #pad(vm: HudVM, pad: Extract<HudVM['pad'], { readonly shown: true }>, drawn: boolean): TemplateResult {
-    const shown = Math.min(this.#group ?? pad.open, pad.groups.length - 1);
-    const group = pad.groups[shown];
-    return html`
-      <ol class="pad">
-        ${repeat(
-          group?.keys ?? [],
-          (key) => `${vm.scene}/${key.id}`,
-          (key) => html`
-            <li>
-              <button
-                type="button"
-                class=${['key', key.current ? 'you' : '', key.visited ? 'seen' : ''].join(' ').trim()}
-                data-option=${key.id}
-                ?data-lit=${drawn && this.#lit.marks(key.id)}
-              >
-                <span class="num" aria-hidden="true">${key.number}</span><span class="vh">${key.spoken}</span>
-              </button>
-            </li>
-          `,
-        )}
-      </ol>
-      ${
-        pad.groups.length < 2
-          ? nothing
-          : html`<div class="tens" role="group" aria-label=${pad.label}>
-              ${pad.groups.map(
-                (each, index) => html`
-                  <button
-                    type="button"
-                    class="ten"
-                    aria-pressed=${index === shown ? 'true' : 'false'}
-                    @click=${() => {
-                      this.#showGroup(index);
-                    }}
-                  >
-                    ${each.label}
-                  </button>
-                `,
-              )}
-            </div>`
-      }
     `;
   }
 

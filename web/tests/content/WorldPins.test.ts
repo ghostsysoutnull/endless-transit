@@ -79,7 +79,7 @@ test('seed 0000-1234-0000-4660, third child all the way down', () => {
     'city: Blacktown',
     'street: Low Path',
     'vibe: neon/industrial, then rust/atomic, Ceremonial @ 0.9',
-    'buildings: 8, first: StripWell',
+    'buildings: 10, first: StripWell',
     'building 2: Fluorescent Terminal, 7 floors, 2 doors, corridor theme neon, top floor Peak observatory',
     'doors: Pitted Concrete | Synth-Glass Slab, scorched',
     'room: Synthetic Memory Well (7 rooms), You are in a circular nave beneath a dark dome. The walls are gray corrugated plastic over flickering tubes. The space is illuminated by sparks arcing from an open junction.',

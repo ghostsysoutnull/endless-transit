@@ -42,7 +42,6 @@ import type { Panel } from './Panel.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import { DepthNumber } from './DepthNumber.ts';
 import type { Drawings } from './Drawings.ts';
-import type { Pads } from './Pads.ts';
 import type { PoleWords } from './PoleWords.ts';
 import type { RoomCardVM } from './RoomCardVM.ts';
 
@@ -128,14 +127,12 @@ export class HudPresenter implements Presenter<HudVM> {
   readonly #frame: FrameOf;
   readonly #masthead: Masthead;
   readonly #drawings: Drawings;
-  readonly #pads: Pads;
   readonly #pole: PoleWords;
 
-  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings, pads: Pads, pole: PoleWords) {
+  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings, pole: PoleWords) {
     this.#masthead = masthead;
     this.#frame = frame;
     this.#drawings = drawings;
-    this.#pads = pads;
     this.#pole = pole;
   }
 
@@ -292,7 +289,6 @@ export class HudPresenter implements Presenter<HudVM> {
       card,
       keys,
       bar,
-      pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows: listed,
       moves,

@@ -31,7 +31,7 @@ export class DrawnTower implements Drawing {
   }
 
   /** The tower is its own list: a floor is picked on the picture, so no list stands beside it. */
-  beside<T>(): readonly T[] {
+  beside(): readonly never[] {
     return [];
   }
 }

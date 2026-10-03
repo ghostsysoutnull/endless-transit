@@ -8,6 +8,7 @@ describe('a camera that stands still (the street): the view never moves, going i
     const camera: SceneCamera = new StillCamera();
     expect([camera.rest(), camera.clamp(5)]).toEqual([0, 0]);
     expect(camera.drags()).toBe(false);
+    expect(camera.page()).toBe('free');
     expect(camera.zooms()).toBe(true);
     expect(laid(camera.track()).shown).toBe(false);
     expect(camera.stopCount()).toBe(0);

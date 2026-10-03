@@ -30,6 +30,8 @@ const WIDTH = 0.62;
  * along it. The room before the first building and after the last, in slots.
  */
 const SLOT = 72;
+/** A row whose shared-out slots come within this share of that width stands still as it is, rather than slide by a few pixels. */
+const NEAR = 0.9;
 const LEAD = 0.8;
 const ENDS = 0.6;
 /** The slide: a release coasts for 0.3 s and settles in 380 ms; a ride of d slots takes 260 + 160·√d ms, at most 1.2 s. */
@@ -138,7 +140,8 @@ export class StreetPicture implements ScenePicture<StreetVM> {
   /** The row: how wide a slot is — the picture's width shared out, or the least a building keeps its shape in — and how many slots the view can slide by. */
   #row(vm: StreetVM, size: PictureSize): { readonly slot: number; readonly reach: number } {
     const slots = vm.children.length + ENDS;
-    const slot = Math.max(SLOT, size.width / slots);
+    const shared = size.width / slots;
+    const slot = shared >= SLOT * NEAR ? shared : SLOT;
     return { slot, reach: Math.max(0, slots - size.width / slot) };
   }
 

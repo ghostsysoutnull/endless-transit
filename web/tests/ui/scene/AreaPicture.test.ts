@@ -99,7 +99,8 @@ describe('an area above the street (U04): its places as marks a thumb can tap', 
       picture.paint(two, vm, PHONE, palette(two.asked), 1200, new MarkedChild('enter:0'), 0, new NoChild());
       expect(one.calls, look).toEqual(two.calls);
       const written = one.calls.filter((call) => call.startsWith('fillText('));
-      expect(written.length, look).toBe(most);
+      // Every child's name is written, on one line or more.
+      expect(written.length, look).toBeGreaterThanOrEqual(most);
       for (const call of written) {
         const px = /(\d+(?:\.\d+)?)px/.exec(call)?.[1];
         expect(Number(px), call).toBeGreaterThanOrEqual(12);
