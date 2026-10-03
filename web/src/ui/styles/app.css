@@ -24,6 +24,14 @@
   --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --tap: 48px;
+  /* The page's one column and its gutters; an icon key, the row of keys fixed at the screen's foot (a key and the
+     room over it) and the bar that arrives over that row (a button and its gap): what stands on the page, or sizes
+     itself around the row, reads these. */
+  --column: 720px;
+  --gutter: 16px;
+  --key: 50px;
+  --key-row: calc(var(--key) + 8px);
+  --key-bar: 62px;
   color-scheme: dark;
 }
 
@@ -49,7 +57,7 @@ body {
   font-size: 14px;
   line-height: 1.45;
   padding-block: max(14px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-bottom));
-  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
 }
 
 [hidden] {
@@ -73,7 +81,7 @@ body {
 }
 
 .app {
-  max-width: 720px;
+  max-width: var(--column);
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -218,9 +226,12 @@ body {
 }
 
 .pad {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 6px;
 }
 
 .pb {
@@ -734,6 +745,11 @@ body {
   display: none;
 }
 
+/* The facts under the place's name: the first thing read, on as many lines as they need. */
+.head .tags {
+  margin-top: 5px;
+}
+
 .tag {
   overflow-wrap: anywhere;
 }
@@ -804,6 +820,44 @@ body {
   display: none;
 }
 
+/* The description folded to its first line (a place with a list under its picture): a tap on the line opens the rest. */
+details.desc > summary {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+details.desc > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.desc > summary > span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+details.desc:not([open]) > summary > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+details.desc > summary::after {
+  content: '▾';
+  flex: none;
+  color: var(--dim);
+}
+
+details.desc[open] > summary::after {
+  content: '▴';
+}
+
+details.desc[open] > summary {
+  margin-bottom: 6px;
+}
+
 .desc p {
   margin: 0 0 6px;
   max-width: 62ch;
@@ -838,70 +892,6 @@ body {
   color: var(--dim);
   font-family: var(--sans);
   font-size: 12.5px;
-}
-
-/* The pad (U02, Decision 7): a list of places that go by their numbers — a building's floors — as keys of
-   numbers, a thumb each; past twenty, the tens' tabs under the keys (the first screen keeps a key in view). */
-.pad {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
-  gap: 6px;
-}
-
-.pad .key,
-.tens .ten {
-  all: unset;
-  box-sizing: border-box;
-  width: 100%;
-  min-height: var(--tap);
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--rule-hi);
-  background: var(--panel);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 15px;
-  cursor: pointer;
-  user-select: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.pad .key.seen {
-  color: var(--dim);
-}
-
-.pad .key.you {
-  border-color: var(--yl);
-  color: var(--yl);
-}
-
-.pad .key[data-lit],
-.pad .key:focus-visible,
-.tens .ten:focus-visible {
-  border-color: var(--frame);
-  outline: 2px solid var(--frame);
-  outline-offset: -2px;
-}
-
-.tens {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.tens .ten {
-  font-size: 13px;
-  color: var(--dim);
-}
-
-.tens .ten[aria-pressed='true'] {
-  border-color: var(--frame);
-  color: var(--text);
 }
 
 /* The slider over a drawn place (U02): the picture draws it; this is the thumb-sized control a reader and a
@@ -1729,6 +1719,21 @@ body {
   font-size: 13px;
 }
 
+/* A move with a drawn icon (the way into the corridor): the icon beside its words, cut out of its own ink like a key's. */
+.moves .pb[data-icon]::before {
+  content: '';
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--ab);
+  background: currentColor;
+  mask: var(--icon) center / contain no-repeat;
+}
+
+.moves .pb[data-icon] {
+  border-color: var(--ab);
+}
+
 /* The dock's fold: one button opens the rest (I08); it looks like the others, dashed to say it is not a move. */
 .dock .pb.more {
   border-style: dashed;
@@ -1749,7 +1754,11 @@ body {
   flex-wrap: wrap;
   gap: 8px;
   padding-block: 8px max(8px, env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, rgba(8, 12, 13, 0), var(--ground) 10px);
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--ground) 0%, transparent),
+    var(--ground) 10px
+  );
 }
 
 .dock .pb {
@@ -1887,7 +1896,19 @@ body {
    (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
 .world[data-drawn] > .scene {
   order: -2;
-  height: clamp(200px, calc(100dvh - 381px), 44dvh);
+  height: clamp(200px, calc(100dvh - 349px - var(--foot)), 44dvh);
+}
+
+/* A picture with no list beside it (the tower, which is its own list of floors): it runs from the name down to the
+   keys fixed at the screen's foot — whatever stands there (`--foot`: the row, and the bar while it is over it) — and
+   stops one button short where a move stands under it (the way into the corridor), so that move stays on the first
+   screen. The name's facts are taken at two lines, what a floor's four come to on a phone. */
+.world[data-drawn]:not(:has(.travel)) > .scene {
+  height: max(200px, calc(100dvh - 232px - var(--foot)));
+}
+
+.world[data-drawn]:not(:has(.travel)):has(.cap > .moves) > .scene {
+  height: max(200px, calc(100dvh - 302px - var(--foot)));
 }
 
 .world[data-drawn] .travel {
@@ -2180,7 +2201,7 @@ html:has(.world[data-card]) {
   position: relative;
   box-sizing: border-box;
   min-width: var(--tap);
-  min-height: 50px;
+  min-height: var(--key);
   padding: 4px;
   display: flex;
   flex-direction: column;
@@ -2268,22 +2289,130 @@ html:has(.world[data-card]) {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E");
 }
 
-.card > .more .keys .key > span {
+:is(.card, .keybar) > .more .keys .key > span {
   display: block;
   font-size: 10px;
   letter-spacing: 0.04em;
 }
 
-.card > .more .keys .key[data-icon='title'] {
+:is(.card, .keybar) > .more .keys .key[data-icon='title'] {
   margin-inline-start: 8px;
 }
 
+/* The keys in place of the dock: fixed to the bottom edge of the screen itself, as wide as the page's column, so
+   they never scroll with the page; the page keeps their height free at its end. The MORE sheet rises over them and
+   the veil, over the whole screen above, closes it on a tap. */
+.world .keybar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 1;
+  box-sizing: border-box;
+  width: min(
+    var(--column),
+    calc(
+      100% - max(var(--gutter), env(safe-area-inset-left)) - max(var(--gutter), env(safe-area-inset-right))
+    )
+  );
+  margin-inline: auto;
+  padding-block: 8px max(8px, env(safe-area-inset-bottom));
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--ground) 0%, transparent),
+    var(--ground) 10px
+  );
+}
+
+.world:has(> .keybar) {
+  /* What stands fixed at the screen's foot, for whatever sizes itself around it. */
+  --foot: var(--key-row);
+
+  padding-bottom: var(--foot);
+}
+
+/* What `scrollIntoView` keeps clear where the keys stand: their row, and the bar over it while it is there. */
+html:has(.keybar) {
+  scroll-padding-block: 8px calc(var(--key-row) + 24px);
+}
+
+html:has(.keybar > .alarm) {
+  scroll-padding-block: 8px calc(var(--key-row) + var(--key-bar) + 24px);
+}
+
+/* A move that arrives (the breach): a wide red bar just over the keys, sliding in when it is offered and pulsing
+   while it stands; the page keeps its height free too. */
+.keybar > .pb.alarm {
+  position: relative;
+  width: 100%;
+  margin-bottom: 6px;
+  border-color: var(--rd);
+  background: var(--ground);
+  color: var(--rd);
+}
+
+.world:has(> .keybar > .alarm) {
+  --foot: calc(var(--key-row) + var(--key-bar));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .keybar > .pb.alarm {
+    animation:
+      alarm-in 0.35s ease-out,
+      alarm-pulse 1.4s ease-in-out 0.35s infinite;
+  }
+}
+
+@keyframes alarm-in {
+  0% {
+    opacity: 0;
+    translate: 0 100%;
+  }
+}
+
+@keyframes alarm-pulse {
+  50% {
+    background: color-mix(in srgb, var(--rd) 28%, var(--ground));
+    color: var(--wh);
+  }
+}
+
+.keybar > .veil {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 0.35);
+}
+
+.keybar > .keys {
+  position: relative;
+}
+
+.keybar > .more {
+  position: absolute;
+  inset: auto 0 100% 0;
+  padding: 8px;
+  border: 1px solid var(--rule-hi);
+  background: var(--panel);
+}
+
+/* A move's picture, a key's and a move's under a picture alike. The corridor: a hall running away from the eye. */
+:is(.keys .key, .moves .pb)[data-icon='corridor'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M2.5 2.5h15v15h-15zM7.5 7.5h5v5h-5zM2.5 2.5l5 5M17.5 2.5l-5 5M2.5 17.5l5-5M17.5 17.5l-5-5'/%3E%3C/svg%3E");
+}
+
+/* The elevator: a car with its two arrows. A move the strip has no picture for: a plain chevron. */
+:is(.keys .key, .moves .pb)[data-icon='elevator'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Crect x='4' y='2.5' width='12' height='15'/%3E%3Cpath d='M7.5 8.5 10 6l2.5 2.5M7.5 11.5 10 14l2.5-2.5'/%3E%3C/svg%3E");
+}
+
+:is(.keys .key, .moves .pb)[data-icon='move'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M7.5 4.5 13 10l-5.5 5.5'/%3E%3C/svg%3E");
+}
+
 /* The way back and the way forward: plain arrows, one the mirror of the other. */
-.keys .key[data-icon='back'] {
+:is(.keys .key, .moves .pb)[data-icon='back'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M17 10H3M8.5 4.5 3 10l5.5 5.5'/%3E%3C/svg%3E");
 }
 
-.keys .key[data-icon='forward'] {
+:is(.keys .key, .moves .pb)[data-icon='forward'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M3 10h14M11.5 4.5 17 10l-5.5 5.5'/%3E%3C/svg%3E");
 }
 
@@ -2293,7 +2422,10 @@ html:has(.world[data-card]) {
 
 .keys .key[data-icon='out']::before,
 .keys .key[data-icon='back']::before,
-.keys .key[data-icon='forward']::before {
+.keys .key[data-icon='forward']::before,
+.keys .key[data-icon='elevator']::before,
+.keys .key[data-icon='corridor']::before,
+.keys .key[data-icon='move']::before {
   color: var(--ab);
 }
 

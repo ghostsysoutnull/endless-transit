@@ -1,5 +1,7 @@
 import type { TraceStep } from '#engine/rules/TraceStep.ts';
 import { describe, expect, test } from 'vitest';
+import { AreaPortrait } from '#engine/model/AreaPortrait.ts';
+import { CorridorPortrait } from '#engine/model/CorridorPortrait.ts';
 import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { PlanPortrait } from '#engine/model/PlanPortrait.ts';
 import { RoomLook } from '#engine/model/RoomLook.ts';
@@ -352,12 +354,19 @@ describe('HudPresenter.toViewModel — options stay data', () => {
     expect(presenter.toViewModel(STREET).rows[0]?.label).toBe('Ornate Sanctum');
   });
 
-  test('the moves a place offers become a strip of buttons between the panel and the list, in the router’s options before the dock', () => {
+  test('where no picture draws the place, the moves it offers become a strip of buttons between the panel and the list, in the router’s options before the dock', () => {
     const vm = presenter.toViewModel(FLOOR);
     // The opposite rides along as data: the shell keeps the focus off it when this button vanishes.
     expect(vm.moves).toEqual([
-      { id: 'move:elevator', key: 'B', label: 'BACK TO ELEVATOR', opposite: 'move:corridor' },
+      {
+        id: 'move:elevator',
+        key: 'B',
+        label: 'BACK TO ELEVATOR',
+        opposite: 'move:corridor',
+        icon: 'elevator',
+      },
     ]);
+    expect(vm.keys.shown).toBe(false);
     expect(vm.dock).toEqual([
       { id: 'leave', key: 'L', label: '▲ LEAVE FLOOR', opposite: '' },
       { id: 'to-title', key: 'T', label: 'TITLE SCREEN', opposite: '' },
@@ -481,15 +490,16 @@ describe('HudPresenter.toViewModel — the ritual (I07): the scan panel and the 
   });
 });
 
-describe('HudPresenter.toViewModel — the picture and the pad (U01b, U02): made by their own parts', () => {
-  test('the drawing carries the player’s tear strength, and a building’s floors come as a pad', () => {
+describe('HudPresenter.toViewModel — the picture (U01b, U02): made by its own part', () => {
+  test('the drawing carries the player’s tear strength; a building’s floors stand in no list beside the tower, and each stays on offer', () => {
     const falling = {
       ...towerSnapshot(16, 5),
       player: playerSummary({ coherence: 35, band: 'degraded', decay: 0.5 }),
     };
     const vm = presenter.toViewModel(falling);
     expect(vm.drawing.frame().decay).toBe(0.5);
-    expect(shown(vm.pad).groups[0]?.keys).toHaveLength(16);
+    expect(vm.rows).toEqual([]);
+    expect(vm.options.filter((each) => each.id.startsWith('enter:'))).toHaveLength(16);
   });
 });
 
@@ -874,15 +884,84 @@ describe('HudPresenter.toViewModel — where a place’s moves sit (U03c)', () =
     ]);
     expect(vm.card.arrival).toBe(vm.place.description[0]);
   });
+});
 
-  test('a place not drawn as a plan keeps its moves in the strip, out of the dock', () => {
+describe('HudPresenter.toViewModel — the keys at the foot of a drawn place that is no card', () => {
+  const GAME = [
+    option({ id: 'buffer', key: 'i', label: 'Buffer', role: 'system' }),
+    option({ id: 'trace', key: '', label: 'Trace', role: 'system' }),
+    option({ id: 'to-title', key: 't', label: 'Title screen', role: 'system' }),
+  ];
+
+  /** A shown strip's keys, in order, by option id. */
+  function keysOf(vm: HudVM): string[] {
+    const strip = shown(vm.keys);
+    return [...strip.keys.lead, ...strip.keys.trail].map((key) => key.id);
+  }
+
+  test('a drawn corridor has the keys in place of the dock and the strip: Buffer, Trace, its move back to the elevator, the way out; the game’s own behind MORE', () => {
+    const vm = presenter.toViewModel({
+      ...FLOOR,
+      place: {
+        ...placeOf(FLOOR),
+        portrait: new CorridorPortrait({ shape: 'curved', abyssal: false, doors: [] }),
+      },
+      options: [...FLOOR.options.filter((each) => each.role !== 'system'), ...GAME],
+    });
+    expect(keysOf(vm)).toEqual(['buffer', 'trace', 'move:elevator', 'leave']);
+    expect(shown(vm.keys).keys.trail.map((key) => [key.text, key.icon])).toEqual([
+      ['TRACE', 'trace'],
+      ['ELEVATOR', 'elevator'],
+      ['LEAVE', 'out'],
+    ]);
+    expect(shown(vm.keys).game.map((key) => key.id)).toEqual(['to-title']);
+    expect(vm.moves).toEqual([]);
+    expect(vm.dock).toEqual([]);
+    expect(shown(vm.keys).bar).toEqual([]);
+    expect(vm.card.shown).toBe(false);
+  });
+
+  test('a level above the street has the keys too: the way out last, and a move the strip has no picture for keeps its own words', () => {
+    const vm = presenter.toViewModel({
+      ...PLANET,
+      place: { ...placeOf(PLANET), portrait: new AreaPortrait({ look: 'planet', parts: [], signal: 0 }) },
+      options: [
+        option({ id: 'move:odd', key: '', label: 'Odd way', role: 'move' }),
+        option({ id: 'leave', key: 'l', label: 'Leave Planet', role: 'return' }),
+        ...GAME,
+      ],
+    });
+    expect(keysOf(vm)).toEqual(['buffer', 'trace', 'move:odd', 'leave']);
+    expect(shown(vm.keys).keys.trail[1]).toMatchObject({ text: 'ODD WAY', icon: 'move' });
+    expect(vm.dock).toEqual([]);
+  });
+
+  test('the tower keeps the way into the corridor under its picture, with its words and its icon; its rides have no button and stay on offer; the breach arrives as the bar', () => {
     const tower = towerSnapshot(10, 3);
     const vm = presenter.toViewModel({
       ...tower,
-      options: [...tower.options, option({ id: 'move:up', key: 'u', label: 'Go Up', role: 'move' })],
+      options: [
+        ...tower.options,
+        option({ id: 'move:up', key: 'u', label: 'Go Up', role: 'move', opposite: 'move:down' }),
+        option({ id: 'move:down', key: 'd', label: 'Go Down', role: 'move', opposite: 'move:up' }),
+        option({
+          id: 'move:corridor',
+          key: 'c',
+          label: 'Enter Corridor',
+          role: 'move',
+          opposite: 'move:elevator',
+        }),
+        option({ id: 'breach', key: 'j', label: 'Breach the Bedrock', role: 'move' }),
+      ],
     });
-    expect(vm.moves.map((each) => each.id)).toEqual(['move:up']);
-    expect(vm.dock.map((each) => each.id)).not.toContain('move:up');
-    expect(vm.card.shown).toBe(false);
+    expect(vm.moves).toMatchObject([{ id: 'move:corridor', icon: 'corridor' }]);
+    expect(keysOf(vm)).toEqual(['leave']);
+    expect(shown(vm.keys).bar.map((each) => [each.id, each.label])).toEqual([
+      ['breach', 'BREACH THE BEDROCK'],
+    ]);
+    expect(vm.dock).toEqual([]);
+    expect(vm.options.map((each) => each.id)).toEqual(
+      expect.arrayContaining(['move:corridor', 'move:up', 'move:down', 'breach', 'leave']),
+    );
   });
 });

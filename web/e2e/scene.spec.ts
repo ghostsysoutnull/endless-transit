@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { press, saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { pointInPicture, press, saveText, tapAt, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world: its street is Bright Boulevard, four buildings, the first Ornate Sanctum. */
@@ -21,37 +21,11 @@ async function shoot(page: Page, name: string): Promise<void> {
   await page.screenshot({ path: test.info().outputPath(`${test.info().project.name}-${name}.png`) });
 }
 
-/**
- * A point inside the building the option `id` enters, in page coordinates — found by sweeping the picture
- * with the pointer as a player would and reading which building the scene says is lit.
- */
+/** A point inside the building the option `id` enters, on the picture; a failed test when it is not drawn there. */
 async function pointOf(page: Page, id: string): Promise<{ x: number; y: number }> {
-  await page.getByTestId('scene').scrollIntoViewIfNeeded();
-  const point = await page.getByTestId('scene').evaluate((host, wanted) => {
-    const canvas = host.querySelector('canvas');
-    if (canvas === null) return null;
-    const box = canvas.getBoundingClientRect();
-    const at = (x: number, y: number): void => {
-      canvas.dispatchEvent(new PointerEvent('pointermove', { clientX: x, clientY: y, bubbles: true }));
-    };
-    for (let y = box.top + 2; y < box.bottom; y += 6) {
-      for (let x = box.left + 2; x < box.right; x += 6) {
-        at(x, y);
-        if (host.getAttribute('data-lit') === wanted) {
-          canvas.dispatchEvent(new PointerEvent('pointerleave', { bubbles: true }));
-          // A few pixels further in, clear of the edge the sweep found.
-          return { x: x + 4, y: y + 8 };
-        }
-      }
-    }
-    return null;
-  }, id);
+  const point = await pointInPicture(page, id);
   if (point === null) throw new Error(`no building for ${id} in the picture`);
   return point;
-}
-
-async function tapAt(page: Page, point: { x: number; y: number }, hasTouch: boolean): Promise<void> {
-  await (hasTouch ? page.touchscreen.tap(point.x, point.y) : page.mouse.click(point.x, point.y));
 }
 
 async function kind(page: Page): Promise<string> {
@@ -222,7 +196,7 @@ test('coherence is felt: at a low value the picture tears and the name flickers'
   await shoot(page, 'street-29');
 });
 
-test('the first screen of a drawn street: the name, then the picture, then the list, then the rest of the card', async ({
+test('the first screen of a drawn street: the name with its facts, then the picture, then the list, then the description; the row of buttons at the screen’s foot, there still when the page is scrolled', async ({
   page,
 }) => {
   await plant(page, saveText(SEED, STREET));
@@ -242,13 +216,26 @@ test('the first screen of a drawn street: the name, then the picture, then the l
     const scene = await box('[data-testid="scene"]');
     const row = await box('.rows button[data-option]');
     const tags = await box('.cap .tags');
+    const words = await box('.cap .desc');
     console.log(
       `[scene] ${test.info().project.name} ${String(size.width)}x${String(size.height)}: picture ${String(Math.round(scene.width))}x${String(Math.round(scene.height))} at y=${String(Math.round(scene.y))}, first row bottom=${String(Math.round(row.y + row.height))}`,
     );
-    expect(name.y + name.height).toBeLessThanOrEqual(scene.y);
+    expect(name.y + name.height).toBeLessThanOrEqual(tags.y);
+    expect(tags.y + tags.height).toBeLessThanOrEqual(scene.y);
     expect(scene.y + scene.height).toBeLessThanOrEqual(row.y);
-    expect(row.y + row.height).toBeLessThanOrEqual(tags.y);
+    expect(row.y + row.height).toBeLessThanOrEqual(words.y);
     await expect(page.locator('.rows button[data-option]').first()).toBeInViewport({ ratio: 1 });
+    // The row of buttons is fixed to the bottom edge of the screen: clear of the first row, and never scrolled away.
+    const keys = await box('.keybar .keys');
+    expect(row.y + row.height).toBeLessThanOrEqual(keys.y);
+    expect(size.height - (keys.y + keys.height)).toBeLessThan(40);
+    await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    });
+    expect((await box('.keybar .keys')).y).toBe(keys.y);
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+    });
     await shoot(page, `street-first-screen-${String(size.width)}x${String(size.height)}`);
   }
 });

@@ -16,7 +16,7 @@ const CHILDREN: Readonly<Record<string, readonly [number, number]>> = {
   planet: [2, 8], // PlanetFactory.groovy:65
   country: [2, 10], // CountryFactory.groovy:41
   city: [3, 15], // CityFactory.groovy:45
-  street: [4, 20], // StreetFactory.groovy:30 — 2 to 10 pairs
+  street: [4, 22], // StreetFactory.ts — 2 to 11 pairs (the Groovy game's 2 to 10, raised in the web game)
 };
 
 const registry = realRegistry();

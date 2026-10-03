@@ -7,6 +7,7 @@ import { FixedEntropySource } from '#tests/support/FixedEntropySource.ts';
 import { hudPresenter } from '#tests/support/hudPresenter.ts';
 import { MemorySaveStore } from '#tests/support/MemorySaveStore.ts';
 import { realRegistry } from '#tests/support/world.ts';
+import type { KeyStripVM } from '#ui/screens/KeyStripVM.ts';
 
 const presenter = hudPresenter('golden');
 
@@ -63,18 +64,25 @@ function page(vm: HudVM): string {
       `${telemetry.heading} ${telemetry.sync.text} ${telemetry.spectrogram.label} ${telemetry.spectrogram.picture.anchors.join(' ')} ${telemetry.lines.join(' ')}${telemetry.voice === '' ? '' : ` ${telemetry.voice}`}`,
     );
   }
+  // The row of keys, a card's or a drawn place's own: each key's word and what it says, then the game's behind MORE.
+  const keysLine = (strip: KeyStripVM): string =>
+    `keys: ${[...strip.keys.lead, ...strip.keys.trail].map((key) => `[${key.key}] ${key.text} (${key.label}) ${key.badge}`.trim()).join(' | ')}`;
+  const gameLine = (strip: KeyStripVM): string =>
+    `game: ${strip.game.map((key) => `[${key.key}] ${key.text} (${key.label})`).join(' | ')}`;
   if (vm.card.shown) {
     const card = vm.card;
-    const keys = [...card.keys.lead, ...card.keys.trail];
     lines.push(`arrival: ${card.arrival}`);
-    lines.push(
-      `keys: ${keys.map((key) => `[${key.key}] ${key.text} (${key.label}) ${key.badge}`.trim()).join(' | ')}`,
-    );
+    lines.push(keysLine(card));
     lines.push(`ways: ${card.ways.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
-    lines.push(`game: ${card.game.map((key) => `[${key.key}] ${key.text} (${key.label})`).join(' | ')}`);
+    lines.push(gameLine(card));
     lines.push(
       `corner: ${card.corner.toWords.text} (${card.corner.toWords.label}) | ${card.corner.toRoom.text} (${card.corner.toRoom.label})`,
     );
+  } else if (vm.keys.shown) {
+    lines.push(keysLine(vm.keys));
+    if (vm.keys.bar.length > 0)
+      lines.push(`bar: ${vm.keys.bar.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
+    lines.push(gameLine(vm.keys));
   } else {
     lines.push(`dock: ${vm.dock.map((option) => `[${option.key}] ${option.label}`).join(' | ')}`);
   }

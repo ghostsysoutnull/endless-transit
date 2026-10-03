@@ -58,6 +58,12 @@ describe('a camera that travels: where the view may stand, how long it takes to 
     expect(camera().stopCount()).toBe(10);
   });
 
+  test('a view dragged sideways leaves the page its scroll up and down; one dragged up and down keeps the finger; one that does not drag leaves the page free', () => {
+    expect(camera({ axis: 'x' }).page()).toBe('vertical');
+    expect(camera({ axis: 'y' }).page()).toBe('held');
+    expect(camera({ drag: 0 }).page()).toBe('free');
+  });
+
   test('a finger is measured along the axis it drags on', () => {
     expect(camera().along({ x: 12, y: 40 })).toBe(40);
     expect(camera({ axis: 'x' }).along({ x: 12, y: 40 })).toBe(12);

@@ -28,4 +28,8 @@ export class Undrawn implements Drawing {
   arrange(moves: readonly OptionVM[]): MovesLayout {
     return this.#moves.arrange(moves);
   }
+
+  beside<T>(rows: readonly T[]): readonly T[] {
+    return rows;
+  }
 }

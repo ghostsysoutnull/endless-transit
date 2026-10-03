@@ -51,22 +51,23 @@ const picture = new ScenePictures().street();
 
 describe('the street picture: one row of buildings on a ground line, as the mock draws it, laid out as hit areas', () => {
   for (const size of [PHONE, WIDE]) {
-    test(`4 to 20 buildings at ${String(size.width)} × ${String(size.height)}: one hit each, inside the picture, none overlapping, each anchor inside its hit`, () => {
-      for (let count = 4; count <= 20; count++) {
+    test(`4 to 22 buildings at ${String(size.width)} × ${String(size.height)}: one hit each, a thumb wide, none overlapping, each anchor inside its hit; a row that stands still is whole inside the picture`, () => {
+      for (let count = 4; count <= 22; count++) {
         const hits = picture.layout(street(count), size);
         expect(hits.map((hit) => hit.id)).toEqual(street(count).children.map((child) => child.id));
+        const still = !picture.camera(street(count), size).drags();
         for (const hit of hits) {
           const where = `${String(count)} buildings, ${hit.id}`;
           expect(hit.x, where).toBeGreaterThanOrEqual(0);
           expect(hit.y, where).toBeGreaterThanOrEqual(0);
-          expect(hit.x + hit.width, where).toBeLessThanOrEqual(size.width);
+          if (still) expect(hit.x + hit.width, where).toBeLessThanOrEqual(size.width);
           expect(hit.y + hit.height, where).toBeLessThanOrEqual(size.height);
           expect(hit.anchor.x, where).toBeGreaterThan(hit.x);
           expect(hit.anchor.x, where).toBeLessThan(hit.x + hit.width);
           expect(hit.anchor.y, where).toBeGreaterThan(hit.y);
           expect(hit.anchor.y, where).toBeLessThan(hit.y + hit.height);
-          // One row across the phone: twenty buildings still leave each a slot of its own (the list is the thumb's way in).
-          if (size === PHONE) expect(hit.width, where).toBeGreaterThanOrEqual(13);
+          // However long the row, a building keeps a slot a thumb can tap.
+          expect(hit.width, where).toBeGreaterThanOrEqual(44);
         }
         for (const [index, hit] of hits.entries()) {
           for (const other of hits.slice(index + 1)) {
@@ -76,6 +77,29 @@ describe('the street picture: one row of buildings on a ground line, as the mock
       }
     });
   }
+
+  test('a row longer than the picture slides sideways under a finger and leaves the page its scroll up and down; one that fits stands still', () => {
+    const long = picture.camera(street(22), PHONE);
+    expect([long.drags(), long.page(), long.along({ x: 1, y: 2 }), long.zooms()]).toEqual([
+      true,
+      'vertical',
+      1,
+      true,
+    ]);
+    expect([long.rest(), long.clamp(-5)]).toEqual([0, 0]);
+    const short = picture.camera(street(4), PHONE);
+    expect([short.drags(), short.page()]).toEqual([false, 'free']);
+  });
+
+  test('the slide ends with the last building inside the picture, and a building is entered from the middle of the picture where the row’s ends allow', () => {
+    const vm = street(22);
+    const camera = picture.camera(vm, PHONE);
+    const end = picture.layout(vm, PHONE, camera.clamp(1000)).at(-1);
+    expect((end?.x ?? 0) + (end?.width ?? 0)).toBeLessThanOrEqual(PHONE.width);
+    expect(camera.stopOf('enter:0')).toBe(0);
+    const stop = camera.stopOf('enter:10') ?? 0;
+    expect(picture.layout(vm, PHONE, stop)[10]?.anchor.x).toBeCloseTo(PHONE.width / 2, 5);
+  });
 
   test('one row, like the mock: every building stands on the same ground line, left to right in the list’s order', () => {
     for (const count of [4, 8, 20]) {

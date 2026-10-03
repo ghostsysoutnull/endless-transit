@@ -1,4 +1,5 @@
 import { BACK_MOVE } from '#engine/model/BackMove.ts';
+import { CORRIDOR_MOVE, DESCEND_MOVE, DOWN_MOVE, ELEVATOR_MOVE, UP_MOVE } from '#engine/model/FloorMoves.ts';
 import { FORWARD_MOVE } from '#engine/model/ForwardMove.ts';
 import type { Fact } from '#engine/model/Fact.ts';
 
@@ -22,6 +23,16 @@ export const MOVE_PREFIX = 'move:';
 export const BACK_MOVE_ID = `${MOVE_PREFIX}${BACK_MOVE}`;
 /** The option id of the move forward (a room's): what a screen finds the way on by. */
 export const FORWARD_MOVE_ID = `${MOVE_PREFIX}${FORWARD_MOVE}`;
+/** The option id of the move back to the elevator (a corridor's): what a screen draws its key for. */
+export const ELEVATOR_MOVE_ID = `${MOVE_PREFIX}${ELEVATOR_MOVE}`;
+/** The option id of the move into the corridor (an elevator's): what a screen draws its key for. */
+export const CORRIDOR_MOVE_ID = `${MOVE_PREFIX}${CORRIDOR_MOVE}`;
+/** The option ids of the elevator's rides — up, down, and down into the substrate: what a screen knows them by. */
+export const UP_MOVE_ID = `${MOVE_PREFIX}${UP_MOVE}`;
+export const DOWN_MOVE_ID = `${MOVE_PREFIX}${DOWN_MOVE}`;
+export const DESCEND_MOVE_ID = `${MOVE_PREFIX}${DESCEND_MOVE}`;
+/** The BREACH command's option id: what a screen draws its bar for. */
+export const BREACH_ID = 'breach';
 
 /** A thing the player can do right now — data, never a closure. The engine resolves `id` to the action. */
 export interface GameOption {

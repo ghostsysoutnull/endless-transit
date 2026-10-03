@@ -187,7 +187,7 @@ export class PlanScene implements StagedScene<PlanSketch> {
     const canvas = this.#mounted?.canvas;
     canvas?.name(sketch.frame().label);
     this.#label(sketch);
-    canvas?.touch(true);
+    canvas?.touch('held');
     this.#run();
   }
 

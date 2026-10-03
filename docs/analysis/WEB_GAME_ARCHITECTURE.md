@@ -172,19 +172,27 @@ is a real `<button>` at least 44 × 44 CSS px; nothing depends on hover or a key
 
 **Phone first.** The HUD is one small box (the name, steps, buffer, the Coherence meter), with the depth rail of level
 glyphs under it (U01a: the terminal's readouts, the address, its hash and the seed are gone from the world screen);
-the moves sit under the place's title, the dock is LEAVE + MORE (MORE is a disclosure holding scan, map,
-buffer, trace, help, title, end session) that the next step folds again, and a panel the player asked for (scan,
-map) comes after the list; every screen shows a move without scrolling at 360 × 640. A drawn place (U01b: the
-street) shows the name, then the picture, then the list, then the rest of the card, the picture sized so the first
-row stays above the dock at 360 × 640; its HUD is one thin row. A room is a card (U03e): the drawing says where a
-place's moves sit (`Drawing.arrange`, a `MovesPlace` — `MovesOnCard` for the plan, `MovesInStrip` for the rest — into
-a `MovesLayout`), and where they sit on a card the presenter builds `HudVM.card` (a `RoomCardVM`: the corner's words,
+where no picture draws the place the moves sit under its title and the dock is LEAVE + MORE (MORE is a disclosure
+holding scan, map, buffer, trace, help, title, end session) that the next step folds again; a panel the player asked
+for (scan, map) comes after the list; every screen shows a move without scrolling at 360 × 640. A drawn place (U01b)
+shows the name with its facts under it (the chips: position, culture, era, trait, drift), then the picture, then the
+list, then the rest of the card with the description folded to its first line; its HUD is one thin row. In place of
+the dock it has the row of keys (`KeyStrip`, drawn by `KeyStripView` from a `KeyStripVM`: MORE, Buffer, Trace, its
+moves, the way out; the game's other options on the MORE sheet), fixed to the bottom edge of the screen by the
+stylesheet so it never scrolls with the page. The drawing says where a place's moves sit (`Drawing.arrange`, a
+`MovesPlace` — `MovesOnCard` for the plan, `MovesInKeys` for every other picture, `MovesInStrip` where no picture
+draws — into a `MovesLayout`) and whether a list stands beside the picture (`Drawing.beside`: the tower is its own
+list). Among the keys the presenter builds `HudVM.keys`: a move is a key by its id (`MOVE_KEYS`), the elevator's
+rides have no button (`RIDES`; a floor is picked on the building's picture), the breach arrives as a red bar over
+the keys (`HudVM.bar`), and the tower's way into the corridor keeps its words under the picture (`MoveVM`). A room is
+a card (U03e): where the moves sit on a card the presenter builds `HudVM.card` (a `RoomCardVM`: the corner's words,
 the arrival's paragraph, the keys — Buffer, Trace, and the way back, which is the way out or the engine's move back by
 its id, `BACK_MOVE_ID` — the other moves and the game's other options) and leaves the dock empty. `HudView` hands its
 parts (`CardParts`) to a `RoomCard`, `RoomCardView`, which lays them out on two faces and owns which one shows: the
 picture with the place's heading, first words and status over it, fading; the back with the panels a step brought, the
 words, the lists (the objects and the telemetry) and the ways the keys do not carry. The game's own options are not on
-the back: the strip's first key, MORE, opens a sheet of them over the card's foot, keyed like the strip (`GAME_KEYS` in
+the back: the strip's first key, MORE, opens a sheet of them over the card's foot (the same `KeyStrip` the other
+drawn places use, handed to the card), keyed like the strip (`GAME_KEYS` in
 `HudPresenter` names each by its option id), closed by a tap on the veil or a step. The face turned away is hidden from
 everyone. The folded corner — bottom right on both faces — and a sideways swipe (not over the plan) turn it and pick
 nothing; a new room shows the front, a step that brought a panel the back. A turn is a `CardTurn` (`src/ui/card/`:
@@ -232,7 +240,9 @@ zoom.
 reach's signal); `SceneDrawing` reads it into `DrawnArea` (`AreaVM`), drawn by `AreaPicture` on the line host with a
 `StillCamera`: the level's `AreaScene` (one class a level) says where its children stand and paints its backdrop, each
 child's `AreaMark` (one class a child kind) paints its mark — both tables keyed by the look, built in `ScenePictures`
-with the shared `AreaInk` and `AreaSpots`. A Layer draws as its mode says, the tower or its Artery; the Artery's
+with the shared `AreaInk` and `AreaSpots`. Every mark is written by its name, never its number: `AreaNames` shares the
+room between the names — a line under the mark, broken at spaces and hyphens over up to three lines (`NameLine`s),
+cut with an ellipsis only where it still would collide. A Layer draws as its mode says, the tower or its Artery; the Artery's
 corridor is tinted by `VoidTint`; `TowerFigure.breached` tells the tower the bedrock is open.
 
 **The trace column (U04).** TRACE's step carries each level's band (`TraceSummary`: its `bandPortrait` — its own
@@ -260,8 +270,11 @@ trace, a button over each level's row, following the level in focus as it scroll
 Pole | Column, the pick kept by a `TraceViewMemory` (`LocalStorageTraceViewMemory`).
 
 **The building and the corridor (U02).** A picture's view moves: it answers a `SceneCamera` for its view model at a
-size — `TravelCamera` (the tower's car, the corridor's walk: range, pace, coast, the stops, and a `CameraTrack`) or
-`StillCamera` (the street) — and `SceneView` owns where the view stands and asks the camera every rule. The track is a
+size — `TravelCamera` (the tower's car, the corridor's walk, a long street's slide: range, pace, coast, the stops, and
+a `CameraTrack`) or `StillCamera` (a street that fits, an area) — and `SceneView` owns where the view stands and asks
+the camera every rule. The camera also says what its drag leaves the page (`SceneCamera.page`, a `PageScroll`: a
+sideways drag leaves the scroll up and down, a drag up and down keeps the finger, no drag leaves it all), which the
+canvas turns into the browser's rule (`PixelCanvas.touch`). The track is a
 `SliderTrack` (its `SliderBox`, axis and the views at its ends) or `NoTrack`; it lays the real `role=slider`
 (`SceneSlider`, a `SliderFace`) over itself or hides it, and reads a finger on it. A finger is a `Drag`:
 `PictureDrag` on the picture (past a slop, one to one) or `SliderDrag` on the track, each let go with its `Fling`. A going-in is a
@@ -271,11 +284,13 @@ you stand by are a `ChildMark` (`MarkedChild` or `NoChild`). `SceneView`'s parts
 canvas a `SceneCanvas` made by `SceneCanvasMaker` (U03: a `PixelCanvas` from `CanvasMaker` — a canvas in its host
 within the `PixelBudget`, inked where it sits — listened to through `CanvasInput`, painted under the zoom and torn).
 `TowerPicture` draws a row per level (a floor's corridor as a line in its shape, a tick per door; the Layers faint in
-the void's red below the bedrock), the roof `Roof` picks, the car and the gauge; `CorridorPicture` walks a `HallView`
+the void's red below the bedrock), the car and the gauge; its window takes the picture's whole height and scrolls a
+little past the tower's ends, onto the roof `Roof` picks and the bedrock; a finger on its floors scrolls the page and
+taps a floor, the gauge alone moves the window. `StreetPicture` gives each building a slot that keeps its shape and
+slides a row longer than the picture sideways; `CorridorPicture` walks a `HallView`
 (a pair of doors every 2.2 units) with one part per key from `CorridorParts` — a `HallShape` per corridor shape, a
 panel per material family, a mark per state look (`DoorLooks` the inks) — each door a `PlacedDoor`, and the
-`CorridorSlider` along its foot. A building's floors are listed as a pad of numbers (`FloorPad`), one group up to
-twenty, else by tens (`FloorsByTen`, the Layers together first, `LayersTogether`), the car's group shown first.
+`CorridorSlider` along its foot. A building's floors stand in no list: the tower is its own list.
 
 **The apartment's plan (U03).** A room's portrait is its apartment's plan (`PlanPortrait` → `PlanFigure`: every room
 in walking order with its `RoomSight` — visited, known, fog, which `Apartment.plan` owns — and its relic marks, the

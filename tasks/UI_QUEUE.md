@@ -26,7 +26,8 @@ them; an iteration that proves too big is split into slices that each show the t
 5. **Coherence is felt** — grain, torn lines, a red drift and a flicker in the place name, growing as it falls.
 6. **The depth rail** is always on screen; tapping a level opens the trace there.
 7. **A building is ridden**: a window of thumb-sized floors follows the car; a gauge beside it is a real slider for the
-   whole height; the roof and the sealed bedrock show when reached; floor buttons group by tens above 20 floors.
+   whole height; the roof and the sealed bedrock show when reached; the floor buttons are gone since the
+   fast loop of 2026-10-03 (`tasks/ui/corridor-keys-fast-loop.md`): the tower is the list.
 8. **A corridor is walked**, first person, every door standing in the perspective: its shape comes from its floor's
    words (the curved gallery bends away, the service corridor runs to a blank wall); a slider along the bottom scrubs
    freely left and right; a door picked from the list is walked to, then opened.

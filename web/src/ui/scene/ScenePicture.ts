@@ -25,6 +25,6 @@ export interface ScenePicture<VM> {
     view: number,
     here: ChildMark,
   ): void;
-  /** How the picture's view moves at this size; a camera that never moves for a picture that stands still (the street). */
+  /** How the picture's view moves at this size; a camera that never moves for a picture that stands still (an area, a street that fits its picture). */
   camera(vm: VM, size: PictureSize): SceneCamera;
 }

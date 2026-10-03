@@ -1,4 +1,5 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
+import { keyed } from 'lit-html/directives/keyed.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import type { SpectrumVM } from '#ui/canvas/SpectrumVM.ts';
@@ -14,7 +15,11 @@ import type { View } from '#ui/View.ts';
 import type { CanvasViews } from './CanvasViews.ts';
 import type { DrawnStage } from './DrawnStage.ts';
 import type { HudVM } from './HudVM.ts';
+import type { KeyStrip } from './KeyStrip.ts';
+import type { KeyStripParts } from './KeyStripParts.ts';
+import type { KeyStripVM } from './KeyStripVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
+import type { MoveVM } from './MoveVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import type { PictureBook } from './PictureBook.ts';
 import type { RoomCard } from './RoomCard.ts';
@@ -39,7 +44,7 @@ interface TraceParts {
  * panel, the list of places to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel; a room is drawn as a card of its own (`RoomCard`, U03e), its keys in place of the dock. The coherence meter is a
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel; a room is drawn as a card of its own (`RoomCard`, U03e), its keys in place of the dock; a place whose moves stand among the keys (`HudVM.keys`) keeps its list and has the same keys (`KeyStrip`) in place of the dock and of the strip. The coherence meter is a
  * `role="meter"` whose fill is a width the stylesheet animates (nodes survive a render). The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
@@ -78,8 +83,6 @@ export class HudView implements View<HudVM> {
   #lit: ChildMark = new NoChild();
   /** The path to the last place shown: the child on it is the one the picture zooms out of. */
   #came = new Retrace([]);
-  /** The pad's group shown (U02): the view-model's until a tab is tapped or the car is dragged to another; reset by a new place. */
-  #group: number | undefined;
   /** The trace column's pictures and its dive (U04), the pole and the view the player picked last (U05). */
   readonly #column: TraceParts;
   /** Which view the open trace shows: the one the player picked last, read when it opens (U05). */
@@ -96,6 +99,8 @@ export class HudView implements View<HudVM> {
   #pull: number | undefined;
   /** The room's card (U03e): its markup and which face shows. */
   readonly #card: RoomCard;
+  /** The strip of keys at the screen's foot (U03e), the card's and the screen's own: its MORE sheet closes at each step. */
+  readonly #keys: KeyStrip;
 
   /** The registry binds a drawing to its picture (U01b); the stage shows its scene (U03); the makers make each canvas the screen carries (U02). */
   constructor(
@@ -104,11 +109,13 @@ export class HudView implements View<HudVM> {
     canvases: CanvasViews,
     column: TraceParts,
     card: RoomCard,
+    keys: KeyStrip,
   ) {
     this.#book = book;
     this.#stage = stage;
     this.#column = column;
     this.#card = card;
+    this.#keys = keys;
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
       map: () => canvases.map(),
@@ -117,7 +124,7 @@ export class HudView implements View<HudVM> {
   }
 
   /**
-   * Every button of the screen that is also drawn in the picture — a row, a pad key, a move, the way out, a relic's
+   * Every button of the screen that is also drawn in the picture — a row, a move, the way out, a relic's
    * tile — goes through the picture when tapped (U02, U03: it rides, walks or glides there first) and lights its twin
    * while pointed at or focused: one listener each on the screen, before the shell's own router hears the click.
    */
@@ -180,9 +187,9 @@ export class HudView implements View<HudVM> {
     this.#openBands = new Set();
     if (vm.scene !== this.#vm?.scene) {
       this.#lit = new NoChild();
-      this.#group = undefined;
     }
     this.#card.step(vm, this.#bringsPanel(vm));
+    this.#keys.close();
     this.#paint(vm);
     // A scene kept from the last render is shown the new frame; one made just now already shows it.
     this.#stage.redraw();
@@ -344,12 +351,6 @@ export class HudView implements View<HudVM> {
   #light(mark: ChildMark): void {
     if (mark.equals(this.#lit) || !this.#stage.showing()) return;
     this.#lit = mark;
-    // The pad follows what is lit: dragging the car past a ten shows that ten's floors (the mock's `S.group`).
-    const group =
-      this.#vm?.pad.shown === true
-        ? this.#vm.pad.groups.findIndex((each) => each.keys.some((key) => mark.marks(key.id)))
-        : -1;
-    if (group >= 0) this.#group = group;
     this.#stage.light(mark);
     if (this.#vm !== undefined && this.#container !== undefined)
       render(this.#template(this.#vm), this.#container);
@@ -366,6 +367,7 @@ export class HudView implements View<HudVM> {
     this.#more = false;
     this.#debugOpen = false;
     this.#card.forget();
+    this.#keys.close();
   }
 
   #host(slot: Slot | 'scene'): HTMLElement | null {
@@ -375,11 +377,6 @@ export class HudView implements View<HudVM> {
 
   #toggleMore(): void {
     this.#more = !this.#more;
-    if (this.#vm !== undefined) this.#paint(this.#vm);
-  }
-
-  #showGroup(index: number): void {
-    this.#group = index;
     if (this.#vm !== undefined) this.#paint(this.#vm);
   }
 
@@ -408,7 +405,7 @@ export class HudView implements View<HudVM> {
             picture: this.#picture(),
             head: this.#head(vm),
             status: this.#status(vm),
-            words: this.#words(vm),
+            words: html`${this.#facts(vm)} ${this.#words(vm, this.#description(vm))}`,
             lists: this.#aside(vm),
             panels: this.#panels(vm),
             button: (option) => this.#docked(option),
@@ -425,7 +422,7 @@ export class HudView implements View<HudVM> {
       <div class="app world" data-frame=${vm.frame} data-band=${vm.meter.band} ?data-drawn=${drawn}>
         ${this.#top(vm)}
         <section class="cap" aria-label=${vm.regions.place} tabindex="-1" data-rest>
-          <div class="head">${this.#head(vm)}</div>
+          <div class="head">${this.#head(vm)} ${this.#facts(vm)}</div>
           ${
             vm.moves.length === 0
               ? nothing
@@ -433,13 +430,13 @@ export class HudView implements View<HudVM> {
                   <nav class="moves" aria-label=${vm.regions.moves}>
                     ${repeat(
                       vm.moves,
-                      (option) => option.id,
-                      (option) => this.#docked(option),
+                      (move) => move.id,
+                      (move) => this.#move(move),
                     )}
                   </nav>
                 `
           }
-          <div class="body">${this.#words(vm)} ${this.#status(vm)}</div>
+          <div class="body">${this.#words(vm, this.#folded(vm))} ${this.#status(vm)}</div>
         </section>
         ${drawn ? this.#picture() : nothing} ${this.#panels(vm)} ${this.#trace(vm)}
         <div class="side">
@@ -450,58 +447,100 @@ export class HudView implements View<HudVM> {
                   <section class="travel" aria-label=${vm.regions.travel}>
                     <h3 class="heading">${vm.heading}</h3>
                     ${vm.sealedNote.shown ? html`<p class="sealed-note" data-testid="sealed-note">${vm.sealedNote.text}</p>` : nothing}
-                    ${
-                      vm.pad.shown
-                        ? this.#pad(vm, vm.pad, drawn)
-                        : html`<ol class="rows">
-                            ${repeat(
-                              vm.rows,
-                              (row) => `${vm.scene}/${row.id}`,
-                              (row) => this.#row(row, vm.sealedTag, drawn),
-                            )}
-                          </ol>`
-                    }
+                    <ol class="rows">
+                      ${repeat(
+                        vm.rows,
+                        (row) => `${vm.scene}/${row.id}`,
+                        (row) => this.#row(row, vm.sealedTag, drawn),
+                      )}
+                    </ol>
                   </section>
                 `
           }
           ${this.#aside(vm)}
         </div>
-        <nav class="dock" aria-label=${vm.regions.dock} data-open=${this.#more ? 'true' : 'false'}>
-          ${repeat(
-            vm.dock.slice(0, vm.fold.out),
-            (option) => option.id,
-            (option) => this.#docked(option, undefined, true),
-          )}
-          ${
-            vm.dock.length <= vm.fold.after
-              ? nothing
-              : html`
-                  <button
-                    type="button"
-                    class="pb more"
-                    data-testid="more"
-                    aria-label=${vm.fold.label}
-                    aria-expanded=${this.#more ? 'true' : 'false'}
-                    aria-controls="dock-fold"
-                    @click=${() => {
-                      this.#toggleMore();
-                    }}
-                  >
-                    <span>${this.#more ? vm.fold.less : vm.fold.more}</span>
-                  </button>
-                  <div class="fold" id="dock-fold">
-                    ${repeat(
-                      vm.dock.slice(vm.fold.after),
-                      (option) => option.id,
-                      (option) => this.#docked(option),
-                    )}
-                  </div>
-                `
-          }
-        </nav>
-        ${this.#debug(vm)} ${this.#build(vm)}
+        ${vm.keys.shown ? this.#keybar(vm.keys) : this.#dock(vm)} ${this.#debug(vm)} ${this.#build(vm)}
       </div>
     `;
+  }
+
+  /** A move under the picture: the screen's button, with its drawn icon where it has one. */
+  #move(move: MoveVM): TemplateResult {
+    return html`
+      <button
+        type="button"
+        class="pb"
+        data-option=${move.id}
+        data-icon=${move.icon === '' ? nothing : move.icon}
+        ?data-lit=${this.#lit.marks(move.id)}
+      >
+        ${move.key === '' ? nothing : html`<kbd aria-hidden="true">${move.key}</kbd>`}<span
+          >${move.label}</span
+        >
+      </button>
+    `;
+  }
+
+  /** The dock: the way out, then the game's own options folded behind MORE. */
+  #dock(vm: HudVM): TemplateResult {
+    return html`
+      <nav class="dock" aria-label=${vm.regions.dock} data-open=${this.#more ? 'true' : 'false'}>
+        ${repeat(
+          vm.dock.slice(0, vm.fold.out),
+          (option) => option.id,
+          (option) => this.#docked(option, undefined, true),
+        )}
+        ${
+          vm.dock.length <= vm.fold.after
+            ? nothing
+            : html`
+                <button
+                  type="button"
+                  class="pb more"
+                  data-testid="more"
+                  aria-label=${vm.fold.label}
+                  aria-expanded=${this.#more ? 'true' : 'false'}
+                  aria-controls="dock-fold"
+                  @click=${() => {
+                    this.#toggleMore();
+                  }}
+                >
+                  <span>${this.#more ? vm.fold.less : vm.fold.more}</span>
+                </button>
+                <div class="fold" id="dock-fold">
+                  ${repeat(
+                    vm.dock.slice(vm.fold.after),
+                    (option) => option.id,
+                    (option) => this.#docked(option),
+                  )}
+                </div>
+              `
+        }
+      </nav>
+    `;
+  }
+
+  /** The strip of keys in place of the dock: at the screen's foot, its MORE sheet rising over it, the bar of a move that arrives (the breach) above it. */
+  #keybar(keys: KeyStripVM & { readonly bar: readonly OptionVM[] }): TemplateResult {
+    const parts: KeyStripParts = {
+      slot: nothing,
+      lit: (id) => this.#lit.marks(id),
+      repaint: () => {
+        if (this.#vm !== undefined) this.#paint(this.#vm);
+      },
+    };
+    return html`<div class="keybar">
+      ${this.#keys.sheet(keys, parts)}
+      ${repeat(
+        keys.bar,
+        (option) => option.id,
+        (option) =>
+          html`<button type="button" class="pb alarm" data-option=${option.id}>
+            <span>${option.label}</span>
+          </button>`,
+      )}
+      ${this.#keys.strip(keys, parts)}
+    </div>`;
   }
 
   /** The top of the world screen: the HUD and the depth rail. */
@@ -575,8 +614,8 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  /** The place's chips, its words, its labelled rows and its diagnostic line. */
-  #words(vm: HudVM): TemplateResult {
+  /** The place's facts as chips: its position among its siblings, then each fact. */
+  #facts(vm: HudVM): TemplateResult {
     return html`
       <ul class="tags">
         ${
@@ -592,7 +631,33 @@ export class HudView implements View<HudVM> {
           `,
         )}
       </ul>
-      <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
+    `;
+  }
+
+  /** The place's description, whole. */
+  #description(vm: HudVM): TemplateResult {
+    return html`<div class="desc">
+      ${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}
+    </div>`;
+  }
+
+  /** The place's description folded to its first line, which opens the rest on a tap — a view control; folded again at each new place. */
+  #folded(vm: HudVM): TemplateResult {
+    const [first, ...rest] = vm.place.description;
+    if (first === undefined) return html``;
+    return html`${keyed(
+      vm.scene,
+      html`<details class="desc">
+        <summary><span>${first}</span></summary>
+        ${rest.map((paragraph) => html`<p>${paragraph}</p>`)}
+      </details>`,
+    )}`;
+  }
+
+  /** The place's words: its description as the screen lays it, its labelled rows and its diagnostic line. */
+  #words(vm: HudVM, description: TemplateResult): TemplateResult {
+    return html`
+      ${description}
       ${
         vm.place.rows.length === 0
           ? nothing
@@ -961,55 +1026,6 @@ export class HudView implements View<HudVM> {
         }
         ${map === null ? nothing : this.#map(map, 'pane', 'pane-map', map.label)}
       </aside>
-    `;
-  }
-
-  /**
-   * The pad (U02): the shown group's keys — a real button each, its number shown and its row's words for a
-   * reader, lighting its floor like a row — then, past twenty, a tab per ten; a tab only shows its group.
-   */
-  #pad(vm: HudVM, pad: Extract<HudVM['pad'], { readonly shown: true }>, drawn: boolean): TemplateResult {
-    const shown = Math.min(this.#group ?? pad.open, pad.groups.length - 1);
-    const group = pad.groups[shown];
-    return html`
-      <ol class="pad">
-        ${repeat(
-          group?.keys ?? [],
-          (key) => `${vm.scene}/${key.id}`,
-          (key) => html`
-            <li>
-              <button
-                type="button"
-                class=${['key', key.current ? 'you' : '', key.visited ? 'seen' : ''].join(' ').trim()}
-                data-option=${key.id}
-                ?data-lit=${drawn && this.#lit.marks(key.id)}
-              >
-                <span class="num" aria-hidden="true">${key.number}</span><span class="vh">${key.spoken}</span>
-              </button>
-            </li>
-          `,
-        )}
-      </ol>
-      ${
-        pad.groups.length < 2
-          ? nothing
-          : html`<div class="tens" role="group" aria-label=${pad.label}>
-              ${pad.groups.map(
-                (each, index) => html`
-                  <button
-                    type="button"
-                    class="ten"
-                    aria-pressed=${index === shown ? 'true' : 'false'}
-                    @click=${() => {
-                      this.#showGroup(index);
-                    }}
-                  >
-                    ${each.label}
-                  </button>
-                `,
-              )}
-            </div>`
-      }
     `;
   }
 

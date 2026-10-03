@@ -40,7 +40,7 @@ test('pointer or touch: when the pressed button leaves the screen, the focus mov
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter-world]');
 });
 
-test('entering a place moves the focus to the first place on its list — every level, no dead end at the body', async ({
+test('entering a place moves the focus to the first place on its list, or to a button where it has no list — no dead end at the body', async ({
   page,
   hasTouch,
 }) => {
@@ -53,8 +53,8 @@ test('entering a place moves the focus to the first place on its list — every 
   const first = page.locator('button[data-option="enter:0"]');
   await (hasTouch ? first.tap() : first.click());
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
-  // A building's floors are a pad counting up (U02): its first key is the lobby.
-  await expect(page.getByRole('button', { name: /^Ride to Lobby,/ })).toBeFocused();
+  // A building has no list — its tower is the list: the focus lands on a button of the row at the screen's foot.
+  await expect.poll(() => page.evaluate(FOCUSED)).toMatch(/^BUTTON\[.+\]$/);
 });
 
 test('a key pressed with nothing focused does not grab the focus', async ({ page, hasTouch }) => {
@@ -130,29 +130,6 @@ async function plantAt(page: Page, path: string, states: Record<string, string> 
     ['endless-transit.save', saveText('7F3A-91C2-0B4D-E6A8', path, states)] as const,
   );
 }
-
-test('keyboard: Enter on GO UP rides to the Peak and then rests — it never lands on GO DOWN and rides back', async ({
-  page,
-  hasTouch,
-}) => {
-  test.skip(hasTouch, 'a phone has no Enter key');
-  await plantAt(page, LOBBY);
-  await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
-  await page.locator('button[data-option="move:up"]').focus();
-  for (let floor = 1; floor <= 15; floor++) {
-    await page.keyboard.press('Enter');
-    await expect(page.getByTestId('place-name')).toHaveText(`Floor ${String(floor)}`);
-  }
-  // The Peak: GO UP is gone. The focus rests on the screen, not on the body and never on the opposite move.
-  await expect(page.locator('button[data-option="move:up"]')).toHaveCount(0);
-  for (let again = 0; again < 5; again++) {
-    await page.keyboard.press('Enter');
-    await expect(page.getByTestId('place-name')).toHaveText('Floor 15');
-    // The resting place is the panel that says where you are.
-    expect(await page.evaluate(FOCUSED)).toBe('SECTION[]');
-  }
-});
 
 test('keyboard: Enter on GO FORWARD reaches the last room and then rests — never on GO BACK, never on the title', async ({
   page,

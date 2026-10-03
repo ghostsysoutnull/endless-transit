@@ -1,5 +1,6 @@
 import type { Fact } from './Fact.ts';
 import type { Floor } from './Floor.ts';
+import { CORRIDOR_MOVE, DESCEND_MOVE, DOWN_MOVE, ELEVATOR_MOVE, UP_MOVE } from './FloorMoves.ts';
 import type { FloorState } from './FloorState.ts';
 import type { Location } from './Location.ts';
 import type { Move } from './Move.ts';
@@ -14,17 +15,17 @@ const GROUND = 0;
  * descent into the substrate is offered instead (Guide:277-278) — and the corridor (ElevatorState.groovy:22-45).
  */
 const MOVES = new MoveTable<Floor>([
-  { move: { id: 'up', label: 'Go Up', opposite: 'down' }, to: (floor) => floor.neighbour(1) },
+  { move: { id: UP_MOVE, label: 'Go Up', opposite: DOWN_MOVE }, to: (floor) => floor.neighbour(1) },
   {
-    move: { id: 'down', label: 'Go Down', opposite: 'up' },
+    move: { id: DOWN_MOVE, label: 'Go Down', opposite: UP_MOVE },
     to: (floor) => (floor.number() === GROUND ? undefined : floor.neighbour(-1)),
   },
   {
-    move: { id: 'descend', label: 'Descend into the Substrate', opposite: 'up' },
+    move: { id: DESCEND_MOVE, label: 'Descend into the Substrate', opposite: UP_MOVE },
     to: (floor) => (floor.number() === GROUND ? floor.neighbour(-1) : undefined),
   },
   {
-    move: { id: 'corridor', label: 'Enter Corridor', opposite: 'elevator' },
+    move: { id: CORRIDOR_MOVE, label: 'Enter Corridor', opposite: ELEVATOR_MOVE },
     to: (floor) => floor,
     act: (floor) => {
       floor.enterCorridor();

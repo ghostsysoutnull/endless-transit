@@ -16,33 +16,22 @@ BUILDINGS ON THIS STREET
   08 [8] Enter Building: TeahouseGate
   09 [9] Enter Building: BridgeGate
   10 [A] Enter Building: TowerSpire
-[NEURAL_MAP: STREET] SCAN_ORIGIN: Grand Avenue | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited)
-dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+  11 [G] Enter Building: Ink-Black Tower
+  12 [K] Enter Building: Unit 0x95D Unit
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Grand Avenue | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited) | ⌂ Ink-Black Tower (unvisited) | ⌂ Unit 0x95D Unit (unvisited)
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === BUILDING ⌂ Cedar Lantern  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0
-tags: Building 3 of 10 (position) | Culture Shogun (culture) | Floors 7 (reading)
+tags: Building 3 of 12 (position) | Culture Shogun (culture) | Floors 7 (reading)
   An elevator runs the height of the building.
 status: Entered Cedar Lantern.
-RIDE TO A FLOOR
-  06 [6] Ride to Peak
-       Zone: Peak observatory
-  05 [5] Ride to Floor 5
-       Zone: Data vault
-  04 [4] Ride to Floor 4
-       Zone: Storage cell
-  03 [3] Ride to Floor 3
-       Zone: Storage cell
-  02 [2] Ride to Floor 2
-       Zone: Power relay
-  01 [1] Ride to Floor 1
-       Zone: Mechanical sump
-  00 [0] Ride to Lobby [>X<]
-       Zone: Transit lobby
 TELEMETRY NOMINAL Quantum spectrogram 5 3 8 7 6 Resonant traces 0
-dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
@@ -51,9 +40,10 @@ stats: Steps 2 | Buffer 0
 tags: Era Analog (era) | Culture Shogun (culture) | Stability 90.00% (reading) | Trait Military (trait)
   Floor 0. Shogun geometry presses in from every wall; the elevator sighs shut behind you.
 status: Entered Floor 0.
-moves: [U] GO UP | [C] ENTER CORRIDOR
+moves: [C] ENTER CORRIDOR
 TELEMETRY NOMINAL Quantum spectrogram 4 4 6 3 3 Resonant traces 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
@@ -62,14 +52,14 @@ stats: Steps 3 | Buffer 0
 tags: Culture Shogun (culture) | Doors 2 (reading)
   A narrow service corridor, doors set flush into either wall.
 status: Enter Corridor.
-moves: [B] BACK TO ELEVATOR
 DOORS
   01 [1] Open Bone-Lattice Aperture, cold
        An aperture of interlocking bone-white struts. The frame is ice-cold to the touch, pulling heat from your palm. The word 'HOLLOW' is stamped into the metal in block letters.
   02 [2] Open Lacquered Timber Gate, rusted
        A timber gate under many coats of black lacquer. The metal hinges are fused by deep, flakey oxidation.
 TELEMETRY NOMINAL Quantum spectrogram 9 5 8 9 2 Resonant traces 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === ROOM □ Lacquered Barracks  [frame magenta]
 path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Lacquered Barracks *

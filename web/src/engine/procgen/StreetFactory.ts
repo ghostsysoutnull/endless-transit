@@ -16,7 +16,7 @@ export class StreetFactory implements LocationFactory {
 
   constructor(offspring: Offspring, names: NameLists) {
     this.#names = names.at('names/street');
-    this.#buildings = offspring.of({ min: 2, max: 10, unit: 2 }, () => BUILDING_KIND);
+    this.#buildings = offspring.of({ min: 2, max: 11, unit: 2 }, () => BUILDING_KIND);
   }
 
   kind(): LocationKind {

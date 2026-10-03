@@ -1,6 +1,13 @@
 import type { Portrait } from '#engine/model/Portrait.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
-import type { GameOption } from '#engine/rules/GameOption.ts';
+import {
+  BREACH_ID,
+  CORRIDOR_MOVE_ID,
+  DESCEND_MOVE_ID,
+  DOWN_MOVE_ID,
+  type GameOption,
+  UP_MOVE_ID,
+} from '#engine/rules/GameOption.ts';
 import type { TraceStep } from '#engine/rules/TraceStep.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
@@ -14,9 +21,16 @@ import { DrawnPlan } from './DrawnPlan.ts';
 import { DrawnStreet } from './DrawnStreet.ts';
 import { DrawnTower } from './DrawnTower.ts';
 import { ListedParts } from './ListedParts.ts';
+import { MovesInKeys } from './MovesInKeys.ts';
 import { MovesOnCard } from './MovesOnCard.ts';
 import { MovesInStrip } from './MovesInStrip.ts';
 import { Undrawn } from './Undrawn.ts';
+
+/**
+ * Among the keys, on every picture: the breach arrives as the bar over them, and the elevator's rides have no button —
+ * a floor is picked on the building's tower.
+ */
+const AMONG_KEYS = { bar: [BREACH_ID], unseen: [UP_MOVE_ID, DOWN_MOVE_ID, DESCEND_MOVE_ID] } as const;
 
 /** Where a picture's place stands, and what a reader hears for its slider. */
 interface Framed {
@@ -36,9 +50,14 @@ interface DrawnChildren {
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
-  /** Where each picture's moves sit (U03c, U03e): on the card for the plan, under the picture for every other. */
+  /**
+   * Where each picture's moves sit (U03c, U03e): on the card for the plan; among the keys for every other picture —
+   * the tower keeps the way into the corridor under it; under the picture for a place no picture draws.
+   */
   readonly #strip = new MovesInStrip();
   readonly #carded = new MovesOnCard();
+  readonly #keyed = new MovesInKeys({ under: [], ...AMONG_KEYS });
+  readonly #towered = new MovesInKeys({ under: [CORRIDOR_MOVE_ID], ...AMONG_KEYS });
 
   /**
    * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,
@@ -95,7 +114,7 @@ export class SceneDrawing implements Drawings {
               doors: building.doors,
             })),
           ),
-          this.#strip,
+          this.#keyed,
         ),
       tower: (tower) =>
         new DrawnTower(
@@ -110,7 +129,7 @@ export class SceneDrawing implements Drawings {
             ),
             tower,
           },
-          this.#strip,
+          this.#towered,
         ),
       corridor: (corridor) =>
         new DrawnCorridor(
@@ -126,7 +145,7 @@ export class SceneDrawing implements Drawings {
             shape: corridor.shape,
             abyssal: corridor.abyssal,
           },
-          this.#strip,
+          this.#keyed,
         ),
       plan: (plan) => {
         // Each doorway's move by the room it leads to; the way out; the relics by their take (U03).
@@ -166,7 +185,7 @@ export class SceneDrawing implements Drawings {
             look: area.look,
             signal: area.signal,
           },
-          this.#strip,
+          this.#keyed,
         ),
       unseen: () => new Undrawn(this.#frame(place, decay, travel), this.#strip),
     });

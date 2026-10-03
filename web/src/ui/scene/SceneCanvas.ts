@@ -5,6 +5,7 @@ import type { PointerHold } from './PointerHold.ts';
 import type { Tear } from './Tear.ts';
 import type { TearFrame } from './TearFrame.ts';
 import type { Zoom } from './Zoom.ts';
+import type { PageScroll } from '#ui/canvas/PageScroll.ts';
 
 /**
  * A scene's canvas in its host (U03, out of `SceneView` so both scene hosts share it): sized to its host, named for a
@@ -41,9 +42,9 @@ export class SceneCanvas implements PointerHold {
     this.#canvas.name(label);
   }
 
-  /** Whether a finger on it drags the picture, or scrolls the page and taps. */
-  touch(drags: boolean): void {
-    this.#canvas.touch(drags);
+  /** What a finger on it leaves the page: the picture takes the rest. */
+  touch(page: PageScroll): void {
+    this.#canvas.touch(page);
   }
 
   /** A new frame of the game: its colours are read afresh. */

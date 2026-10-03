@@ -1,9 +1,10 @@
+import type { PageScroll } from '#ui/canvas/PageScroll.ts';
 import type { CameraStop } from './CameraStop.ts';
 import type { CameraTrack } from './CameraTrack.ts';
 import { NoTrack } from './NoTrack.ts';
 import type { SceneCamera } from './SceneCamera.ts';
 
-/** A camera that stands still (the street, U01b): its view never leaves 0, nothing drags, no slider; going in zooms. */
+/** A camera that stands still (an area, a street that fits its picture): its view never leaves 0, nothing drags, no slider; going in zooms. */
 export class StillCamera implements SceneCamera {
   rest(): number {
     return 0;
@@ -27,6 +28,10 @@ export class StillCamera implements SceneCamera {
 
   drags(): boolean {
     return false;
+  }
+
+  page(): PageScroll {
+    return 'free';
   }
 
   dragRate(): number {

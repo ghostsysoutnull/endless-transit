@@ -17,20 +17,20 @@ facts; if the two ever disagree, the guide wins and this page has a bug.
 Open [**the game**]({{ "/play/" | relative_url }}) on a phone. **NEW WORLD** draws a seed, **RE-ROLL**
 draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Every action is a button. The game saves itself after every tap, in this browser only; a reload continues.
 
-**Try it:** tap a building, then `0` on its pad of floors (the lobby), **ENTER CORRIDOR**, the first door. Tap an object.
+**Try it:** tap a building, then floor `0` (the lobby) on its tower, **ENTER CORRIDOR**, the first door. Tap an object.
 
 ## Buttons
 
 | Moving | |
 | :-- | :-- |
-| A listed place | enters it (a building's floors are a pad of numbers: `0` is the lobby; past twenty, a tab per ten) |
-| `▲ LEAVE …` | up one level (from a corridor: to the building, skipping the elevator) |
-| Elevator | **GO UP**, **GO DOWN**, **ENTER CORRIDOR** |
+| A listed place | enters it (a building has no list: tap a floor on its tower; the slider on its right moves it) |
+| **LEAVE** | up one level (from a corridor: to the building, skipping the elevator) |
+| Elevator | **ENTER CORRIDOR**; to change floor, **LEAVE** and tap another on the tower |
 | Corridor | doors, **BACK TO ELEVATOR** |
 | Room | a card: the picture, and its back (the folded corner or a sideways swipe) with the words, the objects and the telemetry; a doorway walks through it; an object takes it (its name flies to the **BUFFER** key); icon keys under it: **MORE** (the game's commands), **BUFFER**, **MAP** (the whole plan; **ROOM** to come back), **TRACE**, **←** back — **LEAVE** in the first room — and **→** forward |
 | Null Reach | **SCAN FOR SPECTRAL ECHOES** until 100, then **CAPTURE SPECTRAL ECHO** |
 
-| The dock (`▲ LEAVE` and **MORE** stay under your thumb; a room has its keys and the back of its card in its place) | |
+| The row of buttons (icons fixed at the bottom of the screen: **MORE**, **BUFFER**, **TRACE**, the place's moves, **LEAVE**; **MORE** opens the commands below) | |
 | :-- | :-- |
 | **SCAN** | doors and room types, nearby floors, or the apartment's rooms |
 | **LATTICE** | what is below you, drawn; dim is unvisited |
@@ -43,7 +43,7 @@ The depth rail under the HUD is your path, one glyph for each level; the one you
 
 ## What things cost
 
-* **Every move, take and dock button costs 1 Coherence** before it acts. Answers on a screen the game opened (the
+* **Every move, take and button of the row costs 1 Coherence** before it acts. Answers on a screen the game opened (the
   buffer, the recap, HELP) are free. A tap on something no longer offered costs nothing.
 * It costs **2** if the street header says `ENTROPIC`, and **2** below a building's bedrock (**4** where both apply).
 * **Only merging gives it back: +15 per merge**, capped at 100.

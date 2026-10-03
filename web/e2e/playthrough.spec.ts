@@ -26,7 +26,7 @@ async function bufferSize(page: Page): Promise<number> {
 }
 
 test(
-  'the whole game from the title: new world, street, building, elevator, corridor, door, room, take, merge, scan, map, the ritual under ?debug, the breach, the descent, a Layer, the recap, the title, and a reload that continues',
+  'the whole game from the title: new world, street, building, a floor on its tower, corridor, door, room, take, merge, scan, map, the ritual under ?debug, the breach, a Layer under the lobby, the recap, the title, and a reload that continues',
   { tag: '@playthrough' },
   async ({ page, hasTouch }) => {
     const problems = watchForErrors(page);
@@ -50,19 +50,16 @@ test(
     await expect(page.getByTestId('world-seed')).toHaveText(SEED);
     await press(page, /enter world/i, hasTouch);
 
-    // The street, the building, the elevator up and down, the corridor, a door.
+    // The street, the building, a floor tapped on its tower, the corridor, a door.
     await expect(page.getByTestId('place-kind')).toHaveText('STREET');
     await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
     await expect(page.getByTestId('coherence')).toHaveText('100%');
     await expectTouchable(page, 'street');
     await tapOption(page, 'enter:0', hasTouch);
     await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
-    await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(16);
+    const gauge = page.getByTestId('scene').getByRole('slider');
+    await expect(gauge).toHaveAttribute('aria-valuemax', '16');
     await tapOption(page, `enter:${String(PEAK)}`, hasTouch); // the lobby is listed last
-    await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
-    await press(page, /go up/i, hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('Floor 1');
-    await press(page, /go down/i, hasTouch);
     await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
     await press(page, /enter corridor/i, hasTouch);
     await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(9);
@@ -72,8 +69,8 @@ test(
     await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
     await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
     await expect(page.locator('button.tile')).toHaveCount(4);
-    await expect(page.getByTestId('coherence')).toHaveText('94%');
-    await expect(stat(page, 'Steps')).toHaveText('6');
+    await expect(page.getByTestId('coherence')).toHaveText('96%');
+    await expect(stat(page, 'Steps')).toHaveText('4');
 
     // Two takes, then the buffer: a merge gives fifteen back.
     await tapOption(page, 'capture:0', hasTouch);
@@ -81,7 +78,7 @@ test(
     await tapOption(page, 'capture:0', hasTouch);
     await expect(page.locator('button.tile')).toHaveCount(2);
     expect(await bufferSize(page)).toBeGreaterThanOrEqual(2);
-    await expect(page.getByTestId('coherence')).toHaveText('92%');
+    await expect(page.getByTestId('coherence')).toHaveText('94%');
     await expectTouchable(page, 'room after two takes');
     await press(page, /^buffer$/i, hasTouch);
     await expect(page.getByTestId('buffer-heading')).toBeVisible();
@@ -96,7 +93,7 @@ test(
     await shoot(page, '3-buffer-merged');
     await press(page, /^back$/i, hasTouch);
     await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-    await expect(page.getByTestId('coherence')).toHaveText('100%'); // 92, the buffer's one, fifteen back, capped
+    await expect(page.getByTestId('coherence')).toHaveText('100%'); // 94, the buffer's one, fifteen back, capped
 
     // SCAN in the room reads the apartment; MAP in the corridor plots the doors. Each costs one and no step.
     await press(page, /^scan$/i, hasTouch);
@@ -109,7 +106,7 @@ test(
     await expect(page.getByTestId('map')).toBeVisible();
     await expect(page.getByTestId('status')).toHaveText(/^NEURAL_LATTICE_PROJECTION: 9 nodes plotted from /);
     await expect(page.getByTestId('coherence')).toHaveText('97%');
-    await expect(stat(page, 'Steps')).toHaveText('9');
+    await expect(stat(page, 'Steps')).toHaveText('7');
     await expectTouchable(page, 'corridor with the map');
     await shoot(page, '4-map-corridor');
 
@@ -129,31 +126,25 @@ test(
     await press(page, /^back$/i, hasTouch);
     await expect(page.getByTestId('coherence')).toHaveText('100%');
 
-    // To the Peak: the breach spends the Keystone; floor 0 then descends.
+    // To the Peak, tapped on the tower (the top floor is listed first): the breach spends the Keystone.
     await press(page, /leave the apartment/i, hasTouch);
-    await press(page, /back to elevator/i, hasTouch);
-    for (let floor = 1; floor <= PEAK; floor++) {
-      await press(page, /go up/i, hasTouch);
-      await expect(page.getByTestId('place-name')).toHaveText(`Floor ${String(floor)}`);
-    }
-    await expect(page.getByTestId('coherence')).toHaveText('83%');
+    await press(page, /leave floor/i, hasTouch);
+    await tapOption(page, 'enter:0', hasTouch);
+    await expect(page.getByTestId('place-name')).toHaveText(`Floor ${String(PEAK)}`);
+    await expect(page.getByTestId('coherence')).toHaveText('97%');
     await press(page, /breach the bedrock/i, hasTouch);
     await expect(page.getByTestId('status')).toContainText('HARMONIC_INVERSION_PROTOCOL_ENGAGED');
     await expect(page.locator('.frag', { hasText: 'Keystone' })).toHaveCount(0);
     await press(page, /leave floor/i, hasTouch);
     await expect(page.locator('.diag')).toHaveText('The bedrock is breached');
-    // The Layers join the pad, past twenty by tens: the lobby's ten is a tab away.
-    const tens = page.getByRole('group', { name: 'Floors by tens' }).getByRole('button');
-    await expect(tens).toHaveText(['-0xA–-0x1', '0–9', '10–15']);
-    await (hasTouch ? tens.nth(1).tap() : tens.nth(1).click());
-    await tapOption(page, `enter:${String(PEAK)}`, hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
-    await press(page, /descend into the substrate/i, hasTouch);
+    // The Layers join the tower under the lobby: the way down is the first Layer, listed after the sixteen floors.
+    await expect(gauge).toHaveAttribute('aria-valuemax', '26');
+    await tapOption(page, `enter:${String(PEAK + 1)}`, hasTouch);
     await expect(page.getByTestId('place-kind')).toHaveText('LAYER');
     await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
     await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
     await expect(page.locator('.meter .ml')).toHaveText('Integrity');
-    await expect(page.getByTestId('coherence')).toHaveText('79%');
+    await expect(page.getByTestId('coherence')).toHaveText('94%');
     await expectTouchable(page, 'Layer -1');
     await shoot(page, '5-layer');
 
@@ -168,12 +159,12 @@ test(
     // CONTINUE, then a reload: the same Layer, the same Integrity (a reload never stops at the title once a place is saved).
     await press(page, /continue/i, hasTouch);
     await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
-    await expect(page.getByTestId('coherence')).toHaveText('77%'); // the recap cost two, below the bedrock
+    await expect(page.getByTestId('coherence')).toHaveText('92%'); // the recap cost two, below the bedrock
     await page.reload();
     await expect(page.getByTestId('status')).toHaveText(`Restored world ${SEED} at Layer -0x1.`);
     await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
     await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
-    await expect(page.getByTestId('coherence')).toHaveText('77%');
+    await expect(page.getByTestId('coherence')).toHaveText('92%');
     expect(problems).toEqual([]);
   },
 );

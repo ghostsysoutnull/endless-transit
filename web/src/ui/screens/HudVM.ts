@@ -3,7 +3,9 @@ import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Screen } from '#ui/Screen.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { Drawing } from './Drawing.ts';
+import type { KeyStripVM } from './KeyStripVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
+import type { MoveVM } from './MoveVM.ts';
 import type { Panel } from './Panel.ts';
 import type { RoomCardVM } from './RoomCardVM.ts';
 import type { StatKey } from './StatKey.ts';
@@ -76,38 +78,21 @@ export interface HudVM extends Screen {
   readonly railTrace: { readonly id: string; readonly label: string } | null;
   /** What the place's picture draws (U01b), or that no picture draws it: the screen then stays as it was. */
   readonly drawing: Drawing;
-  /**
-   * A list of places that go by their own numbers (a building's floors) as a pad of numbers (U02): the groups
-   * (one, or tens past 20 — each with its label, `10–19`, and its rows), which one shows first, and the name of
-   * the tabs; not shown for any other list. `rows` still holds every row.
-   */
-  readonly pad: Panel<{
-    readonly label: string;
-    readonly groups: readonly {
-      readonly label: string;
-      /** One key per place: its option, the number shown, what a reader hears, and whether it is where the car is or was visited. */
-      readonly keys: readonly {
-        readonly id: string;
-        readonly number: string;
-        readonly spoken: string;
-        readonly current: boolean;
-        readonly visited: boolean;
-      }[];
-    }[];
-    readonly open: number;
-  }>;
   /** The room's card (U03e): shown where the drawing puts its place's moves on one; the dock and the strip are then empty. */
   readonly card: Panel<RoomCardVM>;
+  /** The strip of keys at the screen's foot where the drawing puts its place's moves among them (`MovesInKeys`), with the moves that arrive as a wide bar over them, each only while the place offers it (`bar`: the breach); the dock is then empty. A room's keys are its card's. */
+  readonly keys: Panel<KeyStripVM & { readonly bar: readonly OptionVM[] }>;
   /** The line above the rows. */
   readonly heading: string;
+  /** The places listed beside the picture; none where the picture is the whole list (the tower). */
   readonly rows: readonly TravelRowVM[];
-  /** The moves the place offers (up, down, into the corridor): a strip of buttons above the list; a room's are on its card (U03e). */
-  readonly moves: readonly OptionVM[];
+  /** The moves that stand as buttons with their words under the picture, or under the panel where no picture draws the place; a room's are on its card (U03e), most pictures' among the keys. */
+  readonly moves: readonly MoveVM[];
   /** Why some rows are closed; not shown when none is. */
   readonly sealedNote: Panel<{ readonly text: string }>;
   /** The word on a closed row. */
   readonly sealedTag: string;
-  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button; empty on a room's card (U03e). */
+  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button; empty on a room's card (U03e) and where the keys stand. */
   readonly dock: readonly OptionVM[];
   /**
    * How the dock folds: how many stay out (the way out), how many of those are the way out (the first ones), and the

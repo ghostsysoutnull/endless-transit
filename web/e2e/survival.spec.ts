@@ -181,15 +181,12 @@ test('play until death and continue: the failure screen, REBUILD, the same seed 
   await expect(rows.nth(1).locator('.seen-mark')).toHaveCount(0);
   await shoot(page, '3b-reborn-street');
   await tapOption(page, 'enter:0', hasTouch);
-  // The pad: the elevator waits at the lobby, the one floor visited.
-  await expect(page.getByRole('button', { name: /Elevator here/ })).toHaveAccessibleName(
-    /^Ride to Lobby, Elevator here, Visited,/,
-  );
-  await expect(page.getByRole('button', { name: /Visited/ })).toHaveCount(1);
+  // The world's own state is undone: the elevator waits at the lobby again.
+  await expect(page.getByTestId('scene').getByRole('slider')).toHaveAttribute('aria-valuetext', 'Floor 0');
   expect(problems).toEqual([]);
 });
 
-test('close the tab and reopen: a new page with the same storage continues with the same Coherence, steps, place and visited marks', async ({
+test('close the tab and reopen: a new page with the same storage continues with the same Coherence, steps and place, the elevator where it was left', async ({
   page,
   hasTouch,
   browser,
@@ -199,10 +196,10 @@ test('close the tab and reopen: a new page with the same storage continues with 
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
   await tapOption(page, 'enter:0', hasTouch);
-  await tapOption(page, 'enter:15', hasTouch);
-  await press(page, /go up/i, hasTouch);
+  // Floor 1 of sixteen, top first on the building's list, tapped on its tower.
+  await tapOption(page, 'enter:14', hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('Floor 1');
-  await expectMeter(page, 97, 'stable', 3);
+  await expectMeter(page, 98, 'stable', 2);
   expect(problems).toEqual([]);
 
   const storageState = await context.storageState();
@@ -222,18 +219,14 @@ test('close the tab and reopen: a new page with the same storage continues with 
   const moreProblems = watchForErrors(again);
   await again.goto('./');
   await expect(again.getByTestId('place-name')).toHaveText('Floor 1');
-  await expectMeter(again, 97, 'stable', 3);
+  await expectMeter(again, 98, 'stable', 2);
   await press(again, /leave floor/i, hasTouch);
-  await expectMeter(again, 96, 'stable', 4);
-  const floors = again.locator('button[data-option^="enter:"]');
-  await expect(floors).toHaveCount(16);
-  // Visited: the lobby and floor 1; the elevator stands at floor 1.
-  await expect(again.getByRole('button', { name: /Visited/ })).toHaveCount(2);
-  await expect(again.getByRole('button', { name: /^Ride to Lobby, Visited,/ })).toHaveCount(1);
-  const car = again.getByRole('button', { name: /Elevator here/ });
-  await expect(car).toHaveAccessibleName(/^Ride to Floor 1, Elevator here, Visited,/);
-  await car.scrollIntoViewIfNeeded();
-  await shoot(again, '4-visited-marks', false);
+  await expectMeter(again, 97, 'stable', 3);
+  // The building's tower: sixteen floors, the elevator standing at floor 1.
+  const gauge = again.getByTestId('scene').getByRole('slider');
+  await expect(gauge).toHaveAttribute('aria-valuemax', '16');
+  await expect(gauge).toHaveAttribute('aria-valuetext', 'Floor 1');
+  await shoot(again, '4-elevator-where-it-was-left', false);
   expect(moreProblems).toEqual([]);
   await reopened.close();
 });

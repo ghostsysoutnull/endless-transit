@@ -14,6 +14,8 @@ export interface Drawing {
   frame(): SceneVM<SceneChild>;
   /** Its view model bound to the picture of its kind. */
   sketchedBy(book: PictureBook): Sketch;
-  /** Where its place's moves sit (U03c, U03e): under the picture, or on the room's card. */
+  /** Where its place's moves sit (U03c, U03e): under the picture, on the room's card, or among the keys at the screen's foot. */
   arrange(moves: readonly OptionVM[]): MovesLayout;
+  /** The listed places that stand in a list beside the picture: all of them, or none where the picture is the whole list (the tower). */
+  beside<T>(rows: readonly T[]): readonly T[];
 }

@@ -11,6 +11,7 @@ import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
 import type { GameCommand } from './GameCommand.ts';
 import {
+  BREACH_ID,
   type GameOption,
   LATTICE_ID,
   MOVE_PREFIX,
@@ -43,7 +44,7 @@ const MAP = LATTICE_ID;
 const TRACE = TRACE_ID;
 const ECHO = 'echo';
 const CAPTURE_ECHO = 'capture-echo';
-const BREACH = 'breach';
+const BREACH = BREACH_ID;
 const DEBUG_INTEGRITY = 'debug:integrity:';
 const DEBUG_PRIME = 'debug:prime';
 const DEBUG_KEYSTONE = 'debug:keystone';

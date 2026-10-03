@@ -4,6 +4,14 @@ import type { Palette } from './Palette.ts';
 import type { PictureSize } from './Picture.ts';
 import type { RatioLimit } from './RatioLimit.ts';
 import type { StylePalette } from './StylePalette.ts';
+import type { PageScroll } from './PageScroll.ts';
+
+/** The browser's rule for each way the page may still scroll under a finger. */
+const TOUCH_ACTION: Readonly<Record<PageScroll, string>> = {
+  free: 'manipulation',
+  vertical: 'pan-y',
+  held: 'none',
+};
 
 /**
  * One canvas in its host (U02): drawn at as many device pixels as its budget allows for its size, inked in the
@@ -87,9 +95,9 @@ export class PixelCanvas implements BandCopy, PointerHold {
     this.#canvas.setAttribute('aria-hidden', 'true');
   }
 
-  /** Whether a finger on it drags the picture, or scrolls the page and taps. */
-  touch(drags: boolean): void {
-    this.#canvas.style.touchAction = drags ? 'none' : 'manipulation';
+  /** What a finger on it leaves the page: the picture takes the rest. */
+  touch(page: PageScroll): void {
+    this.#canvas.style.touchAction = TOUCH_ACTION[page];
   }
 
   listen<K extends keyof HTMLElementEventMap>(

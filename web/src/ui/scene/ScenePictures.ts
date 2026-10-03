@@ -15,6 +15,7 @@ import { SystemGlyph } from './SystemGlyph.ts';
 import { UniverseGlyph } from './UniverseGlyph.ts';
 import { CanvasFont } from '#ui/canvas/CanvasFont.ts';
 import { AreaInk } from './AreaInk.ts';
+import { AreaNames } from './AreaNames.ts';
 import { AreaPicture } from './AreaPicture.ts';
 import { AreaSpots } from './AreaSpots.ts';
 import { CityMark } from './CityMark.ts';
@@ -179,6 +180,7 @@ export class ScenePictures {
     const spread = new AreaSpots(this.#noise);
     return new AreaPicture({
       font: this.#font,
+      names: new AreaNames(),
       ink,
       scenes: {
         universe: new UniverseScene(ink, spread),

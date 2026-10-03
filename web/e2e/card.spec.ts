@@ -118,7 +118,7 @@ test('MORE opens the game’s own keys over the card and a pick closes it; the b
   hasTouch,
 }) => {
   await inTheFirstRoom(page);
-  const more = page.getByTestId('card-more');
+  const more = page.getByTestId('keys-more');
   const sheet = page.getByRole('navigation', { name: 'GAME' });
   await expect(sheet).toHaveCount(0);
   await (hasTouch ? more.tap() : more.click());

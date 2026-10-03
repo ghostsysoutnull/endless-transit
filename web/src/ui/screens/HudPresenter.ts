@@ -6,6 +6,8 @@ import { SPECTROGRAM_DECADES, SPECTROGRAM_TALLEST } from '#engine/rules/Telemetr
 import { BUFFER } from '#engine/rules/BufferPrompt.ts';
 import {
   BACK_MOVE_ID,
+  CORRIDOR_MOVE_ID,
+  ELEVATOR_MOVE_ID,
   FORWARD_MOVE_ID,
   type GameOption,
   LATTICE_ID,
@@ -26,15 +28,17 @@ import type { Masthead } from '#ui/Masthead.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Presenter } from '#ui/Presenter.ts';
 import type { AsideVM } from './AsideVM.ts';
-import type { CardKeyVM } from './CardKeyVM.ts';
+import type { KeyVM } from './KeyVM.ts';
 import { BACK_KEY_WORD } from './BackKeyWord.ts';
 import { BUFFER_LANDING } from './CardSlots.ts';
 import type { HudVM } from './HudVM.ts';
+import type { KeyStripVM } from './KeyStripVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
+import type { MovesLayout } from './MovesLayout.ts';
+import type { Panel } from './Panel.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import { DepthNumber } from './DepthNumber.ts';
 import type { Drawings } from './Drawings.ts';
-import type { Pads } from './Pads.ts';
 import type { PoleWords } from './PoleWords.ts';
 import type { RoomCardVM } from './RoomCardVM.ts';
 
@@ -71,16 +75,31 @@ const LEGEND: Readonly<Record<LegendTone, string>> = {
   mark: 'GLITCH',
 };
 const MAP_HEADING = '[NEURAL_LATTICE_PROJECTION]';
-/** The room card's words (U03e): its corner on each face, its regions and the headings of its back, the short words on its keys. */
+/** The room card's words (U03e): its corner on each face, its regions and the heading of its back's ways. */
 const CARD = {
   corner: {
     toWords: { text: 'WORDS', label: 'Turn the card: the room in words' },
     toRoom: { text: 'ROOM', label: 'Turn the card: the picture' },
   },
-  regions: { front: 'The room', back: 'The room in words', keys: 'Keys', ways: 'WAYS', game: 'GAME' },
-  keys: { buffer: 'BUFFER', trace: 'TRACE', out: 'LEAVE', back: BACK_KEY_WORD, forward: 'FORWARD' },
+  regions: { front: 'The room', back: 'The room in words', ways: 'WAYS' },
+} as const;
+/** The strip of keys' words (U03e): its regions, MORE, and the short word and drawn icon of each key every strip holds. */
+const STRIP = {
+  regions: { keys: 'Keys', game: 'GAME' },
+  keys: {
+    buffer: { text: 'BUFFER', icon: 'buffer' },
+    trace: { text: 'TRACE', icon: 'trace' },
+    out: { text: 'LEAVE', icon: 'out' },
+  },
   more: { text: 'MORE', label: 'More: the game itself' },
 } as const;
+/** A move as a key of the strip: its short word and drawn icon, by its option id. */
+const MOVE_KEYS: ReadonlyMap<string, { readonly text: string; readonly icon: string }> = new Map([
+  [BACK_MOVE_ID, { text: BACK_KEY_WORD, icon: 'back' }],
+  [FORWARD_MOVE_ID, { text: 'FORWARD', icon: 'forward' }],
+  [ELEVATOR_MOVE_ID, { text: 'ELEVATOR', icon: 'elevator' }],
+  [CORRIDOR_MOVE_ID, { text: 'CORRIDOR', icon: 'corridor' }],
+]);
 /** The MORE sheet's keys (U03e): the short word and the drawn icon of each of the game's own options, by its id. */
 const GAME_KEYS: ReadonlyMap<string, { readonly text: string; readonly icon: string }> = new Map([
   [SCAN_ID, { text: 'SCAN', icon: 'scan' }],
@@ -101,14 +120,12 @@ export class HudPresenter implements Presenter<HudVM> {
   readonly #frame: FrameOf;
   readonly #masthead: Masthead;
   readonly #drawings: Drawings;
-  readonly #pads: Pads;
   readonly #pole: PoleWords;
 
-  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings, pads: Pads, pole: PoleWords) {
+  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings, pole: PoleWords) {
     this.#masthead = masthead;
     this.#frame = frame;
     this.#drawings = drawings;
-    this.#pads = pads;
     this.#pole = pole;
   }
 
@@ -140,30 +157,39 @@ export class HudPresenter implements Presenter<HudVM> {
       },
       player.decay,
     );
-    // Where the moves sit is the drawing's to say (U03c, U03e): under the picture, or on the room's card. The dock's
-    // order is this presenter's: the way out, then the game's own behind MORE; a card has no dock.
+    // Where the moves sit is the drawing's to say (U03c, U03e): under the picture, on the room's card, or among the
+    // keys at the screen's foot. The dock's order is this presenter's: the way out, then the game's own behind MORE; a
+    // card has no dock, nor has a place whose moves are keys.
     const leave = leaveOptions.map((option) => this.#docked(option));
     const system = snapshot.options.filter((option) => option.role === 'system');
-    const { strip: moves, ways } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
+    // The list beside the picture is the drawing's to say too: the tower's picture is its whole list.
+    const listed = drawing.beside(rows);
+    const { strip, ways, keys: keyed } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
+    // A move under the picture carries the icon it would have as a key.
+    const moves = strip.map((move) => ({ ...move, icon: MOVE_KEYS.get(move.id)?.icon ?? '' }));
+    const buffer = String(snapshot.buffer?.size ?? 0);
     const card: HudVM['card'] = ways.shown
       ? {
           shown: true,
           ...this.#card({
             arrival: place.description[0] ?? '',
-            buffer: String(snapshot.buffer?.size ?? 0),
+            buffer,
             leave: leaveOptions,
             moves: moveOptions,
             system,
           }),
         }
       : { shown: false };
-    const dock = card.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
-    const carded = card.shown
+    const keys = this.#keys(keyed, { buffer, moves: moveOptions, leave: leaveOptions, system });
+    // The strip that stands, the card's or the screen's own.
+    const standing: Panel<KeyStripVM> = card.shown ? card : keys;
+    const dock = standing.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
+    const carded = standing.shown
       ? [
-          ...this.#keyed(card.keys.lead),
-          ...this.#keyed(card.keys.trail),
-          ...card.ways,
-          ...this.#keyed(card.game),
+          ...this.#keyed(standing.keys.lead),
+          ...this.#keyed(standing.keys.trail),
+          ...(card.shown ? card.ways : []),
+          ...this.#keyed(standing.game),
         ]
       : [];
     return {
@@ -182,11 +208,7 @@ export class HudPresenter implements Presenter<HudVM> {
       },
       stats: [
         { key: 'steps', label: 'Steps', value: String(player.steps) },
-        {
-          key: 'buffer',
-          label: 'Buffer',
-          value: String(snapshot.buffer?.size ?? 0),
-        },
+        { key: 'buffer', label: 'Buffer', value: buffer },
       ],
       place: {
         eyebrow: place.kind.toUpperCase(),
@@ -235,19 +257,19 @@ export class HudPresenter implements Presenter<HudVM> {
         : null,
       drawing,
       card,
-      pad: this.#pads.of(place.portrait, travel, rows),
+      keys,
       heading: place.childrenHeading.toUpperCase(),
-      rows,
+      rows: listed,
       moves,
-      sealedNote: rows.some((row) => row.sealed)
+      sealedNote: listed.some((row) => row.sealed)
         ? { shown: true, text: 'STRUCTURES SEALED · the lattice opens their doors in a later build' }
         : { shown: false },
       sealedTag: 'SEALED',
       dock,
       // On a phone the way out stays out of the fold (I09): one row under the thumb.
       fold: {
-        after: card.shown ? 0 : leave.length,
-        out: card.shown ? 0 : leave.length,
+        after: standing.shown ? 0 : leave.length,
+        out: standing.shown ? 0 : leave.length,
         more: 'MORE',
         less: 'LESS',
         label: 'More of the dock',
@@ -262,6 +284,8 @@ export class HudPresenter implements Presenter<HudVM> {
         ...moves,
         ...dock,
         ...carded,
+        // The bar's moves are buttons; the moves with no button stay on offer for a keyboard.
+        ...(keyed.shown ? [...keyed.bar, ...keyed.unseen] : []),
         ...debug,
       ],
       status: snapshot.message,
@@ -387,10 +411,9 @@ export class HudPresenter implements Presenter<HudVM> {
   }
 
   /**
-   * The room's card (U03e): its keys — Buffer with its count, then Trace, the way back, which is the way out where
-   * it is offered and else the engine's move back, and the way forward, each found by its id and shown only where the
-   * room offers it; every other move goes on its back, every other option of the game on the MORE sheet. No option
-   * stands twice.
+   * The room's card (U03e): its keys — the way back, which is the way out where it is offered and else the engine's
+   * move back, and the way forward, each found by its id and shown only where the room offers it; every other move
+   * goes on its back.
    */
   #card(parts: {
     readonly arrival: string;
@@ -399,57 +422,123 @@ export class HudPresenter implements Presenter<HudVM> {
     readonly moves: readonly GameOption[];
     readonly system: readonly GameOption[];
   }): RoomCardVM {
-    const key = (option: GameOption, text: string, icon: string): CardKeyVM => ({
-      id: option.id,
-      key: option.key.toUpperCase(),
-      anchor: '',
-      text,
-      label: option.label,
-      icon,
-      badge: '',
-    });
-    const out = parts.leave[0];
-    const back = out === undefined ? parts.moves.find((move) => move.id === BACK_MOVE_ID) : undefined;
+    const out = this.#outKeys(parts.leave);
+    const back = out.length > 0 ? undefined : parts.moves.find((move) => move.id === BACK_MOVE_ID);
     const forward = parts.moves.find((move) => move.id === FORWARD_MOVE_ID);
+    const strip = this.#strip({
+      buffer: parts.buffer,
+      system: parts.system,
+      ways: [
+        ...out,
+        ...(back === undefined ? [] : [this.#moveKey(back)]),
+        ...(forward === undefined ? [] : [this.#moveKey(forward)]),
+      ],
+    });
+    const held = new Set([...strip.keys.lead, ...strip.keys.trail].map((each) => each.id));
+    return {
+      ...strip,
+      corner: CARD.corner,
+      arrival: parts.arrival,
+      ways: [...parts.leave, ...parts.moves]
+        .filter((option) => !held.has(option.id))
+        .map((option) => this.#docked(option)),
+      regions: { ...strip.regions, ...CARD.regions },
+    };
+  }
+
+  /**
+   * The keys of a place that is no card: each move the layout puts among them, then the way out, and the layout's bar;
+   * not shown where the layout puts no move among the keys.
+   */
+  #keys(
+    layout: MovesLayout['keys'],
+    parts: {
+      readonly buffer: string;
+      readonly moves: readonly GameOption[];
+      readonly leave: readonly GameOption[];
+      readonly system: readonly GameOption[];
+    },
+  ): HudVM['keys'] {
+    if (!layout.shown) return { shown: false };
+    return {
+      shown: true,
+      ...this.#strip({
+        buffer: parts.buffer,
+        system: parts.system,
+        ways: [
+          ...parts.moves
+            .filter((move) => layout.moves.some((each) => each.id === move.id))
+            .map((move) => this.#moveKey(move)),
+          ...this.#outKeys(parts.leave),
+        ],
+      }),
+      bar: layout.bar,
+    };
+  }
+
+  /**
+   * The strip of keys (U03e): Buffer with its count, then Trace, then the place's `ways` in the order given; every
+   * other option of the game on the MORE sheet. No option stands twice.
+   */
+  #strip(parts: {
+    readonly buffer: string;
+    readonly system: readonly GameOption[];
+    readonly ways: readonly KeyVM[];
+  }): KeyStripVM {
     const keys = {
       lead: parts.system
         .filter((option) => option.id === BUFFER)
         // The Buffer key counts the buffer, and a taken relic flies to it.
         .map((option) => ({
-          ...key(option, CARD.keys.buffer, 'buffer'),
+          ...this.#key(option, STRIP.keys.buffer),
           badge: parts.buffer,
           anchor: BUFFER_LANDING,
         })),
       trail: [
         ...parts.system
           .filter((option) => option.id === TRACE_ID)
-          .map((option) => key(option, CARD.keys.trace, 'trace')),
-        ...(out === undefined ? [] : [key(out, CARD.keys.out, 'out')]),
-        ...(back === undefined ? [] : [key(back, CARD.keys.back, 'back')]),
-        ...(forward === undefined ? [] : [key(forward, CARD.keys.forward, 'forward')]),
+          .map((option) => this.#key(option, STRIP.keys.trace)),
+        ...parts.ways,
       ],
     };
     const held = new Set([...keys.lead, ...keys.trail].map((each) => each.id));
     return {
-      corner: CARD.corner,
-      arrival: parts.arrival,
       keys,
-      more: CARD.more,
-      ways: [...parts.leave, ...parts.moves]
-        .filter((option) => !held.has(option.id))
-        .map((option) => this.#docked(option)),
+      more: STRIP.more,
       game: parts.system
         .filter((option) => !held.has(option.id))
-        .map((option) => {
-          const words = GAME_KEYS.get(option.id) ?? { text: option.label.toUpperCase(), icon: 'game' };
-          return key(option, words.text, words.icon);
-        }),
-      regions: CARD.regions,
+        .map((option) =>
+          this.#key(option, GAME_KEYS.get(option.id) ?? { text: option.label.toUpperCase(), icon: 'game' }),
+        ),
+      regions: STRIP.regions,
     };
   }
 
-  /** A card's keys as the router's options. */
-  #keyed(keys: readonly CardKeyVM[]): readonly OptionVM[] {
+  /** An option as a key of the strip: the short word shown, its drawn icon, the option's own words for a reader. */
+  #key(option: GameOption, words: { readonly text: string; readonly icon: string }): KeyVM {
+    return {
+      id: option.id,
+      key: option.key.toUpperCase(),
+      anchor: '',
+      text: words.text,
+      label: option.label,
+      icon: words.icon,
+      badge: '',
+    };
+  }
+
+  /** A move as a key: its short word and icon by its id, the move's own words where the table names none. */
+  #moveKey(move: GameOption): KeyVM {
+    return this.#key(move, MOVE_KEYS.get(move.id) ?? { text: move.label.toUpperCase(), icon: 'move' });
+  }
+
+  /** The way out as a key; none where the place offers no way out. */
+  #outKeys(leave: readonly GameOption[]): readonly KeyVM[] {
+    return leave.slice(0, 1).map((out) => this.#key(out, STRIP.keys.out));
+  }
+
+  /** A strip's keys as the router's options. */
+  #keyed(keys: readonly KeyVM[]): readonly OptionVM[] {
     return keys.map((each) => ({ id: each.id, key: each.key, label: each.label, opposite: '' }));
   }
 

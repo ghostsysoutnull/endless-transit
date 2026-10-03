@@ -179,7 +179,7 @@ export class SceneView implements LineScene {
     }
     const canvas = this.#mounted?.canvas;
     canvas?.name(vm.label);
-    canvas?.touch(camera.drags());
+    canvas?.touch(camera.page());
     this.#layout();
     this.#run();
   }
@@ -207,7 +207,7 @@ export class SceneView implements LineScene {
 
   /**
    * Whether a child picked from the list is the picture's to ride to (U02, Decision 8: a door picked from the list is
-   * walked to, then opened): an open child the camera has a stop for. The street's list enters at once.
+   * walked to, then opened): an open child the camera has a stop for. A picture that stands still enters at once.
    */
   leads(id: string): boolean {
     const child = this.#sketch?.frame().children.find((each) => each.id === id);

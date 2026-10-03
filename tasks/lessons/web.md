@@ -8,3 +8,9 @@ Web lessons, in the form the Codex's Self-Improvement Loop sets.
 - **`command -v chromium` is not a search for a browser**: look in `~/.cache/ms-playwright` and
   `find / -name playwright-core` before saying there is none; drive it in real time (`docs/analysis/mocks/look.js`) — a
   headless `--virtual-time-budget` screenshot freezes animations and lies.
+- **Accessibility is not a concern for this game**: nothing is built or kept for a screen reader; a button exists
+  because a finger uses it.
+- **A control the player needs on every screen is fixed to the screen itself**, never placed in the page's flow, where
+  a long list pushes it out of reach.
+- **A picture that takes the up-and-down drag locks the page under it**: before a picture is made taller or draggable,
+  say where the finger scrolls the page from.
