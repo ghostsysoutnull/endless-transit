@@ -68,5 +68,5 @@ began at the corridor and went on, on the user's word, to every level.
   a floor on the tower's picture, moving the gauge to bring it into the window) and the suite is green. Its
   screenshots showed the breach's bar covering the way into the corridor: the picture now leaves room for whatever
   stands at the screen's foot, and the breach's test checks it. The approved snapshot writes the row of buttons too.
-- **Not settled here**: `web/CLAUDE.md` wall 3 still demands accessibility and lists the view controls without the
-  description's fold; the elevator's up, down and descend are still moves of the engine, with no button.
+- **Not settled here**: `web/CLAUDE.md` wall 3 lists the view controls without the description's fold (its demand
+  for accessibility went right after the loop, on the user's word, with `e2e/a11y.spec.ts`, now `e2e/page.spec.ts`); the elevator's up, down and descend are still moves of the engine, with no button.
