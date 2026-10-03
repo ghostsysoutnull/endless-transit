@@ -11,7 +11,8 @@ BUILDINGS ON THIS STREET
   03 [3] Enter Building: ArchiveRoot
   04 [4] Enter Building: SpireFall
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Bright Boulevard | ⌂ Ornate Sanctum (unvisited) | ⌂ The Spire of Static (unvisited) | ⌂ ArchiveRoot (unvisited) | ⌂ SpireFall (unvisited)
-dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === BUILDING ⌂ Ornate Sanctum  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum *
@@ -20,41 +21,9 @@ stats: Steps 1 | Buffer 0
 tags: Building 1 of 4 (position) | Culture Baroque (culture) | Floors 16 (reading)
   An elevator runs the height of the building.
 status: Entered Ornate Sanctum.
-RIDE TO A FLOOR
-  15 [] Ride to Peak
-       Zone: Peak observatory
-  14 [] Ride to Floor 14
-       Zone: Vip quarters
-  13 [] Ride to Floor 13
-       Zone: Data vault
-  12 [] Ride to Floor 12
-       Zone: Vip quarters
-  11 [] Ride to Floor 11
-       Zone: Hydroponic bay
-  10 [] Ride to Floor 10
-       Zone: Living unit
-  09 [9] Ride to Floor 9
-       Zone: Living unit
-  08 [8] Ride to Floor 8
-       Zone: Bio server
-  07 [7] Ride to Floor 7
-       Zone: Hydroponic bay
-  06 [6] Ride to Floor 6
-       Zone: Research lab
-  05 [5] Ride to Floor 5
-       Zone: Research lab
-  04 [4] Ride to Floor 4
-       Zone: Filtration intake
-  03 [3] Ride to Floor 3
-       Zone: Filtration intake
-  02 [2] Ride to Floor 2
-       Zone: Mechanical sump
-  01 [1] Ride to Floor 1
-       Zone: Power relay
-  00 [0] Ride to Lobby [>X<]
-       Zone: Transit lobby
 TELEMETRY NOMINAL Quantum spectrogram 1 5 6 8 8 Resonant traces 0
-dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
@@ -63,9 +32,10 @@ stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Baroque (culture) | Stability 77.00% (reading) | Trait Industrial (trait)
   Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.
 status: Entered Floor 0.
-moves: [U] GO UP | [C] ENTER CORRIDOR
+moves: [C] ENTER CORRIDOR
 TELEMETRY NOMINAL Quantum spectrogram 7 4 2 4 8 Resonant traces 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
@@ -74,7 +44,6 @@ stats: Steps 3 | Buffer 0
 tags: Culture Baroque (culture) | Doors 9 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
-moves: [B] BACK TO ELEVATOR
 DOORS
   01 [1] Open Brutalist Slab, pitted
        A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.
@@ -95,7 +64,8 @@ DOORS
   09 [9] Open Reinforced Polymer, rusted
        A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
 TELEMETRY NOMINAL Quantum spectrogram 5 4 5 2 4 Resonant traces 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === ROOM □ Grand Power Plant  [frame yellow]
 path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Grand Power Plant *

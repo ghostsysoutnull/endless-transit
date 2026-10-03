@@ -26,55 +26,22 @@ BUILDINGS ON THIS STREET
   18 [Z] Enter Building: Silent Void
   19 [] Enter Building: Unmarked Gravity
   20 [] Enter Building: CellFall
-[NEURAL_MAP: STREET] SCAN_ORIGIN: Broad Alley | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited)
-dock: [L] ▲ LEAVE STREET | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+  21 [] Enter Building: Blank Gravity
+  22 [] Enter Building: Empty Cell
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Broad Alley | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ Empty Cell (unvisited)
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === BUILDING ⌂ HorizonWell  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0
-tags: Building 2 of 20 (position) | Culture Void (culture) | Floors 18 (reading)
+tags: Building 2 of 22 (position) | Culture Void (culture) | Floors 18 (reading)
   An elevator runs the height of the building.
 status: Entered HorizonWell.
-RIDE TO A FLOOR
-  17 [] Ride to Peak
-       Zone: Peak observatory
-  16 [] Ride to Floor 16
-       Zone: Vip quarters
-  15 [] Ride to Floor 15
-       Zone: Executive suite
-  14 [] Ride to Floor 14
-       Zone: Vip quarters
-  13 [] Ride to Floor 13
-       Zone: Research lab
-  12 [] Ride to Floor 12
-       Zone: Research lab
-  11 [] Ride to Floor 11
-       Zone: Hydroponic bay
-  10 [] Ride to Floor 10
-       Zone: Research lab
-  09 [9] Ride to Floor 9
-       Zone: Hydroponic bay
-  08 [8] Ride to Floor 8
-       Zone: Research lab
-  07 [7] Ride to Floor 7
-       Zone: Hydroponic bay
-  06 [6] Ride to Floor 6
-       Zone: Hydroponic bay
-  05 [5] Ride to Floor 5
-       Zone: Research lab
-  04 [4] Ride to Floor 4
-       Zone: Power relay
-  03 [3] Ride to Floor 3
-       Zone: Filtration intake
-  02 [2] Ride to Floor 2
-       Zone: Filtration intake
-  01 [1] Ride to Floor 1
-       Zone: Power relay
-  00 [0] Ride to Lobby [>X<]
-       Zone: Transit lobby
 TELEMETRY NOMINAL Quantum spectrogram 3 1 7 6 1 Resonant traces 0
-dock: [L] ▲ LEAVE BUILDING | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
@@ -83,9 +50,10 @@ stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Void (culture) | Stability 90.00% (reading) | Trait Research (trait)
   Floor 0. A landing of Void design, silent except for the lift cables ticking overhead.
 status: Entered Floor 0.
-moves: [U] GO UP | [C] ENTER CORRIDOR
+moves: [C] ENTER CORRIDOR
 TELEMETRY NOMINAL Quantum spectrogram 7 1 2 8 4 Resonant traces 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
@@ -94,7 +62,6 @@ stats: Steps 3 | Buffer 0
 tags: Culture Void (culture) | Doors 10 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
-moves: [B] BACK TO ELEVATOR
 DOORS
   01 [1] Open Reinforced Polymer, warped
        A slab of reinforced polymer, dull and unscratched. The panel has bowed outward and no longer meets its frame.
@@ -117,7 +84,8 @@ DOORS
   10 [A] Open Oxidized Metal Hatch, static
        An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
 TELEMETRY NOMINAL Quantum spectrogram 6 6 8 9 1 Resonant traces 0
-dock: [L] ▲ LEAVE FLOOR | [S] SCAN | [M] LATTICE | [I] BUFFER | [] TRACE | [H] HELP | [T] TITLE SCREEN | [Q] END SESSION
+keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)
+game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === ROOM □ Hollow Neural Link Array  [frame grey]
 path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Hollow Neural Link Array *

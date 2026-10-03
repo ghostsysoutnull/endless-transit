@@ -63,5 +63,10 @@ began at the corridor and went on, on the user's word, to every level.
   `SceneDrawing` (where each picture puts its moves and its list), the tower's window and page scroll, the sliding
   street, `AreaNames`, the cameras' `page`; the in-game manual's words; the world's street range and one pin.
 - **The in-game manual** no longer names GO UP and GO DOWN; its second heading reads THE BUTTONS BELOW.
+- **The browser suite**, run once as it was, failed fourteen tests in eleven files — a floor picked by its removed
+  button, the elevator's up and down, the old MORE, the street's size and order; each was rewritten (the harness taps
+  a floor on the tower's picture, moving the gauge to bring it into the window) and the suite is green. Its
+  screenshots showed the breach's bar covering the way into the corridor: the picture now leaves room for whatever
+  stands at the screen's foot, and the breach's test checks it. The approved snapshot writes the row of buttons too.
 - **Not settled here**: `web/CLAUDE.md` wall 3 still demands accessibility and lists the view controls without the
   description's fold; the elevator's up, down and descend are still moves of the engine, with no button.
