@@ -327,7 +327,7 @@ PRIME, KEYSTONE) as a folded strip out of the tab order; tests turn it on with `
    against every surface (≥ 4.5:1, parsed from the stylesheet), views carrying no words.
 2. **Vitest, UI without a browser:** presenters → view-models, canvas pictures against a recording painter.
 3. **Playwright, production build, the `phone` profile:** every flow (title, world walk, buildings, items, survival,
-   ritual, map, fold, focus, announce, a11y, resilience against corrupt saves and a throwing storage, help), and
+   ritual, map, fold, focus, announce, the page, resilience against corrupt saves and a throwing storage, help), and
    `@playthrough` — the whole game from the title to the void recap and a reload that continues
    (`npx playwright test --grep @playthrough`). Screenshots land in `test-results/` and are looked at before UI work
    is called done.
