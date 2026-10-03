@@ -1,3 +1,4 @@
+import type { PageScroll } from '#ui/canvas/PageScroll.ts';
 import type { CameraStop } from './CameraStop.ts';
 import type { CameraTrack } from './CameraTrack.ts';
 
@@ -20,6 +21,8 @@ export interface SceneCamera {
   landing(view: number, speed: number): number;
   /** Whether a finger on the picture moves the view. */
   drags(): boolean;
+  /** Which way the page still scrolls under a finger on the picture. */
+  page(): PageScroll;
   /** View units a finger moves the view by for one CSS pixel along the axis. */
   dragRate(): number;
   /** Where a point on the page lies along the axis a finger drags on, in CSS pixels. */

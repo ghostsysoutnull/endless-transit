@@ -1,3 +1,4 @@
+import type { PageScroll } from '#ui/canvas/PageScroll.ts';
 import type { CameraStop } from './CameraStop.ts';
 import type { CameraTrack } from './CameraTrack.ts';
 import type { SceneCamera } from './SceneCamera.ts';
@@ -86,6 +87,12 @@ export class TravelCamera implements SceneCamera {
 
   drags(): boolean {
     return this.#drag !== 0;
+  }
+
+  /** A view dragged sideways leaves the page its scroll up and down; one dragged up and down keeps the finger. */
+  page(): PageScroll {
+    if (!this.drags()) return 'free';
+    return this.#axis === 'x' ? 'vertical' : 'held';
   }
 
   dragRate(): number {

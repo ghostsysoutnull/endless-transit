@@ -5,7 +5,9 @@ import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import type { StreetVM } from './StreetVM.ts';
+import { NoTrack } from './NoTrack.ts';
 import { StillCamera } from './StillCamera.ts';
+import { TravelCamera } from './TravelCamera.ts';
 import type { StreetParts } from './StreetParts.ts';
 import type { ChildMark } from './ChildMark.ts';
 
@@ -23,6 +25,17 @@ const STARS = 50;
 const TALLEST = 100;
 /** A building's width in its slot. */
 const WIDTH = 0.62;
+/**
+ * A building's slot is at least this wide: a row longer than the picture runs on past its edge, and the view slides
+ * along it. The room before the first building and after the last, in slots.
+ */
+const SLOT = 72;
+const LEAD = 0.8;
+const ENDS = 0.6;
+/** The slide: a release coasts for 0.3 s and settles in 380 ms; a ride of d slots takes 260 + 160·√d ms, at most 1.2 s. */
+const COAST = 0.3;
+const SETTLE = { base: 380, per: 0 };
+const PACE = { base: 260, per: 160, most: 1200 };
 /** Windows: at most this many rows and columns, however many floors and doors. */
 const WINDOW_ROWS = 14;
 const WINDOW_COLUMNS = 4;
@@ -42,10 +55,12 @@ interface Standing {
 
 /**
  * Draws a street as the mock does (U01b; the mock's `street`, `transit-reframed.html:740-766`): one row of
- * buildings standing on the ground line, each as tall as its floors say, windows by its doors and floors that
+ * buildings standing on the ground line, each in a slot wide enough to keep its shape — a long row runs past the
+ * picture's edge and a finger slides the view along it, the page still scrolling up and down — each as tall as its
+ * floors say, windows by its doors and floors that
  * flicker, a landmark ringed, a visited one with a yellow dot, the lit one outlined in yellow, its number under its
- * feet; stars twinkle over them, rain falls and the dashed line of the way runs below. A pure function of its
- * view-model, size, time and lit child: every ink is a token of the stylesheet, every variation a hash of the
+ * feet; stars twinkle over them, rain falls and the dashed line of the way runs below. The view is how many slots
+ * the row has slid by, owned by the scene host. A pure function of its view-model, size, time, lit child and view: every ink is a token of the stylesheet, every variation a hash of the
  * building's address — never the clock's randomness.
  */
 export class StreetPicture implements ScenePicture<StreetVM> {
@@ -55,13 +70,34 @@ export class StreetPicture implements ScenePicture<StreetVM> {
     this.#parts = parts;
   }
 
-  /** A street stands still: nothing to drag, no slider; going in zooms (U01b). */
-  camera(): SceneCamera {
-    return new StillCamera();
+  /** A row that fits the picture stands still; a longer one slides sideways under a finger, no slider; going in zooms (U01b). */
+  camera(vm: StreetVM, size: PictureSize): SceneCamera {
+    const row = this.#row(vm, size);
+    if (row.reach <= 0) return new StillCamera();
+    const seen = size.width / row.slot;
+    return new TravelCamera({
+      rest: 0,
+      min: 0,
+      max: row.reach,
+      drag: -1 / row.slot,
+      axis: 'x',
+      coast: COAST,
+      snap: false,
+      settle: SETTLE,
+      pace: PACE,
+      zoom: true,
+      // Before a building is entered the view rides to where it stands in the middle, as far as the row's ends allow.
+      stops: vm.children.map((child, index) => ({
+        id: child.id,
+        at: Math.min(row.reach, Math.max(0, index + LEAD - seen / 2)),
+      })),
+      track: new NoTrack(),
+    });
   }
 
-  layout(vm: StreetVM, size: PictureSize): readonly SceneHit[] {
-    return this.#stand(vm, size).map((building) => {
+  /** Where each building can be tapped at a view; a row that has not slid stands at 0. */
+  layout(vm: StreetVM, size: PictureSize, view = 0): readonly SceneHit[] {
+    return this.#stand(vm, size, view).map((building) => {
       const top = building.base - building.height;
       const y = Math.max(0, top - building.roof - 2);
       return {
@@ -82,6 +118,7 @@ export class StreetPicture implements ScenePicture<StreetVM> {
     palette: Palette,
     time: number,
     lit: ChildMark,
+    view = 0,
   ): void {
     const seconds = time / 1000;
     const { width, height } = size;
@@ -92,14 +129,22 @@ export class StreetPicture implements ScenePicture<StreetVM> {
     painter.fillRect(0, 0, width, height);
     this.#stars(painter, size, palette, seconds);
     this.#rain(painter, size, palette, seconds);
-    for (const building of this.#stand(vm, size)) this.#building(painter, building, palette, seconds, lit);
+    for (const building of this.#stand(vm, size, view))
+      this.#building(painter, building, palette, seconds, lit);
     this.#way(painter, size, palette, seconds);
     painter.globalAlpha = 1;
   }
 
-  /** Where each building stands: one row along the ground line, slots the mock's width apart. */
-  #stand(vm: StreetVM, size: PictureSize): Standing[] {
-    const slot = size.width / (vm.children.length + 0.6);
+  /** The row: how wide a slot is — the picture's width shared out, or the least a building keeps its shape in — and how many slots the view can slide by. */
+  #row(vm: StreetVM, size: PictureSize): { readonly slot: number; readonly reach: number } {
+    const slots = vm.children.length + ENDS;
+    const slot = Math.max(SLOT, size.width / slots);
+    return { slot, reach: Math.max(0, slots - size.width / slot) };
+  }
+
+  /** Where each building stands at a view: one row along the ground line, slid left by the view. */
+  #stand(vm: StreetVM, size: PictureSize, view: number): Standing[] {
+    const { slot } = this.#row(vm, size);
     const base = size.height * GROUND;
     const reach = base - size.height * SKY;
     return vm.children.map((child, index) => {
@@ -109,7 +154,7 @@ export class StreetPicture implements ScenePicture<StreetVM> {
       return {
         child,
         slot,
-        middle: slot * (0.8 + index),
+        middle: slot * (LEAD + index - view),
         base,
         width,
         height: (reach - roof) * (0.3 + 0.68 * Math.sqrt(floors / TALLEST)),

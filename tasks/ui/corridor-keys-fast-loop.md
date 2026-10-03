@@ -22,4 +22,7 @@ stay as they are.
 | `MovesInKeys(under)` | constructor argument on a kind of this loop | `SceneDrawing` hands it | which moves keep their words under the picture (the tower's way into the corridor) | none |
 | `MoveVM` | value object (data for the view) | `ui/screens` | a move under the picture with its drawn icon | none |
 | `Drawing.beside` | method on an existing kind | each `Drawing` member | whether the listed places stand in a list beside the picture (the tower: none) | none |
+| `PageScroll` | value (a union of three words) | `ui/canvas` | which way the page still scrolls under a finger on a picture | none |
+| `SceneCamera.page` | method on an existing kind | `TravelCamera`, `StillCamera` | what its drag leaves the page: a sideways drag leaves up and down | none |
+| `StreetPicture`'s row (`SLOT`, `#row`) | constants and a method on an existing kind | `StreetPicture` | the least width a building's slot keeps, and how far the view slides along a longer row | none |
 | `MOVE_KEYS` | table (a constant) | `HudPresenter` | a move's short word and icon as a key, by option id | none |

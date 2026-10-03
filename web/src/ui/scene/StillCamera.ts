@@ -1,3 +1,4 @@
+import type { PageScroll } from '#ui/canvas/PageScroll.ts';
 import type { CameraStop } from './CameraStop.ts';
 import type { CameraTrack } from './CameraTrack.ts';
 import { NoTrack } from './NoTrack.ts';
@@ -27,6 +28,10 @@ export class StillCamera implements SceneCamera {
 
   drags(): boolean {
     return false;
+  }
+
+  page(): PageScroll {
+    return 'free';
   }
 
   dragRate(): number {

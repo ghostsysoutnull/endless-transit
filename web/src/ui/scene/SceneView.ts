@@ -179,7 +179,7 @@ export class SceneView implements LineScene {
     }
     const canvas = this.#mounted?.canvas;
     canvas?.name(vm.label);
-    canvas?.touch(camera.drags());
+    canvas?.touch(camera.page());
     this.#layout();
     this.#run();
   }
