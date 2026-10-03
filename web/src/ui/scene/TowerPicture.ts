@@ -18,8 +18,20 @@ import { SliderTrack } from './SliderTrack.ts';
 const ROW = 50;
 const FEWEST = 4;
 const MOST = 11;
-/** The strip left of the tower the floor numbers are written in, and the room the gauge takes on the right. */
-const NUMBERS = 46;
+/** The window runs the picture's whole height but for this edge. */
+const EDGE = 6;
+/**
+ * What stands past the tower's ends, in rows: the window scrolls this far above the top floor, where the roof is, and
+ * below the lowest level, where the bedrock is.
+ */
+const ROOF = 0.8;
+const FOOT = 0.45;
+/**
+ * The strip left of the tower the floor numbers are written in: as wide as the tower's longest label — a character's
+ * advance in the picture's font — and the room around it. Then the room the gauge takes on the right.
+ */
+const DIGIT = 7.5;
+const NUMBERS_ROOM = 14;
 const GAUGE = 58;
 const GAUGE_ROOM = 66;
 const MARGIN = 20;
@@ -42,6 +54,9 @@ interface Frame {
   readonly rows: ReadonlyMap<number, Row>;
   readonly top: number;
   readonly bottom: number;
+  /** The tower's own ends inside the window: its roof line and its bedrock line, the window's edge when out of view. */
+  readonly head: number;
+  readonly foot: number;
   readonly visible: number;
   readonly row: number;
   readonly left: number;
@@ -59,9 +74,11 @@ interface Frame {
 /**
  * Draws a building as the mock rides it (U02; the mock's `building`, `transit-reframed.html:766-826`): a window
  * of thumb-sized floors that follows the car, the shaft and the car on its cable, each floor's number, windows
- * and its corridor in its shape with a tick per door in its state's ink, the roof when the top is in view and
- * the bedrock — sealed, or broken open onto the Layers — when the foot is; counts of the floors out of view; and
- * the gauge on the right: the whole height, its ticks, the floors visited, the window and the car. The view is
+ * and its corridor in its shape with a tick per door in its state's ink; the window takes the picture's whole
+ * height and scrolls a little past the tower's ends, onto the roof above the top floor and the bedrock — sealed, or
+ * broken open onto the Layers — under the lowest; and
+ * the gauge on the right: the whole height, its ticks, the floors visited, the window and the car — the one
+ * thing a finger moves the window by: a drag on the floors is the page's. The view is
  * the car's floor, owned by the scene host. A pure function of its view-model, size, time, lit child and view.
  */
 export class TowerPicture implements ScenePicture<TowerVM> {
@@ -84,7 +101,8 @@ export class TowerPicture implements ScenePicture<TowerVM> {
       rest: frame.tower.car,
       min: frame.min,
       max: frame.max,
-      drag: stops.length === 0 ? 0 : 1 / frame.row,
+      // A finger on the floors scrolls the page and taps a floor; only the gauge moves the window.
+      drag: 0,
       axis: 'y',
       coast: COAST,
       snap: true,
@@ -119,9 +137,9 @@ export class TowerPicture implements ScenePicture<TowerVM> {
       if (height <= 4) continue;
       hits.push({
         id: child.id,
-        x: frame.left - 36,
+        x: 0,
         y: top,
-        width: frame.width + 36,
+        width: frame.left + frame.width,
         height,
         anchor: { x: frame.middle, y: top + height / 2 },
       });
@@ -146,8 +164,6 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     const frame = this.#frame(vm, size, view);
     if (frame === undefined) return;
     const seconds = time / 1000;
-    this.#top(painter, frame, palette);
-    this.#foot(painter, frame, size, palette, vm.tower.breached, seconds);
     painter.save();
     painter.beginPath();
     painter.rect(0, frame.top, size.width, frame.bottom - frame.top);
@@ -155,14 +171,16 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     for (const level of this.#levels(frame)) this.#floor(painter, vm, frame, level, palette, seconds, lit);
     if (vm.tower.breached) this.#bedrockLine(painter, frame, palette, seconds);
     this.#car(painter, frame, palette, view);
+    this.#roof(painter, frame, palette);
+    this.#bedrock(painter, frame, palette);
     painter.restore();
     painter.globalAlpha = 0.8;
     painter.strokeStyle = palette('cy');
     painter.lineWidth = 1.2;
-    painter.strokeRect(frame.left + 0.5, frame.top + 0.5, frame.width, frame.bottom - frame.top);
+    painter.strokeRect(frame.left + 0.5, frame.head + 0.5, frame.width, frame.foot - frame.head);
     painter.beginPath();
-    painter.moveTo(frame.inner + 0.5, frame.top);
-    painter.lineTo(frame.inner + 0.5, frame.bottom);
+    painter.moveTo(frame.inner + 0.5, frame.head);
+    painter.lineTo(frame.inner + 0.5, frame.foot);
     painter.stroke();
     if (frame.gauge) this.#gauge(painter, vm, frame, size, palette, view);
     painter.globalAlpha = 1;
@@ -175,24 +193,32 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     const min = Math.min(...rows.keys());
     const max = Math.max(...rows.keys());
     const levels = max - min + 1;
-    const top = Math.max(size.height * 0.1, 52);
-    const bottom = size.height - Math.max(size.height * 0.09, 38);
-    const visible = Math.min(levels, Math.min(MOST, Math.max(FEWEST, Math.floor((bottom - top) / ROW))));
+    const top = EDGE;
+    const bottom = size.height - EDGE;
+    // The window counts the roof and the bedrock among what it scrolls over: a short tower shows them both at once.
+    const visible = Math.min(
+      levels + ROOF + FOOT,
+      Math.min(MOST, Math.max(FEWEST, Math.floor((bottom - top) / ROW))),
+    );
     const row = (bottom - top) / visible;
     const gauge = vm.children.length > 0;
-    const width = size.width - NUMBERS - (gauge ? GAUGE_ROOM : MARGIN);
+    const numbers =
+      Math.max(...tower.rows.map((each) => each.level.label().length)) * DIGIT + NUMBERS_ROOM;
+    const width = size.width - numbers - (gauge ? GAUGE_ROOM : MARGIN);
     const shaft = Math.min(GAUGE, width * 0.13);
-    const inner = NUMBERS + shaft;
+    const inner = numbers + shaft;
     const clamped = Math.min(Math.max(view, min), max);
-    const base = Math.min(Math.max(clamped - (visible - 1) / 2, min), max - visible + 1);
+    const base = Math.min(Math.max(clamped - (visible - 1) / 2, min - FOOT), max - visible + 1 + ROOF);
     return {
       tower,
       rows,
       top,
       bottom,
+      head: Math.max(top, bottom - (max - base + 1) * row),
+      foot: Math.min(bottom, bottom - (min - base) * row),
       visible,
       row,
-      left: NUMBERS,
+      left: numbers,
       width,
       shaft,
       inner,
@@ -230,28 +256,17 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     return frame.rows.get(level)?.level.label() ?? '';
   }
 
-  /** The roof when the top floor is in view, else how many floors are above the window. */
-  #top(painter: Painter, frame: Frame, palette: Palette): void {
-    if (frame.base < frame.max - frame.visible + 1 - 0.01) {
-      this.#count(
-        painter,
-        `▲ ${String(Math.ceil(frame.max - (frame.base + frame.visible - 1)))}`,
-        frame.middle,
-        frame.top - 16,
-        palette,
-      );
-      return;
-    }
-    const roof = this.#y(frame, frame.max);
-    const rise = Math.min(frame.width * 0.2, (roof - 6) * 0.8);
-    if (rise <= 4) return;
+  /** The roof over the top floor, where the window has scrolled onto it. */
+  #roof(painter: Painter, frame: Frame, palette: Palette): void {
+    const rise = Math.min(frame.width * 0.2, ROOF * frame.row - 8);
+    if (frame.head <= frame.top || rise <= 4) return;
     const { middle, width } = frame;
     painter.globalAlpha = 0.6;
     painter.strokeStyle = palette('cy');
     painter.lineWidth = 1.2;
     painter.beginPath();
     this.#parts.roofDrawers[this.#parts.roofs.of(frame.tower.address, frame.tower.landmark)].trace(painter, {
-      base: roof,
+      base: frame.head,
       rise,
       origin: middle,
       span: width,
@@ -263,57 +278,22 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     painter.globalAlpha = 1;
   }
 
-  /** The bedrock when the foot is in view — the substrate's end once breached — else how many levels are below. */
-  #foot(
-    painter: Painter,
-    frame: Frame,
-    size: PictureSize,
-    palette: Palette,
-    breached: boolean,
-    seconds: number,
-  ): void {
-    if (frame.base > frame.min + 0.01) {
-      this.#count(
-        painter,
-        `▼ ${String(Math.ceil(frame.base - frame.min))}`,
-        frame.middle,
-        frame.bottom + 16,
-        palette,
-        // Once breached, the count below throbs in the void's red: the way down is open (U04).
-        breached ? { ink: 'rd', alpha: 0.65 + 0.35 * Math.sin(seconds * 3) } : { ink: 'dim', alpha: 1 },
-      );
-      return;
-    }
-    const { left, width, bottom } = frame;
+  /** The bedrock under the lowest level — the substrate's end once breached — where the window has scrolled onto it. */
+  #bedrock(painter: Painter, frame: Frame, palette: Palette): void {
+    const { left, width, foot, bottom } = frame;
+    if (foot >= bottom) return;
     painter.globalAlpha = 0.06;
     painter.fillStyle = palette('rd');
-    painter.fillRect(left, bottom, width, size.height - bottom);
+    painter.fillRect(left, foot, width, bottom - foot);
     painter.globalAlpha = 0.3;
     painter.strokeStyle = palette('rd');
     painter.lineWidth = 1;
     painter.beginPath();
     for (let x = left; x < left + width; x += 10) {
-      painter.moveTo(x, bottom + 2);
-      painter.lineTo(Math.min(x + 8, left + width), size.height);
+      painter.moveTo(x, foot + 2);
+      painter.lineTo(Math.min(x + 8, left + width), bottom);
     }
     painter.stroke();
-    painter.globalAlpha = 1;
-  }
-
-  #count(
-    painter: Painter,
-    text: string,
-    x: number,
-    y: number,
-    palette: Palette,
-    look: { readonly ink: string; readonly alpha: number } = { ink: 'dim', alpha: 1 },
-  ): void {
-    painter.globalAlpha = look.alpha;
-    painter.font = this.#parts.font.of('regular');
-    painter.textAlign = 'center';
-    painter.textBaseline = 'middle';
-    painter.fillStyle = palette(look.ink);
-    painter.fillText(text, x, y);
     painter.globalAlpha = 1;
   }
 
@@ -446,10 +426,10 @@ export class TowerPicture implements ScenePicture<TowerVM> {
 
   /** The shaft and the car at the view, on its cable from the top. */
   #car(painter: Painter, frame: Frame, palette: Palette, view: number): void {
-    const { left, shaft, top, bottom, row } = frame;
+    const { left, shaft, head, foot, row } = frame;
     painter.globalAlpha = 1;
     painter.fillStyle = palette('ground');
-    painter.fillRect(left, top, shaft, bottom - top);
+    painter.fillRect(left, head, shaft, foot - head);
     painter.globalAlpha = 0.18;
     painter.strokeStyle = palette('cy');
     painter.beginPath();
@@ -464,7 +444,7 @@ export class TowerPicture implements ScenePicture<TowerVM> {
     painter.strokeStyle = palette('yl');
     painter.lineWidth = 1.5;
     painter.beginPath();
-    painter.moveTo(left + shaft / 2, top);
+    painter.moveTo(left + shaft / 2, head);
     painter.lineTo(left + shaft / 2, car + 3);
     painter.stroke();
     painter.globalAlpha = 0.88;
@@ -514,7 +494,7 @@ export class TowerPicture implements ScenePicture<TowerVM> {
       if (child.visited) painter.fillRect(x - 6, at(child.level.number()) - 1, 14, 2);
     }
     const high = at(Math.min(max, frame.base + frame.visible - 1));
-    const low = at(frame.base);
+    const low = at(Math.max(min, frame.base));
     painter.globalAlpha = 0.14;
     painter.fillStyle = palette('cy');
     painter.fillRect(x - 10, high, 22, Math.max(22, low - high));
