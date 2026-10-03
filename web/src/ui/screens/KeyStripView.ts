@@ -5,7 +5,7 @@ import type { KeyStripParts } from './KeyStripParts.ts';
 import type { KeyStripVM } from './KeyStripVM.ts';
 
 /**
- * Draws the strip of keys at the foot of a screen (U03e) — a room's card, a corridor — and owns one piece of state:
+ * Draws the strip of keys at the foot of a screen (U03e) — under a room's card, or in place of the dock — and owns one piece of state:
  * whether the MORE sheet, the game's own options, lies open. Each key is a real button for its option, its drawn icon
  * the stylesheet's; MORE is a view control: it picks nothing. Every word comes from the view-model.
  */

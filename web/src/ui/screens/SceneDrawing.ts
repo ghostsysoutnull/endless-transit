@@ -37,7 +37,7 @@ interface DrawnChildren {
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
-  /** Where each picture's moves sit (U03c, U03e): on the card for the plan, among the keys for the corridor, under the picture for every other. */
+  /** Where each picture's moves sit (U03c, U03e): on the card for the plan; among the keys for the corridor, the street and every area above it; under the picture for the tower and a place no picture draws. */
   readonly #strip = new MovesInStrip();
   readonly #carded = new MovesOnCard();
   readonly #keyed = new MovesInKeys();
@@ -97,7 +97,7 @@ export class SceneDrawing implements Drawings {
               doors: building.doors,
             })),
           ),
-          this.#strip,
+          this.#keyed,
         ),
       tower: (tower) =>
         new DrawnTower(
@@ -168,7 +168,7 @@ export class SceneDrawing implements Drawings {
             look: area.look,
             signal: area.signal,
           },
-          this.#strip,
+          this.#keyed,
         ),
       unseen: () => new Undrawn(this.#frame(place, decay, travel), this.#strip),
     });

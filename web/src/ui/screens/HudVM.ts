@@ -99,7 +99,7 @@ export interface HudVM extends Screen {
   }>;
   /** The room's card (U03e): shown where the drawing puts its place's moves on one; the dock and the strip are then empty. */
   readonly card: Panel<RoomCardVM>;
-  /** The strip of keys at the screen's foot where the drawing puts its place's moves among them (a corridor); the dock and the strip under the picture are then empty. A room's keys are its card's. */
+  /** The strip of keys at the screen's foot where the drawing puts its place's moves among them (`MovesInKeys`); the dock and the strip under the picture are then empty. A room's keys are its card's. */
   readonly keys: Panel<KeyStripVM>;
   /** The line above the rows. */
   readonly heading: string;

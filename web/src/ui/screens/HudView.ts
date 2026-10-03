@@ -42,7 +42,7 @@ interface TraceParts {
  * panel, the list of places to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel; a room is drawn as a card of its own (`RoomCard`, U03e), its keys in place of the dock; a corridor keeps its list and has the same keys (`KeyStrip`) in place of the dock and of the strip. The coherence meter is a
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel; a room is drawn as a card of its own (`RoomCard`, U03e), its keys in place of the dock; a place whose moves stand among the keys (`HudVM.keys`) keeps its list and has the same keys (`KeyStrip`) in place of the dock and of the strip. The coherence meter is a
  * `role="meter"` whose fill is a width the stylesheet animates (nodes survive a render). The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
@@ -99,7 +99,7 @@ export class HudView implements View<HudVM> {
   #pull: number | undefined;
   /** The room's card (U03e): its markup and which face shows. */
   readonly #card: RoomCard;
-  /** The strip of keys at the screen's foot (U03e), the card's and a corridor's: its MORE sheet closes at each step. */
+  /** The strip of keys at the screen's foot (U03e), the card's and the screen's own: its MORE sheet closes at each step. */
   readonly #keys: KeyStrip;
 
   /** The registry binds a drawing to its picture (U01b); the stage shows its scene (U03); the makers make each canvas the screen carries (U02). */
@@ -520,7 +520,7 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  /** The strip of keys in place of the dock (a corridor's): at the screen's foot, its MORE sheet rising over it. */
+  /** The strip of keys in place of the dock: at the screen's foot, its MORE sheet rising over it. */
   #keybar(keys: KeyStripVM): TemplateResult {
     const parts: KeyStripParts = {
       slot: nothing,
