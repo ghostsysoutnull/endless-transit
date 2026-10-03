@@ -172,11 +172,9 @@ export class HudPresenter implements Presenter<HudVM> {
     // card has no dock, nor has a place whose moves are keys.
     const leave = leaveOptions.map((option) => this.#docked(option));
     const system = snapshot.options.filter((option) => option.role === 'system');
-    const {
-      strip: moves,
-      ways,
-      keys: keyed,
-    } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
+    const { strip, ways, keys: keyed } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
+    // A move under the picture carries the icon it would have as a key.
+    const moves = strip.map((move) => ({ ...move, icon: MOVE_KEYS.get(move.id)?.icon ?? '' }));
     const card: HudVM['card'] = ways.shown
       ? {
           shown: true,
@@ -189,7 +187,8 @@ export class HudPresenter implements Presenter<HudVM> {
           }),
         }
       : { shown: false };
-    // A move is a key, then the way out — but a ride, which has no button, and a move that arrives as the bar.
+    // A move the layout puts among the keys is a key, then the way out — but a ride, which has no button, and a move
+    // that arrives as the bar.
     const keys: HudVM['keys'] = keyed.shown
       ? {
           shown: true,
@@ -198,6 +197,7 @@ export class HudPresenter implements Presenter<HudVM> {
             system,
             ways: [
               ...moveOptions
+                .filter((move) => keyed.moves.some((each) => each.id === move.id))
                 .filter((move) => !RIDES.has(move.id) && !BARRED.has(move.id))
                 .map((move) => this.#moveKey(move)),
               ...this.#outKeys(leaveOptions),
@@ -209,14 +209,14 @@ export class HudPresenter implements Presenter<HudVM> {
     // The rides stay on offer for a keyboard.
     const rides = keyed.shown ? keyed.moves.filter((move) => RIDES.has(move.id)) : [];
     // The strip that stands, the card's or the screen's own.
-    const strip: Panel<KeyStripVM> = card.shown ? card : keys;
-    const dock = strip.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
-    const carded = strip.shown
+    const standing: Panel<KeyStripVM> = card.shown ? card : keys;
+    const dock = standing.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
+    const carded = standing.shown
       ? [
-          ...this.#keyed(strip.keys.lead),
-          ...this.#keyed(strip.keys.trail),
+          ...this.#keyed(standing.keys.lead),
+          ...this.#keyed(standing.keys.trail),
           ...(card.shown ? card.ways : []),
-          ...this.#keyed(strip.game),
+          ...this.#keyed(standing.game),
         ]
       : [];
     return {
@@ -301,8 +301,8 @@ export class HudPresenter implements Presenter<HudVM> {
       dock,
       // On a phone the way out stays out of the fold (I09): one row under the thumb.
       fold: {
-        after: strip.shown ? 0 : leave.length,
-        out: strip.shown ? 0 : leave.length,
+        after: standing.shown ? 0 : leave.length,
+        out: standing.shown ? 0 : leave.length,
         more: 'MORE',
         less: 'LESS',
         label: 'More of the dock',

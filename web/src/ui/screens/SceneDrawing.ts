@@ -1,6 +1,6 @@
 import type { Portrait } from '#engine/model/Portrait.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
-import type { GameOption } from '#engine/rules/GameOption.ts';
+import { CORRIDOR_MOVE_ID, type GameOption } from '#engine/rules/GameOption.ts';
 import type { TraceStep } from '#engine/rules/TraceStep.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
@@ -37,10 +37,14 @@ interface DrawnChildren {
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
-  /** Where each picture's moves sit (U03c, U03e): on the card for the plan; among the keys for every other picture; under the picture for a place no picture draws. */
+  /**
+   * Where each picture's moves sit (U03c, U03e): on the card for the plan; among the keys for every other picture —
+   * the tower keeps the way into the corridor under it; under the picture for a place no picture draws.
+   */
   readonly #strip = new MovesInStrip();
   readonly #carded = new MovesOnCard();
   readonly #keyed = new MovesInKeys();
+  readonly #towered = new MovesInKeys([CORRIDOR_MOVE_ID]);
 
   /**
    * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,
@@ -112,7 +116,7 @@ export class SceneDrawing implements Drawings {
             ),
             tower,
           },
-          this.#keyed,
+          this.#towered,
         ),
       corridor: (corridor) =>
         new DrawnCorridor(

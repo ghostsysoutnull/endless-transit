@@ -5,6 +5,7 @@ import type { AsideVM } from './AsideVM.ts';
 import type { Drawing } from './Drawing.ts';
 import type { KeyStripVM } from './KeyStripVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
+import type { MoveVM } from './MoveVM.ts';
 import type { Panel } from './Panel.ts';
 import type { RoomCardVM } from './RoomCardVM.ts';
 import type { StatKey } from './StatKey.ts';
@@ -107,7 +108,7 @@ export interface HudVM extends Screen {
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
   /** The moves the place offers (up, down, into the corridor): a strip of buttons above the list; a room's are on its card (U03e). */
-  readonly moves: readonly OptionVM[];
+  readonly moves: readonly MoveVM[];
   /** Why some rows are closed; not shown when none is. */
   readonly sealedNote: Panel<{ readonly text: string }>;
   /** The word on a closed row. */

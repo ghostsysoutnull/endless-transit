@@ -18,6 +18,7 @@ import type { KeyStrip } from './KeyStrip.ts';
 import type { KeyStripParts } from './KeyStripParts.ts';
 import type { KeyStripVM } from './KeyStripVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
+import type { MoveVM } from './MoveVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import type { PictureBook } from './PictureBook.ts';
 import type { RoomCard } from './RoomCard.ts';
@@ -442,8 +443,8 @@ export class HudView implements View<HudVM> {
                   <nav class="moves" aria-label=${vm.regions.moves}>
                     ${repeat(
                       vm.moves,
-                      (option) => option.id,
-                      (option) => this.#docked(option),
+                      (move) => move.id,
+                      (move) => this.#move(move),
                     )}
                   </nav>
                 `
@@ -478,6 +479,21 @@ export class HudView implements View<HudVM> {
         ${vm.keys.shown ? this.#keybar(vm.keys, vm.bar) : this.#dock(vm)}
         ${this.#debug(vm)} ${this.#build(vm)}
       </div>
+    `;
+  }
+
+  /** A move under the picture: the screen's button, with its drawn icon where it has one. */
+  #move(move: MoveVM): TemplateResult {
+    return html`
+      <button
+        type="button"
+        class="pb"
+        data-option=${move.id}
+        data-icon=${move.icon === '' ? nothing : move.icon}
+        ?data-lit=${this.#lit.marks(move.id)}
+      >
+        ${move.key === '' ? nothing : html`<kbd aria-hidden="true">${move.key}</kbd>`}<span>${move.label}</span>
+      </button>
     `;
   }
 

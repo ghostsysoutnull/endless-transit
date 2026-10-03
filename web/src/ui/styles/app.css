@@ -1729,6 +1729,21 @@ body {
   font-size: 13px;
 }
 
+/* A move with a drawn icon (the way into the corridor): the icon beside its words, cut out of its own ink like a key's. */
+.moves .pb[data-icon]::before {
+  content: '';
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--ab);
+  background: currentColor;
+  mask: var(--icon) center / contain no-repeat;
+}
+
+.moves .pb[data-icon] {
+  border-color: var(--ab);
+}
+
 /* The dock's fold: one button opens the rest (I08); it looks like the others, dashed to say it is not a move. */
 .dock .pb.more {
   border-style: dashed;
@@ -2351,8 +2366,9 @@ html:has(.world[data-card]) {
   background: var(--panel);
 }
 
-/* The corridor: a hall running away from the eye. */
-.keys .key[data-icon='corridor'] {
+/* The corridor: a hall running away from the eye — a key's, and the wide move's under the tower's picture. */
+.keys .key[data-icon='corridor'],
+.moves .pb[data-icon='corridor'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M2.5 2.5h15v15h-15zM7.5 7.5h5v5h-5zM2.5 2.5l5 5M17.5 2.5l-5 5M2.5 17.5l5-5M17.5 17.5l-5-5'/%3E%3C/svg%3E");
 }
 
