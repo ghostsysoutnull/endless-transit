@@ -94,8 +94,92 @@ export async function press(page: Page, name: RegExp, hasTouch: boolean): Promis
 
 export async function tapOption(page: Page, id: string, hasTouch: boolean): Promise<void> {
   const button = page.locator(`button[data-option="${id}"]`);
+  // A place with no button of its own — a floor: the tower is its building's list — is tapped in the picture.
+  if ((await button.count()) === 0 && (await page.getByTestId('scene').getByRole('slider').isVisible())) {
+    await tapInPicture(page, id, hasTouch);
+    return;
+  }
   await unfold(page, button, hasTouch);
   await (hasTouch ? button.tap() : button.click());
+}
+
+/**
+ * A point inside the place the option `id` enters, on the picture, in page coordinates — found by sweeping the
+ * picture with the pointer as a player would and reading which place the scene says is lit; nothing when the place
+ * is not in the picture's window.
+ */
+export async function pointInPicture(page: Page, id: string): Promise<{ x: number; y: number } | null> {
+  await page.getByTestId('scene').scrollIntoViewIfNeeded();
+  return page.getByTestId('scene').evaluate((host, wanted) => {
+    const canvas = host.querySelector('canvas');
+    if (canvas === null) return null;
+    const box = canvas.getBoundingClientRect();
+    const at = (x: number, y: number): void => {
+      canvas.dispatchEvent(new PointerEvent('pointermove', { clientX: x, clientY: y, bubbles: true }));
+    };
+    for (let y = box.top + 2; y < box.bottom; y += 6) {
+      for (let x = box.left + 2; x < box.right; x += 6) {
+        at(x, y);
+        if (host.getAttribute('data-lit') === wanted) {
+          canvas.dispatchEvent(new PointerEvent('pointerleave', { bubbles: true }));
+          // A few pixels further in, clear of the edge the sweep found.
+          return { x: x + 4, y: y + 8 };
+        }
+      }
+    }
+    canvas.dispatchEvent(new PointerEvent('pointerleave', { bubbles: true }));
+    return null;
+  }, id);
+}
+
+/** A tap at a point of the page: a finger on a touch device, a click on a desktop. */
+export async function tapAt(page: Page, point: { x: number; y: number }, hasTouch: boolean): Promise<void> {
+  await (hasTouch ? page.touchscreen.tap(point.x, point.y) : page.mouse.click(point.x, point.y));
+}
+
+/**
+ * Taps the place the option `id` enters on the picture. Where the picture has a gauge (the tower) and the place is
+ * out of its window, the gauge's arrow keys move the window a place at a time — up to the top, then down to the foot —
+ * until the place shows; each step is waited for until the picture stands still.
+ */
+export async function tapInPicture(page: Page, id: string, hasTouch: boolean): Promise<void> {
+  const slider = page.getByTestId('scene').getByRole('slider');
+  /** Where the place is once the picture has come to rest: two sweeps in a row that agree. */
+  const resting = async (): Promise<{ x: number; y: number } | null> => {
+    let last = await pointInPicture(page, id);
+    await expect
+      .poll(
+        async () => {
+          const now = await pointInPicture(page, id);
+          const same = now?.x === last?.x && now?.y === last?.y;
+          last = now;
+          return same;
+        },
+        { intervals: [150] },
+      )
+      .toBe(true);
+    return last;
+  };
+  let point = await resting();
+  for (const key of ['ArrowUp', 'ArrowDown']) {
+    while (point === null && (await slider.isVisible())) {
+      const before = await slider.getAttribute('aria-valuenow');
+      await slider.focus();
+      await page.keyboard.press(key);
+      // The key's ride takes a moment to reach the next place; at the gauge's end it moves nothing.
+      const moved = await expect
+        .poll(() => slider.getAttribute('aria-valuenow'), { timeout: 2000, intervals: [100] })
+        .not.toBe(before)
+        .then(
+          () => true,
+          () => false,
+        );
+      if (!moved) break;
+      point = await resting();
+    }
+  }
+  if (point === null) throw new Error(`${id} is not in the picture`);
+  await tapAt(page, point, hasTouch);
 }
 
 /** No sideways scroll, and every action on screen is a real button of at least 44 × 44 CSS px. */

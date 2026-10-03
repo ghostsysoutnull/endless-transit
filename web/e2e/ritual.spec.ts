@@ -8,6 +8,8 @@ const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
 const LOBBY = `${BUILDING}.0`;
 const PEAK = `${BUILDING}.15`;
+/** The first Layer on the breached building's list: after its sixteen floors. */
+const FIRST_LAYER = 'enter:16';
 /** Grand Power Plant: four relics, the apartment's culture the header's (every take resonates). */
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
 const KEYSTONE = { kind: 'keystone', building: BUILDING };
@@ -111,7 +113,7 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
   expect(problems).toEqual([]);
 });
 
-test('breach on the Peak and descend: the breach spends the Keystone, the lobby offers the descent, Layer −1 reads INTEGRITY in the void’s frame, the Artery and a Shard below; a reload continues below the bedrock', async ({
+test('breach on the Peak and descend: the breach spends the Keystone, the Layers stand under the lobby on the tower, Layer −1 reads INTEGRITY in the void’s frame, the Artery and a Shard below; a reload continues below the bedrock', async ({
   page,
   hasTouch,
 }) => {
@@ -124,8 +126,10 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await expect(page.getByTestId('place-name')).toHaveText('Floor 15');
   await expect(stat(page, 'Buffer')).toHaveText('1');
   const breach = page.getByRole('button', { name: /breach the bedrock/i });
+  // The breach arrives as a bar over the row of buttons; under the picture stands the way into the corridor alone.
   await expect(breach).toBeVisible();
-  await expect(page.locator('.moves button')).toHaveCount(3);
+  await expect(page.locator('.keybar .alarm')).toHaveCount(1);
+  await expect(page.locator('.moves button')).toHaveCount(1);
   await expectTouchable(page, 'the Peak with the breach');
   await shoot(page, '3-breach-offered');
   // In the corridor too (HK-018), then back.
@@ -136,24 +140,16 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   await expect(page.getByTestId('status')).toContainText('HARMONIC_INVERSION_PROTOCOL_ENGAGED');
   await expect(stat(page, 'Buffer')).toHaveText('0');
   await expect(page.getByRole('button', { name: /breach the bedrock/i })).toHaveCount(0);
-  await expect(page.locator('.moves button')).toHaveCount(2);
 
   await press(page, /leave floor/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expect(page.locator('.diag')).toHaveText('The bedrock is breached');
-  // The ten Layers join the pad: past twenty it goes by tens, the Layers' own group first; the car's ten shows.
-  const tens = page.getByRole('group', { name: 'Floors by tens' }).getByRole('button');
-  await expect(tens).toHaveText(['-0xA–-0x1', '0–9', '10–15']);
-  await expect(tens.nth(2)).toHaveAttribute('aria-pressed', 'true');
-  await (hasTouch ? tens.first().tap() : tens.first().click());
-  await expect(page.getByRole('button', { name: /^Ride to Layer -0x1,.*P: 10%/ })).toHaveCount(1);
-  await (hasTouch ? tens.nth(1).tap() : tens.nth(1).click());
-  await tapOption(page, 'enter:15', hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
-  const descend = page.getByRole('button', { name: /descend into the substrate/i });
-  await expect(descend).toBeVisible();
-  await expect(page.getByRole('button', { name: /go down/i })).toHaveCount(0);
-  await press(page, /descend into the substrate/i, hasTouch);
+  // The ten Layers join the tower under the lobby: the gauge counts sixteen floors and ten Layers, the car at the Peak.
+  const gauge = page.getByTestId('scene').getByRole('slider');
+  await expect(gauge).toHaveAttribute('aria-valuemax', '26');
+  await expect(gauge).toHaveAttribute('aria-valuetext', 'Floor 15');
+  // The way down is the first Layer, listed after the floors, tapped on the tower: no button descends.
+  await tapOption(page, FIRST_LAYER, hasTouch);
 
   await expect(page.getByTestId('place-kind')).toHaveText('LAYER');
   await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
@@ -165,18 +161,18 @@ test('breach on the Peak and descend: the breach spends the Keystone, the lobby 
   // Drawn (U04): the tower, the car below the bedrock.
   await expect(page.getByTestId('scene').locator('canvas')).toBeVisible();
   await expect(page.getByTestId('telemetry')).toContainText('PRESSURE HIGH');
-  await expect(page.getByTestId('coherence')).toHaveText('94%'); // 100: the corridor and back, the breach, leave, the lobby, the descent
+  await expect(page.getByTestId('coherence')).toHaveText('95%'); // 100: the corridor and back, the breach, leave, the Layer
   await expectTouchable(page, 'Layer -1');
   await shoot(page, '4-layer-hud');
   // Every prompt down here costs two (Guide:137-138).
   await press(page, /^scan$/i, hasTouch);
-  await expect(page.getByTestId('coherence')).toHaveText('92%');
+  await expect(page.getByTestId('coherence')).toHaveText('93%');
   await expect(page.getByTestId('scan').locator('.srow.you')).toContainText('ABYSSAL_SUBSTRATE');
 
   await page.reload();
   await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
   await expect(page.locator('.app')).toHaveAttribute('data-frame', 'abyssal');
-  await expect(page.getByTestId('coherence')).toHaveText('92%');
+  await expect(page.getByTestId('coherence')).toHaveText('93%');
 
   await press(page, /enter corridor/i, hasTouch);
   // The Artery walked (U04), its doors in the perspective.

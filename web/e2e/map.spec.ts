@@ -186,22 +186,20 @@ test('below the bedrock every node is ☠ in the void’s frame; TRACE opens the
   expect(problems).toEqual([]);
 });
 
-test('TRACE on a street, from the universe down; the dock’s MORE opens, the step folds it, and it opens and closes again', async ({
+test('TRACE on a street, from the universe down; MORE opens the game’s commands over the row of buttons, and closes them again', async ({
   page,
   hasTouch,
 }) => {
   const problems = watchForErrors(page);
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
-  const more = page.getByTestId('more');
-  const traceButton = page.getByRole('button', { name: /^trace$/i });
-  // The fold (I09): TRACE waits behind MORE, a real disclosure.
-  await expect(more).toHaveText('MORE');
+  const more = page.getByTestId('keys-more');
+  const scan = page.getByRole('button', { name: /^scan$/i });
+  // TRACE is a button of the row at the screen's foot; the game's commands wait behind MORE, a real disclosure.
   await expect(more).toHaveAttribute('aria-expanded', 'false');
-  await expect(traceButton).toHaveCount(0);
+  await expect(scan).toHaveCount(0);
   await press(page, /^trace$/i, hasTouch);
-  // The step folds the dock again.
-  await expect(more).toHaveText('MORE');
+  await expect(more).toHaveAttribute('aria-expanded', 'false');
   const trace = page.getByTestId('trace');
   const bands = trace.getByRole('button', { name: /^Depth / });
   await expect(bands).toHaveCount(8);
@@ -213,12 +211,11 @@ test('TRACE on a street, from the universe down; the dock’s MORE opens, the st
   await press(page, /^close$/i, hasTouch);
   await expect(trace).toHaveCount(0);
   await (hasTouch ? more.tap() : more.click());
-  await expect(more).toHaveText('LESS');
   await expect(more).toHaveAttribute('aria-expanded', 'true');
-  await expect(traceButton).toBeVisible();
+  await expect(scan).toBeVisible();
   await (hasTouch ? more.tap() : more.click());
-  await expect(more).toHaveText('MORE');
-  await expect(traceButton).toHaveCount(0);
+  await expect(more).toHaveAttribute('aria-expanded', 'false');
+  await expect(scan).toHaveCount(0);
   expect(problems).toEqual([]);
 });
 

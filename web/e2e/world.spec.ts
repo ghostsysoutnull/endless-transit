@@ -101,7 +101,7 @@ test('reload restores the place; the title screen is one tap away and the place 
   expect(problems).toEqual([]);
 });
 
-test('a long street: twenty buildings, every one a button, two of them landmarks; the way out on the first screen', async ({
+test('a long street: twenty-two buildings, every one a button, two of them landmarks; the way out on the first screen', async ({
   page,
 }, testInfo) => {
   const problems = watchForErrors(page);
@@ -109,12 +109,13 @@ test('a long street: twenty buildings, every one a button, two of them landmarks
   await page.goto('./');
   await expect(page.getByTestId('place-name')).toHaveText('Grand Way');
   await expect(page.locator('[data-sealed]')).toHaveCount(0);
-  await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(20);
+  await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(22);
   await expect(page.getByTestId('sealed-note')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /leave/i })).toBeInViewport({ ratio: 1 });
   await expect(page.locator('button[data-option^="enter:"] .landmark')).toHaveCount(2);
-  // Twenty buildings, the dock's LEAVE and MORE (I09), the rest folded, and the rail that opens the trace (U04).
-  await expect(page.getByRole('button')).toHaveCount(20 + 2 + 1);
+  // Twenty-two buildings, the row of buttons at the screen's foot (MORE, BUFFER, TRACE, LEAVE), and the rail that
+  // opens the trace (U04).
+  await expect(page.getByRole('button')).toHaveCount(22 + 4 + 1);
   await expectTouchable(page, 'long street');
   await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-5-long-street.png`) });
   expect(problems).toEqual([]);

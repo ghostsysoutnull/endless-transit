@@ -131,7 +131,8 @@ test('the elevator screen at the street’s first building: TECH_ERA, RESONANCE,
   await tapOption(page, 'enter:15', hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('Floor 0');
   await expect(page.locator('.tag')).toHaveCount(4);
-  await expect(page.locator('.desc p').nth(0)).toHaveText(
+  // The description is folded to its first line, which opens the rest.
+  await expect(page.locator('.desc summary')).toHaveText(
     'Floor 0. Baroque geometry presses in from every wall; the elevator sighs shut behind you.',
   );
   await expect(page.getByTestId('telemetry').locator('.bars canvas')).toHaveCount(1);

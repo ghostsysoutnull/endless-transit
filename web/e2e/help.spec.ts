@@ -59,7 +59,7 @@ test('HELP opens the manual — every button explained, the survival rules — c
   // One prompt: the help; the way back is free; no step.
   await expect(page.getByTestId('coherence')).toHaveText('99%');
   await expect(stat(page, 'Steps')).toHaveText('0');
-  await expect(page.getByTestId('more')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('keys-more')).toHaveAttribute('aria-expanded', 'false');
   await expect(page.getByRole('button', { name: /^help$/i })).toHaveCount(0);
   expect(problems).toEqual([]);
 });

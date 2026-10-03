@@ -1,11 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
-import { plant, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { plant, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
-/** A fixed world: its street is Bright Boulevard; its first building is entered from the street's list. */
+/** A fixed world: its street is Bright Boulevard; its first building, sixteen floors, is entered from the street's list. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 
-/** Inside the fixed world's first building: the tower is drawn, its floors are the pad. */
+/** Inside the fixed world's first building: the tower is drawn, and is the list of its floors. */
+const FLOOR_7 = 'enter:8';
 async function building(page: Page, hasTouch: boolean): Promise<void> {
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
@@ -65,19 +66,20 @@ test('the slider is hidden where the picture has nothing to slide to: on the str
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expect(slider).toBeVisible();
-  await press(page, /^Ride to Floor 7,/, hasTouch);
+  await tapOption(page, FLOOR_7, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
   await expect(slider).toBeHidden();
   expect(problems).toEqual([]);
 });
 
-test('a floor tapped on the pad: the car rides there first, then the floor is entered', async ({
+test('a floor tapped on the tower: the car rides there first, then the floor is entered; no floor has a button of its own', async ({
   page,
   hasTouch,
 }) => {
   const problems = watchForErrors(page);
   await building(page, hasTouch);
-  await press(page, /^Ride to Floor 7,/, hasTouch);
+  await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(0);
+  await tapOption(page, FLOOR_7, hasTouch);
   // The ride runs first: the building is still on show right after the tap.
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expect(page.getByTestId('place-kind')).toHaveText('FLOOR');
@@ -85,19 +87,25 @@ test('a floor tapped on the pad: the car rides there first, then the floor is en
   expect(problems).toEqual([]);
 });
 
-test('a drag on the tower moves the car: another floor lights as it passes', async ({ page, hasTouch }) => {
+test('a finger dragged down the tower’s floors does not move the car: the gauge alone does', async ({
+  page,
+  hasTouch,
+}) => {
   const problems = watchForErrors(page);
   await building(page, hasTouch);
   const scene = page.getByTestId('scene');
+  const slider = scene.getByRole('slider');
   await scene.scrollIntoViewIfNeeded();
   const box = await scene.locator('canvas').boundingBox();
   if (box === null) throw new Error('the tower has no canvas');
+  const car = await slider.getAttribute('aria-valuenow');
   const x = box.x + box.width * 0.45;
   await page.mouse.move(x, box.y + box.height * 0.3);
   await page.mouse.down();
-  const first = await scene.getAttribute('data-lit');
   await page.mouse.move(x, box.y + box.height * 0.8, { steps: 12 });
   await page.mouse.up();
-  await expect(scene).not.toHaveAttribute('data-lit', first ?? '');
+  await expect(slider).toHaveAttribute('aria-valuenow', car ?? '');
+  // The drag ends on a floor without entering it: a drag is not a tap.
+  await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   expect(problems).toEqual([]);
 });
