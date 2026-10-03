@@ -15,5 +15,8 @@ stay as they are.
 | `MovesInKeys` | value object (a `MovesPlace`) | `ui/screens` | a place whose moves stand among the keys at the screen's foot | none |
 | `MovesLayout.keys` | field on an existing kind | `MovesPlace` members | whether the moves are keys | none |
 | `HudVM.keys` | field on an existing kind | `HudPresenter` | the strip of a place that is no card | none |
-| `ELEVATOR_MOVE`, `ELEVATOR_MOVE_ID` | constants | `engine/model/ElevatorMove`, `engine/rules/GameOption` | the id of the move back to the elevator, so a screen finds it by id | none |
+| `UP_MOVE`, `DOWN_MOVE`, `DESCEND_MOVE`, `CORRIDOR_MOVE`, `ELEVATOR_MOVE` and their `…_MOVE_ID` | constants | `engine/model/FloorMoves`, `engine/rules/GameOption` | the id of each of a floor's moves, so a screen finds it by id | none |
+| `BREACH_ID` | constant | `engine/rules/GameOption` | the breach command's option id | none |
+| `RIDES`, `BARRED` | tables (constants) | `HudPresenter` | which moves have no button where the keys stand, and which arrive as the bar | none |
+| `HudVM.bar` | field on an existing kind | `HudPresenter` | the moves shown as a bar over the keys | none |
 | `MOVE_KEYS` | table (a constant) | `HudPresenter` | a move's short word and icon as a key, by option id | none |

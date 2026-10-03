@@ -101,6 +101,8 @@ export interface HudVM extends Screen {
   readonly card: Panel<RoomCardVM>;
   /** The strip of keys at the screen's foot where the drawing puts its place's moves among them (`MovesInKeys`); the dock and the strip under the picture are then empty. A room's keys are its card's. */
   readonly keys: Panel<KeyStripVM>;
+  /** The moves that arrive as a wide bar over the keys, each only while the place offers it (the breach); empty where no keys stand. */
+  readonly bar: readonly OptionVM[];
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];

@@ -10,6 +10,12 @@ through its own plan, `/grill` and a Directive. Code-quality items go to `HOUSEK
 ### CONCEPT-001 — Ships of the Lattice
 **Found:** 2026-09-20, user idea. **State:** concept, no plan. Record, decision table (verdicts still empty) and two playable mocks (text v1, visual v13): `docs/analysis/SHIPS_CONCEPT.md`. Every rule the mocks run on, marked pick / invented / game: `docs/analysis/SHIPS_RULES.md`.
 
+### CONCEPT-003 — The bedrock itself is the breach's button
+**Found:** 2026-10-03, during the corridor-keys fast loop (`tasks/ui/corridor-keys-fast-loop.md`). **State:** concept, no plan; not a short-term priority (the user's call). The tower's picture already draws the bedrock under the lowest floor. When the traveller stands on the ground floor holding the Keystone, it cracks and pulses red with the word BREACH on it, and a tap on the ground breaks it; after the breach the same spot is the way down into the substrate. Today the breach is a red bar over the row of buttons (option C of that loop). Cost: the tower picture learns to be tapped there, with a real button behind the tap.
+
+### CONCEPT-004 — The Keystone does the breach
+**Found:** 2026-10-03, same loop. **State:** concept, no plan; not a short-term priority (the user's call). When the breach is possible the BUFFER button pulses; inside the buffer the Keystone's tile carries a BREACH action, so the player uses the object that pays for it. Cost: a new action on the buffer screen, and the breach then happens one screen away from the tower.
+
 ## 🟢 CLOSED
 
 ### CONCEPT-002 — The game as a single-page app

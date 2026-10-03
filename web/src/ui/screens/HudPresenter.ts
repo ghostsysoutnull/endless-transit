@@ -6,6 +6,10 @@ import { SPECTROGRAM_DECADES, SPECTROGRAM_TALLEST } from '#engine/rules/Telemetr
 import { BUFFER } from '#engine/rules/BufferPrompt.ts';
 import {
   BACK_MOVE_ID,
+  BREACH_ID,
+  CORRIDOR_MOVE_ID,
+  DESCEND_MOVE_ID,
+  DOWN_MOVE_ID,
   ELEVATOR_MOVE_ID,
   FORWARD_MOVE_ID,
   type GameOption,
@@ -13,6 +17,7 @@ import {
   SCAN_ID,
   TO_TITLE_ID,
   TRACE_ID,
+  UP_MOVE_ID,
   VISITED_KEY,
 } from '#engine/rules/GameOption.ts';
 import { HELP } from '#engine/rules/HelpPrompt.ts';
@@ -97,7 +102,12 @@ const MOVE_KEYS: ReadonlyMap<string, { readonly text: string; readonly icon: str
   [BACK_MOVE_ID, { text: BACK_KEY_WORD, icon: 'back' }],
   [FORWARD_MOVE_ID, { text: 'FORWARD', icon: 'forward' }],
   [ELEVATOR_MOVE_ID, { text: 'ELEVATOR', icon: 'elevator' }],
+  [CORRIDOR_MOVE_ID, { text: 'CORRIDOR', icon: 'corridor' }],
 ]);
+/** The elevator's rides: where the keys stand no button is drawn for them — a floor is picked on the building's list. */
+const RIDES: ReadonlySet<string> = new Set([UP_MOVE_ID, DOWN_MOVE_ID, DESCEND_MOVE_ID]);
+/** The moves that arrive as a bar over the keys, only while offered. */
+const BARRED: ReadonlySet<string> = new Set([BREACH_ID]);
 /** The MORE sheet's keys (U03e): the short word and the drawn icon of each of the game's own options, by its id. */
 const GAME_KEYS: ReadonlyMap<string, { readonly text: string; readonly icon: string }> = new Map([
   [SCAN_ID, { text: 'SCAN', icon: 'scan' }],
@@ -179,17 +189,25 @@ export class HudPresenter implements Presenter<HudVM> {
           }),
         }
       : { shown: false };
-    // Every move is a key, then the way out.
+    // A move is a key, then the way out — but a ride, which has no button, and a move that arrives as the bar.
     const keys: HudVM['keys'] = keyed.shown
       ? {
           shown: true,
           ...this.#strip({
             buffer: String(snapshot.buffer?.size ?? 0),
             system,
-            ways: [...moveOptions.map((move) => this.#moveKey(move)), ...this.#outKeys(leaveOptions)],
+            ways: [
+              ...moveOptions
+                .filter((move) => !RIDES.has(move.id) && !BARRED.has(move.id))
+                .map((move) => this.#moveKey(move)),
+              ...this.#outKeys(leaveOptions),
+            ],
           }),
         }
       : { shown: false };
+    const bar = keyed.shown ? keyed.moves.filter((move) => BARRED.has(move.id)) : [];
+    // The rides stay on offer for a keyboard.
+    const rides = keyed.shown ? keyed.moves.filter((move) => RIDES.has(move.id)) : [];
     // The strip that stands, the card's or the screen's own.
     const strip: Panel<KeyStripVM> = card.shown ? card : keys;
     const dock = strip.shown ? [] : [...leave, ...system.map((option) => this.#docked(option))];
@@ -271,6 +289,7 @@ export class HudPresenter implements Presenter<HudVM> {
       drawing,
       card,
       keys,
+      bar,
       pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
       rows,
@@ -298,6 +317,8 @@ export class HudPresenter implements Presenter<HudVM> {
         ...moves,
         ...dock,
         ...carded,
+        ...bar,
+        ...rides,
         ...debug,
       ],
       status: snapshot.message,

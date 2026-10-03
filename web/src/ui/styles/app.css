@@ -2296,6 +2296,43 @@ html:has(.world[data-card]) {
   padding-bottom: 58px;
 }
 
+/* A move that arrives (the breach): a wide red bar just over the keys, sliding in when it is offered and pulsing
+   while it stands; the page keeps its height free too. */
+.keybar > .pb.alarm {
+  position: relative;
+  width: 100%;
+  margin-bottom: 6px;
+  border-color: var(--rd);
+  background: var(--ground);
+  color: var(--rd);
+}
+
+.world:has(> .keybar > .alarm) {
+  padding-bottom: 120px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .keybar > .pb.alarm {
+    animation:
+      alarm-in 0.35s ease-out,
+      alarm-pulse 1.4s ease-in-out 0.35s infinite;
+  }
+}
+
+@keyframes alarm-in {
+  0% {
+    opacity: 0;
+    translate: 0 100%;
+  }
+}
+
+@keyframes alarm-pulse {
+  50% {
+    background: color-mix(in srgb, var(--rd) 28%, var(--ground));
+    color: var(--wh);
+  }
+}
+
 .keybar > .veil {
   position: fixed;
   inset: 0;
@@ -2312,6 +2349,11 @@ html:has(.world[data-card]) {
   padding: 8px;
   border: 1px solid var(--rule-hi);
   background: var(--panel);
+}
+
+/* The corridor: a hall running away from the eye. */
+.keys .key[data-icon='corridor'] {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M2.5 2.5h15v15h-15zM7.5 7.5h5v5h-5zM2.5 2.5l5 5M17.5 2.5l-5 5M2.5 17.5l5-5M17.5 17.5l-5-5'/%3E%3C/svg%3E");
 }
 
 /* The elevator: a car with its two arrows. A move the strip has no picture for: a plain chevron. */
@@ -2340,6 +2382,7 @@ html:has(.world[data-card]) {
 .keys .key[data-icon='back']::before,
 .keys .key[data-icon='forward']::before,
 .keys .key[data-icon='elevator']::before,
+.keys .key[data-icon='corridor']::before,
 .keys .key[data-icon='move']::before {
   color: var(--ab);
 }

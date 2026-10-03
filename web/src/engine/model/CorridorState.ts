@@ -1,4 +1,4 @@
-import { ELEVATOR_MOVE } from './ElevatorMove.ts';
+import { CORRIDOR_MOVE, ELEVATOR_MOVE } from './FloorMoves.ts';
 import type { Fact } from './Fact.ts';
 import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
@@ -11,7 +11,7 @@ import type { ScanReport } from './ScanReport.ts';
 /** The one move: back to the elevator. */
 const MOVES = new MoveTable<Floor>([
   {
-    move: { id: ELEVATOR_MOVE, label: 'Back to Elevator', opposite: 'corridor' },
+    move: { id: ELEVATOR_MOVE, label: 'Back to Elevator', opposite: CORRIDOR_MOVE },
     to: (floor) => floor,
     act: (floor) => {
       floor.returnToElevator();
