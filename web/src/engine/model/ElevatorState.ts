@@ -1,3 +1,4 @@
+import { ELEVATOR_MOVE } from './ElevatorMove.ts';
 import type { Fact } from './Fact.ts';
 import type { Floor } from './Floor.ts';
 import type { FloorState } from './FloorState.ts';
@@ -24,7 +25,7 @@ const MOVES = new MoveTable<Floor>([
     to: (floor) => (floor.number() === GROUND ? floor.neighbour(-1) : undefined),
   },
   {
-    move: { id: 'corridor', label: 'Enter Corridor', opposite: 'elevator' },
+    move: { id: 'corridor', label: 'Enter Corridor', opposite: ELEVATOR_MOVE },
     to: (floor) => floor,
     act: (floor) => {
       floor.enterCorridor();

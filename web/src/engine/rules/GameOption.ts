@@ -1,4 +1,5 @@
 import { BACK_MOVE } from '#engine/model/BackMove.ts';
+import { ELEVATOR_MOVE } from '#engine/model/ElevatorMove.ts';
 import { FORWARD_MOVE } from '#engine/model/ForwardMove.ts';
 import type { Fact } from '#engine/model/Fact.ts';
 
@@ -22,6 +23,8 @@ export const MOVE_PREFIX = 'move:';
 export const BACK_MOVE_ID = `${MOVE_PREFIX}${BACK_MOVE}`;
 /** The option id of the move forward (a room's): what a screen finds the way on by. */
 export const FORWARD_MOVE_ID = `${MOVE_PREFIX}${FORWARD_MOVE}`;
+/** The option id of the move back to the elevator (a corridor's): what a screen draws its key for. */
+export const ELEVATOR_MOVE_ID = `${MOVE_PREFIX}${ELEVATOR_MOVE}`;
 
 /** A thing the player can do right now — data, never a closure. The engine resolves `id` to the action. */
 export interface GameOption {

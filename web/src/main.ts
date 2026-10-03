@@ -48,6 +48,7 @@ import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { LayersTogether } from '#ui/screens/LayersTogether.ts';
 import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
 import { HudView } from '#ui/screens/HudView.ts';
+import { KeyStripView } from '#ui/screens/KeyStripView.ts';
 import { RoomCardView } from '#ui/screens/RoomCardView.ts';
 import { StripSlot } from '#ui/screens/StripSlot.ts';
 import { CardTurns } from '#ui/card/CardTurns.ts';
@@ -106,6 +107,8 @@ const canvases = new CanvasViewMaker(
   motion,
   canvasMaker,
 );
+// The strip of keys at the world screen's foot: one, drawn by the room's card or by the screen itself.
+const keys = new KeyStripView();
 new Shell(
   engine,
   [
@@ -156,7 +159,9 @@ new Shell(
             broken: [new StaticTurn(), new TornTurn()],
             still: new InstantTurn(),
           }),
+          keys,
         }),
+        keys,
       ),
     ),
   ],

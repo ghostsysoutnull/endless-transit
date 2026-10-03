@@ -14,6 +14,7 @@ import { DrawnPlan } from './DrawnPlan.ts';
 import { DrawnStreet } from './DrawnStreet.ts';
 import { DrawnTower } from './DrawnTower.ts';
 import { ListedParts } from './ListedParts.ts';
+import { MovesInKeys } from './MovesInKeys.ts';
 import { MovesOnCard } from './MovesOnCard.ts';
 import { MovesInStrip } from './MovesInStrip.ts';
 import { Undrawn } from './Undrawn.ts';
@@ -36,9 +37,10 @@ interface DrawnChildren {
 
 /** Owns one fact: how a place and its travel options become what its picture draws (U01b, U02). */
 export class SceneDrawing implements Drawings {
-  /** Where each picture's moves sit (U03c, U03e): on the card for the plan, under the picture for every other. */
+  /** Where each picture's moves sit (U03c, U03e): on the card for the plan, among the keys for the corridor, under the picture for every other. */
   readonly #strip = new MovesInStrip();
   readonly #carded = new MovesOnCard();
+  readonly #keyed = new MovesInKeys();
 
   /**
    * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,
@@ -126,7 +128,7 @@ export class SceneDrawing implements Drawings {
             shape: corridor.shape,
             abyssal: corridor.abyssal,
           },
-          this.#strip,
+          this.#keyed,
         ),
       plan: (plan) => {
         // Each doorway's move by the room it leads to; the way out; the relics by their take (U03).

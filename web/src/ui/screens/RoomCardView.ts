@@ -7,10 +7,11 @@ import type { CardTurns } from '#ui/card/CardTurns.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { ReducedMotion } from '#ui/ReducedMotion.ts';
 import type { Point } from '#ui/scene/Point.ts';
-import type { CardKeyVM } from './CardKeyVM.ts';
 import type { CardParts } from './CardParts.ts';
 import { MAP_KEY_SLOT } from './CardSlots.ts';
 import type { HudVM } from './HudVM.ts';
+import type { KeyStrip } from './KeyStrip.ts';
+import type { KeyStripParts } from './KeyStripParts.ts';
 import type { RoomCard } from './RoomCard.ts';
 import type { RoomCardVM } from './RoomCardVM.ts';
 
@@ -24,17 +25,16 @@ const SWIPE = { far: 48, steep: 1.5 };
  * game's options. The face turned away is hidden from everyone (`data-off`), so no finger and no reader reaches a
  * button on it. The folded corner on each face is a real button that turns the card; a sideways swipe does the same
  * while you stand in the room or read its back — over the plan one finger pans. Both are view controls: they pick
- * nothing. Under the card the keys stay in reach on both faces; the picture's MAP key is mounted in their slot, and a
- * tap on it shows the picture. A new room starts on its picture; a step that brings a panel shows the back at once.
+ * nothing. Under the card the keys (`KeyStrip`, closed by the screen at each step) stay in reach on both faces; the
+ * picture's MAP key is mounted in their slot, and a tap on it shows the picture. A new room starts on its picture; a step that brings a panel shows the back at once.
  * How a turn plays is a `CardTurn`'s; which one, `CardTurns`'; under reduced motion the other face is there at once.
  * Every word comes from the view-model.
  */
 export class RoomCardView implements RoomCard {
   readonly #motion: ReducedMotion;
   readonly #turns: CardTurns;
+  readonly #keys: KeyStrip;
   #back = false;
-  /** Whether the MORE sheet, the game's own options, lies open over the card. */
-  #more = false;
   /** While a turn plays, taps on the corner wait. */
   #busy = false;
   #scene = '';
@@ -50,9 +50,10 @@ export class RoomCardView implements RoomCard {
   /** What the card was last drawn with: a turn asked for from outside the template plays on it. */
   #drawn: { readonly vm: HudVM; readonly parts: CardParts } | undefined;
 
-  constructor(parts: { motion: ReducedMotion; turns: CardTurns }) {
+  constructor(parts: { motion: ReducedMotion; turns: CardTurns; keys: KeyStrip }) {
     this.#motion = parts.motion;
     this.#turns = parts.turns;
+    this.#keys = parts.keys;
   }
 
   step(vm: HudVM, panel: boolean): void {
@@ -60,7 +61,6 @@ export class RoomCardView implements RoomCard {
     this.#scene = vm.scene;
     if (this.#arrived) this.#back = false;
     if (panel) this.#back = true;
-    this.#more = false;
     this.#count = 0;
     this.#went = undefined;
     this.#steps += 1;
@@ -69,7 +69,6 @@ export class RoomCardView implements RoomCard {
   forget(): void {
     this.#scene = '';
     this.#back = false;
-    this.#more = false;
     this.#went = undefined;
     this.#busy = false;
     this.#steps += 1;
@@ -89,6 +88,20 @@ export class RoomCardView implements RoomCard {
     const back = this.#back;
     const turn = (event: Event, toBack: boolean): void => {
       void this.#turn(event.target, vm, parts, toBack);
+    };
+    // The strip's middle is the MAP key's slot: a tap on the key mounted there shows the picture.
+    const strip: KeyStripParts = {
+      slot: html`<span
+        class="slot"
+        id=${MAP_KEY_SLOT}
+        @click=${(event: Event) => {
+          turn(event, false);
+        }}
+      ></span>`,
+      lit: (id) => parts.lit(id),
+      repaint: () => {
+        parts.repaint();
+      },
     };
     return html`
       <div
@@ -157,70 +170,9 @@ export class RoomCardView implements RoomCard {
             <span aria-hidden="true">${card.corner.toRoom.text}</span>
           </button>
         </section>
-        ${this.#more ? this.#sheet(card, parts) : nothing}
+        ${this.#keys.sheet(card, strip)}
       </div>
-      <nav
-        class="keys"
-        aria-label=${card.regions.keys}
-        @click=${(event: Event) => {
-          if (event.target instanceof Element && event.target.closest(`#${MAP_KEY_SLOT}`) !== null)
-            turn(event, false);
-        }}
-      >
-        <button
-          type="button"
-          class="key"
-          data-icon="more"
-          data-testid="card-more"
-          aria-expanded=${this.#more ? 'true' : 'false'}
-          aria-label=${card.more.label}
-          @click=${() => {
-            this.#more = !this.#more;
-            parts.repaint();
-          }}
-        >
-          <span aria-hidden="true">${card.more.text}</span>
-        </button>
-        ${card.keys.lead.map((key) => this.#key(key, parts))}
-        <span class="slot" id=${MAP_KEY_SLOT}></span>
-        ${card.keys.trail.map((key) => this.#key(key, parts))}
-      </nav>
-    `;
-  }
-
-  /** The MORE sheet: the game's own options as a second strip of keys over the foot of the card; a tap on the veil above it closes it. */
-  #sheet(card: RoomCardVM, parts: CardParts): TemplateResult {
-    const close = (): void => {
-      this.#more = false;
-      parts.repaint();
-    };
-    return html`
-      <div class="veil" @click=${close}></div>
-      <section class="more" aria-label=${card.regions.game} data-spot>
-        <nav class="keys" aria-label=${card.regions.game}>
-          ${card.game.map((key) => this.#key(key, parts))}
-        </nav>
-      </section>
-    `;
-  }
-
-  /** One key of the strip: a real button for its option, its drawn icon the stylesheet's, its count beside it. */
-  #key(key: CardKeyVM, parts: CardParts): TemplateResult {
-    return html`
-      <button
-        type="button"
-        class="key"
-        id=${key.anchor === '' ? nothing : key.anchor}
-        data-option=${key.id}
-        data-icon=${key.icon}
-        ?data-lit=${parts.lit(key.id)}
-        aria-label=${key.label}
-      >
-        ${key.badge === '' ? nothing : html`<b class="badge" aria-hidden="true">${key.badge}</b>`}<span
-          aria-hidden="true"
-          >${key.text}</span
-        >
-      </button>
+      ${this.#keys.strip(card, strip)}
     `;
   }
 

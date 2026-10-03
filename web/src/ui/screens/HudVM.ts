@@ -3,6 +3,7 @@ import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Screen } from '#ui/Screen.ts';
 import type { AsideVM } from './AsideVM.ts';
 import type { Drawing } from './Drawing.ts';
+import type { KeyStripVM } from './KeyStripVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { Panel } from './Panel.ts';
 import type { RoomCardVM } from './RoomCardVM.ts';
@@ -98,6 +99,8 @@ export interface HudVM extends Screen {
   }>;
   /** The room's card (U03e): shown where the drawing puts its place's moves on one; the dock and the strip are then empty. */
   readonly card: Panel<RoomCardVM>;
+  /** The strip of keys at the screen's foot where the drawing puts its place's moves among them (a corridor); the dock and the strip under the picture are then empty. A room's keys are its card's. */
+  readonly keys: Panel<KeyStripVM>;
   /** The line above the rows. */
   readonly heading: string;
   readonly rows: readonly TravelRowVM[];
@@ -107,7 +110,7 @@ export interface HudVM extends Screen {
   readonly sealedNote: Panel<{ readonly text: string }>;
   /** The word on a closed row. */
   readonly sealedTag: string;
-  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button; empty on a room's card (U03e). */
+  /** Leave and the game's own options, in order: the first `fold.after` always within reach of a thumb, the rest behind one button; empty on a room's card (U03e) and where the keys stand. */
   readonly dock: readonly OptionVM[];
   /**
    * How the dock folds: how many stay out (the way out), how many of those are the way out (the first ones), and the

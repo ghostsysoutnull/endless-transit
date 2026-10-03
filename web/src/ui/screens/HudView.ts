@@ -14,6 +14,9 @@ import type { View } from '#ui/View.ts';
 import type { CanvasViews } from './CanvasViews.ts';
 import type { DrawnStage } from './DrawnStage.ts';
 import type { HudVM } from './HudVM.ts';
+import type { KeyStrip } from './KeyStrip.ts';
+import type { KeyStripParts } from './KeyStripParts.ts';
+import type { KeyStripVM } from './KeyStripVM.ts';
 import type { MapPanelVM } from './MapPanelVM.ts';
 import type { TravelRowVM } from './TravelRowVM.ts';
 import type { PictureBook } from './PictureBook.ts';
@@ -39,7 +42,7 @@ interface TraceParts {
  * panel, the list of places to enter, and a dock that stays within reach of a thumb. Every word comes from the view-model
  * (`HudPresenter` owns them); this file owns markup only. An open row is a real button carrying
  * `data-option`; a sealed row is a closed line — never a button that does nothing; a row's readings ride
- * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel; a room is drawn as a card of its own (`RoomCard`, U03e), its keys in place of the dock. The coherence meter is a
+ * beside its name; a place that lists nothing has no list (the pane beside it takes the column). The moves a place offers are a strip of buttons under the panel; a room is drawn as a card of its own (`RoomCard`, U03e), its keys in place of the dock; a corridor keeps its list and has the same keys (`KeyStrip`) in place of the dock and of the strip. The coherence meter is a
  * `role="meter"` whose fill is a width the stylesheet animates (nodes survive a render). The panel is the
  * screen's resting place for the focus (`data-rest`, focusable by script only): where the shell puts it
  * when a ride ends. The status line here is for the eye; the shell's own live region speaks it. Rows are keyed by
@@ -96,6 +99,8 @@ export class HudView implements View<HudVM> {
   #pull: number | undefined;
   /** The room's card (U03e): its markup and which face shows. */
   readonly #card: RoomCard;
+  /** The strip of keys at the screen's foot (U03e), the card's and a corridor's: its MORE sheet closes at each step. */
+  readonly #keys: KeyStrip;
 
   /** The registry binds a drawing to its picture (U01b); the stage shows its scene (U03); the makers make each canvas the screen carries (U02). */
   constructor(
@@ -104,11 +109,13 @@ export class HudView implements View<HudVM> {
     canvases: CanvasViews,
     column: TraceParts,
     card: RoomCard,
+    keys: KeyStrip,
   ) {
     this.#book = book;
     this.#stage = stage;
     this.#column = column;
     this.#card = card;
+    this.#keys = keys;
     this.#canvases = new CanvasSlots({
       pane: () => canvases.pane(),
       map: () => canvases.map(),
@@ -183,6 +190,7 @@ export class HudView implements View<HudVM> {
       this.#group = undefined;
     }
     this.#card.step(vm, this.#bringsPanel(vm));
+    this.#keys.close();
     this.#paint(vm);
     // A scene kept from the last render is shown the new frame; one made just now already shows it.
     this.#stage.redraw();
@@ -366,6 +374,7 @@ export class HudView implements View<HudVM> {
     this.#more = false;
     this.#debugOpen = false;
     this.#card.forget();
+    this.#keys.close();
   }
 
   #host(slot: Slot | 'scene'): HTMLElement | null {
@@ -466,42 +475,61 @@ export class HudView implements View<HudVM> {
           }
           ${this.#aside(vm)}
         </div>
-        <nav class="dock" aria-label=${vm.regions.dock} data-open=${this.#more ? 'true' : 'false'}>
-          ${repeat(
-            vm.dock.slice(0, vm.fold.out),
-            (option) => option.id,
-            (option) => this.#docked(option, undefined, true),
-          )}
-          ${
-            vm.dock.length <= vm.fold.after
-              ? nothing
-              : html`
-                  <button
-                    type="button"
-                    class="pb more"
-                    data-testid="more"
-                    aria-label=${vm.fold.label}
-                    aria-expanded=${this.#more ? 'true' : 'false'}
-                    aria-controls="dock-fold"
-                    @click=${() => {
-                      this.#toggleMore();
-                    }}
-                  >
-                    <span>${this.#more ? vm.fold.less : vm.fold.more}</span>
-                  </button>
-                  <div class="fold" id="dock-fold">
-                    ${repeat(
-                      vm.dock.slice(vm.fold.after),
-                      (option) => option.id,
-                      (option) => this.#docked(option),
-                    )}
-                  </div>
-                `
-          }
-        </nav>
+        ${vm.keys.shown ? this.#keybar(vm.keys) : this.#dock(vm)}
         ${this.#debug(vm)} ${this.#build(vm)}
       </div>
     `;
+  }
+
+  /** The dock: the way out, then the game's own options folded behind MORE. */
+  #dock(vm: HudVM): TemplateResult {
+    return html`
+      <nav class="dock" aria-label=${vm.regions.dock} data-open=${this.#more ? 'true' : 'false'}>
+        ${repeat(
+          vm.dock.slice(0, vm.fold.out),
+          (option) => option.id,
+          (option) => this.#docked(option, undefined, true),
+        )}
+        ${
+          vm.dock.length <= vm.fold.after
+            ? nothing
+            : html`
+                <button
+                  type="button"
+                  class="pb more"
+                  data-testid="more"
+                  aria-label=${vm.fold.label}
+                  aria-expanded=${this.#more ? 'true' : 'false'}
+                  aria-controls="dock-fold"
+                  @click=${() => {
+                    this.#toggleMore();
+                  }}
+                >
+                  <span>${this.#more ? vm.fold.less : vm.fold.more}</span>
+                </button>
+                <div class="fold" id="dock-fold">
+                  ${repeat(
+                    vm.dock.slice(vm.fold.after),
+                    (option) => option.id,
+                    (option) => this.#docked(option),
+                  )}
+                </div>
+              `
+        }
+      </nav>
+    `;
+  }
+
+  /** The strip of keys in place of the dock (a corridor's): at the screen's foot, its MORE sheet rising over it. */
+  #keybar(keys: KeyStripVM): TemplateResult {
+    const parts: KeyStripParts = {
+      slot: nothing,
+      lit: (id) => this.#lit.marks(id),
+      repaint: () => {
+        if (this.#vm !== undefined) this.#paint(this.#vm);
+      },
+    };
+    return html`<div class="keybar">${this.#keys.sheet(keys, parts)} ${this.#keys.strip(keys, parts)}</div>`;
   }
 
   /** The top of the world screen: the HUD and the depth rail. */
