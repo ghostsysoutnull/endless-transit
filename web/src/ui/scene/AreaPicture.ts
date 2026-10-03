@@ -34,7 +34,8 @@ export interface AreaParts {
 /**
  * Draws a level above the street (U04): the level's own backdrop, each child as its kind is marked where the level
  * stands it, a landmark ringed, a visited one with a yellow dot, the one you came back out of ringed in dashes, and
- * its name under it at 12 px — on a second line or cut short where names would collide (`AreaNames`). A pure function of its view-model, size,
+ * its name under it at 12 px — broken over up to three lines, cut short only where it still would collide
+ * (`AreaNames`). A pure function of its view-model, size,
  * time and marks; the level and the child kinds each answer for their own drawing.
  */
 export class AreaPicture implements ScenePicture<AreaVM> {
@@ -151,11 +152,11 @@ export class AreaPicture implements ScenePicture<AreaVM> {
     }
   }
 
-  /** Its name where `AreaNames` placed it, in its state's ink. */
+  /** Its name's lines where `AreaNames` placed them, in its state's ink. */
   #name(
     painter: Painter,
     palette: Palette,
-    name: NameLine,
+    name: readonly NameLine[],
     child: AreaVM['children'][number],
     isLit: boolean,
   ): void {
@@ -164,6 +165,6 @@ export class AreaPicture implements ScenePicture<AreaVM> {
     painter.textBaseline = 'top';
     painter.fillStyle = palette(isLit ? 'yl' : child.sealed ? 'dim' : 'text');
     painter.globalAlpha = 1;
-    painter.fillText(name.text, name.x, name.y);
+    for (const line of name) painter.fillText(line.text, line.x, line.y);
   }
 }
