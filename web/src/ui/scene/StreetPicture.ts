@@ -141,8 +141,8 @@ export class StreetPicture implements ScenePicture<StreetVM> {
   #row(vm: StreetVM, size: PictureSize): { readonly slot: number; readonly reach: number } {
     const slots = vm.children.length + ENDS;
     const shared = size.width / slots;
-    const slot = shared >= SLOT * NEAR ? shared : SLOT;
-    return { slot, reach: Math.max(0, slots - size.width / slot) };
+    if (shared >= SLOT * NEAR) return { slot: shared, reach: 0 };
+    return { slot: SLOT, reach: slots - size.width / SLOT };
   }
 
   /** Where each building stands at a view: one row along the ground line, slid left by the view. */

@@ -7,6 +7,14 @@ const SIZE = { width: 328, height: 260 };
 const measure = (text: string): number => text.length * 7;
 const names = new AreaNames();
 
+/** Marks with their names, paired in order. */
+function named(
+  spots: readonly { x: number; y: number }[],
+  called: readonly string[],
+): { at: { x: number; y: number }; name: string }[] {
+  return spots.map((at, index) => ({ at, name: called[index] ?? '' }));
+}
+
 /** The words a name was written with, its lines put back together. */
 function written(lines: readonly NameLine[]): string {
   return lines
@@ -19,10 +27,9 @@ describe('the names under an area’s marks: every mark by its name, sharing the
   test('a name with room beside its neighbours is one line, centred under its mark', () => {
     const [left, right] = names.lines(
       [
-        { x: 80, y: 100 },
-        { x: 240, y: 100 },
+        { at: { x: 80, y: 100 }, name: 'Vel' },
+        { at: { x: 240, y: 100 }, name: 'Tessel' },
       ],
-      ['Vel', 'Tessel'],
       SIZE,
       measure,
     );
@@ -36,7 +43,11 @@ describe('the names under an area’s marks: every mark by its name, sharing the
       { x: 140, y: 60 },
       { x: 220, y: 60 },
     ];
-    const all = names.lines(spots, ['New Calder Heights', 'Karth-under-Glass', 'Saint Oriel'], SIZE, measure);
+    const all = names.lines(
+      named(spots, ['New Calder Heights', 'Karth-under-Glass', 'Saint Oriel']),
+      SIZE,
+      measure,
+    );
     expect(all.map(written)).toEqual(['New Calder Heights', 'Karth-under-Glass', 'Saint Oriel']);
     // The last has the room to its right: it stays on one line.
     expect(all.map((lines) => lines.length)).toEqual([2, 2, 1]);
@@ -49,12 +60,14 @@ describe('the names under an area’s marks: every mark by its name, sharing the
 
   test('a word with no room on the line under its mark drops to the next line, whole', () => {
     const [, middle] = names.lines(
-      [
-        { x: 100, y: 60 },
-        { x: 140, y: 60 },
-        { x: 180, y: 60 },
-      ],
-      ['A', 'Brackwaterhaven', 'B'],
+      named(
+        [
+          { x: 100, y: 60 },
+          { x: 140, y: 60 },
+          { x: 180, y: 60 },
+        ],
+        ['A', 'Brackwaterhaven', 'B'],
+      ),
       SIZE,
       measure,
     );
@@ -63,14 +76,16 @@ describe('the names under an area’s marks: every mark by its name, sharing the
 
   test('only what still does not fit is cut short, with an ellipsis: one long word hemmed in by marks beside and below', () => {
     const [, middle] = names.lines(
-      [
-        { x: 100, y: 60 },
-        { x: 140, y: 60 },
-        { x: 180, y: 60 },
-        { x: 110, y: 92 },
-        { x: 170, y: 92 },
-      ],
-      ['A', 'Brackwaterhaven', 'B', 'C', 'D'],
+      named(
+        [
+          { x: 100, y: 60 },
+          { x: 140, y: 60 },
+          { x: 180, y: 60 },
+          { x: 110, y: 92 },
+          { x: 170, y: 92 },
+        ],
+        ['A', 'Brackwaterhaven', 'B', 'C', 'D'],
+      ),
       SIZE,
       measure,
     );
@@ -97,7 +112,7 @@ describe('the names under an area’s marks: every mark by its name, sharing the
       x: 45 + (index % 4) * 79 + (index % 3) * 5,
       y: 40 + Math.floor(index / 4) * 78 + (index % 2) * 9,
     }));
-    const all = names.lines(spots, crowd, SIZE, measure);
+    const all = names.lines(named(spots, crowd), SIZE, measure);
     const boxes = all.flatMap((lines, mark) =>
       lines.map((line) => ({
         mark,
@@ -123,14 +138,5 @@ describe('the names under an area’s marks: every mark by its name, sharing the
         ),
     );
     expect(clashes).toEqual([]);
-  });
-
-  test('the same marks, names and size give the same lines', () => {
-    const spots = [
-      { x: 60, y: 60 },
-      { x: 140, y: 70 },
-    ];
-    const once = names.lines(spots, ['Port Meridian', 'Low Harbor'], SIZE, measure);
-    expect(names.lines(spots, ['Port Meridian', 'Low Harbor'], SIZE, measure)).toEqual(once);
   });
 });

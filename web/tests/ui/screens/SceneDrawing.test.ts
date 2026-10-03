@@ -131,11 +131,14 @@ describe('where a picture puts its place’s moves and its list', () => {
   const CORRIDOR = { id: 'move:corridor', key: 'C', label: 'ENTER CORRIDOR', opposite: 'move:elevator' };
   const LISTED = ['Peak', 'Lobby'];
 
-  test('the tower keeps the way into the corridor under it, its other moves among the keys, and no list beside it: it is its own list', () => {
+  const BREACH = { id: 'breach', key: 'J', label: 'BREACH THE BEDROCK', opposite: '' };
+  const WALK = { id: 'move:odd', key: '', label: 'ODD WAY', opposite: '' };
+
+  test('the tower keeps the way into the corridor under it, its rides without a button, the breach as the bar, and no list beside it: it is its own list', () => {
     const tower = drawingOf(towerSnapshot(16, 5));
-    const layout = tower.arrange([UP, CORRIDOR]);
+    const layout = tower.arrange([UP, CORRIDOR, BREACH]);
     expect(layout.strip).toEqual([CORRIDOR]);
-    expect(layout.keys).toEqual({ shown: true, moves: [UP] });
+    expect(layout.keys).toEqual({ shown: true, moves: [], bar: [BREACH], unseen: [UP] });
     expect(tower.beside(LISTED)).toEqual([]);
   });
 
@@ -147,7 +150,7 @@ describe('where a picture puts its place’s moves and its list', () => {
         portrait: new StreetPortrait([{ address: '0.0.0.0.1.0.0.0.0', floors: 16, doors: 9 }]),
       },
     });
-    expect(street.arrange([UP])).toMatchObject({ strip: [], keys: { shown: true, moves: [UP] } });
+    expect(street.arrange([WALK])).toMatchObject({ strip: [], keys: { shown: true, moves: [WALK] } });
     expect(street.beside(LISTED)).toEqual(LISTED);
     const plain = drawingOf(PLANET);
     expect(plain.arrange([UP])).toMatchObject({ strip: [UP], keys: { shown: false } });

@@ -17,7 +17,7 @@ import { StillCamera } from './StillCamera.ts';
 import type { AreaNames } from './AreaNames.ts';
 import type { NameLine } from './NameLine.ts';
 
-/** A child's tap box: a thumb wide, reaching down over its name. */
+/** A child's tap box: a thumb wide, reaching down over the first line of its name. */
 const TAP = 46;
 const BELOW = 16;
 
@@ -85,8 +85,10 @@ export class AreaPicture implements ScenePicture<AreaVM> {
     this.#parts.scenes[vm.look].backdrop(moment);
     painter.font = this.#parts.font.of('regular');
     const names = this.#parts.names.lines(
-      spots,
-      vm.children.map((child) => child.name),
+      vm.children.flatMap((child, index) => {
+        const at = spots[index];
+        return at === undefined ? [] : [{ at, name: child.name }];
+      }),
       size,
       (text) => painter.measureText(text).width,
     );

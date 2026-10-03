@@ -459,8 +459,7 @@ export class HudView implements View<HudVM> {
           }
           ${this.#aside(vm)}
         </div>
-        ${vm.keys.shown ? this.#keybar(vm.keys, vm.bar) : this.#dock(vm)} ${this.#debug(vm)}
-        ${this.#build(vm)}
+        ${vm.keys.shown ? this.#keybar(vm.keys) : this.#dock(vm)} ${this.#debug(vm)} ${this.#build(vm)}
       </div>
     `;
   }
@@ -522,7 +521,7 @@ export class HudView implements View<HudVM> {
   }
 
   /** The strip of keys in place of the dock: at the screen's foot, its MORE sheet rising over it, the bar of a move that arrives (the breach) above it. */
-  #keybar(keys: KeyStripVM, bar: readonly OptionVM[]): TemplateResult {
+  #keybar(keys: KeyStripVM & { readonly bar: readonly OptionVM[] }): TemplateResult {
     const parts: KeyStripParts = {
       slot: nothing,
       lit: (id) => this.#lit.marks(id),
@@ -533,7 +532,7 @@ export class HudView implements View<HudVM> {
     return html`<div class="keybar">
       ${this.#keys.sheet(keys, parts)}
       ${repeat(
-        bar,
+        keys.bar,
         (option) => option.id,
         (option) =>
           html`<button type="button" class="pb alarm" data-option=${option.id}>

@@ -31,6 +31,13 @@ interface Laid {
   readonly room: number;
 }
 
+/** A name as the lines could hold it: the lines filled, the words left over, and the roomiest line looked at. */
+interface Filled {
+  readonly lines: readonly Laid[];
+  readonly left: readonly string[];
+  readonly roomiest: Laid;
+}
+
 /** One line of a name as it was placed: where it stands and how wide it came out. */
 interface Placed {
   readonly line: NameLine;
@@ -48,19 +55,15 @@ interface Placed {
 export class AreaNames {
   /** Each mark's name as the lines the picture writes, in the marks' order. */
   lines(
-    spots: readonly Point[],
-    names: readonly string[],
+    named: readonly { readonly at: Point; readonly name: string }[],
     size: PictureSize,
     measure: (text: string) => number,
   ): readonly (readonly NameLine[])[] {
-    const marks = spots.map((at, index) => {
-      const name = names[index] ?? '';
-      return { index, at, name, width: measure(name) };
-    });
+    const marks = named.map((each, index) => ({ index, ...each, width: measure(each.name) }));
     const queue = [...marks].sort((one, other) => one.at.x - other.at.x || one.index - other.index);
     const placed = new Map<number, readonly Placed[]>();
     for (const mark of queue) {
-      const laid = this.#lay(mark, queue, placed, size, measure).map((line) => ({
+      const laid = this.#closed(mark, this.#lay(mark, queue, placed, size, measure), measure).map((line) => ({
         ...line,
         width: measure(line.text),
       }));
@@ -77,8 +80,8 @@ export class AreaNames {
 
   /**
    * A name laid line by line: each line takes the words that fit its room; a name not begun skips a line with no room
-   * for its first word; what is left when the lines run out is cut on the last one, and a name no line can begin is
-   * cut on the roomiest.
+   * for its first word. It answers the lines filled, the words left over when the lines ran out, and the roomiest
+   * line it looked at.
    */
   #lay(
     mark: Named,
@@ -86,17 +89,17 @@ export class AreaNames {
     placed: ReadonlyMap<number, readonly Placed[]>,
     size: PictureSize,
     measure: (text: string) => number,
-  ): readonly Laid[] {
+  ): Filled {
     const first = this.#first(mark, size);
     const words = mark.name.split(BREAKS).filter((word) => word !== '');
     const lines: Laid[] = [];
-    let roomiest: { readonly top: number; readonly room: number } | undefined;
+    let roomiest: Laid = { text: '', top: first, room: 0 };
     let next = 0;
     for (let row = 0; row < ROWS && next < words.length; row++) {
       const top = first + row * LINE;
       if (row > 0 && top + LINE > size.height - EDGE) break;
       const room = this.#room(mark, top, marks, placed, size);
-      if (roomiest === undefined || room > roomiest.room) roomiest = { top, room };
+      if (row === 0 || room > roomiest.room) roomiest = { text: '', top, room };
       let text = '';
       let taken = next;
       for (const word of words.slice(next)) {
@@ -110,14 +113,20 @@ export class AreaNames {
         next = taken;
       } else if (lines.length > 0) break;
     }
-    const last = lines.at(-1);
-    if (last === undefined) {
-      const line = roomiest ?? { top: first, room: 0 };
-      return [{ text: this.#cut(mark.name, line.room, measure), top: line.top, room: line.room }];
-    }
-    if (next === words.length) return lines;
-    const rest = words.slice(next).reduce((text, word) => this.#joined(text, word), last.text);
-    return [...lines.slice(0, -1), { ...last, text: this.#cut(rest, last.room, measure) }];
+    return { lines, left: words.slice(next), roomiest };
+  }
+
+  /**
+   * The lines as they are written: whole when no word is left over; else what is left is cut on the last line — and a
+   * name no line could begin is cut on the roomiest.
+   */
+  #closed(mark: Named, filled: Filled, measure: (text: string) => number): readonly Laid[] {
+    const last = filled.lines.at(-1);
+    if (last === undefined)
+      return [{ ...filled.roomiest, text: this.#cut(mark.name, filled.roomiest.room, measure) }];
+    if (filled.left.length === 0) return filled.lines;
+    const rest = filled.left.reduce((text, word) => this.#joined(text, word), last.text);
+    return [...filled.lines.slice(0, -1), { ...last, text: this.#cut(rest, last.room, measure) }];
   }
 
   /** A word added to a line: after a space, or straight after a hyphen. */

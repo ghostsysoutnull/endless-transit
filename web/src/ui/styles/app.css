@@ -24,6 +24,14 @@
   --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --tap: 48px;
+  /* The page's one column and its gutters; an icon key, the row of keys fixed at the screen's foot (a key and the
+     room over it) and the bar that arrives over that row (a button and its gap): what stands on the page, or sizes
+     itself around the row, reads these. */
+  --column: 720px;
+  --gutter: 16px;
+  --key: 50px;
+  --key-row: calc(var(--key) + 8px);
+  --key-bar: 62px;
   color-scheme: dark;
 }
 
@@ -49,7 +57,7 @@ body {
   font-size: 14px;
   line-height: 1.45;
   padding-block: max(14px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-bottom));
-  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
 }
 
 [hidden] {
@@ -73,7 +81,7 @@ body {
 }
 
 .app {
-  max-width: 720px;
+  max-width: var(--column);
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -1746,7 +1754,11 @@ details.desc[open] > summary {
   flex-wrap: wrap;
   gap: 8px;
   padding-block: 8px max(8px, env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, rgba(8, 12, 13, 0), var(--ground) 10px);
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--ground) 0%, transparent),
+    var(--ground) 10px
+  );
 }
 
 .dock .pb {
@@ -1884,18 +1896,18 @@ details.desc[open] > summary {
    (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
 .world[data-drawn] > .scene {
   order: -2;
-  height: clamp(200px, calc(100dvh - 407px), 44dvh);
+  height: clamp(200px, calc(100dvh - 349px - var(--key-row)), 44dvh);
 }
 
 /* A picture with no list beside it (the tower, which is its own list of floors): it runs from the name down to the
    keys fixed at the screen's foot, and stops one button short where a move stands under it (the way into the
    corridor), so that move stays on the first screen. */
 .world[data-drawn]:not(:has(.travel)) > .scene {
-  height: max(200px, calc(100dvh - 262px));
+  height: max(200px, calc(100dvh - 204px - var(--key-row)));
 }
 
 .world[data-drawn]:not(:has(.travel)):has(.cap > .moves) > .scene {
-  height: max(200px, calc(100dvh - 332px));
+  height: max(200px, calc(100dvh - 274px - var(--key-row)));
 }
 
 .world[data-drawn] .travel {
@@ -2188,7 +2200,7 @@ html:has(.world[data-card]) {
   position: relative;
   box-sizing: border-box;
   min-width: var(--tap);
-  min-height: 50px;
+  min-height: var(--key);
   padding: 4px;
   display: flex;
   flex-direction: column;
@@ -2295,16 +2307,31 @@ html:has(.world[data-card]) {
   z-index: 1;
   box-sizing: border-box;
   width: min(
-    720px,
-    calc(100% - max(16px, env(safe-area-inset-left)) - max(16px, env(safe-area-inset-right)))
+    var(--column),
+    calc(
+      100% - max(var(--gutter), env(safe-area-inset-left)) - max(var(--gutter), env(safe-area-inset-right))
+    )
   );
   margin-inline: auto;
   padding-block: 8px max(8px, env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, rgba(8, 12, 13, 0), var(--ground) 10px);
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--ground) 0%, transparent),
+    var(--ground) 10px
+  );
 }
 
 .world:has(> .keybar) {
-  padding-bottom: 58px;
+  padding-bottom: var(--key-row);
+}
+
+/* What `scrollIntoView` keeps clear where the keys stand: their row, and the bar over it while it is there. */
+html:has(.keybar) {
+  scroll-padding-block: 8px calc(var(--key-row) + 24px);
+}
+
+html:has(.keybar > .alarm) {
+  scroll-padding-block: 8px calc(var(--key-row) + var(--key-bar) + 24px);
 }
 
 /* A move that arrives (the breach): a wide red bar just over the keys, sliding in when it is offered and pulsing
@@ -2319,7 +2346,7 @@ html:has(.world[data-card]) {
 }
 
 .world:has(> .keybar > .alarm) {
-  padding-bottom: 120px;
+  padding-bottom: calc(var(--key-row) + var(--key-bar));
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -2362,27 +2389,26 @@ html:has(.world[data-card]) {
   background: var(--panel);
 }
 
-/* The corridor: a hall running away from the eye — a key's, and the wide move's under the tower's picture. */
-.keys .key[data-icon='corridor'],
-.moves .pb[data-icon='corridor'] {
+/* A move's picture, a key's and a move's under a picture alike. The corridor: a hall running away from the eye. */
+:is(.keys .key, .moves .pb)[data-icon='corridor'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M2.5 2.5h15v15h-15zM7.5 7.5h5v5h-5zM2.5 2.5l5 5M17.5 2.5l-5 5M2.5 17.5l5-5M17.5 17.5l-5-5'/%3E%3C/svg%3E");
 }
 
 /* The elevator: a car with its two arrows. A move the strip has no picture for: a plain chevron. */
-.keys .key[data-icon='elevator'] {
+:is(.keys .key, .moves .pb)[data-icon='elevator'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Crect x='4' y='2.5' width='12' height='15'/%3E%3Cpath d='M7.5 8.5 10 6l2.5 2.5M7.5 11.5 10 14l2.5-2.5'/%3E%3C/svg%3E");
 }
 
-.keys .key[data-icon='move'] {
+:is(.keys .key, .moves .pb)[data-icon='move'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M7.5 4.5 13 10l-5.5 5.5'/%3E%3C/svg%3E");
 }
 
 /* The way back and the way forward: plain arrows, one the mirror of the other. */
-.keys .key[data-icon='back'] {
+:is(.keys .key, .moves .pb)[data-icon='back'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M17 10H3M8.5 4.5 3 10l5.5 5.5'/%3E%3C/svg%3E");
 }
 
-.keys .key[data-icon='forward'] {
+:is(.keys .key, .moves .pb)[data-icon='forward'] {
   --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M3 10h14M11.5 4.5 17 10l-5.5 5.5'/%3E%3C/svg%3E");
 }
 

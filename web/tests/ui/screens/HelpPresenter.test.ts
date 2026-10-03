@@ -71,11 +71,11 @@ describe('HelpPresenter — the help screen (Guide:96; I09)', () => {
     expect(vm.frame).toBe('yellow');
     expect(vm.heading).toBe('[OPERATOR_MANUAL]');
     expect(vm.lead).toMatch(/Every tap is a prompt; every prompt costs Coherence/);
-    expect(vm.sections.map((section) => section.heading)).toEqual(['MOVING', 'THE DOCK']);
+    expect(vm.sections.map((section) => section.heading)).toEqual(['MOVING', 'THE BUTTONS BELOW']);
     expect(vm.sections[0]?.entries.map((entry) => entry.term)).toEqual([
       'A listed place',
       '▲ LEAVE',
-      'GO UP · GO DOWN',
+      'A FLOOR',
       'ENTER CORRIDOR · BACK TO ELEVATOR',
       'GO FORWARD · GO BACK',
       'An object',

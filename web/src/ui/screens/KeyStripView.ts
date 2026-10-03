@@ -1,5 +1,5 @@
 import { html, nothing, type TemplateResult } from 'lit-html';
-import type { CardKeyVM } from './CardKeyVM.ts';
+import type { KeyVM } from './KeyVM.ts';
 import type { KeyStrip } from './KeyStrip.ts';
 import type { KeyStripParts } from './KeyStripParts.ts';
 import type { KeyStripVM } from './KeyStripVM.ts';
@@ -23,7 +23,7 @@ export class KeyStripView implements KeyStrip {
           type="button"
           class="key"
           data-icon="more"
-          data-testid="card-more"
+          data-testid="keys-more"
           aria-expanded=${this.#more ? 'true' : 'false'}
           aria-label=${vm.more.label}
           @click=${() => {
@@ -57,7 +57,7 @@ export class KeyStripView implements KeyStrip {
   }
 
   /** One key of the strip: a real button for its option, its drawn icon the stylesheet's, its count beside it. */
-  #key(key: CardKeyVM, parts: KeyStripParts): TemplateResult {
+  #key(key: KeyVM, parts: KeyStripParts): TemplateResult {
     return html`
       <button
         type="button"

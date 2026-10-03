@@ -6,15 +6,21 @@ const MOVES = [
   { id: 'move:corridor', key: 'C', label: 'ENTER CORRIDOR', opposite: 'move:elevator' },
 ];
 
+const BREACH = { id: 'breach', key: 'J', label: 'BREACH THE BEDROCK', opposite: '' };
+
 test('the moves stand among the keys, and none under the picture', () => {
-  const layout = new MovesInKeys().arrange(MOVES);
+  const layout = new MovesInKeys({ under: [], bar: [], unseen: [] }).arrange(MOVES);
   expect(layout.strip).toEqual([]);
-  expect(layout.keys).toEqual({ shown: true, moves: MOVES });
+  expect(layout.keys).toEqual({ shown: true, moves: MOVES, bar: [], unseen: [] });
   expect(layout.ways.shown).toBe(false);
 });
 
-test('a move named as the place’s own way in keeps its place under the picture, out of the keys', () => {
-  const layout = new MovesInKeys(['move:corridor']).arrange(MOVES);
-  expect(layout.strip.map((move) => move.id)).toEqual(['move:corridor']);
-  expect(layout.keys).toEqual({ shown: true, moves: [MOVES[0]] });
+test('by its id a move keeps its words under the picture, arrives as the bar over the keys, or has no button and only stays on offer', () => {
+  const layout = new MovesInKeys({
+    under: ['move:corridor'],
+    bar: ['breach'],
+    unseen: ['move:up'],
+  }).arrange([...MOVES, BREACH]);
+  expect(layout.strip).toEqual([MOVES[1]]);
+  expect(layout.keys).toEqual({ shown: true, moves: [], bar: [BREACH], unseen: [MOVES[0]] });
 });

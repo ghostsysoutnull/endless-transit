@@ -1,6 +1,13 @@
 import type { Portrait } from '#engine/model/Portrait.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
-import { CORRIDOR_MOVE_ID, type GameOption } from '#engine/rules/GameOption.ts';
+import {
+  BREACH_ID,
+  CORRIDOR_MOVE_ID,
+  DESCEND_MOVE_ID,
+  DOWN_MOVE_ID,
+  type GameOption,
+  UP_MOVE_ID,
+} from '#engine/rules/GameOption.ts';
 import type { TraceStep } from '#engine/rules/TraceStep.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import type { SceneChild } from '#ui/scene/SceneChild.ts';
@@ -18,6 +25,12 @@ import { MovesInKeys } from './MovesInKeys.ts';
 import { MovesOnCard } from './MovesOnCard.ts';
 import { MovesInStrip } from './MovesInStrip.ts';
 import { Undrawn } from './Undrawn.ts';
+
+/**
+ * Among the keys, on every picture: the breach arrives as the bar over them, and the elevator's rides have no button —
+ * a floor is picked on the building's tower.
+ */
+const AMONG_KEYS = { bar: [BREACH_ID], unseen: [UP_MOVE_ID, DOWN_MOVE_ID, DESCEND_MOVE_ID] } as const;
 
 /** Where a picture's place stands, and what a reader hears for its slider. */
 interface Framed {
@@ -43,8 +56,8 @@ export class SceneDrawing implements Drawings {
    */
   readonly #strip = new MovesInStrip();
   readonly #carded = new MovesOnCard();
-  readonly #keyed = new MovesInKeys();
-  readonly #towered = new MovesInKeys([CORRIDOR_MOVE_ID]);
+  readonly #keyed = new MovesInKeys({ under: [], ...AMONG_KEYS });
+  readonly #towered = new MovesInKeys({ under: [CORRIDOR_MOVE_ID], ...AMONG_KEYS });
 
   /**
    * What the place's picture draws, told by its portrait: a child per listed place the portrait draws a part for,

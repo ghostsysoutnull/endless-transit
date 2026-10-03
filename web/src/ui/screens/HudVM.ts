@@ -80,15 +80,13 @@ export interface HudVM extends Screen {
   readonly drawing: Drawing;
   /** The room's card (U03e): shown where the drawing puts its place's moves on one; the dock and the strip are then empty. */
   readonly card: Panel<RoomCardVM>;
-  /** The strip of keys at the screen's foot where the drawing puts its place's moves among them (`MovesInKeys`); the dock and the strip under the picture are then empty. A room's keys are its card's. */
-  readonly keys: Panel<KeyStripVM>;
-  /** The moves that arrive as a wide bar over the keys, each only while the place offers it (the breach); empty where no keys stand. */
-  readonly bar: readonly OptionVM[];
+  /** The strip of keys at the screen's foot where the drawing puts its place's moves among them (`MovesInKeys`), with the moves that arrive as a wide bar over them, each only while the place offers it (`bar`: the breach); the dock is then empty. A room's keys are its card's. */
+  readonly keys: Panel<KeyStripVM & { readonly bar: readonly OptionVM[] }>;
   /** The line above the rows. */
   readonly heading: string;
   /** The places listed beside the picture; none where the picture is the whole list (the tower). */
   readonly rows: readonly TravelRowVM[];
-  /** The moves the place offers (up, down, into the corridor): a strip of buttons above the list; a room's are on its card (U03e). */
+  /** The moves that stand as buttons with their words under the picture, or under the panel where no picture draws the place; a room's are on its card (U03e), most pictures' among the keys. */
   readonly moves: readonly MoveVM[];
   /** Why some rows are closed; not shown when none is. */
   readonly sealedNote: Panel<{ readonly text: string }>;

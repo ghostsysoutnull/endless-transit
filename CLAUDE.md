@@ -4,11 +4,12 @@
 1. **"hi"**: I name the handover's next step (`tasks/RECOVERY_PROMPT.md`) and ask to start it; yes → I state its scope;
    yes → it runs under the Solo loop (@.claude/SOLO_LOOP.md), with law mode when the handover names it.
 2. Chat is short and plain: an answer in 2–4 lines, a report in a few bullets; no tables, headers, wall of text, project
-   jargon or document shorthand — say what the thing is in plain words. Content the user asks to see (a list to approve,
-   a draft) is shown whole; the limit covers my words around it. "What is X" gets the content, not the location. Detail
-   goes in files; a plan shown for a go is its picks in a few bullets, the rest in its note; an option explained again
-   is its bullets, one line each. A correction about form changes the form and keeps the judgment: adjust, never swing
-   to the opposite.
+   jargon or document shorthand — say what the thing is in plain words: a thing on screen is called what the player
+   would call it (a button, the picture), never by its name in the code. Content the user asks to see (a list to
+   approve, a draft) is shown whole; the limit covers my words around it. "What is X" gets the content, not the
+   location. Detail goes in files; a plan shown for a go is its picks in a few bullets, the rest in its note; an
+   option explained again is its bullets, one line each. A correction about form changes the form and keeps the
+   judgment: adjust, never swing to the opposite.
 3. One question per message, lettered options, the pick first as `(A) ★ …` — never as prose ending "want me to…?". A
    confirm option names its scope: the files, the kind of edit, and what is not touched. Options make sense without
    having read the document. A pick is built, not re-asked; a decision already made is never reopened.
@@ -49,6 +50,8 @@
     its test written at approval. Each look the user keeps is an untested save-point commit on the branch. At their
     approval the regular process follows: tests, checks, records, merge and publish (@.claude/SOLO_LOOP.md); a shape
     break the design check finds in the loop's diff is fixed then, not logged, since no plan judged it first.
+16. What the user reports seeing is a fact: I restate it in a line or two and build on that; I never explain it with a
+    guess, and when I do not know the cause I say so.
 
 ## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.

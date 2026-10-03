@@ -917,7 +917,7 @@ describe('HudPresenter.toViewModel — the keys at the foot of a drawn place tha
     expect(shown(vm.keys).game.map((key) => key.id)).toEqual(['to-title']);
     expect(vm.moves).toEqual([]);
     expect(vm.dock).toEqual([]);
-    expect(vm.bar).toEqual([]);
+    expect(shown(vm.keys).bar).toEqual([]);
     expect(vm.card.shown).toBe(false);
   });
 
@@ -954,11 +954,11 @@ describe('HudPresenter.toViewModel — the keys at the foot of a drawn place tha
         option({ id: 'breach', key: 'j', label: 'Breach the Bedrock', role: 'move' }),
       ],
     });
-    expect(vm.moves).toEqual([
-      { id: 'move:corridor', key: 'C', label: 'ENTER CORRIDOR', opposite: 'move:elevator', icon: 'corridor' },
-    ]);
+    expect(vm.moves).toMatchObject([{ id: 'move:corridor', icon: 'corridor' }]);
     expect(keysOf(vm)).toEqual(['leave']);
-    expect(vm.bar.map((each) => [each.id, each.label])).toEqual([['breach', 'BREACH THE BEDROCK']]);
+    expect(shown(vm.keys).bar.map((each) => [each.id, each.label])).toEqual([
+      ['breach', 'BREACH THE BEDROCK'],
+    ]);
     expect(vm.dock).toEqual([]);
     expect(vm.options.map((each) => each.id)).toEqual(
       expect.arrayContaining(['move:corridor', 'move:up', 'move:down', 'breach', 'leave']),

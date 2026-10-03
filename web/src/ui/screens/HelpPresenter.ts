@@ -47,8 +47,8 @@ export class HelpPresenter implements Presenter<HelpVM> {
             { term: 'A listed place', what: 'Tap it to enter. The list is what lies one level down.' },
             { term: '▲ LEAVE', what: 'Back up one level, to the place you came from.' },
             {
-              term: 'GO UP · GO DOWN',
-              what: 'Ride a building’s elevator one floor. The top and the ground floor drop one of them.',
+              term: 'A FLOOR',
+              what: 'In a building, tap a floor on the tower to ride there. The gauge down its right side moves the tower.',
             },
             {
               term: 'ENTER CORRIDOR · BACK TO ELEVATOR',
@@ -65,7 +65,7 @@ export class HelpPresenter implements Presenter<HelpVM> {
           ],
         },
         {
-          heading: 'THE DOCK',
+          heading: 'THE BUTTONS BELOW',
           entries: [
             {
               term: 'SCAN',
@@ -86,7 +86,10 @@ export class HelpPresenter implements Presenter<HelpVM> {
               term: 'END SESSION',
               what: 'The recap of this run: where you are, your steps, your places, your buffer. RESUME comes back; ending it goes to the title with the place kept.',
             },
-            { term: 'MORE', what: 'On a phone, the rest of the dock. It folds again after the next tap.' },
+            {
+              term: 'MORE',
+              what: 'The game’s own commands, the ones above. It closes again after the next tap.',
+            },
           ],
         },
       ],

@@ -27,8 +27,9 @@ const EDGE = 6;
 const ROOF = 0.8;
 const FOOT = 0.45;
 /**
- * The strip left of the tower the floor numbers are written in: as wide as the tower's longest label — a character's
- * advance in the picture's font — and the room around it. Then the room the gauge takes on the right.
+ * The strip left of the tower the floor numbers are written in: as wide as the tower's longest label — a character
+ * taken at most this wide, a little over its advance in the pictures' font at its 12 px floor — and the room around
+ * it. Then the room the gauge takes on the right.
  */
 const DIGIT = 7.5;
 const NUMBERS_ROOM = 14;
