@@ -1905,6 +1905,17 @@ body {
   height: clamp(200px, calc(100dvh - 381px), 44dvh);
 }
 
+/* A picture with no list beside it (the tower, which is its own list of floors): it runs from the name down to the
+   keys fixed at the screen's foot, and stops one button short where a move stands under it (the way into the
+   corridor), so that move stays on the first screen. */
+.world[data-drawn]:not(:has(.travel)) > .scene {
+  height: max(200px, calc(100dvh - 236px));
+}
+
+.world[data-drawn]:not(:has(.travel)):has(.cap > .moves) > .scene {
+  height: max(200px, calc(100dvh - 306px));
+}
+
 .world[data-drawn] .travel {
   order: -1;
 }

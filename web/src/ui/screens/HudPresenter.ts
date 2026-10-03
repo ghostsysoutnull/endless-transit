@@ -172,6 +172,8 @@ export class HudPresenter implements Presenter<HudVM> {
     // card has no dock, nor has a place whose moves are keys.
     const leave = leaveOptions.map((option) => this.#docked(option));
     const system = snapshot.options.filter((option) => option.role === 'system');
+    // The list beside the picture is the drawing's to say too: the tower's picture is its whole list.
+    const listed = drawing.beside(rows);
     const { strip, ways, keys: keyed } = drawing.arrange(moveOptions.map((option) => this.#docked(option)));
     // A move under the picture carries the icon it would have as a key.
     const moves = strip.map((move) => ({ ...move, icon: MOVE_KEYS.get(move.id)?.icon ?? '' }));
@@ -292,9 +294,9 @@ export class HudPresenter implements Presenter<HudVM> {
       bar,
       pad: this.#pads.of(place.portrait, travel, rows),
       heading: place.childrenHeading.toUpperCase(),
-      rows,
+      rows: listed,
       moves,
-      sealedNote: rows.some((row) => row.sealed)
+      sealedNote: listed.some((row) => row.sealed)
         ? { shown: true, text: 'STRUCTURES SEALED · the lattice opens their doors in a later build' }
         : { shown: false },
       sealedTag: 'SEALED',

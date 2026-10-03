@@ -106,6 +106,7 @@ export interface HudVM extends Screen {
   readonly bar: readonly OptionVM[];
   /** The line above the rows. */
   readonly heading: string;
+  /** The places listed beside the picture; none where the picture is the whole list (the tower). */
   readonly rows: readonly TravelRowVM[];
   /** The moves the place offers (up, down, into the corridor): a strip of buttons above the list; a room's are on its card (U03e). */
   readonly moves: readonly MoveVM[];

@@ -19,4 +19,7 @@ stay as they are.
 | `BREACH_ID` | constant | `engine/rules/GameOption` | the breach command's option id | none |
 | `RIDES`, `BARRED` | tables (constants) | `HudPresenter` | which moves have no button where the keys stand, and which arrive as the bar | none |
 | `HudVM.bar` | field on an existing kind | `HudPresenter` | the moves shown as a bar over the keys | none |
+| `MovesInKeys(under)` | constructor argument on a kind of this loop | `SceneDrawing` hands it | which moves keep their words under the picture (the tower's way into the corridor) | none |
+| `MoveVM` | value object (data for the view) | `ui/screens` | a move under the picture with its drawn icon | none |
+| `Drawing.beside` | method on an existing kind | each `Drawing` member | whether the listed places stand in a list beside the picture (the tower: none) | none |
 | `MOVE_KEYS` | table (a constant) | `HudPresenter` | a move's short word and icon as a key, by option id | none |

@@ -29,4 +29,9 @@ export class DrawnTower implements Drawing {
   arrange(moves: readonly OptionVM[]): MovesLayout {
     return this.#moves.arrange(moves);
   }
+
+  /** The tower is its own list: a floor is picked on the picture, so no list stands beside it. */
+  beside<T>(): readonly T[] {
+    return [];
+  }
 }
