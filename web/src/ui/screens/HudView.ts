@@ -1,4 +1,5 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
+import { keyed } from 'lit-html/directives/keyed.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import type { SpectrumVM } from '#ui/canvas/SpectrumVM.ts';
@@ -418,7 +419,7 @@ export class HudView implements View<HudVM> {
             picture: this.#picture(),
             head: this.#head(vm),
             status: this.#status(vm),
-            words: this.#words(vm),
+            words: html`${this.#facts(vm)} ${this.#words(vm, this.#description(vm))}`,
             lists: this.#aside(vm),
             panels: this.#panels(vm),
             button: (option) => this.#docked(option),
@@ -435,7 +436,7 @@ export class HudView implements View<HudVM> {
       <div class="app world" data-frame=${vm.frame} data-band=${vm.meter.band} ?data-drawn=${drawn}>
         ${this.#top(vm)}
         <section class="cap" aria-label=${vm.regions.place} tabindex="-1" data-rest>
-          <div class="head">${this.#head(vm)}</div>
+          <div class="head">${this.#head(vm)} ${this.#facts(vm)}</div>
           ${
             vm.moves.length === 0
               ? nothing
@@ -449,7 +450,7 @@ export class HudView implements View<HudVM> {
                   </nav>
                 `
           }
-          <div class="body">${this.#words(vm)} ${this.#status(vm)}</div>
+          <div class="body">${this.#words(vm, this.#folded(vm))} ${this.#status(vm)}</div>
         </section>
         ${drawn ? this.#picture() : nothing} ${this.#panels(vm)} ${this.#trace(vm)}
         <div class="side">
@@ -630,8 +631,8 @@ export class HudView implements View<HudVM> {
     `;
   }
 
-  /** The place's chips, its words, its labelled rows and its diagnostic line. */
-  #words(vm: HudVM): TemplateResult {
+  /** The place's facts as chips: its position among its siblings, then each fact. */
+  #facts(vm: HudVM): TemplateResult {
     return html`
       <ul class="tags">
         ${
@@ -647,7 +648,31 @@ export class HudView implements View<HudVM> {
           `,
         )}
       </ul>
-      <div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>
+    `;
+  }
+
+  /** The place's description, whole. */
+  #description(vm: HudVM): TemplateResult {
+    return html`<div class="desc">${vm.place.description.map((paragraph) => html`<p>${paragraph}</p>`)}</div>`;
+  }
+
+  /** The place's description folded to its first line, which opens the rest on a tap — a view control; folded again at each new place. */
+  #folded(vm: HudVM): TemplateResult {
+    const [first, ...rest] = vm.place.description;
+    if (first === undefined) return html``;
+    return html`${keyed(
+      vm.scene,
+      html`<details class="desc">
+        <summary><span>${first}</span></summary>
+        ${rest.map((paragraph) => html`<p>${paragraph}</p>`)}
+      </details>`,
+    )}`;
+  }
+
+  /** The place's words: its description as the screen lays it, its labelled rows and its diagnostic line. */
+  #words(vm: HudVM, description: TemplateResult): TemplateResult {
+    return html`
+      ${description}
       ${
         vm.place.rows.length === 0
           ? nothing

@@ -734,6 +734,11 @@ body {
   display: none;
 }
 
+/* The facts under the place's name: the first thing read, on as many lines as they need. */
+.head .tags {
+  margin-top: 5px;
+}
+
 .tag {
   overflow-wrap: anywhere;
 }
@@ -802,6 +807,44 @@ body {
 
 .desc:empty {
   display: none;
+}
+
+/* The description folded to its first line (a place with a list under its picture): a tap on the line opens the rest. */
+details.desc > summary {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+details.desc > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.desc > summary > span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+details.desc:not([open]) > summary > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+details.desc > summary::after {
+  content: '▾';
+  flex: none;
+  color: var(--dim);
+}
+
+details.desc[open] > summary::after {
+  content: '▴';
+}
+
+details.desc[open] > summary {
+  margin-bottom: 6px;
 }
 
 .desc p {
@@ -1902,18 +1945,18 @@ body {
    (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
 .world[data-drawn] > .scene {
   order: -2;
-  height: clamp(200px, calc(100dvh - 381px), 44dvh);
+  height: clamp(200px, calc(100dvh - 407px), 44dvh);
 }
 
 /* A picture with no list beside it (the tower, which is its own list of floors): it runs from the name down to the
    keys fixed at the screen's foot, and stops one button short where a move stands under it (the way into the
    corridor), so that move stays on the first screen. */
 .world[data-drawn]:not(:has(.travel)) > .scene {
-  height: max(200px, calc(100dvh - 236px));
+  height: max(200px, calc(100dvh - 262px));
 }
 
 .world[data-drawn]:not(:has(.travel)):has(.cap > .moves) > .scene {
-  height: max(200px, calc(100dvh - 306px));
+  height: max(200px, calc(100dvh - 332px));
 }
 
 .world[data-drawn] .travel {
