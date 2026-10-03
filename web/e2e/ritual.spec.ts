@@ -130,6 +130,10 @@ test('breach on the Peak and descend: the breach spends the Keystone, the Layers
   await expect(breach).toBeVisible();
   await expect(page.locator('.keybar .alarm')).toHaveCount(1);
   await expect(page.locator('.moves button')).toHaveCount(1);
+  // The bar stands clear of the way into the corridor: neither covers the other on the first screen.
+  const way = await page.locator('.moves button').boundingBox();
+  const bar = await page.locator('.keybar .alarm').boundingBox();
+  expect((way?.y ?? 0) + (way?.height ?? 0)).toBeLessThanOrEqual(bar?.y ?? 0);
   await expectTouchable(page, 'the Peak with the breach');
   await shoot(page, '3-breach-offered');
   // In the corridor too (HK-018), then back.

@@ -1896,18 +1896,19 @@ details.desc[open] > summary {
    (measured, tasks/ui/U01b.md): a taller phone grows it, up to 44% of the screen. */
 .world[data-drawn] > .scene {
   order: -2;
-  height: clamp(200px, calc(100dvh - 349px - var(--key-row)), 44dvh);
+  height: clamp(200px, calc(100dvh - 349px - var(--foot)), 44dvh);
 }
 
 /* A picture with no list beside it (the tower, which is its own list of floors): it runs from the name down to the
-   keys fixed at the screen's foot, and stops one button short where a move stands under it (the way into the
-   corridor), so that move stays on the first screen. */
+   keys fixed at the screen's foot — whatever stands there (`--foot`: the row, and the bar while it is over it) — and
+   stops one button short where a move stands under it (the way into the corridor), so that move stays on the first
+   screen. The name's facts are taken at two lines, what a floor's four come to on a phone. */
 .world[data-drawn]:not(:has(.travel)) > .scene {
-  height: max(200px, calc(100dvh - 204px - var(--key-row)));
+  height: max(200px, calc(100dvh - 232px - var(--foot)));
 }
 
 .world[data-drawn]:not(:has(.travel)):has(.cap > .moves) > .scene {
-  height: max(200px, calc(100dvh - 274px - var(--key-row)));
+  height: max(200px, calc(100dvh - 302px - var(--foot)));
 }
 
 .world[data-drawn] .travel {
@@ -2322,7 +2323,10 @@ html:has(.world[data-card]) {
 }
 
 .world:has(> .keybar) {
-  padding-bottom: var(--key-row);
+  /* What stands fixed at the screen's foot, for whatever sizes itself around it. */
+  --foot: var(--key-row);
+
+  padding-bottom: var(--foot);
 }
 
 /* What `scrollIntoView` keeps clear where the keys stand: their row, and the bar over it while it is there. */
@@ -2346,7 +2350,7 @@ html:has(.keybar > .alarm) {
 }
 
 .world:has(> .keybar > .alarm) {
-  padding-bottom: calc(var(--key-row) + var(--key-bar));
+  --foot: calc(var(--key-row) + var(--key-bar));
 }
 
 @media (prefers-reduced-motion: no-preference) {
