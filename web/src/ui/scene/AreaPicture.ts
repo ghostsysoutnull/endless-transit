@@ -14,16 +14,18 @@ import type { SceneCamera } from './SceneCamera.ts';
 import type { SceneHit } from './SceneHit.ts';
 import type { ScenePicture } from './ScenePicture.ts';
 import { StillCamera } from './StillCamera.ts';
+import type { AreaNames } from './AreaNames.ts';
+import type { NameLine } from './NameLine.ts';
 
 /** A child's tap box: a thumb wide, reaching down over its name. */
 const TAP = 46;
 const BELOW = 16;
-/** The name's line under a mark. */
-const NAME_DROP = 17;
 
 /** What the area picture draws with, built by `ScenePictures` and handed in whole (U04). */
 export interface AreaParts {
   readonly font: PictureFont;
+  /** How the names under the marks share the room. */
+  readonly names: AreaNames;
   readonly ink: AreaInk;
   readonly scenes: Readonly<Record<AreaLook, AreaScene>>;
   readonly marks: Readonly<Record<MarkLook, AreaMark>>;
@@ -32,7 +34,7 @@ export interface AreaParts {
 /**
  * Draws a level above the street (U04): the level's own backdrop, each child as its kind is marked where the level
  * stands it, a landmark ringed, a visited one with a yellow dot, the one you came back out of ringed in dashes, and
- * its name under it at 12 px — or its number where names would collide. A pure function of its view-model, size,
+ * its name under it at 12 px — on a second line or cut short where names would collide (`AreaNames`). A pure function of its view-model, size,
  * time and marks; the level and the child kinds each answer for their own drawing.
  */
 export class AreaPicture implements ScenePicture<AreaVM> {
@@ -80,7 +82,13 @@ export class AreaPicture implements ScenePicture<AreaVM> {
     };
     this.#parts.ink.ground(painter, size, palette);
     this.#parts.scenes[vm.look].backdrop(moment);
-    const room = this.#room(spots, size);
+    painter.font = this.#parts.font.of('regular');
+    const names = this.#parts.names.lines(
+      spots,
+      vm.children.map((child) => child.name),
+      size,
+      (text) => painter.measureText(text).width,
+    );
     vm.children.forEach((child, index) => {
       const at = spots[index];
       if (at === undefined) return;
@@ -91,7 +99,8 @@ export class AreaPicture implements ScenePicture<AreaVM> {
         address: child.address,
       });
       this.#rings(painter, palette, at, child, isLit, here.marks(child.id));
-      this.#name(painter, palette, size, at, room, child, isLit);
+      const name = names[index];
+      if (name !== undefined) this.#name(painter, palette, name, child, isLit);
     });
     painter.globalAlpha = 1;
     painter.setLineDash([]);
@@ -99,17 +108,6 @@ export class AreaPicture implements ScenePicture<AreaVM> {
 
   #spots(vm: AreaVM, size: PictureSize): readonly Point[] {
     return this.#parts.scenes[vm.look].spots(vm.children.length, size, vm.address);
-  }
-
-  /** How wide a name may be: the gap to the nearest other child, or the picture's width alone. */
-  #room(spots: readonly Point[], size: PictureSize): number {
-    let room = size.width * 0.5;
-    spots.forEach((a, i) => {
-      spots.forEach((b, j) => {
-        if (j > i && Math.abs(a.y - b.y) < NAME_DROP + 12) room = Math.min(room, Math.abs(a.x - b.x) - 6);
-      });
-    });
-    return room;
   }
 
   #rings(
@@ -153,13 +151,11 @@ export class AreaPicture implements ScenePicture<AreaVM> {
     }
   }
 
-  /** Its name under it when it fits the room beside its neighbours, else its number; kept inside the picture. */
+  /** Its name where `AreaNames` placed it, in its state's ink. */
   #name(
     painter: Painter,
     palette: Palette,
-    size: PictureSize,
-    at: Point,
-    room: number,
+    name: NameLine,
     child: AreaVM['children'][number],
     isLit: boolean,
   ): void {
@@ -168,10 +164,6 @@ export class AreaPicture implements ScenePicture<AreaVM> {
     painter.textBaseline = 'top';
     painter.fillStyle = palette(isLit ? 'yl' : child.sealed ? 'dim' : 'text');
     painter.globalAlpha = 1;
-    const text = painter.measureText(child.name).width <= room ? child.name : child.ordinal;
-    const half = painter.measureText(text).width / 2;
-    const x = Math.min(Math.max(at.x, half + 2), size.width - half - 2);
-    const y = Math.min(at.y + NAME_DROP - 6, size.height - 14);
-    painter.fillText(text, x, y);
+    painter.fillText(name.text, name.x, name.y);
   }
 }

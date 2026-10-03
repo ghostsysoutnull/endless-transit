@@ -25,4 +25,6 @@ stay as they are.
 | `PageScroll` | value (a union of three words) | `ui/canvas` | which way the page still scrolls under a finger on a picture | none |
 | `SceneCamera.page` | method on an existing kind | `TravelCamera`, `StillCamera` | what its drag leaves the page: a sideways drag leaves up and down | none |
 | `StreetPicture`'s row (`SLOT`, `#row`) | constants and a method on an existing kind | `StreetPicture` | the least width a building's slot keeps, and how far the view slides along a longer row | none |
+| `AreaNames` | service (pure) | `ui/scene`, handed to `AreaPicture` by `ScenePictures` | how the names under an area's marks share the room: a second line, then a cut, never a number | none |
+| `NameLine` | value object | `ui/scene` | a name as placed: its text and where it stands | none |
 | `MOVE_KEYS` | table (a constant) | `HudPresenter` | a move's short word and icon as a key, by option id | none |
