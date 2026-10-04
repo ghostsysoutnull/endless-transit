@@ -5,7 +5,6 @@
 - **Next:** U06 of the UI rework, the wrap-up, now the title, the map and the scan tables — its row in
   `tasks/UI_QUEUE.md`; then U06b, the node pictures (a mock first), then U07.
 - **Open threads:**
-  - the real site is not republished since the loop: a publish waits for the user's word;
   - the elevator's up, down and descend have no button, and the keyboard-only browser tests are skipped on the one
     profile: both go with HK-025 (keep the keys or remove them);
   - a flaky browser test: `web/e2e/ritual.spec.ts`, the breach and descent, failed once in U03e's one full run;
