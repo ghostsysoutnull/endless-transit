@@ -2,11 +2,11 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, turnCard, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Censed Altar, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const LOBBY = `${STREET}.0.0`;
-/** Grand Power Plant: four relics, the apartment's culture the header's (every take resonates). */
+/** Candlelit Maintenance Bay: four relics, the apartment's culture the header's (every take resonates). */
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
 const RELIC = { kind: 'relic', from: FIRST_ROOM, key: 'with|reliquary box|plasma coil' };
 
@@ -124,7 +124,7 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
   await expect(stat(page, 'Buffer')).toHaveText('2');
 
   await press(page, /go forward/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('Baroque Maintenance Bay');
+  await expect(page.getByTestId('place-name')).toHaveText('Censed Foundry');
   await expect(page.locator('button.tile')).toHaveCount(4);
   await press(page, /^buffer$/i, hasTouch);
   await tapOption(page, 'drop:1', hasTouch);
@@ -137,7 +137,7 @@ test('the buffer: open it, merge two into a hybrid (+15), drop the hybrid in the
 
   // A reload finds the hybrid on the floor, the prize alone in the buffer, the coherence and the tally kept.
   await page.reload();
-  await expect(page.getByTestId('place-name')).toHaveText('Baroque Maintenance Bay');
+  await expect(page.getByTestId('place-name')).toHaveText('Censed Foundry');
   await expect(page.locator('button.tile')).toHaveCount(5);
   await expect(page.locator('button.tile').last()).toHaveText(/plasma-brass Hybrid/);
   await expect(stat(page, 'Buffer')).toHaveText('1');

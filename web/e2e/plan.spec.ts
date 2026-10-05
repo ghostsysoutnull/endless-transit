@@ -4,7 +4,7 @@ import { plant, press, saveText, tapOption, watchForErrors } from './support/har
 /** A fixed world: its first building's lobby corridor; the first door opens on an apartment of two rooms. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const LOBBY = '0.0.0.0.0.0.0.0.0.0';
-/** Grand Power Plant, the apartment's first room: four relics, the way out, a doorway on to the second room. */
+/** Candlelit Maintenance Bay, the apartment's first room: four relics, the way out, a doorway on to the second room. */
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
 
 /** Another world: its apartment of nine rooms, standing in the second — the plan runs past the picture (U03c). */
@@ -55,7 +55,7 @@ test('a room is drawn as its apartment’s plan: a named picture, the room you s
   const problems = watchForErrors(page);
   await inTheFirstRoom(page);
   await expect(
-    page.getByTestId('scene').getByRole('img', { name: /^Picture of Grand Power Plant/ }),
+    page.getByTestId('scene').getByRole('img', { name: /^Picture of Candlelit Maintenance Bay/ }),
   ).toHaveCount(1);
   // The picture holds no button: the moves, the dock and the tiles are the one set of buttons.
   await expect(page.getByTestId('scene').locator('[data-option]')).toHaveCount(0);
@@ -74,9 +74,9 @@ test('Go forward: the view glides through the doorway first, then the next room 
   await holdTime(page);
   await tapOption(page, 'move:forward', hasTouch);
   // The glide runs first: the first room is still on show right after the tap.
-  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).toHaveText('Candlelit Maintenance Bay');
   await page.clock.runFor(1000);
-  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).not.toHaveText('Candlelit Maintenance Bay');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
   await page.clock.resume();
   await page.waitForTimeout(900);
@@ -100,7 +100,7 @@ test('the doorway tapped in the picture lights its button, and leads on to the n
     .dispatchEvent('pointermove', { clientX: point.x, clientY: point.y });
   await expect(page.locator('button[data-option="move:forward"]')).toHaveAttribute('data-lit', '');
   await (hasTouch ? page.touchscreen.tap(point.x, point.y) : page.mouse.click(point.x, point.y));
-  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).not.toHaveText('Candlelit Maintenance Bay');
 });
 
 test('a relic’s tile is taken at once, no glide', async ({ page, hasTouch }) => {
@@ -159,7 +159,7 @@ test('reduced motion: Go forward enters the next room at once', async ({ page, h
   await holdTime(page);
   // No frame runs from here on: a move that waited for a glide would never land.
   await tapOption(page, 'move:forward', hasTouch);
-  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).not.toHaveText('Candlelit Maintenance Bay');
 });
 
 test('back from the help screen, the plan still takes the taps: Go forward glides first', async ({
@@ -175,9 +175,9 @@ test('back from the help screen, the plan still takes the taps: Go forward glide
   await page.clock.runFor(1200);
   await holdTime(page);
   await tapOption(page, 'move:forward', hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).toHaveText('Candlelit Maintenance Bay');
   await page.clock.runFor(1000);
-  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).not.toHaveText('Candlelit Maintenance Bay');
 });
 
 async function inARoomOfNine(page: Page): Promise<void> {

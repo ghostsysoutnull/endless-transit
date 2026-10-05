@@ -1,32 +1,32 @@
 === STREET ═ Requiem Slipway  [frame yellow]
-path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway *
+path: ∞ The Endless Universe > » Uniform-915-Tether > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0
 tags: Way 1 of 8 (position) | Era Future (era) | Culture Baroque (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Requiem Slipway.
 BUILDINGS ON THIS STREET
-  01 [1] Enter Building: Ornate Sanctum
-  02 [2] Enter Building: The Spire of Static
-  03 [3] Enter Building: ArchiveRoot
-  04 [4] Enter Building: SpireFall
-[NEURAL_MAP: STREET] SCAN_ORIGIN: Requiem Slipway | ⌂ Ornate Sanctum (unvisited) | ⌂ The Spire of Static (unvisited) | ⌂ ArchiveRoot (unvisited) | ⌂ SpireFall (unvisited)
+  01 [1] Enter Building: Censed Altar
+  02 [2] Enter Building: The Cloister of Signals
+  03 [3] Enter Building: ChapterhouseApex
+  04 [4] Enter Building: ArchiveHelix
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Requiem Slipway | ⌂ Censed Altar (unvisited) | ⌂ The Cloister of Signals (unvisited) | ⌂ ChapterhouseApex (unvisited) | ⌂ ArchiveHelix (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
-=== BUILDING ⌂ Ornate Sanctum  [frame yellow]
-path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum *
+=== BUILDING ⌂ Censed Altar  [frame yellow]
+path: ∞ The Endless Universe > » Uniform-915-Tether > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Censed Altar *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0
 tags: Building 1 of 4 (position) | Culture Baroque (culture) | Floors 16 (reading)
   An elevator runs the height of the building.
-status: Entered Ornate Sanctum.
+status: Entered Censed Altar.
 TELEMETRY NOMINAL Quantum spectrogram 1 5 6 8 8 Resonant traces 0
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame yellow]
-path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Uniform-915-Tether > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Censed Altar > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Baroque (culture) | Stability 77.00% (reading) | Trait Industrial (trait)
@@ -38,45 +38,45 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame yellow]
-path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Uniform-915-Tether > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Censed Altar > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0
 tags: Culture Baroque (culture) | Doors 9 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
 DOORS
-  01 [1] Open Brutalist Slab, pitted
-       A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.
-  02 [2] Open Lacquered Timber Gate, weeping
-       A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
-  03 [3] Open Synth-Glass Slab, pitted
-       A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay. The word 'RESONANCE' is finely etched into the frame, appearing almost as a structural glyph.
-  04 [4] Open Riveted Iron Hatch, frozen
-       A hatch of riveted iron, its seams weeping orange. A rime of frost has sealed the edges shut. The word 'quarantine' is scrawled across the surface in jagged, desperate lines.
-  05 [5] Open Industrial Barrier, scorched
-       An industrial barrier of stamped steel and yellow chevrons. The surface is blackened in a fan shape, as if something burned its way out.
-  06 [6] Open Synth-Glass Slab, pitted
-       A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is heavily scarred by micro-impacts and substrate decay.
-  07 [7] Open Frosted Crystal Pane, weeping
-       A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
-  08 [8] Open Synth-Glass Slab, scorched
-       A pristine synth-glass barrier, reflecting the corridor's dim light. The surface is blackened in a fan shape, as if something burned its way out.
-  09 [9] Open Reinforced Polymer, rusted
-       A slab of reinforced polymer, dull and unscratched. The metal hinges are fused by deep, flakey oxidation.
+  01 [1] Open Velvet-Padded Door, iridescent
+       A door padded in red cloth and studded with brass nails. Colours slide across it as you pass. The word 'do_not_sleep' is scrawled across the surface in jagged, desperate lines.
+  02 [2] Open Rose-Window Pane
+       A round pane of many small glasses in a wheel of stone. The structure appears stable.
+  03 [3] Open Censer-Grille Gate, knitting
+       A gate of pierced metal that keeps a ghost of incense. A scratch on it is closing as you watch. The word 'LATTICE' is finely etched into the frame, appearing almost as a structural glyph.
+  04 [4] Open Choir-Stall Door, seamless
+       A door built from the carved backs of choir stalls. There is no gap between it and its frame, only a change of colour. The word 'still_listening' is scrawled across the surface in jagged, desperate lines.
+  05 [5] Open Ivory Inlay Door, cryogenic
+       A door inlaid with pale plates in the pattern of a rose. A deep cold rolls off it and pools at your feet.
+  06 [6] Open Gilt Chapel Door, shimmering
+       A tall door of gilt panels, the saints on it worn faceless. The air just in front of it shimmers.
+  07 [7] Open Fresco Panel, glassy
+       A plastered panel painted with a sky of small clouds. The surface is so smooth that the eye slides off it.
+  08 [8] Open Carved Oak Portal, breathing
+       A portal of dark oak carved with vines and small watching faces. The surface swells and settles, slowly, like a sleeper.
+  09 [9] Open Brass Reliquary Hatch, weightless
+       A hatch like the lid of a reliquary, brass over something kept. It hangs a hair's breadth clear of its frame, touching nothing.
 TELEMETRY NOMINAL Quantum spectrogram 5 4 5 2 4 Resonant traces 0
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
-=== ROOM □ Grand Power Plant  [frame yellow]
-path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Grand Power Plant *
+=== ROOM □ Candlelit Maintenance Bay  [frame yellow]
+path: ∞ The Endless Universe > » Uniform-915-Tether > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Censed Altar > ▤ Floor 0 > ▅ Corridor > 🚪 Velvet-Padded Door, iridescent > □ Candlelit Maintenance Bay *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 1
-tags: Room 1 of 2 (position) | Era Future (era) | Type Power Plant (reading) | Oxygen 14% (reading) | Temp 7°C (reading) | Signal Clear (signal)
+tags: Room 1 of 2 (position) | Era Future (era) | Type Maintenance Bay (reading) | Oxygen 14% (reading) | Temp 7°C (reading) | Signal Clear (signal)
   You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.
   The space is illuminated by a soft holographic haze with no visible source.
 Furniture: half-dismantled stained glass shard, scorched funeral mask
 Relics: 4
-status: Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.
+status: Entered Candlelit Maintenance Bay. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.
 IN THIS ROOM: plasma coil with reliquary box <with|reliquary box|plasma coil> | brass censer fused to laser cutter <fused|brass censer|laser cutter> | stone gargoyle infused with orbital beacon <infused|stone gargoyle|orbital beacon> | prayer bench infused with plasma coil <infused|prayer bench|plasma coil>
 TELEMETRY NOMINAL Quantum spectrogram 5 5 5 9 9 Resonant traces 0
 arrival: You are in gantry-braced architecture that vibrates with every pulse. The walls are blue silk damask with gold thread.
@@ -85,16 +85,16 @@ ways:
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
-=== ROOM □ Baroque Maintenance Bay  [frame yellow]
-path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Baroque Maintenance Bay *
+=== ROOM □ Censed Foundry  [frame yellow]
+path: ∞ The Endless Universe > » Uniform-915-Tether > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Censed Altar > ▤ Floor 0 > ▅ Corridor > 🚪 Velvet-Padded Door, iridescent > □ Censed Foundry *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 1
-tags: Room 2 of 2 (position) | Era Future (era) | Type Maintenance Bay (reading) | Oxygen 19% (reading) | Temp 20°C (reading) | Signal Shielded (signal)
+tags: Room 2 of 2 (position) | Era Future (era) | Type Foundry (reading) | Oxygen 19% (reading) | Temp 20°C (reading) | Signal Shielded (signal)
   You are in a pump room throbbing behind a steel grille. The walls are red gilt mouldings peeling from plaster.
   The space is illuminated by the violet corona of an idle plasma coil.
 Furniture: bolted-down velvet kneeling-rug, rewired stone gargoyle, flickering stained glass shard
 Relics: 4
-status: Entered Baroque Maintenance Bay.
+status: Entered Censed Foundry.
 IN THIS ROOM: velvet kneeling-rug fused to optic implant <fused|velvet kneeling-rug|optic implant> | reliquary box fused to drone dock <fused|reliquary box|drone dock> | nanotech mesh grafted onto carved choir stall <grafted|carved choir stall|nanotech mesh> | plasma coil with prayer bench <with|prayer bench|plasma coil>
 TELEMETRY NOMINAL Quantum spectrogram 4 3 7 6 3 Resonant traces 0
 arrival: You are in a pump room throbbing behind a steel grille. The walls are red gilt mouldings peeling from plaster.

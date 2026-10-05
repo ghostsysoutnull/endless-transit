@@ -3,7 +3,7 @@ import { press, saveText, trailOf, watchForErrors } from './support/harness.ts';
 
 const SEED_FORM = /^[0-9A-F]{4}(-[0-9A-F]{4}){3}$/;
 const SLOT = 'endless-transit.save';
-/** A world whose shape is known (world.spec.ts walks it): the first street of its first city; its first building, Ornate Sanctum, 16 floors, 9 doors. */
+/** A world whose shape is known (world.spec.ts walks it): the first street of its first city; its first building, Censed Altar, 16 floors, 9 doors. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;

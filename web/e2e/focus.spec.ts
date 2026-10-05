@@ -118,7 +118,7 @@ test('keyboard: Enter on TITLE SCREEN, then Enter again, is a round trip to the 
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[to-title]');
 });
 
-/** The lobby of Ornate Sanctum (16 floors), and the first room behind its first door (two rooms). */
+/** The lobby of Censed Altar (16 floors), and the first room behind its first door (two rooms). */
 const LOBBY = '0.0.0.0.0.0.0.0.0.0';
 async function plantAt(page: Page, path: string, states: Record<string, string> = {}): Promise<void> {
   await page.addInitScript(

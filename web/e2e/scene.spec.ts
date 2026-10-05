@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { pointInPicture, press, saveText, tapAt, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway, four buildings, the first Ornate Sanctum. */
+/** A fixed world: its street is Requiem Slipway, four buildings, the first Censed Altar. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 
@@ -73,9 +73,9 @@ test('the street is drawn: a named picture with its list as its twin; a building
   await shoot(page, 'street');
   await tapOption(page, 'enter:0', hasTouch);
   expect(await kind(page)).toBe('BUILDING');
-  await expect(
-    page.getByTestId('scene').getByRole('img', { name: /^Picture of Ornate Sanctum/ }),
-  ).toHaveCount(1);
+  await expect(page.getByTestId('scene').getByRole('img', { name: /^Picture of Censed Altar/ })).toHaveCount(
+    1,
+  );
   expect(problems).toEqual([]);
 });
 

@@ -196,7 +196,7 @@ test('the keyboard is an extra: digits go down, L goes up, T is the title', asyn
   await page.keyboard.press('e');
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await page.keyboard.press('1');
-  await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
+  await expect(page.getByTestId('place-name')).toHaveText('Censed Altar');
   await page.keyboard.press('l');
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await page.keyboard.press('t');

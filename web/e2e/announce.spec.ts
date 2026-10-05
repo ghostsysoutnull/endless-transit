@@ -4,7 +4,7 @@ import { press, saveText, tapOption } from './support/harness.ts';
 /** The live region the shell owns: `[role=status]` — there is exactly one, whatever the screen. */
 const LIVE = '[role="status"]';
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum. */
+/** A fixed world: its street is Requiem Slipway; its first building Censed Altar. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 
