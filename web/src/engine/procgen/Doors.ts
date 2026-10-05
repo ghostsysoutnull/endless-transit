@@ -17,6 +17,8 @@ const DOOR = 'door';
 /** The branches of a corridor's seed its doors' materials and states are dealt on. */
 const MATERIALS = 'door-materials';
 const STATES = 'door-states';
+/** The branch of a corridor's seed its doors' words are dealt on, one deal a style. */
+const WORDS = 'door-words';
 /** About one door in five has words on it (Guide:222; Door.groovy:31, CorridorFactory.groovy:51). */
 const INSCRIBED = 0.2;
 
@@ -32,8 +34,9 @@ interface Line<K> {
  * (`themes/doors/materials/<culture>`) and a state from the list of the era in force
  * (`themes/doors/states/<era>`), each dealt among the corridor's doors on the corridor's seed, so no two
  * doors of a corridor share a material or a state while the list lasts; and, on the `door` branch of its
- * apartment's seed, one roll in five for words: the ones the room behind guarantees, else a word of the
- * inscription list in one of the four styles. Its look alone can be read without the apartment (`look`, the
+ * apartment's seed, one roll in five for words: the ones the room behind guarantees, else one of the four
+ * styles and a word of that style's own list (`themes/doors/inscriptions/<style>` — the style is who
+ * wrote it), dealt along the corridor so no two of its doors say the same. Its look alone can be read without the apartment (`look`, the
  * peek, U02). A list is read whole and typed the first time a door asks for it: a line with an unknown key
  * refuses its list.
  */
@@ -53,7 +56,9 @@ export class Doors implements DoorDeal {
     const seed = slot.corridor.child(slot.index).branch(DOOR);
     return new Door({
       look: this.look(slot),
-      inscription: seed.branch('inscribed').probability(INSCRIBED) ? this.#words(seed, behind) : undefined,
+      inscription: seed.branch('inscribed').probability(INSCRIBED)
+        ? this.#words(slot, seed, behind)
+        : undefined,
       trace: behind.trace(),
       told: { material: this.#material(slot).told, state: this.#state(slot).told },
     });
@@ -95,13 +100,14 @@ export class Doors implements DoorDeal {
     return this.#deal.nth(slot.corridor.branch(STATES), lines, slot.index);
   }
 
-  #words(seed: Seed, behind: RoomCategory): DoorInscription {
-    return (
-      behind.guarantee() ??
-      new DoorInscription(
-        seed.branch('word').pick(this.#library.list(`${LISTS}/inscriptions`)),
-        seed.branch('style').pick(INSCRIPTION_STYLES),
-      )
+  #words(slot: DoorSlot, seed: Seed, behind: RoomCategory): DoorInscription {
+    const guaranteed = behind.guarantee();
+    if (guaranteed !== undefined) return guaranteed;
+    const style = seed.branch('style').pick(INSCRIPTION_STYLES);
+    const words = this.#library.list(`${LISTS}/inscriptions/${style.key()}`);
+    return new DoorInscription(
+      this.#deal.nth(slot.corridor.branch(WORDS).branch(style.key()), words, slot.index),
+      style,
     );
   }
 }

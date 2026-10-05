@@ -41,7 +41,7 @@ export const INSCRIPTION_STYLES: readonly InscriptionStyle[] = [
     key: 'stamped',
     before: '[',
     after: ']',
-    applied: 'stamped into the metal in block letters',
+    applied: 'stamped across the door in block letters',
   }),
   new InscriptionStyle({
     key: 'scrawled',
