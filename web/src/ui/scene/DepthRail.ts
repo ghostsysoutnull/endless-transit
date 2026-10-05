@@ -99,7 +99,9 @@ export class DepthRail {
   }
 
   #same(one: RailVM['levels'], other: RailVM['levels']): boolean {
-    return one.length === other.length && one.every((level, index) => level.address === other[index]?.address);
+    return (
+      one.length === other.length && one.every((level, index) => level.address === other[index]?.address)
+    );
   }
 
   /** A level's slot: room is kept for one more mark, so the one left on the way up lifts off inside the rail. */

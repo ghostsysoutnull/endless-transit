@@ -17,7 +17,7 @@ function portrait(location: Location): unknown {
     status: location.status(),
     description: location.description(),
     facts: location.facts(),
-    children: location.children().map((child) => `${location.approachVerb()} ${child.callSign()}`),
+    children: location.children().map((child) => child.callSign()),
   };
 }
 

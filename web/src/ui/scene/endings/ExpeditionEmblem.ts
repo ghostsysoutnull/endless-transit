@@ -16,12 +16,30 @@ export class ExpeditionEmblem implements EndingEmblem {
     const top = 14;
     const bottom = size.height - 14;
     const step = (bottom - top) / (levels - 1);
-    this.#ink.line(painter, [{ x, y: top }, { x, y: bottom }], palette('frame'), 1.5, 0.6);
+    this.#ink.line(
+      painter,
+      [
+        { x, y: top },
+        { x, y: bottom },
+      ],
+      palette('frame'),
+      1.5,
+      0.6,
+    );
     // The pulse: short dashes running down, by hand (the painter has no dash offset).
     const pitch = 17;
     const offset = (seconds * 40) % pitch;
     for (let y = top + offset; y < bottom; y += pitch) {
-      this.#ink.line(painter, [{ x, y }, { x, y: Math.min(bottom, y + 3) }], palette('wh'), 2, 0.8);
+      this.#ink.line(
+        painter,
+        [
+          { x, y },
+          { x, y: Math.min(bottom, y + 3) },
+        ],
+        palette('wh'),
+        2,
+        0.8,
+      );
     }
     for (let level = 0; level < levels; level++) {
       const at = { x, y: top + level * step };

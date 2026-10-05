@@ -14,7 +14,15 @@ export class FrayedEmblem implements EndingEmblem {
   paint({ painter, size, palette, seconds }: EmblemMoment): void {
     const y = size.height / 2;
     const split = size.width * 0.45;
-    this.#ink.line(painter, [{ x: 10, y }, { x: split, y }], palette('frame'), 2);
+    this.#ink.line(
+      painter,
+      [
+        { x: 10, y },
+        { x: split, y },
+      ],
+      palette('frame'),
+      2,
+    );
     for (let strand = 0; strand < 6; strand++) {
       const points: Point[] = [];
       for (let x = split; x <= size.width - 10; x += 4) {
@@ -27,7 +35,13 @@ export class FrayedEmblem implements EndingEmblem {
             (strand - 2.5) * out * 9,
         });
       }
-      this.#ink.line(painter, points, strand % 2 === 1 ? palette('rd') : palette('frame'), 1, 0.9 - strand * 0.1);
+      this.#ink.line(
+        painter,
+        points,
+        strand % 2 === 1 ? palette('rd') : palette('frame'),
+        1,
+        0.9 - strand * 0.1,
+      );
     }
   }
 }

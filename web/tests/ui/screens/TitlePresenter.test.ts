@@ -2,12 +2,16 @@ import { describe, expect, test } from 'vitest';
 import { NoPortrait } from '#engine/model/NoPortrait.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import type { GameOption } from '#engine/rules/GameOption.ts';
+import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PlaceSummary } from '#engine/rules/PlaceSummary.ts';
 import { BuildMasthead } from '#ui/BuildMasthead.ts';
+import { PassageLevels } from '#ui/screens/PassageLevels.ts';
+import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
 import { TitlePresenter } from '#ui/screens/TitlePresenter.ts';
 import { playerSummary } from '#tests/support/playerSummary.ts';
+import { traceStep } from '#tests/support/traceStep.ts';
 
-const presenter = new TitlePresenter(new BuildMasthead('a1b2c3d'));
+const presenter = new TitlePresenter(new BuildMasthead('a1b2c3d'), new PassageLevels(new SceneDrawing()));
 
 function option(id: string, key: string, label: string): GameOption {
   return {
@@ -28,100 +32,90 @@ function option(id: string, key: string, label: string): GameOption {
   };
 }
 
+const NO_WORLD: GameSnapshot = {
+  world: null,
+  place: null,
+  player: null,
+  buffer: null,
+  prompt: null,
+  options: [option('new-world', 'n', 'New world')],
+  message: '',
+  scan: null,
+  map: null,
+  trace: null,
+  descent: null,
+};
+
+const NOISE = new Seed(3, 4);
+const A_WORLD: GameSnapshot = {
+  ...NO_WORLD,
+  world: { seed: '1111-1111-2222-2222', name: 'The Endless Universe' },
+  options: [option('enter-world', 'e', 'Enter world'), option('reroll', 'r', 'Re-roll')],
+  message: 'World 1111-1111-2222-2222 drawn.',
+  descent: {
+    noise: NOISE,
+    trace: {
+      steps: [
+        traceStep({ depth: 0, address: '0' }),
+        traceStep({
+          depth: 1,
+          icon: '»',
+          kind: 'Cosmic filament',
+          name: 'Zeta-915-Link',
+          address: '0.0',
+          glyph: 'filament',
+        }),
+        traceStep({
+          depth: 2,
+          icon: '═',
+          kind: 'Street',
+          name: 'Vesper Row',
+          address: '0.0.0',
+          glyph: 'street',
+          current: true,
+        }),
+      ],
+    },
+  },
+};
+
 describe('TitlePresenter.toViewModel', () => {
-  test('no world yet: the screen invites, and carries the option as data', () => {
-    const vm = presenter.toViewModel({
-      world: null,
-      place: null,
-      player: null,
-      buffer: null,
-      prompt: null,
-      options: [option('new-world', 'n', 'New world')],
-      message: '',
-      scan: null,
-      map: null,
-      trace: null,
-    });
+  test('no world yet: the screen invites, with the one option to lead', () => {
+    const vm = presenter.toViewModel(NO_WORLD);
     expect(vm.world).toBeNull();
-    expect(vm.options).toEqual([{ id: 'new-world', key: 'N', label: 'NEW WORLD', opposite: '' }]);
     expect(vm.prompt).toMatch(/no world/i);
-    expect(vm.stageLine).toBe('AWAITING SEED');
+    expect(vm.options).toEqual([{ id: 'new-world', key: 'N', label: 'New world', opposite: '', lead: true }]);
+    expect(vm.enters).toBe('');
     expect(vm.status).toBe('');
   });
 
-  test('a world: name, seed and the engine message pass through; labels are upper-cased for the terminal look', () => {
-    const vm = presenter.toViewModel({
-      world: { seed: '1111-1111-2222-2222', name: 'Hollow Reach' },
-      place: null,
-      player: null,
-      buffer: null,
-      prompt: null,
-      options: [option('reroll', 'r', 'Re-roll')],
-      message: 'World 1111-1111-2222-2222 drawn.',
-      scan: null,
-      map: null,
-      trace: null,
-    });
-    expect(vm.world).toEqual({
-      nameLabel: 'UNIVERSE',
-      name: 'HOLLOW REACH',
-      seedLabel: 'SEED',
-      seed: '1111-1111-2222-2222',
-    });
-    expect(vm.stageLine).toBe('WORLD LOCKED');
-    expect(vm.options).toEqual([{ id: 'reroll', key: 'R', label: 'RE-ROLL', opposite: '' }]);
+  test('a world: its seed and name pass through, the way down becomes a level each with its words, entering leads and plays the passage', () => {
+    const vm = presenter.toViewModel(A_WORLD);
+    expect(vm.world?.seed).toBe('1111-1111-2222-2222');
+    expect(vm.world?.name).toBe('The Endless Universe');
+    expect(vm.world?.noise).toBe(NOISE);
+    expect(vm.world?.levels.map((level) => [level.kind, level.name, level.icon, level.into])).toEqual([
+      ['Universe', 'The Endless Universe', '∞', '0.0'],
+      ['Cosmic filament', 'Zeta-915-Link', '»', '0.0.0'],
+      ['Street', 'Vesper Row', '═', ''],
+    ]);
+    expect(vm.options.map((each) => [each.id, each.label, each.lead])).toEqual([
+      ['enter-world', 'Enter world', true],
+      ['reroll', 'Re-roll', false],
+    ]);
+    expect(vm.enters).toBe('enter-world');
     expect(vm.status).toBe('World 1111-1111-2222-2222 drawn.');
   });
 
-  test('every word on the screen is carried by the view-model, region names for screen readers included', () => {
-    const vm = presenter.toViewModel({
-      world: null,
-      place: null,
-      player: null,
-      buffer: null,
-      prompt: null,
-      options: [],
-      message: '',
-      scan: null,
-      map: null,
-      trace: null,
-    });
+  test('the game’s name and the build stamp are the masthead’s — handed in, the engine never sees them', () => {
+    const vm = presenter.toViewModel(NO_WORLD);
     expect(vm.title).toBe('ENDLESS TRANSIT');
-    expect(vm.regions).toEqual({ stage: 'Uplink', world: 'World', actions: 'Actions' });
-  });
-
-  test('the build stamp names the build the page was made from — handed in, the engine never sees it', () => {
-    expect(
-      presenter.toViewModel({
-        world: null,
-        place: null,
-        player: null,
-        buffer: null,
-        prompt: null,
-        options: [],
-        message: '',
-        scan: null,
-        map: null,
-        trace: null,
-      }).build,
-    ).toBe('build a1b2c3d');
+    expect(vm.build).toBe('build a1b2c3d');
   });
 
   test('the title is the screen of a snapshot without a place — and only of that one', () => {
-    const atTitle = {
-      world: null,
-      place: null,
-      player: null,
-      buffer: null,
-      prompt: null,
-      options: [],
-      message: '',
-      scan: null,
-      map: null,
-      trace: null,
-    };
-    expect(presenter.accepts(atTitle)).toBe(true);
-    expect(presenter.toViewModel(atTitle).scene).toBe('title');
+    expect(presenter.accepts(NO_WORLD)).toBe(true);
+    expect(presenter.toViewModel(NO_WORLD).scene).toBe('title');
     const place: PlaceSummary = {
       kind: 'Universe',
       icon: '∞',
@@ -141,28 +135,6 @@ describe('TitlePresenter.toViewModel', () => {
       noise: new Seed(0, 0),
       abyssal: false,
     };
-    expect(
-      presenter.accepts({
-        ...atTitle,
-        place,
-        player: playerSummary(),
-      }),
-    ).toBe(false);
-  });
-
-  test('the view-model is plain data', () => {
-    const vm = presenter.toViewModel({
-      world: null,
-      place: null,
-      player: null,
-      buffer: null,
-      prompt: null,
-      options: [],
-      message: '',
-      scan: null,
-      map: null,
-      trace: null,
-    });
-    expect(JSON.parse(JSON.stringify(vm))).toEqual(vm);
+    expect(presenter.accepts({ ...NO_WORLD, place, player: playerSummary() })).toBe(false);
   });
 });

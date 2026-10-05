@@ -68,10 +68,8 @@ export class SavedGame {
       return undefined;
     }
     if (typeof data !== 'object' || data === null) return undefined;
-    const { version, seed, path, states, coherence, steps, visited, buffer, resonant, reboots } = data as Record<
-      string,
-      unknown
-    >;
+    const { version, seed, path, states, coherence, steps, visited, buffer, resonant, reboots } =
+      data as Record<string, unknown>;
     if (version !== VERSION || typeof seed !== 'string') return undefined;
     const parsedSeed = Seed.parse(seed);
     const parsedStates = SavedGame.#statesOf(states);

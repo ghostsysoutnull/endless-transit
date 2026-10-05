@@ -27,7 +27,11 @@ const VOID_LINES = [
 const ENDINGS: Readonly<
   Record<string, { readonly heading: string; readonly lines: readonly string[]; readonly closing: string }>
 > = {
-  void: { heading: 'The void takes the session', lines: VOID_LINES, closing: 'Sleep among the static, Operator.' },
+  void: {
+    heading: 'The void takes the session',
+    lines: VOID_LINES,
+    closing: 'Sleep among the static, Operator.',
+  },
   echo: {
     heading: 'The signal answered',
     lines: [],
@@ -44,8 +48,16 @@ const ENDINGS: Readonly<
     lines: [],
     closing: `One more step and there would have been no one to take it. ${KEPT}`,
   },
-  empty: { heading: 'Empty-handed', lines: [], closing: `You looked at everything and touched nothing. ${KEPT}` },
-  pacing: { heading: 'Pacing', lines: [], closing: `You know one corridor better than it knows itself. ${KEPT}` },
+  empty: {
+    heading: 'Empty-handed',
+    lines: [],
+    closing: `You looked at everything and touched nothing. ${KEPT}`,
+  },
+  pacing: {
+    heading: 'Pacing',
+    lines: [],
+    closing: `You know one corridor better than it knows itself. ${KEPT}`,
+  },
   tuned: { heading: 'In tune', lines: [], closing: `The lattice hummed where you walked. ${KEPT}` },
   expedition: { heading: 'Expedition complete', lines: [], closing: `A long way down. ${KEPT}` },
   sky: { heading: 'Never left the sky', lines: [], closing: `The web stayed a picture. ${KEPT}` },

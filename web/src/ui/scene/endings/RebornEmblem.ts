@@ -25,7 +25,16 @@ export class RebornEmblem implements EndingEmblem {
       }
       points.push({ x, y: y - lift });
     }
-    this.#ink.line(painter, [{ x: 10, y }, { x: size.width - 10, y }], palette('dim'), 1, 0.3);
+    this.#ink.line(
+      painter,
+      [
+        { x: 10, y },
+        { x: size.width - 10, y },
+      ],
+      palette('dim'),
+      1,
+      0.3,
+    );
     this.#ink.line(painter, points, palette('gn'), 1.8);
     const last = points[points.length - 1];
     if (last !== undefined) this.#ink.dot(painter, last, 3, palette('wh'));

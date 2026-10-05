@@ -12,6 +12,14 @@ describe('Buffer — the quantum trace buffer (Guide:236-243; no limit, U03d)', 
     expect(new Buffer(Array.from({ length: 40 }, (_, n) => fragment('x', n))).size()).toBe(40);
   });
 
+  test('holds: whether any fragment of a kind is in it, by the kind a save names it by', () => {
+    const buffer = new Buffer([fragment('Lens', 3)]);
+    expect(buffer.holds('relic')).toBe(true);
+    expect(buffer.holds('hybrid')).toBe(false);
+    expect(buffer.holds('echo')).toBe(false);
+    expect(new Buffer().holds('relic')).toBe(false);
+  });
+
   test('take removes the fragment at that position and hands it over; nothing at a position nobody holds', () => {
     const buffer = new Buffer([fragment('A', 1), fragment('B', 2), fragment('C', 3)]);
     expect(buffer.take(1)?.name()).toBe('B');

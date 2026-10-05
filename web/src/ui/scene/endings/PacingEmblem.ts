@@ -15,10 +15,38 @@ export class PacingEmblem implements EndingEmblem {
     const centre = { x: width / 2, y: height / 2 };
     const far = Math.min(width, height) * 0.12;
     const dim = palette('dim');
-    this.#ink.line(painter, [{ x: 10, y: height - 10 }, { x: centre.x - far, y: centre.y + far }], dim);
-    this.#ink.line(painter, [{ x: width - 10, y: height - 10 }, { x: centre.x + far, y: centre.y + far }], dim);
-    this.#ink.line(painter, [{ x: 10, y: 10 }, { x: centre.x - far, y: centre.y - far }], dim);
-    this.#ink.line(painter, [{ x: width - 10, y: 10 }, { x: centre.x + far, y: centre.y - far }], dim);
+    this.#ink.line(
+      painter,
+      [
+        { x: 10, y: height - 10 },
+        { x: centre.x - far, y: centre.y + far },
+      ],
+      dim,
+    );
+    this.#ink.line(
+      painter,
+      [
+        { x: width - 10, y: height - 10 },
+        { x: centre.x + far, y: centre.y + far },
+      ],
+      dim,
+    );
+    this.#ink.line(
+      painter,
+      [
+        { x: 10, y: 10 },
+        { x: centre.x - far, y: centre.y - far },
+      ],
+      dim,
+    );
+    this.#ink.line(
+      painter,
+      [
+        { x: width - 10, y: 10 },
+        { x: centre.x + far, y: centre.y - far },
+      ],
+      dim,
+    );
     painter.strokeStyle = dim;
     painter.lineWidth = 1;
     painter.strokeRect(centre.x - far, centre.y - far, far * 2, far * 2);

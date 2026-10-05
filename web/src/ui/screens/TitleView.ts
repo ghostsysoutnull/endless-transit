@@ -63,9 +63,10 @@ export class TitleView implements View<TitleVM> {
   /** The tap that enters the world goes through the passage first; any other is the router's. */
   #through(event: Event): void {
     const vm = this.#vm;
-    if (vm === undefined || vm.world === null || vm.enters === '' || this.#parts.passage.playing()) return;
-    if (!(event.target instanceof Element)) return;
-    if (event.target.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.enters) return;
+    if (vm === undefined) return;
+    if (vm.world === null || vm.enters === '' || this.#parts.passage.playing()) return;
+    const target = event.target instanceof Element ? event.target : undefined;
+    if (target?.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.enters) return;
     event.stopPropagation();
     const container = this.#container;
     if (container === undefined) return;

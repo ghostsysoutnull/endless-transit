@@ -13,8 +13,25 @@ export class SeveredEmblem implements EndingEmblem {
   paint({ painter, size, palette, seconds }: EmblemMoment): void {
     const y = size.height / 2;
     const cut = size.width / 2 + Math.sin(seconds * 0.8) * 10;
-    this.#ink.line(painter, [{ x: 10, y }, { x: cut - 14, y }], palette('frame'), 2);
-    this.#ink.line(painter, [{ x: cut + 14, y }, { x: size.width - 10, y }], palette('frame'), 2, 0.4);
+    this.#ink.line(
+      painter,
+      [
+        { x: 10, y },
+        { x: cut - 14, y },
+      ],
+      palette('frame'),
+      2,
+    );
+    this.#ink.line(
+      painter,
+      [
+        { x: cut + 14, y },
+        { x: size.width - 10, y },
+      ],
+      palette('frame'),
+      2,
+      0.4,
+    );
     this.#ink.dot(painter, { x: cut - 14, y }, 3, palette('wh'));
     this.#ink.dot(painter, { x: cut + 14, y }, 3, palette('dim'));
     for (let spark = 0; spark < 4; spark++) {

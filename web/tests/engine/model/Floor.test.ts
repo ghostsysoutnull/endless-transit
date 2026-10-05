@@ -191,7 +191,6 @@ describe('Floor — the corridor', () => {
     ]);
     expect(middle.listing()).toBe(middle.corridor().children());
     expect(middle.childrenHeading()).toBe(middle.corridor().childrenHeading());
-    expect(middle.approachVerb()).toBe(middle.corridor().approachVerb());
     expect(middle.description()).toEqual(middle.corridor().description());
     expect(middle.status()).toBe(middle.corridor().status());
     expect(middle.move('up')).toBeUndefined();

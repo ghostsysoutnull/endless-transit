@@ -63,7 +63,9 @@ export class Passage {
           <ol class="passage-rail">
             ${playing.levels.map(
               (level, index) =>
-                html`<li ?data-passed=${index < playing.at} ?data-here=${index === playing.at}>${level.icon}</li>`,
+                html`<li ?data-passed=${index < playing.at} ?data-here=${index === playing.at}>
+                  ${level.icon}
+                </li>`,
             )}
           </ol>
           <div class="passage-names">

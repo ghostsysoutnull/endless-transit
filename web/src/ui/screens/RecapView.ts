@@ -63,8 +63,8 @@ export class RecapView implements View<RecapVM> {
   #through(event: Event): void {
     const vm = this.#vm;
     if (vm === undefined || vm.ends === '' || this.#parts.passage.playing()) return;
-    if (!(event.target instanceof Element)) return;
-    if (event.target.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.ends) return;
+    const target = event.target instanceof Element ? event.target : undefined;
+    if (target?.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.ends) return;
     event.stopPropagation();
     const container = this.#container;
     if (container === undefined) return;

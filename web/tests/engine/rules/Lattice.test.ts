@@ -26,7 +26,7 @@ function trailOf(path: string): string[] {
 
 function saveText(path: string, states: Record<string, string> = {}, coherence = 100): string {
   return JSON.stringify({
-    version: 6,
+    version: 7,
     seed: '7F3A-91C2-0B4D-E6A8',
     path,
     states,
@@ -35,6 +35,7 @@ function saveText(path: string, states: Record<string, string> = {}, coherence =
     visited: trailOf(path),
     buffer: [],
     resonant: 0,
+    reboots: 0,
   });
 }
 

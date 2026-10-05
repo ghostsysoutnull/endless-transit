@@ -144,7 +144,12 @@ new Shell(
       new TitlePresenter(masthead, new PassageLevels(new SceneDrawing())),
       new TitleView({
         book: scenes,
-        scene: new TitleScene({ canvases: canvasMaker, clock, motion, tear: new TearPass(new CoherenceFx()) }),
+        scene: new TitleScene({
+          canvases: canvasMaker,
+          clock,
+          motion,
+          tear: new TearPass(new CoherenceFx()),
+        }),
         // The way into the game, taken at every start.
         passage: new Passage({
           dive: new Dive({ canvases: canvasMaker, clock, motion, tear: new NoTear(), hold: PASSAGE }),

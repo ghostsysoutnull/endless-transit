@@ -48,7 +48,10 @@ export class EmblemInk {
   ): void {
     const points: Point[] = [];
     for (let x = span.from; x <= span.to; x += 3) {
-      points.push({ x, y: span.y + Math.sin((x - span.from) * shape.frequency + shape.phase) * shape.amplitude });
+      points.push({
+        x,
+        y: span.y + Math.sin((x - span.from) * shape.frequency + shape.phase) * shape.amplitude,
+      });
     }
     this.line(painter, points, ink, width, alpha);
   }

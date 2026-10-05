@@ -2989,8 +2989,8 @@ html:has(.keybar > .alarm) {
 }
 
 .fall-key:active {
-  border-color: var(--wh);
-  background: var(--wh);
+  border-color: var(--yl);
+  background: var(--yl);
   color: var(--ground);
 }
 
@@ -3089,6 +3089,7 @@ html:has(.keybar > .alarm) {
 .passage-step b {
   overflow: hidden;
   color: var(--wh);
+  transition: color 0.5s;
   font-size: clamp(19px, 6vw, 26px);
   font-weight: 700;
   line-height: 1.2;
@@ -3102,8 +3103,11 @@ html:has(.keybar > .alarm) {
 }
 
 .passage-step[data-role='past'] {
-  opacity: 0.75;
   transform: translateY(-34px) scale(0.5);
+}
+
+.passage-step[data-role='past'] b {
+  color: var(--dim);
 }
 
 .passage-step[data-role='past'] span,
