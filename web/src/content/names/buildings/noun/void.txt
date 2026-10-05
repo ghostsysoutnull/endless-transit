@@ -10,3 +10,15 @@ Cell
 Plane
 Hush
 Field
+Gap
+Vacuum
+Absence
+Interval
+Margin
+Lacuna
+Umbra
+Eclipse
+Silence
+Rift
+Nadir
+Remnant

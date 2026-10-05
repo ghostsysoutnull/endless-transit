@@ -10,3 +10,15 @@ Portico
 Atrium
 Shrine
 Terrace
+Stoa
+Lyceum
+Odeon
+Amphitheatre
+Gymnasium
+Propylaea
+Treasury
+Aqueduct
+Stadium
+Peristyle
+Academy
+Exedra

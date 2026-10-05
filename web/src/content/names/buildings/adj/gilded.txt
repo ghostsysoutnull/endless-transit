@@ -10,3 +10,15 @@ Burnished
 Lacquered
 Polished
 Velvet-Lined
+Filigreed
+Brocade
+Damask
+Pearl-Inlaid
+Chandeliered
+Marquetry
+Satin
+Engraved
+Bevelled
+Tasselled
+Enamelled
+Silvered

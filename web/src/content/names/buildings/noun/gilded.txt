@@ -10,3 +10,15 @@ Study
 Lounge
 Vault
 Pavilion
+Emporium
+Athenaeum
+Casino
+Opera
+Mezzanine
+Boudoir
+Orangery
+Bourse
+Promenade
+Cabinet
+Belvedere
+Solarium

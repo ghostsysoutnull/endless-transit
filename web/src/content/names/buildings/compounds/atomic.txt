@@ -1,0 +1,12 @@
+Fall
+Pile
+Shelter
+Shield
+Zone
+Flash
+Halo
+Ward
+Cask
+Dome
+Rod
+Glow

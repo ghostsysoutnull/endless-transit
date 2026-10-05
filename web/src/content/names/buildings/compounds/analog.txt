@@ -1,0 +1,12 @@
+Dial
+Reel
+Mast
+Depot
+Press
+Wire
+Gauge
+Valve
+Works
+Spool
+Lever
+Crank

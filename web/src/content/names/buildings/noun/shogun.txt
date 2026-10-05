@@ -10,3 +10,15 @@ Hall
 Gatehouse
 Courtyard
 Tower
+Pagoda
+Veranda
+Granary
+Bathhouse
+Storehouse
+Watchtower
+Arbor
+Belltower
+Stable
+Workshop
+Moat
+Pond

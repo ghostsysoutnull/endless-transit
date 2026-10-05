@@ -10,3 +10,15 @@ Chapel
 Vestry
 Cloister
 Spire
+Abbey
+Oratory
+Nave
+Belfry
+Chancel
+Sacristy
+Minster
+Refectory
+Chapterhouse
+Baptistery
+Priory
+Presbytery

@@ -10,3 +10,15 @@ Vault
 Cube
 Plinth
 Shaft
+Bunker
+Bulwark
+Rampart
+Buttress
+Casemate
+Redoubt
+Pier
+Stele
+Ziggurat
+Cenotaph
+Pylon
+Mastaba

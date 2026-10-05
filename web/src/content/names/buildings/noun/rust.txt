@@ -10,3 +10,15 @@ Yard
 Silo
 Pit
 Girder
+Gantry
+Boiler
+Hopper
+Crucible
+Derrick
+Furnace
+Hulk
+Chassis
+Tank
+Winch
+Flue
+Scaffold

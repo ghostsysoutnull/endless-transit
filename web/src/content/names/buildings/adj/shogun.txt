@@ -10,3 +10,15 @@ Quiet
 Tiled
 Ink-Black
 Ceremonial
+Bamboo
+Jade
+Silken
+Raked
+Mossed
+Lantern-Lit
+Plum
+Brushed
+Maple
+Misted
+Thatched
+Heron-White

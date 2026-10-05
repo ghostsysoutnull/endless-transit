@@ -10,3 +10,15 @@ Arcade
 Booth
 Terminal
 Strip
+Kiosk
+Uplink
+Billboard
+Capsule
+Marquee
+Server
+Matrix
+Screen
+Module
+Console
+Antenna
+Mainframe

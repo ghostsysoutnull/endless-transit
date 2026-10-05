@@ -10,3 +10,15 @@ Corrupted
 Dangling
 Leaking
 Unbound
+Deadlocked
+Forked
+Truncated
+Overflowing
+Unmapped
+Stale
+Mangled
+Phantom
+Hung
+Zeroed
+Bleeding
+Looping

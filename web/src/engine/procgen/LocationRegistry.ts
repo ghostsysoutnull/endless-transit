@@ -76,7 +76,7 @@ export class LocationRegistry implements FactoryLookup {
       new CountryFactory(offspring, names, themes),
       new CityFactory(offspring, names),
       new StreetFactory(offspring, names),
-      new BuildingFactory(offspring, { namer: new BuildingNamer(library), sizes: new BuildingSizes() }),
+      new BuildingFactory(offspring, { namer: new BuildingNamer(library, deal), sizes: new BuildingSizes() }),
       new FloorFactory(offspring, {
         zones: new FloorZones(library),
         decks,

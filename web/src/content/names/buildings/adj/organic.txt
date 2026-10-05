@@ -10,3 +10,15 @@ Damp
 Ribbed
 Veined
 Sporing
+Mossy
+Budding
+Rooted
+Fleshy
+Tendrilled
+Mycelial
+Pollinated
+Chitinous
+Sap-Wet
+Twining
+Fruiting
+Leathery
