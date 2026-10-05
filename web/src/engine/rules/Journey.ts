@@ -226,6 +226,7 @@ export class Journey {
         .fragments()
         .map((fragment) => fragment.data()),
       resonant: this.#player.resonantTraces(),
+      reboots: this.#player.reboots(),
     });
   }
 
@@ -287,6 +288,7 @@ export class Journey {
       visited: saved.visited(),
       buffer,
       resonant: saved.resonant(),
+      reboots: saved.reboots(),
     });
     return true;
   }

@@ -17,6 +17,8 @@ export interface PlayerFacts {
   readonly buffer: readonly Fragment[];
   /** The resonance tally. */
   readonly resonant: number;
+  /** How many times the link failed and the traveller rebooted. */
+  readonly reboots: number;
 }
 
 /**
@@ -36,6 +38,7 @@ export class Player {
   readonly #seen: Set<string>;
   readonly #buffer: Buffer;
   #resonant: number;
+  #reboots: number;
 
   constructor(
     facts: PlayerFacts = {
@@ -44,6 +47,7 @@ export class Player {
       visited: [],
       buffer: [],
       resonant: 0,
+      reboots: 0,
     },
   ) {
     this.#coherence = new Coherence(facts.coherence);
@@ -52,6 +56,12 @@ export class Player {
     this.#seen = new Set(this.#footprints);
     this.#buffer = new Buffer(facts.buffer);
     this.#resonant = facts.resonant;
+    this.#reboots = facts.reboots;
+  }
+
+  /** How many times the link failed and the traveller came back. */
+  reboots(): number {
+    return this.#reboots;
   }
 
   buffer(): Buffer {
@@ -145,5 +155,6 @@ export class Player {
   /** What zero does to the traveller (Guide:144-146, TurnProcessor.groovy:99): coherence back in full, the rest — steps, footprints, the buffer, the tally — kept. */
   reboot(): void {
     this.#coherence = new Coherence();
+    this.#reboots += 1;
   }
 }

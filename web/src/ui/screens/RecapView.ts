@@ -1,24 +1,25 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
-import type { LiveBand } from '#ui/scene/LiveBand.ts';
+import type { EmblemStage } from '#ui/scene/EmblemStage.ts';
+import type { EndingEmblem } from '#ui/scene/endings/EndingEmblem.ts';
 import type { ScenePick } from '#ui/scene/ScenePick.ts';
 import type { View } from '#ui/View.ts';
 import type { Passage } from './Passage.ts';
 import type { PictureBook } from './PictureBook.ts';
 import type { RecapVM } from './RecapVM.ts';
 
-/** What the recap's view is built from: the pictures of the levels, its own live picture, the passage out of the game, and how a picture asks for an option. */
+/** What the recap's view is built from: the pictures of the levels, the endings' emblems and their stage, the passage out of the game, and how a picture asks for an option. */
 interface RecapParts {
   readonly book: PictureBook;
-  readonly scene: LiveBand;
+  readonly emblems: Readonly<Record<string, EndingEmblem>>;
+  readonly scene: EmblemStage;
   readonly passage: Passage;
   readonly picks: ScenePick;
 }
 
 /**
- * Draws the session recap with lit-html: the ending's heading over the picture of the place the traveller stands
- * in, live (`LiveBand`); under it where that is, the run's figures or the void's lines, the closing line and two
- * buttons. Ending the session plays the passage back up, out to the universe (`Passage`), before the option runs. Every word comes from the view-model (`RecapPresenter` owns them); this file owns markup only.
+ * Draws the session recap with lit-html: the ending's heading over its emblem, live (`EmblemStage`); under it where
+ * the traveller stands, the run's figures, the void's lines, the closing line and two buttons. Ending the session plays the passage back up, out to the universe (`Passage`), before the option runs. Every word comes from the view-model (`RecapPresenter` owns them); this file owns markup only.
  */
 export class RecapView implements View<RecapVM> {
   readonly #parts: RecapParts;
@@ -90,9 +91,9 @@ export class RecapView implements View<RecapVM> {
     render(this.#template(vm), this.#container);
     if (this.#parts.passage.playing()) return;
     const host = this.#element('[data-sky]');
-    const here = vm.levels[vm.levels.length - 1];
-    if (host === undefined || here === undefined) return;
-    this.#parts.scene.show(host, { sketch: here.drawing.sketchedBy(this.#parts.book), into: here.into });
+    const emblem = this.#parts.emblems[vm.outcome];
+    if (emblem === undefined) throw new Error(`no emblem for the ending '${vm.outcome}'`);
+    if (host !== undefined) this.#parts.scene.show(host, emblem);
   }
 
   /** The screen's first element a selector finds, when it is an HTML element. */

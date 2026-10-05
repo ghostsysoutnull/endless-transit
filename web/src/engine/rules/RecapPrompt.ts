@@ -1,3 +1,5 @@
+import { HYBRID_KIND } from '#engine/model/Hybrid.ts';
+import { ECHO_KIND } from '#engine/model/SpectralEcho.ts';
 import { Endings } from './Endings.ts';
 import type { GameOption } from './GameOption.ts';
 import type { Journey } from './Journey.ts';
@@ -32,7 +34,20 @@ export class RecapPrompt implements Prompt {
     const player = this.#journey.player();
     return {
       id: RECAP,
-      outcome: here === undefined ? '' : this.#endings.of({ here, places: player.placesVisited() }),
+      outcome:
+        here === undefined
+          ? ''
+          : this.#endings.of({
+              here,
+              places: player.placesVisited(),
+              steps: player.steps(),
+              relics: player.buffer().size(),
+              resonant: player.resonantTraces(),
+              reboots: player.reboots(),
+              critical: player.coherence().critical(),
+              echo: player.buffer().holds(ECHO_KIND),
+              hybrid: player.buffer().holds(HYBRID_KIND),
+            }),
       figures: {
         locus: here?.address().toString() ?? '',
         steps: String(player.steps()),

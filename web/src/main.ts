@@ -30,7 +30,7 @@ import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { DepthRail } from '#ui/scene/DepthRail.ts';
 import { Dive } from '#ui/scene/Dive.ts';
-import { LiveBand } from '#ui/scene/LiveBand.ts';
+import { EmblemStage } from '#ui/scene/EmblemStage.ts';
 import { NoTear } from '#ui/scene/NoTear.ts';
 import { TraceBands } from '#ui/scene/TraceBands.ts';
 import { TracePole } from '#ui/scene/TracePole.ts';
@@ -122,7 +122,8 @@ new Shell(
       new RecapPresenter(masthead, frame, new PassageLevels(new SceneDrawing())),
       new RecapView({
         book: scenes,
-        scene: new LiveBand({ canvases: canvasMaker, clock, motion, tear: new TearPass(new CoherenceFx()) }),
+        emblems: pictures.emblems(),
+        scene: new EmblemStage({ canvases: canvasMaker, clock, motion }),
         // The way out of the game: the title's dive rewound, at its pace, torn as coherence has fallen.
         passage: new Passage({
           dive: new Dive({

@@ -3,7 +3,7 @@ import type { FragmentData } from '#engine/model/Fragment.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { Coherence } from '#engine/rules/Coherence.ts';
 
-const VERSION = 6;
+const VERSION = 7;
 
 /** What a save is made of; a drawn-but-not-entered world has only its seed. */
 export interface SavedFacts {
@@ -19,6 +19,8 @@ export interface SavedFacts {
   readonly buffer?: readonly FragmentData[];
   /** The resonance tally. */
   readonly resonant?: number;
+  /** How many times the traveller rebooted. */
+  readonly reboots?: number;
 }
 
 /**
@@ -28,7 +30,7 @@ export interface SavedFacts {
  * dropped relics — every per-place fact has its home here), and the traveller: coherence, steps, the
  * visited path, the buffer as fragment data, the resonance tally (Guide:364-366); v6 (I07) is v5 whose
  * states may hold a building's ritual and breach, a reach's hunt, and whose buffer may hold a Keystone, a
- * Hidden Frequency or an echo. The world itself is never
+ * Hidden Frequency or an echo; v7 adds the count of reboots. The world itself is never
  * stored: seed + path rebuild it. Another version is "no save" — there is nobody to migrate for. What the
  * text says is checked for shape here; whether the world could have written it (every fragment included)
  * is the journey's question.
@@ -42,6 +44,7 @@ export class SavedGame {
   readonly #visited: readonly string[];
   readonly #buffer: readonly FragmentData[];
   readonly #resonant: number;
+  readonly #reboots: number;
 
   constructor(facts: SavedFacts) {
     this.#seed = facts.seed;
@@ -52,6 +55,7 @@ export class SavedGame {
     this.#visited = [...(facts.visited ?? [])];
     this.#buffer = [...(facts.buffer ?? [])];
     this.#resonant = facts.resonant ?? 0;
+    this.#reboots = facts.reboots ?? 0;
   }
 
   /** Static because it is the factory for the text `toText` writes. Anything unreadable is "no save". */
@@ -64,7 +68,7 @@ export class SavedGame {
       return undefined;
     }
     if (typeof data !== 'object' || data === null) return undefined;
-    const { version, seed, path, states, coherence, steps, visited, buffer, resonant } = data as Record<
+    const { version, seed, path, states, coherence, steps, visited, buffer, resonant, reboots } = data as Record<
       string,
       unknown
     >;
@@ -81,7 +85,12 @@ export class SavedGame {
     ) {
       return undefined;
     }
-    if (!SavedGame.#isCoherence(coherence) || !SavedGame.#isCount(steps) || !SavedGame.#isCount(resonant)) {
+    if (
+      !SavedGame.#isCoherence(coherence) ||
+      !SavedGame.#isCount(steps) ||
+      !SavedGame.#isCount(resonant) ||
+      !SavedGame.#isCount(reboots)
+    ) {
       return undefined;
     }
     const address = typeof path === 'string' ? Address.parse(path) : undefined;
@@ -94,7 +103,8 @@ export class SavedGame {
         parsedVisited.length !== 0 ||
         parsedStates.size !== 0 ||
         parsedBuffer.length !== 0 ||
-        resonant !== 0)
+        resonant !== 0 ||
+        reboots !== 0)
     ) {
       return undefined;
     }
@@ -107,6 +117,7 @@ export class SavedGame {
       visited: parsedVisited,
       buffer: parsedBuffer,
       resonant,
+      reboots,
     });
   }
 
@@ -196,6 +207,10 @@ export class SavedGame {
     return this.#resonant;
   }
 
+  reboots(): number {
+    return this.#reboots;
+  }
+
   toText(): string {
     return JSON.stringify({
       version: VERSION,
@@ -207,6 +222,7 @@ export class SavedGame {
       visited: this.#visited,
       buffer: this.#buffer,
       resonant: this.#resonant,
+      reboots: this.#reboots,
     });
   }
 }

@@ -6,11 +6,12 @@ import type { PassageLevel } from './PassageLevel.ts';
 export interface RecapVM extends Screen {
   /** The frame colour of the place the session ends in; `default` above planet level. */
   readonly frame: string;
-  /** The ending reached, in a few words. */
+  /** The ending reached: its key, which picks its emblem, and its heading in a few words. */
+  readonly outcome: string;
   readonly heading: string;
   /** Where the traveller stands: the words before it, its name and its kind. */
   readonly place: { readonly label: string; readonly name: string; readonly kind: string };
-  /** The run's figures (the full ending); none for the others. */
+  /** The run's figures. */
   readonly figures: readonly { readonly label: string; readonly value: string }[];
   /** The void's typewritten lines (the ending below the bedrock); none for the others. */
   readonly lines: readonly string[];

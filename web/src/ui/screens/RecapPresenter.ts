@@ -7,7 +7,7 @@ import type { Presenter } from '#ui/Presenter.ts';
 import type { PassageLevels } from './PassageLevels.ts';
 import type { RecapVM } from './RecapVM.ts';
 
-/** The figures of the full recap, each with its word. */
+/** The run's figures, each with its word. */
 const FIGURES: readonly { readonly key: string; readonly label: string }[] = [
   { key: 'steps', label: 'Steps' },
   { key: 'places', label: 'Places' },
@@ -15,42 +15,42 @@ const FIGURES: readonly { readonly key: string; readonly label: string }[] = [
   // The tally counts resonant traces (HK-023), and says so.
   { key: 'resonant', label: 'Resonant' },
 ];
+/** What every closing line but the void's ends on: what ending the session does. */
+const KEPT = 'End the session and the world keeps your place.';
 /** The void's typewritten lines (SessionRecap.groovy:22-27); the last one closes. */
 const VOID_LINES = [
   'Your echoes are sinking into the strata.',
   'The web is folding back upon itself.',
   'The v-v-void... it remembers... [OK]',
 ] as const;
-/** The words of each ending, by the engine's key (Guide:424-428); a new ending is one more entry. */
+/** The words of each ending, by the engine's key (Guide:424-428; the mock `docs/analysis/mocks/endings.html`); a new ending is one more entry. */
 const ENDINGS: Readonly<
-  Record<
-    string,
-    {
-      readonly heading: string;
-      readonly figures: boolean;
-      readonly lines: readonly string[];
-      readonly closing: string;
-    }
-  >
+  Record<string, { readonly heading: string; readonly lines: readonly string[]; readonly closing: string }>
 > = {
-  void: {
-    heading: 'The void takes the session',
-    figures: false,
-    lines: VOID_LINES,
-    closing: 'Sleep among the static, Operator.',
-  },
-  expedition: {
-    heading: 'Expedition complete',
-    figures: true,
+  void: { heading: 'The void takes the session', lines: VOID_LINES, closing: 'Sleep among the static, Operator.' },
+  echo: {
+    heading: 'The signal answered',
     lines: [],
-    closing: 'A long way down. End the session and the world keeps your place.',
+    closing: `Something out there said your name back. ${KEPT}`,
   },
-  severed: {
-    heading: 'End of session',
-    figures: false,
+  hybrid: {
+    heading: 'Something new carried out',
     lines: [],
-    closing: 'A short visit. End the session and the world keeps your place.',
+    closing: `Two voices, one frequency. Nothing like it exists anywhere else. ${KEPT}`,
   },
+  reborn: { heading: 'Reborn', lines: [], closing: `You went dark and came back. The web noticed. ${KEPT}` },
+  frayed: {
+    heading: 'Frayed',
+    lines: [],
+    closing: `One more step and there would have been no one to take it. ${KEPT}`,
+  },
+  empty: { heading: 'Empty-handed', lines: [], closing: `You looked at everything and touched nothing. ${KEPT}` },
+  pacing: { heading: 'Pacing', lines: [], closing: `You know one corridor better than it knows itself. ${KEPT}` },
+  tuned: { heading: 'In tune', lines: [], closing: `The lattice hummed where you walked. ${KEPT}` },
+  expedition: { heading: 'Expedition complete', lines: [], closing: `A long way down. ${KEPT}` },
+  sky: { heading: 'Never left the sky', lines: [], closing: `The web stayed a picture. ${KEPT}` },
+  settled: { heading: 'Settled', lines: [], closing: `A door closed behind you, and you let it. ${KEPT}` },
+  severed: { heading: 'End of session', lines: [], closing: `A short visit. ${KEPT}` },
 };
 
 /**
@@ -81,9 +81,10 @@ export class RecapPresenter implements Presenter<RecapVM> {
     return {
       scene: RECAP,
       frame: this.#frame.of(snapshot.place),
+      outcome: prompt.outcome,
       heading: ending.heading,
       place: { label: 'You stand in', name: snapshot.place?.name ?? '', kind: snapshot.place?.kind ?? '' },
-      figures: ending.figures ? this.#figures(prompt) : [],
+      figures: this.#figures(prompt),
       lines: ending.lines,
       closing: ending.closing,
       levels: this.#levelsOf(snapshot),

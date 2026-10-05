@@ -1,3 +1,17 @@
+import { EchoEmblem } from './endings/EchoEmblem.ts';
+import { EmblemInk } from './endings/EmblemInk.ts';
+import { EmptyEmblem } from './endings/EmptyEmblem.ts';
+import type { EndingEmblem } from './endings/EndingEmblem.ts';
+import { ExpeditionEmblem } from './endings/ExpeditionEmblem.ts';
+import { FrayedEmblem } from './endings/FrayedEmblem.ts';
+import { HybridEmblem } from './endings/HybridEmblem.ts';
+import { PacingEmblem } from './endings/PacingEmblem.ts';
+import { RebornEmblem } from './endings/RebornEmblem.ts';
+import { SettledEmblem } from './endings/SettledEmblem.ts';
+import { SeveredEmblem } from './endings/SeveredEmblem.ts';
+import { SkyEmblem } from './endings/SkyEmblem.ts';
+import { TunedEmblem } from './endings/TunedEmblem.ts';
+import { VoidEmblem } from './endings/VoidEmblem.ts';
 import type { GlyphLook } from '#engine/model/GlyphLook.ts';
 import type { PoleGlyph } from './PoleGlyph.ts';
 import { ApartmentGlyph } from './ApartmentGlyph.ts';
@@ -211,6 +225,25 @@ export class ScenePictures {
   pole(): PolePicture {
     const ink = new AreaInk(this.#noise);
     return new PolePicture({ font: this.#font, ink, glyphs: this.#glyphsIn(ink) });
+  }
+
+  /** The endings' emblems (the mock `docs/analysis/mocks/endings.html`), by the ending's key: a new ending is one more. */
+  emblems(): Readonly<Record<string, EndingEmblem>> {
+    const ink = new EmblemInk();
+    return {
+      void: new VoidEmblem(ink),
+      echo: new EchoEmblem(ink),
+      hybrid: new HybridEmblem(ink),
+      reborn: new RebornEmblem(ink),
+      frayed: new FrayedEmblem(ink),
+      empty: new EmptyEmblem(),
+      pacing: new PacingEmblem(ink),
+      tuned: new TunedEmblem(ink),
+      expedition: new ExpeditionEmblem(ink),
+      sky: new SkyEmblem(ink),
+      settled: new SettledEmblem(ink),
+      severed: new SeveredEmblem(ink),
+    };
   }
 
   /** The levels' small live drawings, one a kind: the pole's own, for whatever else draws a level by its mark (the depth rail). */

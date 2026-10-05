@@ -1,15 +1,31 @@
 import type { Ending, Run } from './Ending.ts';
 
-/** A full recap needs this many places visited (Guide:426, SessionRecap.groovy:33). */
+/** A full expedition is this many places visited (Guide:426, SessionRecap.groovy:33). */
 const EXPEDITION_PLACES = 20;
+/** In tune: this many resonant traces. */
+const TUNED_TRACES = 3;
+/** Pacing: this many steps for each place visited. */
+const PACING = 3;
+/** How deep the planet and a room stand on the way down: levels below the universe (the trace's depth). */
+const PLANET_DEPTH = 4;
+const ROOM_DEPTH = 11;
 
 /**
- * The endings of a session in the order they are tried (Guide:422-428, SessionRecap.groovy:14-69): the first
- * reached wins: below the bedrock first (Guide:424-425), then the full recap, then the one every run reaches.
+ * The endings of a session in the order they are tried (Guide:422-428): the first reached wins. Below the bedrock
+ * first, then what the run carries out, how it went, the tally, where it ended, and the one every run reaches.
  */
 const ENDINGS: readonly Ending[] = [
   { id: 'void', reached: (run) => run.here.abyssal() },
+  { id: 'echo', reached: (run) => run.echo },
+  { id: 'hybrid', reached: (run) => run.hybrid },
+  { id: 'reborn', reached: (run) => run.reboots > 0 },
+  { id: 'frayed', reached: (run) => run.critical },
+  { id: 'empty', reached: (run) => run.places >= EXPEDITION_PLACES && run.relics === 0 },
+  { id: 'pacing', reached: (run) => run.places > 0 && run.steps >= run.places * PACING },
+  { id: 'tuned', reached: (run) => run.resonant >= TUNED_TRACES },
   { id: 'expedition', reached: (run) => run.places >= EXPEDITION_PLACES },
+  { id: 'sky', reached: (run) => run.here.depth() < PLANET_DEPTH },
+  { id: 'settled', reached: (run) => run.here.depth() >= ROOM_DEPTH },
   { id: 'severed', reached: () => true },
 ];
 
