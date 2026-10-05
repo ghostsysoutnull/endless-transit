@@ -68,10 +68,16 @@ export class Journey {
     this.#player = new Player();
   }
 
-  /** Steps into the world: back where the traveller was, or where a new journey starts (a street, Guide:41). */
+  /** Where entering the world lands: back where the traveller was, or where a new journey starts (a street, Guide:41); nothing before a world is drawn. */
+  landing(): Location | undefined {
+    return this.#resumeAt ?? this.#universe?.startOfJourney();
+  }
+
+  /** Steps into the world, where `landing` says. */
   enter(): boolean {
-    if (this.#universe === undefined) return false;
-    this.#land(this.#resumeAt ?? this.#universe.startOfJourney());
+    const landing = this.landing();
+    if (landing === undefined) return false;
+    this.#land(landing);
     this.#resumeAt = undefined;
     return true;
   }

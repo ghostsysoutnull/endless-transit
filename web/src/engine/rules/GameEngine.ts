@@ -6,6 +6,7 @@ import type { EntropySource } from '#engine/rng/EntropySource.ts';
 import { BUFFER, BufferPrompt } from './BufferPrompt.ts';
 import type { BufferSummary } from './BufferSummary.ts';
 import { Coherence } from './Coherence.ts';
+import type { DescentSummary } from './DescentSummary.ts';
 import { Corruption } from './Corruption.ts';
 import { Drain } from './Drain.ts';
 import { FrameEntropy } from './FrameEntropy.ts';
@@ -16,6 +17,8 @@ import {
   LATTICE_ID,
   MOVE_PREFIX,
   SCAN_ID,
+  ENTER_WORLD_ID,
+  NEW_WORLD_ID,
   TO_TITLE_ID,
   TRACE_ID,
   VISITED_KEY,
@@ -115,7 +118,7 @@ export class GameEngine {
         keys: ['n'],
         turn: FREE,
         options: () =>
-          this.#atTitle() && !this.#hasWorld() ? [systemOption('new-world', 'n', 'New world')] : [],
+          this.#atTitle() && !this.#hasWorld() ? [systemOption(NEW_WORLD_ID, 'n', 'New world')] : [],
         run: () => this.#drawWorld(),
       },
       {
@@ -123,7 +126,7 @@ export class GameEngine {
         turn: FREE,
         options: () =>
           this.#atTitle() && this.#hasWorld()
-            ? [systemOption('enter-world', 'e', this.#journey.resumes() ? 'Continue' : 'Enter world')]
+            ? [systemOption(ENTER_WORLD_ID, 'e', this.#journey.resumes() ? 'Continue' : 'Enter world')]
             : [],
         run: () => this.#moved(this.#journey.enter(), `Entered ${this.#journey.here()?.name() ?? ''}.`),
       },
@@ -252,34 +255,7 @@ export class GameEngine {
         options: () => (this.#atTitle() ? [] : [systemOption(TRACE, '', 'Trace')]),
         run: () => {
           const trail = this.#journey.here()?.trail() ?? [];
-          const player = this.#journey.player();
-          const seen = (place: Location): boolean => player.visited(place);
-          this.#trace = {
-            steps: trail.map((step, depth) => ({
-              address: step.address().toString(),
-              portrait: step.bandPortrait(seen, trail[depth + 1]),
-              children: step.listing().map((child) => ({
-                address: child.address().toString(),
-                name: child.name(),
-                ordinal: String(child.ordinal()),
-                landmark: child.landmark(),
-                visited: player.visited(child),
-                sealed: child.sealed(),
-              })),
-              facts: step.facts(),
-              words: step.description()[0] ?? '',
-              scale: step.kind().scale(),
-              glyph: step.kind().glyph(),
-              vibe: step.vibeFigure(),
-              signs: step.poleSigns(),
-              depth,
-              icon: step.kind().icon(),
-              kind: step.kind().title(),
-              name: step.name(),
-              current: depth === trail.length - 1,
-              abyssal: step.abyssal(),
-            })),
-          };
+          this.#trace = this.#traceOf(trail);
           return `NEURAL_LATTICE_TRACE_INITIATED: ${String(trail.length)} levels from the universe.`;
         },
       },
@@ -420,6 +396,47 @@ export class GameEngine {
       scan: this.#scan,
       map: this.#map,
       trace: this.#trace,
+      descent: here === undefined ? this.#descent() : null,
+    };
+  }
+
+  /** The way down entering the world takes, and the seed of the title's noise; nothing before a world is drawn. */
+  #descent(): DescentSummary | null {
+    const universe = this.#journey.universe();
+    const landing = this.#journey.landing();
+    if (universe === undefined || landing === undefined) return null;
+    return { trace: this.#traceOf(landing.trail()), noise: this.#frames.of(universe, 0) };
+  }
+
+  /** A trail as a trace: a step a level, each with what its band draws and its row on the pole reads. */
+  #traceOf(trail: readonly Location[]): TraceSummary {
+    const player = this.#journey.player();
+    const seen = (place: Location): boolean => player.visited(place);
+    return {
+      steps: trail.map((step, depth) => ({
+        address: step.address().toString(),
+        portrait: step.bandPortrait(seen, trail[depth + 1]),
+        children: step.listing().map((child) => ({
+          address: child.address().toString(),
+          name: child.name(),
+          ordinal: String(child.ordinal()),
+          landmark: child.landmark(),
+          visited: player.visited(child),
+          sealed: child.sealed(),
+        })),
+        facts: step.facts(),
+        words: step.description()[0] ?? '',
+        scale: step.kind().scale(),
+        glyph: step.kind().glyph(),
+        vibe: step.vibeFigure(),
+        signs: step.poleSigns(),
+        depth,
+        icon: step.kind().icon(),
+        kind: step.kind().title(),
+        name: step.name(),
+        current: depth === trail.length - 1,
+        abyssal: step.abyssal(),
+      })),
     };
   }
 

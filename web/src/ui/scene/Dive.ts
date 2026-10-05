@@ -6,27 +6,35 @@ import type { Clock } from './Clock.ts';
 import type { Point } from './Point.ts';
 import type { Sketch } from './Sketch.ts';
 
-/** How long each level holds in the dive, in milliseconds, and how far it zooms into where you went down. */
-const LEVEL = 750;
+/** How far each level zooms into where you went down. */
 const ZOOM = 2.6;
 
 /**
  * The dive (U04, Decision 12; the mock's cinema, `transit-reframed.html:1103-1104`): full screen, level by level
  * from the universe, each zooming into the place you went down into and fading into the next, landing on you. None
- * under reduced motion: it is done at once. Built in `main.ts`; an entity — where the dive stands and when it lands.
+ * under reduced motion: it is done at once. How long each level holds, in milliseconds, is its maker's to say: the
+ * trace's dive lingers, the title's is the way into the game. Built in `main.ts`; an entity — where the dive stands
+ * and when it lands.
  */
 export class Dive {
   readonly #canvases: Canvases;
   readonly #clock: Clock;
   readonly #motion: ReducedMotion;
+  readonly #hold: number;
   #canvas: PixelCanvas | undefined;
   #stop: (() => void) | undefined;
   #done: (() => void) | undefined;
 
-  constructor(parts: { readonly canvases: Canvases; readonly clock: Clock; readonly motion: ReducedMotion }) {
+  constructor(parts: {
+    readonly canvases: Canvases;
+    readonly clock: Clock;
+    readonly motion: ReducedMotion;
+    readonly hold: number;
+  }) {
     this.#canvases = parts.canvases;
     this.#clock = parts.clock;
     this.#motion = parts.motion;
+    this.#hold = parts.hold;
   }
 
   play(
@@ -49,7 +57,7 @@ export class Dive {
     this.#stop = this.#clock.subscribe((time) => {
       // A frame's time can be a moment before the tap that started the dive: never before its start.
       const elapsed = Math.max(0, time - start);
-      const index = Math.floor(elapsed / LEVEL);
+      const index = Math.floor(elapsed / this.#hold);
       const level = levels[index];
       if (level === undefined) {
         this.skip();
@@ -59,7 +67,7 @@ export class Dive {
         shown = index;
         spot = undefined;
       }
-      const t = (elapsed % LEVEL) / LEVEL;
+      const t = (elapsed % this.#hold) / this.#hold;
       const last = index === levels.length - 1;
       const size = canvas.hostSize();
       if (size.width === 0 || size.height === 0) return;

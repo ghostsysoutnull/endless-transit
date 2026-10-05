@@ -1,73 +1,166 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
-import type { OptionVM } from '#ui/OptionVM.ts';
+import type { Dive } from '#ui/scene/Dive.ts';
+import type { ScenePick } from '#ui/scene/ScenePick.ts';
+import type { TitleScene } from '#ui/scene/TitleScene.ts';
 import type { View } from '#ui/View.ts';
+import type { PictureBook } from './PictureBook.ts';
 import type { TitleVM } from './TitleVM.ts';
 
+/** What the title's view is built from: the pictures of the levels, its own live picture, the dive, and how a picture asks for an option. */
+interface TitleParts {
+  readonly book: PictureBook;
+  readonly scene: TitleScene;
+  readonly dive: Dive;
+  readonly picks: ScenePick;
+}
+
 /**
- * Draws the title screen with lit-html. Buttons carry `data-option` and no handlers of their own — the
- * input router listens once for the whole screen. The status line here is for the eye; the shell's own
- * live region speaks it.
+ * Draws the title screen with lit-html: the game's name over the picture, the world's seed and the buttons at the
+ * screen's foot. The picture is the world's universe, live (`TitleScene`); entering the world plays the dive down to
+ * where the traveller lands before the option runs — a tap on the dive lands at once. Buttons carry `data-option`
+ * and no handlers of their own — the input router listens once for the whole screen.
  * Every word comes from the view-model (`TitlePresenter` owns them); this file owns markup only.
  */
 export class TitleView implements View<TitleVM> {
+  readonly #parts: TitleParts;
   #container: HTMLElement | undefined;
+  #vm: TitleVM | undefined;
+  /** The screen's own listener: made at each mount, taken away with it. */
+  #listeners = new AbortController();
+  /** Whether the dive plays over the screen. */
+  #diving = false;
+
+  constructor(parts: TitleParts) {
+    this.#parts = parts;
+  }
 
   mount(container: HTMLElement): void {
     this.#container = container;
+    this.#listeners = new AbortController();
+    container.addEventListener(
+      'click',
+      (event) => {
+        this.#through(event);
+      },
+      // Heard on the way down, before the shell's router hears it on the way up the same element.
+      { signal: this.#listeners.signal, capture: true },
+    );
   }
 
   render(vm: TitleVM): void {
-    if (this.#container === undefined) throw new Error('TitleView.render before mount');
-    render(this.#template(vm), this.#container);
+    this.#paint(vm);
   }
 
   dispose(): void {
-    if (this.#container !== undefined) render(nothing, this.#container);
+    const container = this.#container;
     this.#container = undefined;
+    this.#listeners.abort();
+    this.#diving = false;
+    this.#parts.dive.skip();
+    this.#parts.scene.clear();
+    if (container !== undefined) render(nothing, container);
+    this.#vm = undefined;
+  }
+
+  /** The tap that enters the world goes through the dive first; any other is the router's. */
+  #through(event: Event): void {
+    const vm = this.#vm;
+    if (vm === undefined || vm.world === null || vm.enters === '' || this.#diving) return;
+    if (!(event.target instanceof Element)) return;
+    if (event.target.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.enters) return;
+    event.stopPropagation();
+    this.#diving = true;
+    this.#parts.scene.clear();
+    this.#paint(vm);
+    const host = this.#element('[data-dive]');
+    const enters = vm.enters;
+    const levels = vm.world.levels.map((level) => ({
+      sketch: level.drawing.sketchedBy(this.#parts.book),
+      into: level.into,
+    }));
+    const landed = (): void => {
+      const container = this.#container;
+      if (container === undefined) return;
+      this.#diving = false;
+      this.#parts.picks.pick(container, enters);
+    };
+    if (host === undefined) landed();
+    else this.#parts.dive.play(host, levels, landed);
+  }
+
+  #paint(vm: TitleVM): void {
+    if (this.#container === undefined) throw new Error('TitleView.render before mount');
+    this.#vm = vm;
+    render(this.#template(vm), this.#container);
+    if (this.#diving) return;
+    const host = this.#element('[data-sky]');
+    if (host === undefined) return;
+    const first = vm.world?.levels[0];
+    if (vm.world === null || first === undefined) {
+      this.#parts.scene.wait(host);
+      return;
+    }
+    this.#parts.scene.resolve(host, {
+      key: vm.world.seed,
+      sketch: first.drawing.sketchedBy(this.#parts.book),
+      into: first.into,
+      noise: vm.world.noise,
+    });
+  }
+
+  /** The screen's first element a selector finds, when it is an HTML element. */
+  #element(selector: string): HTMLElement | undefined {
+    const found = this.#container?.querySelector(selector);
+    return found instanceof HTMLElement ? found : undefined;
   }
 
   #template(vm: TitleVM): TemplateResult {
     return html`
-      <div class="app">
-        <header class="bar">
+      <div class="app title">
+        <header class="title-head">
           <h1>${vm.title}</h1>
-          <p class="sub">${vm.tagline}</p>
+          <p class="title-tag">${vm.tagline}</p>
         </header>
-        <section class="stage" aria-label=${vm.regions.stage}>
-          <div class="sigil" aria-hidden="true">◈</div>
-          <p class="stage-line">${vm.stageLine}</p>
-        </section>
-        <section class="cap" aria-label=${vm.regions.world}>
+        <div class="title-sky" data-sky></div>
+        <section class="title-world">
           ${
             vm.world === null
-              ? html`<p class="prompt" data-testid="prompt">${vm.prompt}</p>`
+              ? html`<p class="title-prompt" data-testid="prompt">${vm.prompt}</p>`
               : html`
-                  <p class="eyebrow">${vm.world.nameLabel}</p>
-                  <h2 data-testid="world-name">${vm.world.name}</h2>
-                  <p class="eyebrow">${vm.world.seedLabel}</p>
-                  <p class="seed" data-testid="world-seed">${vm.world.seed}</p>
+                  <p class="title-name" data-testid="world-name">${vm.world.name}</p>
+                  <p class="title-seed">
+                    <span>${vm.world.seedLabel}</span>
+                    <b data-testid="world-seed">${vm.world.seed}</b>
+                  </p>
                 `
           }
-          <p class=${vm.status === '' ? 'status quiet' : 'status'} data-testid="status">${vm.status}</p>
+          <p class="title-status" data-testid="status">${vm.status}</p>
         </section>
-        <nav class="pad" aria-label=${vm.regions.actions}>
+        <nav class="title-keys">
           ${repeat(
             vm.options,
             (option) => option.id,
-            (option) => this.#button(option),
+            (option) => html`
+              <button type="button" class="title-key" ?data-lead=${option.lead} data-option=${option.id}>
+                ${option.label}
+              </button>
+            `,
           )}
         </nav>
         <footer class="build" data-testid="build">${vm.build}</footer>
+        ${
+          this.#diving
+            ? html`<div
+                class="title-dive"
+                data-dive
+                @click=${() => {
+                  this.#parts.dive.skip();
+                }}
+              ></div>`
+            : nothing
+        }
       </div>
-    `;
-  }
-
-  #button(option: OptionVM): TemplateResult {
-    return html`
-      <button type="button" class="pb" data-option=${option.id}>
-        <kbd aria-hidden="true">${option.key}</kbd><span>${option.label}</span>
-      </button>
     `;
   }
 }

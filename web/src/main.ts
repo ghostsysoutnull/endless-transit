@@ -37,6 +37,7 @@ import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
 import { SliderMaker } from '#ui/scene/SliderMaker.ts';
 import { TearPass } from '#ui/scene/TearPass.ts';
+import { TitleScene } from '#ui/scene/TitleScene.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
@@ -113,7 +114,16 @@ new Shell(
     new ScreenStage(new RecapPresenter(masthead, frame), new RecapView()),
     new ScreenStage(new BufferPresenter(masthead, frame), new BufferView()),
     new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
-    new ScreenStage(new TitlePresenter(masthead), new TitleView()),
+    new ScreenStage(
+      new TitlePresenter(masthead, new SceneDrawing()),
+      new TitleView({
+        book: scenes,
+        scene: new TitleScene({ canvases: canvasMaker, clock, motion, tear: new TearPass(new CoherenceFx()) }),
+        // The way into the game, taken at every start: each level held more briefly than in the trace's dive.
+        dive: new Dive({ canvases: canvasMaker, clock, motion, hold: 520 }),
+        picks: new SceneEvents(),
+      }),
+    ),
     new ScreenStage(
       new HudPresenter(masthead, frame, new SceneDrawing(), new PolePresenter()),
       new HudView(
@@ -138,7 +148,7 @@ new Shell(
         canvases,
         {
           bands: new TraceBands({ canvases: canvasMaker, clock, motion }),
-          dive: new Dive({ canvases: canvasMaker, clock, motion }),
+          dive: new Dive({ canvases: canvasMaker, clock, motion, hold: 750 }),
           pole: new TracePole({ canvases: canvasMaker, clock, motion, picture: pictures.pole() }),
           // The trace's view the player picked last (U05): kept in the browser like the save.
           views: new LocalStorageTraceViewMemory(() => window.localStorage),
