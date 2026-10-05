@@ -16,13 +16,15 @@ interface Level {
   readonly into: string;
 }
 
+/** Nobody is told which level shows. */
+const UNWATCHED = (): void => undefined;
+
 /**
  * The dive (U04, Decision 12; the mock's cinema, `transit-reframed.html:1103-1104`): full screen, level by level
  * from the universe, each zooming into the place you went down into and fading into the next, landing on you — or
  * rewound: the same reel backwards, from you out to the universe and into the dark. Each level is torn as far as
  * its own picture's decay says, by the tear its maker hands it. None under reduced motion: it is done at once. How
- * long each level holds, in milliseconds, is its maker's to say: the trace's dive lingers, the title's is the way
- * into the game. Built in `main.ts`; an entity — where the dive stands and when it ends.
+ * long each level holds, in milliseconds, is its maker's to say. Built in `main.ts`; an entity — where the dive stands and when it ends.
  */
 export class Dive {
   readonly #canvases: Canvases;
@@ -48,30 +50,40 @@ export class Dive {
     this.#hold = parts.hold;
   }
 
-  /** Down: from the universe to you. */
-  play(host: HTMLElement, levels: readonly Level[], done: () => void): void {
-    this.#run(host, levels, done, (elapsed) => elapsed);
+  /** Down: from the universe to you. `shown` is told each level as it comes on, by its place among the levels. */
+  play(
+    host: HTMLElement,
+    levels: readonly Level[],
+    done: () => void,
+    shown: (index: number) => void = UNWATCHED,
+  ): void {
+    this.#run(host, levels, { done, shown }, (elapsed) => elapsed);
   }
 
   /** Back up: from you out to the universe, ending in the dark. */
-  rewind(host: HTMLElement, levels: readonly Level[], done: () => void): void {
+  rewind(
+    host: HTMLElement,
+    levels: readonly Level[],
+    done: () => void,
+    shown: (index: number) => void = UNWATCHED,
+  ): void {
     const whole = levels.length * this.#hold;
-    this.#run(host, levels, done, (elapsed) => whole - elapsed);
+    this.#run(host, levels, { done, shown }, (elapsed) => whole - elapsed);
   }
 
   /** The reel shown until its time is up: `moment` says where on the way down each moment of the clock stands. */
   #run(
     host: HTMLElement,
     levels: readonly Level[],
-    done: () => void,
+    told: { readonly done: () => void; readonly shown: (index: number) => void },
     moment: (elapsed: number) => number,
   ): void {
     this.skip();
     if (this.#motion.reduced() || levels.length === 0) {
-      done();
+      told.done();
       return;
     }
-    this.#done = done;
+    this.#done = told.done;
     const canvas = this.#canvases.mount(host, () => undefined);
     canvas.decorative();
     this.#canvas = canvas;
@@ -96,6 +108,7 @@ export class Dive {
       if (index !== shown) {
         shown = index;
         spot = undefined;
+        told.shown(index);
       }
       const t = at / this.#hold - index;
       const last = index === levels.length - 1;

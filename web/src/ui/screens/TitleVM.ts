@@ -1,7 +1,7 @@
 import type { Seed } from '#engine/rng/Seed.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Screen } from '#ui/Screen.ts';
-import type { Drawing } from './Drawing.ts';
+import type { PassageLevel } from './PassageLevel.ts';
 
 /** The title screen as plain readonly data — framework-free. */
 export interface TitleVM extends Screen {
@@ -12,7 +12,7 @@ export interface TitleVM extends Screen {
     readonly seedLabel: string;
     readonly seed: string;
     /** The way down entering takes, a level each from the universe: the first is the title's picture, all of them its dive. */
-    readonly levels: readonly { readonly drawing: Drawing; readonly into: string }[];
+    readonly levels: readonly PassageLevel[];
     /** The seed of the static the picture resolves out of. */
     readonly noise: Seed;
   } | null;

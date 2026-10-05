@@ -1,6 +1,6 @@
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Screen } from '#ui/Screen.ts';
-import type { Drawing } from './Drawing.ts';
+import type { PassageLevel } from './PassageLevel.ts';
 
 /** The session recap as plain readonly data — framework-free. */
 export interface RecapVM extends Screen {
@@ -16,7 +16,7 @@ export interface RecapVM extends Screen {
   readonly lines: readonly string[];
   readonly closing: string;
   /** The way back up, a level each from the universe to here: the last is the screen's picture, all of them its rise. */
-  readonly levels: readonly { readonly drawing: Drawing; readonly into: string }[];
+  readonly levels: readonly PassageLevel[];
   /** The buttons: the one the screen leads with stands out. */
   readonly options: readonly (OptionVM & { readonly lead: boolean })[];
   /** The id of the option that ends the session — the rise plays before it runs; empty when it is not on offer. */

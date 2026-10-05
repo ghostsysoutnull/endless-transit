@@ -4,7 +4,7 @@ import { END_SESSION, RECAP } from '#engine/rules/RecapPrompt.ts';
 import type { FrameOf } from '#ui/FrameOf.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { Presenter } from '#ui/Presenter.ts';
-import type { Drawings } from './Drawings.ts';
+import type { PassageLevels } from './PassageLevels.ts';
 import type { RecapVM } from './RecapVM.ts';
 
 /** The figures of the full recap, each with its word. */
@@ -56,17 +56,17 @@ const ENDINGS: Readonly<
 /**
  * Owns the words of the session recap (Guide:422-430): the heading, figures and closing line of the ending the
  * engine reached, where the traveller stands, and the two answers. The trace the recap opened with becomes the
- * screen's pictures: a level each, drawn as its band in the trace is, torn as coherence has fallen. No DOM.
+ * screen's levels, torn as coherence has fallen. No DOM.
  */
 export class RecapPresenter implements Presenter<RecapVM> {
   readonly #frame: FrameOf;
   readonly #masthead: Masthead;
-  readonly #drawings: Drawings;
+  readonly #levels: PassageLevels;
 
-  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings) {
+  constructor(masthead: Masthead, frame: FrameOf, levels: PassageLevels) {
     this.#masthead = masthead;
     this.#frame = frame;
-    this.#drawings = drawings;
+    this.#levels = levels;
   }
 
   accepts(snapshot: GameSnapshot): boolean {
@@ -86,7 +86,7 @@ export class RecapPresenter implements Presenter<RecapVM> {
       figures: ending.figures ? this.#figures(prompt) : [],
       lines: ending.lines,
       closing: ending.closing,
-      levels: this.#levels(snapshot),
+      levels: this.#levelsOf(snapshot),
       options: snapshot.options.map((option) => ({
         id: option.id,
         key: option.key.toUpperCase(),
@@ -106,15 +106,11 @@ export class RecapPresenter implements Presenter<RecapVM> {
     return FIGURES.map((figure) => ({ label: figure.label, value: prompt.figures[figure.key] ?? '' }));
   }
 
-  /** The trace the recap opened with, a picture a level; none when the engine handed none. */
-  #levels(snapshot: GameSnapshot): RecapVM['levels'] {
+  /** The trace the recap opened with, as levels; none when the engine handed none. */
+  #levelsOf(snapshot: GameSnapshot): RecapVM['levels'] {
     const place = snapshot.place;
-    const steps = snapshot.trace?.steps ?? [];
-    if (place === null) return [];
-    const decay = snapshot.player?.decay ?? 0;
-    return steps.map((step, index) => ({
-      drawing: this.#drawings.band(step, place.noise, decay),
-      into: steps[index + 1]?.address ?? '',
-    }));
+    const trace = snapshot.trace;
+    if (place === null || trace === null) return [];
+    return this.#levels.of(trace, place.noise, snapshot.player?.decay ?? 0);
   }
 }

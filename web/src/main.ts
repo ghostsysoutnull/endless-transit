@@ -44,6 +44,8 @@ import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
 import { HelpView } from '#ui/screens/HelpView.ts';
+import { Passage } from '#ui/screens/Passage.ts';
+import { PassageLevels } from '#ui/screens/PassageLevels.ts';
 import { PolePresenter } from '#ui/screens/PolePresenter.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
@@ -107,6 +109,8 @@ const canvases = new CanvasViewMaker(
   motion,
   canvasMaker,
 );
+// How long each level holds on the way into the game and on the way out of it, in milliseconds: long enough to read.
+const PASSAGE = 1000;
 // The strip of keys at the world screen's foot: one, drawn by the room's card or by the screen itself.
 const keys = new KeyStripView();
 new Shell(
@@ -114,17 +118,20 @@ new Shell(
   [
     new ScreenStage(new RebootPresenter(masthead), new RebootView()),
     new ScreenStage(
-      new RecapPresenter(masthead, frame, new SceneDrawing()),
+      new RecapPresenter(masthead, frame, new PassageLevels(new SceneDrawing())),
       new RecapView({
         book: scenes,
         scene: new LiveBand({ canvases: canvasMaker, clock, motion, tear: new TearPass(new CoherenceFx()) }),
         // The way out of the game: the title's dive rewound, at its pace, torn as coherence has fallen.
-        dive: new Dive({
-          canvases: canvasMaker,
-          clock,
-          motion,
-          tear: new TearPass(new CoherenceFx()),
-          hold: 520,
+        passage: new Passage({
+          dive: new Dive({
+            canvases: canvasMaker,
+            clock,
+            motion,
+            tear: new TearPass(new CoherenceFx()),
+            hold: PASSAGE,
+          }),
+          book: scenes,
         }),
         picks: new SceneEvents(),
       }),
@@ -132,12 +139,15 @@ new Shell(
     new ScreenStage(new BufferPresenter(masthead, frame), new BufferView()),
     new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
     new ScreenStage(
-      new TitlePresenter(masthead, new SceneDrawing()),
+      new TitlePresenter(masthead, new PassageLevels(new SceneDrawing())),
       new TitleView({
         book: scenes,
         scene: new TitleScene({ canvases: canvasMaker, clock, motion, tear: new TearPass(new CoherenceFx()) }),
-        // The way into the game, taken at every start: each level held more briefly than in the trace's dive.
-        dive: new Dive({ canvases: canvasMaker, clock, motion, tear: new NoTear(), hold: 520 }),
+        // The way into the game, taken at every start.
+        passage: new Passage({
+          dive: new Dive({ canvases: canvasMaker, clock, motion, tear: new NoTear(), hold: PASSAGE }),
+          book: scenes,
+        }),
         picks: new SceneEvents(),
       }),
     ),

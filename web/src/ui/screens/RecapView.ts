@@ -1,25 +1,24 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
-import type { Dive } from '#ui/scene/Dive.ts';
 import type { LiveBand } from '#ui/scene/LiveBand.ts';
 import type { ScenePick } from '#ui/scene/ScenePick.ts';
 import type { View } from '#ui/View.ts';
+import type { Passage } from './Passage.ts';
 import type { PictureBook } from './PictureBook.ts';
 import type { RecapVM } from './RecapVM.ts';
 
-/** What the recap's view is built from: the pictures of the levels, its own live picture, the rise, and how a picture asks for an option. */
+/** What the recap's view is built from: the pictures of the levels, its own live picture, the passage out of the game, and how a picture asks for an option. */
 interface RecapParts {
   readonly book: PictureBook;
   readonly scene: LiveBand;
-  readonly dive: Dive;
+  readonly passage: Passage;
   readonly picks: ScenePick;
 }
 
 /**
  * Draws the session recap with lit-html: the ending's heading over the picture of the place the traveller stands
  * in, live (`LiveBand`); under it where that is, the run's figures or the void's lines, the closing line and two
- * buttons. Ending the session plays the rise — the dive rewound, out to the universe — before the option runs; a tap
- * on it ends at once. Every word comes from the view-model (`RecapPresenter` owns them); this file owns markup only.
+ * buttons. Ending the session plays the passage back up, out to the universe (`Passage`), before the option runs. Every word comes from the view-model (`RecapPresenter` owns them); this file owns markup only.
  */
 export class RecapView implements View<RecapVM> {
   readonly #parts: RecapParts;
@@ -27,8 +26,6 @@ export class RecapView implements View<RecapVM> {
   #vm: RecapVM | undefined;
   /** The screen's own listener: made at each mount, taken away with it. */
   #listeners = new AbortController();
-  /** Whether the rise plays over the screen. */
-  #rising = false;
 
   constructor(parts: RecapParts) {
     this.#parts = parts;
@@ -55,44 +52,43 @@ export class RecapView implements View<RecapVM> {
     const container = this.#container;
     this.#container = undefined;
     this.#listeners.abort();
-    this.#rising = false;
-    this.#parts.dive.skip();
+    this.#parts.passage.stop();
     this.#parts.scene.clear();
     if (container !== undefined) render(nothing, container);
     this.#vm = undefined;
   }
 
-  /** The tap that ends the session goes through the rise first; any other is the router's. */
+  /** The tap that ends the session goes through the passage first; any other is the router's. */
   #through(event: Event): void {
     const vm = this.#vm;
-    if (vm === undefined || vm.ends === '' || this.#rising) return;
+    if (vm === undefined || vm.ends === '' || this.#parts.passage.playing()) return;
     if (!(event.target instanceof Element)) return;
     if (event.target.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.ends) return;
     event.stopPropagation();
-    this.#rising = true;
-    this.#parts.scene.clear();
-    this.#paint(vm);
-    const host = this.#element('[data-dive]');
+    const container = this.#container;
+    if (container === undefined) return;
     const ends = vm.ends;
-    const levels = vm.levels.map((level) => ({
-      sketch: level.drawing.sketchedBy(this.#parts.book),
-      into: level.into,
-    }));
-    const risen = (): void => {
-      const container = this.#container;
-      if (container === undefined) return;
-      this.#rising = false;
-      this.#parts.picks.pick(container, ends);
-    };
-    if (host === undefined) risen();
-    else this.#parts.dive.rewind(host, levels, risen);
+    this.#parts.scene.clear();
+    this.#parts.passage.up(
+      {
+        container,
+        repaint: () => {
+          if (this.#vm !== undefined) this.#paint(this.#vm);
+        },
+      },
+      vm.levels,
+      () => {
+        // The screen may be gone by now: then nothing is asked of it.
+        if (this.#container !== undefined) this.#parts.picks.pick(this.#container, ends);
+      },
+    );
   }
 
   #paint(vm: RecapVM): void {
     if (this.#container === undefined) throw new Error('RecapView.render before mount');
     this.#vm = vm;
     render(this.#template(vm), this.#container);
-    if (this.#rising) return;
+    if (this.#parts.passage.playing()) return;
     const host = this.#element('[data-sky]');
     const here = vm.levels[vm.levels.length - 1];
     if (host === undefined || here === undefined) return;
@@ -154,17 +150,7 @@ export class RecapView implements View<RecapVM> {
           )}
         </nav>
         <footer class="build" data-testid="build">${vm.build}</footer>
-        ${
-          this.#rising
-            ? html`<div
-                class="fall-reel"
-                data-dive
-                @click=${() => {
-                  this.#parts.dive.skip();
-                }}
-              ></div>`
-            : nothing
-        }
+        ${this.#parts.passage.template()}
       </div>
     `;
   }

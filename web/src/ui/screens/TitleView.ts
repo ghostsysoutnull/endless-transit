@@ -1,24 +1,24 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
-import type { Dive } from '#ui/scene/Dive.ts';
 import type { ScenePick } from '#ui/scene/ScenePick.ts';
 import type { TitleScene } from '#ui/scene/TitleScene.ts';
 import type { View } from '#ui/View.ts';
+import type { Passage } from './Passage.ts';
 import type { PictureBook } from './PictureBook.ts';
 import type { TitleVM } from './TitleVM.ts';
 
-/** What the title's view is built from: the pictures of the levels, its own live picture, the dive, and how a picture asks for an option. */
+/** What the title's view is built from: the pictures of the levels, its own live picture, the passage into the game, and how a picture asks for an option. */
 interface TitleParts {
   readonly book: PictureBook;
   readonly scene: TitleScene;
-  readonly dive: Dive;
+  readonly passage: Passage;
   readonly picks: ScenePick;
 }
 
 /**
  * Draws the title screen with lit-html: the game's name over the picture, the world's seed and the buttons at the
- * screen's foot. The picture is the world's universe, live (`TitleScene`); entering the world plays the dive down to
- * where the traveller lands before the option runs — a tap on the dive lands at once. Buttons carry `data-option`
+ * screen's foot. The picture is the world's universe, live (`TitleScene`); entering the world plays the passage down to
+ * where the traveller lands (`Passage`) before the option runs. Buttons carry `data-option`
  * and no handlers of their own — the input router listens once for the whole screen.
  * Every word comes from the view-model (`TitlePresenter` owns them); this file owns markup only.
  */
@@ -28,8 +28,6 @@ export class TitleView implements View<TitleVM> {
   #vm: TitleVM | undefined;
   /** The screen's own listener: made at each mount, taken away with it. */
   #listeners = new AbortController();
-  /** Whether the dive plays over the screen. */
-  #diving = false;
 
   constructor(parts: TitleParts) {
     this.#parts = parts;
@@ -56,44 +54,43 @@ export class TitleView implements View<TitleVM> {
     const container = this.#container;
     this.#container = undefined;
     this.#listeners.abort();
-    this.#diving = false;
-    this.#parts.dive.skip();
+    this.#parts.passage.stop();
     this.#parts.scene.clear();
     if (container !== undefined) render(nothing, container);
     this.#vm = undefined;
   }
 
-  /** The tap that enters the world goes through the dive first; any other is the router's. */
+  /** The tap that enters the world goes through the passage first; any other is the router's. */
   #through(event: Event): void {
     const vm = this.#vm;
-    if (vm === undefined || vm.world === null || vm.enters === '' || this.#diving) return;
+    if (vm === undefined || vm.world === null || vm.enters === '' || this.#parts.passage.playing()) return;
     if (!(event.target instanceof Element)) return;
     if (event.target.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.enters) return;
     event.stopPropagation();
-    this.#diving = true;
-    this.#parts.scene.clear();
-    this.#paint(vm);
-    const host = this.#element('[data-dive]');
+    const container = this.#container;
+    if (container === undefined) return;
     const enters = vm.enters;
-    const levels = vm.world.levels.map((level) => ({
-      sketch: level.drawing.sketchedBy(this.#parts.book),
-      into: level.into,
-    }));
-    const landed = (): void => {
-      const container = this.#container;
-      if (container === undefined) return;
-      this.#diving = false;
-      this.#parts.picks.pick(container, enters);
-    };
-    if (host === undefined) landed();
-    else this.#parts.dive.play(host, levels, landed);
+    this.#parts.scene.clear();
+    this.#parts.passage.down(
+      {
+        container,
+        repaint: () => {
+          if (this.#vm !== undefined) this.#paint(this.#vm);
+        },
+      },
+      vm.world.levels,
+      () => {
+        // The screen may be gone by now: then nothing is asked of it.
+        if (this.#container !== undefined) this.#parts.picks.pick(this.#container, enters);
+      },
+    );
   }
 
   #paint(vm: TitleVM): void {
     if (this.#container === undefined) throw new Error('TitleView.render before mount');
     this.#vm = vm;
     render(this.#template(vm), this.#container);
-    if (this.#diving) return;
+    if (this.#parts.passage.playing()) return;
     const host = this.#element('[data-sky]');
     if (host === undefined) return;
     const first = vm.world?.levels[0];
@@ -149,17 +146,7 @@ export class TitleView implements View<TitleVM> {
           )}
         </nav>
         <footer class="build" data-testid="build">${vm.build}</footer>
-        ${
-          this.#diving
-            ? html`<div
-                class="fall-reel"
-                data-dive
-                @click=${() => {
-                  this.#parts.dive.skip();
-                }}
-              ></div>`
-            : nothing
-        }
+        ${this.#parts.passage.template()}
       </div>
     `;
   }

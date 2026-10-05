@@ -2890,7 +2890,7 @@ html:has(.keybar > .alarm) {
 }
 
 .fall-sky canvas,
-.fall-reel canvas {
+.passage-picture canvas {
   position: absolute;
   inset: 0;
   display: block;
@@ -2991,13 +2991,123 @@ html:has(.keybar > .alarm) {
   margin-top: 8px;
 }
 
-/* The dive into the game and the rise out of it: over the whole screen; a tap ends it at once. */
-.fall-reel {
+/* The passage into the game and out of it: over the whole screen, a caption of its own above the picture so no word
+   covers it; a tap ends it at once. */
+.passage {
   position: fixed;
   inset: 0;
   z-index: 60;
+  display: flex;
+  flex-direction: column;
+  padding-top: max(14px, env(safe-area-inset-top));
   background: var(--ground);
   touch-action: manipulation;
+}
+
+.passage-cap {
+  flex: none;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+  animation: passage-in 0.4s ease-out both;
+}
+
+@keyframes passage-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The rail: a mark a level, lit as far as the way has gone, the level shown larger. */
+.passage-rail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.passage-rail li {
+  flex: 0 1 26px;
+  text-align: center;
+  color: var(--dim);
+  font-size: 14px;
+  transition:
+    color 0.3s,
+    transform 0.3s;
+}
+
+.passage-rail li[data-passed] {
+  color: var(--frame);
+}
+
+.passage-rail li[data-here] {
+  color: var(--yl);
+  transform: scale(1.6);
+}
+
+/* The names: every level's words stand at the same spot and move by where they are on the way — the one above shrunk
+   over it, the one shown whole, the next waiting below, the rest out of sight. */
+.passage-names {
+  position: relative;
+  height: 84px;
+  overflow: hidden;
+}
+
+.passage-step {
+  position: absolute;
+  inset: 30px 0 auto;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  transform-origin: left top;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.5s;
+}
+
+.passage-step span {
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: opacity 0.3s;
+}
+
+.passage-step b {
+  overflow: hidden;
+  color: var(--wh);
+  font-size: clamp(19px, 6vw, 26px);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.passage-step[data-role='gone'] {
+  opacity: 0;
+  transform: translateY(-50px) scale(0.4);
+}
+
+.passage-step[data-role='past'] {
+  opacity: 0.75;
+  transform: translateY(-34px) scale(0.5);
+}
+
+.passage-step[data-role='past'] span,
+.passage-step[data-role='gone'] span {
+  opacity: 0;
+}
+
+.passage-step[data-role='below'] {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.passage-picture {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
 }
 
 /* The recap: the ending in the frame's colour, where the traveller stands, the run's figures as a row of tiles. */
