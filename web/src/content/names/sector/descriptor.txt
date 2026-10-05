@@ -2,7 +2,7 @@ Outer
 Inner
 Core
 Rim
-Void
+Distal
 Prime
 Secondary
 Tertiary

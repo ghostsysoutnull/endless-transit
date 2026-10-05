@@ -70,7 +70,7 @@ export class LocationRegistry implements FactoryLookup {
       new UniverseFactory(offspring),
       new FilamentFactory(offspring, names),
       new SectorFactory(offspring, names),
-      new NullReachFactory(offspring),
+      new NullReachFactory(offspring, names),
       new SolarSystemFactory(offspring, names),
       new PlanetFactory(offspring, names, themes),
       new CountryFactory(offspring, names, themes),
