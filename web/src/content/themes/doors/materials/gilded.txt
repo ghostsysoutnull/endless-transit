@@ -1,0 +1,12 @@
+Brass-Bound Door|A door strapped in brass, every strap ending in a small flourish.|metal
+Mahogany Panel Door|A door of deep red mahogany in six raised panels.|timber
+Etched Crystal Pane|A pane of crystal etched with a border of ferns.|glass
+Clockwork Shutter|A shutter of overlapping brass leaves around a toothed ring.|metal
+Mother-of-Pearl Screen|A screen of pearly plates that shift colour as you move.|bone
+Walnut Double Door|Two leaves of figured walnut that meet without a gap.|timber
+Bevelled Mirror Door|A door faced in mirror, bevelled into a dozen facets.|glass
+Sterling Vault Door|A round vault door of silvered steel with a spoked wheel.|metal
+Porcelain Tile Door|A door faced in white tiles painted with blue ships.|stone
+Onyx Slab|A slab of banded onyx, lit faintly from behind.|stone
+Cut-Glass Lattice|A lattice of cut glass that throws small rainbows on the floor.|glass
+Leather-Quilted Door|A door quilted in green leather, a button in every dimple.|plain

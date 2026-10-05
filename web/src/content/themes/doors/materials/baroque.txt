@@ -1,0 +1,12 @@
+Gilt Chapel Door|A tall door of gilt panels, the saints on it worn faceless.|timber
+Carved Oak Portal|A portal of dark oak carved with vines and small watching faces.|timber
+Stained-Glass Leaf|A leaf of leaded glass that colours whatever light gets through.|glass
+Brass Reliquary Hatch|A hatch like the lid of a reliquary, brass over something kept.|metal
+Marble Tympanum|A marble slab under a carved arch, heavy as an altar.|stone
+Censer-Grille Gate|A gate of pierced metal that keeps a ghost of incense.|metal
+Organ-Pipe Screen|A screen of upright pipes set shoulder to shoulder.|metal
+Fresco Panel|A plastered panel painted with a sky of small clouds.|stone
+Ivory Inlay Door|A door inlaid with pale plates in the pattern of a rose.|bone
+Choir-Stall Door|A door built from the carved backs of choir stalls.|timber
+Rose-Window Pane|A round pane of many small glasses in a wheel of stone.|glass
+Velvet-Padded Door|A door padded in red cloth and studded with brass nails.|plain

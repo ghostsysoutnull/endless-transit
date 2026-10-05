@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Greased|Black grease is packed into the hinges and smeared below them.|plain
+Sooted|Soot has settled on it in a soft even coat.|plain
+Dented|Something heavy has dented it at the height of a cart.|plain
+Steaming|A thread of steam escapes from the foot of it.|plain
+Welded|A rough bead of weld runs along one edge.|plain
+Scaled|A crust of boiler scale has built up along the seams.|plain
+Patched|A plate has been bolted over a hole in it.|plain
+Chained|A chain is looped through it, its lock long gone.|plain
+Icebound|Ice has bound its edges to the frame.|frost
+Cold-soaked|The metal of the frame is cold right through and bites the hand.|cold
+Photographic|It is so motionless it could be a photograph of a door.|static

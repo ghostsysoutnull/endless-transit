@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, turnCard, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: Requiem Slipway; Ornate Sanctum, 16 floors, 9 doors; the first door opens on Grand Power Plant. */
+/** A fixed world: Requiem Slipway; Censed Altar, 16 floors, 9 doors; the first door opens on Candlelit Maintenance Bay. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const LOBBY = `${STREET}.0.0`;
@@ -31,7 +31,7 @@ test('a room reads like the old game: its interpretation, furniture, the relic c
   await plant(page, FIRST_ROOM, { [LOBBY]: 'corridor' });
   await page.goto('./');
   await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).toHaveText('Candlelit Maintenance Bay');
   // The room's words, its tiles and its readouts are on the back of its card (U03e).
   await turnCard(page, hasTouch);
   await expect(page.locator('.desc p').nth(0)).toHaveText(
@@ -64,7 +64,7 @@ test('a room reads like the old game: its interpretation, furniture, the relic c
 
   // The next room: its own furniture and objects, the way out gone.
   await press(page, /go forward/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('Baroque Maintenance Bay');
+  await expect(page.getByTestId('place-name')).toHaveText('Censed Foundry');
   await expect(page.locator('.prow').nth(0)).toContainText('bolted-down velvet kneeling-rug');
   await expect(tiles.first()).toContainText('velvet kneeling-rug fused to optic implant');
   expect(problems).toEqual([]);
@@ -80,10 +80,10 @@ test('a door tells its full appearance under its name on the corridor list; one 
   const doors = page.locator('button[data-option^="enter:"]');
   await expect(doors).toHaveCount(9);
   await expect(doors.first().locator('.rd[data-fact="narrative"]')).toContainText(
-    "A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.",
+    "A door padded in red cloth and studded with brass nails. Colours slide across it as you pass. The word 'do_not_sleep' is scrawled across the surface in jagged, desperate lines.",
   );
   await expect(doors.nth(1).locator('.rd[data-fact="narrative"]')).toContainText(
-    'A timber gate under many coats of black lacquer.',
+    'A round pane of many small glasses in a wheel of stone.',
   );
   await expectTouchable(page, 'corridor');
   await shoot(page, '6-corridor-doors');

@@ -10,3 +10,15 @@ Flaking
 Riveted
 Sooty
 Buckled
+Welded
+Salvaged
+Pitted
+Bolted
+Smelted
+Greasy
+Dented
+Scorched
+Tarred
+Clanking
+Rusted
+Slagged

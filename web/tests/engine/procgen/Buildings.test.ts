@@ -54,7 +54,7 @@ describe('buildings on a street', () => {
     expect(share(51, 100)).toBeLessThan(0.09 + 0.015);
   });
 
-  test('landmarks: 4% of buildings, 8% under a Null Reach, always one of the 15 names (Guide, "Null Reaches", "Landmarks")', () => {
+  test('landmarks: 4% of buildings, 8% under a Null Reach, always one of the landmark titles (Guide, "Null Reaches", "Landmarks")', () => {
     const rate = (buildings: readonly Building[]) =>
       buildings.filter((building) => building.landmark()).length / buildings.length;
     expect(underNullReaches.length).toBeGreaterThan(10_000);
@@ -62,21 +62,18 @@ describe('buildings on a street', () => {
     expect(rate(underSectors)).toBeLessThan(0.047);
     expect(rate(underNullReaches)).toBeGreaterThan(0.07);
     expect(rate(underNullReaches)).toBeLessThan(0.09);
-    expect(LANDMARKS).toHaveLength(15);
     const used = new Set<string>();
     for (const building of [...underSectors, ...underNullReaches].filter((each) => each.landmark())) {
       expect(LANDMARKS).toContain(building.name());
       used.add(building.name());
     }
-    expect(used.size).toBe(15);
+    expect(used.size).toBe(LANDMARKS.length);
   });
 
   test('plain names follow the four patterns, in the words of the street’s culture', () => {
     const plain = underSectors.filter((building) => !building.landmark());
-    const patterns = [
-      /^Unit 0x[0-9A-F]{1,3} \S+$/,
-      /^The .+ of (Static|Frequencies|Resonance|Stability|Time|Light|The Web)$/,
-    ];
+    const concepts = library.list('names/buildings/concepts');
+    const patterns = [/^Unit 0x[0-9A-F]{1,3} \S+$/, new RegExp(`^The .+ of (${concepts.join('|')})$`)];
     const uncommon = plain.filter((building) => patterns.some((pattern) => pattern.test(building.name())));
     expect(uncommon.length / underSectors.length).toBeGreaterThan(0.13);
     expect(uncommon.length / underSectors.length).toBeLessThan(0.17);

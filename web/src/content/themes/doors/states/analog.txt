@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Yellowed|The surface has yellowed like an old page.|plain
+Scuffed|The lower half is scuffed by years of boots and trolleys.|plain
+Taped|Strips of tape hold a corner of it together.|plain
+Creaking|The frame creaks when the air in the corridor shifts.|plain
+Dusty|Dust lies along every ledge of it, undisturbed.|plain
+Sticking|It has swollen in its frame and sticks at the top.|plain
+Rattling|It rattles loosely in its frame at every footstep.|plain
+Waxed|Someone has waxed it, and the smell is still there.|plain
+Iced|A skin of ice has grown over the edges and sealed them.|frost
+Chilled|The frame is chill to the touch and pulls the warmth from your palm.|cold
+Ghosting|A faint second outline hangs beside it, like a badly tuned picture.|static

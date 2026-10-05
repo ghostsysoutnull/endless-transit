@@ -17,7 +17,7 @@ export class KeyedPart implements NamePart {
     return this.#name;
   }
 
-  list(vibe: Vibe | undefined): string {
-    return `${this.#directory}/${this.#name}/${this.#key(vibe)}`;
+  list(among: { readonly vibe: Vibe | undefined }): string {
+    return `${this.#directory}/${this.#name}/${this.#key(among.vibe)}`;
   }
 }

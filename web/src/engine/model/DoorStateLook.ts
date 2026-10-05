@@ -1,7 +1,7 @@
 /** The looks a door's state can be drawn with (the mock's frost, cold glow and scan lines); every other state is plain. */
 const LOOKS = ['frost', 'cold', 'static', 'plain'] as const;
 
-/** How a door's state is drawn: its list's key column (`themes/doors/states.txt`), identity by stable key. */
+/** How a door's state is drawn: its list's key column (the door state lists), identity by stable key. */
 export type DoorStateLook = (typeof LOOKS)[number];
 
 /**
@@ -10,7 +10,6 @@ export type DoorStateLook = (typeof LOOKS)[number];
  */
 export function doorStateLook(key: string): DoorStateLook {
   const look = LOOKS.find((known) => known === key);
-  if (look === undefined)
-    throw new Error(`themes/doors/states.txt: '${key}' is not a door state look (${LOOKS.join(', ')})`);
+  if (look === undefined) throw new Error(`'${key}' is not a door state look (${LOOKS.join(', ')})`);
   return look;
 }

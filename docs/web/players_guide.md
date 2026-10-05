@@ -265,21 +265,26 @@ your step count — then **CAPTURE SPECTRAL ECHO**. One echo per reach, until a 
 
 ## Reading doors before you open them
 
-The door list in a corridor shows what each door is made of and its state, like `Brutalist Slab, pitted`, with a
+The door list in a corridor shows what each door is made of and its state, like `Velvet-Padded Door, iridescent`, with a
 sentence about its look under it that tells the words written on it, if any. Reading all of that is free.
 <!-- src/engine/model/Door.ts:54-57, 71-78 -->
 
 Every door also carries a **trace**, a line of sensory text, and a **room type**, but you only see them when you scan:
 tap **SCAN** in the corridor. The trace is decided by the type of the first room behind the door, and it never lies.
-The five traces, and which four room types a country's trait allows, are the same as in the
-[terminal guide]({{ "/terminal/guide/players_guide.html#reading-doors-before-you-open-them" | relative_url }}): the
-web game reads the same word lists. <!-- src/engine/model/RoomCategory.ts, src/content/names/rooms -->
+The five traces are the same as in the
+[terminal guide]({{ "/terminal/guide/players_guide.html#reading-doors-before-you-open-them" | relative_url }}). A
+country's trait allows sixteen room types here, and an apartment never holds the same type twice.
+<!-- src/engine/model/Trace.ts:6-25, src/content/names/rooms, src/engine/procgen/RoomCategories.ts:14-20 -->
 
 **Inscriptions are rarer and stronger.** About one door in five has words on it. Two of them are guarantees:
 `[DATA_VAULT]` means Laboratory or Bio-Server, `!! DANGER !!` means Security Station or Armory. Any other word just
-means "not one of those four". <!-- src/engine/procgen/Doors.ts:15-16 -->
+means "not one of those four": it is written in one of four ways, each with words of its own — stamped by the system,
+scrawled by those who came before, etched by the structure, burned as a warning — and no two doors of a corridor say
+the same. <!-- src/engine/procgen/Doors.ts:22-23, 110-119; src/content/themes/doors/inscriptions -->
 
-**Material and state mean nothing.** Whether the door is a rusted hatch or polished ceramic is decoration.
+**Material and state mean nothing.** Whether the door is a riveted iron hatch or a paper screen is decoration: the
+material is in the words of the place's culture, the state in the words of its era.
+<!-- src/engine/procgen/Doors.ts:79-87 -->
 
 Room type is mostly flavour. It changes the name and the description. It does not change what objects you find, which
 come from the planet's culture and era.
@@ -340,13 +345,13 @@ lost. Your Keystone survives in the buffer and still fits: it remembers the buil
 
 ## Where to go
 
-**Null Reaches.** On the filament list, `Null Reach` entries are just that. About 30% of filament nodes are one. They
+**Null Reaches.** On the filament list, an entry that begins `Null Reach` is one. About 30% of filament nodes are one. They
 are thinner, with only one or two solar systems, but buildings under them have double the chance of being a landmark,
-and each reach holds one free Spectral Echo. <!-- src/engine/procgen/FilamentFactory.ts:13, src/engine/procgen/NullReachFactory.ts:10, src/engine/model/NullReach.ts:14 -->
+and each reach holds one free Spectral Echo. <!-- src/engine/procgen/FilamentFactory.ts:13, src/engine/procgen/NullReachFactory.ts:22, src/engine/model/NullReach.ts:14 -->
 
-**Landmarks** are buildings with grand names, marked on the street list. There are 15 names. They contain nothing
+**Landmarks** are buildings with grand names, marked on the street list. There are 32 names, and a street never shows the same one twice. They contain nothing
 special; the name is the prize. A street's building has a 4% chance (3% plus half a percent per level below depth 5),
-doubled under a Null Reach, never more than 25%. <!-- src/engine/procgen/BuildingNamer.ts:11-15 -->
+doubled under a Null Reach, never more than 25%. <!-- src/content/names/buildings/landmarks.txt, src/engine/procgen/BuildingNamer.ts:15-18, 28-37 -->
 
 **Check the era.** The street's chips show its `Era`. If it is `ENTROPIC`, every prompt costs 2. There is no era that
 costs less. <!-- src/engine/rules/Drain.ts:10 -->
@@ -369,7 +374,7 @@ follow the planet's main culture and era: 85% shifted by up to a tenth either wa
 
 **How big the world is.** 3 to 7 filaments in the universe, 4 to 8 nodes on a filament, 3 to 7 solar systems in a
 sector, 2 to 10 planets, 2 to 8 countries, 2 to 10 cities, 3 to 15 streets, 4 to 22 buildings on a street (always an
-even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/FilamentFactory.ts:25, src/engine/procgen/SectorFactory.ts:19, src/engine/procgen/SolarSystemFactory.ts:19, src/engine/procgen/PlanetFactory.ts:27, src/engine/procgen/CountryFactory.ts:28, src/engine/procgen/CityFactory.ts:21, src/engine/procgen/StreetFactory.ts:19 -->
+even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/FilamentFactory.ts:26, src/engine/procgen/SectorFactory.ts:19, src/engine/procgen/SolarSystemFactory.ts:19, src/engine/procgen/PlanetFactory.ts:27, src/engine/procgen/CountryFactory.ts:28, src/engine/procgen/CityFactory.ts:21, src/engine/procgen/StreetFactory.ts:19 -->
 
 ## Reading the screen
 
@@ -402,9 +407,10 @@ frequency, the merge made.
 
 **The frame colour** is the planet's main culture, one of nine; below bedrock it is the void's red.
 
-**Floor zone names** are picked by height; SCAN names each `FUNCTION`. Floor 0 is always the transit lobby and the
-top floor the peak observatory; floors 1 to 4 draw from four basement-style names, floors within four of the top from
-four executive names, everything between from four living names. <!-- src/engine/procgen/FloorZones.ts:7-8, 27; src/engine/model/Floor.ts:72-77, 139-142 -->
+**Floor zone names** are picked by height, in the words of the country's trait; SCAN names each `FUNCTION`. Floor 0
+takes a lobby name and the top floor a peak name; floors 1 to 4 draw from twelve low-floor names, floors within four
+of the top from twelve high-floor names, everything between from twelve middle ones. Neighbouring floors never share
+a name. <!-- src/engine/procgen/FloorZones.ts:10-11, 31-38, 42-45; src/engine/model/Floor.ts:72-77, 139-142 -->
 
 ## Saving, seeds and the debug tools
 
@@ -510,6 +516,12 @@ port's iteration notes (`tasks/port/I02.md` to `I09.md`).
 30. **The elevator has no up and down.** The terminal game rides one floor at a time with `u` and `d`; here a floor is
     tapped on the building's tower, and the way below the bedrock is a Layer tapped there too.
     <!-- src/ui/screens/SceneDrawing.ts:33 -->
+31. **The names are the web game's own.** The terminal game names every place, building, door and room from short
+    lists, each picked alone. Here the lists are longer and follow the place — its culture, its era, its country's
+    trait, the alphabet of its universe — and what stands side by side is dealt apart: places on a list, buildings on
+    a street, floors in a tower, doors on a corridor and rooms in an apartment do not repeat a name while their lists
+    last. A Null Reach carries a word of its own in place of a serial.
+    <!-- src/engine/procgen/NameParts.ts:15-21, src/engine/procgen/BuildingNamer.ts:28-37, src/engine/procgen/FloorZones.ts:13-21, src/engine/procgen/Doors.ts:32-42, src/engine/procgen/RoomCategories.ts:14-20, src/engine/procgen/NullReachFactory.ts:12-15 -->
 
 ## FAQ
 

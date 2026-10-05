@@ -10,3 +10,15 @@ Sac
 Cyst
 Bloom
 Hollow
+Hive
+Burrow
+Cocoon
+Gall
+Bulb
+Stalk
+Canopy
+Thicket
+Womb
+Polyp
+Bower
+Rhizome

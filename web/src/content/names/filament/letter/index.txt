@@ -1,0 +1,7 @@
+greek
+hebrew
+runic
+radio
+arabic
+ogham
+cyrillic

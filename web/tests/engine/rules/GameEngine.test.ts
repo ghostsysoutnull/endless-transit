@@ -13,7 +13,7 @@ import { must, realRegistry } from '#tests/support/world.ts';
 
 const FIRST = new Seed(0x7f3a91c2, 0x0b4de6a8);
 const SECOND = new Seed(0x33333333, 0x44444444);
-/** Grand Power Plant: the first room behind the lobby's first door of Ornate Sanctum. */
+/** Candlelit Maintenance Bay: the first room behind the lobby's first door of Censed Altar. */
 const FIRST_ROOM = '0.0.0.0.0.0.0.0.0.0.0.0.0';
 
 function engineOn(saves: MemorySaveStore, debug = false): GameEngine {
@@ -95,7 +95,7 @@ function walkedDown(engine: GameEngine, levels: number): GameSnapshot {
   return snapshot;
 }
 
-/** Ornate Sanctum (16 floors, 9 doors) on Requiem Slipway: into the lobby, the corridor, and the first door. */
+/** Censed Altar (16 floors, 9 doors) on Requiem Slipway: into the lobby, the corridor, and the first door. */
 function inTheFirstRoom(engine: GameEngine): GameSnapshot {
   engine.step('new-world');
   engine.step('enter-world');
@@ -226,12 +226,12 @@ describe('GameEngine — walking the big world', () => {
         frame: null,
         abyssal: false,
         nodes: [
-          { x: 5, y: 1, glyph: '»', name: 'Lambda-915-Link', visited: true, noise: false },
-          { x: 18, y: 10, glyph: '»', name: 'Gamma-901-Thread', visited: false, noise: false },
-          { x: 16, y: 12, glyph: '»', name: 'Zeta-678-Pulse', visited: false, noise: false },
-          { x: 10, y: 13, glyph: '»', name: 'Delta-655-Strand', visited: false, noise: false },
-          { x: 21, y: 10, glyph: '»', name: 'Eta-486-Sync', visited: false, noise: false },
-          { x: 4, y: 0, glyph: '»', name: 'Kappa-957-Stream', visited: false, noise: false },
+          { x: 5, y: 1, glyph: '»', name: 'Uniform-915-Tether', visited: true, noise: false },
+          { x: 18, y: 10, glyph: '»', name: 'Victor-901-Sync', visited: false, noise: false },
+          { x: 16, y: 12, glyph: '»', name: 'Juliett-678-Tendril', visited: false, noise: false },
+          { x: 10, y: 13, glyph: '»', name: 'Echo-655-Thread', visited: false, noise: false },
+          { x: 21, y: 10, glyph: '»', name: 'Sierra-486-Skein', visited: false, noise: false },
+          { x: 4, y: 0, glyph: '»', name: 'Mike-957-Braid', visited: false, noise: false },
         ],
         marks: [],
       },
@@ -241,8 +241,8 @@ describe('GameEngine — walking the big world', () => {
     expect(travel[0]).toEqual({
       id: 'enter:0',
       key: '1',
-      label: 'Synchronize with Lambda-915-Link',
-      place: 'Lambda-915-Link',
+      label: 'Synchronize with Uniform-915-Tether',
+      place: 'Uniform-915-Tether',
       role: 'travel',
       sealed: false,
       landmark: false,
@@ -272,11 +272,11 @@ describe('GameEngine — walking the big world', () => {
     const snapshot = walkedDown(engine, 1);
     const place = must(snapshot.place ?? undefined, 'a place');
     expect(place.kind).toBe('Cosmic filament');
-    expect(place.name).toBe('Lambda-915-Link');
+    expect(place.name).toBe('Uniform-915-Tether');
     expect(place.address).toBe('0.0');
     expect(place.trail).toHaveLength(2);
     expect(place.position).toMatchObject({ label: 'CONDUIT', index: 1 });
-    expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Lambda-915-Link']);
+    expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Uniform-915-Tether']);
     expect(place.trail.map((step) => step.address)).toEqual(['0', '0.0']);
     expect(snapshot.options.find((option) => option.id === 'leave')).toEqual({
       id: 'leave',
@@ -294,7 +294,7 @@ describe('GameEngine — walking the big world', () => {
       address: '',
       numbered: false,
     });
-    expect(snapshot.message).toBe('Entered Lambda-915-Link.');
+    expect(snapshot.message).toBe('Entered Uniform-915-Tether.');
   });
 
   test('eight levels: universe to street and back up to the universe', () => {
@@ -369,11 +369,11 @@ describe('GameEngine — walking the big world', () => {
     const buildings = street.options.filter((option) => option.role === 'travel');
     expect(buildings).toHaveLength(4);
     expect(buildings.every((option) => !option.sealed && option.key !== '')).toBe(true);
-    expect(buildings[0]?.label).toBe('Enter Building: Ornate Sanctum');
-    expect(buildings[0]?.place).toBe('Ornate Sanctum');
+    expect(buildings[0]?.label).toBe('Enter Building: Censed Altar');
+    expect(buildings[0]?.place).toBe('Censed Altar');
     const building = engine.step('enter:0');
     expect(building.place?.kind).toBe('Building');
-    expect(building.message).toBe('Entered Ornate Sanctum.');
+    expect(building.message).toBe('Entered Censed Altar.');
     expect(building.place?.facts).toEqual([
       { key: 'culture', label: 'Culture', value: 'baroque' },
       { key: 'reading', label: 'Floors', value: '16' },
@@ -391,7 +391,7 @@ describe('GameEngine — walking the big world', () => {
       sealed: false,
       landmark: false,
       ordinal: '15',
-      readings: [{ key: 'zone', label: 'Zone', value: 'Peak observatory' }],
+      readings: [{ key: 'zone', label: 'Zone', value: 'Cooling crown' }],
       opposite: '',
       current: false,
       visited: false,
@@ -404,7 +404,7 @@ describe('GameEngine — walking the big world', () => {
     // A floor's key is its number (Guide:111) — so only floors 0–9 have one; a key never differs from the ordinal.
     expect(floors.map((option) => option.key).join(',')).toBe(',,,,,,9,8,7,6,5,4,3,2,1,0');
     expect(floors.at(-1)?.label).toBe('Ride to Lobby');
-    expect(floors.at(-1)?.readings[0]?.value).toBe('Transit lobby');
+    expect(floors.at(-1)?.readings[0]?.value).toBe('Freight concourse');
     expect(building.options.filter((option) => option.role === 'move')).toEqual([]);
     // The elevator column's [>X<]: the lobby to begin with, then the floor last arrived at (Building.groovy:189).
     expect(floors.map((option) => option.current).indexOf(true)).toBe(15);
@@ -478,8 +478,8 @@ describe('GameEngine — walking the big world', () => {
     expect(doors[0]).toEqual({
       id: 'enter:0',
       key: '1',
-      label: 'Open Brutalist Slab, pitted',
-      place: 'Brutalist Slab, pitted',
+      label: 'Open Velvet-Padded Door, iridescent',
+      place: 'Velvet-Padded Door, iridescent',
       role: 'travel',
       sealed: false,
       landmark: false,
@@ -489,7 +489,7 @@ describe('GameEngine — walking the big world', () => {
           key: 'narrative',
           label: '',
           value:
-            "A massive brutalist slab of pitted concrete. The surface is heavily scarred by micro-impacts and substrate decay. The word 'void_sink' is scrawled across the surface in jagged, desperate lines.",
+            "A door padded in red cloth and studded with brass nails. Colours slide across it as you pass. The word 'do_not_sleep' is scrawled across the surface in jagged, desperate lines.",
         },
       ],
       opposite: '',
@@ -502,12 +502,12 @@ describe('GameEngine — walking the big world', () => {
     expect(corridorOf(must(corridor.place ?? undefined).portrait).doors[0]).toEqual({
       address: '0.0.0.0.0.0.0.0.0.0.0.0',
       look: new DoorLook({
-        material: 'Brutalist Slab',
-        state: 'Pitted',
-        family: 'stone',
+        material: 'Velvet-Padded Door',
+        state: 'Iridescent',
+        family: 'plain',
         stateLook: 'plain',
       }),
-      words: 'VOID_SINK',
+      words: 'DO_NOT_SLEEP',
     });
     expect(corridor.options.filter((option) => option.role === 'move')).toEqual([
       move('elevator', 'b', 'Back to Elevator', 'corridor', {
@@ -525,17 +525,17 @@ describe('GameEngine — walking the big world', () => {
     const engine = engineOn(new MemorySaveStore());
     const room = inTheFirstRoom(engine);
     expect(room.place?.kind).toBe('Room');
-    expect(room.place?.name).toBe('Grand Power Plant');
+    expect(room.place?.name).toBe('Candlelit Maintenance Bay');
     expect(room.place?.address).toBe('0.0.0.0.0.0.0.0.0.0.0.0.0');
     expect(room.place?.trail).toHaveLength(13);
     expect(room.place?.position).toEqual({ counted: true, label: 'ROOM', index: 1, total: 2 });
     expect(room.place?.trail.map((step) => step.icon).join('')).toBe('∞»○☼⊕⬚🏙═⌂▤▅🚪□');
-    expect(room.place?.trail[11]?.name).toBe('Brutalist Slab, pitted');
+    expect(room.place?.trail[11]?.name).toBe('Velvet-Padded Door, iridescent');
     expect(room.place?.description).toHaveLength(2);
     expect(room.place?.facts.map((fact) => fact.label)).toEqual(['Era', 'Type', 'Oxygen', 'Temp', 'Signal']);
     // The free lottery rolled on the move that landed here (Guide:187): step 4 of this walk wins (Void.test pins the roll).
     expect(room.message).toBe(
-      'Entered Grand Power Plant. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.',
+      'Entered Candlelit Maintenance Bay. SPECTRAL_DEVIATION: Extracted Frequency 1243085 Hz.',
     );
     // What the room holds rides on the snapshot as plain data: relics by key and name, furniture, and the
     // telemetry every place inside a building shows (five bars of 1–9, drawn on the place's own seed).
@@ -559,7 +559,7 @@ describe('GameEngine — walking the big world', () => {
     expect(engine.snapshot().place?.telemetry).toEqual(room.place?.telemetry);
     expect(room.options.filter((option) => option.role !== 'take')).toEqual([
       move('forward', 'f', 'Go forward', 'back', {
-        place: 'Baroque Maintenance Bay',
+        place: 'Censed Foundry',
         address: '0.0.0.0.0.0.0.0.0.0.0.0.1',
       }),
       { ...system('leave', 'l', 'Leave the apartment'), role: 'return' },

@@ -14,3 +14,5 @@ Web lessons, in the form the Codex's Self-Improvement Loop sets.
   a long list pushes it out of reach.
 - **A picture that takes the up-and-down drag locks the page under it**: before a picture is made taller or draggable,
   say where the finger scrolls the page from.
+- **A changed word is searched in the browser tests by every line the snapshot's diff removed**: the door and room
+  sentences are quoted there too, not the names alone.

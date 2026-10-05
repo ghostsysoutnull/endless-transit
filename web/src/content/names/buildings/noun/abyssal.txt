@@ -10,3 +10,15 @@ Stack
 Socket
 Fault
 Kernel
+Daemon
+Pointer
+Handle
+Segment
+Register
+Trap
+Dump
+Mutex
+Abscess
+Cortex
+Ganglion
+Vector

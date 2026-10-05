@@ -1,0 +1,12 @@
+Marble Leaf Door|A door of two marble leaves, veined in grey.|stone
+Bronze Temple Door|A bronze door cast with a procession in low relief.|metal
+Alabaster Panel|A panel of alabaster thin enough to glow.|stone
+Fluted Column Door|A door carved as a row of fluted half-columns.|stone
+Olive-Wood Door|A door of olive wood, its grain like slow water.|timber
+Laurel-Wrought Gate|A gate of metal wrought into branches of laurel.|metal
+Sun-Disc Hatch|A round hatch of gold-coloured metal with rays cut into it.|metal
+Azure Glass Leaf|A leaf of blue glass, clear as a noon sky.|glass
+Ivory-Plated Door|A door plated in ivory-white tiles with gilded joints.|bone
+Cedar Coffered Door|A door of cedar set with deep square coffers.|timber
+Travertine Slab|A slab of honey-coloured travertine, full of small holes.|stone
+Crystal Oculus|A round eye of clear crystal in a ring of bronze.|glass

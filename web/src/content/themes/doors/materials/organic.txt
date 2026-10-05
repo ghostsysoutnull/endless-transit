@@ -1,0 +1,12 @@
+Bone-Lattice Aperture|An aperture of interlocking bone-white struts.|bone
+Chitin Plate|A plate of dark chitin in overlapping segments.|bone
+Woven Root Gate|A gate of living roots woven tight as a basket.|timber
+Bark Slab|A slab of thick bark, furrowed deep enough to hide a finger.|timber
+Resin Pane|A pane of amber resin with small things caught inside it.|glass
+Membrane Valve|A valve of pale membrane, closed like a pursed mouth.|plain
+Mycelial Mat Door|A door of pressed white mycelium, soft at the edges.|plain
+Grown-Coral Arch|An arch of coral grown shut across the opening.|bone
+Living Wicker Door|A door of wicker that has put out a few green leaves.|timber
+Amber Lens|A thick lens of amber that shows the room beyond upside down.|glass
+Shell Operculum|A round lid of shell, spiralled, fitted to its opening.|bone
+Petrified Trunk Door|A door cut from one trunk long since turned to stone.|stone

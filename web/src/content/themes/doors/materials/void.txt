@@ -1,0 +1,12 @@
+Blank Panel|A blank panel with no seam, handle or mark.|plain
+Ash-Grey Slab|A slab the grey of cold ash, the same in every light.|stone
+Pale Membrane|A pale membrane stretched flat across the opening.|plain
+Null-Glass Pane|A pane of glass that shows nothing behind it and nothing in front.|glass
+Seamless Plate|A metal plate that meets its frame without a line.|metal
+Hollow-Core Door|A door that sounds empty when the corridor is quiet.|plain
+Smoked Pane|A pane of smoked glass, darker toward the middle.|glass
+Bleached Bone Door|A door of white plates fitted like the bones of a skull.|bone
+Unmarked Hatch|A hatch with a wheel and nothing else, not even a number.|metal
+Chalk Slab|A slab of chalk that leaves white on whatever touches it.|stone
+Shadow-Lacquer Door|A wooden door lacquered a black that gives no reflection.|timber
+Starless Screen|A dark glass screen, like a window onto a sky with nothing in it.|glass

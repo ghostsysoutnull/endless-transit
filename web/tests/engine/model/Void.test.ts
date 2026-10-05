@@ -11,7 +11,7 @@ const registry = realRegistry();
 const SEED = new Seed(0x7f3a91c2, 0x0b4de6a8);
 const universe = registry.universe(SEED);
 const street = must(toStreet(universe, () => 0).at(-1));
-/** Grand Power Plant, the first room behind the lobby's first door of Ornate Sanctum. */
+/** Candlelit Maintenance Bay, the first room behind the lobby's first door of Censed Altar. */
 const room = must(street.children()[0]?.children()[0]?.children()[0]?.children()[0]?.children()[0]);
 
 /** The first Null Reach of the first filament of a world whose first filament has one. */

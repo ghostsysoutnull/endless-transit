@@ -1,7 +1,8 @@
 # Handover
 
-- **Branch:** `master` (the place names — dealt among siblings, the lists grown, planet to street named in the words
-  of the vibe in force; its record `tasks/words/place-names.md` — merged; its branch deleted).
+- **Branch:** `master` (the names fast loop — rooms, filaments, doors and their words, buildings, floor zones and Null
+  Reaches named in the words of their place and dealt apart; its record `tasks/words/names-fast-loop.md` — merged
+  after the place names, `tasks/words/place-names.md`; its branch deleted).
 - **Next:** U06 of the UI rework, the wrap-up, now the title, the map and the scan tables — its row in
   `tasks/UI_QUEUE.md`; then U06b, the node pictures (a mock first), then U07.
 - **Open threads:**

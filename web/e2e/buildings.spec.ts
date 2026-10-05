@@ -2,11 +2,11 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Censed Altar, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const LOBBY = '0.0.0.0.0.0.0.0.0.0';
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
-/** Floor 2 on the list of Ornate Sanctum's sixteen floors, top first. */
+/** Floor 2 on the list of Censed Altar's sixteen floors, top first. */
 const FLOOR_2 = 'enter:13';
 
 /** Plants a save once per test — a reload inside the test must find what the game itself wrote. */
@@ -41,7 +41,7 @@ test('from the title: a new world lands on a street; into a building, a floor pi
 
   await tapOption(page, 'enter:0', hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
-  await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
+  await expect(page.getByTestId('place-name')).toHaveText('Censed Altar');
   // The tower is the list of its floors: no floor has a button; the gauge counts them, the car waiting at the lobby.
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(0);
   const gauge = page.getByTestId('scene').getByRole('slider');

@@ -2,3 +2,15 @@ Power Plant||ozone
 Processing Core||ozone
 Maintenance Bay||clicking
 Fuel Depot||humming
+Foundry||ozone
+Turbine Hall||humming
+Assembly Line||clicking
+Smelter||ozone
+Pump Room||humming
+Welding Bay||ozone
+Coolant Sump||frost
+Boiler Room||humming
+Tool Crib||clicking
+Press Shop||clicking
+Switchgear Room||ozone
+Scrap Hopper||clicking

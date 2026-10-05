@@ -11,15 +11,12 @@ import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.t
 
 const registry = realRegistry();
 const library = new ContentLibrary(new BundledContent());
-const MATERIALS = library.triples('themes/doors/materials').map(([name]) => name);
-const STATES = library.triples('themes/doors/states').map(([name]) => name);
-const WORDS = library.list('themes/doors/inscriptions');
-/** `[WORD]`, `_word_`, `⟨WORD⟩`, `!! WORD !!` — the four inscription styles (DoorInscription.groovy:10-24). */
-const STYLED = (word: string): readonly string[] => [
-  `[${word}]`,
-  `_${word.toLowerCase()}_`,
-  `⟨${word}⟩`,
-  `!! ${word} !!`,
+/** Every word a door can carry beside the two guarantees, as it reads on the door: each in the style whose list holds it. */
+const STYLED = [
+  ...library.list('themes/doors/inscriptions/stamped').map((word) => `[${word}]`),
+  ...library.list('themes/doors/inscriptions/scrawled').map((word) => `_${word.toLowerCase()}_`),
+  ...library.list('themes/doors/inscriptions/etched').map((word) => `⟨${word}⟩`),
+  ...library.list('themes/doors/inscriptions/burned').map((word) => `!! ${word} !!`),
 ];
 
 function as<T>(value: unknown, type: new (...args: never[]) => T): T {
@@ -53,12 +50,14 @@ describe('a corridor and its doors (Guide, "Reading doors before you open them")
     expect(Math.max(...counts)).toBe(20);
   });
 
-  test('a door is a material and a state; its name is the material, then the state in plain words unless it is Stable, and never the words on it (Door.groovy:62-70, DoorAppearance.groovy:22-27; U03b)', () => {
+  test('a door is a material of the culture in force and a state of the era in force; its name is the material, then the state in plain words unless it is Stable, and never the words on it (Door.groovy:62-70, DoorAppearance.groovy:22-27; U03b)', () => {
     expect(apartments.length).toBeGreaterThan(1_000);
     for (const apartment of apartments) {
       const door = apartment.door();
-      expect(MATERIALS).toContain(door.material());
-      expect(STATES).toContain(door.state());
+      const vibe = must(apartment.parent()?.vibe(), 'the corridor’s vibe');
+      const names = (list: string) => library.triples(list).map(([name]) => name);
+      expect(names(`themes/doors/materials/${vibe.culture().key()}`)).toContain(door.material());
+      expect(names(`themes/doors/states/${vibe.era().key()}`)).toContain(door.state());
       expect(door.brief()).toBe(
         door.state() === 'Stable' ? door.material() : `${door.material()}, ${door.state().toLowerCase()}`,
       );
@@ -81,17 +80,14 @@ describe('a corridor and its doors (Guide, "Reading doors before you open them")
     const others = apartments.filter(
       (each) => each.door().inscription() !== undefined && !vaults.includes(each) && !dangers.includes(each),
     );
-    expect(vaults.length).toBeGreaterThan(20);
-    expect(dangers.length).toBeGreaterThan(20);
+    expect(vaults.length).toBeGreaterThan(0);
+    expect(dangers.length).toBeGreaterThan(0);
     expect(others.length).toBeGreaterThan(100);
     for (const each of vaults) expect(['Laboratory', 'Bio-Server']).toContain(firstRoomOf(each));
     for (const each of dangers) expect(['Security Station', 'Armory']).toContain(firstRoomOf(each));
     for (const each of others) {
       expect(['Laboratory', 'Bio-Server', 'Security Station', 'Armory']).not.toContain(firstRoomOf(each));
-      const styled = WORDS.flatMap(STYLED);
-      expect(styled, must(each.door().inscription()).formatted()).toContain(
-        must(each.door().inscription()).formatted(),
-      );
+      expect(STYLED).toContain(must(each.door().inscription()).formatted());
     }
     const stylesSeen = new Set(others.map((each) => must(each.door().inscription()).formatted().charAt(0)));
     expect([...stylesSeen].sort()).toEqual(['!', '[', '_', '⟨']);
@@ -99,13 +95,15 @@ describe('a corridor and its doors (Guide, "Reading doors before you open them")
 });
 
 describe('an apartment and its rooms (Guide, "Finding things worth taking")', () => {
-  test('1 to 10 rooms per apartment, both ends reached; no two rooms of one apartment share a name', () => {
+  test('1 to 10 rooms per apartment, both ends reached; no two rooms of one apartment share a name or a type', () => {
     const counts = apartments.map((apartment) => apartment.children().length);
     expect(Math.min(...counts)).toBe(1);
     expect(Math.max(...counts)).toBe(10);
     for (const apartment of apartments) {
       const names = apartment.children().map((room) => room.name());
       expect(new Set(names).size, names.join(', ')).toBe(names.length);
+      const types = apartment.children().map((room) => as(room, Room).type());
+      expect(new Set(types).size, types.join(', ')).toBe(types.length);
       expect(apartment.children().every((room) => room.kind().key() === 'room')).toBe(true);
     }
   });

@@ -21,8 +21,8 @@ const FURNITURE = { min: 1, max: 3 };
 const ROOM: RoomShape = { kind: ROOM_KIND, make: (origin, facts) => new Room(origin, facts) };
 
 /**
- * A room: named `<adjective> <category>` — the category one of the trait's four, the adjective dealt by
- * the apartment so no two of its rooms share one (NameGenerator.groovy:127-148; ApartmentFactory.groovy:47-59);
+ * A room: named `<adjective> <category>` — each dealt by the apartment among its rooms, so no two of them
+ * share an adjective or a kind (`RoomCategories` owns the kinds' deal);
  * its atmosphere from its apartment's culture and era and its country's trait (`Atmospheres`); the atmo
  * traits (RoomFactory.groovy:51-54); one to three pieces of furniture (`Furnishings`). Its objects are the
  * apartment's business.
@@ -58,7 +58,7 @@ export class RoomFactory implements LocationFactory<Room, Apartment> {
     const trait = apartment.vibe()?.mutation();
     if (trait === undefined)
       throw new Error('a room takes its category from the country above: it needs one');
-    const category = this.#categories.categoryOf(origin.seed, trait);
+    const category = this.#categories.categoryOf(apartment.seed(), origin.index, trait);
     const adjective = this.#deal.nth(
       apartment.seed().branch('adjectives'),
       this.#library.list(`${ADJECTIVES}/${apartment.culture().key()}`),

@@ -1,6 +1,6 @@
-import type { Seed } from '#engine/rng/Seed.ts';
+import type { Tower } from './Tower.ts';
 
-/** What a floor factory asks of `FloorZones`: the zone a floor stands in, by its number in the building. */
+/** What a floor factory asks of `FloorZones`: the zone a floor stands in, by its number in its building. */
 export interface Zones {
-  zoneOf(seed: Seed, number: number, floors: number): string;
+  zoneOf(tower: Tower, number: number): string;
 }

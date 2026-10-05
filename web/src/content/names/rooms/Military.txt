@@ -2,3 +2,15 @@ Security Station|burned DANGER|clicking
 Barracks||humming
 Armory|burned DANGER|clicking
 Tactical Hub||humming
+Guard Post||clicking
+Brig||stillness
+Drill Hall||humming
+Munitions Locker||clicking
+War Room||humming
+Signal Bunker||ozone
+Mess Hall||humming
+Watch Room||stillness
+Interrogation Cell||stillness
+Quartermaster Store||clicking
+Firing Range||clicking
+Field Infirmary||stillness

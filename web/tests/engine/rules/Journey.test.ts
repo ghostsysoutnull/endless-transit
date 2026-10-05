@@ -40,7 +40,7 @@ function onTheStreet(): Journey {
   return trip;
 }
 
-/** …in the first room behind the first door of the lobby of Ornate Sanctum (16 floors, 9 doors). */
+/** …in the first room behind the first door of the lobby of Censed Altar (16 floors, 9 doors). */
 function inTheFirstRoom(): Journey {
   const trip = onTheStreet();
   expect(trip.descend(0)).toBe(true);
@@ -180,7 +180,7 @@ describe('Journey — where the traveller stands', () => {
 
   test('rooms: forward and back; leaving the first room lands on the floor, in the corridor; leaving the floor from there returns it to the elevator (HK-019)', () => {
     const trip = inTheFirstRoom();
-    expect(trip.here()?.name()).toBe('Grand Power Plant');
+    expect(trip.here()?.name()).toBe('Candlelit Maintenance Bay');
     expect(trip.move('back')).toBe(false);
     expect(trip.leave()).toBe(true);
     expect(trip.here()?.kind().key()).toBe('floor');

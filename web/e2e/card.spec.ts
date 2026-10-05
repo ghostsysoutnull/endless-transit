@@ -59,7 +59,7 @@ test('the corner turns the card to the room’s words and back, and picks nothin
   await expect(page.getByTestId('scene')).toBeVisible();
   await expect(page.locator('.desc')).toBeHidden();
   await expect(steps(page)).toHaveText(before ?? '');
-  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).toHaveText('Candlelit Maintenance Bay');
   expect(problems).toEqual([]);
 });
 
@@ -144,8 +144,8 @@ test('a travelling key tapped on the back turns the card to its picture first, t
   await press(page, /go forward/i, hasTouch);
   // The picture is up again while the first room is still the place: the ride plays where it can be seen.
   await expect(toWords(page)).toBeVisible();
-  await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
-  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).toHaveText('Candlelit Maintenance Bay');
+  await expect(page.getByTestId('place-name')).not.toHaveText('Candlelit Maintenance Bay');
   await expect(toWords(page)).toBeVisible();
 });
 
@@ -154,7 +154,7 @@ test('arriving, the line over the picture names the room and says its first word
 }) => {
   await inTheFirstRoom(page);
   const line = page.locator('.card .line');
-  await expect(line).toContainText('Grand Power Plant');
+  await expect(line).toContainText('Candlelit Maintenance Bay');
   await expect(line).toContainText('You are in gantry-braced architecture');
   await expect(line).toHaveCSS('opacity', '0', { timeout: 9000 });
 });
@@ -172,7 +172,7 @@ test('a relic taken from the back of the card is counted on the Buffer key; a wa
   await expect(page.getByTestId('stat-buffer')).toHaveText('2');
   await expect(toRoom(page)).toBeVisible();
   await press(page, /go forward/i, hasTouch);
-  await expect(page.getByTestId('place-name')).not.toHaveText('Grand Power Plant');
+  await expect(page.getByTestId('place-name')).not.toHaveText('Candlelit Maintenance Bay');
   await expect(toWords(page)).toBeVisible();
   await expect(page.getByRole('button', { name: /go back/i })).toBeVisible();
 });

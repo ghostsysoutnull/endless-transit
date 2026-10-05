@@ -2,3 +2,15 @@ Hydroponic Bay||stillness
 Spore Farm||stillness
 Oxygen Sump||stillness
 Growth Chamber||stillness
+Seed Vault||frost
+Grafting Room||stillness
+Irrigation Works||humming
+Compost Pit||stillness
+Root Cellar||frost
+Nutrient Vat||humming
+Algae Tank||stillness
+Mycelium Bed||stillness
+Threshing Floor||clicking
+Grain Silo||stillness
+Apiary||humming
+Germination Rack||stillness

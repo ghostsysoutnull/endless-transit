@@ -30,13 +30,18 @@ export class BuildingFactory implements LocationFactory<Building> {
 
   create(origin: Origin): Building {
     const street = origin.parent;
-    const culture = street?.vibe()?.culture();
-    if (street === undefined || culture === undefined) {
-      throw new Error('a building is named in the culture of its street: it needs a street under a planet');
+    const vibe = street?.vibe();
+    if (street === undefined || vibe === undefined) {
+      throw new Error(
+        'a building is named in the culture and era of its street: it needs a street under a planet',
+      );
     }
     const floors = this.#sizes.floorsOf(origin.seed);
-    const named = this.#namer.nameOf(origin.seed, {
-      culture,
+    const named = this.#namer.nameOf({
+      street: street.seed(),
+      index: origin.index,
+      culture: vibe.culture(),
+      era: vibe.era(),
       floors,
       depth: street.depth(),
       landmarkFactor: street.landmarkFactor(),

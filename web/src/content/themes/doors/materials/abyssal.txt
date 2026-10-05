@@ -1,0 +1,12 @@
+Pressure Hatch|A hatch built to hold back a weight of water, dogged at eight points.|metal
+Obsidian Slab|A slab of black volcanic glass with an edge on every chip.|glass
+Tar-Sealed Plate|A metal plate sealed to its frame with a bead of tar.|metal
+Substrate Scab|A scab of hardened substrate grown over an opening.|plain
+Fused Bone Door|A door of bones run together like wax.|bone
+Black-Glass Port|A port of black glass with something pale pressed against the far side.|glass
+Sump Grate|A grate over a door-shaped drain, slick underfoot.|metal
+Rib-Cage Arch|An arch of great ribs closed across the way.|bone
+Salt-Crust Slab|A stone slab under a crust of grey salt.|stone
+Drowned Timber Door|A door of timber black from long years under water.|timber
+Oil-Slick Membrane|A membrane with the colours of oil on water.|plain
+Bedrock Plug|A plug of the bedrock itself, cut and put back.|stone

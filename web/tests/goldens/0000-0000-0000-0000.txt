@@ -1,50 +1,50 @@
 === STREET ═ Sunken Glide  [frame grey]
-path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide *
+path: ∞ The Endless Universe > » Ha-874-Tendril > ○ Null Reach Sparse > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0
 tags: Way 1 of 10 (position) | Era Future (era) | Culture Void (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Sunken Glide.
 BUILDINGS ON THIS STREET
-  01 [1] Enter Building: Drifting Field
-  02 [2] Enter Building: HorizonWell
-  03 [3] Enter Building: Dark Well
-  04 [4] Enter Building: PlaneReach
-  05 [5] Enter Building: WellRoot
-  06 [6] Enter Building: WellRoot
-  07 [7] Enter Building: Blank Gravity
-  08 [8] Enter Building: ReachSpire
-  09 [9] Enter Building: HushWell
-  10 [A] Enter Building: EchoGate
-  11 [G] Enter Building: CellGate
-  12 [K] Enter Building: The Heart of the Strata LANDMARK
-  13 [O] Enter Building: Pale Aperture
-  14 [P] Enter Building: Abyssal Horizon
-  15 [W] Enter Building: HorizonFall
-  16 [X] Enter Building: ShadowGate
-  17 [Y] Enter Building: FieldReach
-  18 [Z] Enter Building: Silent Void
-  19 [] Enter Building: Unmarked Gravity
-  20 [] Enter Building: CellFall
-  21 [] Enter Building: Blank Gravity
-  22 [] Enter Building: Empty Cell
-[NEURAL_MAP: STREET] SCAN_ORIGIN: Sunken Glide | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ Empty Cell (unvisited)
+  01 [1] Enter Building: Stellar Nadir
+  02 [2] Enter Building: VacuumOrbit
+  03 [3] Enter Building: Drifting Well
+  04 [4] Enter Building: IntervalApex
+  05 [5] Enter Building: LacunaArc
+  06 [6] Enter Building: SilencePrism
+  07 [7] Enter Building: Remote Void
+  08 [8] Enter Building: ReachSail
+  09 [9] Enter Building: RemnantLift
+  10 [A] Enter Building: RiftVane
+  11 [G] Enter Building: EclipseBeacon
+  12 [K] Enter Building: Old Unimatrix Root LANDMARK
+  13 [O] Enter Building: Lost Shadow
+  14 [P] Enter Building: Hollow Horizon
+  15 [W] Enter Building: HushSail
+  16 [X] Enter Building: UmbraHelix
+  17 [Y] Enter Building: CellBeacon
+  18 [Z] Enter Building: Unlit Gravity
+  19 [] Enter Building: Absent Aperture
+  20 [] Enter Building: MarginOrbit
+  21 [] Enter Building: Dark Gap
+  22 [] Enter Building: Pale Absence
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Sunken Glide | ⌂ Stellar Nadir (unvisited) | ⌂ VacuumOrbit (unvisited) | ⌂ Drifting Well (unvisited) | ⌂ IntervalApex (unvisited) | ⌂ LacunaArc (unvisited) | ⌂ SilencePrism (unvisited) | ⌂ Remote Void (unvisited) | ⌂ ReachSail (unvisited) | ⌂ RemnantLift (unvisited) | ⌂ RiftVane (unvisited) | ⌂ EclipseBeacon (unvisited) | ⌂ Old Unimatrix Root (unvisited) | ⌂ Lost Shadow (unvisited) | ⌂ Hollow Horizon (unvisited) | ⌂ HushSail (unvisited) | ⌂ UmbraHelix (unvisited) | ⌂ CellBeacon (unvisited) | ⌂ Unlit Gravity (unvisited) | ⌂ Absent Aperture (unvisited) | ⌂ MarginOrbit (unvisited) | ⌂ Dark Gap (unvisited) | ⌂ Pale Absence (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
-=== BUILDING ⌂ HorizonWell  [frame grey]
-path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell *
+=== BUILDING ⌂ VacuumOrbit  [frame grey]
+path: ∞ The Endless Universe > » Ha-874-Tendril > ○ Null Reach Sparse > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ VacuumOrbit *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0
 tags: Building 2 of 22 (position) | Culture Void (culture) | Floors 18 (reading)
   An elevator runs the height of the building.
-status: Entered HorizonWell.
+status: Entered VacuumOrbit.
 TELEMETRY NOMINAL Quantum spectrogram 3 1 7 6 1 Resonant traces 0
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame grey]
-path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Ha-874-Tendril > ○ Null Reach Sparse > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ VacuumOrbit > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Void (culture) | Stability 90.00% (reading) | Trait Research (trait)
@@ -56,47 +56,47 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame grey]
-path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Ha-874-Tendril > ○ Null Reach Sparse > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ VacuumOrbit > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0
 tags: Culture Void (culture) | Doors 10 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
 DOORS
-  01 [1] Open Reinforced Polymer, warped
-       A slab of reinforced polymer, dull and unscratched. The panel has bowed outward and no longer meets its frame.
-  02 [2] Open Brutalist Slab, polished
-       A massive brutalist slab of pitted concrete. The surface is perfectly smooth and sterile. The word 'keep_walking' is scrawled across the surface in jagged, desperate lines.
-  03 [3] Open Industrial Barrier, polished
-       An industrial barrier of stamped steel and yellow chevrons. The surface is perfectly smooth and sterile.
-  04 [4] Open Oxidized Metal Hatch, vibrating
-       An oxidized metal hatch, its wheel-lock seized. The surface is vibrating with a low-frequency thrum.
-  05 [5] Open Reinforced Polymer, weeping
-       A slab of reinforced polymer, dull and unscratched. Moisture beads along the seams and runs in slow lines. The word 'signal_lost' is scrawled across the surface in jagged, desperate lines.
-  06 [6] Open Industrial Barrier
-       An industrial barrier of stamped steel and yellow chevrons. The structure appears stable.
-  07 [7] Open Riveted Iron Hatch, weeping
-       A hatch of riveted iron, its seams weeping orange. Moisture beads along the seams and runs in slow lines. The word 'DATA_VAULT' is stamped into the metal in block letters.
-  08 [8] Open Frosted Crystal Pane, weeping
-       A pane of frosted crystal, faintly luminous. Moisture beads along the seams and runs in slow lines.
-  09 [9] Open Lacquered Timber Gate, weeping
-       A timber gate under many coats of black lacquer. Moisture beads along the seams and runs in slow lines.
-  10 [A] Open Oxidized Metal Hatch, static
-       An oxidized metal hatch, its wheel-lock seized. The door is totally motionless, appearing almost like a static image.
+  01 [1] Open Smoked Pane, shimmering
+       A pane of smoked glass, darker toward the middle. The air just in front of it shimmers.
+  02 [2] Open Pale Membrane, ice-glazed
+       A pale membrane stretched flat across the opening. A clear glaze of ice covers it edge to edge. The word 'same_door_again' is scrawled across the surface in jagged, desperate lines.
+  03 [3] Open Chalk Slab, phase-locked
+       A slab of chalk that leaves white on whatever touches it. It is fixed in place so exactly that it looks drawn there.
+  04 [4] Open Seamless Plate, breathing
+       A metal plate that meets its frame without a line. The surface swells and settles, slowly, like a sleeper.
+  05 [5] Open Unmarked Hatch
+       A hatch with a wheel and nothing else, not even a number. The structure appears stable. The word 'keep_walking' is scrawled across the surface in jagged, desperate lines.
+  06 [6] Open Shadow-Lacquer Door, weightless
+       A wooden door lacquered a black that gives no reflection. It hangs a hair's breadth clear of its frame, touching nothing.
+  07 [7] Open Starless Screen, seamless
+       A dark glass screen, like a window onto a sky with nothing in it. There is no gap between it and its frame, only a change of colour. The word 'SIGNAL_LOST' is stamped across the door in block letters.
+  08 [8] Open Bleached Bone Door, glassy
+       A door of white plates fitted like the bones of a skull. The surface is so smooth that the eye slides off it.
+  09 [9] Open Ash-Grey Slab, sterile
+       A slab the grey of cold ash, the same in every light. The surface is clean in a way that nothing lived-in is.
+  10 [A] Open Blank Panel, iridescent
+       A blank panel with no seam, handle or mark. Colours slide across it as you pass.
 TELEMETRY NOMINAL Quantum spectrogram 6 6 8 9 1 Resonant traces 0
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
-=== ROOM □ Hollow Neural Link Array  [frame grey]
-path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Hollow Neural Link Array *
+=== ROOM □ Hollow Sensor Gallery  [frame grey]
+path: ∞ The Endless Universe > » Ha-874-Tendril > ○ Null Reach Sparse > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ VacuumOrbit > ▤ Floor 0 > ▅ Corridor > 🚪 Pale Membrane, ice-glazed > □ Hollow Sensor Gallery *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 0
-tags: Room 1 of 4 (position) | Era Future (era) | Type Neural Link Array (reading) | Oxygen 20% (reading) | Temp 23°C (reading) | Signal Clear (signal)
+tags: Room 1 of 4 (position) | Era Future (era) | Type Sensor Gallery (reading) | Oxygen 20% (reading) | Temp 23°C (reading) | Signal Clear (signal)
   You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
   The space is illuminated by a lattice of laser threads across the ceiling.
 Furniture: immaculate invisible support, dust-covered white light strip, sagging perfectly white tile
 Relics: 6
-status: Entered Hollow Neural Link Array.
+status: Entered Hollow Sensor Gallery.
 IN THIS ROOM: white light strip infused with smart glass <infused|white light strip|smart glass> | floating white sphere infused with plasma coil <infused|floating white sphere|plasma coil> | hovering disc fused to hologram projector <fused|hovering disc|hologram projector> | hologram projector grafted onto hidden speaker <grafted|hidden speaker|hologram projector> | empty frame infused with aerogel slab <infused|empty frame|aerogel slab> | quantum key <era|quantum key>
 TELEMETRY NOMINAL Quantum spectrogram 6 6 6 9 8 Resonant traces 0
 arrival: You are in geometry optimized for spectral observation. The walls are blue perfectly matte panels that swallow every shadow.
@@ -105,16 +105,16 @@ ways:
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
-=== ROOM □ Abyssal Bio-Server  [frame grey]
-path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Abyssal Bio-Server *
+=== ROOM □ Starless Calibration Room  [frame grey]
+path: ∞ The Endless Universe > » Ha-874-Tendril > ○ Null Reach Sparse > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ VacuumOrbit > ▤ Floor 0 > ▅ Corridor > 🚪 Pale Membrane, ice-glazed > □ Starless Calibration Room *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 0
-tags: Room 2 of 4 (position) | Era Future (era) | Type Bio-Server (reading) | Oxygen 16% (reading) | Temp 15°C (reading) | Signal Clear (signal)
+tags: Room 2 of 4 (position) | Era Future (era) | Type Calibration Room (reading) | Oxygen 16% (reading) | Temp 15°C (reading) | Signal Clear (signal)
   You are in modular experimental subspace. The walls are green white panels with no seams or shadows.
   The space is illuminated by light bent around a gravity plate.
 Furniture: upended white light strip
 Relics: 5
-status: Entered Abyssal Bio-Server.
+status: Entered Starless Calibration Room.
 IN THIS ROOM: neural link grafted onto silent fan <grafted|silent fan|neural link> | neural link with hidden speaker <with|hidden speaker|neural link> | neural link with floating white sphere <with|floating white sphere|neural link> | quantum key with silent fan <with|silent fan|quantum key> | white noise emitter infused with smart glass <infused|white noise emitter|smart glass>
 TELEMETRY NOMINAL Quantum spectrogram 8 4 8 1 3 Resonant traces 0
 arrival: You are in modular experimental subspace. The walls are green white panels with no seams or shadows.

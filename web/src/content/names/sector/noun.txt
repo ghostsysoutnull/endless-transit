@@ -4,13 +4,13 @@ Grid
 Matrix
 Zone
 Region
-Reach
+Stretch
 Expanse
 Span
 Arc
 Belt
 Field
-Drift
+Ridge
 Shoal
 Tract
 Verge

@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Folding|One corner of it is folded over, as paper is.|plain
+Recursive|In the middle of it is a smaller door, and in that a smaller one.|plain
+Doubled|There are two of it, a finger apart, sharing one frame.|plain
+Inverted|It is its own mirror image: the hinges are on the wrong side.|plain
+Partial|Part of it is not there, and the edge of the missing part is clean.|plain
+Mirrored|It shows the corridor behind you, without you in it.|plain
+Listening|It turns very slightly toward any sound.|plain
+Dreaming|Its surface moves with shapes that are almost pictures.|plain
+Void-rimed|A black rime has grown in from its edges and sealed them.|frost
+Absolute|It is as cold as a thing can be, and the air near it falls.|cold
+Unrendered|It is a flat, unfinished shape where a door should be.|static

@@ -2,7 +2,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, trailOf, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway, four buildings; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway, four buildings; its first building Censed Altar, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
@@ -82,7 +82,7 @@ test('on a street the pane beside the list is the drawn map; MAP draws it larger
     'Lattice map of Requiem Slipway: 4 nodes, 0 visited.',
   );
   await expect(pane.locator('.vh li')).toHaveCount(4);
-  await expect(pane.locator('.vh li').first()).toHaveText('⌂ Ornate Sanctum, unvisited');
+  await expect(pane.locator('.vh li').first()).toHaveText('⌂ Censed Altar, unvisited');
   await expect(page.getByTestId('telemetry')).toHaveCount(0);
   await expectDrawn(pane.locator('.cv'), 'the pane map', 'bottom');
   await expect(page.getByTestId('map')).toHaveCount(0);

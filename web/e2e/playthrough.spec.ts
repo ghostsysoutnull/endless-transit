@@ -6,7 +6,7 @@ import { expectTouchable, press, saveText, tapOption, watchForErrors } from './s
  * on both profiles against the production build. Run alone with `npx playwright test --grep @playthrough`.
  */
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Censed Altar, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const PEAK = 15;
 
@@ -56,7 +56,7 @@ test(
     await expect(page.getByTestId('coherence')).toHaveText('100%');
     await expectTouchable(page, 'street');
     await tapOption(page, 'enter:0', hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('Ornate Sanctum');
+    await expect(page.getByTestId('place-name')).toHaveText('Censed Altar');
     const gauge = page.getByTestId('scene').getByRole('slider');
     await expect(gauge).toHaveAttribute('aria-valuemax', '16');
     await tapOption(page, `enter:${String(PEAK)}`, hasTouch); // the lobby is listed last
@@ -67,7 +67,7 @@ test(
     await shoot(page, '2-corridor');
     await tapOption(page, 'enter:0', hasTouch);
     await expect(page.getByTestId('place-kind')).toHaveText('ROOM');
-    await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+    await expect(page.getByTestId('place-name')).toHaveText('Candlelit Maintenance Bay');
     await expect(page.locator('button.tile')).toHaveCount(4);
     await expect(page.getByTestId('coherence')).toHaveText('96%');
     await expect(stat(page, 'Steps')).toHaveText('4');
@@ -112,7 +112,7 @@ test(
 
     // The ritual under ?debug: PRIME stands in for a floor-by-floor run; the next merge inside forges the Keystone.
     await tapOption(page, 'enter:0', hasTouch);
-    await expect(page.getByTestId('place-name')).toHaveText('Grand Power Plant');
+    await expect(page.getByTestId('place-name')).toHaveText('Candlelit Maintenance Bay');
     await tapOption(page, 'debug:prime', hasTouch);
     await expect(page.getByTestId('status')).toHaveText(
       'Building primed: every floor sampled, seven merges in.',
@@ -122,7 +122,7 @@ test(
     await tapOption(page, 'pick:0', hasTouch);
     await tapOption(page, 'pick:1', hasTouch);
     await expect(page.getByTestId('status')).toContainText('KEYSTONE_STABILIZED');
-    await expect(page.locator('.frag', { hasText: 'Ornate Sanctum Keystone' })).toHaveCount(1);
+    await expect(page.locator('.frag', { hasText: 'Censed Altar Keystone' })).toHaveCount(1);
     await press(page, /^back$/i, hasTouch);
     await expect(page.getByTestId('coherence')).toHaveText('100%');
 

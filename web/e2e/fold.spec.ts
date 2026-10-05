@@ -2,13 +2,13 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Censed Altar, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
 const LOBBY = `${BUILDING}.0`;
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
-/** Layer −1 below Ornate Sanctum's sixteen floors, reached once the bedrock is breached (U04 draws it). */
+/** Layer −1 below Censed Altar's sixteen floors, reached once the bedrock is breached (U04 draws it). */
 const LAYER = `${BUILDING}.16`;
 const BREACHED = '{"elevator":-1,"breached":true}';
 /** The lobby's second door: an apartment of one room — no move, eighteen relics; its first button is a relic's tile (U03). */

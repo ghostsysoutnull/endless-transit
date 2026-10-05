@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Seamless|There is no gap between it and its frame, only a change of colour.|plain
+Sterile|The surface is clean in a way that nothing lived-in is.|plain
+Iridescent|Colours slide across it as you pass.|plain
+Breathing|The surface swells and settles, slowly, like a sleeper.|plain
+Shimmering|The air just in front of it shimmers.|plain
+Knitting|A scratch on it is closing as you watch.|plain
+Weightless|It hangs a hair's breadth clear of its frame, touching nothing.|plain
+Glassy|The surface is so smooth that the eye slides off it.|plain
+Ice-glazed|A clear glaze of ice covers it edge to edge.|frost
+Cryogenic|A deep cold rolls off it and pools at your feet.|cold
+Phase-locked|It is fixed in place so exactly that it looks drawn there.|static

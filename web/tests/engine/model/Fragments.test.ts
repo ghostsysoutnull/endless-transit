@@ -11,7 +11,7 @@ import { Seed } from '#engine/rng/Seed.ts';
 import { must, realRegistry } from '#tests/support/world.ts';
 
 const SEED = new Seed(0x7f3a91c2, 0x0b4de6a8);
-/** Grand Power Plant: the first room behind the first door off the lobby of Ornate Sanctum, Requiem Slipway. */
+/** Candlelit Maintenance Bay: the first room behind the first door off the lobby of Censed Altar, Requiem Slipway. */
 const FIRST_ROOM = '0.0.0.0.0.0.0.0.0.0.0.0.0';
 const SECOND_ROOM = '0.0.0.0.0.0.0.0.0.0.0.0.1';
 /** The first room behind the second door: a room of another apartment. */

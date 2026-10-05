@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, trailOf, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Censed Altar, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
@@ -10,7 +10,7 @@ const LOBBY = `${BUILDING}.0`;
 const PEAK = `${BUILDING}.15`;
 /** The first Layer on the breached building's list: after its sixteen floors. */
 const FIRST_LAYER = 'enter:16';
-/** Grand Power Plant: four relics, the apartment's culture the header's (every take resonates). */
+/** Candlelit Maintenance Bay: four relics, the apartment's culture the header's (every take resonates). */
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
 const KEYSTONE = { kind: 'keystone', building: BUILDING };
 /** The ritual done: every floor sampled, seven merges in (Guide:263-270) — what the debug PRIME writes. */
@@ -52,11 +52,11 @@ test('scan a corridor: the door table as a panel under the narrative — trace, 
   await expect(scan).toBeVisible();
   await expect(scan.locator('.heading')).toHaveText('[DATA_SUMMARY]');
   await expect(scan.locator('.srow')).toHaveCount(9);
-  await expect(scan.locator('.srow').first()).toContainText('TRACE Ozone');
-  await expect(scan.locator('.srow').first()).toContainText('INSCRIPTION _void_sink_');
-  await expect(scan.locator('.srow').first()).toContainText('ROOM_TYPE Power Plant');
+  await expect(scan.locator('.srow').first()).toContainText('TRACE Clicking');
+  await expect(scan.locator('.srow').first()).toContainText('INSCRIPTION _do_not_sleep_');
+  await expect(scan.locator('.srow').first()).toContainText('ROOM_TYPE Maintenance Bay');
   await expect(scan.locator('.srow').first().locator('.snote')).toContainText(
-    'A sharp smell of ozone escapes the frame',
+    'A persistent, rhythmic clicking sound',
   );
   await expect(page.getByTestId('coherence')).toHaveText('99%');
   await expect(stat(page, 'Steps')).toHaveText('0');
@@ -66,10 +66,10 @@ test('scan a corridor: the door table as a panel under the narrative — trace, 
   await expect(page.getByTestId('scan')).toHaveCount(0);
   await press(page, /^scan$/i, hasTouch);
   await expect(scan.locator('.heading')).toHaveText('NEURAL_PROXIMITY_REPORT');
-  await expect(scan.locator('.tl').first()).toHaveText('BUILDING: Ornate Sanctum');
+  await expect(scan.locator('.tl').first()).toHaveText('BUILDING: Censed Altar');
   await expect(scan.locator('.srow')).toHaveCount(3);
   await expect(scan.locator('.srow.you')).toHaveCount(1);
-  await expect(scan.locator('.srow.you')).toContainText('TRANSIT_LOBBY');
+  await expect(scan.locator('.srow.you')).toContainText('FREIGHT_CONCOURSE');
   expect(problems).toEqual([]);
 });
 
@@ -101,11 +101,11 @@ test('forge the Keystone: prime the building with the debug tool, take two relic
   await tapOption(page, 'pick:0', hasTouch);
   await tapOption(page, 'pick:2', hasTouch);
   await expect(page.getByTestId('status')).toHaveText(
-    'Critical waveform collapse: KEYSTONE_STABILIZED. The fragments merge into a silent, heavy anchor: Ornate Sanctum Keystone. Coherence +15.',
+    'Critical waveform collapse: KEYSTONE_STABILIZED. The fragments merge into a silent, heavy anchor: Censed Altar Keystone. Coherence +15.',
   );
   await expect(rows).toHaveCount(2);
   await expect(rows.nth(1)).toContainText('0 Hz');
-  await expect(rows.nth(1)).toContainText('Ornate Sanctum Keystone');
+  await expect(rows.nth(1)).toContainText('Censed Altar Keystone');
   await expect(rows.nth(1).locator('.badge')).toHaveCount(0);
   await shoot(page, '2-keystone-forged');
   await press(page, /^back$/i, hasTouch);

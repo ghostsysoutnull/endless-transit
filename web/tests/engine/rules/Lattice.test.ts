@@ -12,7 +12,7 @@ import { must, realRegistry } from '#tests/support/world.ts';
 const FIRST = new Seed(0x7f3a91c2, 0x0b4de6a8);
 const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
-/** Layer −1 is child 16 of the sixteen-floor Ornate Sanctum. */
+/** Layer −1 is child 16 of the sixteen-floor Censed Altar. */
 const LAYER = `${BUILDING}.16`;
 
 function engineOn(saves = new MemorySaveStore(), debug = true): GameEngine {
@@ -59,10 +59,10 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
       frame: 'yellow',
       abyssal: false,
       nodes: [
-        { x: 7, y: 12, glyph: '⌂', name: 'Ornate Sanctum', visited: false, noise: false },
-        { x: 15, y: 7, glyph: '⌂', name: 'The Spire of Static', visited: false, noise: false },
-        { x: 12, y: 2, glyph: '⌂', name: 'ArchiveRoot', visited: false, noise: false },
-        { x: 29, y: 14, glyph: '⌂', name: 'SpireFall', visited: false, noise: false },
+        { x: 7, y: 12, glyph: '⌂', name: 'Censed Altar', visited: false, noise: false },
+        { x: 15, y: 7, glyph: '⌂', name: 'The Cloister of Signals', visited: false, noise: false },
+        { x: 12, y: 2, glyph: '⌂', name: 'ChapterhouseApex', visited: false, noise: false },
+        { x: 29, y: 14, glyph: '⌂', name: 'ArchiveHelix', visited: false, noise: false },
       ],
       marks: [],
     });
@@ -82,7 +82,7 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
   test('a node is the place as its parent lists it: the sixteen floors and, once breached, the ten Layers as ☠; a visited floor is bright', () => {
     const engine = engineOn(new MemorySaveStore(saveText(BUILDING)));
     const sealed = lattice(engine.snapshot());
-    expect(sealed.origin).toEqual({ name: 'Ornate Sanctum', glyph: '⌂' });
+    expect(sealed.origin).toEqual({ name: 'Censed Altar', glyph: '⌂' });
     // The floors as the building lists them, top first (Guide:111); the Layers are not listed until the breach.
     expect(sealed.nodes.map((node) => node.name)).toEqual(
       Array.from({ length: 16 }, (_, n) => `Floor ${String(15 - n)}`),
@@ -111,15 +111,15 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
     ]);
     expect(below.nodes.map((node) => node.glyph).join('')).toBe('☠☠☠☠☠☠☠X☠');
     expect(below.nodes.map((node) => node.name)).toEqual([
-      'Frosted Crystal Pane, humming',
-      'Bone-Lattice Aperture, humming',
-      'Heavy Bulkhead',
-      'Frosted Crystal Pane, polished',
-      'Bone-Lattice Aperture, pitted',
-      'Frosted Crystal Pane, rusted',
-      'Pitted Concrete, static',
-      'Reinforced Polymer, cold',
-      'Pitted Concrete, scorched',
+      'Bedrock Plug, pitted',
+      'Oil-Slick Membrane, warped',
+      'Tar-Sealed Plate, tagged',
+      'Obsidian Slab, scorched',
+      'Black-Glass Port, overexposed',
+      'Pressure Hatch, fused',
+      'Drowned Timber Door, ice-locked',
+      'Substrate Scab, leeching',
+      'Rib-Cage Arch, blistered',
     ]);
     breached.step('leave');
     const building = lattice(breached.snapshot());
@@ -153,15 +153,15 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
     expect(corridor.place?.lattice?.nodes.map((node) => node.glyph)).toEqual(Array<string>(9).fill('🚪'));
     // A door is named as the corridor names it; the one walked through is the visited one.
     expect(corridor.place?.lattice?.nodes.map((node) => `${node.name}${node.visited ? ' *' : ''}`)).toEqual([
-      'Brutalist Slab, pitted *',
-      'Lacquered Timber Gate, weeping',
-      'Synth-Glass Slab, pitted',
-      'Riveted Iron Hatch, frozen',
-      'Industrial Barrier, scorched',
-      'Synth-Glass Slab, pitted',
-      'Frosted Crystal Pane, weeping',
-      'Synth-Glass Slab, scorched',
-      'Reinforced Polymer, rusted',
+      'Velvet-Padded Door, iridescent *',
+      'Rose-Window Pane',
+      'Censer-Grille Gate, knitting',
+      'Choir-Stall Door, seamless',
+      'Ivory Inlay Door, cryogenic',
+      'Gilt Chapel Door, shimmering',
+      'Fresco Panel, glassy',
+      'Carved Oak Portal, breathing',
+      'Brass Reliquary Hatch, weightless',
     ]);
     expect(corridor.place?.telemetry).not.toBeNull();
     // The same doors at the elevator: a floor's map is its own rooms in either mode.
@@ -253,14 +253,14 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
       shown.trace?.steps.map((step) => `${String(step.depth)} ${step.icon} ${step.kind} : ${step.name}`),
     ).toEqual([
       '0 ∞ Universe : The Endless Universe',
-      '1 » Cosmic filament : Lambda-915-Link',
+      '1 » Cosmic filament : Uniform-915-Tether',
       '2 ○ Galactic sector : Upper Shoal 91',
       '3 ☼ Solar system : Alcor Prime',
       '4 ⊕ Planet : Dominia',
       '5 ⬚ Country : Ancient Vesper Assembly',
       '6 🏙 City : Angeltether',
       '7 ═ Street : Requiem Slipway',
-      '8 ⌂ Building : Ornate Sanctum',
+      '8 ⌂ Building : Censed Altar',
       '9 ▤ Floor : Floor 15',
     ]);
     expect(shown.trace?.steps.map((step) => step.current)).toEqual([...Array<boolean>(9).fill(false), true]);
@@ -312,11 +312,11 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     );
     const shown = engine.step('trace');
     expect(shown.trace?.steps.slice(8).map((step) => `${step.icon} ${step.kind} : ${step.name}`)).toEqual([
-      '⌂ Building : Ornate Sanctum',
+      '⌂ Building : Censed Altar',
       '▤ Layer : Layer -0x1',
       '▅ Artery : Artery',
-      '🚪 Crypt : Frosted Crystal Pane, humming',
-      '☠ Shard : Inverted Processing Core',
+      '🚪 Crypt : Bedrock Plug, pitted',
+      '☠ Shard : Dangling Power Plant',
     ]);
     expect(shown.trace?.steps.map((step) => step.abyssal)).toEqual([
       ...Array<boolean>(9).fill(false),
@@ -360,7 +360,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     ]);
     const artery = must(steps[10]).vibe;
     expect(artery.held === 'country' && artery.main).toEqual({ era: 'atomic', culture: 'abyssal' });
-    expect(must(steps[11]).signs).toContainEqual({ look: 'door', word: 'humming' });
+    expect(must(steps[11]).signs).toContainEqual({ look: 'door', word: 'pitted' });
   });
 
   test('MAP and TRACE are on offer everywhere in the world, never at the title; MAP is keyed m, TRACE has no key', () => {
