@@ -149,8 +149,13 @@ parents first and holds the trail, and may name a sealed place (the reboot keeps
 back **through the world** by the `FragmentReader`, which refuses data the fragment would not write back.
 
 **Content.** The `.txt` lists were copied from `terminal/src/main/resources` (byte-identical, `cmp`-checked) and are
-owned by the web game from then on. Every directory has one `index.txt`; **order is the index's order**, never a
-glob's; which cultures exist is `themes/cultures/index.txt` alone. Objects come from a shuffled deck per
+owned by the web game from then on; the place-name lists have grown since. Every directory has one `index.txt`, but
+one keyed by a culture, an era or a trait, whose members are its axis's keys; **order is the index's order**, never a
+glob's; which cultures exist is `themes/cultures/index.txt` alone. A place's name is one word a part, each dealt among
+the siblings on the parent's seed (`NameParts`), so places listed together share no word; a name kind's index line
+`part|axis` says whether a part is one list (`shared`) or a directory of lists keyed by the culture, the era or the
+trait of the vibe in force (`NameAxes`): a planet, a country, a city and a street are named in the words of their vibe,
+a rebel district in its swapped pair. Objects come from a shuffled deck per
 culture × era (no card twice in an apartment), furniture is condition + culture item, atmosphere text glitches by
 the room's anomaly. Every list has a size floor pinned by `tests/content/ContentFloors.test.ts`.
 
