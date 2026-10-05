@@ -37,7 +37,7 @@ crewed by sleepers. Everything about it is hand-written; nothing is generated (I
 | Decks placed by function | bridge on top, habitat, the trait's decks, cargo with the airlock, reactor at the bottom | PICK |
 | The airlock | deck 1, the only way in | PICK (§7 #6) |
 | Hearts | five single named rooms a building has nothing like: reactor, bridge, pod, hold3, cryo | PICK |
-| Middle decks | filled from the trait's four room types (`RoomCategory`) | PICK — the mock hand-writes them |
+| Middle decks | filled from the trait's room types (`RoomCategory`) | PICK — the mock hand-writes them |
 
 ## 2. Dark and lit — explored twice
 

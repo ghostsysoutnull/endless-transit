@@ -37,7 +37,7 @@
 | :-- | :-- | :-- |
 | **Culture** | walls, names, objects | who built it: hull, walls, names |
 | **Era** | lighting, objects, drain | when it was built, and so how it flies: an ancient generation ark, an atomic pulse-drive, a singularity cube |
-| **Trait** | the country's four room types | the ship's **class**: Military → warship, Research → science vessel, Industrial → hauler, Agricultural → hydroponic ark, Ceremonial → tomb ship, Commercial → trader. The existing four-room-types-per-trait table fills the middle decks |
+| **Trait** | the country's sixteen room types | the ship's **class**: Military → warship, Research → science vessel, Industrial → hauler, Agricultural → hydroponic ark, Ceremonial → tomb ship, Commercial → trader. The existing four-room-types-per-trait table fills the middle decks |
 | **Fate** *(new, ships only)* | — | what happened: derelict, dormant, adrift, crewed by sleepers, assimilated. Fate writes the log |
 
 ## 3. The arc

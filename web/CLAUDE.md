@@ -15,10 +15,12 @@ Lessons: @../tasks/lessons/web.md
 no `Math.random`. It receives what it needs through interfaces it owns (`ContentSource`, `SaveStore`, `EntropySource`,
 `WarningSink` — a list an index promised and the content lacks is a `[THEME_WARN]`, never a silent fallback).
 `src/content/` the `.txt` lists + the ONE `import.meta.glob` (`BundledContent`). **Order = the `index.txt` order.**
-Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture, by era or by trait
-(`names/rooms`, keyed by `themes/traits.txt`), carry no index of their own. A place-name kind's index says `part|axis`
-on every line: `shared` is one list; `culture`, `era` or `trait` a directory of lists keyed by it (`NameAxes`). A name
-part keyed by culture holds the nine surface cultures of `themes/planet-frames.txt`, not the lexicons' ten.
+Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture, by era, by trait
+(`names/rooms`, keyed by `themes/traits.txt`) or by the way a door's word is written carry no index of their own. A
+place-name kind's index says `part|axis` on every line: `shared` is one list; `culture`, `era` or `trait` a directory
+of lists keyed by it; `family` a directory with its own index, one list of it picked for all the children of a parent
+(`NameAxes`). A name part keyed by culture holds the nine surface cultures of `themes/planet-frames.txt`, not the
+lexicons' ten.
 `src/platform/` browser adapters. `src/ui/` screens, input, styles — depends on the engine, never the reverse;
 `src/ui/canvas/` and `src/ui/scene/` hold the only hand-written canvas code.
 `src/main.ts` the composition root: the only place adapters are built.

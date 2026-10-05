@@ -154,15 +154,16 @@ builder); none of these is a bug or a fact in two places.
 ### HK-041 — the place names' design check: logged findings (tidying, one line each)
 **Found:** 2026-10-05, the one design check of the place names (`master..words/place-names`); its two fixes are in;
 none of these is a bug the player meets today or a fact in two places.
-- The name lists' floors are literals in `ContentFloors.test.ts`: nothing ties them to the most siblings a kind can
-  have, so a raised child count would let a deal start over unseen. `NameParts` could refuse an index past its list.
-- `NameParts.#parts` is filled inside `words()`: a bad index line is refused at the first naming, not when the
-  registry is built. Build it in the constructor.
+- The name lists' floors are literals in `ContentFloors.test.ts` — and, since the names fast loop, the floors of the
+  buildings', rooms', zones' and doors' lists: nothing ties them to the most siblings a kind can have, so a raised
+  child count would let a deal start over unseen. `NameParts` could refuse an index past its list (the door lists
+  are shorter than the longest corridor by the user's pick, so not `Doors`).
+- `NameParts.#parts` is filled inside `words()`: a bad index line — and a family part's empty index — is refused at
+  the first naming, not when the registry is built. Build it in the constructor.
 - `KeyedPart` holds its two refusals as a function in a field, and `Vibe | undefined` travels from the factory to it
   before it is refused: hand it the plain key reader and refuse in its own `list()`.
-- `NameParts` and `LibraryNames` take the concrete `NameAxes` where the dealer has an interface.
-- `BundledContent.test.ts`'s file and directory counts fail only on an intended addition (older than this piece,
-  re-pinned by it): delete the counts.
+- `NameParts` and `LibraryNames` take the concrete `NameAxes` where the dealer has an interface; `NameAxes` takes
+  the content library too, so the library enters the name machinery twice.
 - `PlaceNames.test.ts` counts the rebel districts among a country's cities, not the walked city, so a rebel
   district's streets are not sure to be checked: count the walked one.
 
