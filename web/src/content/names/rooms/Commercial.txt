@@ -2,3 +2,15 @@ Trading Floor||stillness
 Logic Market||stillness
 Credit Hub||humming
 Supply Node||clicking
+Counting House||clicking
+Auction Pit||stillness
+Bonded Store||stillness
+Ledger Room||clicking
+Vending Arcade||humming
+Customs Desk||stillness
+Showroom||stillness
+Loading Dock||clicking
+Broker's Booth||stillness
+Cold Store||frost
+Pawn Cage||stillness
+Exchange Kiosk||humming

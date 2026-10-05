@@ -2,7 +2,7 @@ import type { DoorInscription } from './DoorInscription.ts';
 import type { Trace } from './Trace.ts';
 
 /**
- * A kind of room — `Laboratory`, `Armory` … — one of the four a country's trait allows. Identity is its
+ * A kind of room — `Laboratory`, `Armory` … — one of those a country's trait allows. Identity is its
  * name. A category may guarantee the words on the door of an apartment it is first in (Guide:223), and it
  * names the trace that door carries (Guide:204-217; RoomCategory.groovy:14-53).
  */

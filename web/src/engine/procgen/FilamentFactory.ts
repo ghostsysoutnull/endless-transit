@@ -13,7 +13,8 @@ import type { Offspring } from './Offspring.ts';
 const NULL_REACH_CHANCE = 0.3;
 
 /**
- * A cosmic filament: named `Greek-number-type`, with a conduit id; 4 to 8 nodes, each of which rolls —
+ * A cosmic filament: named `letter-number-type` — the letter of the one alphabet its universe letters its
+ * filaments in — with a conduit id; 4 to 8 nodes, each of which rolls —
  * on its own seed — a 30% chance of being a Null Reach instead of a galactic sector.
  */
 export class FilamentFactory implements LocationFactory {
@@ -32,11 +33,11 @@ export class FilamentFactory implements LocationFactory {
   }
 
   create(origin: Origin): CosmicFilament {
-    const [greek, type] = this.#names.words(origin, undefined);
+    const [letter, type] = this.#names.words(origin, undefined);
     const number = this.#names.naming(origin.seed).branch('number').range(0, 998);
     const conduit = origin.seed.branch('conduit').range(0, 0xfffe);
     return new CosmicFilament(origin, {
-      name: `${String(greek)}-${String(number)}-${String(type)}`,
+      name: `${String(letter)}-${String(number)}-${String(type)}`,
       conduitId: `0x${conduit.toString(16)}`,
     });
   }

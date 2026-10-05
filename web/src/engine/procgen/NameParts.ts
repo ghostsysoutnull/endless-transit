@@ -41,7 +41,7 @@ export class NameParts implements Names {
       .pairs(`${this.#directory}/index`)
       .map(([name, axis]) => this.#axes.part(this.#directory, name, axis));
     return this.#parts.map((part) =>
-      this.#deal.nth(dealt.branch(part.name()), this.#library.list(part.list(vibe)), slot.index),
+      this.#deal.nth(dealt.branch(part.name()), this.#library.list(part.list(slot, vibe)), slot.index),
     );
   }
 

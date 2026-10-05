@@ -2,3 +2,15 @@ Laboratory|stamped DATA_VAULT|ozone
 Neural Link Array||ozone
 Observation Deck||stillness
 Bio-Server|stamped DATA_VAULT|ozone
+Clean Room||stillness
+Specimen Vault||frost
+Cryo Bank||frost
+Test Chamber||ozone
+Particle Trap||ozone
+Simulation Bay||humming
+Calibration Room||clicking
+Sample Library||stillness
+Isolation Ward||stillness
+Sensor Gallery||clicking
+Dissection Theatre||stillness
+Wave Tank||humming

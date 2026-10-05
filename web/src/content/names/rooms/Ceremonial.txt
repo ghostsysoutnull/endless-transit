@@ -2,3 +2,15 @@ Prayer Hall||stillness
 Ritual Chamber||stillness
 Archive||stillness
 Memory Well||frost
+Reliquary||frost
+Ossuary||frost
+Confessional||stillness
+Choir Loft||humming
+Vestry||stillness
+Scriptorium||stillness
+Bell Chamber||humming
+Offering Room||stillness
+Vigil Cell||stillness
+Anointing Room||stillness
+Oracle Terminal||ozone
+Inner Shrine||stillness

@@ -5,22 +5,27 @@ import { RoomCategory } from '#engine/model/RoomCategory.ts';
 import { Trace } from '#engine/model/Trace.ts';
 import type { Trait } from '#engine/model/Trait.ts';
 import type { Seed } from '#engine/rng/Seed.ts';
+import type { Dealer } from './Dealer.ts';
 
 const LISTS = 'names/rooms';
+/** The branch of an apartment's seed its rooms' kinds are dealt on. */
+const DEALT = 'categories';
 
 /**
  * Owns one fact: which kinds of room a country's trait allows, and which of them a room is — the list
- * `names/rooms/<Trait>` (four lines of `name|guarantee|trace`: the door words it guarantees or none, and
- * the trace its door carries), one drawn on the room's own seed (NameGenerator.groovy:131-141). The same
- * draw, made on the first room's seed, is how a door learns what it leads to (CorridorFactory.groovy:44-45).
- * Built once per trait.
+ * `names/rooms/<Trait>` (a line is `name|guarantee|trace`: the door words it guarantees or none, and the
+ * trace its door carries), dealt among an apartment's rooms on the apartment's seed: room `i` takes the
+ * `i`-th of the deal, so no two rooms of an apartment are of one kind while the list lasts. The same deal,
+ * asked for room 0, is how a door learns what it leads to. Built once per trait.
  */
 export class RoomCategories {
   readonly #library: ContentLibrary;
+  readonly #deal: Dealer;
   readonly #byTrait = new Map<string, readonly RoomCategory[]>();
 
-  constructor(library: ContentLibrary) {
+  constructor(library: ContentLibrary, deal: Dealer) {
     this.#library = library;
+    this.#deal = deal;
   }
 
   allowedBy(trait: Trait): readonly RoomCategory[] {
@@ -40,8 +45,9 @@ export class RoomCategories {
     return categories;
   }
 
-  categoryOf(roomSeed: Seed, trait: Trait): RoomCategory {
-    return roomSeed.branch('category').pick(this.allowedBy(trait));
+  /** The kind of room `index` of the apartment born from this seed. */
+  categoryOf(apartmentSeed: Seed, index: number, trait: Trait): RoomCategory {
+    return this.#deal.nth(apartmentSeed.branch(DEALT), this.allowedBy(trait), index);
   }
 
   /** `stamped DATA_VAULT` → the inscription; an empty guarantee is none; an unknown style is an error. */

@@ -52,10 +52,10 @@ export class LocationRegistry implements FactoryLookup {
   constructor(library: ContentLibrary, themes: ThemeCatalog, warnings: WarningSink) {
     // The engine's composition root: each factory's parts built once here and handed in; each factory keeps its own
     // facts (how many children, which kind, which list) and asks the makers for them.
-    const categories = new RoomCategories(library);
     const offspring = new ProgenyMaker(this);
     const deal = new Deal();
-    const names = new LibraryNames(library, deal, new NameAxes());
+    const categories = new RoomCategories(library, deal);
+    const names = new LibraryNames(library, deal, new NameAxes(library));
     const decks = new LibrarySentences(library);
     const doors = new Doors(library);
     const words = new CorridorWords(decks);

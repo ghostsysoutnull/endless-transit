@@ -27,7 +27,7 @@ function names(): LibraryNames {
       'names/odd/index.txt': 'word|colour',
     }),
   );
-  return new LibraryNames(library, new Deal(), new NameAxes());
+  return new LibraryNames(library, new Deal(), new NameAxes(library));
 }
 
 /** Child `index` of one parent: every slot here shares the parent's seed. */
