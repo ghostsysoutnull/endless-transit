@@ -1,3 +1,4 @@
+import type { GlyphLook } from '#engine/model/GlyphLook.ts';
 import type { TraceColumnVM } from './TraceColumnVM.ts';
 import type { OptionVM } from '#ui/OptionVM.ts';
 import type { Screen } from '#ui/Screen.ts';
@@ -23,6 +24,8 @@ export interface HudVM extends Screen {
    */
   readonly rail: readonly {
     readonly icon: string;
+    /** The mark its level is drawn with on the rail. */
+    readonly glyph: GlyphLook;
     readonly kind: string;
     readonly name: string;
     readonly address: string;

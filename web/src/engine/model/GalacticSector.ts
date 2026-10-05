@@ -42,10 +42,6 @@ export class GalacticSector extends Location {
     return 'Solar systems within proximity';
   }
 
-  approachVerb(): string {
-    return 'Transition to System:';
-  }
-
   /** Drawn as an area of its children (U04). */
   override portrait(): Portrait {
     return this.area('sector');

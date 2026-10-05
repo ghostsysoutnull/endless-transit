@@ -28,6 +28,7 @@ import { EaseOut } from '#ui/scene/EaseOut.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
+import { DepthRail } from '#ui/scene/DepthRail.ts';
 import { Dive } from '#ui/scene/Dive.ts';
 import { LiveBand } from '#ui/scene/LiveBand.ts';
 import { NoTear } from '#ui/scene/NoTear.ts';
@@ -190,6 +191,8 @@ new Shell(
           keys,
         }),
         keys,
+        // The depth rail: the levels' marks are the pole's own glyphs.
+        new DepthRail({ canvases: canvasMaker, clock, motion, glyphs: pictures.glyphs() }),
       ),
     ),
   ],

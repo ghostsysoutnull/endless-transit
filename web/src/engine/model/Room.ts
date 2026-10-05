@@ -381,8 +381,4 @@ export class Room extends Location {
   childrenHeading(): string {
     return '';
   }
-
-  approachVerb(): string {
-    return '';
-  }
 }

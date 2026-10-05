@@ -69,10 +69,6 @@ export class CorridorState implements FloorState {
     return floor.corridor().childrenHeading();
   }
 
-  approachVerb(floor: Floor): string {
-    return floor.corridor().approachVerb();
-  }
-
   /** In the corridor the scan is the corridor's own: the door table (CorridorState.groovy:50-53). */
   scan(floor: Floor, seen: (place: Location) => boolean): ScanReport | undefined {
     return floor.corridor().scan(seen);

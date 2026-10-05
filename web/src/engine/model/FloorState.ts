@@ -27,7 +27,6 @@ export interface FloorState {
   description(floor: Floor): readonly string[];
   status(floor: Floor): string;
   childrenHeading(floor: Floor): string;
-  approachVerb(floor: Floor): string;
   /** What a scan on the floor inspects in this mode (Floor.groovy:82-85): the building's strata, or the corridor's doors. */
   scan(floor: Floor, seen: (place: Location) => boolean): ScanReport | undefined;
 }

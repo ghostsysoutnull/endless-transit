@@ -51,10 +51,6 @@ export class Street extends Location {
     return 'Buildings on this street';
   }
 
-  approachVerb(): string {
-    return 'Enter Building:';
-  }
-
   /** Drawn with its buildings, each as it stands (U01b). */
   override portrait(): Portrait {
     return new StreetPortrait(this.listing().flatMap((child) => child.onStreet()));

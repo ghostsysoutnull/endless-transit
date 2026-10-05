@@ -493,7 +493,7 @@ export class GameEngine {
     return here.listing().map((child, index) => ({
       id: `${TRAVEL}${String(index)}`,
       key: keyOf(child),
-      label: `${here.approachVerb()} ${child.callSign()}`,
+      label: child.callSign(),
       place: child.name(),
       role: 'travel',
       sealed: child.sealed(),
@@ -560,6 +560,7 @@ export class GameEngine {
       position: here.kind().position(peers.indexOf(here) + 1, peers.length),
       trail: here.trail().map((step) => ({
         icon: step.kind().icon(),
+        glyph: step.kind().glyph(),
         kind: step.kind().title(),
         name: step.name(),
         address: step.address().toString(),

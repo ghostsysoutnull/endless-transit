@@ -63,10 +63,6 @@ export class Planet extends Location {
     return 'Planetary landmasses scanned';
   }
 
-  approachVerb(): string {
-    return 'Visit';
-  }
-
   /** Drawn as an area of its children (U04). */
   override portrait(): Portrait {
     return this.area('planet');

@@ -3,6 +3,7 @@ import { keyed } from 'lit-html/directives/keyed.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { CanvasSlots } from '#ui/canvas/CanvasSlots.ts';
 import type { SpectrumVM } from '#ui/canvas/SpectrumVM.ts';
+import type { DepthRail } from '#ui/scene/DepthRail.ts';
 import type { Dive } from '#ui/scene/Dive.ts';
 import type { TraceBands } from '#ui/scene/TraceBands.ts';
 import type { TracePole } from '#ui/scene/TracePole.ts';
@@ -101,6 +102,8 @@ export class HudView implements View<HudVM> {
   readonly #card: RoomCard;
   /** The strip of keys at the screen's foot (U03e), the card's and the screen's own: its MORE sheet closes at each step. */
   readonly #keys: KeyStrip;
+  /** The depth rail's picture: the levels' marks on their line, and which one a finger is nearest. */
+  readonly #rail: DepthRail;
 
   /** The registry binds a drawing to its picture (U01b); the stage shows its scene (U03); the makers make each canvas the screen carries (U02). */
   constructor(
@@ -110,7 +113,9 @@ export class HudView implements View<HudVM> {
     column: TraceParts,
     card: RoomCard,
     keys: KeyStrip,
+    rail: DepthRail,
   ) {
+    this.#rail = rail;
     this.#book = book;
     this.#stage = stage;
     this.#column = column;
@@ -312,21 +317,7 @@ export class HudView implements View<HudVM> {
 
   /** Which rail level lies nearest the finger: the column opens there. */
   #railFrom(event: PointerEvent): void {
-    const crumbs = this.#elements('.rail .crumb');
-    let best: number | undefined;
-    let distance = Infinity;
-    crumbs.forEach((crumb, index) => {
-      const box = crumb.getBoundingClientRect();
-      const away = Math.hypot(
-        box.left + box.width / 2 - event.clientX,
-        box.top + box.height / 2 - event.clientY,
-      );
-      if (away < distance) {
-        distance = away;
-        best = index;
-      }
-    });
-    this.#railAt = best;
+    this.#railAt = this.#rail.nearest(event);
   }
 
   #paint(vm: HudVM): void {
@@ -337,6 +328,13 @@ export class HudView implements View<HudVM> {
     this.#canvases.bind('map', this.#host('map'), vm.map.shown ? vm.map.picture : null);
     this.#canvases.bind('spectrum', this.#host('spectrum'), vm.aside.telemetry?.spectrogram.picture ?? null);
     this.#bindScene(vm.drawing.sketchedBy(this.#book));
+    const rail = this.#element('[data-rail]');
+    if (rail === undefined) this.#rail.clear();
+    else
+      this.#rail.show(rail, {
+        levels: vm.rail.map((level) => ({ address: level.address, glyph: level.glyph })),
+        decay: vm.drawing.frame().decay,
+      });
   }
 
   /** The scene shown in its host: kept while the host and the picture stay, else made anew; gone with its host. */
@@ -361,6 +359,7 @@ export class HudView implements View<HudVM> {
     this.#listeners.abort();
     this.#lit = new NoChild();
     this.#canvases.dispose();
+    this.#rail.clear();
     if (this.#container !== undefined) render(nothing, this.#container);
     this.#container = undefined;
     this.#vm = undefined;
@@ -589,7 +588,8 @@ export class HudView implements View<HudVM> {
                 }}
               ></button>`
         }
-        <ol data-testid="path">
+        <div class="rail-picture" data-rail></div>
+        <ol class="vh" data-testid="path">
           ${vm.rail.map(
             (level) => html`
               <li class=${level.current ? 'crumb you' : 'crumb'}>

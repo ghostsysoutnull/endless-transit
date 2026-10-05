@@ -51,8 +51,6 @@ export abstract class Location {
   abstract status(): string;
   /** The line above the list of children. */
   abstract childrenHeading(): string;
-  /** How a traveller here reaches a child: the words before the child's call sign (`Land on`). */
-  abstract approachVerb(): string;
 
   /** How this place is announced on its parent's list. */
   callSign(): string {

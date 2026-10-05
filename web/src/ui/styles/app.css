@@ -475,6 +475,18 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The rail's picture: the levels' marks on their line, drawn over the whole rail; the button lies over it. */
+.rail-picture {
+  position: absolute;
+  inset: 0;
+}
+
+.rail-picture canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .rail-hit:focus-visible {
   outline: 2px solid var(--frame);
   outline-offset: 2px;

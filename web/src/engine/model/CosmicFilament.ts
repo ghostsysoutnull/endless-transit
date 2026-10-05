@@ -50,10 +50,6 @@ export class CosmicFilament extends Location {
     return 'Galactic sectors within this conduit';
   }
 
-  approachVerb(): string {
-    return 'Pulse to';
-  }
-
   /** Drawn as an area of its children (U04). */
   override portrait(): Portrait {
     return this.area('filament');

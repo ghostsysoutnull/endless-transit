@@ -1,3 +1,4 @@
+import type { GlyphLook } from '#engine/model/GlyphLook.ts';
 import type { Fact } from '#engine/model/Fact.ts';
 import type { Portrait } from '#engine/model/Portrait.ts';
 import type { Position } from '#engine/model/Position.ts';
@@ -25,6 +26,8 @@ export interface PlaceSummary {
   /** From the universe down to here, each step with its address. */
   readonly trail: readonly {
     readonly icon: string;
+    /** Its kind's small drawing: the mark the depth rail draws for it. */
+    readonly glyph: GlyphLook;
     readonly kind: string;
     readonly name: string;
     readonly address: string;
