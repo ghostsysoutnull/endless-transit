@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Rusted|The hinges are fused by deep, flaking corrosion.|plain
+Weeping|Moisture beads along the seams and runs in slow lines.|plain
+Rotting|The lower edge has gone soft and dark.|plain
+Sagging|It hangs from its top hinge and drags on the floor.|plain
+Flaking|Its surface comes away in scales at a breath.|plain
+Split|It has split along its length and been left that way.|plain
+Dissolving|The edges are thinning, as if the air were eating them.|plain
+Slumped|The whole of it has slumped in its frame like wax in the sun.|plain
+Hoared|A grey hoar covers it and has grown across the gap.|frost
+Heat-dead|No warmth at all comes off it, not even the corridor's.|cold
+Looping|It repeats one small movement, over and over, exactly.|static

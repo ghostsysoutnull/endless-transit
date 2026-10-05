@@ -33,14 +33,16 @@ export class FloorFactory implements LocationFactory<Floor, Building> {
 
   create(origin: Origin<Building>): Floor {
     const building = origin.parent;
-    const key = building.vibe()?.culture().key() ?? 'unknown';
+    const vibe = building.vibe();
+    if (vibe === undefined) throw new Error('a floor’s doors are of the vibe above: it needs one');
+    const key = vibe.culture().key();
     // The culture in the sentence is a word, not a label: `Void`, not `VOID` (U02).
     const culture = new Phrase(key).capitalised();
     return new Floor(origin, {
       number: origin.index,
       zone: this.#zones.zoneOf(origin.seed, origin.index, building.floors()),
       sentence: this.#sentences.dealt(origin.seed).replace('{culture}', culture),
-      passage: this.#passages.of(origin.seed, building.doorsPerFloor()),
+      passage: this.#passages.of(origin.seed, building.doorsPerFloor(), vibe),
     });
   }
 

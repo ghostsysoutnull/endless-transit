@@ -1,0 +1,12 @@
+Riveted Iron Hatch|A hatch of riveted iron, a rivet for every finger's width.|metal
+Boilerplate Door|A door of boilerplate, curved as if cut from a tank.|metal
+Scrap-Weld Gate|A gate welded from scrap: a car door, a sign, a grating.|metal
+Corrugated Sheet Door|A door of corrugated sheet on a frame of angle iron.|metal
+Furnace Door|A furnace door with a counterweight and a mica peep-hole.|metal
+Chain-Link Gate|A gate of chain-link backed with flattened drums.|metal
+Firebrick Plug|A plug of firebrick laid without mortar.|stone
+Sleeper-Timber Door|A door of railway sleepers bolted edge to edge.|timber
+Slag-Glass Port|A round port of green slag glass, thick and full of bubbles.|glass
+Cast-Iron Grate|A grate of cast iron with a foundry's name in raised letters.|metal
+Tarred Plank Door|A door of planks under a skin of black tar.|timber
+Cement Board Panel|A panel of grey cement board screwed to a steel frame.|plain

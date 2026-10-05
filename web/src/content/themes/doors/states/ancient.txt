@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Weathered|The surface is weathered soft, its edges rounded.|plain
+Mossed|Moss has taken the foot of it and is climbing.|plain
+Cracked|One long crack runs from the top to the threshold.|plain
+Worn|A hollow is worn where hands have pushed it for centuries.|plain
+Sunken|The threshold has sunk and the door leans into the floor.|plain
+Lichened|Rings of grey lichen spot the whole face of it.|plain
+Crumbling|Grit falls from its edges at a touch.|plain
+Leaning|It leans a little out of true, and so does its frame.|plain
+Rimed|A white rime has crept in from the edges and sealed them.|frost
+Tomb-cold|It gives off the cold of a place shut for a very long time.|cold
+Unaged|It is motionless and unaged, like a painting of a door.|static

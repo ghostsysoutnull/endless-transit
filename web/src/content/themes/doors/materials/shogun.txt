@@ -1,0 +1,12 @@
+Lacquered Timber Gate|A timber gate under many coats of black lacquer.|timber
+Paper Screen Door|A sliding screen of paper on a grid of thin wood.|plain
+Cedar Sliding Door|A sliding door of red cedar that still gives off its scent.|timber
+Bamboo Lattice Gate|A gate of split bamboo tied with black cord.|timber
+Jade Disc Door|A round door of green jade with a hole at its centre.|stone
+Bronze-Capped Gate|A gate whose every beam ends in a cap of green bronze.|metal
+Ink-Painted Panel|A panel painted in ink with one bent pine.|plain
+Cypress Plank Door|A door of pale cypress planks pegged, not nailed.|timber
+Mica Lantern Pane|A pane of mica in a lantern frame, glowing dull gold.|glass
+Iron-Studded Gate|A gate studded with iron bosses in rows of nine.|metal
+Silk-Faced Screen|A screen faced in silk, embroidered with a single crane.|plain
+Moon-Gate Stone|A round stone rolled across a round opening.|stone

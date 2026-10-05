@@ -57,7 +57,7 @@ export class LocationRegistry implements FactoryLookup {
     const categories = new RoomCategories(library, deal);
     const names = new LibraryNames(library, deal, new NameAxes(library));
     const decks = new LibrarySentences(library);
-    const doors = new Doors(library);
+    const doors = new Doors(library, deal);
     const words = new CorridorWords(decks);
     const deck = new ObjectDeck(library);
     const apartments = { doors, deck, deal };

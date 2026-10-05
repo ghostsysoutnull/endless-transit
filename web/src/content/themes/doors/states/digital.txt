@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Flickering|The surface flickers between two slightly different versions of itself.|plain
+Pixelled|Seen close, its edges break into small squares.|plain
+Backlit|A thin line of light shows all the way round it.|plain
+Scrolling|Lines of small text scroll slowly down its face.|plain
+Polished|The surface is perfectly smooth and sterile.|plain
+Lagging|It answers a touch a moment late.|plain
+Blinking|A single point of light on it blinks, waits, and blinks.|plain
+Smudged|The face is smudged with fingerprints at the height of a hand.|plain
+Crystalled|Fine crystals have spread from the edges across the face.|frost
+Supercooled|It is far colder than the corridor, and the air smokes off it.|cold
+Glitching|It holds motionless, then jumps a finger's width and holds again.|static

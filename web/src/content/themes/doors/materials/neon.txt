@@ -1,0 +1,12 @@
+Synth-Glass Slab|A synth-glass barrier that reflects the corridor's dim light.|glass
+Chrome Iris|An iris of chrome blades closed to a point.|metal
+Hologram Curtain|A curtain of projected light with a hard door somewhere behind it.|plain
+Acrylic Light Panel|A panel of clear acrylic, lit along its edges.|glass
+Mesh Roll-Shutter|A roll-shutter of fine mesh with a shop sign's ghost on it.|metal
+Polymer Membrane|A taut polymer membrane the colour of a dead screen.|plain
+Mirror-Film Door|A door skinned in mirror film that shows the corridor bent.|glass
+Circuit-Etched Plate|A metal plate etched all over with fine circuit traces.|metal
+Tinted Visor Door|A curved door of tinted glass, like the visor of a helmet.|glass
+Carbon Weave Panel|A panel of black carbon weave that swallows the light.|plain
+Fibre-Optic Screen|A screen of hanging glass fibres, each tip a point of light.|glass
+Anodised Hatch|A hatch anodised in a colour that changes with the angle.|metal

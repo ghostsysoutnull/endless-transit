@@ -1,0 +1,12 @@
+Stable|The structure appears stable.|plain
+Scorched|The surface is blackened in a fan shape, as if something burned its way out.|plain
+Blistered|The face of it has risen in blisters and set that way.|plain
+Pitted|The surface is scarred by a thousand small impacts.|plain
+Glassed|A patch of the surface has melted smooth and hardened like glass.|plain
+Tagged|Warning tags hang from it on wire, their writing gone.|plain
+Warped|The panel has bowed outward and no longer meets its frame.|plain
+Ashen|A fine grey ash coats it and comes away on the fingers.|plain
+Fused|One edge has run into the frame and set solid.|plain
+Ice-locked|Ice has filled the gap all round and locked it shut.|frost
+Leeching|The frame drinks the heat from the air around it.|cold
+Overexposed|It looks overexposed: a flat, bright image of itself.|static

@@ -1,0 +1,12 @@
+Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.|metal
+Cast Concrete Slab|A slab of cast concrete that still shows the grain of its mould.|stone
+Basalt Block|A single block of black basalt, cut square.|stone
+Granite Plug|A plug of grey granite set deep in its opening.|stone
+Blast Door|A blast door a hand thick, hung on hinges like fists.|metal
+Steel Shutter|A shutter of flat steel slats running in two channels.|metal
+Wired-Glass Panel|A panel of thick glass with a grid of wire inside it.|glass
+Poured Lintel Door|A door under a poured lintel too large for it.|stone
+Bunker Hatch|A low hatch with a rim of bolts and one small spy-hole.|metal
+Formwork Door|A door of rough boards, the kind concrete is poured against.|timber
+Slit-Window Slab|A stone slab with one slit cut through at eye height.|stone
+Composite Panel|A grey composite panel with no handle and no mark.|plain
