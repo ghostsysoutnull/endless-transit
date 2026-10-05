@@ -25,6 +25,11 @@ function names(): LibraryNames {
       'names/country/index.txt': 'suffix|trait',
       'names/country/suffix/Military.txt': 'Garrison\nMarch',
       'names/odd/index.txt': 'word|colour',
+      'names/filament/index.txt': 'letter|family',
+      'names/filament/letter/index.txt': 'greek\nrunic\nradio',
+      'names/filament/letter/greek.txt': 'Alpha\nBeta\nGamma',
+      'names/filament/letter/runic.txt': 'Fehu\nUruz\nAnsuz',
+      'names/filament/letter/radio.txt': 'Alfa\nBravo\nCharlie',
     }),
   );
   return new LibraryNames(library, new Deal(), new NameAxes(library));
@@ -86,5 +91,40 @@ describe('NameParts — a keyed part reads the list of the vibe in force', () =>
     expect(() => names().at('names/street').words(child(0), undefined)).toThrow(/vibe/);
     expect(() => names().at('names/country').words(child(0), rustAncient())).toThrow(/trait/);
     expect(() => names().at('names/odd').words(child(0), rustAncient())).toThrow(/colour/);
+  });
+});
+
+describe('NameParts — a family part: one list of its own index for all the children of a parent', () => {
+  const LISTS = [
+    ['Alpha', 'Beta', 'Gamma'],
+    ['Fehu', 'Uruz', 'Ansuz'],
+    ['Alfa', 'Bravo', 'Charlie'],
+  ];
+  /** The three children of the parent born from this seed, each by its one word. */
+  function family(parent: Seed): string[] {
+    const filaments = names().at('names/filament');
+    return [0, 1, 2].map((index) =>
+      String(filaments.words({ parent: { seed: () => parent }, index }, undefined)[0]),
+    );
+  }
+
+  test('the children of one parent read one list, and share no word of it', () => {
+    for (let n = 0; n < 20; n++) {
+      const words = family(new Seed(n, 5));
+      expect(
+        LISTS.some((list) => words.every((word) => list.includes(word))),
+        words.join(' '),
+      ).toBe(true);
+      expect(new Set(words).size).toBe(3);
+    }
+  });
+
+  test('the list is the parent’s: over twenty parents every list of the index is read', () => {
+    const read = new Set<number>();
+    for (let n = 0; n < 20; n++) {
+      const [first] = family(new Seed(n, 5));
+      read.add(LISTS.findIndex((list) => list.includes(first ?? '')));
+    }
+    expect([...read].sort()).toEqual([0, 1, 2]);
   });
 });

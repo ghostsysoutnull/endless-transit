@@ -3,7 +3,8 @@ import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { doorStateLook } from '#engine/model/DoorStateLook.ts';
 import { materialFamily } from '#engine/model/MaterialFamily.ts';
-import { axisKeys, NAME_KINDS } from '#tests/support/placeNames.ts';
+import { INSCRIPTION_STYLES } from '#engine/model/InscriptionStyle.ts';
+import { FAMILY, listsOfPart, NAME_KINDS } from '#tests/support/placeNames.ts';
 import { must } from '#tests/support/world.ts';
 
 const library = new ContentLibrary(new BundledContent());
@@ -48,12 +49,13 @@ describe('every key of every index has its own file (HK-016 step 1)', () => {
     expect(new Set(library.index('themes/atmosphere/lighting'))).toEqual(new Set([ABYSSAL, ...ERAS]));
   });
 
-  test('every trait has structures and four room kinds; so do the two glitch structures', () => {
+  test('every trait has structures and room kinds; so do the two glitch structures', () => {
     expect(TRAITS.length).toBe(6);
     for (const key of [...TRAITS, ...GLITCH_STRUCTURES]) {
       expect(library.list(`themes/atmosphere/structures/${key}`).length, key).toBeGreaterThan(0);
     }
-    for (const trait of TRAITS) expect(library.pairs(`names/rooms/${trait}`), trait).toHaveLength(4);
+    for (const trait of TRAITS)
+      expect(library.pairs(`names/rooms/${trait}`).length, trait).toBeGreaterThan(0);
     expect(new Set(library.index('themes/atmosphere/structures'))).toEqual(
       new Set([ABYSSAL, ...TRAITS, 'Singularity']),
     );
@@ -93,43 +95,116 @@ describe('list floors (HK-016 step 3; a list may only grow)', () => {
     }
   });
 
-  test('12 adjectives and 12 nouns per culture lexicon', () => {
+  test('24 adjectives and 24 nouns per culture lexicon — a street holds up to 22 buildings — and no adjective is also a noun of its culture', () => {
     for (const culture of CULTURES) {
-      atLeast(`adj/${culture}`, library.list(`names/buildings/adj/${culture}`), 12);
-      atLeast(`noun/${culture}`, library.list(`names/buildings/noun/${culture}`), 12);
+      const adjectives = library.list(`names/buildings/adj/${culture}`);
+      const nouns = library.list(`names/buildings/noun/${culture}`);
+      atLeast(`adj/${culture}`, adjectives, 24);
+      atLeast(`noun/${culture}`, nouns, 24);
+      expect(
+        adjectives.filter((word) => nouns.includes(word)),
+        culture,
+      ).toEqual([]);
     }
   });
 
-  test('12 door materials and 12 states, each with a narrative; 12 inscription words', () => {
-    const materials = library.triples('themes/doors/materials');
-    const states = library.triples('themes/doors/states');
-    atLeast(
-      'doors/materials',
-      materials.map(([name]) => name),
-      12,
-    );
-    atLeast(
-      'doors/states',
-      states.map(([name]) => name),
-      12,
-    );
-    atLeast('doors/inscriptions', library.list('themes/doors/inscriptions'), 12);
-    for (const [name, narrative] of [...materials, ...states]) expect(narrative, name).not.toBe('');
-    expect(states.map(([name]) => name)).toContain('Stable');
+  test('12 building endings per era, none of them a building noun of any culture; 24 concepts; 32 landmark titles, more than a street has buildings', () => {
+    const nouns = new Set(CULTURES.flatMap((culture) => library.list(`names/buildings/noun/${culture}`)));
+    for (const era of ERAS) {
+      const endings = library.list(`names/buildings/compounds/${era}`);
+      atLeast(`compounds/${era}`, endings, 12);
+      expect(
+        endings.filter((ending) => nouns.has(ending)),
+        era,
+      ).toEqual([]);
+    }
+    atLeast('concepts', library.list('names/buildings/concepts'), 24);
+    atLeast('landmarks', library.list('names/buildings/landmarks'), 32);
   });
 
-  test('every door state and material carries a look key the pictures know; frozen, cold and static doors look so', () => {
-    const states = library.triples('themes/doors/states');
-    for (const [name, , key] of states) expect(() => doorStateLook(key), name).not.toThrow();
-    for (const [name, , key] of library.triples('themes/doors/materials'))
-      expect(() => materialFamily(key), name).not.toThrow();
-    const looks = new Map(states.map(([name, , key]) => [name, key]));
-    expect([looks.get('Frozen'), looks.get('Cold'), looks.get('Static'), looks.get('Stable')]).toEqual([
-      'frost',
-      'cold',
-      'static',
-      'plain',
+  test('16 room kinds per trait — an apartment holds up to 10 rooms — and no kind in two traits', () => {
+    const kinds = TRAITS.flatMap((trait) => {
+      const names = library.pairs(`names/rooms/${trait}`).map(([name]) => name);
+      atLeast(`rooms/${trait}`, names, 16);
+      return names;
+    });
+    expect(kinds.filter((kind, at) => kinds.indexOf(kind) !== at)).toEqual([]);
+  });
+
+  test('floor zones per trait: 4 lobby words, 4 peak words, 12 per height band; none named like a room kind or a door word', () => {
+    const rooms = TRAITS.flatMap((trait) => library.pairs(`names/rooms/${trait}`).map(([name]) => name));
+    const taken = new Set([
+      ...rooms.map((name) => name.toUpperCase().replace(/[ -]/g, '_')),
+      ...INSCRIPTION_STYLES.flatMap((style) => library.list(`themes/doors/inscriptions/${style.key()}`)),
+      'DATA_VAULT',
+      'DANGER',
     ]);
+    const parts: readonly (readonly [string, number])[] = [
+      ['lobby', 4],
+      ['peak', 4],
+      ...library.index('names/floors/zones').map((band) => [`zones/${band}`, 12] as const),
+    ];
+    for (const trait of TRAITS) {
+      for (const [part, floor] of parts) {
+        const zones = library.list(`names/floors/${part}/${trait}`);
+        atLeast(`floors/${part}/${trait}`, zones, floor);
+        expect(
+          zones.filter((zone) => taken.has(zone)),
+          `${part}/${trait}`,
+        ).toEqual([]);
+      }
+    }
+  });
+
+  test('12 door materials per culture and 12 states per era, each with a narrative; every era keeps its stable door', () => {
+    for (const culture of CULTURES) {
+      const materials = library.triples(`themes/doors/materials/${culture}`);
+      atLeast(
+        `doors/materials/${culture}`,
+        materials.map(([name]) => name),
+        12,
+      );
+      for (const [name, narrative] of materials) expect(narrative, name).not.toBe('');
+    }
+    for (const era of ERAS) {
+      const states = library.triples(`themes/doors/states/${era}`);
+      atLeast(
+        `doors/states/${era}`,
+        states.map(([name]) => name),
+        12,
+      );
+      for (const [name, narrative] of states) expect(narrative, name).not.toBe('');
+      expect(
+        states.map(([name]) => name),
+        era,
+      ).toContain('Stable');
+    }
+  });
+
+  test('every door state and material carries a look key the pictures know; every era has a frosted, a cold and a motionless door, and its stable one is plain', () => {
+    for (const culture of CULTURES) {
+      for (const [name, , key] of library.triples(`themes/doors/materials/${culture}`))
+        expect(() => materialFamily(key), name).not.toThrow();
+    }
+    for (const era of ERAS) {
+      const states = library.triples(`themes/doors/states/${era}`);
+      for (const [name, , key] of states) expect(() => doorStateLook(key), name).not.toThrow();
+      expect(new Set(states.map(([, , key]) => key)), era).toEqual(
+        new Set(['frost', 'cold', 'static', 'plain']),
+      );
+      expect(states.find(([name]) => name === 'Stable')?.[2], era).toBe('plain');
+    }
+  });
+
+  test('16 door words per way of writing; no word in two of them, and none of them one of the two guarantees', () => {
+    const words = INSCRIPTION_STYLES.flatMap((style) => {
+      const list = library.list(`themes/doors/inscriptions/${style.key()}`);
+      atLeast(`doors/inscriptions/${style.key()}`, list, 16);
+      return list;
+    });
+    expect(words.filter((word, at) => words.indexOf(word) !== at)).toEqual([]);
+    expect(words).not.toContain('DATA_VAULT');
+    expect(words).not.toContain('DANGER');
   });
 
   test('4 sentence variants per described kind, 8 colours', () => {
@@ -142,11 +217,11 @@ describe('list floors (HK-016 step 3; a list may only grow)', () => {
 });
 
 describe('place names: every list outlasts the siblings it is dealt among, and no word could be said twice', () => {
-  const AXIS_KEYS = axisKeys(library);
   /** Each part's floor: at least the most siblings its kind can have, so a deal never starts over in one parent. */
   const FLOORS: Readonly<Record<string, Readonly<Record<string, number>>>> = {
-    'names/filament': { greek: 12, type: 8 },
+    'names/filament': { letter: 20, type: 24 },
     'names/sector': { descriptor: 24, noun: 24 },
+    'names/null-reach': { word: 24 },
     'names/solar-system': { prefix: 48, suffix: 32 },
     'names/planet': { head: 12, tail: 30 },
     'names/country': { prefix: 30, core: 12, suffix: 10 },
@@ -154,24 +229,20 @@ describe('place names: every list outlasts the siblings it is dealt among, and n
     'names/street': { adjective: 16, noun: 16 },
   };
 
-  /** The lists of one part, by path: its one list, or one per key of its axis. */
-  function listsOf(kind: string, part: string, axis: string): Map<string, readonly string[]> {
-    const paths = AXIS_KEYS.get(axis)?.map((key) => `${kind}/${part}/${key}`) ?? [`${kind}/${part}`];
-    return new Map(paths.map((path) => [path, library.list(path)]));
-  }
-
   test.each(NAME_KINDS)('%s: every list of every part reaches its floor', (kind) => {
     const floors = must(FLOORS[kind], `the floors of ${kind}`);
     for (const [part, axis] of library.pairs(`${kind}/index`)) {
       const floor = must(floors[part], `a floor for ${kind}/${part}`);
-      for (const [path, words] of listsOf(kind, part, axis)) atLeast(path, words, floor);
+      for (const [path, words] of listsOfPart(library, kind, part, axis)) atLeast(path, words, floor);
     }
   });
 
   test.each(NAME_KINDS)('%s: no word sits in two of its lists, whatever the part or the key', (kind) => {
+    // The lists of a family part are never read side by side — one parent reads one of them — so they may share a word.
     const words = library
       .pairs(`${kind}/index`)
-      .flatMap(([part, axis]) => [...listsOf(kind, part, axis).values()].flat())
+      .filter(([, axis]) => axis !== FAMILY)
+      .flatMap(([part, axis]) => [...listsOfPart(library, kind, part, axis).values()].flat())
       .map((word) => word.toLowerCase());
     expect(words.filter((word, at) => words.indexOf(word) !== at)).toEqual([]);
   });
