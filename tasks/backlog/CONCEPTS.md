@@ -16,6 +16,9 @@ through its own plan, `/grill` and a Directive. Code-quality items go to `HOUSEK
 ### CONCEPT-004 — The Keystone does the breach
 **Found:** 2026-10-03, same loop. **State:** concept, no plan; not a short-term priority (the user's call). When the breach is possible the BUFFER button pulses; inside the buffer the Keystone's tile carries a BREACH action, so the player uses the object that pays for it. Cost: a new action on the buffer screen, and the breach then happens one screen away from the tower.
 
+### CONCEPT-005 — An apartment's plan takes its shape from its own seed
+**Found:** 2026-10-05, the user's report of the same layout seen often, checked against the code and a measure of 150 worlds. **State:** concept, no plan; not urgent (the user's call). The number of rooms comes out even, but the drawn plan is set almost wholly by that number: the same count gives the same rows of boxes, only their widths moving a little (`web/src/ui/scene/PlanLayout.ts`), so the game shows about ten plan shapes. The idea: the shape comes from the apartment's seed — an L, a hall with rooms off it, a long railroad, a ring around a court — so two five-room apartments look nothing alike; the rooms are still walked one to the next. Cost: the layout code and its tests, judged on the phone.
+
 ## 🟢 CLOSED
 
 ### CONCEPT-002 — The game as a single-page app

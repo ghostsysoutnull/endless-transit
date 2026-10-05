@@ -10,6 +10,7 @@
   - a flaky browser test: `web/e2e/ritual.spec.ts`, the breach and descent, failed once in U03e's one full run;
     rewritten in the loop and green since; to be fixed or deleted, never retried;
   - the breach by the bedrock or by the Keystone: `tasks/backlog/CONCEPTS.md`, CONCEPT-003 and CONCEPT-004;
+  - an apartment's plan shaped by its own seed, not urgent: `tasks/backlog/CONCEPTS.md`, CONCEPT-005;
   - the test cleanup ranked in `docs/analysis/TEST_SUITE_REVIEW.md`, section 6;
   - ships (CONCEPT-001): the verdicts in `docs/analysis/SHIPS_CONCEPT.md`, section 7, none judged;
   - `docs/analysis/WORKFLOW_BACKLOG.md`: WF-011, WF-006 (moot — close at the next review), WF-013 (needs the user's
