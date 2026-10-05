@@ -28,6 +28,7 @@ web/.vitest/
 web/.vite/
 web/test-results/
 web/playwright-report/
+web/names-page/
 web/blob-report/
 web/*.tsbuildinfo
 web/.eslintcache

@@ -60,6 +60,9 @@ lexicons' ten.
 - **Phone check:** `npm run phone` type-checks and builds the working tree as it is (base `/`, stamp `dev`) and uploads it to
   `https://endless-transit.surge.sh/`, a scratch address outside git for the user's phone; the real site moves only
   through `publish:site`. Surge is logged in once per machine with `npx surge login`.
+- **Names page:** `npm run names` (`scripts/names-page.ts`) writes every name list beside names from real worlds as one
+  page and uploads it to `https://endless-transit-names.surge.sh/`: a tool for judging the words, outside the game
+  and its tests; a new kind of named thing gets a section there.
 
 ## The walls
 
@@ -127,3 +130,4 @@ migration.
 | Site → `dist/` (base `/endless-transit/play/`; `ET_BASE` overrides)  | `npm run build`                           |
 | Publish: check → build → `../docs/play/` + `build.txt` (then commit) | `npm run publish:site`                    |
 | Format                                                               | `npm run format`                          |
+| The names page: the lists and names from real worlds, uploaded       | `npm run names`                           |
