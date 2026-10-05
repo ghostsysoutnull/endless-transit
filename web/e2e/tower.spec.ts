@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { plant, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
-/** A fixed world: its street is Bright Boulevard; its first building, sixteen floors, is entered from the street's list. */
+/** A fixed world: its street is Requiem Slipway; its first building, sixteen floors, is entered from the street's list. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 

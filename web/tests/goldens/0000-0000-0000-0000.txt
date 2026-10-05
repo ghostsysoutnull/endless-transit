@@ -1,10 +1,10 @@
-=== STREET ═ Broad Alley  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley *
+=== STREET ═ Sunken Glide  [frame grey]
+path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0
 tags: Way 1 of 10 (position) | Era Future (era) | Culture Void (culture)
   Buildings stand in pairs along both sides of the way.
-status: Entered Broad Alley.
+status: Entered Sunken Glide.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Drifting Field
   02 [2] Enter Building: HorizonWell
@@ -28,12 +28,12 @@ BUILDINGS ON THIS STREET
   20 [] Enter Building: CellFall
   21 [] Enter Building: Blank Gravity
   22 [] Enter Building: Empty Cell
-[NEURAL_MAP: STREET] SCAN_ORIGIN: Broad Alley | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ Empty Cell (unvisited)
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Sunken Glide | ⌂ Drifting Field (unvisited) | ⌂ HorizonWell (unvisited) | ⌂ Dark Well (unvisited) | ⌂ PlaneReach (unvisited) | ⌂ WellRoot (unvisited) | ⌂ WellRoot (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ ReachSpire (unvisited) | ⌂ HushWell (unvisited) | ⌂ EchoGate (unvisited) | ⌂ CellGate (unvisited) | ⌂ The Heart of the Strata (unvisited) | ⌂ Pale Aperture (unvisited) | ⌂ Abyssal Horizon (unvisited) | ⌂ HorizonFall (unvisited) | ⌂ ShadowGate (unvisited) | ⌂ FieldReach (unvisited) | ⌂ Silent Void (unvisited) | ⌂ Unmarked Gravity (unvisited) | ⌂ CellFall (unvisited) | ⌂ Blank Gravity (unvisited) | ⌂ Empty Cell (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === BUILDING ⌂ HorizonWell  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell *
+path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0
 tags: Building 2 of 22 (position) | Culture Void (culture) | Floors 18 (reading)
@@ -44,7 +44,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Void (culture) | Stability 90.00% (reading) | Trait Research (trait)
@@ -56,7 +56,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0
 tags: Culture Void (culture) | Doors 10 (reading)
@@ -88,7 +88,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === ROOM □ Hollow Neural Link Array  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Hollow Neural Link Array *
+path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Hollow Neural Link Array *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 0
 tags: Room 1 of 4 (position) | Era Future (era) | Type Neural Link Array (reading) | Oxygen 20% (reading) | Temp 23°C (reading) | Signal Clear (signal)
@@ -106,7 +106,7 @@ game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Tit
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Abyssal Bio-Server  [frame grey]
-path: ∞ The Endless Universe > » Eta-874-Pulse > ○ Null Reach F4E > ☼ Altair Prime > ⊕ Xenox > ⬚ Western Shadow Territories > 🏙 Cloudcity > ═ Broad Alley > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Abyssal Bio-Server *
+path: ∞ The Endless Universe > » Zeta-874-Pulse > ○ Null Reach F4E > ☼ Rigel Scorpii > ⊕ Echine > ⬚ Democratic Umbral Symposium > 🏙 Drifttether > ═ Sunken Glide > ⌂ HorizonWell > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, polished > □ Abyssal Bio-Server *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 0
 tags: Room 2 of 4 (position) | Era Future (era) | Type Bio-Server (reading) | Oxygen 16% (reading) | Temp 15°C (reading) | Signal Clear (signal)

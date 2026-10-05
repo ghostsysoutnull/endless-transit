@@ -1,10 +1,10 @@
-=== STREET ═ Grand Avenue  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue *
+=== STREET ═ Folded Green  [frame magenta]
+path: ∞ The Endless Universe > » Beta-8-Web > ○ Deep Grid 18 > ☼ Spica Leonis > ⊕ Rinine > ⬚ Northern Bamboo Protectorate > 🏙 Moonport > ═ Folded Green *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0
 tags: Way 1 of 5 (position) | Era Analog (era) | Culture Shogun (culture)
   Buildings stand in pairs along both sides of the way.
-status: Entered Grand Avenue.
+status: Entered Folded Green.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Vermilion Shrine
   02 [2] Enter Building: Silent Hall
@@ -18,12 +18,12 @@ BUILDINGS ON THIS STREET
   10 [A] Enter Building: TowerSpire
   11 [G] Enter Building: Ink-Black Tower
   12 [K] Enter Building: Unit 0x95D Unit
-[NEURAL_MAP: STREET] SCAN_ORIGIN: Grand Avenue | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited) | ⌂ Ink-Black Tower (unvisited) | ⌂ Unit 0x95D Unit (unvisited)
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Folded Green | ⌂ Vermilion Shrine (unvisited) | ⌂ Silent Hall (unvisited) | ⌂ Cedar Lantern (unvisited) | ⌂ KeepReach (unvisited) | ⌂ GardenSpire (unvisited) | ⌂ The Pavilion of The Web (unvisited) | ⌂ Lacquered Shrine (unvisited) | ⌂ TeahouseGate (unvisited) | ⌂ BridgeGate (unvisited) | ⌂ TowerSpire (unvisited) | ⌂ Ink-Black Tower (unvisited) | ⌂ Unit 0x95D Unit (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === BUILDING ⌂ Cedar Lantern  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern *
+path: ∞ The Endless Universe > » Beta-8-Web > ○ Deep Grid 18 > ☼ Spica Leonis > ⊕ Rinine > ⬚ Northern Bamboo Protectorate > 🏙 Moonport > ═ Folded Green > ⌂ Cedar Lantern *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0
 tags: Building 3 of 12 (position) | Culture Shogun (culture) | Floors 7 (reading)
@@ -34,7 +34,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Beta-8-Web > ○ Deep Grid 18 > ☼ Spica Leonis > ⊕ Rinine > ⬚ Northern Bamboo Protectorate > 🏙 Moonport > ═ Folded Green > ⌂ Cedar Lantern > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0
 tags: Era Analog (era) | Culture Shogun (culture) | Stability 90.00% (reading) | Trait Military (trait)
@@ -46,7 +46,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Beta-8-Web > ○ Deep Grid 18 > ☼ Spica Leonis > ⊕ Rinine > ⬚ Northern Bamboo Protectorate > 🏙 Moonport > ═ Folded Green > ⌂ Cedar Lantern > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0
 tags: Culture Shogun (culture) | Doors 2 (reading)
@@ -62,7 +62,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === ROOM □ Lacquered Barracks  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Lacquered Barracks *
+path: ∞ The Endless Universe > » Beta-8-Web > ○ Deep Grid 18 > ☼ Spica Leonis > ⊕ Rinine > ⬚ Northern Bamboo Protectorate > 🏙 Moonport > ═ Folded Green > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Lacquered Barracks *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 0
 tags: Room 1 of 9 (position) | Era Analog (era) | Type Barracks (reading) | Oxygen 14% (reading) | Temp 17°C (reading) | Signal Clear (signal)
@@ -80,7 +80,7 @@ game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Tit
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Paper Security Station  [frame magenta]
-path: ∞ The Endless Universe > » Zeta-8-Thread > ○ Tertiary Expanse 18 > ☼ Sigma Eridani > ⊕ Neoun > ⬚ Great Glacier Domain > 🏙 Cloudgate > ═ Grand Avenue > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Paper Security Station *
+path: ∞ The Endless Universe > » Beta-8-Web > ○ Deep Grid 18 > ☼ Spica Leonis > ⊕ Rinine > ⬚ Northern Bamboo Protectorate > 🏙 Moonport > ═ Folded Green > ⌂ Cedar Lantern > ▤ Floor 0 > ▅ Corridor > 🚪 Bone-Lattice Aperture, cold > □ Paper Security Station *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 0
 tags: Room 2 of 9 (position) | Era Analog (era) | Type Security Station (reading) | Oxygen 16% (reading) | Temp 10°C (reading) | Signal Clear (signal)

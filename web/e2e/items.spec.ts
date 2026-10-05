@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, turnCard, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const LOBBY = `${STREET}.0.0`;

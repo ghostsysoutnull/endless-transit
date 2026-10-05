@@ -10,7 +10,7 @@ import {
 } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const CITY = '0.0.0.0.0.0.0';
@@ -164,7 +164,7 @@ test('play until death and continue: the failure screen, REBUILD, the same seed 
 
   await press(page, /rebuild/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
+  await expect(page.getByTestId('place-name')).toHaveText('Requiem Slipway');
   // The world screen no longer shows the seed (U01a): the save says which world this is.
   expect(
     await page.evaluate(

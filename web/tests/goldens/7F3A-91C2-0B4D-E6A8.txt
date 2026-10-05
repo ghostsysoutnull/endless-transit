@@ -1,21 +1,21 @@
-=== STREET ═ Bright Boulevard  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard *
+=== STREET ═ Requiem Slipway  [frame yellow]
+path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway *
 Coherence: 100% stable
 stats: Steps 0 | Buffer 0
 tags: Way 1 of 8 (position) | Era Future (era) | Culture Baroque (culture)
   Buildings stand in pairs along both sides of the way.
-status: Entered Bright Boulevard.
+status: Entered Requiem Slipway.
 BUILDINGS ON THIS STREET
   01 [1] Enter Building: Ornate Sanctum
   02 [2] Enter Building: The Spire of Static
   03 [3] Enter Building: ArchiveRoot
   04 [4] Enter Building: SpireFall
-[NEURAL_MAP: STREET] SCAN_ORIGIN: Bright Boulevard | ⌂ Ornate Sanctum (unvisited) | ⌂ The Spire of Static (unvisited) | ⌂ ArchiveRoot (unvisited) | ⌂ SpireFall (unvisited)
+[NEURAL_MAP: STREET] SCAN_ORIGIN: Requiem Slipway | ⌂ Ornate Sanctum (unvisited) | ⌂ The Spire of Static (unvisited) | ⌂ ArchiveRoot (unvisited) | ⌂ SpireFall (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === BUILDING ⌂ Ornate Sanctum  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum *
+path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum *
 Coherence: 99% stable
 stats: Steps 1 | Buffer 0
 tags: Building 1 of 4 (position) | Culture Baroque (culture) | Floors 16 (reading)
@@ -26,7 +26,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Building)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 *
 Coherence: 98% stable
 stats: Steps 2 | Buffer 0
 tags: Era Future (era) | Culture Baroque (culture) | Stability 77.00% (reading) | Trait Industrial (trait)
@@ -38,7 +38,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Floor)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === FLOOR ▤ Floor 0  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 *
+path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 *
 Coherence: 97% stable
 stats: Steps 3 | Buffer 0
 tags: Culture Baroque (culture) | Doors 9 (reading)
@@ -68,7 +68,7 @@ keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
 
 === ROOM □ Grand Power Plant  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Grand Power Plant *
+path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Grand Power Plant *
 Coherence: 96% stable
 stats: Steps 4 | Buffer 1
 tags: Room 1 of 2 (position) | Era Future (era) | Type Power Plant (reading) | Oxygen 14% (reading) | Temp 7°C (reading) | Signal Clear (signal)
@@ -86,7 +86,7 @@ game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Tit
 corner: WORDS (Turn the card: the room in words) | ROOM (Turn the card: the picture)
 
 === ROOM □ Baroque Maintenance Bay  [frame yellow]
-path: ∞ The Endless Universe > » Zeta-915-Link > ○ Outer Expanse 91 > ☼ Zeta Borealis > ⊕ Auraea > ⬚ Southern Glacier Kingdom > 🏙 Rainhaven > ═ Bright Boulevard > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Baroque Maintenance Bay *
+path: ∞ The Endless Universe > » Lambda-915-Link > ○ Upper Shoal 91 > ☼ Alcor Prime > ⊕ Dominia > ⬚ Ancient Vesper Assembly > 🏙 Angeltether > ═ Requiem Slipway > ⌂ Ornate Sanctum > ▤ Floor 0 > ▅ Corridor > 🚪 Brutalist Slab, pitted > □ Baroque Maintenance Bay *
 Coherence: 95% stable
 stats: Steps 5 | Buffer 1
 tags: Room 2 of 2 (position) | Era Future (era) | Type Maintenance Bay (reading) | Oxygen 19% (reading) | Temp 20°C (reading) | Signal Shielded (signal)

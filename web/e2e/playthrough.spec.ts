@@ -6,7 +6,7 @@ import { expectTouchable, press, saveText, tapOption, watchForErrors } from './s
  * on both profiles against the production build. Run alone with `npx playwright test --grep @playthrough`.
  */
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const PEAK = 15;
 
@@ -52,7 +52,7 @@ test(
 
     // The street, the building, a floor tapped on its tower, the corridor, a door.
     await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-    await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
+    await expect(page.getByTestId('place-name')).toHaveText('Requiem Slipway');
     await expect(page.getByTestId('coherence')).toHaveText('100%');
     await expectTouchable(page, 'street');
     await tapOption(page, 'enter:0', hasTouch);

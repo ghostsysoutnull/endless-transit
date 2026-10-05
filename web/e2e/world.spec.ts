@@ -4,7 +4,7 @@ import { expectTouchable, press, saveText, tapOption, watchForErrors } from './s
 const SLOT = 'endless-transit.save';
 /** A fixed world, so names and list lengths are known: the save format is the way in, as for any player. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
-/** Steamspire: 15 streets. Its first street, Grand Way: 20 buildings, two of them landmarks. */
+/** Vespertether: 15 streets. Its first street, Hallowed Transit: 20 buildings, two of them landmarks. */
 const LONG_CITY = '0.0.0.0.0.2.0';
 const LONG_STREET = '0.0.0.0.0.2.0.0';
 const LEVELS = [
@@ -65,9 +65,9 @@ test('walk from the title down to a street and back up to the universe, by tappi
     if (kind !== 'STREET') await tapOption(page, 'enter:0', hasTouch);
   }
 
-  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
-  await expect(page.getByTestId('path')).toContainText('Rainhaven');
-  await expect(page.getByTestId('status')).toHaveText('Entered Bright Boulevard.');
+  await expect(page.getByTestId('place-name')).toHaveText('Requiem Slipway');
+  await expect(page.getByTestId('path')).toContainText('Angeltether');
+  await expect(page.getByTestId('status')).toHaveText('Entered Requiem Slipway.');
 
   for (const kind of [...LEVELS].reverse().slice(1)) {
     await press(page, /leave/i, hasTouch);
@@ -86,18 +86,18 @@ test('reload restores the place; the title screen is one tap away and the place 
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
   for (let level = 0; level < 3; level++) await press(page, /leave/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
+  await expect(page.getByTestId('place-name')).toHaveText('Dominia');
 
   await page.reload();
   await expect(page.getByTestId('place-kind')).toHaveText('PLANET');
-  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
+  await expect(page.getByTestId('place-name')).toHaveText('Dominia');
   await expect(page.getByTestId('status')).toContainText(/restored/i);
 
   await press(page, /title screen/i, hasTouch);
   await expect(page.getByTestId('world-seed')).toHaveText(SEED);
   await expect(page.getByRole('button', { name: /re-roll/i })).toBeVisible();
   await press(page, /continue/i, hasTouch);
-  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
+  await expect(page.getByTestId('place-name')).toHaveText('Dominia');
   expect(problems).toEqual([]);
 });
 
@@ -107,7 +107,7 @@ test('a long street: twenty-two buildings, every one a button, two of them landm
   const problems = watchForErrors(page);
   await plant(page, LONG_STREET);
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('Grand Way');
+  await expect(page.getByTestId('place-name')).toHaveText('Hallowed Transit');
   await expect(page.locator('[data-sealed]')).toHaveCount(0);
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(22);
   await expect(page.getByTestId('sealed-note')).toHaveCount(0);
@@ -128,7 +128,7 @@ test('a long list: the last street is reached by scrolling down, leave stays in 
   const problems = watchForErrors(page);
   await plant(page, LONG_CITY);
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('Steamspire');
+  await expect(page.getByTestId('place-name')).toHaveText('Vespertether');
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(15);
   await expectTouchable(page, 'long city');
 
@@ -183,7 +183,7 @@ test('still fits at 360 px wide at every level, the narrowest phone we promise',
 test('the planet colours the frame, down to the street', async ({ page }) => {
   await plant(page, '0.0.0.0.0');
   await page.goto('./');
-  await expect(page.getByTestId('place-name')).toHaveText('Auraea');
+  await expect(page.getByTestId('place-name')).toHaveText('Dominia');
   await expect(page.locator('.app')).toHaveAttribute('data-frame', 'yellow');
   const frame = await page.locator('.hud').evaluate((el) => getComputedStyle(el).borderTopColor);
   expect(frame).toBe('rgb(230, 195, 92)');

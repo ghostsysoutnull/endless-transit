@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, plant, press, saveText, watchForErrors } from './support/harness.ts';
 
-/** A fixed world: its street is Bright Boulevard, eight levels from the universe. */
+/** A fixed world: its street is Requiem Slipway, eight levels from the universe. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 

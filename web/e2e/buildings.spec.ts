@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const LOBBY = '0.0.0.0.0.0.0.0.0.0';
 const FIRST_ROOM = `${LOBBY}.0.0.0`;
@@ -34,7 +34,7 @@ test('from the title: a new world lands on a street; into a building, a floor pi
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
+  await expect(page.getByTestId('place-name')).toHaveText('Requiem Slipway');
   await expect(page.getByTestId('path').locator('li')).toHaveCount(8);
   await expect(page.locator('button[data-option^="enter:"]')).toHaveCount(4);
   await expectTouchable(page, 'street');
@@ -113,7 +113,7 @@ test('from the title: a new world lands on a street; into a building, a floor pi
   await press(page, /leave floor/i, hasTouch);
   await press(page, /leave building/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
+  await expect(page.getByTestId('place-name')).toHaveText('Requiem Slipway');
   expect(problems).toEqual([]);
 });
 
@@ -141,7 +141,7 @@ test('a tall building: the tower is still its list — the gauge counts its floo
   page,
   hasTouch,
 }) => {
-  // Seed 7F3A: Bright Boulevard's buildings are 16, ?, ?, ? floors — find the tallest by walking the street.
+  // Seed 7F3A: Requiem Slipway's buildings are 16, ?, ?, ? floors — find the tallest by walking the street.
   await plant(page, '0.0.0.0.0.0.0.0');
   await page.goto('./');
   const buildings = await page.evaluate(() => {
