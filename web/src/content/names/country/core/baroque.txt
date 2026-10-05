@@ -1,0 +1,12 @@
+Cathedral
+Gilt
+Incense
+Choir
+Altar
+Vesper
+Relic
+Chalice
+Organ
+Fresco
+Halo
+Psalm

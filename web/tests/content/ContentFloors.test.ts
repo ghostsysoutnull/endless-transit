@@ -3,6 +3,8 @@ import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
 import { doorStateLook } from '#engine/model/DoorStateLook.ts';
 import { materialFamily } from '#engine/model/MaterialFamily.ts';
+import { axisKeys, NAME_KINDS } from '#tests/support/placeNames.ts';
+import { must } from '#tests/support/world.ts';
 
 const library = new ContentLibrary(new BundledContent());
 const CULTURES = library.index('themes/cultures');
@@ -136,5 +138,41 @@ describe('list floors (HK-016 step 3; a list may only grow)', () => {
     }
     for (const line of library.list('themes/descriptions/floor')) expect(line).toContain('{culture}');
     atLeast('colours', library.list('themes/colours'), 8);
+  });
+});
+
+describe('place names: every list outlasts the siblings it is dealt among, and no word could be said twice', () => {
+  const AXIS_KEYS = axisKeys(library);
+  /** Each part's floor: at least the most siblings its kind can have, so a deal never starts over in one parent. */
+  const FLOORS: Readonly<Record<string, Readonly<Record<string, number>>>> = {
+    'names/filament': { greek: 12, type: 8 },
+    'names/sector': { descriptor: 24, noun: 24 },
+    'names/solar-system': { prefix: 48, suffix: 32 },
+    'names/planet': { head: 12, tail: 30 },
+    'names/country': { prefix: 30, core: 12, suffix: 10 },
+    'names/city': { head: 14, tail: 14 },
+    'names/street': { adjective: 16, noun: 16 },
+  };
+
+  /** The lists of one part, by path: its one list, or one per key of its axis. */
+  function listsOf(kind: string, part: string, axis: string): Map<string, readonly string[]> {
+    const paths = AXIS_KEYS.get(axis)?.map((key) => `${kind}/${part}/${key}`) ?? [`${kind}/${part}`];
+    return new Map(paths.map((path) => [path, library.list(path)]));
+  }
+
+  test.each(NAME_KINDS)('%s: every list of every part reaches its floor', (kind) => {
+    const floors = must(FLOORS[kind], `the floors of ${kind}`);
+    for (const [part, axis] of library.pairs(`${kind}/index`)) {
+      const floor = must(floors[part], `a floor for ${kind}/${part}`);
+      for (const [path, words] of listsOf(kind, part, axis)) atLeast(path, words, floor);
+    }
+  });
+
+  test.each(NAME_KINDS)('%s: no word sits in two of its lists, whatever the part or the key', (kind) => {
+    const words = library
+      .pairs(`${kind}/index`)
+      .flatMap(([part, axis]) => [...listsOf(kind, part, axis).values()].flat())
+      .map((word) => word.toLowerCase());
+    expect(words.filter((word, at) => words.indexOf(word) !== at)).toEqual([]);
   });
 });

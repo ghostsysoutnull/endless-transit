@@ -151,6 +151,21 @@ builder); none of these is a bug or a fact in two places.
 - `PolePicture.test.ts` expects upper case and `—`; `PoleMarks.test.ts` reads `inForce` by key order: read by lane.
 - No test covers `TracePole`'s focus slide or its repaint on scroll under reduced motion.
 
+### HK-041 — the place names' design check: logged findings (tidying, one line each)
+**Found:** 2026-10-05, the one design check of the place names (`master..words/place-names`); its two fixes are in;
+none of these is a bug the player meets today or a fact in two places.
+- The name lists' floors are literals in `ContentFloors.test.ts`: nothing ties them to the most siblings a kind can
+  have, so a raised child count would let a deal start over unseen. `NameParts` could refuse an index past its list.
+- `NameParts.#parts` is filled inside `words()`: a bad index line is refused at the first naming, not when the
+  registry is built. Build it in the constructor.
+- `KeyedPart` holds its two refusals as a function in a field, and `Vibe | undefined` travels from the factory to it
+  before it is refused: hand it the plain key reader and refuse in its own `list()`.
+- `NameParts` and `LibraryNames` take the concrete `NameAxes` where the dealer has an interface.
+- `BundledContent.test.ts`'s file and directory counts fail only on an intended addition (older than this piece,
+  re-pinned by it): delete the counts.
+- `PlaceNames.test.ts` counts the rebel districts among a country's cities, not the walked city, so a rebel
+  district's streets are not sure to be checked: count the walked one.
+
 ## 🟢 CLOSED
 
 ### HK-040 — the U03e design check's logged findings (tidying, one line each)

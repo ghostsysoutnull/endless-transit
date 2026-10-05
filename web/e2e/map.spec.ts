@@ -2,7 +2,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, tapOption, trailOf, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard, four buildings; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
+/** A fixed world: its street is Requiem Slipway, four buildings; its first building Ornate Sanctum, 16 floors, 9 doors per corridor. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 const BUILDING = `${STREET}.0`;
@@ -76,10 +76,10 @@ test('on a street the pane beside the list is the drawn map; MAP draws it larger
   const pane = page.getByTestId('pane-map');
   await expect(pane).toBeVisible();
   await expect(pane.locator('.heading')).toHaveText('[NEURAL_MAP: STREET]');
-  await expect(pane.locator('.tl')).toHaveText('SCAN_ORIGIN: Bright Boulevard');
+  await expect(pane.locator('.tl')).toHaveText('SCAN_ORIGIN: Requiem Slipway');
   await expect(pane.locator('.cv')).toHaveAttribute(
     'aria-label',
-    'Lattice map of Bright Boulevard: 4 nodes, 0 visited.',
+    'Lattice map of Requiem Slipway: 4 nodes, 0 visited.',
   );
   await expect(pane.locator('.vh li')).toHaveCount(4);
   await expect(pane.locator('.vh li').first()).toHaveText('⌂ Ornate Sanctum, unvisited');
@@ -91,7 +91,7 @@ test('on a street the pane beside the list is the drawn map; MAP draws it larger
   await expect(map).toBeVisible();
   await expect(map.locator('.heading')).toHaveText('[NEURAL_LATTICE_PROJECTION]');
   await expect(page.getByTestId('status')).toHaveText(
-    'NEURAL_LATTICE_PROJECTION: 4 nodes plotted from Bright Boulevard.',
+    'NEURAL_LATTICE_PROJECTION: 4 nodes plotted from Requiem Slipway.',
   );
   await expect(page.getByTestId('coherence')).toHaveText('99%');
   await expect(stat(page, 'Steps')).toHaveText('0');
@@ -203,8 +203,8 @@ test('TRACE on a street, from the universe down; MORE opens the game’s command
   const trace = page.getByTestId('trace');
   const bands = trace.getByRole('button', { name: /^Depth / });
   await expect(bands).toHaveCount(8);
-  await expect(bands.nth(4)).toHaveAccessibleName('Depth 04, Planet: Auraea');
-  await expect(bands.nth(7)).toHaveAccessibleName('Depth 07, Street: Bright Boulevard, you are here');
+  await expect(bands.nth(4)).toHaveAccessibleName('Depth 04, Planet: Dominia');
+  await expect(bands.nth(7)).toHaveAccessibleName('Depth 07, Street: Requiem Slipway, you are here');
   await expectDrawn(trace.locator('[data-level]').nth(7), 'the street’s band', 'bottom');
   await expectTouchable(page, 'street with the trace');
   await shoot(page, '6-trace-street');

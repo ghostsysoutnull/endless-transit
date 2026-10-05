@@ -1,0 +1,14 @@
+works
+mill
+forge
+burg
+yard
+pit
+quay
+wharf
+kiln
+shaft
+foundry
+depot
+lock
+siding

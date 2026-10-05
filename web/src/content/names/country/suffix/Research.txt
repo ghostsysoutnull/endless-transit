@@ -1,0 +1,10 @@
+Institute
+Academy
+Directorate
+Observatory
+Technate
+Collegium
+Lyceum
+Symposium
+Faculty
+Polytechnic

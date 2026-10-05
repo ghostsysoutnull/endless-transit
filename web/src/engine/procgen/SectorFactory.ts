@@ -26,7 +26,7 @@ export class SectorFactory implements LocationFactory {
   create(origin: Origin): GalacticSector {
     const number = this.#names.naming(origin.seed).branch('number').range(0, 98);
     return new GalacticSector(origin, {
-      name: `${this.#names.words(origin.seed).join(' ')} ${String(number)}`,
+      name: `${this.#names.words(origin, undefined).join(' ')} ${String(number)}`,
     });
   }
 

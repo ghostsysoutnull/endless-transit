@@ -1,7 +1,7 @@
 # Handover
 
-- **Branch:** `master` (the corridor-keys fast loop — the row of buttons on every drawn level, the tower as the list
-  of its floors, the sliding street, names on the area pictures — merged; its branch deleted).
+- **Branch:** `master` (the place names — dealt among siblings, the lists grown, planet to street named in the words
+  of the vibe in force; its record `tasks/words/place-names.md` — merged; its branch deleted; not published).
 - **Next:** U06 of the UI rework, the wrap-up, now the title, the map and the scan tables — its row in
   `tasks/UI_QUEUE.md`; then U06b, the node pictures (a mock first), then U07.
 - **Open threads:**
@@ -17,4 +17,4 @@
     `gh auth refresh -s workflow`);
   - the tester's findings, when they come: each becomes a fix under the queue's "Reported by the tester";
   - the rule reviews are closed; not reviewed: `.claude/commands/chronicle.md`;
-  - `tasks/backlog/HOUSEKEEPING.md`: HK-025, HK-026 to HK-040.
+  - `tasks/backlog/HOUSEKEEPING.md`: HK-025, HK-026 to HK-041.

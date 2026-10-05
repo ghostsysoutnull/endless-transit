@@ -13,7 +13,7 @@ import { must, realRegistry, toStreet } from '#tests/support/world.ts';
 const registry = realRegistry();
 const SEED = new Seed(0x7f3a91c2, 0x0b4de6a8);
 
-/** Bright Boulevard's Ornate Sanctum (16 floors, 9 doors), fresh. */
+/** Requiem Slipway's Ornate Sanctum (16 floors, 9 doors), fresh. */
 function sanctum(): { street: Location; building: Building } {
   const street = must(toStreet(registry.universe(SEED), () => 0).at(-1));
   const building = street.children()[0];

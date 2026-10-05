@@ -55,7 +55,7 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
     expect(map).toEqual({
       width: 30,
       height: 15,
-      origin: { name: 'Bright Boulevard', glyph: '═' },
+      origin: { name: 'Requiem Slipway', glyph: '═' },
       frame: 'yellow',
       abyssal: false,
       nodes: [
@@ -73,7 +73,7 @@ describe('the lattice map as data (Guide:92, 156, 279, 339-342; LatticeMapCompon
     for (let level = 0; level < 7; level++) engine.step('leave');
     for (const index of [0, 0, 0, 0, 2, 0]) engine.step(`enter:${String(index)}`);
     const city = lattice(engine.snapshot());
-    expect(city.origin).toEqual({ name: 'Steamspire', glyph: '🏙' });
+    expect(city.origin).toEqual({ name: 'Vespertether', glyph: '🏙' });
     expect(city.nodes).toHaveLength(15);
     expect(new Set(city.nodes.map((node) => `${String(node.x)},${String(node.y)}`)).size).toBe(15);
     expect(city.nodes.every((node) => node.x >= 0 && node.x < 30 && node.y >= 0 && node.y < 15)).toBe(true);
@@ -229,7 +229,7 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
     expect(engine.snapshot().map).toBeNull();
     const shown = engine.step('map');
     expect(shown.player).toMatchObject({ coherence: 99, band: 'stable', steps: 0 });
-    expect(shown.message).toBe('NEURAL_LATTICE_PROJECTION: 4 nodes plotted from Bright Boulevard.');
+    expect(shown.message).toBe('NEURAL_LATTICE_PROJECTION: 4 nodes plotted from Requiem Slipway.');
     expect(shown.map).toEqual(shown.place?.lattice);
     expect(engine.snapshot().map).toEqual(shown.map);
     expect(engine.step('enter:0').map).toBeNull();
@@ -253,13 +253,13 @@ describe('MAP and TRACE — global commands whose panel lasts one step (Guide:91
       shown.trace?.steps.map((step) => `${String(step.depth)} ${step.icon} ${step.kind} : ${step.name}`),
     ).toEqual([
       '0 ∞ Universe : The Endless Universe',
-      '1 » Cosmic filament : Zeta-915-Link',
-      '2 ○ Galactic sector : Outer Expanse 91',
-      '3 ☼ Solar system : Zeta Borealis',
-      '4 ⊕ Planet : Auraea',
-      '5 ⬚ Country : Southern Glacier Kingdom',
-      '6 🏙 City : Rainhaven',
-      '7 ═ Street : Bright Boulevard',
+      '1 » Cosmic filament : Lambda-915-Link',
+      '2 ○ Galactic sector : Upper Shoal 91',
+      '3 ☼ Solar system : Alcor Prime',
+      '4 ⊕ Planet : Dominia',
+      '5 ⬚ Country : Ancient Vesper Assembly',
+      '6 🏙 City : Angeltether',
+      '7 ═ Street : Requiem Slipway',
       '8 ⌂ Building : Ornate Sanctum',
       '9 ▤ Floor : Floor 15',
     ]);

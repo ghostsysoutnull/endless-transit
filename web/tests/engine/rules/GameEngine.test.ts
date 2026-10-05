@@ -95,7 +95,7 @@ function walkedDown(engine: GameEngine, levels: number): GameSnapshot {
   return snapshot;
 }
 
-/** Ornate Sanctum (16 floors, 9 doors) on Bright Boulevard: into the lobby, the corridor, and the first door. */
+/** Ornate Sanctum (16 floors, 9 doors) on Requiem Slipway: into the lobby, the corridor, and the first door. */
 function inTheFirstRoom(engine: GameEngine): GameSnapshot {
   engine.step('new-world');
   engine.step('enter-world');
@@ -182,9 +182,9 @@ describe('GameEngine — walking the big world', () => {
     engine.step('new-world');
     const street = engine.step('enter-world');
     expect(street.place?.kind).toBe('Street');
-    expect(street.place?.name).toBe('Bright Boulevard');
+    expect(street.place?.name).toBe('Requiem Slipway');
     expect(street.place?.address).toBe('0.0.0.0.0.0.0.0');
-    expect(street.message).toBe('Entered Bright Boulevard.');
+    expect(street.message).toBe('Entered Requiem Slipway.');
     expect(street.options.map((option) => option.id)).toEqual([
       'enter:0',
       'enter:1',
@@ -226,12 +226,12 @@ describe('GameEngine — walking the big world', () => {
         frame: null,
         abyssal: false,
         nodes: [
-          { x: 5, y: 1, glyph: '»', name: 'Zeta-915-Link', visited: true, noise: false },
-          { x: 18, y: 10, glyph: '»', name: 'Delta-901-Strand', visited: false, noise: false },
-          { x: 16, y: 12, glyph: '»', name: 'Iota-678-Thread', visited: false, noise: false },
-          { x: 10, y: 13, glyph: '»', name: 'Mu-655-Sync', visited: false, noise: false },
-          { x: 21, y: 10, glyph: '»', name: 'Gamma-486-Link', visited: false, noise: false },
-          { x: 4, y: 0, glyph: '»', name: 'Kappa-957-Pulse', visited: false, noise: false },
+          { x: 5, y: 1, glyph: '»', name: 'Lambda-915-Link', visited: true, noise: false },
+          { x: 18, y: 10, glyph: '»', name: 'Gamma-901-Thread', visited: false, noise: false },
+          { x: 16, y: 12, glyph: '»', name: 'Zeta-678-Pulse', visited: false, noise: false },
+          { x: 10, y: 13, glyph: '»', name: 'Delta-655-Strand', visited: false, noise: false },
+          { x: 21, y: 10, glyph: '»', name: 'Eta-486-Sync', visited: false, noise: false },
+          { x: 4, y: 0, glyph: '»', name: 'Kappa-957-Stream', visited: false, noise: false },
         ],
         marks: [],
       },
@@ -241,8 +241,8 @@ describe('GameEngine — walking the big world', () => {
     expect(travel[0]).toEqual({
       id: 'enter:0',
       key: '1',
-      label: 'Synchronize with Zeta-915-Link',
-      place: 'Zeta-915-Link',
+      label: 'Synchronize with Lambda-915-Link',
+      place: 'Lambda-915-Link',
       role: 'travel',
       sealed: false,
       landmark: false,
@@ -272,11 +272,11 @@ describe('GameEngine — walking the big world', () => {
     const snapshot = walkedDown(engine, 1);
     const place = must(snapshot.place ?? undefined, 'a place');
     expect(place.kind).toBe('Cosmic filament');
-    expect(place.name).toBe('Zeta-915-Link');
+    expect(place.name).toBe('Lambda-915-Link');
     expect(place.address).toBe('0.0');
     expect(place.trail).toHaveLength(2);
     expect(place.position).toMatchObject({ label: 'CONDUIT', index: 1 });
-    expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Zeta-915-Link']);
+    expect(place.trail.map((step) => step.name)).toEqual(['The Endless Universe', 'Lambda-915-Link']);
     expect(place.trail.map((step) => step.address)).toEqual(['0', '0.0']);
     expect(snapshot.options.find((option) => option.id === 'leave')).toEqual({
       id: 'leave',
@@ -294,7 +294,7 @@ describe('GameEngine — walking the big world', () => {
       address: '',
       numbered: false,
     });
-    expect(snapshot.message).toBe('Entered Zeta-915-Link.');
+    expect(snapshot.message).toBe('Entered Lambda-915-Link.');
   });
 
   test('eight levels: universe to street and back up to the universe', () => {
@@ -312,7 +312,7 @@ describe('GameEngine — walking the big world', () => {
       'Street',
     ]);
     const street = engine.snapshot();
-    expect(street.place?.name).toBe('Bright Boulevard');
+    expect(street.place?.name).toBe('Requiem Slipway');
     expect(street.place?.frame).toBe('yellow');
     expect(street.place?.facts).toEqual([
       { key: 'era', label: 'Era', value: 'future' },
@@ -617,10 +617,10 @@ describe('GameEngine — walking the big world', () => {
     engine.step('new-world');
     engine.step('enter-world');
     for (let level = 0; level < 7; level++) engine.step('leave');
-    // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's, m the map's, h the help's).
+    // Vespertether (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's, m the map's, h the help's).
     for (const index of [0, 0, 0, 0, 2, 0]) engine.step(`enter:${String(index)}`);
     const city = engine.snapshot();
-    expect(city.place?.name).toBe('Steamspire');
+    expect(city.place?.name).toBe('Vespertether');
     expect(
       city.options
         .filter((option) => option.role === 'travel')
@@ -646,7 +646,7 @@ describe('GameEngine — walking the big world', () => {
     const open = engine.step('help');
     expect(open.prompt).toEqual({ id: 'help', outcome: '', figures: {} });
     expect(open.player).toMatchObject({ coherence: 85, band: 'stable', steps: 14 });
-    expect(open.place?.name).toBe('Bright Boulevard');
+    expect(open.place?.name).toBe('Requiem Slipway');
     expect(open.options).toEqual([{ ...system('close', 'b', 'Back to the world'), role: 'return' }]);
     expect(open.message).toBe('');
     // Nothing else is heard while it is open; the way back costs nothing.
@@ -654,13 +654,13 @@ describe('GameEngine — walking the big world', () => {
     const back = engine.step('close');
     expect(back.prompt).toBeNull();
     expect(back.player).toMatchObject({ coherence: 85, band: 'stable', steps: 14 });
-    expect(back.place?.name).toBe('Bright Boulevard');
+    expect(back.place?.name).toBe('Requiem Slipway');
     expect(back.scan).toBeNull();
     // A reload lands in the world: the prompt is not saved.
     engine.step('help');
     const reloaded = engineOn(saves).snapshot();
     expect(reloaded.prompt).toBeNull();
-    expect(reloaded.place?.name).toBe('Bright Boulevard');
+    expect(reloaded.place?.name).toBe('Requiem Slipway');
   });
 
   test('the visited mark’s letter is claimed like a command’s: no child is keyed v, so a row never reads [V] … [V]', () => {
@@ -670,9 +670,9 @@ describe('GameEngine — walking the big world', () => {
       saves: new MemorySaveStore(),
     });
     engine.step('new-world');
-    // Broad Alley (seed 0000-…): twenty buildings — the twentieth once read `20 [V] Enter Building: CellFall`.
+    // Sunken Glide (seed 0000-…): twenty buildings — the twentieth once read `20 [V] Enter Building: CellFall`.
     const street = engine.step('enter-world');
-    expect(street.place?.name).toBe('Broad Alley');
+    expect(street.place?.name).toBe('Sunken Glide');
     expect(
       street.options
         .filter((option) => option.role === 'travel')
@@ -842,7 +842,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
   });
 
   test("the drain follows the street's era: two per prompt where it is entropic (Guide:137, 304-305), on every screen below it", () => {
-    // Seed 0000-0005-0000-0023: the street a new world starts on, Bright Road, is entropic.
+    // Seed 0000-0005-0000-0023: the street a new world starts on, Pearl Ruin, is entropic.
     const engine = new GameEngine({
       world: realRegistry(),
       entropy: new FixedEntropySource([new Seed(5, 0x23)]),

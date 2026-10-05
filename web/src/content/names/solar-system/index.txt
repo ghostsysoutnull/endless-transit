@@ -1,2 +1,2 @@
-prefix
-suffix
+prefix|shared
+suffix|shared

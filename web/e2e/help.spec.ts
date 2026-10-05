@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectTouchable, press, saveText, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard. */
+/** A fixed world: its street is Requiem Slipway. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 
@@ -55,7 +55,7 @@ test('HELP opens the manual — every button explained, the survival rules — c
   await shoot(page, '1-help');
   await press(page, /back to the world/i, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
-  await expect(page.getByTestId('place-name')).toHaveText('Bright Boulevard');
+  await expect(page.getByTestId('place-name')).toHaveText('Requiem Slipway');
   // One prompt: the help; the way back is free; no step.
   await expect(page.getByTestId('coherence')).toHaveText('99%');
   await expect(stat(page, 'Steps')).toHaveText('0');

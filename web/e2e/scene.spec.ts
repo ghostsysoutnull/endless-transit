@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { pointInPicture, press, saveText, tapAt, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard, four buildings, the first Ornate Sanctum. */
+/** A fixed world: its street is Requiem Slipway, four buildings, the first Ornate Sanctum. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 
@@ -65,7 +65,7 @@ test('the street is drawn: a named picture with its list as its twin; a building
   await page.goto('./');
   const scene = page.getByTestId('scene');
   await expect(scene).toHaveCount(1);
-  await expect(scene.getByRole('img', { name: /^Picture of Bright Boulevard/ })).toHaveCount(1);
+  await expect(scene.getByRole('img', { name: /^Picture of Requiem Slipway/ })).toHaveCount(1);
   await expect(scene.locator('canvas')).toHaveCount(1);
   // No option lives on the picture: the list is the one set of buttons.
   await expect(scene.locator('[data-option]')).toHaveCount(0);

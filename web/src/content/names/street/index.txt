@@ -1,2 +1,2 @@
-adjective
-noun
+adjective|culture
+noun|era

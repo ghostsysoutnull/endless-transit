@@ -32,10 +32,8 @@ export class PlanetFactory implements LocationFactory {
   }
 
   create(origin: Origin): Planet {
-    return new Planet(origin, {
-      name: this.#names.words(origin.seed).join(''),
-      vibe: this.#vibeOf(origin.seed),
-    });
+    const vibe = this.#vibeOf(origin.seed);
+    return new Planet(origin, { name: this.#names.words(origin, vibe).join(''), vibe });
   }
 
   populate(parent: Location): readonly Location[] {

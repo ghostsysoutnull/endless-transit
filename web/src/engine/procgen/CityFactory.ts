@@ -27,9 +27,12 @@ export class CityFactory implements LocationFactory {
 
   create(origin: Origin): City {
     const rebel = origin.seed.branch('rebel').probability(REBEL_CHANCE);
+    const inherited = origin.parent?.vibe();
+    // The vibe this city is named under is the one chosen for it here: the swapped pair for a rebel district.
+    const vibe = rebel ? inherited?.rebel() : inherited;
     return new City(origin, {
-      name: this.#names.words(origin.seed).join(''),
-      rebelVibe: rebel ? origin.parent?.vibe()?.rebel() : undefined,
+      name: this.#names.words(origin, vibe).join(''),
+      rebelVibe: rebel ? vibe : undefined,
     });
   }
 

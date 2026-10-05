@@ -11,7 +11,7 @@ import { Seed } from '#engine/rng/Seed.ts';
 import { must, realRegistry } from '#tests/support/world.ts';
 
 const SEED = new Seed(0x7f3a91c2, 0x0b4de6a8);
-/** Grand Power Plant: the first room behind the first door off the lobby of Ornate Sanctum, Bright Boulevard. */
+/** Grand Power Plant: the first room behind the first door off the lobby of Ornate Sanctum, Requiem Slipway. */
 const FIRST_ROOM = '0.0.0.0.0.0.0.0.0.0.0.0.0';
 const SECOND_ROOM = '0.0.0.0.0.0.0.0.0.0.0.0.1';
 /** The first room behind the second door: a room of another apartment. */
@@ -70,7 +70,7 @@ describe('a relic found in a room (Room.groovy:165-173; Guide:180-185)', () => {
       }
       if (drifted !== undefined) break;
     }
-    const room = must(drifted, 'a drifted room on Bright Boulevard');
+    const room = must(drifted, 'a drifted room on Requiem Slipway');
     const relic = must(room.objects()[0]);
     expect(relic.resonant()).toBe(false);
     expect(relic.frequency().hertz() % 12).toBe(0);

@@ -15,8 +15,10 @@ Lessons: @../tasks/lessons/web.md
 no `Math.random`. It receives what it needs through interfaces it owns (`ContentSource`, `SaveStore`, `EntropySource`,
 `WarningSink` — a list an index promised and the content lacks is a `[THEME_WARN]`, never a silent fallback).
 `src/content/` the `.txt` lists + the ONE `import.meta.glob` (`BundledContent`). **Order = the `index.txt` order.**
-Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture, or by trait
-(`names/rooms`, keyed by `themes/traits.txt`), carry no index of their own.
+Which cultures exist: `themes/cultures/index.txt` only — directories keyed by culture, by era or by trait
+(`names/rooms`, keyed by `themes/traits.txt`), carry no index of their own. A place-name kind's index says `part|axis`
+on every line: `shared` is one list; `culture`, `era` or `trait` a directory of lists keyed by it (`NameAxes`). A name
+part keyed by culture holds the nine surface cultures of `themes/planet-frames.txt`, not the lexicons' ten.
 `src/platform/` browser adapters. `src/ui/` screens, input, styles — depends on the engine, never the reverse;
 `src/ui/canvas/` and `src/ui/scene/` hold the only hand-written canvas code.
 `src/main.ts` the composition root: the only place adapters are built.
@@ -41,7 +43,8 @@ Which cultures exist: `themes/cultures/index.txt` only — directories keyed by 
 ## Engine laws
 
 - **Lazy loading:** a place's children exist only after `children()`, generated once through the injected
-  `ChildSource`; child `i` is born from `parentSeed.branch(i)` and nothing else.
+  `ChildSource`; child `i`'s seed is `parentSeed.branch(i)` and nothing else. Its name is dealt on a branch of the
+  parent's seed at `i` (`NameParts`), as a room's adjective is: it reads no sibling.
 - **The UI never re-derives a rule:** the engine hands facts over as data; a presenter never cuts a name out of a
   label — the option carries it.
 - **Noise is seeded:** what a screen draws as noise comes from `FrameEntropy` (the place + the step count), never the

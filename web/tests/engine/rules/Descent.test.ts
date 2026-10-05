@@ -127,7 +127,7 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     const saves = new MemorySaveStore();
     const engine = engineOn(ZERO, saves);
     let snapshot = engine.snapshot();
-    // Seed 0000-…: Broad Alley lies under Null Reach F4E, five leaves up.
+    // Seed 0000-…: Sunken Glide lies under Null Reach F4E, five leaves up.
     for (const id of ['new-world', 'enter-world', 'leave', 'leave', 'leave', 'leave', 'leave'])
       snapshot = engine.step(id);
     expect(snapshot.place?.name).toBe('Null Reach F4E');
@@ -377,7 +377,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     const dead = engine.step('move:down');
     expect(dead.prompt?.id).toBe('reboot');
     const reborn = engine.step('reboot');
-    expect(reborn.place?.name).toBe('Bright Boulevard');
+    expect(reborn.place?.name).toBe('Requiem Slipway');
     expect(reborn.buffer?.fragments.map((f) => f.name)).toEqual([
       'Hidden Frequency',
       'Hidden Frequency',

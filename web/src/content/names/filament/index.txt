@@ -1,2 +1,2 @@
-greek
-type
+greek|shared
+type|shared

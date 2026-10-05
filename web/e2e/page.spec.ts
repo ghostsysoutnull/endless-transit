@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { saveText } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
-/** A fixed world: its street is Bright Boulevard. */
+/** A fixed world: its street is Requiem Slipway. */
 const SEED = '7F3A-91C2-0B4D-E6A8';
 const STREET = '0.0.0.0.0.0.0.0';
 

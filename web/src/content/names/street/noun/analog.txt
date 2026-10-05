@@ -1,0 +1,16 @@
+Street
+Road
+Avenue
+Lane
+Drive
+Boulevard
+Terrace
+Crescent
+Close
+Place
+Court
+Parade
+Square
+Gardens
+Hill
+Green
