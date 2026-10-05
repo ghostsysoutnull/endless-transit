@@ -1,7 +1,7 @@
 # Handover
 
 - **Branch:** `master` (the place names — dealt among siblings, the lists grown, planet to street named in the words
-  of the vibe in force; its record `tasks/words/place-names.md` — merged; its branch deleted; not published).
+  of the vibe in force; its record `tasks/words/place-names.md` — merged; its branch deleted).
 - **Next:** U06 of the UI rework, the wrap-up, now the title, the map and the scan tables — its row in
   `tasks/UI_QUEUE.md`; then U06b, the node pictures (a mock first), then U07.
 - **Open threads:**
