@@ -1,0 +1,16 @@
+Parkway
+Strip
+Freeway
+Turnpike
+Overpass
+Bypass
+Plaza
+Expressway
+Underpass
+Cloverleaf
+Motorway
+Concourse
+Interchange
+Flyover
+Circle
+Esplanade

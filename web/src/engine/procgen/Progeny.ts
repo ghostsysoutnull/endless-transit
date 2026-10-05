@@ -9,7 +9,7 @@ const COUNT = 'children';
 
 /**
  * Owns one fact: how a parent's children come to be — how many (a draw in `min … max` on the parent's
- * seed, times `unit`, or a count the parent already decided), and that child `i` is born from
+ * seed, times `unit`, or a count the parent already decided), and that child `i`'s seed is
  * `parentSeed.child(i)` (`Seed` owns that rule) and nothing else. Which factory makes a child is asked per child seed, so a level
  * can mix kinds.
  */

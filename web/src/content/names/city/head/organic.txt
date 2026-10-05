@@ -1,0 +1,14 @@
+Frond
+Spore
+Root
+Fern
+Bloom
+Vine
+Thorn
+Mycel
+Leaf
+Pollen
+Seed
+Bark
+Reed
+Lichen

@@ -24,7 +24,7 @@ export class StreetFactory implements LocationFactory {
   }
 
   create(origin: Origin): Street {
-    return new Street(origin, { name: this.#names.words(origin.seed).join(' ') });
+    return new Street(origin, { name: this.#names.words(origin, origin.parent?.vibe()).join(' ') });
   }
 
   populate(parent: Location): readonly Location[] {

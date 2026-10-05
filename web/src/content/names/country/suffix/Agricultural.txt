@@ -1,0 +1,10 @@
+Commons
+Granges
+Pastures
+Fields
+Orchards
+Steppes
+Lands
+Terraces
+Meadows
+Homesteads

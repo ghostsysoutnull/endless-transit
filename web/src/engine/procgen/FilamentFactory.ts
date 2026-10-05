@@ -32,7 +32,7 @@ export class FilamentFactory implements LocationFactory {
   }
 
   create(origin: Origin): CosmicFilament {
-    const [greek, type] = this.#names.words(origin.seed);
+    const [greek, type] = this.#names.words(origin, undefined);
     const number = this.#names.naming(origin.seed).branch('number').range(0, 998);
     const conduit = origin.seed.branch('conduit').range(0, 0xfffe);
     return new CosmicFilament(origin, {

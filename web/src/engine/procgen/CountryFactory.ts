@@ -35,11 +35,8 @@ export class CountryFactory implements LocationFactory {
   create(origin: Origin): Country {
     const trait = origin.seed.branch('trait').pick(this.#themes.traits());
     const shift = origin.seed.branch('stability').range(SHIFT.min, SHIFT.max) / SHIFT.scale;
-    return new Country(origin, {
-      name: this.#names.words(origin.seed).join(' '),
-      trait,
-      vibe: origin.parent?.vibe()?.mutate(trait, shift),
-    });
+    const vibe = origin.parent?.vibe()?.mutate(trait, shift);
+    return new Country(origin, { name: this.#names.words(origin, vibe).join(' '), trait, vibe });
   }
 
   populate(parent: Location): readonly Location[] {

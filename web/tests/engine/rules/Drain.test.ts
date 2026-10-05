@@ -75,7 +75,7 @@ describe('Drain — what one prompt costs where the traveller stands (Guide:133-
   test('the drain follows the street header, not the apartment’s drift (Guide:313): a room in an ancient apartment under an entropic street costs the street’s two', () => {
     // Seed 0000-0005-0000-0023: Bright Road is entropic; door 3 of its first corridor drifted to `ancient`.
     const bright = must(toStreet(realRegistry().universe(new Seed(5, 0x23)), () => 0).at(-1));
-    expect(bright.name()).toBe('Bright Road');
+    expect(bright.name()).toBe('Pearl Ruin');
     expect(bright.vibe()?.era().key()).toBe('entropic');
     const apartment = must(bright.children()[0]?.children()[0]?.children()[0]?.children()[3]);
     const room = must(apartment.children()[0]);

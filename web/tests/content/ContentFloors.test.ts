@@ -138,3 +138,90 @@ describe('list floors (HK-016 step 3; a list may only grow)', () => {
     atLeast('colours', library.list('themes/colours'), 8);
   });
 });
+
+describe('place names: every list outlasts the siblings it is dealt among, and no word could be said twice', () => {
+  const AXIS_KEYS: ReadonlyMap<string, readonly string[]> = new Map([
+    ['culture', library.pairs('themes/planet-frames').map(([culture]) => culture)],
+    ['era', ERAS],
+    ['trait', TRAITS],
+  ]);
+  /** Each part's floor: at least the most siblings its kind can have, so a deal never starts over in one parent. */
+  const FLOORS: ReadonlyMap<string, ReadonlyMap<string, number>> = new Map([
+    [
+      'names/filament',
+      new Map([
+        ['greek', 12],
+        ['type', 8],
+      ]),
+    ],
+    [
+      'names/sector',
+      new Map([
+        ['descriptor', 24],
+        ['noun', 24],
+      ]),
+    ],
+    [
+      'names/solar-system',
+      new Map([
+        ['prefix', 48],
+        ['suffix', 32],
+      ]),
+    ],
+    [
+      'names/planet',
+      new Map([
+        ['head', 12],
+        ['tail', 30],
+      ]),
+    ],
+    [
+      'names/country',
+      new Map([
+        ['prefix', 30],
+        ['core', 12],
+        ['suffix', 10],
+      ]),
+    ],
+    [
+      'names/city',
+      new Map([
+        ['head', 14],
+        ['tail', 14],
+      ]),
+    ],
+    [
+      'names/street',
+      new Map([
+        ['adjective', 16],
+        ['noun', 16],
+      ]),
+    ],
+  ]);
+
+  /** The lists of one part, by path: its one list, or one per key of its axis. */
+  function listsOf(kind: string, part: string, axis: string): Map<string, readonly string[]> {
+    const paths = AXIS_KEYS.get(axis)?.map((key) => `${kind}/${part}/${key}`) ?? [`${kind}/${part}`];
+    return new Map(paths.map((path) => [path, library.list(path)]));
+  }
+
+  test.each([...FLOORS])('%s: every list of every part reaches its floor', (kind, floors) => {
+    const parts = library.pairs(`${kind}/index`);
+    expect(parts.map(([part]) => part)).toEqual([...floors.keys()]);
+    for (const [part, axis] of parts) {
+      for (const [path, words] of listsOf(kind, part, axis))
+        atLeast(path, words, floors.get(part) ?? Infinity);
+    }
+  });
+
+  test.each([...FLOORS.keys()])(
+    '%s: no word sits in two of its lists, whatever the part or the key',
+    (kind) => {
+      const words = library
+        .pairs(`${kind}/index`)
+        .flatMap(([part, axis]) => [...listsOf(kind, part, axis).values()].flat())
+        .map((word) => word.toLowerCase());
+      expect(words.filter((word, at) => words.indexOf(word) !== at)).toEqual([]);
+    },
+  );
+});

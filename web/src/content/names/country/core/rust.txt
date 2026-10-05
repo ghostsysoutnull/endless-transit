@@ -1,0 +1,12 @@
+Cinder
+Iron
+Slag
+Scrap
+Rivet
+Ash
+Soot
+Girder
+Furnace
+Ember
+Anvil
+Ore

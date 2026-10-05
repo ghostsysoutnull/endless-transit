@@ -377,7 +377,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     const dead = engine.step('move:down');
     expect(dead.prompt?.id).toBe('reboot');
     const reborn = engine.step('reboot');
-    expect(reborn.place?.name).toBe('Bright Boulevard');
+    expect(reborn.place?.name).toBe('Requiem Slipway');
     expect(reborn.buffer?.fragments.map((f) => f.name)).toEqual([
       'Hidden Frequency',
       'Hidden Frequency',

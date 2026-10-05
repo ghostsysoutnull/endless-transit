@@ -30,7 +30,7 @@ describe('VibeFigure — a level’s vibe handed over as data (U05, Decision 14)
   });
 
   test('the planet holds its main and second pairs and their stability, and no trait yet', () => {
-    expect(at.planet.name()).toBe('Auraim');
+    expect(at.planet.name()).toBe('Rustir');
     expect(at.planet.vibeFigure()).toEqual({
       held: 'planet',
       main: { era: 'atomic', culture: 'rust' },

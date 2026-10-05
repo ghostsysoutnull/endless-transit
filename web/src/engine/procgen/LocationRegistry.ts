@@ -16,6 +16,7 @@ import { Doors } from './Doors.ts';
 import { FloorZones } from './FloorZones.ts';
 import { Furnishings } from './Furnishings.ts';
 import { LibraryNames } from './LibraryNames.ts';
+import { NameAxes } from './NameAxes.ts';
 import { LibrarySentences } from './LibrarySentences.ts';
 import { ObjectDeck } from './ObjectDeck.ts';
 import { Passages } from './Passages.ts';
@@ -53,9 +54,9 @@ export class LocationRegistry implements FactoryLookup {
     // facts (how many children, which kind, which list) and asks the makers for them.
     const categories = new RoomCategories(library);
     const offspring = new ProgenyMaker(this);
-    const names = new LibraryNames(library);
-    const decks = new LibrarySentences(library);
     const deal = new Deal();
+    const names = new LibraryNames(library, deal, new NameAxes());
+    const decks = new LibrarySentences(library);
     const doors = new Doors(library);
     const words = new CorridorWords(decks);
     const deck = new ObjectDeck(library);

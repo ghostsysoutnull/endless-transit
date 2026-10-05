@@ -1,0 +1,16 @@
+Cinder
+Rivet
+Corroded
+Oxidized
+Scrapyard
+Weathered
+Dusty
+Sooty
+Buckled
+Flaking
+Slag
+Rusted
+Patchwork
+Welded
+Salvage
+Furnace

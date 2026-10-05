@@ -1,2 +1,2 @@
-descriptor
-noun
+descriptor|shared
+noun|shared

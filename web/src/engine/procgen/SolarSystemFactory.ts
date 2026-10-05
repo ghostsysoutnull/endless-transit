@@ -24,7 +24,7 @@ export class SolarSystemFactory implements LocationFactory {
   }
 
   create(origin: Origin): SolarSystem {
-    return new SolarSystem(origin, { name: this.#names.words(origin.seed).join(' ') });
+    return new SolarSystem(origin, { name: this.#names.words(origin, undefined).join(' ') });
   }
 
   populate(parent: Location): readonly Location[] {
