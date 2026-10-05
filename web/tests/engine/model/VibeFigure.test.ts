@@ -3,7 +3,7 @@ import { Seed } from '#engine/rng/Seed.ts';
 import { must, realRegistry, toStreet } from '#tests/support/world.ts';
 
 /**
- * Seed 0000-0005-0000-0002: the planet Auraim is atomic and rust, its second pair ancient and monolith; Blackcity is a
+ * Seed 0000-0005-0000-0002: the planet Rustir is atomic and rust, its second pair ancient and monolith; Flinthenge is a
  * rebel district; door 9 of its first corridor drew its culture from the second pair and kept the era.
  */
 function world() {

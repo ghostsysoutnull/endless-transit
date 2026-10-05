@@ -1,19 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import { BundledContent } from '#content/BundledContent.ts';
 import { ContentLibrary } from '#engine/content/ContentLibrary.ts';
+import { axisKeys, NAME_KINDS } from '#tests/support/placeNames.ts';
 
 const bundle = new BundledContent();
 const library = new ContentLibrary(bundle);
 const CULTURES = 'themes/cultures';
-const NAME_KINDS = [
-  'names/filament',
-  'names/sector',
-  'names/solar-system',
-  'names/planet',
-  'names/country',
-  'names/city',
-  'names/street',
-];
 
 /** directory → stems of its list files (index.txt left out), from the loader's own keys. */
 function listsByDirectory(): Map<string, string[]> {
@@ -40,15 +32,11 @@ describe('BundledContent — the one glob', () => {
     const directories = listsByDirectory();
     expect(directories.size).toBe(29);
     // A name part is a list of its kind's directory, or a directory of lists: one per key of the axis its index line names.
-    const axisKeys = new Map([
-      ['culture', library.pairs('themes/planet-frames').map(([culture]) => culture)],
-      ['era', library.index('themes/timelines')],
-      ['trait', library.list('themes/traits')],
-    ]);
+    const keysOf = axisKeys(library);
     const nameParts = new Map<string, readonly string[]>();
     for (const kind of NAME_KINDS) {
       for (const [part, axis] of library.pairs(`${kind}/index`)) {
-        const keys = axisKeys.get(axis);
+        const keys = keysOf.get(axis);
         if (keys !== undefined) nameParts.set(`${kind}/${part}`, keys);
       }
     }

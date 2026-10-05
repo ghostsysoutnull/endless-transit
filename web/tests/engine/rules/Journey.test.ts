@@ -7,7 +7,7 @@ import { Journey } from '#engine/rules/Journey.ts';
 import { must, realRegistry } from '#tests/support/world.ts';
 
 const SEED = new Seed(0x7f3a91c2, 0x0b4de6a8);
-/** Bright Boulevard: the first street of the first city … of seed 7F3A. */
+/** Requiem Slipway: the first street of the first city … of seed 7F3A. */
 const STREET = '0.0.0.0.0.0.0.0';
 
 function journey(): Journey {
@@ -32,7 +32,7 @@ function save(
   return new SavedGame({ seed: SEED, address, states, visited, ...traveller });
 }
 
-/** A journey standing on Bright Boulevard. */
+/** A journey standing on Requiem Slipway. */
 function onTheStreet(): Journey {
   const trip = journey();
   trip.begin(SEED);

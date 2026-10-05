@@ -103,7 +103,7 @@ describe('Sessions — a save is the whole state, on every tap of a play session
     const seed = must(Seed.parse(session.seed));
     const last = replay(seed, session.history);
     expect(last.place?.kind).toBe('Building');
-    // Bright Road is entropic: two per tap. Reborn at 100: enter:2 (98), leave (96 after the tool), … enter:3 at the end.
+    // Pearl Ruin is entropic: two per tap. Reborn at 100: enter:2 (98), leave (96 after the tool), … enter:3 at the end.
     expect(last.player?.coherence).toBe(96);
     expect(last.player?.steps).toBe(9);
     expect(last.prompt).toBeNull();

@@ -127,7 +127,7 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     const saves = new MemorySaveStore();
     const engine = engineOn(ZERO, saves);
     let snapshot = engine.snapshot();
-    // Seed 0000-…: Broad Alley lies under Null Reach F4E, five leaves up.
+    // Seed 0000-…: Sunken Glide lies under Null Reach F4E, five leaves up.
     for (const id of ['new-world', 'enter-world', 'leave', 'leave', 'leave', 'leave', 'leave'])
       snapshot = engine.step(id);
     expect(snapshot.place?.name).toBe('Null Reach F4E');

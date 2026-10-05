@@ -617,7 +617,7 @@ describe('GameEngine — walking the big world', () => {
     engine.step('new-world');
     engine.step('enter-world');
     for (let level = 0; level < 7; level++) engine.step('leave');
-    // Steamspire (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's, m the map's, h the help's).
+    // Vespertether (seed 7F3A-…): fifteen streets — nine digits, then the first six free letters (i is the buffer's, m the map's, h the help's).
     for (const index of [0, 0, 0, 0, 2, 0]) engine.step(`enter:${String(index)}`);
     const city = engine.snapshot();
     expect(city.place?.name).toBe('Vespertether');
@@ -670,7 +670,7 @@ describe('GameEngine — walking the big world', () => {
       saves: new MemorySaveStore(),
     });
     engine.step('new-world');
-    // Broad Alley (seed 0000-…): twenty buildings — the twentieth once read `20 [V] Enter Building: CellFall`.
+    // Sunken Glide (seed 0000-…): twenty buildings — the twentieth once read `20 [V] Enter Building: CellFall`.
     const street = engine.step('enter-world');
     expect(street.place?.name).toBe('Sunken Glide');
     expect(
@@ -842,7 +842,7 @@ describe('GameEngine — the turn: every prompt in the world costs coherence bef
   });
 
   test("the drain follows the street's era: two per prompt where it is entropic (Guide:137, 304-305), on every screen below it", () => {
-    // Seed 0000-0005-0000-0023: the street a new world starts on, Bright Road, is entropic.
+    // Seed 0000-0005-0000-0023: the street a new world starts on, Pearl Ruin, is entropic.
     const engine = new GameEngine({
       world: realRegistry(),
       entropy: new FixedEntropySource([new Seed(5, 0x23)]),
