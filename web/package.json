@@ -26,7 +26,8 @@
     "check": "node scripts/check.ts",
     "e2e": "playwright test",
     "publish:site": "node scripts/publish.ts",
-    "phone": "tsc -b && ET_BASE=/ vite build && npx -y surge dist endless-transit.surge.sh"
+    "phone": "tsc -b && ET_BASE=/ vite build && npx -y surge dist endless-transit.surge.sh",
+    "names": "node scripts/names-page.ts && npx -y surge names-page endless-transit-names.surge.sh"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "5.3.0",
