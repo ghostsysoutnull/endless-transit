@@ -133,22 +133,24 @@ describe('determinism and position independence', () => {
     }
   });
 
-  test('a place is the same whether you walk to it, jump to it, or look at its siblings first', () => {
+  test('every place on a walk is the same whether you walk to it, jump to it, or look at its siblings first', () => {
     const seed = new Seed(0x7f3a91c2, 0x0b4de6a8);
-    const walked = must(toStreet(registry.universe(seed), () => 1).at(-1), 'a street');
-    const address = must(Address.parse(walked.address().toString()), 'an address');
-    expect(address.depth()).toBe(7);
+    const chain = toStreet(registry.universe(seed), () => 1);
+    expect(must(chain.at(-1), 'a street').address().depth()).toBe(7);
 
-    const jumped = must(registry.universe(seed).descendant(address), 'the place jumped to');
     const crowded = registry.universe(seed);
     const visitAll = (location: Location, depth: number): void => {
       if (depth < 3) for (const child of location.children()) visitAll(child, depth + 1);
     };
     visitAll(crowded, 0);
-    const afterTheCrowd = must(crowded.descendant(address), 'the place after the crowd');
 
-    expect(portrait(jumped)).toEqual(portrait(walked));
-    expect(portrait(afterTheCrowd)).toEqual(portrait(walked));
+    for (const walked of chain.slice(1)) {
+      const address = must(Address.parse(walked.address().toString()), 'an address');
+      const jumped = must(registry.universe(seed).descendant(address), 'the place jumped to');
+      const afterTheCrowd = must(crowded.descendant(address), 'the place after the crowd');
+      expect(portrait(jumped), walked.kind().key()).toEqual(portrait(walked));
+      expect(portrait(afterTheCrowd), walked.kind().key()).toEqual(portrait(walked));
+    }
   });
 
   test('a room is the same walked to or jumped to, from two separate generators', () => {
