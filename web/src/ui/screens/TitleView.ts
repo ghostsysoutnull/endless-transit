@@ -117,12 +117,12 @@ export class TitleView implements View<TitleVM> {
 
   #template(vm: TitleVM): TemplateResult {
     return html`
-      <div class="app title">
+      <div class="app fall title">
         <header class="title-head">
           <h1>${vm.title}</h1>
           <p class="title-tag">${vm.tagline}</p>
         </header>
-        <div class="title-sky" data-sky></div>
+        <div class="fall-sky" data-sky></div>
         <section class="title-world">
           ${
             vm.world === null
@@ -135,14 +135,14 @@ export class TitleView implements View<TitleVM> {
                   </p>
                 `
           }
-          <p class="title-status" data-testid="status">${vm.status}</p>
+          <p class="fall-status" data-testid="status">${vm.status}</p>
         </section>
-        <nav class="title-keys">
+        <nav class="fall-keys">
           ${repeat(
             vm.options,
             (option) => option.id,
             (option) => html`
-              <button type="button" class="title-key" ?data-lead=${option.lead} data-option=${option.id}>
+              <button type="button" class="fall-key" ?data-lead=${option.lead} data-option=${option.id}>
                 ${option.label}
               </button>
             `,
@@ -152,7 +152,7 @@ export class TitleView implements View<TitleVM> {
         ${
           this.#diving
             ? html`<div
-                class="title-dive"
+                class="fall-reel"
                 data-dive
                 @click=${() => {
                   this.#parts.dive.skip();

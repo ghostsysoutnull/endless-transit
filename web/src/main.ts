@@ -29,6 +29,8 @@ import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
 import { Dive } from '#ui/scene/Dive.ts';
+import { LiveBand } from '#ui/scene/LiveBand.ts';
+import { NoTear } from '#ui/scene/NoTear.ts';
 import { TraceBands } from '#ui/scene/TraceBands.ts';
 import { TracePole } from '#ui/scene/TracePole.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
@@ -111,7 +113,22 @@ new Shell(
   engine,
   [
     new ScreenStage(new RebootPresenter(masthead), new RebootView()),
-    new ScreenStage(new RecapPresenter(masthead, frame), new RecapView()),
+    new ScreenStage(
+      new RecapPresenter(masthead, frame, new SceneDrawing()),
+      new RecapView({
+        book: scenes,
+        scene: new LiveBand({ canvases: canvasMaker, clock, motion, tear: new TearPass(new CoherenceFx()) }),
+        // The way out of the game: the title's dive rewound, at its pace, torn as coherence has fallen.
+        dive: new Dive({
+          canvases: canvasMaker,
+          clock,
+          motion,
+          tear: new TearPass(new CoherenceFx()),
+          hold: 520,
+        }),
+        picks: new SceneEvents(),
+      }),
+    ),
     new ScreenStage(new BufferPresenter(masthead, frame), new BufferView()),
     new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
     new ScreenStage(
@@ -120,7 +137,7 @@ new Shell(
         book: scenes,
         scene: new TitleScene({ canvases: canvasMaker, clock, motion, tear: new TearPass(new CoherenceFx()) }),
         // The way into the game, taken at every start: each level held more briefly than in the trace's dive.
-        dive: new Dive({ canvases: canvasMaker, clock, motion, hold: 520 }),
+        dive: new Dive({ canvases: canvasMaker, clock, motion, tear: new NoTear(), hold: 520 }),
         picks: new SceneEvents(),
       }),
     ),
@@ -148,7 +165,7 @@ new Shell(
         canvases,
         {
           bands: new TraceBands({ canvases: canvasMaker, clock, motion }),
-          dive: new Dive({ canvases: canvasMaker, clock, motion, hold: 750 }),
+          dive: new Dive({ canvases: canvasMaker, clock, motion, tear: new NoTear(), hold: 750 }),
           pole: new TracePole({ canvases: canvasMaker, clock, motion, picture: pictures.pole() }),
           // The trace's view the player picked last (U05): kept in the browser like the save.
           views: new LocalStorageTraceViewMemory(() => window.localStorage),

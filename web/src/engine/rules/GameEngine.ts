@@ -280,6 +280,8 @@ export class GameEngine {
         options: () => (this.#atTitle() ? [] : [systemOption(RECAP, 'q', 'End session')]),
         run: () => {
           this.#prompt = new RecapPrompt(this.#journey);
+          // The recap draws the way back up: the trace to where the traveller stands, until the next step.
+          this.#trace = this.#traceOf(this.#journey.here()?.trail() ?? []);
           return '';
         },
       },

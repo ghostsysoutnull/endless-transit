@@ -1,94 +1,171 @@
 import { html, nothing, render, type TemplateResult } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
-import type { OptionVM } from '#ui/OptionVM.ts';
+import type { Dive } from '#ui/scene/Dive.ts';
+import type { LiveBand } from '#ui/scene/LiveBand.ts';
+import type { ScenePick } from '#ui/scene/ScenePick.ts';
 import type { View } from '#ui/View.ts';
+import type { PictureBook } from './PictureBook.ts';
 import type { RecapVM } from './RecapVM.ts';
 
+/** What the recap's view is built from: the pictures of the levels, its own live picture, the rise, and how a picture asks for an option. */
+interface RecapParts {
+  readonly book: PictureBook;
+  readonly scene: LiveBand;
+  readonly dive: Dive;
+  readonly picks: ScenePick;
+}
+
 /**
- * Draws the session recap with lit-html: the ending's heading, its figures, its shutdown steps or the void's lines, the closing
- * line, two buttons. Every word comes from the view-model (`RecapPresenter` owns them); this file owns
- * markup only. The note line here is for the eye; the shell's own live region speaks the status.
+ * Draws the session recap with lit-html: the ending's heading over the picture of the place the traveller stands
+ * in, live (`LiveBand`); under it where that is, the run's figures or the void's lines, the closing line and two
+ * buttons. Ending the session plays the rise — the dive rewound, out to the universe — before the option runs; a tap
+ * on it ends at once. Every word comes from the view-model (`RecapPresenter` owns them); this file owns markup only.
  */
 export class RecapView implements View<RecapVM> {
+  readonly #parts: RecapParts;
   #container: HTMLElement | undefined;
+  #vm: RecapVM | undefined;
+  /** The screen's own listener: made at each mount, taken away with it. */
+  #listeners = new AbortController();
+  /** Whether the rise plays over the screen. */
+  #rising = false;
+
+  constructor(parts: RecapParts) {
+    this.#parts = parts;
+  }
 
   mount(container: HTMLElement): void {
     this.#container = container;
+    this.#listeners = new AbortController();
+    container.addEventListener(
+      'click',
+      (event) => {
+        this.#through(event);
+      },
+      // Heard on the way down, before the shell's router hears it on the way up the same element.
+      { signal: this.#listeners.signal, capture: true },
+    );
   }
 
   render(vm: RecapVM): void {
-    if (this.#container === undefined) throw new Error('RecapView.render before mount');
-    render(this.#template(vm), this.#container);
+    this.#paint(vm);
   }
 
   dispose(): void {
-    if (this.#container !== undefined) render(nothing, this.#container);
+    const container = this.#container;
     this.#container = undefined;
+    this.#listeners.abort();
+    this.#rising = false;
+    this.#parts.dive.skip();
+    this.#parts.scene.clear();
+    if (container !== undefined) render(nothing, container);
+    this.#vm = undefined;
+  }
+
+  /** The tap that ends the session goes through the rise first; any other is the router's. */
+  #through(event: Event): void {
+    const vm = this.#vm;
+    if (vm === undefined || vm.ends === '' || this.#rising) return;
+    if (!(event.target instanceof Element)) return;
+    if (event.target.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.ends) return;
+    event.stopPropagation();
+    this.#rising = true;
+    this.#parts.scene.clear();
+    this.#paint(vm);
+    const host = this.#element('[data-dive]');
+    const ends = vm.ends;
+    const levels = vm.levels.map((level) => ({
+      sketch: level.drawing.sketchedBy(this.#parts.book),
+      into: level.into,
+    }));
+    const risen = (): void => {
+      const container = this.#container;
+      if (container === undefined) return;
+      this.#rising = false;
+      this.#parts.picks.pick(container, ends);
+    };
+    if (host === undefined) risen();
+    else this.#parts.dive.rewind(host, levels, risen);
+  }
+
+  #paint(vm: RecapVM): void {
+    if (this.#container === undefined) throw new Error('RecapView.render before mount');
+    this.#vm = vm;
+    render(this.#template(vm), this.#container);
+    if (this.#rising) return;
+    const host = this.#element('[data-sky]');
+    const here = vm.levels[vm.levels.length - 1];
+    if (host === undefined || here === undefined) return;
+    this.#parts.scene.show(host, { sketch: here.drawing.sketchedBy(this.#parts.book), into: here.into });
+  }
+
+  /** The screen's first element a selector finds, when it is an HTML element. */
+  #element(selector: string): HTMLElement | undefined {
+    const found = this.#container?.querySelector(selector);
+    return found instanceof HTMLElement ? found : undefined;
   }
 
   #template(vm: RecapVM): TemplateResult {
     return html`
-      <div class="app" data-frame=${vm.frame}>
-        <header class="bar"><h1>${vm.title}</h1></header>
-        <section class="cap recap" aria-label=${vm.regions.recap} tabindex="-1" data-rest>
-          <h2 class="rh" data-testid="recap-heading">${vm.heading}</h2>
+      <div class="app fall ending" data-frame=${vm.frame}>
+        <header class="ending-head">
+          <h1 data-testid="recap-heading">${vm.heading}</h1>
+        </header>
+        <div class="fall-sky" data-sky></div>
+        <section class="ending-words" tabindex="-1" data-rest>
+          <p class="ending-place">
+            <span>${vm.place.label}</span>
+            <b>${vm.place.name}</b>
+            <i>${vm.place.kind}</i>
+          </p>
           ${
             vm.figures.length === 0
               ? nothing
-              : html`<dl class="figures" data-testid="figures">
+              : html`<dl class="ending-figures" data-testid="figures">
                   ${vm.figures.map(
                     (figure) => html`
-                      <div class="figure">
-                        <dt>${figure.label}</dt>
+                      <div>
                         <dd>${figure.value}</dd>
+                        <dt>${figure.label}</dt>
                       </div>
                     `,
                   )}
                 </dl>`
           }
           ${
-            vm.steps.length === 0
-              ? nothing
-              : html`<ol class="shutdown" data-testid="shutdown">
-                  ${vm.steps.map(
-                    (step) => html`
-                      <li>
-                        <span class="k">${step.label}</span> ${step.process}
-                        <span class="done">${step.done}</span>
-                      </li>
-                    `,
-                  )}
-                </ol>`
-          }
-          ${
             vm.lines.length === 0
               ? nothing
-              : html`<div class="void-lines" data-testid="void-lines">
+              : html`<div class="ending-lines" data-testid="void-lines">
                   ${vm.lines.map((line) => html`<p>${line}</p>`)}
                 </div>`
           }
-          <p class="closing" data-testid="closing">${vm.closing}</p>
-          <p class=${vm.note === '' ? 'status quiet' : 'status'} data-testid="status">${vm.note}</p>
+          <p class="ending-closing" data-testid="closing">${vm.closing}</p>
+          <p class="fall-status" data-testid="status">${vm.note}</p>
         </section>
-        <nav class="pad" aria-label=${vm.regions.actions}>
+        <nav class="fall-keys">
           ${repeat(
             vm.options,
             (option) => option.id,
-            (option) => this.#button(option),
+            (option) => html`
+              <button type="button" class="fall-key" ?data-lead=${option.lead} data-option=${option.id}>
+                ${option.label}
+              </button>
+            `,
           )}
         </nav>
         <footer class="build" data-testid="build">${vm.build}</footer>
+        ${
+          this.#rising
+            ? html`<div
+                class="fall-reel"
+                data-dive
+                @click=${() => {
+                  this.#parts.dive.skip();
+                }}
+              ></div>`
+            : nothing
+        }
       </div>
-    `;
-  }
-
-  #button(option: OptionVM): TemplateResult {
-    return html`
-      <button type="button" class="pb" data-option=${option.id}>
-        ${option.key === '' ? nothing : html`<kbd aria-hidden="true">${option.key}</kbd>`}<span
-          >${option.label}</span
-        >
-      </button>
     `;
   }
 }

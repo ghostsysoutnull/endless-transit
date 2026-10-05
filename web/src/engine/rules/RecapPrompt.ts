@@ -8,7 +8,8 @@ import { systemOption } from './SystemOption.ts';
 
 export const RECAP = 'recap';
 const RESUME = 'resume';
-const END = 'end-session';
+/** The answer that ends the session: what the recap's screen plays its rise before. */
+export const END_SESSION = 'end-session';
 
 /**
  * The session recap (Guide:422-430, QuitCommand.groovy:16-27, SessionRecap.groovy:14-69): opened by END
@@ -43,12 +44,12 @@ export class RecapPrompt implements Prompt {
   }
 
   options(): readonly GameOption[] {
-    return [systemOption(RESUME, 'b', 'Resume'), systemOption(END, 'q', 'End session')];
+    return [systemOption(RESUME, 'b', 'Resume'), systemOption(END_SESSION, 'q', 'End session')];
   }
 
   answer(optionId: string): Reply | undefined {
     if (optionId === RESUME) return { message: '', done: true };
-    if (optionId === END) {
+    if (optionId === END_SESSION) {
       this.#journey.toTitle();
       return { message: '', done: true };
     }

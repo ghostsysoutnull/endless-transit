@@ -2849,9 +2849,10 @@ html:has(.keybar > .alarm) {
   background: var(--ground);
 }
 
-/* ---- The title: the top of the fall. The game's name over the world's universe, drawn live from edge to edge; the
-   seed and the buttons at the screen's foot; the dive into the game over it all. One screen, never scrolled. ---- */
-.app.title {
+/* ---- The two ends of the fall: the title and the session's recap. Words over a live picture drawn from edge to edge
+   — the world's universe on the title, the place the traveller stands in on the recap; more words and the buttons
+   at the screen's foot; the dive into the game, or the rise out of it, over it all. One screen, never scrolled. ---- */
+.app.fall {
   position: fixed;
   inset: 0;
   max-width: none;
@@ -2879,7 +2880,7 @@ html:has(.keybar > .alarm) {
   font-size: 14px;
 }
 
-.title-sky {
+.fall-sky {
   position: relative;
   flex: 1 1 0;
   min-height: 0;
@@ -2888,8 +2889,8 @@ html:has(.keybar > .alarm) {
     calc(-1 * max(var(--gutter), env(safe-area-inset-right)));
 }
 
-.title-sky canvas,
-.title-dive canvas {
+.fall-sky canvas,
+.fall-reel canvas {
   position: absolute;
   inset: 0;
   display: block;
@@ -2935,19 +2936,19 @@ html:has(.keybar > .alarm) {
   font-size: 16px;
 }
 
-.title-status {
+.fall-status {
   min-height: 1.45em;
   color: var(--dim);
   font-size: 12px;
 }
 
-.title-keys {
+.fall-keys {
   display: grid;
   gap: 8px;
   margin-top: 10px;
 }
 
-.title-key {
+.fall-key {
   all: unset;
   box-sizing: border-box;
   min-height: var(--tap);
@@ -2966,7 +2967,7 @@ html:has(.keybar > .alarm) {
   -webkit-tap-highlight-color: transparent;
 }
 
-.title-key[data-lead] {
+.fall-key[data-lead] {
   min-height: 60px;
   border-color: var(--yl);
   background: var(--yl);
@@ -2975,26 +2976,117 @@ html:has(.keybar > .alarm) {
   letter-spacing: 0.18em;
 }
 
-.title-key:active {
+.fall-key:active {
   border-color: var(--wh);
   background: var(--wh);
   color: var(--ground);
 }
 
-.title-key:focus-visible {
+.fall-key:focus-visible {
   outline: 2px solid var(--yl);
   outline-offset: 2px;
 }
 
-.app.title .build {
+.app.fall .build {
   margin-top: 8px;
 }
 
-/* The dive into the game: over the whole screen; a tap lands at once. */
-.title-dive {
+/* The dive into the game and the rise out of it: over the whole screen; a tap ends it at once. */
+.fall-reel {
   position: fixed;
   inset: 0;
   z-index: 60;
   background: var(--ground);
   touch-action: manipulation;
+}
+
+/* The recap: the ending in the frame's colour, where the traveller stands, the run's figures as a row of tiles. */
+.ending-head h1 {
+  margin: 0;
+  font-size: clamp(26px, 9vw, 44px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--frame);
+}
+
+.ending-words {
+  outline: none;
+}
+
+.ending-words p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ending-place {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 10px;
+}
+
+.ending-place span {
+  flex: 0 0 100%;
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ending-place b {
+  color: var(--yl);
+  font-size: clamp(18px, 5.6vw, 26px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ending-place i {
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-style: normal;
+}
+
+.ending-figures {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 10px 0 0;
+}
+
+.ending-figures > div {
+  min-width: 0;
+  padding: 6px 4px;
+  border: 1px solid var(--rule-hi);
+  text-align: center;
+}
+
+.ending-figures dd {
+  margin: 0;
+  color: var(--wh);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.ending-figures dt {
+  color: var(--dim);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ending-lines {
+  margin-top: 8px;
+  color: var(--frame);
+  font-style: italic;
+}
+
+.ending-closing {
+  margin-top: 8px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
 }

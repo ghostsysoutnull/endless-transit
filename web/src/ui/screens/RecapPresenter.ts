@@ -1,28 +1,19 @@
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PromptSummary } from '#engine/rules/PromptSummary.ts';
+import { END_SESSION, RECAP } from '#engine/rules/RecapPrompt.ts';
 import type { FrameOf } from '#ui/FrameOf.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { Presenter } from '#ui/Presenter.ts';
+import type { Drawings } from './Drawings.ts';
 import type { RecapVM } from './RecapVM.ts';
 
-/** The prompt this screen claims — the engine's stable key for it. */
-const RECAP = 'recap';
-
-/** The figures of the full recap, in the old order (SessionRecap.groovy:38-46), each with its words. */
-const FIGURES: readonly { readonly key: string; readonly label: string; readonly unit: string }[] = [
-  { key: 'locus', label: 'FINAL_LOCUS', unit: '' },
-  { key: 'steps', label: 'PULSE_TRAVERSAL', unit: ' steps' },
-  { key: 'places', label: 'CELLS_MAPPED', unit: ' footprints' },
-  { key: 'buffer', label: 'BUFFER_DENSITY', unit: ' spectral fragments' },
-  // The old line said "stabilized" (HK-023); the tally counts resonant traces, and says so.
-  { key: 'resonant', label: 'RESONANT_TRACES', unit: ' resonant' },
-];
-/** The shutdown steps of the short ending (SessionRecap.groovy:54-59). */
-const SHUTDOWN = [
-  'UNMOUNTING_LATTICE_TRACE',
-  'DEALLOCATING_TRACE_BUFFER',
-  'RELEASING_NEURAL_CARRIER',
-  'STABILIZING_SUBSTRATE_WAVEFORM',
+/** The figures of the full recap, each with its word. */
+const FIGURES: readonly { readonly key: string; readonly label: string }[] = [
+  { key: 'steps', label: 'Steps' },
+  { key: 'places', label: 'Places' },
+  { key: 'buffer', label: 'Relics' },
+  // The tally counts resonant traces (HK-023), and says so.
+  { key: 'resonant', label: 'Resonant' },
 ];
 /** The void's typewritten lines (SessionRecap.groovy:22-27); the last one closes. */
 const VOID_LINES = [
@@ -37,46 +28,45 @@ const ENDINGS: Readonly<
     {
       readonly heading: string;
       readonly figures: boolean;
-      readonly shutdown: boolean;
       readonly lines: readonly string[];
       readonly closing: string;
     }
   >
 > = {
   void: {
-    heading: '[VOID_RESONANCE_TERMINATION]',
+    heading: 'The void takes the session',
     figures: false,
-    shutdown: false,
     lines: VOID_LINES,
     closing: 'Sleep among the static, Operator.',
   },
   expedition: {
-    heading: '[SESSION_RECAP_INITIALIZED]',
+    heading: 'Expedition complete',
     figures: true,
-    shutdown: false,
     lines: [],
-    closing: 'Expedition successful. Trace synchronized to substrate.',
+    closing: 'A long way down. End the session and the world keeps your place.',
   },
   severed: {
-    heading: '[LINK_TERMINATION_PROTOCOL]',
+    heading: 'End of session',
     figures: false,
-    shutdown: true,
     lines: [],
-    closing: 'Neural link severed. Waveform stabilized.',
+    closing: 'A short visit. End the session and the world keeps your place.',
   },
 };
 
 /**
- * Owns the words of the session recap (Guide:422-430, SessionRecap.groovy:14-69): the heading, figures and
- * closing line of the ending the engine reached, and the two answers. No DOM.
+ * Owns the words of the session recap (Guide:422-430): the heading, figures and closing line of the ending the
+ * engine reached, where the traveller stands, and the two answers. The trace the recap opened with becomes the
+ * screen's pictures: a level each, drawn as its band in the trace is, torn as coherence has fallen. No DOM.
  */
 export class RecapPresenter implements Presenter<RecapVM> {
   readonly #frame: FrameOf;
   readonly #masthead: Masthead;
+  readonly #drawings: Drawings;
 
-  constructor(masthead: Masthead, frame: FrameOf) {
+  constructor(masthead: Masthead, frame: FrameOf, drawings: Drawings) {
     this.#masthead = masthead;
     this.#frame = frame;
+    this.#drawings = drawings;
   }
 
   accepts(snapshot: GameSnapshot): boolean {
@@ -90,33 +80,41 @@ export class RecapPresenter implements Presenter<RecapVM> {
     if (ending === undefined) throw new Error(`no words for the ending '${prompt.outcome}'`);
     return {
       scene: RECAP,
-      title: this.#masthead.name(),
       frame: this.#frame.of(snapshot.place),
       heading: ending.heading,
+      place: { label: 'You stand in', name: snapshot.place?.name ?? '', kind: snapshot.place?.kind ?? '' },
       figures: ending.figures ? this.#figures(prompt) : [],
-      steps: ending.shutdown
-        ? SHUTDOWN.map((process) => ({ label: '[STATUS]', process: `${process}...`, done: '[DONE]' }))
-        : [],
       lines: ending.lines,
       closing: ending.closing,
+      levels: this.#levels(snapshot),
       options: snapshot.options.map((option) => ({
         id: option.id,
         key: option.key.toUpperCase(),
-        label: option.label.toUpperCase(),
+        label: option.label,
         opposite: option.opposite,
+        lead: option.id === END_SESSION,
       })),
+      ends: snapshot.options.some((option) => option.id === END_SESSION) ? END_SESSION : '',
       note: snapshot.message,
       // The engine says nothing when the recap opens; the live region is told the ending's heading, once.
       status: snapshot.message === '' ? ending.heading : snapshot.message,
       build: this.#masthead.buildLine(),
-      regions: { recap: 'Session recap', actions: 'Actions' },
     };
   }
 
   #figures(prompt: PromptSummary): RecapVM['figures'] {
-    return FIGURES.map((figure) => ({
-      label: figure.label,
-      value: `${prompt.figures[figure.key] ?? ''}${figure.unit}`,
+    return FIGURES.map((figure) => ({ label: figure.label, value: prompt.figures[figure.key] ?? '' }));
+  }
+
+  /** The trace the recap opened with, a picture a level; none when the engine handed none. */
+  #levels(snapshot: GameSnapshot): RecapVM['levels'] {
+    const place = snapshot.place;
+    const steps = snapshot.trace?.steps ?? [];
+    if (place === null) return [];
+    const decay = snapshot.player?.decay ?? 0;
+    return steps.map((step, index) => ({
+      drawing: this.#drawings.band(step, place.noise, decay),
+      into: steps[index + 1]?.address ?? '',
     }));
   }
 }
