@@ -10,7 +10,7 @@ const FIRST = new Seed(0x7f3a91c2, 0x0b4de6a8);
 const ZERO = new Seed(0, 0);
 const BUILDING = '0.0.0.0.0.0.0.0.0';
 const FIRST_ROOM = `${BUILDING}.0.0.0.0`;
-/** Layer −1 is child 16 of the sixteen-floor Ornate Sanctum. */
+/** Layer −1 is child 16 of the sixteen-floor Censed Altar. */
 const LAYER = `${BUILDING}.16`;
 
 function engineOn(seed: Seed, saves = new MemorySaveStore(), debug = true): GameEngine {
@@ -45,7 +45,7 @@ function moves(snapshot: GameSnapshot): string[] {
   return snapshot.options.filter((option) => option.role === 'move').map((option) => option.id);
 }
 
-/** Ornate Sanctum's first room, primed by the debug tool, the Keystone forged from the two relics there (the walk's Hidden Frequencies sit at 0 and 3). */
+/** Censed Altar's first room, primed by the debug tool, the Keystone forged from the two relics there (the walk's Hidden Frequencies sit at 0 and 3). */
 function withTheKeystone(engine: GameEngine): GameSnapshot {
   for (const id of ['new-world', 'enter-world', 'enter:0', 'enter:15', 'move:corridor', 'enter:0'])
     engine.step(id);
@@ -84,8 +84,8 @@ describe('SCAN — a global command whose panel lasts one step (Guide:87, 134, 2
     );
     expect(room.scan?.title).toBe('[STRATA_OVERVIEW]');
     expect(room.scan?.rows.map((row) => row.cells.map((cell) => cell.value))).toEqual([
-      ['01', '1944Hz', '~~~', '[VISITED]', 'Power Plant', 'Grand Power Plant'],
-      ['02', '1704Hz', '~~~', '[UNSTABLE]', 'Maintenance Bay', 'Baroque Maintenance Bay'],
+      ['01', '2040Hz', '~~~', '[VISITED]', 'Maintenance Bay', 'Candlelit Maintenance Bay'],
+      ['02', '1284Hz', '~~~', '[UNSTABLE]', 'Foundry', 'Censed Foundry'],
     ]);
     expect(engine.step('move:forward').scan).toBeNull();
     // A scan is never a step: the lottery does not roll on it (Guide:189-190).
@@ -100,7 +100,7 @@ describe('SCAN — a global command whose panel lasts one step (Guide:87, 134, 2
     for (const id of ['new-world', 'enter-world', 'enter:0', 'enter:15']) engine.step(id);
     const pulse = engine.step('scan');
     expect(pulse.scan?.title).toBe('NEURAL_PROXIMITY_REPORT');
-    expect(pulse.scan?.notes).toEqual(['BUILDING: Ornate Sanctum', 'TOTAL_STRATA: 16 units detected.']);
+    expect(pulse.scan?.notes).toEqual(['BUILDING: Censed Altar', 'TOTAL_STRATA: 16 units detected.']);
     expect(pulse.scan?.rows.map((row) => [row.cells[0]?.value, row.current])).toEqual([
       ['02', false],
       ['01', false],
@@ -112,13 +112,13 @@ describe('SCAN — a global command whose panel lasts one step (Guide:87, 134, 2
     expect(doors.scan?.rows).toHaveLength(9);
     expect(doors.scan?.rows[0]?.cells.map((cell) => `${cell.label}=${cell.value}`)).toEqual([
       'ID=01',
-      'TRACE=Ozone',
-      'INSCRIPTION=_void_sink_',
-      'MATERIAL=Brutalist Slab',
-      'STATE=Pitted',
-      'ROOM_TYPE=Power Plant',
+      'TRACE=Clicking',
+      'INSCRIPTION=_do_not_sleep_',
+      'MATERIAL=Velvet-Padded Door',
+      'STATE=Iridescent',
+      'ROOM_TYPE=Maintenance Bay',
     ]);
-    expect(doors.scan?.rows[0]?.note).toContain('A sharp smell of ozone escapes the frame');
+    expect(doors.scan?.rows[0]?.note).toContain('A persistent, rhythmic clicking sound');
   });
 });
 
@@ -127,10 +127,10 @@ describe('the echo hunt in a Null Reach (Guide:116, 192-195; NullSector.groovy:8
     const saves = new MemorySaveStore();
     const engine = engineOn(ZERO, saves);
     let snapshot = engine.snapshot();
-    // Seed 0000-…: Sunken Glide lies under Null Reach F4E, five leaves up.
+    // Seed 0000-…: Sunken Glide lies under Null Reach Sparse, five leaves up.
     for (const id of ['new-world', 'enter-world', 'leave', 'leave', 'leave', 'leave', 'leave'])
       snapshot = engine.step(id);
-    expect(snapshot.place?.name).toBe('Null Reach F4E');
+    expect(snapshot.place?.name).toBe('Null Reach Sparse');
     expect(snapshot.place?.facts).toEqual([{ key: 'signal', label: 'Signal', value: 'scan to search' }]);
     expect(snapshot.options.find((option) => option.id === 'echo')).toMatchObject({
       key: 'e',
@@ -176,19 +176,19 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     const engine = engineOn(FIRST);
     const forged = withTheKeystone(engine);
     expect(forged.message).toBe(
-      'Critical waveform collapse: KEYSTONE_STABILIZED. The fragments merge into a silent, heavy anchor: Ornate Sanctum Keystone. Coherence +15.',
+      'Critical waveform collapse: KEYSTONE_STABILIZED. The fragments merge into a silent, heavy anchor: Censed Altar Keystone. Coherence +15.',
     );
     expect(forged.buffer?.fragments.map((f) => [f.name, f.hertz, f.resonant])).toEqual([
       ['Hidden Frequency', 1243085, false],
       ['Hidden Frequency', 1415632, false],
-      ['Ornate Sanctum Keystone', 0, false],
+      ['Censed Altar Keystone', 0, false],
     ]);
     expect(forged.buffer?.resonant).toBe(2);
     engine.step('pick:0');
     const again = engine.step('pick:1');
     expect(again.message).toBe('Synthesis complete: Hidden-Hidden Hybrid (2658717 Hz). Coherence +15.');
     expect(again.buffer?.fragments.map((f) => f.name)).toEqual([
-      'Ornate Sanctum Keystone',
+      'Censed Altar Keystone',
       'Hidden-Hidden Hybrid',
     ]);
   });
@@ -203,9 +203,9 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     engine.step('enter:0');
     expect(engine.snapshot().options.map((option) => option.id)).toContain('debug:keystone');
     const spawned = engine.step('debug:keystone');
-    expect(spawned.message).toBe('Ornate Sanctum Keystone generated in the trace buffer.');
+    expect(spawned.message).toBe('Censed Altar Keystone generated in the trace buffer.');
     expect(spawned.player?.coherence).toBe(99);
-    expect(spawned.buffer?.fragments[0]?.name).toBe('Ornate Sanctum Keystone');
+    expect(spawned.buffer?.fragments[0]?.name).toBe('Censed Altar Keystone');
   });
 
   test('the breach is offered on the Peak only — at the elevator and in the corridor — keyed j; it spends the Keystone and marks the building; the layers are listed below the lobby', () => {
@@ -290,7 +290,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       engine.snapshot().scan?.rows.map((row) => [row.cells[0]?.value, row.cells[1]?.value, row.current]),
     ).toEqual([
       ['01', 'POWER_RELAY', false],
-      ['00', 'TRANSIT_LOBBY', false],
+      ['00', 'FREIGHT_CONCOURSE', false],
       ['-1', 'ABYSSAL_SUBSTRATE', true],
       ['-2', 'ABYSSAL_SUBSTRATE', false],
       ['-3', 'ABYSSAL_SUBSTRATE', false],
@@ -323,11 +323,11 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     });
     expect(artery.options.filter((option) => option.role === 'travel')).toHaveLength(9);
     const shard = engine.step('enter:0');
-    expect(shard.message).toBe('Entered Inverted Processing Core.');
+    expect(shard.message).toBe('Entered Dangling Power Plant.');
     expect(shard.place).toMatchObject({
       kind: 'Shard',
       icon: '☠',
-      name: 'Inverted Processing Core',
+      name: 'Dangling Power Plant',
       abyssal: true,
       frame: 'abyssal',
       position: { label: 'SHARD', index: 1, total: 8 },
@@ -336,8 +336,8 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     expect(shard.place?.trail.slice(9).map((step) => `${step.icon} ${step.name}`)).toEqual([
       '▤ Layer -0x1',
       '▅ Artery',
-      '🚪 Frosted Crystal Pane, humming',
-      '☠ Inverted Processing Core',
+      '🚪 Bedrock Plug, pitted',
+      '☠ Dangling Power Plant',
     ]);
     expect(shard.place?.contents?.objects.map((object) => object.name)).toEqual([
       'null reference infused with radar dish',
@@ -351,7 +351,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     engine.step('resume');
     // A save made below the bedrock restores where it stood (Guide:401), the breach recalled before the Layer is asked for.
     const restored = engineOn(FIRST, new MemorySaveStore(saves.load())).snapshot();
-    expect(restored.place?.name).toBe('Inverted Processing Core');
+    expect(restored.place?.name).toBe('Dangling Power Plant');
     expect(restored.place?.abyssal).toBe(true);
     expect(restored.buffer?.size).toBe(taken.buffer?.size);
     expect(saves.load()).toContain(`"${LAYER}":"corridor"`);
@@ -368,7 +368,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     expect(engine.step('breach').buffer?.fragments.map((f) => f.name)).toEqual([
       'Hidden Frequency',
       'Hidden Frequency',
-      'Ornate Sanctum Keystone',
+      'Censed Altar Keystone',
     ]);
     engine.step('leave');
     engine.step('enter:15');
@@ -381,7 +381,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     expect(reborn.buffer?.fragments.map((f) => f.name)).toEqual([
       'Hidden Frequency',
       'Hidden Frequency',
-      'Ornate Sanctum Keystone',
+      'Censed Altar Keystone',
     ]);
     const building = engine.step('enter:0');
     expect(building.place?.status).toBe('');
@@ -422,7 +422,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
       { buffer: [{ kind: 'keystone', building: BUILDING }] },
     );
     expect(engineOn(FIRST, new MemorySaveStore(keystone)).snapshot().buffer?.fragments[0]?.name).toBe(
-      'Ornate Sanctum Keystone',
+      'Censed Altar Keystone',
     );
   });
 });

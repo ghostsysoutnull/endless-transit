@@ -8,10 +8,13 @@ import { Glitch } from '#engine/model/Glitch.ts';
 import { INSCRIPTION_STYLES } from '#engine/model/InscriptionStyle.ts';
 import { RoomCategory } from '#engine/model/RoomCategory.ts';
 import { Room } from '#engine/model/Room.ts';
+import { Deal } from '#engine/procgen/Deal.ts';
 import { Doors } from '#engine/procgen/Doors.ts';
+import type { DoorSlot } from '#engine/procgen/DoorSlot.ts';
 import { Trace } from '#engine/model/Trace.ts';
 import { Seed } from '#engine/rng/Seed.ts';
 import { MemoryContentSource } from '#tests/support/MemoryContentSource.ts';
+import { vibe } from '#tests/support/vibe.ts';
 import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.ts';
 
 const registry = realRegistry();
@@ -190,17 +193,23 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
   const doors = new Doors(
     new ContentLibrary(
       new MemoryContentSource({
-        'themes/doors/materials.txt': 'Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.|metal\n',
-        'themes/doors/states.txt': 'Cold|The frame is ice-cold to the touch.|cold\n',
-        'themes/doors/inscriptions.txt': 'LATTICE\n',
+        'themes/doors/materials/rust.txt': 'Heavy Bulkhead|A heavily reinforced poly-slab bulkhead.|metal\n',
+        'themes/doors/states/ancient.txt': 'Cold|The frame is ice-cold to the touch.|cold\n',
+        'themes/doors/inscriptions/stamped.txt': 'LATTICE\n',
+        'themes/doors/inscriptions/scrawled.txt': 'LATTICE\n',
+        'themes/doors/inscriptions/etched.txt': 'LATTICE\n',
+        'themes/doors/inscriptions/burned.txt': 'LATTICE\n',
       }),
     ),
+    new Deal(),
   );
+  /** The first door of the corridor born from this seed, in a rust world of the ancient era. */
+  const first = (corridor: Seed): DoorSlot => ({ corridor, index: 0, vibe: vibe('rust', 'ancient') });
   const [stamped, scrawled, etched, burned] = INSCRIPTION_STYLES;
 
   test('the narrative is the material’s sentence, the state’s, and how the word was applied when there is one', () => {
     const plain = doors.of(
-      new Seed(1, 1),
+      first(new Seed(1, 1)),
       new RoomCategory('Archive', undefined, must(Trace.of('stillness'))),
     );
     expect(plain.brief()).toBe('Heavy Bulkhead, cold');
@@ -210,7 +219,7 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
         : `A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch. ${must(plain.inscription()).narrative()}`,
     );
     const vault = doors.of(
-      new Seed(2, 2),
+      first(new Seed(2, 2)),
       new RoomCategory(
         'Laboratory',
         new DoorInscription('DATA_VAULT', must(stamped)),
@@ -219,14 +228,14 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
     );
     if (vault.inscription() !== undefined) {
       expect(vault.narrative()).toBe(
-        "A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch. The word 'DATA_VAULT' is stamped into the metal in block letters.",
+        "A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch. The word 'DATA_VAULT' is stamped across the door in block letters.",
       );
     }
   });
 
   test('the four styles each tell how the word was applied', () => {
     expect(new DoorInscription('DANGER', must(stamped)).narrative()).toBe(
-      "The word 'DANGER' is stamped into the metal in block letters.",
+      "The word 'DANGER' is stamped across the door in block letters.",
     );
     expect(new DoorInscription('IT_HUMS', must(scrawled)).narrative()).toBe(
       "The word 'it_hums' is scrawled across the surface in jagged, desperate lines.",

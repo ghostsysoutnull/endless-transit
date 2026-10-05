@@ -39,23 +39,7 @@ describe('the door trace (Guide:203-231; RoomCategory.groovy:14-53, AnomalousTra
     expect(must(Trace.of('ozone')).equals(must(Trace.of('ozone')))).toBe(true);
   });
 
-  test('the trace is decided by the first room behind the door and never lies: the Guide’s table, on the real lists', () => {
-    const table: Record<string, string> = {
-      'Memory Well': 'Frost',
-      Laboratory: 'Ozone',
-      'Neural Link Array': 'Ozone',
-      'Bio-Server': 'Ozone',
-      'Power Plant': 'Ozone',
-      'Processing Core': 'Ozone',
-      'Security Station': 'Clicking',
-      Armory: 'Clicking',
-      'Maintenance Bay': 'Clicking',
-      'Supply Node': 'Clicking',
-      Barracks: 'Humming',
-      'Tactical Hub': 'Humming',
-      'Fuel Depot': 'Humming',
-      'Credit Hub': 'Humming',
-    };
+  test('the trace is decided by the first room behind the door and never lies, on the real lists', () => {
     let seen = 0;
     for (let n = 0; n < 12; n++) {
       const way = must(toStreet(registry.universe(new Seed(n, n * 3)), () => n).at(-1));
@@ -65,7 +49,7 @@ describe('the door trace (Guide:203-231; RoomCategory.groovy:14-53, AnomalousTra
         const apartment = as(door, Apartment);
         const first = as(apartment.children()[0], Room);
         expect(apartment.behind().equals(first.category())).toBe(true);
-        expect(apartment.door().trace().name()).toBe(table[first.type()] ?? 'Stillness');
+        expect(apartment.door().trace().equals(first.category().trace())).toBe(true);
         seen++;
       }
     }
@@ -97,12 +81,12 @@ describe('scans (Guide:87, 112-116, 227-231; ScanCommand.groovy:29-58)', () => {
     const third = as(building.children()[3], Floor);
     const report = must(third.scan(NOBODY));
     expect(report.title).toBe('NEURAL_PROXIMITY_REPORT');
-    expect(report.notes).toEqual(['BUILDING: Ornate Sanctum', 'TOTAL_STRATA: 16 units detected.']);
+    expect(report.notes).toEqual(['BUILDING: Censed Altar', 'TOTAL_STRATA: 16 units detected.']);
     expect(report.rows.map((row) => row.cells.map((cell) => `${cell.label}=${cell.value}`))).toEqual([
-      ['ID=05', 'FUNCTION=RESEARCH_LAB'],
-      ['ID=04', 'FUNCTION=FILTRATION_INTAKE'],
-      ['ID=03', 'FUNCTION=FILTRATION_INTAKE'],
-      ['ID=02', 'FUNCTION=MECHANICAL_SUMP'],
+      ['ID=05', 'FUNCTION=MACHINE_FLOOR'],
+      ['ID=04', 'FUNCTION=ASH_HANDLING'],
+      ['ID=03', 'FUNCTION=PUMP_GALLERY'],
+      ['ID=02', 'FUNCTION=COAL_BUNKER'],
       ['ID=01', 'FUNCTION=POWER_RELAY'],
     ]);
     expect(report.rows.map((row) => row.current)).toEqual([false, false, true, false, false]);
@@ -147,11 +131,11 @@ describe('scans (Guide:87, 112-116, 227-231; ScanCommand.groovy:29-58)', () => {
     expect(report.rows.map((row) => row.place)).toEqual(rooms);
     expect(must(report.rows[0]).cells.map((cell) => [cell.key, cell.label, cell.value])).toEqual([
       ['reading', 'ID', '01'],
-      ['reading', 'FREQ', '1944Hz'],
+      ['reading', 'FREQ', '2040Hz'],
       ['signal', 'WAVE', '~~~'],
       ['stable', 'STATUS', '[VISITED]'],
-      ['reading', 'TYPE', 'Power Plant'],
-      ['reading', 'IDENTIFIER', 'Grand Power Plant'],
+      ['reading', 'TYPE', 'Maintenance Bay'],
+      ['reading', 'IDENTIFIER', 'Candlelit Maintenance Bay'],
     ]);
     expect(must(report.rows[1]).cells.map((cell) => cell.value)).toContain('[UNSTABLE]');
     expect(must(report.rows[1]).cells.find((cell) => cell.label === 'STATUS')?.key).toBe('reading');

@@ -8,10 +8,7 @@ import { must, realRegistry, sampleSeed, toStreet } from '#tests/support/world.t
 
 const registry = realRegistry();
 const library = new ContentLibrary(new BundledContent());
-const ZONES = 'names/floors/zones';
-const BASEMENT = library.list(`${ZONES}/basement`);
-const LIVING = library.list(`${ZONES}/living`);
-const EXECUTIVE = library.list(`${ZONES}/executive`);
+const WORDS = 'names/floors';
 
 /** The first building of the first street under `n`, with its floors. */
 function buildingOf(n: number): { building: Building; floors: Floor[] } {
@@ -30,13 +27,18 @@ function buildingOf(n: number): { building: Building; floors: Floor[] } {
 
 const sample = Array.from({ length: 400 }, (_, n) => buildingOf(n));
 
-/** What zone list a floor of this height draws from (Guide:356-360; Building.groovy:78-91). */
-function tierOf(number: number, floors: number): readonly string[] {
-  if (number === 0) return ['TRANSIT_LOBBY'];
-  if (number === floors - 1) return ['PEAK_OBSERVATORY'];
-  if (number < 5) return BASEMENT;
-  if (number > floors - 5) return EXECUTIVE;
-  return LIVING;
+/** The trait of the country a building stands in: its floors' zones are in that trait's words. */
+function traitOf(building: Building): string {
+  return must(building.vibe()?.mutation(), 'a building’s trait').key();
+}
+
+/** Which part of the floor words a floor of this height draws from (Guide:356-360; Building.groovy:78-91). */
+function partOf(number: number, floors: number): string {
+  if (number === 0) return 'lobby';
+  if (number === floors - 1) return 'peak';
+  if (number < 5) return 'zones/basement';
+  if (number > floors - 5) return 'zones/executive';
+  return 'zones/living';
 }
 
 describe('floors of a building', () => {
@@ -51,31 +53,39 @@ describe('floors of a building', () => {
     expect(must(sample[0]?.floors[0]).children()).toHaveLength(1);
   });
 
-  test('zones by height: lobby at 0, peak at the top, basement names 1–4, executive names up to three under the top, living names between', () => {
-    const seen = { basement: new Set<string>(), living: new Set<string>(), executive: new Set<string>() };
+  test('zones by height, in the words of the country’s trait: a lobby word at 0, a peak word at the top, basement words 1–4, executive words up to three under the top, living words between', () => {
     for (const { building, floors } of sample) {
       for (const floor of floors) {
-        const tier = tierOf(floor.number(), building.floors());
-        expect(tier, `${building.name()} floor ${String(floor.number())}`).toContain(floor.zone());
-        if (tier === BASEMENT) seen.basement.add(floor.zone());
-        if (tier === LIVING) seen.living.add(floor.zone());
-        if (tier === EXECUTIVE) seen.executive.add(floor.zone());
+        const part = partOf(floor.number(), building.floors());
+        expect(
+          library.list(`${WORDS}/${part}/${traitOf(building)}`),
+          `${building.name()} floor ${String(floor.number())}`,
+        ).toContain(floor.zone());
       }
     }
-    expect([...seen.basement].sort()).toEqual([...BASEMENT].sort());
-    expect([...seen.living].sort()).toEqual([...LIVING].sort());
-    expect([...seen.executive].sort()).toEqual([...EXECUTIVE].sort());
-    expect(BASEMENT).toHaveLength(4);
-    expect(LIVING).toHaveLength(4);
-    expect(EXECUTIVE).toHaveLength(4);
+  });
+
+  test('no two neighbouring floors of a building stand in the same zone', () => {
+    expect(sample.some(({ building }) => building.floors() > 40)).toBe(true);
+    for (const { building, floors } of sample) {
+      const zones = floors.map((floor) => floor.zone());
+      for (let number = 1; number < zones.length; number++) {
+        expect(
+          zones[number],
+          `${building.name()} floors ${String(number - 1)} and ${String(number)}`,
+        ).not.toBe(zones[number - 1]);
+      }
+    }
   });
 
   test('nine floors: lobby, four basement, three executive, peak — the first height with all three executive floors (Guide:358); ten floors have one living floor', () => {
     const nine = sample.find(({ building }) => building.floors() === 9);
     expect(nine).toBeDefined();
-    const tiers = (floors: readonly Floor[]) =>
-      floors.map((floor) => floor.zone()).map((zone) => (LIVING.includes(zone) ? 'living' : 'other'));
-    expect(tiers(nine?.floors ?? [])).toEqual([
+    const tiers = ({ building, floors }: { building: Building; floors: readonly Floor[] }) => {
+      const living = library.list(`${WORDS}/zones/living/${traitOf(building)}`);
+      return floors.map((floor) => (living.includes(floor.zone()) ? 'living' : 'other'));
+    };
+    expect(tiers(must(nine))).toEqual([
       'other',
       'other',
       'other',
@@ -99,7 +109,7 @@ describe('floors of a building', () => {
       'Peak',
     ]);
     const ten = must(sample.find(({ building }) => building.floors() === 10));
-    expect(tiers(ten.floors)).toEqual([
+    expect(tiers(ten)).toEqual([
       'other',
       'other',
       'other',
