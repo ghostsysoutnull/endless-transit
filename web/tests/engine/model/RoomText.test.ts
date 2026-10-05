@@ -218,19 +218,21 @@ describe('a door’s full appearance (Door.groovy:79-92; DoorAppearance.groovy:3
         ? 'A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch.'
         : `A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch. ${must(plain.inscription()).narrative()}`,
     );
-    const vault = doors.of(
-      first(new Seed(2, 2)),
-      new RoomCategory(
-        'Laboratory',
-        new DoorInscription('DATA_VAULT', must(stamped)),
-        must(Trace.of('ozone')),
-      ),
+    const laboratory = new RoomCategory(
+      'Laboratory',
+      new DoorInscription('DATA_VAULT', must(stamped)),
+      must(Trace.of('ozone')),
     );
-    if (vault.inscription() !== undefined) {
-      expect(vault.narrative()).toBe(
-        "A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch. The word 'DATA_VAULT' is stamped across the door in block letters.",
-      );
-    }
+    // One door in five has words: the first of these corridors whose first door does.
+    const vault = must(
+      Array.from({ length: 60 }, (_, n) => doors.of(first(new Seed(2, n)), laboratory)).find(
+        (door) => door.inscription() !== undefined,
+      ),
+      'a door with words on it',
+    );
+    expect(vault.narrative()).toBe(
+      "A heavily reinforced poly-slab bulkhead. The frame is ice-cold to the touch. The word 'DATA_VAULT' is stamped across the door in block letters.",
+    );
   });
 
   test('the four styles each tell how the word was applied', () => {

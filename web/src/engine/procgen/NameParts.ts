@@ -36,12 +36,13 @@ export class NameParts implements Names {
     if (slot.parent === undefined) {
       throw new Error(`${this.#directory}: a name is dealt among siblings — it needs a parent`);
     }
-    const dealt = slot.parent.seed().branch(DEALT).branch(this.#directory);
+    const parent = slot.parent.seed();
+    const dealt = parent.branch(DEALT).branch(this.#directory);
     this.#parts ??= this.#library
       .pairs(`${this.#directory}/index`)
       .map(([name, axis]) => this.#axes.part(this.#directory, name, axis));
     return this.#parts.map((part) =>
-      this.#deal.nth(dealt.branch(part.name()), this.#library.list(part.list(slot, vibe)), slot.index),
+      this.#deal.nth(dealt.branch(part.name()), this.#library.list(part.list({ parent, vibe })), slot.index),
     );
   }
 

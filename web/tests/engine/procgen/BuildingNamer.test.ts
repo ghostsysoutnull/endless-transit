@@ -68,7 +68,7 @@ describe('BuildingNamer — the size words of a "Unit 0x…" name', () => {
   const renamed = new BuildingNamer(words, new Deal());
   const unitWord = (floors: number): string => {
     for (let n = 0; n < 5_000; n++) {
-      const name = renamed.nameOf(sampleSeed(n), site(0, { floors })).name;
+      const name = renamed.nameOf(site(0, { street: sampleSeed(n), floors })).name;
       if (name.startsWith('Unit 0x')) return name.split(' ')[2] ?? '';
     }
     throw new Error('no "Unit 0x…" name in 5 000 seeds');
@@ -85,11 +85,9 @@ describe('BuildingNamer — the size words of a "Unit 0x…" name', () => {
 });
 
 describe('BuildingNamer — the words are dealt along the street', () => {
-  /** The buildings of one street, as many as the longest holds; each rolls its pattern on its own seed. */
+  /** The buildings of one street, as many as the longest holds. */
   function street(seed: Seed, facts: Partial<BuildingSite> = {}): { name: string; landmark: boolean }[] {
-    return Array.from({ length: 22 }, (_, index) =>
-      namer.nameOf(seed.child(index), site(index, { street: seed, ...facts })),
-    );
+    return Array.from({ length: 22 }, (_, index) => namer.nameOf(site(index, { street: seed, ...facts })));
   }
 
   test('no two buildings of a street carry the same name', () => {

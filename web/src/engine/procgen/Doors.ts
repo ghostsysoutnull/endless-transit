@@ -36,9 +36,9 @@ interface Line<K> {
  * doors of a corridor share a material or a state while the list lasts; and, on the `door` branch of its
  * apartment's seed, one roll in five for words: the ones the room behind guarantees, else one of the four
  * styles and a word of that style's own list (`themes/doors/inscriptions/<style>` — the style is who
- * wrote it), dealt along the corridor so no two of its doors say the same. Its look alone can be read without the apartment (`look`, the
- * peek, U02). A list is read whole and typed the first time a door asks for it: a line with an unknown key
- * refuses its list.
+ * wrote it), dealt along the corridor so no two of its doors say the same. Its look alone can be read
+ * without the apartment (`look`, the peek, U02). A list is read whole and typed the first time a door asks
+ * for it: a line with an unknown key refuses its list.
  */
 export class Doors implements DoorDeal {
   readonly #library: ContentLibrary;
@@ -77,27 +77,34 @@ export class Doors implements DoorDeal {
   }
 
   #material(slot: DoorSlot): Line<MaterialFamily> {
-    const culture = slot.vibe.culture().key();
-    let lines = this.#materials.get(culture);
-    if (lines === undefined) {
-      lines = this.#library
-        .triples(`${LISTS}/materials/${culture}`)
-        .map(([name, told, key]) => ({ name, told, key: materialFamily(key) }));
-      this.#materials.set(culture, lines);
-    }
+    const lines = this.#lines(this.#materials, `materials/${slot.vibe.culture().key()}`, materialFamily);
     return this.#deal.nth(slot.corridor.branch(MATERIALS), lines, slot.index);
   }
 
   #state(slot: DoorSlot): Line<DoorStateLook> {
-    const era = slot.vibe.era().key();
-    let lines = this.#states.get(era);
-    if (lines === undefined) {
-      lines = this.#library
-        .triples(`${LISTS}/states/${era}`)
-        .map(([name, told, key]) => ({ name, told, key: doorStateLook(key) }));
-      this.#states.set(era, lines);
-    }
+    const lines = this.#lines(this.#states, `states/${slot.vibe.era().key()}`, doorStateLook);
     return this.#deal.nth(slot.corridor.branch(STATES), lines, slot.index);
+  }
+
+  /** A door list, read whole and typed the first time it is asked for: a line whose key `typed` refuses, refuses it. */
+  #lines<K>(
+    read: Map<string, readonly Line<K>[]>,
+    list: string,
+    typed: (key: string) => K,
+  ): readonly Line<K>[] {
+    let lines = read.get(list);
+    if (lines === undefined) {
+      lines = this.#library.triples(`${LISTS}/${list}`).map(([name, told, key]) => {
+        try {
+          return { name, told, key: typed(key) };
+        } catch (refusal) {
+          const why = refusal instanceof Error ? refusal.message : String(refusal);
+          throw new Error(`${LISTS}/${list}: ${name} — ${why}`, { cause: refusal });
+        }
+      });
+      read.set(list, lines);
+    }
+    return lines;
   }
 
   #words(slot: DoorSlot, seed: Seed, behind: RoomCategory): DoorInscription {

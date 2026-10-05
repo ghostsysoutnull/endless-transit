@@ -26,13 +26,14 @@ const MAX_UNIT_SERIAL = 0xffe;
 const SIZE_WORD_LIMITS = [10, 20] as const;
 
 /**
- * Owns one fact: how a building is named. One rarity roll on its own seed: below the landmark chance it
- * takes one of the landmark titles; in the next 15% an uncommon pattern (`Unit 0x… <size word>` or `The
- * <noun> of <concept>`); otherwise a common one (`<adjective> <noun>` or `<noun><compound>`) — the noun and
- * the adjective in the words of the street's culture, the compound in the words of its era. Every word and
- * every landmark title is dealt among the street's buildings on the street's seed, so no two of them share
- * one while its list lasts. The landmark chance is 3%, plus half a point per level below depth 5, times
- * whatever factor the places above ask for, never more than 25%.
+ * Owns one fact: how a building is named. One rarity roll on its own seed (its street's child at its
+ * place): below the landmark chance it takes one of the landmark titles; in the next 15% an uncommon
+ * pattern (`Unit 0x… <size word>` or `The <noun> of <concept>`); otherwise a common one (`<adjective>
+ * <noun>` or `<noun><compound>`) — the noun and the adjective in the words of the street's culture, the
+ * compound in the words of its era. Every word and every landmark title is dealt among the street's
+ * buildings on the street's seed, so no two of them share one while its list lasts. The landmark chance is
+ * 3%, plus half a point per level below depth 5, times whatever factor the places above ask for, never more
+ * than 25%.
  */
 export class BuildingNamer implements BuildingNames {
   readonly #library: ContentLibrary;
@@ -43,8 +44,8 @@ export class BuildingNamer implements BuildingNames {
     this.#deal = deal;
   }
 
-  nameOf(seed: Seed, site: BuildingSite): { name: string; landmark: boolean } {
-    const naming = seed.branch('name');
+  nameOf(site: BuildingSite): { name: string; landmark: boolean } {
+    const naming = site.street.child(site.index).branch('name');
     const roll = naming.branch('rarity').range(0, ROLL_STEPS - 1);
     const landmarkChance = this.landmarkChance(site.depth, site.landmarkFactor);
     if (roll < landmarkChance) {

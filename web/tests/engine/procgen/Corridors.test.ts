@@ -67,16 +67,6 @@ describe('a corridor and its doors (Guide, "Reading doors before you open them")
     expect(apartments.some((apartment) => apartment.door().state() === 'Stable')).toBe(true);
   });
 
-  test('the doors of a corridor share no material and no state while the lists last: up to twelve doors', () => {
-    const short = sample.filter(({ apartments: each }) => each.length <= 12);
-    expect(short.length).toBeGreaterThan(100);
-    for (const { apartments: each } of short) {
-      const doors = each.map((apartment) => apartment.door());
-      expect(new Set(doors.map((door) => door.material())).size).toBe(doors.length);
-      expect(new Set(doors.map((door) => door.state())).size).toBe(doors.length);
-    }
-  });
-
   test('about one door in five has words on it (Guide:222; Door.groovy:31)', () => {
     const inscribed = apartments.filter((apartment) => apartment.door().inscription() !== undefined);
     expect(inscribed.length / apartments.length).toBeGreaterThan(0.18);

@@ -1,7 +1,7 @@
 /** The families a door's material is drawn by (a panel pattern each); any other material is plain. */
 const FAMILIES = ['glass', 'metal', 'stone', 'timber', 'bone', 'plain'] as const;
 
-/** Which family a door's material belongs to: its list's key column (`themes/doors/materials.txt`). */
+/** Which family a door's material belongs to: its list's key column (the door material lists). */
 export type MaterialFamily = (typeof FAMILIES)[number];
 
 /**
@@ -10,7 +10,6 @@ export type MaterialFamily = (typeof FAMILIES)[number];
  */
 export function materialFamily(key: string): MaterialFamily {
   const family = FAMILIES.find((known) => known === key);
-  if (family === undefined)
-    throw new Error(`themes/doors/materials.txt: '${key}' is not a material family (${FAMILIES.join(', ')})`);
+  if (family === undefined) throw new Error(`'${key}' is not a material family (${FAMILIES.join(', ')})`);
   return family;
 }

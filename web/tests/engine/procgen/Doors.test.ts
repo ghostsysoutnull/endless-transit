@@ -122,9 +122,16 @@ describe('a door’s words: a word of the list of the way it is written', () => 
   });
 
   test('the words the room behind guarantees win over the lists', () => {
-    const guarantee = new DoorInscription('DANGER', must(INSCRIPTION_STYLES[3], 'the burned style'));
+    const burned = must(
+      INSCRIPTION_STYLES.find((style) => style.key() === 'burned'),
+      'the burned style',
+    );
+    const guarantee = new DoorInscription('DANGER', burned);
     const seen = worded(doors(), leadingTo(guarantee));
     expect(seen.length).toBeGreaterThan(0);
-    for (const words of seen) expect(words.formatted()).toBe('!! DANGER !!');
+    for (const words of seen) {
+      expect(words.word()).toBe('DANGER');
+      expect(words.style().key()).toBe('burned');
+    }
   });
 });

@@ -1,5 +1,5 @@
+import type { Seed } from '#engine/rng/Seed.ts';
 import type { NamePart } from './NamePart.ts';
-import type { NameSlot } from './NameSlot.ts';
 
 /** The branch of a parent's seed the list its children share is picked on. */
 const FAMILY = 'name-family';
@@ -25,11 +25,8 @@ export class FamilyPart implements NamePart {
     return this.#name;
   }
 
-  list(slot: NameSlot): string {
-    if (slot.parent === undefined) {
-      throw new Error(`${this.#directory}/${this.#name} is picked on the parent's seed: it needs a parent`);
-    }
+  list(among: { readonly parent: Seed }): string {
     const part = `${this.#directory}/${this.#name}`;
-    return `${part}/${slot.parent.seed().branch(FAMILY).branch(part).pick(this.#lists)}`;
+    return `${part}/${among.parent.branch(FAMILY).branch(part).pick(this.#lists)}`;
   }
 }

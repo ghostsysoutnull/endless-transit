@@ -1,6 +1,5 @@
 import type { Vibe } from '#engine/model/Vibe.ts';
 import type { NamePart } from './NamePart.ts';
-import type { NameSlot } from './NameSlot.ts';
 
 /** A part of a name read from a directory of lists: the one its key names for the vibe in force. */
 export class KeyedPart implements NamePart {
@@ -18,7 +17,7 @@ export class KeyedPart implements NamePart {
     return this.#name;
   }
 
-  list(_slot: NameSlot, vibe: Vibe | undefined): string {
-    return `${this.#directory}/${this.#name}/${this.#key(vibe)}`;
+  list(among: { readonly vibe: Vibe | undefined }): string {
+    return `${this.#directory}/${this.#name}/${this.#key(among.vibe)}`;
   }
 }

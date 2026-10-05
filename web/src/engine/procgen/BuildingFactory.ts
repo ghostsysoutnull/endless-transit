@@ -37,7 +37,7 @@ export class BuildingFactory implements LocationFactory<Building> {
       );
     }
     const floors = this.#sizes.floorsOf(origin.seed);
-    const named = this.#namer.nameOf(origin.seed, {
+    const named = this.#namer.nameOf({
       street: street.seed(),
       index: origin.index,
       culture: vibe.culture(),
