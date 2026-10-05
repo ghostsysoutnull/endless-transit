@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { expectTouchable, land, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 /**
  * The full playthrough (I10): one session from the title to the void and back, as a player would tap it,
@@ -49,6 +49,7 @@ test(
     await page.reload();
     await expect(page.getByTestId('world-seed')).toHaveText(SEED);
     await press(page, /enter world/i, hasTouch);
+    await land(page, hasTouch);
 
     // The street, the building, a floor tapped on its tower, the corridor, a door.
     await expect(page.getByTestId('place-kind')).toHaveText('STREET');
@@ -148,16 +149,18 @@ test(
     await expectTouchable(page, 'Layer -1');
     await shoot(page, '5-layer');
 
-    // The recap below the bedrock is the void's; ending it goes to the title, and the world waits behind CONTINUE.
+    // The End screen below the bedrock is the void's; ending it rises to the title, and the world waits behind CONTINUE.
     await press(page, /end session/i, hasTouch);
-    await expect(page.getByTestId('recap-heading')).toHaveText('[VOID_RESONANCE_TERMINATION]');
+    await expect(page.getByTestId('recap-heading')).toHaveText('The void takes the session');
     await expect(page.getByTestId('closing')).toHaveText('Sleep among the static, Operator.');
     await press(page, /end session/i, hasTouch);
+    await land(page, hasTouch);
     await expect(page.getByTestId('world-seed')).toHaveText(SEED);
     await expect(page.getByRole('button', { name: /continue/i })).toBeVisible();
 
     // CONTINUE, then a reload: the same Layer, the same Integrity (a reload never stops at the title once a place is saved).
     await press(page, /continue/i, hasTouch);
+    await land(page, hasTouch);
     await expect(page.getByTestId('place-name')).toHaveText('Layer -0x1');
     await expect(page.getByTestId('coherence')).toHaveText('92%'); // the recap cost two, below the bedrock
     await page.reload();

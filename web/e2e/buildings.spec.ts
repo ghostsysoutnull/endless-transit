@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { expectTouchable, land, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world: its street is Requiem Slipway; its first building Censed Altar, 16 floors, 9 doors per corridor. */
@@ -33,6 +33,7 @@ test('from the title: a new world lands on a street; into a building, a floor pi
   await plant(page, null);
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
+  await land(page, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await expect(page.getByTestId('place-name')).toHaveText('Requiem Slipway');
   await expect(page.getByTestId('path').locator('li')).toHaveCount(8);

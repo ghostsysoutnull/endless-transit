@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { press, saveText, tapOption } from './support/harness.ts';
+import { land, press, saveText, tapOption } from './support/harness.ts';
 
 /** The live region the shell owns: `[role=status]` — there is exactly one, whatever the screen. */
 const LIVE = '[role="status"]';
@@ -47,6 +47,7 @@ test('one live region, mounted once: title → world → back changes its text, 
   await press(page, /new world/i, hasTouch);
   await expect(page.locator(LIVE)).toContainText('drawn');
   await press(page, /enter world/i, hasTouch);
+  await land(page, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   // The switch of screens is where a new node would slip in — and a new node with text is not announced.
   await expect(page.locator(LIVE)).toHaveCount(1);
@@ -66,6 +67,7 @@ test('the path says what kind of place each crumb is, to a screen reader, withou
   await page.goto('./');
   await press(page, /new world/i, hasTouch);
   await press(page, /enter world/i, hasTouch);
+  await land(page, hasTouch);
   // A new world starts on a street: eight levels on the depth rail, the universe first. Every one is in the
   // markup on every screen size — a phone shows the glyphs and reads the kind and the name out (U01a).
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
@@ -108,8 +110,8 @@ test('when the recap opens the live region says the heading of the ending, once'
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await countAnnouncements(page);
   await press(page, /end session/i, hasTouch);
-  await expect(page.getByTestId('recap-heading')).toHaveText('[LINK_TERMINATION_PROTOCOL]');
-  await expect(page.locator(LIVE)).toHaveText('[LINK_TERMINATION_PROTOCOL]');
+  await expect(page.getByTestId('recap-heading')).toHaveText('End of session');
+  await expect(page.locator(LIVE)).toHaveText('End of session');
   await expect(page.locator(LIVE)).toHaveCount(1);
   expect(await announced(page)).toBe(1);
   await press(page, /resume/i, hasTouch);

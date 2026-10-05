@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { expectTouchable, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
+import { expectTouchable, land, press, saveText, tapOption, watchForErrors } from './support/harness.ts';
 
 const SLOT = 'endless-transit.save';
 /** A fixed world, so names and list lengths are known: the save format is the way in, as for any player. */
@@ -39,6 +39,7 @@ test('walk from the title down to a street and back up to the universe, by tappi
   await page.goto('./');
   await expect(page.getByTestId('world-seed')).toHaveText(SEED);
   await press(page, /enter world/i, hasTouch);
+  await land(page, hasTouch);
   // A new world starts on a street (Guide:41); the universe is seven leaves above.
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   for (let level = 0; level < 7; level++) await press(page, /leave/i, hasTouch);
@@ -85,6 +86,7 @@ test('reload restores the place; the title screen is one tap away and the place 
   await plant(page, null);
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
+  await land(page, hasTouch);
   for (let level = 0; level < 3; level++) await press(page, /leave/i, hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('Dominia');
 
@@ -97,6 +99,7 @@ test('reload restores the place; the title screen is one tap away and the place 
   await expect(page.getByTestId('world-seed')).toHaveText(SEED);
   await expect(page.getByRole('button', { name: /re-roll/i })).toBeVisible();
   await press(page, /continue/i, hasTouch);
+  await land(page, hasTouch);
   await expect(page.getByTestId('place-name')).toHaveText('Dominia');
   expect(problems).toEqual([]);
 });
@@ -171,6 +174,7 @@ test('still fits at 360 px wide at every level, the narrowest phone we promise',
   await plant(page, null);
   await page.goto('./');
   await press(page, /enter world/i, hasTouch);
+  await land(page, hasTouch);
   for (let level = 0; level < 7; level++) await press(page, /leave/i, hasTouch);
   for (const kind of LEVELS) {
     await expect(page.getByTestId('place-kind')).toHaveText(kind);

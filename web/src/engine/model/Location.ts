@@ -317,6 +317,11 @@ export abstract class Location {
     return undefined;
   }
 
+  /** Whether a session ending here has settled in: only a room has a door to close behind you. */
+  settled(): boolean {
+    return false;
+  }
+
   /** Whether this place is below a building's bedrock (the Groovy `isAbyssal`): the parent's answer, false at the top. */
   abyssal(): boolean {
     return this.parent()?.abyssal() ?? false;

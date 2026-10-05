@@ -92,6 +92,16 @@ export async function press(page: Page, name: RegExp, hasTouch: boolean): Promis
   await (hasTouch ? button.tap() : button.click());
 }
 
+/**
+ * The way into the game or out of it (the title's dive, the End screen's rise) plays for a second a level: a tester
+ * taps it to land at once, as a player may.
+ */
+export async function land(page: Page, hasTouch: boolean): Promise<void> {
+  const passage = page.getByTestId('passage');
+  await passage.waitFor();
+  await (hasTouch ? passage.tap() : passage.click());
+}
+
 export async function tapOption(page: Page, id: string, hasTouch: boolean): Promise<void> {
   const button = page.locator(`button[data-option="${id}"]`);
   // A place with no button of its own — a floor: the tower is its building's list — is tapped in the picture.
@@ -209,7 +219,7 @@ export function trailOf(path: string | null): string[] {
   return steps.map((_, depth) => steps.slice(0, depth + 1).join('.'));
 }
 
-/** A v6 save as the game writes one: a fresh traveller who has walked the trail, unless a field is set on purpose. */
+/** A v7 save as the game writes one: a fresh traveller who has walked the trail, unless a field is set on purpose. */
 export function saveText(
   seed: string,
   path: string | null,
@@ -223,7 +233,7 @@ export function saveText(
   } = {},
 ): string {
   return JSON.stringify({
-    version: 6,
+    version: 7,
     seed,
     path,
     states,
@@ -232,5 +242,6 @@ export function saveText(
     visited: traveller.visited ?? trailOf(path),
     buffer: traveller.buffer ?? [],
     resonant: traveller.resonant ?? 0,
+    reboots: 0,
   });
 }

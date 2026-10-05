@@ -63,28 +63,26 @@ export class TitleView implements View<TitleVM> {
   /** The tap that enters the world goes through the passage first; any other is the router's. */
   #through(event: Event): void {
     const vm = this.#vm;
-    if (vm === undefined) return;
-    if (vm.world === null || vm.enters === '' || this.#parts.passage.playing()) return;
-    const target = event.target instanceof Element ? event.target : undefined;
-    if (target?.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.enters) return;
-    event.stopPropagation();
     const container = this.#container;
-    if (container === undefined) return;
-    const enters = vm.enters;
-    this.#parts.scene.clear();
-    this.#parts.passage.down(
-      {
-        container,
-        repaint: () => {
-          if (this.#vm !== undefined) this.#paint(this.#vm);
+    const levels = vm?.world?.levels;
+    if (vm === undefined || levels === undefined || container === undefined) return;
+    const { enters } = vm;
+    this.#parts.passage.through(event, enters, () => {
+      this.#parts.scene.clear();
+      this.#parts.passage.down(
+        {
+          container,
+          repaint: () => {
+            if (this.#vm !== undefined) this.#paint(this.#vm);
+          },
         },
-      },
-      vm.world.levels,
-      () => {
-        // The screen may be gone by now: then nothing is asked of it.
-        if (this.#container !== undefined) this.#parts.picks.pick(this.#container, enters);
-      },
-    );
+        levels,
+        () => {
+          // The screen may be gone by now: then nothing is asked of it.
+          if (this.#container !== undefined) this.#parts.picks.pick(this.#container, enters);
+        },
+      );
+    });
   }
 
   #paint(vm: TitleVM): void {
@@ -92,8 +90,8 @@ export class TitleView implements View<TitleVM> {
     this.#vm = vm;
     render(this.#template(vm), this.#container);
     if (this.#parts.passage.playing()) return;
-    const host = this.#element('[data-sky]');
-    if (host === undefined) return;
+    const host = this.#container.querySelector('[data-sky]');
+    if (!(host instanceof HTMLElement)) return;
     const first = vm.world?.levels[0];
     if (vm.world === null || first === undefined) {
       this.#parts.scene.wait(host);
@@ -105,12 +103,6 @@ export class TitleView implements View<TitleVM> {
       into: first.into,
       noise: vm.world.noise,
     });
-  }
-
-  /** The screen's first element a selector finds, when it is an HTML element. */
-  #element(selector: string): HTMLElement | undefined {
-    const found = this.#container?.querySelector(selector);
-    return found instanceof HTMLElement ? found : undefined;
   }
 
   #template(vm: TitleVM): TemplateResult {

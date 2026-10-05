@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import {
   expectTouchable,
+  land,
   press,
   saveText,
   tapOption,
@@ -68,6 +69,7 @@ test('the HUD shows Coherence and the step count: a move costs one and counts on
   await expect(page.locator('.cohbar i')).toHaveAttribute('style', /width:\s*99%/);
   await press(page, /title screen/i, hasTouch);
   await press(page, /continue/i, hasTouch);
+  await land(page, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('BUILDING');
   await expectMeter(page, 98, 'stable', 1);
   await expectTouchable(page, 'building with the meter');
@@ -231,7 +233,7 @@ test('close the tab and reopen: a new page with the same storage continues with 
   await reopened.close();
 });
 
-test('the recap: END SESSION opens the short ending under twenty places; RESUME returns; END SESSION again goes to the title, and CONTINUE comes back', async ({
+test('the End screen: END SESSION opens the short ending on a short visit, with the figures; RESUME returns; END SESSION again rises to the title, and CONTINUE comes back', async ({
   page,
   hasTouch,
 }) => {
@@ -239,10 +241,16 @@ test('the recap: END SESSION opens the short ending under twenty places; RESUME 
   await plant(page, saveText(SEED, STREET));
   await page.goto('./');
   await press(page, /end session/i, hasTouch);
-  await expect(page.getByTestId('recap-heading')).toHaveText('[LINK_TERMINATION_PROTOCOL]');
-  await expect(page.getByTestId('shutdown').getByRole('listitem')).toHaveCount(4);
-  await expect(page.getByTestId('figures')).toHaveCount(0);
-  await expect(page.getByTestId('closing')).toHaveText('Neural link severed. Waveform stabilized.');
+  await expect(page.getByTestId('recap-heading')).toHaveText('End of session');
+  await expect(page.getByTestId('figures').locator('dt')).toHaveText([
+    'Steps',
+    'Places',
+    'Relics',
+    'Resonant',
+  ]);
+  await expect(page.getByTestId('closing')).toHaveText(
+    'A short visit. End the session and the world keeps your place.',
+  );
   await expect(page.getByRole('button')).toHaveCount(2);
   await expectTouchable(page, 'recap, short ending');
   await shoot(page, '5a-recap-severed');
@@ -254,15 +262,20 @@ test('the recap: END SESSION opens the short ending under twenty places; RESUME 
   await press(page, /end session/i, hasTouch);
   await expect(page.getByTestId('recap-heading')).toBeVisible();
   await press(page, /end session/i, hasTouch);
+  await land(page, hasTouch);
   await expect(page.getByTestId('world-seed')).toHaveText(SEED);
   await expect(page.getByRole('button', { name: /continue/i })).toBeVisible();
   await press(page, /continue/i, hasTouch);
+  await land(page, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await expectMeter(page, 98, 'stable', 0);
   expect(problems).toEqual([]);
 });
 
-test('the recap: twenty places visited is the full ending with its figures', async ({ page, hasTouch }) => {
+test('the End screen: twenty places visited with nothing taken is "Empty-handed", with its figures', async ({
+  page,
+  hasTouch,
+}) => {
   const problems = watchForErrors(page);
   // The street's trail is eight places; four buildings, seven more streets and the country's second city make twenty.
   const visited = [
@@ -277,25 +290,12 @@ test('the recap: twenty places visited is the full ending with its figures', asy
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   await expect(page.locator('.row.seen')).toHaveCount(4);
   await press(page, /end session/i, hasTouch);
-  await expect(page.getByTestId('recap-heading')).toHaveText('[SESSION_RECAP_INITIALIZED]');
+  await expect(page.getByTestId('recap-heading')).toHaveText('Empty-handed');
   const figures = page.getByTestId('figures');
-  await expect(figures.locator('dt')).toHaveText([
-    'FINAL_LOCUS',
-    'PULSE_TRAVERSAL',
-    'CELLS_MAPPED',
-    'BUFFER_DENSITY',
-    'RESONANT_TRACES',
-  ]);
-  await expect(figures.locator('dd')).toHaveText([
-    STREET,
-    '41 steps',
-    '20 footprints',
-    '0 spectral fragments',
-    '0 resonant',
-  ]);
-  await expect(page.getByTestId('shutdown')).toHaveCount(0);
+  await expect(figures.locator('dt')).toHaveText(['Steps', 'Places', 'Relics', 'Resonant']);
+  await expect(figures.locator('dd')).toHaveText(['41', '20', '0', '0']);
   await expect(page.getByTestId('closing')).toHaveText(
-    'Expedition successful. Trace synchronized to substrate.',
+    'You looked at everything and touched nothing. End the session and the world keeps your place.',
   );
   await expectTouchable(page, 'recap, full ending');
   await shoot(page, '5b-recap-expedition');

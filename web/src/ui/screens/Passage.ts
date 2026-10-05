@@ -29,6 +29,18 @@ export class Passage {
     return this.#playing !== undefined;
   }
 
+  /**
+   * A tap heard on the way down: when it is on the button of `option` and no passage plays, it is taken from the
+   * router and `play` runs it; any other tap is left alone. Nothing while the option is not on offer (empty).
+   */
+  through(event: Event, option: string, play: () => void): void {
+    if (option === '' || this.#playing !== undefined) return;
+    const target = event.target instanceof Element ? event.target : undefined;
+    if (target?.closest<HTMLElement>('button[data-option]')?.dataset.option !== option) return;
+    event.stopPropagation();
+    play();
+  }
+
   /** Down the levels, from the first to the last, then `ended`. */
   down(screen: PassageScreen, levels: readonly PassageLevel[], ended: () => void): void {
     this.#play(screen, levels, 0, ended, (host, reel, done, shown) => {
@@ -55,6 +67,7 @@ export class Passage {
     return html`
       <div
         class="passage"
+        data-testid="passage"
         @click=${() => {
           this.stop();
         }}

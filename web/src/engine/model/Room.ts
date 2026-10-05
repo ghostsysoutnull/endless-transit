@@ -381,4 +381,8 @@ export class Room extends Location {
   childrenHeading(): string {
     return '';
   }
+
+  override settled(): boolean {
+    return true;
+  }
 }

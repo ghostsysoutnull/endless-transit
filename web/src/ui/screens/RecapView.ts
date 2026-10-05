@@ -62,27 +62,25 @@ export class RecapView implements View<RecapVM> {
   /** The tap that ends the session goes through the passage first; any other is the router's. */
   #through(event: Event): void {
     const vm = this.#vm;
-    if (vm === undefined || vm.ends === '' || this.#parts.passage.playing()) return;
-    const target = event.target instanceof Element ? event.target : undefined;
-    if (target?.closest<HTMLElement>('button[data-option]')?.dataset.option !== vm.ends) return;
-    event.stopPropagation();
     const container = this.#container;
-    if (container === undefined) return;
-    const ends = vm.ends;
-    this.#parts.scene.clear();
-    this.#parts.passage.up(
-      {
-        container,
-        repaint: () => {
-          if (this.#vm !== undefined) this.#paint(this.#vm);
+    if (vm === undefined || container === undefined) return;
+    const { levels, ends } = vm;
+    this.#parts.passage.through(event, ends, () => {
+      this.#parts.scene.clear();
+      this.#parts.passage.up(
+        {
+          container,
+          repaint: () => {
+            if (this.#vm !== undefined) this.#paint(this.#vm);
+          },
         },
-      },
-      vm.levels,
-      () => {
-        // The screen may be gone by now: then nothing is asked of it.
-        if (this.#container !== undefined) this.#parts.picks.pick(this.#container, ends);
-      },
-    );
+        levels,
+        () => {
+          // The screen may be gone by now: then nothing is asked of it.
+          if (this.#container !== undefined) this.#parts.picks.pick(this.#container, ends);
+        },
+      );
+    });
   }
 
   #paint(vm: RecapVM): void {
@@ -90,16 +88,10 @@ export class RecapView implements View<RecapVM> {
     this.#vm = vm;
     render(this.#template(vm), this.#container);
     if (this.#parts.passage.playing()) return;
-    const host = this.#element('[data-sky]');
     const emblem = this.#parts.emblems[vm.outcome];
     if (emblem === undefined) throw new Error(`no emblem for the ending '${vm.outcome}'`);
-    if (host !== undefined) this.#parts.scene.show(host, emblem);
-  }
-
-  /** The screen's first element a selector finds, when it is an HTML element. */
-  #element(selector: string): HTMLElement | undefined {
-    const found = this.#container?.querySelector(selector);
-    return found instanceof HTMLElement ? found : undefined;
+    const host = this.#container.querySelector('[data-sky]');
+    if (host instanceof HTMLElement) this.#parts.scene.show(host, emblem);
   }
 
   #template(vm: RecapVM): TemplateResult {

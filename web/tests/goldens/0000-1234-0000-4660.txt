@@ -6,18 +6,18 @@ tags: Way 1 of 5 (position) | Era Analog (era) | Culture Shogun (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Folded Green.
 BUILDINGS ON THIS STREET
-  01 [1] Enter Building: Ceremonial Teahouse
-  02 [2] Enter Building: Misted Pagoda
-  03 [3] Enter Building: Silent Granary
-  04 [4] Enter Building: StableLever
-  05 [5] Enter Building: VerandaCrank
-  06 [6] Enter Building: The Storehouse of Frequencies
-  07 [7] Enter Building: Thatched Hall
-  08 [8] Enter Building: KeepWorks
-  09 [9] Enter Building: PavilionMast
-  10 [A] Enter Building: MoatWire
-  11 [G] Enter Building: Tiled Lantern
-  12 [K] Enter Building: Unit 0x95D Unit
+  01 [1] Ceremonial Teahouse
+  02 [2] Misted Pagoda
+  03 [3] Silent Granary
+  04 [4] StableLever
+  05 [5] VerandaCrank
+  06 [6] The Storehouse of Frequencies
+  07 [7] Thatched Hall
+  08 [8] KeepWorks
+  09 [9] PavilionMast
+  10 [A] MoatWire
+  11 [G] Tiled Lantern
+  12 [K] Unit 0x95D Unit
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Folded Green | ⌂ Ceremonial Teahouse (unvisited) | ⌂ Misted Pagoda (unvisited) | ⌂ Silent Granary (unvisited) | ⌂ StableLever (unvisited) | ⌂ VerandaCrank (unvisited) | ⌂ The Storehouse of Frequencies (unvisited) | ⌂ Thatched Hall (unvisited) | ⌂ KeepWorks (unvisited) | ⌂ PavilionMast (unvisited) | ⌂ MoatWire (unvisited) | ⌂ Tiled Lantern (unvisited) | ⌂ Unit 0x95D Unit (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
@@ -53,9 +53,9 @@ tags: Culture Shogun (culture) | Doors 2 (reading)
   A narrow service corridor, doors set flush into either wall.
 status: Enter Corridor.
 DOORS
-  01 [1] Open Mica Lantern Pane, yellowed
+  01 [1] Mica Lantern Pane, yellowed
        A pane of mica in a lantern frame, glowing dull gold. The surface has yellowed like an old page. The word 'NO_ENTRY' is stamped across the door in block letters.
-  02 [2] Open Ink-Painted Panel, dusty
+  02 [2] Ink-Painted Panel, dusty
        A panel painted in ink with one bent pine. Dust lies along every ledge of it, undisturbed.
 TELEMETRY NOMINAL Quantum spectrogram 9 5 8 9 2 Resonant traces 0
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)

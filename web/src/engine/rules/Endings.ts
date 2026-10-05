@@ -6,9 +6,6 @@ const EXPEDITION_PLACES = 20;
 const TUNED_TRACES = 3;
 /** Pacing: this many steps for each place visited. */
 const PACING = 3;
-/** How deep the planet and a room stand on the way down: levels below the universe (the trace's depth). */
-const PLANET_DEPTH = 4;
-const ROOM_DEPTH = 11;
 
 /**
  * The endings of a session in the order they are tried (Guide:422-428): the first reached wins. Below the bedrock
@@ -24,8 +21,9 @@ const ENDINGS: readonly Ending[] = [
   { id: 'pacing', reached: (run) => run.places > 0 && run.steps >= run.places * PACING },
   { id: 'tuned', reached: (run) => run.resonant >= TUNED_TRACES },
   { id: 'expedition', reached: (run) => run.places >= EXPEDITION_PLACES },
-  { id: 'sky', reached: (run) => run.here.depth() < PLANET_DEPTH },
-  { id: 'settled', reached: (run) => run.here.depth() >= ROOM_DEPTH },
+  // Above any planet no vibe is in force; a room is the one place that settles.
+  { id: 'sky', reached: (run) => run.here.vibe() === undefined },
+  { id: 'settled', reached: (run) => run.here.settled() },
   { id: 'severed', reached: () => true },
 ];
 

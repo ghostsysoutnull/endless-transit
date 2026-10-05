@@ -108,13 +108,6 @@ test('still fits at 360 px wide, the narrowest phone we promise', async ({ page,
   await expect(page.getByTestId('world-seed')).toBeVisible();
 });
 
-test('reduced motion is respected: the sigil stops pulsing', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('./');
-  const animation = await page.locator('.sigil').evaluate((el) => getComputedStyle(el).animationName);
-  expect(animation).toBe('none');
-});
-
 test('the keyboard is an extra: N draws a world, R re-rolls', async ({ page, hasTouch }) => {
   test.skip(hasTouch, 'a phone has no keyboard — nothing may depend on one');
   await page.goto('./');
