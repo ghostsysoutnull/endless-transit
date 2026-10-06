@@ -19,6 +19,17 @@ through its own plan, `/grill` and a Directive. Code-quality items go to `HOUSEK
 ### CONCEPT-005 — An apartment's plan takes its shape from its own seed
 **Found:** 2026-10-05, the user's report of the same layout seen often, checked against the code and a measure of 150 worlds. **State:** concept, no plan; not urgent (the user's call). The number of rooms comes out even, but the drawn plan is set almost wholly by that number: the same count gives the same rows of boxes, only their widths moving a little (`web/src/ui/scene/PlanLayout.ts`), so the game shows about ten plan shapes. The idea: the shape comes from the apartment's seed — an L, a hall with rooms off it, a long railroad, a ring around a court — so two five-room apartments look nothing alike; the rooms are still walked one to the next. Cost: the layout code and its tests, judged on the phone.
 
+### CONCEPT-006 — Three more endings, each on a fact the game does not yet keep
+**Found:** 2026-10-05, the title-fall fast loop (`tasks/ui/title-fall-fast-loop.md`), left out of the ladder of twelve
+on purpose. **State:** concept, no plan. *Rebel district* (you walked a rebel city), *Peak* (you stood on a building's
+top floor), *Drift* (you entered an apartment whose culture had drifted from its planet's): each needs the traveller to
+remember one more thing, saved, then one entry in the ladder, its words and its emblem.
+
+### CONCEPT-007 — The depth rail read with a finger
+**Found:** 2026-10-05, the same loop, the user's pick for "later". **State:** concept, no plan. Press and slide along
+the rail and a small label follows the finger with each level's kind and name; lifting opens Trace at that level.
+Read-only, as Trace is.
+
 ## 🟢 CLOSED
 
 ### CONCEPT-002 — The game as a single-page app

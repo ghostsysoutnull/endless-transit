@@ -37,9 +37,9 @@ draws another, **ENTER WORLD** starts you on a **street** with 100 Coherence. Ev
 | **BUFFER** | inventory as tiles: tap one, tap another = merge; the tile's tray key drops it in the room; **BACK** |
 | **TRACE** | your whole path: a band a level, each drawn; tap a band to open it larger; **DIVE** zooms down to you; **POLE** shows every level at a glance — a live node a level, the era, culture and trait it sets beside it, those in force written huge behind as you scroll; a rebel city's in red, a drifted apartment's underlined (your pick is remembered) |
 | **HELP** | the manual, inside the game |
-| **TITLE SCREEN** · **END SESSION** | the title (the world waits behind **CONTINUE**) · the recap (**RESUME** comes back) |
+| **TITLE SCREEN** · **END SESSION** | the title (the world waits behind **CONTINUE**) · the End screen: your ending, one of twelve (**RESUME** comes back) |
 
-The depth rail under the HUD is your path, one glyph for each level; the one you stand in is ringed. Tap it for the trace.
+The depth rail under the HUD is your path, one drawn mark for each level on a line; the one you stand in is larger and ringed. Tap it for the trace.
 
 ## What things cost
 

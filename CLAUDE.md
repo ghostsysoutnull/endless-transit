@@ -51,7 +51,11 @@
     approval the regular process follows: tests, checks, records, merge and publish (@.claude/SOLO_LOOP.md); a shape
     break the design check finds in the loop's diff is fixed then, not logged, since no plan judged it first.
 16. What the user reports seeing is a fact: I restate it in a line or two and build on that; I never explain it with a
-    guess, and when I do not know the cause I say so.
+    guess, and when I do not know the cause I say so. "Can you check?" on a report is a reading of the code and of
+    what the rules side hands over; a browser run is a process option offered with its cost, never started on my own.
+17. An option pitched leans only on facts read in this session: a feature it needs is read in the code before it is
+    promised. For a new design, the first message is the whole field of candidates on the facts at hand with my
+    ladder; the cut to a pick comes after the user has seen it.
 
 ## 🧱 OO Principles — every plan and every diff is checked against each of them
 1. **One owner per fact.** A rule, list or constant lives in one place; everyone else asks it.
