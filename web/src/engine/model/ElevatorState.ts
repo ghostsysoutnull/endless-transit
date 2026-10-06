@@ -96,10 +96,6 @@ export class ElevatorState implements FloorState {
     return '';
   }
 
-  approachVerb(): string {
-    return '';
-  }
-
   /** At the elevator the scan is the building's vertical strata pulse around this floor (ElevatorState.groovy:83-86). */
   scan(floor: Floor, seen: (place: Location) => boolean): ScanReport | undefined {
     return floor.building().scanAround(floor.number(), seen);

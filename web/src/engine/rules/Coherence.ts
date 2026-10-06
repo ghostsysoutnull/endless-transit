@@ -74,6 +74,11 @@ export class Coherence {
     return BANDS.find((band) => this.#value >= band.from)?.key ?? 'critical';
   }
 
+  /** Whether this value is in the bar's lowest band. */
+  critical(): boolean {
+    return this.band() === BANDS.at(-1)?.key;
+  }
+
   /** Whether the description of the place is read through static at this value. */
   corrupting(): boolean {
     return this.#value < CORRUPTS_BELOW;

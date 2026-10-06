@@ -76,6 +76,7 @@ const OPEN: GameSnapshot = {
   scan: null,
   map: null,
   trace: null,
+  descent: null,
 };
 
 describe('BufferPresenter — the buffer screen (InventoryOverlayComponent.groovy:20-52; Guide:124-126)', () => {

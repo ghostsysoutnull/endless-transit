@@ -90,7 +90,7 @@ a drain that rises, and one heart.
   In this concept the seven digits are a registry. In the mock the number turns out to be the hum of an unlisted
   container in Hold 3 — and merging the beacon away costs you the bearing (`NO CARRIER`).
 * **The Vinculum.** The hive's heart carries the name of the player's own interface. The mock's node greets you with
-  `PARENT NODE FOUND :: WELCOME BACK, UNIT`. The game's existing ending, "Neural link severed", gains a second meaning.
+  `PARENT NODE FOUND :: WELCOME BACK, UNIT`. The game's plain ending, "End of session", gains a second meaning.
   Hinted, never stated.
 
 ## 7. Decisions

@@ -178,7 +178,10 @@ test('past the old sixteen (U03d): the tiles stay buttons, a take lands, and the
   expect(problems).toEqual([]);
 });
 
-test('the recap lists the buffer and the tally', async ({ page, hasTouch }) => {
+test('the End screen counts the buffer and the tally; three resonant traces are "In tune"', async ({
+  page,
+  hasTouch,
+}) => {
   const problems = watchForErrors(page);
   const visited = [
     ...['0', '0.0', '0.0.0', '0.0.0.0', '0.0.0.0.0', '0.0.0.0.0.0', '0.0.0.0.0.0.0', STREET],
@@ -189,16 +192,11 @@ test('the recap lists the buffer and the tally', async ({ page, hasTouch }) => {
   await plant(page, saveText(SEED, STREET, {}, { steps: 41, visited, buffer: [RELIC, RELIC], resonant: 3 }));
   await page.goto('./');
   await press(page, /end session/i, hasTouch);
+  await expect(page.getByTestId('recap-heading')).toHaveText('In tune');
   const figures = page.getByTestId('figures');
-  await expect(figures.locator('dt')).toHaveText([
-    'FINAL_LOCUS',
-    'PULSE_TRAVERSAL',
-    'CELLS_MAPPED',
-    'BUFFER_DENSITY',
-    'RESONANT_TRACES',
-  ]);
-  await expect(figures.locator('dd').nth(3)).toHaveText('2 spectral fragments');
-  await expect(figures.locator('dd').nth(4)).toHaveText('3 resonant');
+  await expect(figures.locator('dt')).toHaveText(['Steps', 'Places', 'Relics', 'Resonant']);
+  await expect(figures.locator('dd').nth(2)).toHaveText('2');
+  await expect(figures.locator('dd').nth(3)).toHaveText('3');
   expect(problems).toEqual([]);
 });
 

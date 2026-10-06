@@ -1,4 +1,5 @@
 import type { BufferSummary } from './BufferSummary.ts';
+import type { DescentSummary } from './DescentSummary.ts';
 import type { GameOption } from './GameOption.ts';
 import type { MapSummary } from './MapSummary.ts';
 import type { PlaceSummary } from './PlaceSummary.ts';
@@ -26,6 +27,8 @@ export interface GameSnapshot {
   readonly scan: ScanSummary | null;
   /** The map the last MAP drew, until the next step; `null` when the last step was no map. */
   readonly map: MapSummary | null;
-  /** The trace the last TRACE drew, until the next step; `null` when the last step was no trace. */
+  /** The trace the last TRACE drew, or the one the session's recap opened with, until the next step; `null` after any other step. */
   readonly trace: TraceSummary | null;
+  /** The way down entering the world takes, while at the title screen with a world drawn; `null` anywhere else. */
+  readonly descent: DescentSummary | null;
 }

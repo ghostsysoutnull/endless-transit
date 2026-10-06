@@ -64,10 +64,6 @@ export class Country extends Location {
     return 'Regional cities identified';
   }
 
-  approachVerb(): string {
-    return 'Travel to';
-  }
-
   /** Drawn as an area of its children (U04). */
   override portrait(): Portrait {
     return this.area('country');

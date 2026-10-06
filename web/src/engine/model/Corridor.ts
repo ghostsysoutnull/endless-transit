@@ -103,10 +103,6 @@ export class Corridor extends Location {
     return 'Doors';
   }
 
-  approachVerb(): string {
-    return 'Open';
-  }
-
   /** In the trace a corridor is drawn as its floor's corridor, walked (U04). */
   override bandPortrait(): Portrait {
     return this.#floor.walked();

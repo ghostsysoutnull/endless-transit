@@ -49,6 +49,7 @@ const FLOOR: GameSnapshot = {
   scan: null,
   map: null,
   trace: null,
+  descent: null,
 };
 
 /** A building: floors listed top first, numbered by floor, with their readings. */
@@ -137,6 +138,7 @@ const ROOM: GameSnapshot = {
   scan: null,
   map: null,
   trace: null,
+  descent: null,
 };
 
 describe('HudPresenter — which snapshots it takes', () => {

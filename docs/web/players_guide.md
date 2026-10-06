@@ -53,19 +53,23 @@ want one.
 
 ## Your first five minutes
 
-**Opening the game.** Open the link above. The title screen shows one button, **NEW WORLD**; tap it and a seed
-(`XXXX-XXXX-XXXX-XXXX`) and a universe name appear, with **ENTER WORLD** and **RE-ROLL** under them. Re-roll as often
-as you like; enter when you like the name. The seed is drawn from your browser's random source; there is no box to
-type one in. <!-- src/engine/rules/GameEngine.ts:105-127, src/platform/CryptoEntropySource.ts -->
+**Opening the game.** Open the link above. The title is the top of the fall: the game's name over static, and one
+button, **NEW WORLD**. Tap it and that world's universe appears out of the static, drawn live with its filaments
+named, and its seed (`XXXX-XXXX-XXXX-XXXX`) stands large at the foot with **ENTER WORLD** and **RE-ROLL**. Re-roll as
+often as you like: each world's universe resolves anew. Entering dives level by level from the universe down to the
+street you land on, each level named as it passes, one second a level; a tap lands at once. The seed is drawn from
+your browser's random source; there is no box to type one in.
+<!-- src/engine/rules/GameEngine.ts:114-137, 471, src/ui/scene/TitleScene.ts:11, src/ui/screens/Passage.ts, src/main.ts:114, src/platform/CryptoEntropySource.ts -->
 
 **Coming back.** If you have played before, the title shows **CONTINUE** instead, and reloading the page while you are
 in the world puts you straight back where you stood — the game saves itself after every tap, in this browser only.
 See [Saving](#saving-seeds-and-the-debug-tools).
 
 **The screen.** The top box is the HUD: the Coherence bar (Integrity below the bedrock), **Steps** and **Buffer** (how many
-fragments you carry); where a place is drawn it is one thin row. Under it runs the **depth rail**: one glyph for each
-level from the universe down to where you stand, which is ringed; the whole rail is one button that opens the **trace**
-at the level nearest your finger (below). <!-- src/ui/screens/HudPresenter.ts:199, 255, src/ui/screens/HudView.ts:313, 583 -->
+fragments you carry); where a place is drawn it is one thin row. Under it runs the **depth rail**: one small drawn mark for
+each level from the universe down to where you stand, on a line with a pulse running down it; yours is larger, alive
+and ringed. The whole rail is one button that opens the **trace** at the level nearest your finger (below).
+<!-- src/ui/screens/HudPresenter.ts:199, 255, src/ui/scene/DepthRail.ts -->
 Under the rail is the place: its kind and its name, and under the name its chips (your position among your
 neighbours, such as `Orbit 2 of 5` on a planet or `Building 2 of 20` in a building — a floor has none, its name and the
 tower say its height — then its tags). Everywhere from the universe down to a corridor a **picture** comes next
@@ -179,7 +183,7 @@ offer changes nothing and costs nothing.
 | **TRACE** | none | Opens the trace over the screen: a band for each level from the universe down to you, each the level's own picture with the place you went down into marked, a thread running through them to you. Tap a band to open it larger; **DIVE** zooms from the universe down to you and lands on your band; ✕, Esc or a swipe down its header closes it. **POLE \| COLUMN** in its header switches to the pole (every level at a glance, see *Reading the screen*) and back; the game remembers your pick, after a reload too. The rail opens it too. Costs 1. <!-- src/ui/screens/HudPresenter.ts:255, src/ui/screens/HudView.ts:220-259, 267, src/platform/LocalStorageTraceViewMemory.ts:17-32 --> |
 | **HELP** | `H` | The operator's manual: what every button does and how not to die. Costs 1. |
 | **TITLE SCREEN** | `T` | Back to the title; the world waits behind CONTINUE. Costs 1. |
-| **END SESSION** | `Q` | The recap of this run. **RESUME** comes back for free; END SESSION again goes to the title with your place kept. |
+| **END SESSION** | `Q` | The End screen: the ending this run has reached, its moving emblem, where you stand, your steps, places, relics and resonant traces. **RESUME** comes back for free; END SESSION again rises level by level from your place out to the universe and lands on the title with your place kept. |
 | **MORE** | — | Opens the commands above over the row of buttons, and closes them. |
 
 <!-- src/engine/rules/GameEngine.ts:202-283 -->
@@ -378,11 +382,12 @@ even number). <!-- src/engine/procgen/UniverseFactory.ts:15, src/engine/procgen/
 
 ## Reading the screen
 
-**The depth rail** under the HUD is your path, one glyph for each level, the current one ringed: `∞` universe,
-`»` filament, `○` sector or null reach, `☼` solar system, `⊕` planet, `⬚` country, `🏙` city, `═` street, `⌂` building,
-`▤` floor, `▅` corridor, `🚪` apartment, `□` room; below bedrock the shard is `☠`. Its length is how deep you are: one
-glyph at the universe, thirteen in a room. The rail shows the glyphs, and a screen reader reads each level's kind and
-name. Tap it to open the trace; the **TRACE** button opens it too.
+**The depth rail** under the HUD is your path, one mark for each level on a line from the universe to you: the marks
+are the pole's own small drawings of each kind (below), the one you stand in larger, moving and ringed, and a pulse
+runs down the line toward you. Its length is how deep you are: one mark at the universe, thirteen in a room. Going down
+a level, a new mark drops onto the line and the ring slides to it; going up, the mark you left lifts off. As Coherence
+falls the line frays and trembles red. Tap it to open the trace; the **TRACE** button opens it too.
+<!-- src/ui/scene/DepthRail.ts -->
 
 **The pole** (POLE in the trace's header) is every level at a glance: one spine down the middle, a big node a level
 with its small moving drawing, its kind above it and its name under it. Beside a node are the values its level sets —
@@ -416,7 +421,7 @@ a name. <!-- src/engine/procgen/FloorZones.ts:10-11, 31-38, 42-45; src/engine/mo
 
 **Saving is automatic.** After every tap the game writes one save into this browser's storage, under the key
 `endless-transit.save`: the seed, where you stand, your Coherence, steps, every place you have visited, your buffer,
-your resonance tally, and what every visited place remembers — which objects are gone from which rooms, what lies
+your resonance tally, how many times you have rebooted, and what every visited place remembers — which objects are gone from which rooms, what lies
 dropped on their floors, which floors are in corridor mode, where each elevator waits, which buildings are primed or
 breached, whether a reach's echo is taken. There is one slot; a new world replaces it.
 <!-- src/platform/LocalStorageSaveStore.ts:3, src/engine/persistence/SavedGame.ts:6, src/engine/rules/Journey.ts:208-224 -->
@@ -541,11 +546,16 @@ It lived in the browser you played in. Another browser, a private window or a cl
 is no way to bring it back.
 
 **What are the endings?**
-END SESSION shows one of three: below bedrock, `[VOID_RESONANCE_TERMINATION]` and "Sleep among the static, Operator."
-(this one wins); with twenty or more places visited, `[SESSION_RECAP_INITIALIZED]` with your final locus, steps,
-footprints, buffer size and resonant traces, ending "Expedition successful."; with fewer, `[LINK_TERMINATION_PROTOCOL]`,
-four shutdown steps and "Neural link severed." RESUME takes you back to the world for free.
-<!-- src/engine/rules/Endings.ts:3-14, src/ui/screens/RecapPresenter.ts:45-67 -->
+END SESSION shows one of twelve, each with its own heading, emblem and closing line; the first reached wins, in this
+order: **The void takes the session** (below the bedrock, with the void's three lines and "Sleep among the static,
+Operator."); **The signal answered** (your buffer holds an echo from a null reach); **Something new carried out** (it
+holds a hybrid you forged); **Reborn** (you hit zero and rebooted at least once); **Frayed** (your Coherence is under
+30 at the end); **Empty-handed** (twenty places or more and no relic held); **Pacing** (at least three steps for every
+place visited); **In tune** (three or more resonant traces); **Expedition complete** (twenty places or more); **Never
+left the sky** (you ended above any planet); **Settled** (you ended inside a room); **End of session** (the rest).
+Every ending shows where you stand and your steps, places, relics and resonant traces. RESUME takes you back to the
+world for free.
+<!-- src/engine/rules/Endings.ts:4-30, src/ui/screens/RecapPresenter.ts:27-60 -->
 
 **Is there a bottom to the basement?**
 Yes: Layer `-0xA`, where the pressure reads 100% (SCAN says so).

@@ -264,10 +264,6 @@ export class Apartment extends Location {
     return 'Internal cells detected';
   }
 
-  approachVerb(): string {
-    return 'Enter Room:';
-  }
-
   /** In the trace an apartment is its plan at the room you went into: that room's own picture (U04). */
   override bandPortrait(seen: (place: Location) => boolean, next: Location | undefined): Portrait {
     return next === undefined ? super.bandPortrait(seen, next) : next.portrait(seen);

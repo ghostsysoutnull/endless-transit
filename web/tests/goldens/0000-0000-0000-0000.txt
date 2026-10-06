@@ -6,28 +6,28 @@ tags: Way 1 of 10 (position) | Era Future (era) | Culture Void (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Sunken Glide.
 BUILDINGS ON THIS STREET
-  01 [1] Enter Building: Stellar Nadir
-  02 [2] Enter Building: VacuumOrbit
-  03 [3] Enter Building: Drifting Well
-  04 [4] Enter Building: IntervalApex
-  05 [5] Enter Building: LacunaArc
-  06 [6] Enter Building: SilencePrism
-  07 [7] Enter Building: Remote Void
-  08 [8] Enter Building: ReachSail
-  09 [9] Enter Building: RemnantLift
-  10 [A] Enter Building: RiftVane
-  11 [G] Enter Building: EclipseBeacon
-  12 [K] Enter Building: Old Unimatrix Root LANDMARK
-  13 [O] Enter Building: Lost Shadow
-  14 [P] Enter Building: Hollow Horizon
-  15 [W] Enter Building: HushSail
-  16 [X] Enter Building: UmbraHelix
-  17 [Y] Enter Building: CellBeacon
-  18 [Z] Enter Building: Unlit Gravity
-  19 [] Enter Building: Absent Aperture
-  20 [] Enter Building: MarginOrbit
-  21 [] Enter Building: Dark Gap
-  22 [] Enter Building: Pale Absence
+  01 [1] Stellar Nadir
+  02 [2] VacuumOrbit
+  03 [3] Drifting Well
+  04 [4] IntervalApex
+  05 [5] LacunaArc
+  06 [6] SilencePrism
+  07 [7] Remote Void
+  08 [8] ReachSail
+  09 [9] RemnantLift
+  10 [A] RiftVane
+  11 [G] EclipseBeacon
+  12 [K] Old Unimatrix Root LANDMARK
+  13 [O] Lost Shadow
+  14 [P] Hollow Horizon
+  15 [W] HushSail
+  16 [X] UmbraHelix
+  17 [Y] CellBeacon
+  18 [Z] Unlit Gravity
+  19 [] Absent Aperture
+  20 [] MarginOrbit
+  21 [] Dark Gap
+  22 [] Pale Absence
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Sunken Glide | ⌂ Stellar Nadir (unvisited) | ⌂ VacuumOrbit (unvisited) | ⌂ Drifting Well (unvisited) | ⌂ IntervalApex (unvisited) | ⌂ LacunaArc (unvisited) | ⌂ SilencePrism (unvisited) | ⌂ Remote Void (unvisited) | ⌂ ReachSail (unvisited) | ⌂ RemnantLift (unvisited) | ⌂ RiftVane (unvisited) | ⌂ EclipseBeacon (unvisited) | ⌂ Old Unimatrix Root (unvisited) | ⌂ Lost Shadow (unvisited) | ⌂ Hollow Horizon (unvisited) | ⌂ HushSail (unvisited) | ⌂ UmbraHelix (unvisited) | ⌂ CellBeacon (unvisited) | ⌂ Unlit Gravity (unvisited) | ⌂ Absent Aperture (unvisited) | ⌂ MarginOrbit (unvisited) | ⌂ Dark Gap (unvisited) | ⌂ Pale Absence (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
@@ -63,25 +63,25 @@ tags: Culture Void (culture) | Doors 10 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
 DOORS
-  01 [1] Open Smoked Pane, shimmering
+  01 [1] Smoked Pane, shimmering
        A pane of smoked glass, darker toward the middle. The air just in front of it shimmers.
-  02 [2] Open Pale Membrane, ice-glazed
+  02 [2] Pale Membrane, ice-glazed
        A pale membrane stretched flat across the opening. A clear glaze of ice covers it edge to edge. The word 'same_door_again' is scrawled across the surface in jagged, desperate lines.
-  03 [3] Open Chalk Slab, phase-locked
+  03 [3] Chalk Slab, phase-locked
        A slab of chalk that leaves white on whatever touches it. It is fixed in place so exactly that it looks drawn there.
-  04 [4] Open Seamless Plate, breathing
+  04 [4] Seamless Plate, breathing
        A metal plate that meets its frame without a line. The surface swells and settles, slowly, like a sleeper.
-  05 [5] Open Unmarked Hatch
+  05 [5] Unmarked Hatch
        A hatch with a wheel and nothing else, not even a number. The structure appears stable. The word 'keep_walking' is scrawled across the surface in jagged, desperate lines.
-  06 [6] Open Shadow-Lacquer Door, weightless
+  06 [6] Shadow-Lacquer Door, weightless
        A wooden door lacquered a black that gives no reflection. It hangs a hair's breadth clear of its frame, touching nothing.
-  07 [7] Open Starless Screen, seamless
+  07 [7] Starless Screen, seamless
        A dark glass screen, like a window onto a sky with nothing in it. There is no gap between it and its frame, only a change of colour. The word 'SIGNAL_LOST' is stamped across the door in block letters.
-  08 [8] Open Bleached Bone Door, glassy
+  08 [8] Bleached Bone Door, glassy
        A door of white plates fitted like the bones of a skull. The surface is so smooth that the eye slides off it.
-  09 [9] Open Ash-Grey Slab, sterile
+  09 [9] Ash-Grey Slab, sterile
        A slab the grey of cold ash, the same in every light. The surface is clean in a way that nothing lived-in is.
-  10 [A] Open Blank Panel, iridescent
+  10 [A] Blank Panel, iridescent
        A blank panel with no seam, handle or mark. Colours slide across it as you pass.
 TELEMETRY NOMINAL Quantum spectrogram 6 6 8 9 1 Resonant traces 0
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)

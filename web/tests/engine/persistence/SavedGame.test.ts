@@ -18,7 +18,7 @@ const BUFFER = [
   },
 ];
 const SAVE = {
-  version: 6,
+  version: 7,
   seed: '0000-0001-0000-0002',
   path: '0.1',
   states: {},
@@ -27,11 +27,12 @@ const SAVE = {
   visited: ['0', '0.1'],
   buffer: [],
   resonant: 0,
+  reboots: 0,
 };
 const text = (changes: Record<string, unknown>): string => JSON.stringify({ ...SAVE, ...changes });
 
 describe('SavedGame — seed + path + what the visited places remember + the traveller (Guide:364-366)', () => {
-  test('round trip: what is written parses back to the same seed, place, states, coherence, steps, visited path, buffer and tally', () => {
+  test('round trip: what is written parses back to the same seed, place, states, coherence, steps, visited path, buffer, tally and reboots', () => {
     const written = new SavedGame({
       seed: SEED,
       address: new Address([2, 0, 7]),
@@ -41,6 +42,7 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
       visited: VISITED,
       buffer: BUFFER,
       resonant: 3,
+      reboots: 1,
     }).toText();
     const parsed = SavedGame.parse(written);
     expect(parsed?.seed().equals(SEED)).toBe(true);
@@ -51,6 +53,7 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
     expect(parsed?.visited()).toEqual(VISITED);
     expect(parsed?.buffer()).toEqual(BUFFER);
     expect(parsed?.resonant()).toBe(3);
+    expect(parsed?.reboots()).toBe(1);
     expect(parsed?.toText()).toBe(written);
   });
 
@@ -66,7 +69,7 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
     expect(parsed?.resonant()).toBe(0);
   });
 
-  test('the format is versioned plain JSON: version 6 carries the states by address and the traveller with the buffer and the tally', () => {
+  test('the format is versioned plain JSON: version 7 carries the states by address and the traveller with the buffer, the tally and the count of reboots', () => {
     expect(
       JSON.parse(
         new SavedGame({
@@ -78,10 +81,11 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
           visited: ['0', '0.3', '0.3.1'],
           buffer: BUFFER,
           resonant: 1,
+          reboots: 2,
         }).toText(),
       ),
     ).toEqual({
-      version: 6,
+      version: 7,
       seed: '0000-0001-0000-0002',
       path: '0.3.1',
       states: { '0.2.0': 'corridor' },
@@ -90,9 +94,10 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
       visited: ['0', '0.3', '0.3.1'],
       buffer: BUFFER,
       resonant: 1,
+      reboots: 2,
     });
     expect(JSON.parse(new SavedGame({ seed: new Seed(1, 2) }).toText())).toEqual({
-      version: 6,
+      version: 7,
       seed: '0000-0001-0000-0002',
       path: null,
       states: {},
@@ -101,15 +106,16 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
       visited: [],
       buffer: [],
       resonant: 0,
+      reboots: 0,
     });
   });
 
-  test('a good save of version 6 parses', () => {
+  test('a good save of version 7 parses', () => {
     expect(SavedGame.parse(text({}))).toBeDefined();
     expect(SavedGame.parse(text({ coherence: 0, steps: 400 }))).toBeDefined();
   });
 
-  test('nothing, junk, another version (5 included), a bad seed, a bad path or bad states all parse to "no save"', () => {
+  test('nothing, junk, another version (6 included), a bad seed, a bad path or bad states all parse to "no save"', () => {
     expect(SavedGame.parse(undefined)).toBeUndefined();
     expect(SavedGame.parse('')).toBeUndefined();
     expect(SavedGame.parse('{not json')).toBeUndefined();
@@ -125,8 +131,8 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
         '{"version":4,"seed":"0000-0001-0000-0002","path":"0.1","states":{},"coherence":100,"steps":0,"visited":["0","0.1"]}',
       ),
     ).toBeUndefined();
-    expect(SavedGame.parse(text({ version: 5 }))).toBeUndefined();
-    expect(SavedGame.parse(text({ version: 7 }))).toBeUndefined();
+    expect(SavedGame.parse(text({ version: 6 }))).toBeUndefined();
+    expect(SavedGame.parse(text({ version: 8 }))).toBeUndefined();
     expect(SavedGame.parse(text({ seed: 'zzz' }))).toBeUndefined();
     expect(SavedGame.parse(text({ seed: 42 }))).toBeUndefined();
     expect(SavedGame.parse(text({ path: undefined }))).toBeUndefined();
@@ -161,6 +167,9 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
     for (const resonant of [-1, 1.5, '3', null, undefined]) {
       expect(SavedGame.parse(text({ resonant })), String(resonant)).toBeUndefined();
     }
+    for (const reboots of [-1, 1.5, '3', null, undefined]) {
+      expect(SavedGame.parse(text({ reboots })), String(reboots)).toBeUndefined();
+    }
   });
 
   test('a world drawn but not entered was written with a fresh traveller and no states — anything else is no save', () => {
@@ -172,5 +181,6 @@ describe('SavedGame — seed + path + what the visited places remember + the tra
     expect(SavedGame.parse(text({ ...drawn, states: { '0.2.0': 'corridor' } }))).toBeUndefined();
     expect(SavedGame.parse(text({ ...drawn, buffer: BUFFER }))).toBeUndefined();
     expect(SavedGame.parse(text({ ...drawn, resonant: 1 }))).toBeUndefined();
+    expect(SavedGame.parse(text({ ...drawn, reboots: 1 }))).toBeUndefined();
   });
 });

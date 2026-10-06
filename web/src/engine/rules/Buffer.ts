@@ -17,6 +17,11 @@ export class Buffer {
     return this.#fragments;
   }
 
+  /** Whether any fragment of this kind (the `FragmentReader`'s key) is held. */
+  holds(kind: string): boolean {
+    return this.#fragments.some((fragment) => fragment.data().kind === kind);
+  }
+
   size(): number {
     return this.#fragments.length;
   }

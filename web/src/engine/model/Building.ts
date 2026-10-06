@@ -293,10 +293,6 @@ export class Building extends Location {
     return 'Ride to a floor';
   }
 
-  approachVerb(): string {
-    return 'Ride to';
-  }
-
   /** The held fragment that is this building's Keystone, if any (Building.groovy:37-40). */
   #keystoneAmong(held: readonly Fragment[]): Fragment | undefined {
     const key = this.keystone().key();

@@ -6,10 +6,10 @@ tags: Way 1 of 8 (position) | Era Future (era) | Culture Baroque (culture)
   Buildings stand in pairs along both sides of the way.
 status: Entered Requiem Slipway.
 BUILDINGS ON THIS STREET
-  01 [1] Enter Building: Censed Altar
-  02 [2] Enter Building: The Cloister of Signals
-  03 [3] Enter Building: ChapterhouseApex
-  04 [4] Enter Building: ArchiveHelix
+  01 [1] Censed Altar
+  02 [2] The Cloister of Signals
+  03 [3] ChapterhouseApex
+  04 [4] ArchiveHelix
 [NEURAL_MAP: STREET] SCAN_ORIGIN: Requiem Slipway | ⌂ Censed Altar (unvisited) | ⌂ The Cloister of Signals (unvisited) | ⌂ ChapterhouseApex (unvisited) | ⌂ ArchiveHelix (unvisited)
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [L] LEAVE (Leave Street)
 game: [S] SCAN (Scan) | [M] LATTICE (Lattice) | [H] HELP (Help) | [T] TITLE (Title screen) | [Q] END (End session)
@@ -45,23 +45,23 @@ tags: Culture Baroque (culture) | Doors 9 (reading)
   A curved gallery of doors beneath a single strip of light.
 status: Enter Corridor.
 DOORS
-  01 [1] Open Velvet-Padded Door, iridescent
+  01 [1] Velvet-Padded Door, iridescent
        A door padded in red cloth and studded with brass nails. Colours slide across it as you pass. The word 'do_not_sleep' is scrawled across the surface in jagged, desperate lines.
-  02 [2] Open Rose-Window Pane
+  02 [2] Rose-Window Pane
        A round pane of many small glasses in a wheel of stone. The structure appears stable.
-  03 [3] Open Censer-Grille Gate, knitting
+  03 [3] Censer-Grille Gate, knitting
        A gate of pierced metal that keeps a ghost of incense. A scratch on it is closing as you watch. The word 'LATTICE' is finely etched into the frame, appearing almost as a structural glyph.
-  04 [4] Open Choir-Stall Door, seamless
+  04 [4] Choir-Stall Door, seamless
        A door built from the carved backs of choir stalls. There is no gap between it and its frame, only a change of colour. The word 'still_listening' is scrawled across the surface in jagged, desperate lines.
-  05 [5] Open Ivory Inlay Door, cryogenic
+  05 [5] Ivory Inlay Door, cryogenic
        A door inlaid with pale plates in the pattern of a rose. A deep cold rolls off it and pools at your feet.
-  06 [6] Open Gilt Chapel Door, shimmering
+  06 [6] Gilt Chapel Door, shimmering
        A tall door of gilt panels, the saints on it worn faceless. The air just in front of it shimmers.
-  07 [7] Open Fresco Panel, glassy
+  07 [7] Fresco Panel, glassy
        A plastered panel painted with a sky of small clouds. The surface is so smooth that the eye slides off it.
-  08 [8] Open Carved Oak Portal, breathing
+  08 [8] Carved Oak Portal, breathing
        A portal of dark oak carved with vines and small watching faces. The surface swells and settles, slowly, like a sleeper.
-  09 [9] Open Brass Reliquary Hatch, weightless
+  09 [9] Brass Reliquary Hatch, weightless
        A hatch like the lid of a reliquary, brass over something kept. It hangs a hair's breadth clear of its frame, touching nothing.
 TELEMETRY NOMINAL Quantum spectrogram 5 4 5 2 4 Resonant traces 0
 keys: [I] BUFFER (Buffer) 0 | [] TRACE (Trace) | [B] ELEVATOR (Back to Elevator) | [L] LEAVE (Leave Floor)

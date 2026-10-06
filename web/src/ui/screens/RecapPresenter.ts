@@ -1,82 +1,84 @@
 import type { GameSnapshot } from '#engine/rules/GameSnapshot.ts';
 import type { PromptSummary } from '#engine/rules/PromptSummary.ts';
+import { END_SESSION, RECAP } from '#engine/rules/RecapPrompt.ts';
 import type { FrameOf } from '#ui/FrameOf.ts';
 import type { Masthead } from '#ui/Masthead.ts';
 import type { Presenter } from '#ui/Presenter.ts';
+import type { PassageLevels } from './PassageLevels.ts';
 import type { RecapVM } from './RecapVM.ts';
 
-/** The prompt this screen claims — the engine's stable key for it. */
-const RECAP = 'recap';
-
-/** The figures of the full recap, in the old order (SessionRecap.groovy:38-46), each with its words. */
-const FIGURES: readonly { readonly key: string; readonly label: string; readonly unit: string }[] = [
-  { key: 'locus', label: 'FINAL_LOCUS', unit: '' },
-  { key: 'steps', label: 'PULSE_TRAVERSAL', unit: ' steps' },
-  { key: 'places', label: 'CELLS_MAPPED', unit: ' footprints' },
-  { key: 'buffer', label: 'BUFFER_DENSITY', unit: ' spectral fragments' },
-  // The old line said "stabilized" (HK-023); the tally counts resonant traces, and says so.
-  { key: 'resonant', label: 'RESONANT_TRACES', unit: ' resonant' },
+/** The run's figures, each with its word. */
+const FIGURES: readonly { readonly key: string; readonly label: string }[] = [
+  { key: 'steps', label: 'Steps' },
+  { key: 'places', label: 'Places' },
+  { key: 'buffer', label: 'Relics' },
+  // The tally counts resonant traces (HK-023), and says so.
+  { key: 'resonant', label: 'Resonant' },
 ];
-/** The shutdown steps of the short ending (SessionRecap.groovy:54-59). */
-const SHUTDOWN = [
-  'UNMOUNTING_LATTICE_TRACE',
-  'DEALLOCATING_TRACE_BUFFER',
-  'RELEASING_NEURAL_CARRIER',
-  'STABILIZING_SUBSTRATE_WAVEFORM',
-];
+/** What every closing line but the void's ends on: what ending the session does. */
+const KEPT = 'End the session and the world keeps your place.';
 /** The void's typewritten lines (SessionRecap.groovy:22-27); the last one closes. */
 const VOID_LINES = [
   'Your echoes are sinking into the strata.',
   'The web is folding back upon itself.',
   'The v-v-void... it remembers... [OK]',
 ] as const;
-/** The words of each ending, by the engine's key (Guide:424-428); a new ending is one more entry. */
+/** The words of each ending, by the engine's key (Guide:424-428; the mock `docs/analysis/mocks/endings.html`); a new ending is one more entry. */
 const ENDINGS: Readonly<
-  Record<
-    string,
-    {
-      readonly heading: string;
-      readonly figures: boolean;
-      readonly shutdown: boolean;
-      readonly lines: readonly string[];
-      readonly closing: string;
-    }
-  >
+  Record<string, { readonly heading: string; readonly lines: readonly string[]; readonly closing: string }>
 > = {
   void: {
-    heading: '[VOID_RESONANCE_TERMINATION]',
-    figures: false,
-    shutdown: false,
+    heading: 'The void takes the session',
     lines: VOID_LINES,
     closing: 'Sleep among the static, Operator.',
   },
-  expedition: {
-    heading: '[SESSION_RECAP_INITIALIZED]',
-    figures: true,
-    shutdown: false,
+  echo: {
+    heading: 'The signal answered',
     lines: [],
-    closing: 'Expedition successful. Trace synchronized to substrate.',
+    closing: `Something out there said your name back. ${KEPT}`,
   },
-  severed: {
-    heading: '[LINK_TERMINATION_PROTOCOL]',
-    figures: false,
-    shutdown: true,
+  hybrid: {
+    heading: 'Something new carried out',
     lines: [],
-    closing: 'Neural link severed. Waveform stabilized.',
+    closing: `Two voices, one frequency. Nothing like it exists anywhere else. ${KEPT}`,
   },
+  reborn: { heading: 'Reborn', lines: [], closing: `You went dark and came back. The web noticed. ${KEPT}` },
+  frayed: {
+    heading: 'Frayed',
+    lines: [],
+    closing: `One more step and there would have been no one to take it. ${KEPT}`,
+  },
+  empty: {
+    heading: 'Empty-handed',
+    lines: [],
+    closing: `You looked at everything and touched nothing. ${KEPT}`,
+  },
+  pacing: {
+    heading: 'Pacing',
+    lines: [],
+    closing: `You know one corridor better than it knows itself. ${KEPT}`,
+  },
+  tuned: { heading: 'In tune', lines: [], closing: `The lattice hummed where you walked. ${KEPT}` },
+  expedition: { heading: 'Expedition complete', lines: [], closing: `A long way down. ${KEPT}` },
+  sky: { heading: 'Never left the sky', lines: [], closing: `The web stayed a picture. ${KEPT}` },
+  settled: { heading: 'Settled', lines: [], closing: `A door closed behind you, and you let it. ${KEPT}` },
+  severed: { heading: 'End of session', lines: [], closing: `A short visit. ${KEPT}` },
 };
 
 /**
- * Owns the words of the session recap (Guide:422-430, SessionRecap.groovy:14-69): the heading, figures and
- * closing line of the ending the engine reached, and the two answers. No DOM.
+ * Owns the words of the session recap (Guide:422-430): the heading, figures and closing line of the ending the
+ * engine reached, where the traveller stands, and the two answers. The trace the recap opened with becomes the
+ * screen's levels, torn as coherence has fallen. No DOM.
  */
 export class RecapPresenter implements Presenter<RecapVM> {
   readonly #frame: FrameOf;
   readonly #masthead: Masthead;
+  readonly #levels: PassageLevels;
 
-  constructor(masthead: Masthead, frame: FrameOf) {
+  constructor(masthead: Masthead, frame: FrameOf, levels: PassageLevels) {
     this.#masthead = masthead;
     this.#frame = frame;
+    this.#levels = levels;
   }
 
   accepts(snapshot: GameSnapshot): boolean {
@@ -90,33 +92,38 @@ export class RecapPresenter implements Presenter<RecapVM> {
     if (ending === undefined) throw new Error(`no words for the ending '${prompt.outcome}'`);
     return {
       scene: RECAP,
-      title: this.#masthead.name(),
       frame: this.#frame.of(snapshot.place),
+      outcome: prompt.outcome,
       heading: ending.heading,
-      figures: ending.figures ? this.#figures(prompt) : [],
-      steps: ending.shutdown
-        ? SHUTDOWN.map((process) => ({ label: '[STATUS]', process: `${process}...`, done: '[DONE]' }))
-        : [],
+      place: { label: 'You stand in', name: snapshot.place?.name ?? '', kind: snapshot.place?.kind ?? '' },
+      figures: this.#figures(prompt),
       lines: ending.lines,
       closing: ending.closing,
+      levels: this.#levelsOf(snapshot),
       options: snapshot.options.map((option) => ({
         id: option.id,
         key: option.key.toUpperCase(),
-        label: option.label.toUpperCase(),
+        label: option.label,
         opposite: option.opposite,
+        lead: option.id === END_SESSION,
       })),
+      ends: snapshot.options.some((option) => option.id === END_SESSION) ? END_SESSION : '',
       note: snapshot.message,
       // The engine says nothing when the recap opens; the live region is told the ending's heading, once.
       status: snapshot.message === '' ? ending.heading : snapshot.message,
       build: this.#masthead.buildLine(),
-      regions: { recap: 'Session recap', actions: 'Actions' },
     };
   }
 
   #figures(prompt: PromptSummary): RecapVM['figures'] {
-    return FIGURES.map((figure) => ({
-      label: figure.label,
-      value: `${prompt.figures[figure.key] ?? ''}${figure.unit}`,
-    }));
+    return FIGURES.map((figure) => ({ label: figure.label, value: prompt.figures[figure.key] ?? '' }));
+  }
+
+  /** The trace the recap opened with, as levels; none when the engine handed none. */
+  #levelsOf(snapshot: GameSnapshot): RecapVM['levels'] {
+    const place = snapshot.place;
+    const trace = snapshot.trace;
+    if (place === null || trace === null) return [];
+    return this.#levels.of(trace, place.noise, snapshot.player?.decay ?? 0);
   }
 }

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { press, saveText } from './support/harness.ts';
+import { land, press, saveText } from './support/harness.ts';
 
 /** What holds the focus right now, as `TAG[data-option]`. */
 const FOCUSED = `(() => {
@@ -48,6 +48,7 @@ test('entering a place moves the focus to the first place on its list, or to a b
   await page.getByRole('button', { name: /new world/i }).focus();
   await press(page, /new world/i, hasTouch);
   await press(page, /enter world/i, hasTouch);
+  await land(page, hasTouch);
   await expect(page.getByTestId('place-kind')).toHaveText('STREET');
   expect(await page.evaluate(FOCUSED)).toBe('BUTTON[enter:0]');
   const first = page.locator('button[data-option="enter:0"]');

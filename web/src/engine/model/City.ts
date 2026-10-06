@@ -71,10 +71,6 @@ export class City extends Location {
     return 'Streets detected in this city';
   }
 
-  approachVerb(): string {
-    return 'Go to';
-  }
-
   /** Drawn as an area of its children (U04). */
   override portrait(): Portrait {
     return this.area('city');

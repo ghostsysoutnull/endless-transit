@@ -40,6 +40,8 @@ lexicons' ten.
   kind on `SceneStage`) on the screen — the compiler names every reader to answer. A place with `NoPortrait` keeps the
   screen as it was.
 - **A kind of fragment:** one class and one row in the `FragmentReader`'s table.
+- **An ending:** one entry in `rules/Endings`' ladder (the first reached wins), its words in `RecapPresenter`, its
+  emblem class under `ui/scene/endings/` registered in `ScenePictures.emblems`.
 - **A fact about a place:** that place's `remember()`/`recall()` — its one home, and what the save carries.
 
 ## Engine laws

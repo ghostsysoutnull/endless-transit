@@ -34,10 +34,6 @@ export class Universe extends Location {
     return 'Primary filaments radiating from root';
   }
 
-  approachVerb(): string {
-    return 'Synchronize with';
-  }
-
   /** Drawn as an area of its children (U04). */
   override portrait(): Portrait {
     return this.area('universe');

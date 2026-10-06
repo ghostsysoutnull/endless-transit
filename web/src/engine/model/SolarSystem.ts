@@ -42,10 +42,6 @@ export class SolarSystem extends Location {
     return 'Orbital bodies within range';
   }
 
-  approachVerb(): string {
-    return 'Land on';
-  }
-
   /** Drawn as an area of its children (U04). */
   override portrait(): Portrait {
     return this.area('solar-system');

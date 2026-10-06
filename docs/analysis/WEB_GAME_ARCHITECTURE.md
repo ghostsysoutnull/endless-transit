@@ -41,7 +41,7 @@ src/
 │  ├─ model/        the places (Universe … Room, the four abyssal kinds), value objects, relics, moves, scans
 │  ├─ procgen/      LocationRegistry (kind → factory; builds each factory's parts once), the factories, decks, names, themes
 │  ├─ rules/        GameEngine, Journey, Player, Coherence/Drain, commands, prompts, summaries
-│  └─ persistence/  SavedGame (the format, v6) + SaveStore interface
+│  └─ persistence/  SavedGame (the format, v7) + SaveStore interface
 ├─ content/       the forked .txt lists + index.txt files, and the ONE import.meta.glob (BundledContent)
 ├─ platform/      LocalStorageSaveStore, CryptoEntropySource, ConsoleWarningSink
 ├─ ui/            Shell, ScreenStage, Presenter/View seam, InputRouter, screens/ (presenter + VM + view per screen), canvas/
@@ -138,8 +138,8 @@ of `[V]` marks), the `Buffer` (no limit, U03d; a merge of two makes their hybrid
 tally (a fresh resonant capture counts once). Death rebuilds the world from the same seed on the starting street with
 100 Coherence; steps, visited places and the buffer are kept, every per-place memory is gone.
 
-**The save (`SavedGame`, v6).** Plain JSON: `version`, `seed`, `path`, `states` (memento by address of every visited
-place), `coherence`, `steps`, `visited`, `buffer` (fragment data with provenance), `resonant`. The world is never
+**The save (`SavedGame`, v7).** Plain JSON: `version`, `seed`, `path`, `states` (memento by address of every visited
+place), `coherence`, `steps`, `visited`, `buffer` (fragment data with provenance), `resonant`, `reboots`. The world is never
 stored. `restore` is strict: a save the journey could not have written — a state off the path, a path a floor's
 mode does not admit, a fragment no room dealt, a Keystone for no building — is refused whole and the title screen
 opens; `saved(restore(s)) === s` for every valid save; another version is no save (nobody to migrate for). Play-session
@@ -171,6 +171,20 @@ stages which presenter `accepts` the snapshot, calls `Presenter.toViewModel(snap
 word**, casing and aria label; a `*View.ts` carries no literal (`tests/ui/ViewsCarryNoWords.test.ts`) — and the
 `View<VM>` renders it with `lit-html` into a container that survives renders (focus, scroll and transitions keep
 working). Screens: Title, Hud (the world), Buffer, Help, Reboot, Recap.
+
+**The two ends of the fall (the title-fall loop, 2026-10-05).** The title is the top: while a world is drawn the
+snapshot carries `descent` — the trace from the universe to where entering lands (`Journey.landing`) and a noise seed —
+and `TitlePresenter` turns it into `PassageLevel`s (`PassageLevels`, a level's band drawing with its icon, kind and
+name). `TitleView` shows the first level live through `TitleScene` (static with no world; a world's universe resolving
+out of the tear, anew at each new seed) and, on the tap that enters, plays the `Passage` down before the option runs:
+`Dive` under a caption of its own — a rail of the levels' marks and each level's kind and name, the name above
+shrinking away as the next comes up — then asks for the option by the scene's pick. The End screen is the bottom: the
+END command opens the recap with the trace to where the traveller stands in `trace`; `RecapPresenter` reads the ending
+the rules side reached (`Endings`, a ladder of twelve judged on a `Run` — where it ended, what the buffer holds,
+`Player.reboots`, `Coherence.critical`, the tally) and its words; `RecapView` shows the ending's emblem live
+(`EmblemStage`, one `EndingEmblem` class an ending under `ui/scene/endings/`, registered in `ScenePictures.emblems`) and
+plays the same `Passage` up (`Dive.rewind`, torn by each level's own decay) before the session ends. A new ending is one
+entry in the ladder, its words in the presenter and its emblem class.
 
 **Shell's four rules for every screen:** where the focus goes after a render (the option that held it; if it vanished,
 never its `opposite` move — the panel instead; only a shown button in the tab order takes it, so the rail, U04, never
@@ -261,8 +275,10 @@ places, chips, first words and its kind's `scale`). `HudPresenter` makes the `Tr
 `SceneDrawing.band` (the same pictures, the children keyed by address); `HudView` shows the column over the screen and
 hands its hosts to `TraceBands` (a canvas a band, painted through the sketch's own stage call by a `BandStage`, only the
 band in the middle of the view moving, and the thread through each band's spot) and `Dive` (the levels full screen,
-zooming into each spot, landing on your band); both built in `main.ts`. The rail is one button (`railTrace`) running
-TRACE, out of the tab order; the view keeps the level nearest the finger to open the column there.
+zooming into each spot, landing on your band; its pace and its tear are its maker's, `NoTear` here); both built in
+`main.ts`. The rail is one button (`railTrace`) running TRACE, out of the tab order; its picture is `DepthRail` (the
+levels' marks — the pole's glyphs, `ScenePictures.glyphs` — on a line with a pulse, a mark dropping on or lifting off
+with each step, frayed by the decay), which also says which level stands nearest the finger, to open the column there.
 
 **The pole and the vibe (U05).** A level hands its vibe over as data: `Location.vibeFigure()` answers a `VibeFigure`
 (nothing above the planet; the planet's main and second pairs and stability; from the country down the trait, whether

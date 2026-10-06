@@ -73,7 +73,7 @@ function saveText(
   traveller: { coherence?: number; steps?: number; buffer?: readonly unknown[]; resonant?: number } = {},
 ): string {
   return JSON.stringify({
-    version: 6,
+    version: 7,
     seed: '7F3A-91C2-0B4D-E6A8',
     path,
     states,
@@ -82,6 +82,7 @@ function saveText(
     visited,
     buffer: [],
     resonant: 0,
+    reboots: 0,
     ...traveller,
   });
 }
@@ -165,6 +166,33 @@ describe('GameEngine — the title screen', () => {
     expect(engine.step('reroll').world?.seed).toBe('3333-3333-4444-4444');
   });
 
+  test('the way down (the title’s dive): no world, no way; a world drawn, the trace from the universe to the street entering lands on; after a visit, to the place kept; nothing of it in the world', () => {
+    const engine = engineOn(new MemorySaveStore());
+    expect(engine.snapshot().descent).toBeNull();
+    const drawn = engine.step('new-world');
+    expect(drawn.descent?.trace.steps.map((step) => step.kind)).toEqual([
+      'Universe',
+      'Cosmic filament',
+      'Galactic sector',
+      'Solar system',
+      'Planet',
+      'Country',
+      'City',
+      'Street',
+    ]);
+    expect(drawn.descent?.trace.steps.at(-1)?.current).toBe(true);
+    expect(drawn.descent?.noise.equals(drawn.descent.noise)).toBe(true);
+    expect(engine.step('enter-world').descent).toBeNull();
+    engine.step('enter:0');
+    engine.step('to-title');
+    expect(
+      engine
+        .snapshot()
+        .descent?.trace.steps.map((step) => step.kind)
+        .at(-1),
+    ).toBe('Building');
+  });
+
   test('an option that is not on offer changes nothing (a stale tap, an unknown id)', () => {
     const engine = engineOn(new MemorySaveStore());
     for (const id of ['reroll', 'enter-world', 'enter:0', 'leave', 'to-title', 'open-pod-bay-doors', '']) {
@@ -209,7 +237,7 @@ describe('GameEngine — walking the big world', () => {
       name: 'The Endless Universe',
       address: '0',
       position: { counted: false },
-      trail: [{ icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' }],
+      trail: [{ icon: '∞', glyph: 'universe', kind: 'Universe', name: 'The Endless Universe', address: '0' }],
       status: '',
       description: ['A neural web of infinite complexity.'],
       facts: [],
@@ -241,7 +269,7 @@ describe('GameEngine — walking the big world', () => {
     expect(travel[0]).toEqual({
       id: 'enter:0',
       key: '1',
-      label: 'Synchronize with Uniform-915-Tether',
+      label: 'Uniform-915-Tether',
       place: 'Uniform-915-Tether',
       role: 'travel',
       sealed: false,
@@ -369,7 +397,7 @@ describe('GameEngine — walking the big world', () => {
     const buildings = street.options.filter((option) => option.role === 'travel');
     expect(buildings).toHaveLength(4);
     expect(buildings.every((option) => !option.sealed && option.key !== '')).toBe(true);
-    expect(buildings[0]?.label).toBe('Enter Building: Censed Altar');
+    expect(buildings[0]?.label).toBe('Censed Altar');
     expect(buildings[0]?.place).toBe('Censed Altar');
     const building = engine.step('enter:0');
     expect(building.place?.kind).toBe('Building');
@@ -385,7 +413,7 @@ describe('GameEngine — walking the big world', () => {
     expect(floors[0]).toEqual({
       id: 'enter:0',
       key: '',
-      label: 'Ride to Peak',
+      label: 'Peak',
       place: 'Floor 15',
       role: 'travel',
       sealed: false,
@@ -403,7 +431,7 @@ describe('GameEngine — walking the big world', () => {
     );
     // A floor's key is its number (Guide:111) — so only floors 0–9 have one; a key never differs from the ordinal.
     expect(floors.map((option) => option.key).join(',')).toBe(',,,,,,9,8,7,6,5,4,3,2,1,0');
-    expect(floors.at(-1)?.label).toBe('Ride to Lobby');
+    expect(floors.at(-1)?.label).toBe('Lobby');
     expect(floors.at(-1)?.readings[0]?.value).toBe('Freight concourse');
     expect(building.options.filter((option) => option.role === 'move')).toEqual([]);
     // The elevator column's [>X<]: the lobby to begin with, then the floor last arrived at (Building.groovy:189).
@@ -478,7 +506,7 @@ describe('GameEngine — walking the big world', () => {
     expect(doors[0]).toEqual({
       id: 'enter:0',
       key: '1',
-      label: 'Open Velvet-Padded Door, iridescent',
+      label: 'Velvet-Padded Door, iridescent',
       place: 'Velvet-Padded Door, iridescent',
       role: 'travel',
       sealed: false,
@@ -1058,7 +1086,7 @@ describe('GameEngine — the recap: the endings of `quit`, by places visited (Gu
     expect(engineOn(saves).snapshot().prompt).toBeNull();
   });
 
-  test('the ending at the exact edge: nineteen places visited is "severed", twenty is "expedition" (Guide:426-430)', () => {
+  test('the ending at the exact edge: nineteen places visited is "severed", twenty with nothing taken is "empty" (Guide:426-430)', () => {
     const engine = engineOn(new MemorySaveStore());
     engine.step('new-world');
     engine.step('enter-world');
@@ -1088,9 +1116,42 @@ describe('GameEngine — the recap: the endings of `quit`, by places visited (Gu
     engine.step('enter:1');
     const twenty = engine.step('recap');
     expect(twenty.prompt?.figures.places).toBe('20');
-    expect(twenty.prompt?.outcome).toBe('expedition');
+    // Twenty places with nothing taken: the ladder's "empty-handed" comes before the expedition.
+    expect(twenty.prompt?.outcome).toBe('empty');
     expect(twenty.prompt?.figures.steps).toBe(String(twenty.player?.steps ?? -1));
     expect(twenty.prompt?.figures.locus).toBe(twenty.place?.address);
+  });
+
+  test('the recap opens with the trace to where the traveller stands (its rise), and the trace goes with the next step', () => {
+    const engine = engineOn(new MemorySaveStore());
+    engine.step('new-world');
+    engine.step('enter-world');
+    engine.step('enter:0');
+    const recap = engine.step('recap');
+    expect(recap.trace?.steps.map((step) => step.kind).slice(-2)).toEqual(['Street', 'Building']);
+    expect(recap.trace?.steps.at(-1)?.current).toBe(true);
+    expect(engine.step('resume').trace).toBeNull();
+  });
+
+  test('the endings by where the run ended and how it went: at the universe "sky", in a room "settled", at a critical coherence "frayed", after a reboot "reborn" — the count of reboots kept through a reload', () => {
+    const sky = engineOn(new MemorySaveStore(), true);
+    walkedDown(sky, 0);
+    expect(sky.step('recap').prompt?.outcome).toBe('sky');
+
+    const saves = new MemorySaveStore();
+    const engine = engineOn(saves, true);
+    inTheFirstRoom(engine);
+    expect(engine.step('recap').prompt?.outcome).toBe('settled');
+    engine.step('resume');
+    engine.step('debug:integrity:29');
+    expect(engine.step('recap').prompt?.outcome).toBe('frayed');
+    engine.step('resume');
+    engine.step('debug:integrity:1');
+    engine.step('move:forward');
+    engine.step('reboot');
+    expect(engine.step('recap').prompt?.outcome).toBe('reborn');
+    engine.step('resume');
+    expect(engineOn(saves, true).step('recap').prompt?.outcome).toBe('reborn');
   });
 
   test('when the tap that opens the recap takes the last point, the link fails instead', () => {

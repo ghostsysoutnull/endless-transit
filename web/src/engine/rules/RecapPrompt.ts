@@ -1,3 +1,5 @@
+import { HYBRID_KIND } from '#engine/model/Hybrid.ts';
+import { ECHO_KIND } from '#engine/model/SpectralEcho.ts';
 import { Endings } from './Endings.ts';
 import type { GameOption } from './GameOption.ts';
 import type { Journey } from './Journey.ts';
@@ -8,7 +10,8 @@ import { systemOption } from './SystemOption.ts';
 
 export const RECAP = 'recap';
 const RESUME = 'resume';
-const END = 'end-session';
+/** The answer that ends the session: what the recap's screen plays its rise before. */
+export const END_SESSION = 'end-session';
 
 /**
  * The session recap (Guide:422-430, QuitCommand.groovy:16-27, SessionRecap.groovy:14-69): opened by END
@@ -31,7 +34,20 @@ export class RecapPrompt implements Prompt {
     const player = this.#journey.player();
     return {
       id: RECAP,
-      outcome: here === undefined ? '' : this.#endings.of({ here, places: player.placesVisited() }),
+      outcome:
+        here === undefined
+          ? ''
+          : this.#endings.of({
+              here,
+              places: player.placesVisited(),
+              steps: player.steps(),
+              relics: player.buffer().size(),
+              resonant: player.resonantTraces(),
+              reboots: player.reboots(),
+              critical: player.coherence().critical(),
+              echo: player.buffer().holds(ECHO_KIND),
+              hybrid: player.buffer().holds(HYBRID_KIND),
+            }),
       figures: {
         locus: here?.address().toString() ?? '',
         steps: String(player.steps()),
@@ -43,12 +59,12 @@ export class RecapPrompt implements Prompt {
   }
 
   options(): readonly GameOption[] {
-    return [systemOption(RESUME, 'b', 'Resume'), systemOption(END, 'q', 'End session')];
+    return [systemOption(RESUME, 'b', 'Resume'), systemOption(END_SESSION, 'q', 'End session')];
   }
 
   answer(optionId: string): Reply | undefined {
     if (optionId === RESUME) return { message: '', done: true };
-    if (optionId === END) {
+    if (optionId === END_SESSION) {
       this.#journey.toTitle();
       return { message: '', done: true };
     }

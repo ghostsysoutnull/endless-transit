@@ -29,7 +29,7 @@ function saveText(
   traveller: { buffer?: readonly unknown[]; visited?: readonly string[]; version?: number } = {},
 ): string {
   return JSON.stringify({
-    version: traveller.version ?? 6,
+    version: traveller.version ?? 7,
     seed: '7F3A-91C2-0B4D-E6A8',
     path,
     states,
@@ -38,6 +38,7 @@ function saveText(
     visited: traveller.visited ?? trailOf(path),
     buffer: traveller.buffer ?? [],
     resonant: 0,
+    reboots: 0,
   });
 }
 
@@ -241,7 +242,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
         `enter:${String(16 + k)}`,
         String(-1 - k),
         '',
-        `Ride to Layer -0x${(k + 1).toString(16).toUpperCase()}`,
+        `Layer -0x${(k + 1).toString(16).toUpperCase()}`,
       ]),
     );
     expect(listed[16]?.readings.map((fact) => fact.value)).toEqual(['ABYSSAL_SUBSTRATE', 'P: 10%', '1138Hz']);
@@ -393,7 +394,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
     expect(moves(engine.snapshot())).toContain('breach');
   });
 
-  test('strict restore: a Keystone from a room’s address, a Layer of an unbreached building, a v5 save — refused whole', () => {
+  test('strict restore: a Keystone from a room’s address, a Layer of an unbreached building, a v6 save — refused whole', () => {
     const cases: [string, string][] = [
       [
         'a keystone naming a room',
@@ -408,7 +409,7 @@ describe('the ritual (Guide:257-276): prime, forge, breach — and the descent (
         'a layer with the breach but the elevator at the lobby',
         saveText(LAYER, { [BUILDING]: '{"breached":true}' }),
       ],
-      ['a v5 save', saveText(FIRST_ROOM, { [`${BUILDING}.0`]: 'corridor' }, { version: 5 })],
+      ['a v6 save', saveText(FIRST_ROOM, { [`${BUILDING}.0`]: 'corridor' }, { version: 6 })],
     ];
     for (const [what, text] of cases) {
       const snapshot = engineOn(FIRST, new MemorySaveStore(text)).snapshot();

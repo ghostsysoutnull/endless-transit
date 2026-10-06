@@ -276,10 +276,6 @@ export class Floor extends Location {
     return this.#state.childrenHeading(this);
   }
 
-  approachVerb(): string {
-    return this.#state.approachVerb(this);
-  }
-
   /** What a scan on this floor inspects is decided by the mode, never by the caller (Floor.groovy:82-85). */
   override scan(seen: (place: Location) => boolean): ScanReport | undefined {
     return this.#state.scan(this, seen);

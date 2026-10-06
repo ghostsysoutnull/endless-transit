@@ -475,6 +475,18 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The rail's picture: the levels' marks on their line, drawn over the whole rail; the button lies over it. */
+.rail-picture {
+  position: absolute;
+  inset: 0;
+}
+
+.rail-picture canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .rail-hit:focus-visible {
   outline: 2px solid var(--frame);
   outline-offset: 2px;
@@ -2847,4 +2859,361 @@ html:has(.keybar > .alarm) {
   right: 12px;
   bottom: 24px;
   background: var(--ground);
+}
+
+/* ---- The two ends of the fall: the title and the session's recap. Words over a live picture drawn from edge to edge
+   — the world's universe on the title, the place the traveller stands in on the recap; more words and the buttons
+   at the screen's foot; the dive into the game, or the rise out of it, over it all. One screen, never scrolled. ---- */
+.app.fall {
+  position: fixed;
+  inset: 0;
+  max-width: none;
+  gap: 0;
+  padding-block: max(18px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-bottom));
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+  overflow: hidden;
+}
+
+.title-head h1 {
+  margin: 0;
+  /* Each word on a line of its own. */
+  word-spacing: 100vw;
+  font-size: clamp(40px, 15vw, 68px);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: 0.08em;
+  color: var(--frame);
+}
+
+.title-tag {
+  margin: 10px 0 0;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+}
+
+.fall-sky {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  margin-block: 8px;
+  margin-inline: calc(-1 * max(var(--gutter), env(safe-area-inset-left)))
+    calc(-1 * max(var(--gutter), env(safe-area-inset-right)));
+}
+
+.fall-sky canvas,
+.passage-picture canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.title-world p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.title-name {
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+}
+
+.title-seed {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-seed span {
+  margin-top: 6px;
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title-seed b {
+  color: var(--yl);
+  font-size: clamp(20px, 6.6vw, 30px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.title-prompt {
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+}
+
+.fall-status {
+  min-height: 1.45em;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.fall-keys {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.fall-key {
+  all: unset;
+  box-sizing: border-box;
+  min-height: var(--tap);
+  padding: 10px 16px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--rule-hi);
+  background: var(--ground);
+  color: var(--text);
+  font: 700 14px var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fall-key[data-lead] {
+  min-height: 60px;
+  border-color: var(--yl);
+  background: var(--yl);
+  color: var(--ground);
+  font-size: 17px;
+  letter-spacing: 0.18em;
+}
+
+.fall-key:active {
+  border-color: var(--yl);
+  background: var(--yl);
+  color: var(--ground);
+}
+
+.fall-key:focus-visible {
+  outline: 2px solid var(--yl);
+  outline-offset: 2px;
+}
+
+.app.fall .build {
+  margin-top: 8px;
+}
+
+/* The passage into the game and out of it: over the whole screen, a caption of its own above the picture so no word
+   covers it; a tap ends it at once. */
+.passage {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  padding-top: max(14px, env(safe-area-inset-top));
+  background: var(--ground);
+  touch-action: manipulation;
+  outline: none;
+}
+
+.passage-cap {
+  flex: none;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+  animation: passage-in 0.4s ease-out both;
+}
+
+@keyframes passage-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The rail: a mark a level, lit as far as the way has gone, the level shown larger. */
+.passage-rail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.passage-rail li {
+  flex: 0 1 26px;
+  text-align: center;
+  color: var(--dim);
+  font-size: 14px;
+  transition:
+    color 0.3s,
+    transform 0.3s;
+}
+
+.passage-rail li[data-passed] {
+  color: var(--frame);
+}
+
+.passage-rail li[data-here] {
+  color: var(--yl);
+  transform: scale(1.6);
+}
+
+/* The names: every level's words stand at the same spot and move by where they are on the way — the one above shrunk
+   over it, the one shown whole, the next waiting below, the rest out of sight. */
+.passage-names {
+  position: relative;
+  height: 84px;
+  overflow: hidden;
+}
+
+.passage-step {
+  position: absolute;
+  inset: 30px 0 auto;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  transform-origin: left top;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.5s;
+}
+
+.passage-step span {
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: opacity 0.3s;
+}
+
+.passage-step b {
+  overflow: hidden;
+  color: var(--wh);
+  transition: color 0.5s;
+  font-size: clamp(19px, 6vw, 26px);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.passage-step[data-role='gone'] {
+  opacity: 0;
+  transform: translateY(-50px) scale(0.4);
+}
+
+.passage-step[data-role='past'] {
+  transform: translateY(-34px) scale(0.5);
+}
+
+.passage-step[data-role='past'] b {
+  color: var(--dim);
+}
+
+.passage-step[data-role='past'] span,
+.passage-step[data-role='gone'] span {
+  opacity: 0;
+}
+
+.passage-step[data-role='below'] {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.passage-picture {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* The recap: the ending in the frame's colour, where the traveller stands, the run's figures as a row of tiles. */
+.ending-head h1 {
+  margin: 0;
+  font-size: clamp(26px, 9vw, 44px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--frame);
+}
+
+.ending-words {
+  outline: none;
+}
+
+.ending-words p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.ending-place {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 10px;
+}
+
+.ending-place span {
+  flex: 0 0 100%;
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ending-place b {
+  color: var(--yl);
+  font-size: clamp(18px, 5.6vw, 26px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ending-place i {
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-style: normal;
+}
+
+.ending-figures {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 10px 0 0;
+}
+
+.ending-figures > div {
+  min-width: 0;
+  padding: 6px 4px;
+  border: 1px solid var(--rule-hi);
+  text-align: center;
+}
+
+.ending-figures dd {
+  margin: 0;
+  color: var(--wh);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.ending-figures dt {
+  color: var(--dim);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ending-lines {
+  margin-top: 8px;
+  color: var(--frame);
+  font-style: italic;
+}
+
+.ending-closing {
+  margin-top: 8px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
 }

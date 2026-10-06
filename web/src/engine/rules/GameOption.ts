@@ -15,6 +15,9 @@ export const TRACE_ID = 'trace';
 export const SCAN_ID = 'scan';
 /** The lattice map command's option id: what a screen draws its key for. */
 export const LATTICE_ID = 'map';
+/** The title's option ids — a world drawn, and the world entered: what the title leads with, and plays its dive before. */
+export const NEW_WORLD_ID = 'new-world';
+export const ENTER_WORLD_ID = 'enter-world';
 /** The option id of the way to the title screen: what a screen draws its key for. */
 export const TO_TITLE_ID = 'to-title';
 /** What a move's option id starts with, before the move's own id. */

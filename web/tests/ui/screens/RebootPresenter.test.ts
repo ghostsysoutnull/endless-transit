@@ -34,6 +34,7 @@ const DEAD: GameSnapshot = {
   scan: null,
   map: null,
   trace: null,
+  descent: null,
 };
 
 describe('RebootPresenter — what zero coherence puts on screen (Guide:144-147)', () => {

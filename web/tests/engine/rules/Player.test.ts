@@ -60,7 +60,14 @@ describe('Player — the traveller: coherence, steps, the visited path (Player.g
   });
 
   test('a traveller can be brought back from saved facts, as they were', () => {
-    const player = new Player({ coherence: 42, steps: 17, visited: ['0', '0.1'], buffer: [], resonant: 0 });
+    const player = new Player({
+      coherence: 42,
+      steps: 17,
+      visited: ['0', '0.1'],
+      buffer: [],
+      resonant: 0,
+      reboots: 0,
+    });
     expect(player.coherence().value()).toBe(42);
     expect(player.steps()).toBe(17);
     expect(player.footprints()).toEqual(['0', '0.1']);
@@ -144,6 +151,7 @@ describe('Player — the buffer and the resonance tally (Guide:141-142, 245-248;
       visited: ['0', '0.1'],
       buffer: [fragment('A', 1), fragment('B', 2)],
       resonant: 3,
+      reboots: 0,
     });
     expect(
       player

@@ -37,11 +37,11 @@ export const PLANET: GameSnapshot = {
     address: '0.0.0.0.1',
     position: { counted: true, label: 'ORBIT', index: 2, total: 5 },
     trail: [
-      { icon: '∞', kind: 'Universe', name: 'The Endless Universe', address: '0' },
-      { icon: '»', kind: 'Cosmic filament', name: 'Zeta-915-Link', address: '0.0' },
-      { icon: '○', kind: 'Galactic sector', name: 'Outer Expanse 91', address: '0.0.0' },
-      { icon: '☼', kind: 'Solar system', name: 'Zeta Borealis', address: '0.0.0.0' },
-      { icon: '⊕', kind: 'Planet', name: 'Auraea', address: '0.0.0.0.1' },
+      { icon: '∞', glyph: 'universe', kind: 'Universe', name: 'The Endless Universe', address: '0' },
+      { icon: '»', glyph: 'filament', kind: 'Cosmic filament', name: 'Zeta-915-Link', address: '0.0' },
+      { icon: '○', glyph: 'sector', kind: 'Galactic sector', name: 'Outer Expanse 91', address: '0.0.0' },
+      { icon: '☼', glyph: 'system', kind: 'Solar system', name: 'Zeta Borealis', address: '0.0.0.0' },
+      { icon: '⊕', glyph: 'planet', kind: 'Planet', name: 'Auraea', address: '0.0.0.0.1' },
     ],
     status: 'RESONANCE: [BAROQUE]',
     description: ['A world on the surface layer of the lattice, tuned to one culture and one era.'],
@@ -83,6 +83,7 @@ export const PLANET: GameSnapshot = {
   scan: null,
   map: null,
   trace: null,
+  descent: null,
 };
 
 export const STREET: GameSnapshot = {

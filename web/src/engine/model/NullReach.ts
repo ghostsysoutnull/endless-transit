@@ -76,10 +76,6 @@ export class NullReach extends Location {
     return 'Faint gravitational anomalies detected';
   }
 
-  approachVerb(): string {
-    return 'Detect faint signal:';
-  }
-
   override landmarkFactor(): number {
     return super.landmarkFactor() * LANDMARK_FACTOR;
   }

@@ -55,6 +55,7 @@ const HELP: GameSnapshot = {
   scan: null,
   map: null,
   trace: null,
+  descent: null,
 };
 
 describe('HelpPresenter — the help screen (Guide:96; I09)', () => {

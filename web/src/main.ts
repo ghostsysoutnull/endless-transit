@@ -28,7 +28,10 @@ import { EaseOut } from '#ui/scene/EaseOut.ts';
 import { PixelBudget } from '#ui/scene/PixelBudget.ts';
 import { SceneCanvasMaker } from '#ui/scene/SceneCanvasMaker.ts';
 import { SceneEvents } from '#ui/scene/SceneEvents.ts';
+import { DepthRail } from '#ui/scene/DepthRail.ts';
 import { Dive } from '#ui/scene/Dive.ts';
+import { EmblemStage } from '#ui/scene/EmblemStage.ts';
+import { NoTear } from '#ui/scene/NoTear.ts';
 import { TraceBands } from '#ui/scene/TraceBands.ts';
 import { TracePole } from '#ui/scene/TracePole.ts';
 import { SceneRegistry } from '#ui/scene/SceneRegistry.ts';
@@ -37,10 +40,13 @@ import { ScenePictures } from '#ui/scene/ScenePictures.ts';
 import { SceneViewMaker } from '#ui/scene/SceneViewMaker.ts';
 import { SliderMaker } from '#ui/scene/SliderMaker.ts';
 import { TearPass } from '#ui/scene/TearPass.ts';
+import { TitleScene } from '#ui/scene/TitleScene.ts';
 import { BufferPresenter } from '#ui/screens/BufferPresenter.ts';
 import { BufferView } from '#ui/screens/BufferView.ts';
 import { HelpPresenter } from '#ui/screens/HelpPresenter.ts';
 import { HelpView } from '#ui/screens/HelpView.ts';
+import { Passage } from '#ui/screens/Passage.ts';
+import { PassageLevels } from '#ui/screens/PassageLevels.ts';
 import { PolePresenter } from '#ui/screens/PolePresenter.ts';
 import { HudPresenter } from '#ui/screens/HudPresenter.ts';
 import { SceneDrawing } from '#ui/screens/SceneDrawing.ts';
@@ -104,16 +110,54 @@ const canvases = new CanvasViewMaker(
   motion,
   canvasMaker,
 );
+// How long each level holds on the way into the game and on the way out of it, in milliseconds: long enough to read.
+const PASSAGE = 1000;
 // The strip of keys at the world screen's foot: one, drawn by the room's card or by the screen itself.
 const keys = new KeyStripView();
 new Shell(
   engine,
   [
     new ScreenStage(new RebootPresenter(masthead), new RebootView()),
-    new ScreenStage(new RecapPresenter(masthead, frame), new RecapView()),
+    new ScreenStage(
+      new RecapPresenter(masthead, frame, new PassageLevels(new SceneDrawing())),
+      new RecapView({
+        book: scenes,
+        emblems: pictures.emblems(),
+        scene: new EmblemStage({ canvases: canvasMaker, clock, motion }),
+        // The way out of the game: the title's dive rewound, at its pace, torn as coherence has fallen.
+        passage: new Passage({
+          dive: new Dive({
+            canvases: canvasMaker,
+            clock,
+            motion,
+            tear: new TearPass(new CoherenceFx()),
+            hold: PASSAGE,
+          }),
+          book: scenes,
+        }),
+        picks: new SceneEvents(),
+      }),
+    ),
     new ScreenStage(new BufferPresenter(masthead, frame), new BufferView()),
     new ScreenStage(new HelpPresenter(masthead, frame), new HelpView()),
-    new ScreenStage(new TitlePresenter(masthead), new TitleView()),
+    new ScreenStage(
+      new TitlePresenter(masthead, new PassageLevels(new SceneDrawing())),
+      new TitleView({
+        book: scenes,
+        scene: new TitleScene({
+          canvases: canvasMaker,
+          clock,
+          motion,
+          tear: new TearPass(new CoherenceFx()),
+        }),
+        // The way into the game, taken at every start.
+        passage: new Passage({
+          dive: new Dive({ canvases: canvasMaker, clock, motion, tear: new NoTear(), hold: PASSAGE }),
+          book: scenes,
+        }),
+        picks: new SceneEvents(),
+      }),
+    ),
     new ScreenStage(
       new HudPresenter(masthead, frame, new SceneDrawing(), new PolePresenter()),
       new HudView(
@@ -138,7 +182,7 @@ new Shell(
         canvases,
         {
           bands: new TraceBands({ canvases: canvasMaker, clock, motion }),
-          dive: new Dive({ canvases: canvasMaker, clock, motion }),
+          dive: new Dive({ canvases: canvasMaker, clock, motion, tear: new NoTear(), hold: 750 }),
           pole: new TracePole({ canvases: canvasMaker, clock, motion, picture: pictures.pole() }),
           // The trace's view the player picked last (U05): kept in the browser like the save.
           views: new LocalStorageTraceViewMemory(() => window.localStorage),
@@ -153,6 +197,8 @@ new Shell(
           keys,
         }),
         keys,
+        // The depth rail: the levels' marks are the pole's own glyphs.
+        new DepthRail({ canvases: canvasMaker, clock, motion, glyphs: pictures.glyphs() }),
       ),
     ),
   ],

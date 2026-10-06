@@ -382,7 +382,7 @@ export class Room extends Location {
     return '';
   }
 
-  approachVerb(): string {
-    return '';
+  override settled(): boolean {
+    return true;
   }
 }

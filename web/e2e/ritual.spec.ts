@@ -197,7 +197,7 @@ test('breach on the Peak and descend: the breach spends the Keystone, the Layers
   await expect(page.locator('button.tile')).toHaveCount(0);
   // The recap down here is the void's.
   await press(page, /end session/i, hasTouch);
-  await expect(page.locator('.rh, h2').first()).toContainText('[VOID_RESONANCE_TERMINATION]');
+  await expect(page.getByTestId('recap-heading')).toHaveText('The void takes the session');
   await expect(page.getByTestId('closing')).toHaveText('Sleep among the static, Operator.');
   await shoot(page, '6-void-recap');
   expect(problems).toEqual([]);

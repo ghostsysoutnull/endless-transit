@@ -31,6 +31,12 @@ describe('Coherence — the one resource, as a value (Guide:43, 133-156)', () =>
     expect(new Coherence(0).decay()).toBe(1);
   });
 
+  test('critical under 30 and not at it: the lowest band as a question', () => {
+    expect(new Coherence(29).critical()).toBe(true);
+    expect(new Coherence(0).critical()).toBe(true);
+    expect(new Coherence(30).critical()).toBe(false);
+  });
+
   test('exhausted at zero and only there (Guide:144, TurnProcessor.groovy:55)', () => {
     expect(new Coherence(0).exhausted()).toBe(true);
     expect(new Coherence(1).exhausted()).toBe(false);

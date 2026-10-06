@@ -16,3 +16,5 @@ Web lessons, in the form the Codex's Self-Improvement Loop sets.
   say where the finger scrolls the page from.
 - **A changed word is searched in the browser tests by every line the snapshot's diff removed**: the door and room
   sentences are quoted there too, not the names alone.
+- **`npm run phone` type-checks the tests too**: a fast-loop round whose save points leave a test file uncompiled runs
+  the app's type check, the build and the upload by their parts, and the save point says so.
