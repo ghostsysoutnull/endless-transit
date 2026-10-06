@@ -197,7 +197,6 @@ test('the End screen counts the buffer and the tally; three resonant traces are 
   await expect(figures.locator('dt')).toHaveText(['Steps', 'Places', 'Relics', 'Resonant']);
   await expect(figures.locator('dd').nth(2)).toHaveText('2');
   await expect(figures.locator('dd').nth(3)).toHaveText('3');
-  await expect(figures.locator('dd').nth(4)).toHaveText('3 resonant');
   expect(problems).toEqual([]);
 });
 

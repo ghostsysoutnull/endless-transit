@@ -3014,6 +3014,7 @@ html:has(.keybar > .alarm) {
   padding-top: max(14px, env(safe-area-inset-top));
   background: var(--ground);
   touch-action: manipulation;
+  outline: none;
 }
 
 .passage-cap {

@@ -68,6 +68,7 @@ export class Passage {
       <div
         class="passage"
         data-testid="passage"
+        tabindex="-1"
         @click=${() => {
           this.stop();
         }}
@@ -125,6 +126,8 @@ export class Passage {
       done();
       return;
     }
+    // The passage holds the focus while it plays, so the shell's rule finds it on the screen when the next one comes.
+    host.parentElement?.focus({ preventScroll: true });
     run(
       host,
       levels.map((level) => ({ sketch: level.drawing.sketchedBy(this.#book), into: level.into })),
